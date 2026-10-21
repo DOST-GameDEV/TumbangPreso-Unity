@@ -1,0 +1,201 @@
+using TumbangPreso.Core;
+using UnityEngine;
+
+namespace TumbangPreso
+{
+    public sealed partial class CharacterMotor
+    {
+        private EdgeRecoveryKind _edgeKind;
+        private Vector3 _edgeGrip,_edgeLanding,_edgeOutward,_edgeStart;
+        private byte _edgePhase;
+        private float _edgeElapsed,_edgeRatio,_edgePendingUntil,_edgeRequestAt=-99;
+        private ulong _lastNetworkPoseSerial;
+        public bool IsEdgeRecovering=>_edgeKind!=EdgeRecoveryKind.None;
+        public EdgeRecoveryKind EdgeKind=>_edgeKind;
+        public Vector3 EdgeGrip=>_edgeGrip;
+        public Vector3 EdgeOutward=>_edgeOutward;
+        public byte EdgePhase=>_edgePhase; // 0 reach/catch, 1 effort while hanging, 2 pull over lip (Drone: catch, lift and float, set down)
+        public float EdgePhaseRatio=>_edgeRatio;
+        public float EdgeMashRatio=>Mathf.Clamp01((_tripTotal-_tripLeft)/Mathf.Max(.01f,_tripTotal-Balance.MinTripDown));
+        private Vector3 HangingFeet=>_edgeGrip+_edgeOutward*(_cc.radius+.14f)-Vector3.up*1.28f;
+
+        public bool BeginEdgeRecovery(MapEdgeAnchor anchor)
+        {
+            if(!NetAuthority.ShouldResolve()||IsEdgeRecovering||anchor.Kind==EdgeRecoveryKind.None||!gameObject.activeInHierarchy)return false;
+            ApplyFallRecovery();
+            _edgeKind=anchor.Kind;_edgeGrip=anchor.Grip;_edgeLanding=anchor.Landing;_edgeOutward=anchor.Outward;
+            _edgeStart=transform.position;_edgeElapsed=0;_edgeRatio=0;_edgePhase=0;_edgePendingUntil=0;
+            transform.rotation=Quaternion.LookRotation(-anchor.Outward,Vector3.up);
+            _velocity=Vector3.zero;_externalVelocity=Vector3.zero;_grounded=false;_spawnSettle=0;
+            Net.MatchRpc.Instance?.BeginEdgeMovementOwnership(_playerSlot);
+            return true;
+        }
+
+        public bool TryBeginLagoonEdgeRecovery()
+        {
+            if(!NetAuthority.ShouldResolve()||PresentationClock.BlocksInput||IsEdgeRecovering||!CanMove()||Time.time-_edgeRequestAt<.12f)return false;
+            _edgeRequestAt=Time.time;
+            return MapEdgeGeometry.TryLagoon(this,out var anchor)&&BeginEdgeRecovery(anchor);
+        }
+
+        private bool StepEdgeRecoveryFixed(float dt)
+        {
+            if(!IsEdgeRecovering&&IsLocallySimulated()&&Intent.JustPressed(Verb.Jump)&&CanMove()&&IsSwimming)
+            {
+                if(NetAuthority.ShouldResolve())TryBeginLagoonEdgeRecovery();
+                else if(Time.time-_edgeRequestAt>=.18f&&MapEdgeGeometry.TryLagoon(this,out _))
+                {
+                    _edgeRequestAt=Time.time;_edgePendingUntil=Time.time+.6f;
+                    Net.MatchRpc.Instance?.RequestEdgeClimbServerRpc(_playerSlot,MovementEpoch);
+                }
+            }
+            if(!IsEdgeRecovering)
+            {
+                if(Time.time>=_edgePendingUntil)return false;
+                // Wait for host acceptance rather than predicting an ordinary water
+                // jump through the bridge while its climb request is in flight.
+                Intent.CommitFrame();return true;
+            }
+            // This is a movement constraint, not a pause of the character's
+            // resource clocks. Preserve ordinary stunned/idle stamina behavior.
+            if(NetAuthority.ShouldResolve()||IsLocallySimulated())
+            {Stamina.StepFatigue(dt);Stamina.Step(dt,false,false);}
+            if(!NetAuthority.ShouldResolve())
+            {StepNetworkReplica(dt);Intent.CommitFrame();return true;}
+            if(_edgeKind==EdgeRecoveryKind.Drone){StepDroneCarry(dt);return true;}
+
+            _edgeElapsed+=dt;var feet=HangingFeet;
+            if(_edgePhase==0)
+            {
+                float duration=_edgeKind==EdgeRecoveryKind.Lagoon?.48f:.30f;
+                _edgeRatio=Mathf.Clamp01(_edgeElapsed/duration);float t=Mathf.SmoothStep(0,1,_edgeRatio);
+                var at=Vector3.Lerp(_edgeStart,feet,t);
+                // Leave the underside horizontally before reaching up from water.
+                if(_edgeKind==EdgeRecoveryKind.Lagoon)
+                {
+                    float horizontal=Mathf.SmoothStep(0,1,Mathf.Clamp01(_edgeRatio*1.8f));
+                    at.x=Mathf.Lerp(_edgeStart.x,feet.x,horizontal);at.z=Mathf.Lerp(_edgeStart.z,feet.z,horizontal);
+                }
+                SetEdgePose(at,false);
+                if(_edgeRatio>=1){_edgePhase=1;_edgeElapsed=0;_edgeRatio=0;}
+            }
+            else if(_edgePhase==1)
+            {
+                // Hang effort advances on the host clock, never on repeated Jump.
+                _tripLeft=Mathf.Max(Balance.MinTripDown,_tripLeft-dt);
+                SetEdgePose(feet,false);_edgeRatio=EdgeMashRatio;
+                if(_tripLeft<=Balance.MinTripDown){_edgePhase=2;_edgeElapsed=0;_edgeRatio=0;}
+            }
+            else
+            {
+                _edgeRatio=Mathf.Clamp01(_edgeElapsed/Balance.MinTripDown);_tripLeft=Balance.MinTripDown*(1-_edgeRatio);
+                var raised=feet;raised.y=Mathf.Max(_edgeGrip.y+.16f,_edgeLanding.y+.16f);
+                var over=_edgeLanding;over.y=raised.y;Vector3 at;
+                if(_edgeRatio<.44f)at=Vector3.Lerp(feet,raised,Mathf.SmoothStep(0,1,_edgeRatio/.44f));
+                else if(_edgeRatio<.76f)at=Vector3.Lerp(raised,over,Mathf.SmoothStep(0,1,(_edgeRatio-.44f)/.32f));
+                else at=Vector3.Lerp(over,_edgeLanding,Mathf.SmoothStep(0,1,(_edgeRatio-.76f)/.24f));
+                SetEdgePose(at,_edgeRatio>=1);
+                if(_edgeRatio>=1)
+                {
+                    ResetEdgeRecovery();_tripLeft=0;_tripTotal=0;AdvanceRecoveryEpisode();
+                    _tripImmuneUntil=Time.time+Balance.TripGraceAfterGetUp;
+                    Net.MatchRpc.Instance?.BeginEdgeMovementOwnership(_playerSlot);
+                }
+            }
+            Intent.CommitFrame();
+            // Edge trajectories belong to the host even for a normally client-driven
+            // seat. Old owner movement is rejected until the climb finishes.
+            if(NetAuthority.IsHost)Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(_playerSlot,transform.position,transform.eulerAngles.y,_velocity);
+            return true;
+        }
+
+        // The Arena's drone (docs/ARENA_MAP_BRIEF.md, ARENA-1.1 point 3). The host owns the
+        // whole path: caught where it fell, lifted straight up clear of the stage, floated
+        // across, set down. It runs on its own clock. The fall trip that BeginEdgeRecovery
+        // applied only keeps the body from acting and is counted down to match; the Rooftop
+        // and Lagoon steps above never see this kind.
+        //
+        // THE CATCH IS DEEP IN THE SHAFT NOW (about y -22, owner 2026-10-05), so the body
+        // arrives at terminal speed (25 m/s) and has 25 m to come back up. The catch takes the
+        // fall up over 3 m (an ease-out from 15 m/s: a snatch, not a wall), the haul is the
+        // larger share of the carry and peaks near 30 m/s (a replica's smoothing follows to
+        // 40), and the whole carry is 3.5 s: 0.4 caught, 2.5 hauled and floated across, 0.6 set
+        // down. Only the Arena has this kind, so no other map sees these numbers.
+        public const float DroneCatchSeconds=.4f,DroneCarrySeconds=2.5f,DroneSetDownSeconds=.6f,DroneCarryHeight=3.2f;
+        public const float DroneLiftShare=.55f;
+        private const float DroneCatchSink=3;
+
+        private void StepDroneCarry(float dt)
+        {
+            _edgeElapsed+=dt;
+            var caught=_edgeStart-Vector3.up*DroneCatchSink;
+            var above=_edgeLanding;above.y=Mathf.Max(_edgeLanding.y,_edgeStart.y)+DroneCarryHeight;
+            var lifted=caught;lifted.y=above.y;
+            float total=DroneCatchSeconds+DroneCarrySeconds+DroneSetDownSeconds,spent;bool done=false;
+            if(_edgePhase==0)
+            {
+                _edgeRatio=Mathf.Clamp01(_edgeElapsed/DroneCatchSeconds);spent=_edgeElapsed;
+                // Ease out: the fall is taken up over a short sink, not stopped dead.
+                SetEdgePose(Vector3.Lerp(_edgeStart,caught,1-(1-_edgeRatio)*(1-_edgeRatio)),false);
+                if(_edgeRatio>=1){_edgePhase=1;_edgeElapsed=0;_edgeRatio=0;}
+            }
+            else if(_edgePhase==1)
+            {
+                _edgeRatio=Mathf.Clamp01(_edgeElapsed/DroneCarrySeconds);spent=DroneCatchSeconds+_edgeElapsed;
+                float across=Mathf.Clamp01((_edgeRatio-DroneLiftShare)/(1-DroneLiftShare));
+                var at=_edgeRatio<DroneLiftShare
+                    ?Vector3.Lerp(caught,lifted,Mathf.SmoothStep(0,1,_edgeRatio/DroneLiftShare))
+                    :Vector3.Lerp(lifted,above,Mathf.SmoothStep(0,1,across));
+                // A gentle bob while it floats across, zero at both ends of the crossing.
+                at.y+=Mathf.Sin(_edgeElapsed*5.5f)*.07f*Mathf.Sin(across*Mathf.PI);
+                SetEdgePose(at,false);
+                if(_edgeRatio>=1){_edgePhase=2;_edgeElapsed=0;_edgeRatio=0;}
+            }
+            else
+            {
+                _edgeRatio=Mathf.Clamp01(_edgeElapsed/DroneSetDownSeconds);spent=DroneCatchSeconds+DroneCarrySeconds+_edgeElapsed;
+                done=_edgeRatio>=1;
+                SetEdgePose(Vector3.Lerp(above,_edgeLanding,Mathf.SmoothStep(0,1,_edgeRatio)),done);
+            }
+            _tripLeft=Mathf.Max(Balance.MinTripDown,_tripTotal*(1-Mathf.Clamp01(spent/total)));
+            if(done)
+            {
+                // Movement goes back exactly as a climb hands it back, and THEN the fall costs
+                // the tag's own five seconds (owner: "same 5 second tag freeze"). No score and
+                // no trip to the spawn: the body stays where the drone put it.
+                ResetEdgeRecovery();_tripLeft=0;_tripTotal=0;AdvanceRecoveryEpisode();
+                _tripImmuneUntil=Time.time+Balance.TripGraceAfterGetUp;
+                Net.MatchRpc.Instance?.BeginEdgeMovementOwnership(_playerSlot);
+                ApplyTagged();
+            }
+            Intent.CommitFrame();
+            if(NetAuthority.IsHost)Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(_playerSlot,transform.position,transform.eulerAngles.y,_velocity);
+        }
+
+        private void SetEdgePose(Vector3 feet,bool grounded)
+        {
+            float yaw=Mathf.Atan2(-_edgeOutward.x,-_edgeOutward.z)*Mathf.Rad2Deg;
+            bool enabled=_cc.enabled;_cc.enabled=false;transform.SetPositionAndRotation(feet,Quaternion.Euler(0,yaw,0));_cc.enabled=enabled;
+            _grounded=grounded;_networkGrounded=grounded;_velocity=Vector3.zero;_externalVelocity=Vector3.zero;_fallSpeed=0;
+            _networkTargetPosition=feet;_networkTargetYaw=yaw;_networkTargetVelocity=Vector3.zero;
+            _networkSmoothVelocity=Vector3.zero;_networkYawVelocity=0;
+        }
+
+        private void ResetEdgeRecovery()
+        {_edgeKind=EdgeRecoveryKind.None;_edgePhase=0;_edgeRatio=0;_edgeElapsed=0;_edgePendingUntil=0;}
+
+        public void ApplyEdgeRecoverySnapshot(EdgeRecoveryKind kind,Vector3 grip,Vector3 outward,byte phase,float ratio)
+        {
+            if(kind==EdgeRecoveryKind.None&&IsEdgeRecovering)
+            {_tripLeft=0;_tripTotal=0;_pendingRecovery.Clear();}
+            if(kind!=EdgeRecoveryKind.None||IsEdgeRecovering)_edgePendingUntil=0;
+            _edgeKind=kind;_edgeGrip=grip;_edgeOutward=outward;_edgePhase=phase;_edgeRatio=Mathf.Clamp01(ratio);
+        }
+
+        public bool AcceptNetworkPoseSerial(ulong serial)
+        {
+            if(serial==0||serial<=_lastNetworkPoseSerial)return false;
+            _lastNetworkPoseSerial=serial;return true;
+        }
+    }
+}

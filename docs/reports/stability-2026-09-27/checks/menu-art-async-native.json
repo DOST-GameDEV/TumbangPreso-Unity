@@ -1,0 +1,28 @@
+{
+  "base": "fc1487fa6f7decd68190fbfad8f05dd769940d14",
+  "scope": "Asynchronous title/login/avatar preparation with retained consumer caches",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.8980249,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/OwnerMenuArt.cs",
+      "sha256": "BC1ECBE722880DCB928C565BEA09AD686ACB45F3E604C4A6FCEC78996B23E280"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Avatars.cs",
+      "sha256": "23BA16A0A484E7A35F4FB2797E0444FC7B457FEE9119C53B0452DDA05B9EC8AD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TumpNativePickerTests.cs",
+      "sha256": "135FC0E7D1BABA7B2CEEC86ECA878F8E5422B7EE55D59C4EFA497C1DEA486250"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6277840896,
+  "retryCount": 0,
+  "unverified": [
+    "Cold player I/O and frame timings",
+    "Whole boot/first-click flow"
+  ]
+}

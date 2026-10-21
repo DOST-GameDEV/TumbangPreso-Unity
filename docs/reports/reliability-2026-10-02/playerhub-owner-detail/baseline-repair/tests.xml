@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.8922853">
+  <test-suite type="TestSuite" id="2539" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1257" result="Failed" site="Child" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.892285" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2533" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1257" result="Failed" site="Child" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.869899" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20816" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2534" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1257" result="Failed" site="Child" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.856509" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2535" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1257" result="Failed" site="Child" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.843509" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1975" name="PlayerHubOwnerDetailTests" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.810560" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1978" name="AccountChangeBeforeAnyScorecardWasOpenedKeepsTheHubUsable" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests.AccountChangeBeforeAnyScorecardWasOpenedKeepsTheHubUsable" methodname="AccountChangeBeforeAnyScorecardWasOpenedKeepsTheHubUsable" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" seed="732395621" result="Passed" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.621819" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1976" name="AnAccountChangeClosesThePreviousOwnersActualScorecard" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests.AnAccountChangeClosesThePreviousOwnersActualScorecard" methodname="AnAccountChangeClosesThePreviousOwnersActualScorecard" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" seed="994171594" result="Failed" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.094831" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  New account rows appeared behind the previous account's still-open scorecard.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PlayerHubOwnerDetailTests.AnAccountChangeClosesThePreviousOwnersActualScorecard () [0x00047] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PlayerHubOwnerDetailTests.cs:86
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1977" name="SameAccountDataRefreshKeepsTheCurrentScorecardOpen" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests.SameAccountDataRefreshKeepsTheCurrentScorecardOpen" methodname="SameAccountDataRefreshKeepsTheCurrentScorecardOpen" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" seed="538509481" result="Passed" start-time="2026-10-02 06:44:32Z" end-time="2026-10-02 06:44:32Z" duration="0.076944" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

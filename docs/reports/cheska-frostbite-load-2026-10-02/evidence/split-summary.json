@@ -1,0 +1,42 @@
+[
+  {
+    "run": "split-1",
+    "test": "LoadedCueUsesTheRealShoeAndRetiresWithTheLoad",
+    "passed": 1,
+    "duration": "0.6043816",
+    "peak_total_gib": 7.242,
+    "peak_anon_shmem_gib": 5.57
+  },
+  {
+    "run": "split-2",
+    "test": "AnUnloadedKitLeavesTheShoeUntouched",
+    "passed": 1,
+    "duration": "0.5921389",
+    "peak_total_gib": 6.378,
+    "peak_anon_shmem_gib": 4.683
+  },
+  {
+    "run": "split-3",
+    "test": "ExpiryAndResetRetireTheCue",
+    "passed": 1,
+    "duration": "0.8005407",
+    "peak_total_gib": 6.841,
+    "peak_anon_shmem_gib": 5.142
+  },
+  {
+    "run": "split-4",
+    "test": "RestoredLoadWaitsForEquipmentWithoutRefreshingTheClock",
+    "passed": 1,
+    "duration": "0.5068147",
+    "peak_total_gib": 6.236,
+    "peak_anon_shmem_gib": 4.541
+  },
+  {
+    "run": "split-5",
+    "test": "OwnerMeshUsesTheSameCueAndKeepsAuthoredSurfaces",
+    "passed": 1,
+    "duration": "0.7563869",
+    "peak_total_gib": 6.42,
+    "peak_anon_shmem_gib": 4.716
+  }
+]

@@ -22,7 +22,7 @@ namespace TumbangPreso
     /// characters — the empty seats are bot-filled — and an AI cannot press R, so counting
     /// characters leaves a solo host waiting forever for three bots to agree. Spectators are
     /// excluded for the same reason: they hold no seat and can never press. The count comes
-    /// from `LobbySession.PlayingPeerCount` and nowhere else.
+    /// from the same seated-peer membership used to accept the votes.
     ///
     /// ⚠️ A SECOND PRESS IS IDEMPOTENT. Votes go into a set, so mashing R cannot ready you
     /// twice or start the countdown early.
@@ -52,6 +52,10 @@ namespace TumbangPreso
 
         private bool _awaitingLocalReady;
         private bool _countingDown;
+        private bool _countdownConsumed;
+        private bool _automatic, _introductionDone;
+        private float _nextAutomaticReady;
+        private Coroutine _arrival;
 
         /// <summary>Peers that have declared ready. Host-side; a set, so a second press from
         /// the same peer changes nothing.</summary>
@@ -74,7 +78,7 @@ namespace TumbangPreso
             _awaitingLocalReady = true;
             _countingDown = false;
 
-            ReadyPromptChanged?.Invoke(true);
+            ReadyPromptChanged?.Invoke(!_automatic);
             RaiseNetReady();
         }
 
@@ -87,13 +91,14 @@ namespace TumbangPreso
         /// </summary>
         public void DeclareReady(int peerId)
         {
-            if (!NetAuthority.IsHost || !AwaitingNetReady) return;
+            if (!NetAuthority.IsHost || !AwaitingNetReady || !EligiblePeer(peerId)) return;
 
             if (!_netReady.Add(peerId)) return;   // idempotent
 
+            MatchArrivalPresentation.Trace($"peer {peerId} ready ({CurrentReadyCount()}/{ExpectedReadyCount()})");
             RaiseNetReady();
 
-            if (_netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+            TryBeginNetCountdown();
         }
 
         /// <summary>
@@ -108,7 +113,7 @@ namespace TumbangPreso
             _netReady.Remove(peerId);
             RaiseNetReady();
 
-            if (_netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+            TryBeginNetCountdown();
         }
 
         /// <summary>
@@ -129,17 +134,39 @@ namespace TumbangPreso
         private int ExpectedReadyCount()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount() ?? 1;
+            return NetAuthority.IsNetworked ? lobby?.SeatedPeerCount() ?? 0 : 1;
+        }
+
+        private bool EligiblePeer(int peerId)
+            => NetAuthority.IsNetworked
+                ? Net.NetSession.Instance?.Lobby.IsSeatedPeer(peerId) == true
+                : peerId == NetAuthority.LocalPeerId && !GameLaunch.Spectator;
+
+        private int CurrentReadyCount()
+        {
+            int count = 0;
+            foreach (int peer in _netReady) if (EligiblePeer(peer)) count++;
+            return count;
         }
 
         private void RaiseNetReady()
-            => NetReadyChanged?.Invoke(_netReady.Count, ExpectedReadyCount());
+            => NetReadyChanged?.Invoke(CurrentReadyCount(), ExpectedReadyCount());
+
+        private void TryBeginNetCountdown()
+        {
+            if (!NetAuthority.IsHost || !AwaitingNetReady || UI.Hub.HubLoading.Visible ||
+                (_automatic && !_introductionDone) ||
+                (NetAuthority.IsNetworked && Net.NetSession.Instance == null)) return;
+            if (CurrentReadyCount() >= ExpectedReadyCount()) BeginNetCountdown();
+        }
 
         private void BeginNetCountdown()
         {
-            if (_countingDown) return;
+            if (_countingDown || _countdownConsumed || UI.Hub.HubLoading.Visible) return;
+            if (_automatic && !_introductionDone) return;
 
             AwaitingNetReady = false;
+            MatchArrivalPresentation.Trace($"countdown sent with {CurrentReadyCount()}/{ExpectedReadyCount()} ready");
 
             // Last-chance pick sweep before match starts: broadcast full table to late joiners and peers
             Net.MatchRpc.Instance?.BroadcastPicks();
@@ -151,25 +178,106 @@ namespace TumbangPreso
         /// <summary>Starts the 3, 2, 1, GO countdown locally on clients.</summary>
         public void StartLocalCountdown()
         {
-            if (_countingDown) return;
+            if (_countingDown || _countdownConsumed) return;
+            // A host countdown wins over a delayed local introduction. Never keep the player's
+            // camera or input held after the network has advanced into the playable round.
+            if (_arrival != null)
+            {
+                MatchArrivalPresentation.Trace("the host's countdown arrived during the opening and cut it");
+                StopCoroutine(_arrival); _arrival = null;
+                var presentation = GetComponent<MatchArrivalPresentation>();
+                if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
+                _introductionDone = true;
+            }
             _awaitingLocalReady = false;
             AwaitingNetReady = false;
             StartCoroutine(RunReadyCountdown());
         }
 
         private InputAction _readyUp;
+        private bool _countdownHold;
+        private void HoldUntilStart()
+        {
+            if (_countdownHold) return;
+            PresentationClock.Hold(); _countdownHold = true;
+        }
+        private void ReleaseStartHold()
+        {
+            if (!_countdownHold) return;
+            _countdownHold = false; PresentationClock.Release();
+            _local?.Intent.RequireFreshActions();
+        }
+        private void OnDisable()
+        {
+            StopAllCoroutines(); _arrival = null;
+            GetComponent<MatchArrivalPresentation>()?.Cancel();
+            ReleaseStartHold();
+        }
+        private void OnDestroy() => OnDisable();
         private CharacterMotor _local;
 
         public bool AwaitingReady => _awaitingLocalReady;
         public bool CountingDown => _countingDown;
 
-        /// <summary>Open the free-roam window. The round does not start until READY.</summary>
+        /// <summary>Open the automatic court introduction and loaded-peer barrier.</summary>
         public void Open(CharacterMotor local)
         {
+            StopAllCoroutines(); _arrival = null;
+            GetComponent<MatchArrivalPresentation>()?.Cancel();
+            ReleaseStartHold();
             _local = local;
             _awaitingLocalReady = true;
             _countingDown = false;
-            ReadyPromptChanged?.Invoke(true);
+            _countdownConsumed = false;
+            _automatic = true; // Lobby lock-in is the only player-facing ready step.
+            _introductionDone = !_automatic;
+            _readySendPending = false;
+            ReadyPromptChanged?.Invoke(!_automatic);
+            MatchArrivalPresentation.Trace("gate opened for seat " + (local != null ? local.PlayerSlot : -1));
+            if (AdoptStartedMatch()) return;
+            if (_automatic && _arrival == null) _arrival = StartCoroutine(PrepareAutomaticArrival());
+        }
+
+        // A late join never receives the countdown that already finished on the host.
+        // Retire only this gate's presentation; snapshots remain the round-state owner.
+        private bool AdoptStartedMatch()
+        {
+            var match = GameServices.Match;
+            if (!NetAuthority.ShouldRequest() || match == null ||
+                !match.HostConfirmedInProgress) return false;
+            if (!_awaitingLocalReady && !_countingDown && _arrival == null && !_countdownHold)
+                return true;
+
+            MatchArrivalPresentation.Trace("adopting the host's running match; the opening is retired");
+            StopAllCoroutines(); _arrival = null;
+            var presentation = GetComponent<MatchArrivalPresentation>();
+            if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
+            ReleaseStartHold();
+            // An ultimate snapshot can arrive while the old opening still owns its hold.
+            // Retiring the opening must not release that accepted shared cinematic.
+            if (SharedUltimatePhase.Instance?.Active == true) PresentationClock.Hold();
+            _readySendPending = false;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            _countingDown = false;
+            _countdownConsumed = true;
+            _introductionDone = true;
+            ReadyPromptChanged?.Invoke(false);
+            CountdownHidden?.Invoke();
+            return true;
+        }
+
+        private IEnumerator PrepareAutomaticArrival()
+        {
+            var presentation = gameObject.AddComponent<MatchArrivalPresentation>();
+            presentation.Viewer = _local;
+            yield return presentation.Run();
+            if (presentation != null) Destroy(presentation);
+            HoldUntilStart();
+            MatchArrivalPresentation.Trace("opening done, waiting for the countdown");
+            _introductionDone = true;
+            _nextAutomaticReady = 0;
+            _arrival = null;
         }
 
         private void Awake()
@@ -192,17 +300,38 @@ namespace TumbangPreso
         /// the worst case of a retry that was not needed is one extra `Add` that changes nothing.
         /// </summary>
         private bool _readySendPending;
+        private float _nextReadySend;
 
         private void Update()
         {
-            if (_readySendPending)
+            if (AdoptStartedMatch()) return;
+            // Manual READY reads its action directly, outside PlayerInputReader's
+            // loading guard. Do not spend a press or start a hidden countdown.
+            if (UI.Hub.HubLoading.Visible) return;
+            TryBeginNetCountdown();
+
+            if (_readySendPending && Time.unscaledTime >= _nextReadySend)
             {
-                if (Net.MatchRpc.Instance != null &&
-                    Net.MatchRpc.Instance.DeclareReadyServerRpc())
-                    _readySendPending = false;
+                // A successful transport send is not host acceptance. Keep the
+                // idempotent vote until the scoped countdown acknowledges it.
+                _nextReadySend = Time.unscaledTime + .5f;
+                Net.MatchRpc.Instance?.DeclareReadyServerRpc();
             }
 
             if (_countingDown || !_awaitingLocalReady) return;
+
+            if (_automatic)
+            {
+                if (!_introductionDone) return;
+                if (!NetAuthority.IsNetworked) { StartCoroutine(RunReadyCountdown()); return; }
+                if (NetAuthority.IsHost && ExpectedReadyCount() == 0) { BeginNetCountdown(); return; }
+                if (GameLaunch.Spectator || Time.unscaledTime < _nextAutomaticReady) return;
+                // The host can finish loading after this client. Repeat until the host's countdown
+                // acknowledges the quorum; the existing peer set makes each repeat idempotent.
+                _nextAutomaticReady = Time.unscaledTime + .5f;
+                Net.MatchRpc.Instance?.DeclareReadyServerRpc();
+                return;
+            }
 
             // ⚠️⚠️ A SPECTATOR'S R IS THE REPLAY KEY AND MUST NOT ALSO BE THE READY KEY.
             // 🧑 2026-08-29: *"r for spectatotr does ready and replay, conflict"*.
@@ -234,6 +363,10 @@ namespace TumbangPreso
             // what keeps `-tp-autostart` working on an all-bots peer that this gate now ignores.
             if (GameLaunch.Spectator) return;
 
+            // This action bypasses PlayerInputReader, so it must respect the same chat
+            // context. Previously submitted votes and automatic readiness still run above.
+            if (UI.LobbyChat.AnyTyping) return;
+
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
             if (_local != null) ReadyGestureRequested?.Invoke(_local);
@@ -242,8 +375,8 @@ namespace TumbangPreso
             // press IS the start.
             if (NetAuthority.IsNetworked)
             {
-                _readySendPending = Net.MatchRpc.Instance == null ||
-                                    !Net.MatchRpc.Instance.DeclareReadyServerRpc();
+                _readySendPending = true;
+                _nextReadySend = 0;
             }
             else
             {
@@ -260,23 +393,40 @@ namespace TumbangPreso
         /// </summary>
         private IEnumerator RunReadyCountdown()
         {
+            HoldUntilStart();
+            _countdownConsumed = true;
+            _readySendPending = false;
             _countingDown = true;
             ReadyPromptChanged?.Invoke(false);
 
             foreach (var tick in new[] { "3", "2", "1" })
             {
+                if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
                 CountdownTick?.Invoke(tick);
-                yield return new WaitForSeconds(TickSeconds);
+                yield return new WaitForSecondsRealtime(TickSeconds);
             }
 
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
             CountdownTick?.Invoke("GO!");
-            yield return new WaitForSeconds(GoSeconds);
+            yield return new WaitForSecondsRealtime(GoSeconds);
 
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
             CountdownHidden?.Invoke();
             _awaitingLocalReady = false;
             _countingDown = false;
 
+            ReleaseStartHold();
             RoundShouldBegin?.Invoke();
+        }
+
+        private void CancelAbandonedCountdown()
+        {
+            ReleaseStartHold();
+            _readySendPending = false;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            _countingDown = false;
+            CountdownHidden?.Invoke();
         }
     }
 }

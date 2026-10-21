@@ -1,0 +1,98 @@
+{
+  "evidence_level": "Native Unity Editor PlayMode, graphics D3D11; no pixel/human review",
+  "provenance": "Original two causal failures precede added cross-state control. Only new control ran on unchanged original production; candidate runs all three using the current fixture. Review correction precedes candidate; no native candidate fixture/assertion repair.",
+  "runs": {
+    "original": {
+      "result": "Failed(Child)",
+      "total": 2,
+      "passed": 0,
+      "failed": 2,
+      "duration_seconds": 7.409343,
+      "job_id": "5d12db518ee548c9bf82c518e8b3cab7",
+      "exit_code": 2,
+      "guardTerminal": true,
+      "preservationCompleted": true,
+      "leaseHeld": false,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper",
+          "result": "Failed",
+          "failure": "  Current landed rim leaked onto historical InFlight pose.\n  Expected: 0.0d +/- 0.0010000000474974513d\n  But was:  0.85000002384185791d\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalHeldSlipper",
+          "result": "Failed",
+          "failure": "  Current landed rim leaked onto historical Held pose.\n  Expected: 0.0d +/- 0.0010000000474974513d\n  But was:  0.85000002384185791d\n"
+        }
+      ]
+    },
+    "original-control": {
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "duration_seconds": 3.3490966,
+      "job_id": "9a5c0c1467f34ae2a9e2bee0ff84a504",
+      "exit_code": 0,
+      "guardTerminal": true,
+      "preservationCompleted": true,
+      "leaseHeld": false,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.HistoricalLooseRestoresInitialHighlightAfterHeldAndFlightFrames",
+          "result": "Passed",
+          "failure": null
+        }
+      ]
+    },
+    "candidate": {
+      "result": "Passed",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "duration_seconds": 7.1216527,
+      "job_id": "1c7251eb7b574c5f9d184d2fd392fa97",
+      "exit_code": 0,
+      "guardTerminal": true,
+      "preservationCompleted": true,
+      "leaseHeld": false,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalHeldSlipper",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.HistoricalLooseRestoresInitialHighlightAfterHeldAndFlightFrames",
+          "result": "Passed",
+          "failure": null
+        }
+      ]
+    }
+  },
+  "source_hash_checks": {
+    "Assets/TumbangPreso/Runtime/Slipper.cs": {
+      "frozen_sha256": "adb50ce5e405621e69275db25bfc8a453582db7981a9c3e2ef124be781620497",
+      "worker_matches": true,
+      "primary_matches": true,
+      "recorded_candidate_manifest_matches": true
+    },
+    "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs": {
+      "frozen_sha256": "b265e92587ab96385f289602d193d6ad83f5eeb7fcc5931a99d1bb52d24f9271",
+      "worker_matches": true,
+      "primary_matches": true,
+      "recorded_candidate_manifest_matches": true
+    },
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedSlipperHighlightTests.cs": {
+      "frozen_sha256": "0ea9d6b91bf1c8c59f3974b88859aaed5c711e9bcb6d32468e795e9779215c11",
+      "worker_matches": true,
+      "primary_matches": true,
+      "recorded_candidate_manifest_matches": null
+    }
+  }
+}

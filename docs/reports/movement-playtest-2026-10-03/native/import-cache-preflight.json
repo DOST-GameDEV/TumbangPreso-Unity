@@ -1,0 +1,17 @@
+{
+  "operation": "Advisory eviction of clean pages from idle task-owned Unity Library only; no files deleted or modified.",
+  "before": {
+    "current": 4839915520,
+    "file": 3425701888,
+    "inactive_file": 1685848064
+  },
+  "after": {
+    "current": 4428976128,
+    "file": 3016810496,
+    "inactive_file": 1448579072
+  },
+  "fileCount": 34410,
+  "bytesAdvised": 5219938229,
+  "allObservedFileDataUnchanged": true,
+  "errors": []
+}

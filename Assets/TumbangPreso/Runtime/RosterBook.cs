@@ -33,6 +33,19 @@ namespace TumbangPreso
 
         private static RosterBook _cached;
         private static bool _tried;
+        private static ResourceRequest _pending;
+
+        public static System.Collections.IEnumerator Warmup()
+        {
+            if (_cached != null || _tried) yield break;
+            var request = _pending ??= Resources.LoadAsync<RosterBook>(ResourcePath);
+            yield return request;
+            if (_pending == request)
+            {
+                if (!_tried) CompleteLoad(request.asset as RosterBook);
+                _pending = null;
+            }
+        }
 
         /// <summary>
         /// ⚠️ NULL IS SURVIVABLE. If the book is missing the game falls back to primitives
@@ -44,14 +57,25 @@ namespace TumbangPreso
             if (_cached != null) return _cached;
             if (_tried) return null;
 
-            _tried = true;
-            _cached = Resources.Load<RosterBook>(ResourcePath);
+            // A cancelled preload may still have completed its native request.
+            // Adopt it without issuing another read; direct callers retain fallback.
+            if (_pending != null && _pending.isDone)
+            {
+                CompleteLoad(_pending.asset as RosterBook);
+            }
+            else CompleteLoad(Resources.Load<RosterBook>(ResourcePath));
+            _pending = null;
 
+            return _cached;
+        }
+
+        private static void CompleteLoad(RosterBook book)
+        {
+            _tried = true;
+            _cached = book;
             if (_cached == null)
                 Debug.LogWarning($"[Roster] no book at Resources/{ResourcePath}. " +
                                  "Run Tumbang Preso > Build Roster Book. Falling back to primitives.");
-
-            return _cached;
         }
 
         public RosterEntryAsset PersonArt(int index) => Resolve(People, Roster.People, index);

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.3163516">
+  <test-suite type="TestSuite" id="2677" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1365" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.316352" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2671" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1365" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.303531" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2672" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1365" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.295879" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2673" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1365" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.288811" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2057" name="PracticeResetCombatLifetimeTests" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.270903" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2062" name="InvalidDefenderChoiceLeavesTheExistingContactUntouched" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.InvalidDefenderChoiceLeavesTheExistingContactUntouched" methodname="InvalidDefenderChoiceLeavesTheExistingContactUntouched" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="33696547" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.067314" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2061" name="OrdinaryPausePreservesTheCommittedContactAndCooldown" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.OrdinaryPausePreservesTheCommittedContactAndCooldown" methodname="OrdinaryPausePreservesTheCommittedContactAndCooldown" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="206856113" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.122728" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2060" name="ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" methodname="ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="1923379018" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.025493" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2058" name="ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" methodname="ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="760180679" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.021706" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2059" name="SetDefenderRetiresThePreviousRoleContact" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.SetDefenderRetiresThePreviousRoleContact" methodname="SetDefenderRetiresThePreviousRoleContact" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="780458522" result="Passed" start-time="2026-10-03 03:37:58Z" end-time="2026-10-03 03:37:58Z" duration="0.023445" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

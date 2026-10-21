@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using NUnit.Framework;
@@ -85,8 +86,11 @@ namespace TumbangPreso.PlayTests
             if (_target != null) _target.Release();
             if (_host != null) Object.Destroy(_host);
 
-            var leaked = Root("ResultCanvas");
-            if (leaked != null) Object.Destroy(leaked.gameObject);
+            foreach (string name in new[] { "OwnerResultCanvas", "ResultCanvas" })
+            {
+                var leaked = Root(name);
+                if (leaked != null) Object.Destroy(leaked.gameObject);
+            }
 
             // ⚠️⚠️ AND IT LEAVES AN EMPTY SCENE, FOR THE REASON `MatchRecordIdentityProbe`'s
             // teardown records at length. This one loads `MainMenu`, and `PlayerHubLayoutProbe`
@@ -155,8 +159,18 @@ namespace TumbangPreso.PlayTests
             build.Invoke(splash, null);
             yield return null;
 
-            var canvas = Root("SplashCanvas");
-            Assert.IsNotNull(canvas, "SplashScreen built no SplashCanvas");
+            // ⚠️⚠️ `OwnerLoadingCanvas`, NOT `SplashCanvas`, AND THE OLD NAME IS STILL IN THE
+            // FILE ON A BRANCH NOTHING TAKES. `BuildSurface` picks one of three surfaces and the
+            // painted one wins whenever her background and her logo are both present, which in a
+            // shipping build is always: `SplashScreen.CourtLoading.cs` builds
+            // `OwnerLoadingCanvas`. The bare `SplashCanvas` below it is the fallback for a
+            // project with no owner art at all. **Both are named here rather than only the live
+            // one**, because a probe that knows a single name reports "the boot screen was not
+            // built" the day the other branch is taken, which is the § 124.11 fault written into
+            // the fix for § 124.11.
+            var canvas = Root("OwnerLoadingCanvas") ?? Root("SplashCanvas");
+            Assert.IsNotNull(canvas, "SplashScreen.BuildSurface built neither OwnerLoadingCanvas " +
+                "nor SplashCanvas, so the screen every player meets first drew nothing.");
 
             RectParentage.AssertEveryRectHasARectParent(canvas, "the boot splash");
 
@@ -238,8 +252,12 @@ namespace TumbangPreso.PlayTests
             show.Invoke(board, new object[] { award, profile });
             yield return null;
 
-            var canvas = Root("ResultCanvas");
-            Assert.IsNotNull(canvas, "MatchResult built no ResultCanvas");
+            // ⚠️⚠️ `OwnerResultCanvas`, NOT `ResultCanvas`. `MatchResult.Build` is one line now
+            // (`BuildNativeResult`) and the board a player sees at the end of a match is
+            // `MatchResult.FinishSheet.cs`'s painted sheet. The legacy builder that made
+            // `ResultCanvas` is kept as `BuildLegacyReference` and nothing calls it.
+            var canvas = Root("OwnerResultCanvas") ?? Root("ResultCanvas");
+            Assert.IsNotNull(canvas, "MatchResult built no result canvas");
 
             // ⚠️⚠️ THE BOARD IS BUILT HIDDEN AND THE PROBE HAS TO RAISE IT, WHICH IS NOT THE
             // SAME AS THE PROBE FAKING IT. `MatchResult.Awake`'s own note says the CANVAS hides
@@ -253,7 +271,23 @@ namespace TumbangPreso.PlayTests
             Raise(canvas);
             yield return null;
 
-            var headline = Find(canvas, "XpHeadline");
+            // ⚠️⚠️ THE XP BLOCK IS ON THE SECOND PAGE AND THE SHEET OPENS ON THE FIRST, SO
+            // RAISING THE CANVAS IS NOT ENOUGH. The painted board is three tabbed pages
+            // (STANDINGS, YOUR MATCH, PLAYERS) and `BuildNativeResult` finishes on `NativePage(0)`.
+            // `ShowProgression` still activates the headline itself, so an `activeSelf` assertion
+            // passes while every rect under the hidden page measures ZERO WIDTH and the layout
+            // measurement below proves nothing. **Pressed rather than reflected**: the tab is the
+            // door a player has, and driving it also proves the door still works.
+            var yourMatch = Find(canvas, "ResultTab1");
+            Assert.IsNotNull(yourMatch, "the results board has no YOUR MATCH tab, so the XP block " +
+                "has no door. MatchResult.FinishSheet.cs builds ResultTab0..2.");
+            yourMatch.GetComponent<Button>().onClick.Invoke();
+            for (int i = 0; i < 3; i++) yield return null;
+
+            // ⚠️ `EarnedXp` AND `XpTrack`, NOT `XpHeadline` AND `XpBar`. The painted finish sheet
+            // renamed both; the legacy names still exist in `MatchResult.cs` on the branch
+            // `BuildLegacyReference` owns, which nothing calls.
+            var headline = Find(canvas, "EarnedXp") ?? Find(canvas, "XpHeadline");
             Assert.IsNotNull(headline, "the XP block has no headline");
             Assert.IsTrue(headline.gameObject.activeSelf,
                 "ShowProgression was given a real award and left the XP block hidden");
@@ -273,7 +307,7 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ THE BAR IS ASSERTED SEPARATELY FROM THE LABELS. It is an Image, so no
                 // amount of text measurement can see it running off the card, and a progress bar
                 // that is off screen is the one part of this block a player actually looks at.
-                var bar = Find(canvas, "XpBar");
+                var bar = Find(canvas, "XpTrack") ?? Find(canvas, "XpBar");
                 Assert.IsNotNull(bar, "the XP block has no bar");
                 AssertInside((RectTransform)canvas, (RectTransform)bar.transform, name, "the XP bar");
 
@@ -322,32 +356,35 @@ namespace TumbangPreso.PlayTests
             // which reads exactly like a missing scene. **A screen a player reaches through the
             // menu has to be probed through the menu**, or the probe is testing an asset the
             // build does not ship.
-            var load = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-            for (int i = 0; i < 30; i++) yield return null;
-
-            var panel = Object.FindFirstObjectByType<ConvertedSettingsPanel>(FindObjectsInactive.Include);
-            Assert.IsNotNull(panel,
-                "the SettingsPanel scene built no ConvertedSettingsPanel, so the telemetry " +
-                "opt-out has no home. FUTURE.md PHASE 3 puts it here and docs/TODO.md § 92.4 " +
-                "records it as the one phase 1 to 3 surface that did NOT move.");
-            panel.gameObject.SetActive(true);
+            yield return PaintedScreens.OpenSettings();
             for (int i = 0; i < 10; i++) yield return null;
-            // The row belongs to PLAYER. An inactive tab retains its unlaid-out
-            // prefab rectangles, which are not the dimensions a player sees.
-            for (int i = 0; i < ConvertedSettingsPanel.TabCount; i++)
-                if (ConvertedSettingsPanel.TabTitle(i) == "PLAYER") panel.ShowTab(i);
+
+            // The row belongs to PLAYER. An unshown section has not been built at all:
+            // `ShowSection` destroys every child of the list and rebuilds it, so there are no
+            // unlaid-out rectangles to measure, there is nothing.
+            var view = Object.FindFirstObjectByType<TumpSettingsView>();
+            Assert.IsNotNull(view, "the settings door opened no settings screen.");
+            view.ShowSection(System.Array.IndexOf(TumpSettingsView.Sections, "Player"));
             for (int i = 0; i < 2; i++) yield return null;
 
-            var canvas = panel.GetComponentInParent<Canvas>(true);
-            Assert.IsNotNull(canvas, "the settings panel is not under a canvas");
+            var canvas = PaintedScreens.Settings();
 
-            var row = Find(canvas.transform, "TelemetryRow");
-            var note = Find(canvas.transform, "TelemetryNote");
-
+            // ⚠️⚠️ THE ROW IS `Telemetry` AND ITS NOTE IS `Note`, WHICH IS A RENAME AND NOT A
+            // DELETION, AND READING IT AS A DELETION IS WHAT § 153.18 FOUND TWENTY-EIGHT TIMES.
+            // `SettingsWorkspaceRows.Row` names the row after the SETTING (`Telemetry`,
+            // `PlayerName`), hangs the control off a `Control` child as `TelemetryValue`, and
+            // `TumpSettingsView.Note` calls every note `Note` because a note belongs to the row
+            // above it rather than carrying a name of its own. **So the note is identified by
+            // its position**: the one immediately after the telemetry row in the list. A note
+            // found by name would be whichever section's note happened to be built first.
+            var row = Find(canvas.transform, "Telemetry");
             Assert.IsNotNull(row,
-                "there is no TelemetryRow on the settings panel. The opt-out is the only thing " +
+                "there is no Telemetry row on the settings panel. The opt-out is the only thing " +
                 "standing between Phase 3 and collecting from somebody who said no.");
+
+            var column = row.parent;
+            var note = column.Cast<Transform>()
+                .FirstOrDefault(t => t.name == "Note" && t.GetSiblingIndex() > row.GetSiblingIndex());
             Assert.IsNotNull(note,
                 "the telemetry opt-out has no note saying what is collected. The picker without " +
                 "the sentence is a switch with no label on what it switches.");

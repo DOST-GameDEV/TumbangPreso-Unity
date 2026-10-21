@@ -68,7 +68,7 @@ namespace TumbangPreso.UI
         }
         private AbilityVariant OwnerSelectedVariant()
         {
-            if(_slot==0)return null;
+            if(!HeroLoadoutRules.SidegradesOpen || _slot!=1 && _slot!=2)return null;
             var settings=Settings.SettingsStore.Current;
             var options=HeroLoadoutRules.VariantsFor(_hero,_slot);
             var build=HeroBuildRules.RowFor(settings.HeroBuilds,_hero);
@@ -79,20 +79,38 @@ namespace TumbangPreso.UI
         {
             var hero=Roster.HeroPeople.First(item=>item.Id==_hero);
             _ownerHeroName.text=hero.Name+" · SKILLS";_ownerHeroPortrait.sprite=OwnerPortraitArt.Get("UI/portraits/"+_hero);
-            _ownerSignature.sprite=_ownerHeroPortrait.sprite;_ownerSignature.gameObject.SetActive(_slot==0);
-            _ownerOptions.gameObject.SetActive(_slot!=0);
-            var kit=HeroAbilitySystem.CreateKitFor(_hero);HeroAbility[] powers={kit.Skill1,kit.Skill2,kit.Ultimate};
+            var kit=HeroAbilitySystem.CreateKitFor(_hero);
+            var slots=kit.ScreenSlots;
+            var shown=slots[GuideIndexFor(_slot,slots.Length)];
+            var ability=shown.Ability;
+            bool variants=HeroLoadoutRules.SidegradesOpen && shown.LoadoutSlot>0;
+            _ownerSignature.sprite=_ownerHeroPortrait.sprite;_ownerSignature.gameObject.SetActive(!variants);
+            _ownerOptions.gameObject.SetActive(variants);
             for(int i=0;i<_ownerTabs.Count;i++)
             {
-                int slot=i==2?0:i+1;bool selected=slot==_slot;
-                _ownerTabs[i].GetComponentInChildren<TumpAbilitySymbol>().Glyph=powers[i].Glyph;
-                _ownerTabs[i].GetComponentInChildren<TumpAbilitySymbol>().SetVerticesDirty();
+                bool selected=GuideSlotAt(i,slots.Length)==_slot;
+                _ownerTabs[i].GetComponentInChildren<TumpAbilitySymbol>().Glyph=slots[i].Ability.Glyph;
                 _ownerTabs[i].GetComponentInChildren<Text>().color=selected?OwnerUiTheme.Current.Lime:OwnerUiTheme.Current.Pale;
                 _ownerTabs[i].transform.Find("SelectedSlot").gameObject.SetActive(selected);
             }
-            var ability=_slot==0?kit.Ultimate:_slot==1?kit.Skill1:kit.Skill2;
-            _ownerAbilityIcon.Glyph=ability.Glyph;_ownerAbilityIcon.SetVerticesDirty();
-            _ownerBinding.text=Hud.KeyLabelFor(_slot==0?"Ultimate":_slot==1?"Skill1":"Skill2")+"  ·  "+(_slot==0?"ULTIMATE":"SKILL "+_slot);
+            _ownerAbilityIcon.Glyph=ability.Glyph;
+            _ownerBinding.text=Hud.KeyLabelFor(shown.Action)+"  ·  "+shown.Label;
+            if(!variants)
+            {
+                _ownerAbilityName.text=ability.Name;
+                _ownerBody.text=ability.Summary;
+                OwnerUiLayout.Place(_ownerBody.rectTransform,820,663,976,250);
+                _ownerGain.gameObject.SetActive(false);
+                _ownerCost.gameObject.SetActive(false);
+                _ownerUnlock.gameObject.SetActive(false);
+                _ownerEquip.gameObject.SetActive(false);
+                _canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
+                return;
+            }
+            OwnerUiLayout.Place(_ownerBody.rectTransform,820,663,976,130);
+            _ownerGain.gameObject.SetActive(true);
+            _ownerCost.gameObject.SetActive(true);
+            _ownerUnlock.gameObject.SetActive(true);
             var selectedVariant=OwnerSelectedVariant();if(selectedVariant!=null)_selected=selectedVariant.Id;
             var settings=Settings.SettingsStore.Current;
             var equipped=_slot==0?null:HeroBuildRules.Equipped(HeroBuildRules.RowFor(settings.HeroBuilds,_hero),_hero,_slot,settings.AbilityChallenges);

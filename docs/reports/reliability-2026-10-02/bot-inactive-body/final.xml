@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.2017103">
+  <test-suite type="TestSuite" id="2509" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.201710" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2503" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.190226" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18240" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2504" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.187295" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2505" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.184932" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1118" name="BotCompanionObservationTests" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.149079" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1133" name="InactiveCompanionsStopSupplyingLiveBotObservations" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.144113" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1131" name="InactiveCompanionsStopSupplyingLiveBotObservations(Classic)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations(Classic)" methodname="InactiveCompanionsStopSupplyingLiveBotObservations" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="472864403" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.097714" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1132" name="InactiveCompanionsStopSupplyingLiveBotObservations(HeroStrike)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations(HeroStrike)" methodname="InactiveCompanionsStopSupplyingLiveBotObservations" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1440053160" result="Passed" start-time="2026-10-02 01:33:11Z" end-time="2026-10-02 01:33:11Z" duration="0.033704" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

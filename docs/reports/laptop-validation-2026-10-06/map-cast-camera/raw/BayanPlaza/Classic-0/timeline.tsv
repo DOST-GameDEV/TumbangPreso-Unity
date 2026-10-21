@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	88.980	Quiet	QuietEstablish	the street	1	0
+1.503	88.480	Quiet	QuietEstablish	the street	1	0
+2.004	87.980	Quiet	QuietEstablish	the street	1	0
+2.504	87.480	ThrowPrep	Objective	throw · TIKBOY	2	0
+3.005	86.981	ThrowPrep	Objective	throw · TIKBOY	2	0
+3.506	86.481	ThrowPrep	Objective	throw · TIKBOY	2	0
+4.007	85.981	LataHit	Objective	the can · TIKBOY	2	0
+4.507	85.481	LataHit	Objective	the can · TIKBOY	2	0
+5.172	84.821	LataHit	Objective	the can · TIKBOY	2	0
+5.673	84.321	Retrieval	Chase	retrieval · LOLA PACING	3	0
+6.174	83.881	Retrieval	Chase	retrieval · TIKBOY	3	0
+6.674	83.381	Retrieval	Chase	retrieval · TIKBOY	3	0
+7.176	82.921	Tag	Defender	tag · MARING	4	0
+7.677	82.421	Tag	Defender	tag · MARING	4	0
+8.178	81.921	Tag	Defender	tag · MARING	4	0
+8.679	81.421	Tag	Defender	tag · MARING	4	0
+9.180	80.922	Tag	Defender	tag · MARING	4	0
+9.680	80.422	Tag	Defender	tag · MARING	4	0
+10.185	79.922	Downed	Recovery	down · TIKBOY	5	0
+10.686	79.422	Downed	Recovery	down · TIKBOY	5	0
+11.186	78.922	Downed	Recovery	down · TIKBOY	5	0
+11.686	78.422	Downed	Recovery	down · TIKBOY	5	0
+12.188	77.942	Tag	Defender	tag · MARING	7	0
+12.689	77.482	Tag	Defender	tag · MARING	7	0
+13.190	76.982	Tag	Defender	tag · MARING	7	0
+13.691	76.462	Tag	Defender	tag · MARING	7	0
+14.191	75.962	Tag	Defender	tag · MARING	7	0
+14.691	75.462	Tag	Defender	tag · MARING	7	0

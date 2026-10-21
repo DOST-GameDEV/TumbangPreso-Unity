@@ -1,0 +1,26 @@
+{
+  "sourceRef": "4edb7bb0863f197a059f6ba3a5d05d47158e0ec4",
+  "profile": "pc-quicktap-cand1005",
+  "filter": "TumbangPreso.PlayTests.HeroQuickTapTests",
+  "expectedCases": 5,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-quicktap-cand1005",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.HeroQuickTapTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\hero-quicktap1005\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\hero-quicktap1005\\candidate-native\\editor.log"
+  ],
+  "pid": 5440
+}

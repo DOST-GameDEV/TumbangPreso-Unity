@@ -140,7 +140,7 @@ GROUPS = [
         "PhaseSurfaceLayoutProbe", "PlayerHubLayoutProbe", "PreviewDragProbe",
         "QueueCardLayoutProbe", "SettingsScrollProbe", "SettingsWheelProbe",
         "UiClickProbe", "UiRuntimeShots", "WardrobeSheetProbe", "ModelPreviewProbe",
-        "ModelPreviewTests", "MatchRecordIdentityProbe",
+        "ModelPreviewTests", "HeroPreviewSizeProbe", "MatchRecordIdentityProbe",
 
         # ⚠⚠ THE FIFTY-TWO BELOW AND IN THE OTHER GROUPS WERE IN NO GROUP AT ALL ON
         # 2026-09-19, WHICH MEANT THE GATE COULD NOT RUN AT ALL. `--plan` refuses a partition
@@ -151,11 +151,19 @@ GROUPS = [
         # verdict about the code, so a fixture that turns out to share a world with another one
         # should simply be moved.
         "BrandPickerTests", "BrandPreparationTests", "BrandSettingsTests", "CloseFeedbackViewProbe",
-        "ModelPreviewPixelTests", "OwnerMenuEditsTests", "OwnerMenuSkyTests", "OwnerPasswordTests",
+        "ModelPreviewPixelTests", "OwnerMenuEditsTests", "StudioIntroTests", "OwnerMenuSkyTests", "OwnerPasswordTests",
         "OwnerPlayerHubTests", "OwnerPreparationTests", "OwnerUiAuthoringTests",
         "PlayHeadingScaleTests", "ReducedActionFocusProbe", "SwimmingNameplateTests",
         "TumpNativeFrontEndTests", "TumpNativeJoinTests", "TumpNativePickerTests",
         "TumpNativeSettingsTests",
+
+        # UX-1, 2026-09-23: HOME and the hub's screens, over the `MatchSetup` scene.
+        "HubFlowTests",
+        "MatchArrivalFlowTests", "ColdLobbyCodeTests",
+        # The animated HOME scene in the hub's reserved background layer (docs/reports/home-scene).
+        "HubSceneVideoTests",
+        # Placed 2026-09-27 when ASTRAReworks was merged with the Kanto branch: login feedback is a screen.
+        "OwnerLoginFeedbackTests",
     ]),
 
     ("match", """
@@ -167,7 +175,7 @@ GROUPS = [
      """, [
         "AiLaneTests", "ArenaBoundsProbe", "BotMotionProbe", "CarriedSlipperSelfHideProbe",
         "CarryTests", "MapRetrievalProbe", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
-        "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe", "MapRouteProbe",
+        "AmihanWikiTests", "AmihanAirburstTests", "DanteDriftTests", "DanteDriftPresentationTests", "DanteHandoffReviewTests", "HexPhantomReviewTests", "DanteBoulderImbueTests", "DanteBoulderMotionTests", "DanteBastionMotionTests", "DanteBoulderLoadTests", "TimedRecoveryTests", "DanteWardRuleTests", "DanteMountainFormTests", "DanteMountainFilm", "DanteConcussedPresentationTests", "DanteBeastReview", "DanteEarthboundTests", "DanteWardBadgeTests", "DanteVisibilityTests", "CheskaFrostbiteLoadTests", "CheskaFrostbiteMotionTests", "CheskaExpiryPresentationTests", "CheskaIceContractProbe", "IceTractionProbe", "NemuLookoutTests", "NemuKitContractProbe", "NemuPrusisyonTests", "NemuPossessionMovementTests", "NemuPossessionReviewProbe", "NemuPrusisyonFilm", "NemuFamiliarPoseTests", "BotCompanionObservationTests", "HauntedPerceptionTests", "MapRouteProbe",
         "RetrievalSlideTests", "HitFreezeProbe", "SecondMatchLifecycleProbe",
         "AudioListenerProbe",
         "FppOccluderProbe", "LandedHighlightTests", "LataFloatProbe", "MatchRunTests",
@@ -183,13 +191,60 @@ GROUPS = [
         "EquipmentIntegrationProbe", "FootSupportProbe", "FppHandsReviewProbe",
         "FppSlipperShadowProbe", "IceWorldSnapshotProbe", "MapGraphicsReviewProbe",
         "MovementSnapshotProbe", "OwnerTrainingUiTests", "PendingPreparationTests",
-        "PendingPresentationProbe", "PhaisterRitualContractProbe", "PickupPressOwnershipProbe",
+        "PendingPresentationProbe", "PickupPressOwnershipProbe",
         "PinnedFetchProbe", "RecoveryDeviceProbe", "RecoveryMenuBoundaryProbe",
         "ResidentLaundrySceneTests", "RooftopRecoveryProbe", "RooftopSwimmingProbe",
         "SeanSkillTimingProbe", "SlipperLookupCostProbe", "SpectatorReplayOwnershipProbe",
         "SplitSpiresPassageProbe", "ThrowAimIntegrationProbe", "ThrowMotionReviewProbe",
         "TumpNativeHudTests", "TumpNativeResultTests", "ZackKitAcceptanceProbe",
         "ZackSkillPresentationProbe",
+        # Placed 2026-09-27 with the ASTRAReworks merge: each loads an arena or match state (map-loading
+        # readiness, the practice range, the voodoo body, the generated motion clips on a body).
+        "MatchLoadingReadinessTests", "PracticeRangeTests", "VoodooBodyWiringTests", "GeneratedMotionAssetsTests",
+        # Presentation and preview-transition contracts install real arenas and
+        # assert accepted state/lifecycle outcomes; their occasional images are evidence.
+        "ActionChainIntegrationTests",
+        "AccessibilityControlTests",
+        "WorldCourtCueTests",
+        "BlockContactTests",
+        "CatchReconstructionTests",
+        "CloseCallPresentationTests",
+        "ExchangeAudioTests",
+        "ExchangeMotionTests",
+        "ExchangePresenceTests",
+        "LocomotionArmsProbe",
+        "GameplayActionShots",
+        "CastAndMotionReel",
+        "ExchangePresentationTests",
+        "FamiliarReadoutTests",
+        "MapPreviewTransitionTests",
+        "MatchFinishPresentationTests",
+        "MatchMomentTests",
+        "RecordedEffectsTests",
+        "ReplayRetentionTests",
+        "ReplayReadbackSupportTests", "DefenderLungeTravelTests", "RoundBreakFreezeTests",
+        "RoundFieldCleanupTests",
+        "ScoreFeedbackTests",
+        "SharedUltimatePhaseTests",
+        "SkillReceiptTests",
+        "RafiExpansionProbe",
+        "SeanCinderGateProbe", "SeanSteadyEmberProbe", "RafiBackwashProbe", "RafiBahaProbe",
+        "SpectatorExchangeTests",
+        # Placed 2026-09-24: both load an arena (Eskinita for the bot's chase clock, the Lagoon
+        # for its swim-and-climb recovery) and run bodies inside it.
+        "AiReactionTimingTests", "LagoonRecoveryProbe",
+        # Placed 2026-09-26: plays Paete's whole kit through real input on Bayan Plaza (HERO-9).
+        "PaeteKitPlayProbe",
+        # Placed 2026-09-27: puts Paete's plant, thorns and a mid-crawl sentry back for a rejoiner (HERO-9), the Ice probe's twin.
+        "PaeteWorldSnapshotProbe",
+        # Placed 2026-09-26: films Amihan's whole kit through real input on Bayan Plaza (HERO-8's second pass).
+        "AmihanKitPlayProbe",
+        # Placed 2026-09-27: films Phaister's overhauled kit through real input on Bayan Plaza (HERO-10).
+        "PhaisterKitPlayProbe",
+        # Placed 2026-09-28: casts Phaister's v3 kit (TELEPORT, the two reach curses) in a real round on Bayan Plaza (HERO-10).
+        "PhaisterVoodooKitTests",
+        # Placed 2026-09-26: walks every roster body on Eskinita and measures each hand against the hip (ASKS-0926).
+        "WalkArmsProbe",
     ]),
 
     ("capture", """
@@ -202,6 +257,14 @@ GROUPS = [
         "MsaaResolveProbe", "NationalsShowcaseProbe", "ImprovementEvidenceProbe", "NearFadeProbe", "ToneSweep",
         "WorldOutlineCoverageProbe", "MatchFrameRateProbe", "HudPerformanceProbe",
         "ReplayCaptureProbe", "AbilityStressProbe", "KuroIdleReviewProbe", "KuroMapClearanceProbe", "MapExperienceProbe",
+        # ⚠️ § 154's shot pass, placed the day it landed. It loads Eskinita, runs a match and
+        # writes PNGs of the recall mark, which is `GameplayShots`' shape exactly: a fixture
+        # that replaces cameras belongs beside the others that do.
+        "SlipperRecallShots",
+        # These three own continuous render/camera capture routes.
+        "BusyExchangeProbe", "ThrowCancellationProbe", "UltimateIntroductionProbe",
+        # Placed 2026-09-24: it photographs the HUD icon sheet, a camera-replacing capture.
+        "HudIconSheetShots",
     ]),
 
     ("services", """
@@ -255,6 +318,12 @@ def discover_fixtures():
             name = m.group(1)
             # An abstract base carries no cases of its own.
             if re.search(rf"abstract\s+class\s+{name}\b", text):
+                continue
+            # ⚠️ A MonoBehaviour declared inside a fixture file (`WorldCourtCueTests`'
+            # `AcceptedPhaseWitness` and `ReleaseFramePump`) is a component the fixture adds to a
+            # GameObject, not a fixture: NUnit never runs it, so asking for it in a group made
+            # `--plan` refuse a partition that was complete.
+            if re.search(rf"class\s+{name}\s*:\s*MonoBehaviour\b", text):
                 continue
             found.setdefault(name, path.name)
 
@@ -388,7 +457,7 @@ def partition_problems(fixtures):
     return problems
 
 
-def run_group(group, members, log_suffix=""):
+def run_group(group, members, log_suffix="", profile="playmode-suite-validation"):
     """
     One Unity launch, one group.
 
@@ -406,8 +475,8 @@ def run_group(group, members, log_suffix=""):
     OUT.mkdir(parents=True, exist_ok=True)
     xml = OUT / f"{group}{log_suffix}.xml"
     log = OUT / f"{group}{log_suffix}.log"
-    if xml.exists():
-        xml.unlink()
+    if xml.exists() or log.exists():
+        raise SystemExit(f"Evidence already exists for {group}{log_suffix}; choose a fresh --out folder. Nothing was deleted.")
 
     started = datetime.datetime.now().timestamp()
     test_filter = ";".join(f"{NAMESPACE}.{m}" for m in members)
@@ -415,12 +484,15 @@ def run_group(group, members, log_suffix=""):
     cmd = [str(UNITY), "-batchmode", "-runTests", "-projectPath", str(ROOT),
            "-buildTarget", BUILD_TARGET, "-testPlatform", "PlayMode",
            "-testCategory", CATEGORIES, "-testFilter", test_filter,
-           "-testResults", str(xml), "-logFile", str(log)]
+           "-testResults", str(xml), "-logFile", str(log), "-tp-profile", profile]
 
     if sys.platform == "win32":
         cmd = [sys.executable, str(ROOT / "tools" / "run_unity_guarded.py"), *cmd[1:]]
     proc = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True, errors="replace")
-    return read_group_xml(group, xml, started, members, proc.returncode)
+    (OUT / f"{group}{log_suffix}-runner.log").write_text(proc.stdout + "\n" + proc.stderr, encoding="utf-8")
+    row = read_group_xml(group, xml, started, members, proc.returncode)
+    row["profile"] = profile
+    return row
 
 
 def read_group_xml(group, xml, started, members, exit_code):
@@ -562,14 +634,22 @@ def print_summary(agg, label=""):
 
 
 def main():
+    global OUT
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--plan", action="store_true", help="print the partition and check it")
     ap.add_argument("--group", help="run one group by name")
+    ap.add_argument("--profile", default="playmode-suite-validation",
+                    help="named isolated profile; never run against the player's default profile")
+    ap.add_argument("--out", type=pathlib.Path, default=OUT,
+                    help="fresh evidence folder for this qualification attempt")
     ap.add_argument("--gate", action="store_true", help="run every group and aggregate")
     ap.add_argument("--twice", action="store_true",
                     help="the nationals gate: the whole thing, back to back, both green")
     args = ap.parse_args()
+    if not args.profile.strip() or args.profile.startswith("-"):
+        ap.error("--profile must name an isolated validation profile")
+    OUT = args.out.resolve()
 
     fixtures = discover_fixtures()
     problems = partition_problems(fixtures)
@@ -596,7 +676,8 @@ def main():
         if not match:
             print(f"no such group: {args.group}", file=sys.stderr)
             return 2
-        row = run_group(match[0][0], match[0][2])
+        row = run_group(match[0][0], match[0][2], profile=args.profile)
+        (OUT / f"{args.group}-summary.json").write_text(json.dumps(row, indent=2), encoding="utf-8")
         print(json.dumps(row, indent=2)[:4000])
         return 0 if row["ok"] else 1
 
@@ -609,7 +690,7 @@ def main():
 
     for attempt in range(1, passes + 1):
         suffix = f"-pass{attempt}" if passes > 1 else ""
-        rows = [run_group(g, m, suffix) for g, _w, m in GROUPS]
+        rows = [run_group(g, m, suffix, profile=args.profile) for g, _w, m in GROUPS]
         agg = aggregate(rows, fixtures)
         agg["pass"] = attempt
         agg["sha"] = head_sha()

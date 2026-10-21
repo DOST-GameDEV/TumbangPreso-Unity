@@ -11,7 +11,7 @@ namespace TumbangPreso.UI
             var background = OwnerUiLayout.Rect(_canvas.transform, "BiographyPaper").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(background.rectTransform); background.color = new Color32(233, 211, 177, 255); background.raycastTarget = false;
             var root = OwnerUiLayout.DesignArea(_canvas.transform, "CharacterStoryComposition");
-            OwnerTextAction.Create(root, "CloseCharacterStory", "BACK", Close, 55, 25, 170, 70, 30);
+            OwnerTextAction.CreateBack(root, "CloseCharacterStory", Close, 55, 25);
             _title = OwnerUiLayout.Text(root, "StoryTitle", "", 76, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_title.rectTransform, 91, 126, 1720, 131);
             _origin = OwnerUiLayout.Text(root, "StoryOrigin", "", 42, OwnerUiLayout.TypeRole.Accent);

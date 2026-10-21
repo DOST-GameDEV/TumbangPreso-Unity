@@ -40,6 +40,76 @@ namespace TumbangPreso.PlayTests
         private static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
         private static readonly int RimColorId = Shader.PropertyToID("_RimColor");
 
+        /// <summary>
+        /// THE LOCAL PLAYER'S OWN TSINELAS, and both tests below take it rather than the first
+        /// one the scene hands back.
+        ///
+        /// ⚠️⚠️ THAT CHANGED ON 2026-09-19 AND IT IS THE FEATURE CHANGING, NOT THE TEST BEING
+        /// MADE TO PASS. 🧑: *"other player's tsinelas does not get highlighted now. only
+        /// yours."* `Slipper.RefreshHighlight` gates the landed rim on the owner glow, so the
+        /// subject of this test is now a specific slipper rather than any of the four, and
+        /// `FindFirstObjectByType` is explicitly unsorted: on this machine it usually handed back
+        /// seat 0's, and `GameLaunch.SoloSeat` is 1.
+        ///
+        /// ⚠️ IT RESOLVES THE SEAT THROUGH `PlayerInputReader` RATHER THAN CALLING
+        /// `SetOwnerGlow(true)` BY HAND. `MatchInstaller.HumanSeat` is what gives exactly one
+        /// body that component, and `MatchInstaller.BuildSlipper` lights the glow from the same
+        /// answer, so asking this way drives the real wiring. A test that set the flag itself
+        /// would keep passing after that wiring broke, which is the one failure that would make
+        /// every landed rim in the game go dark at once.
+        /// </summary>
+        private static Slipper LocalSlipper(out int seat)
+        {
+            seat = -1;
+
+            foreach (var motor in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (motor.GetComponent<PlayerInputReader>() == null) continue;
+                seat = motor.PlayerSlot;
+                break;
+            }
+
+            if (seat < 0) return null;
+
+            foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
+                if (s.OwnerSlot == seat) return s;
+
+            return null;
+        }
+
+        /// <summary>
+        /// The MODEL's renderer, skipping anything parented to the slipper as an effect.
+        ///
+        /// ⚠️⚠️ THIS TEST READ `GetComponentInChildren&lt;Renderer&gt;()` AND THAT STOPPED BEING
+        /// SAFE THE DAY § THE RECALL BEAM LANDED. The beam is several renderers parented to the
+        /// tsinelas, and `Slipper.RefreshHighlight` deliberately does not write rim properties
+        /// into an effect, so an unlucky pick reads a block with no rim in it and reports the
+        /// feature dark while it is working perfectly. `VfxRenderTag`'s own note is the rule and
+        /// `InputEdgeTests.EverySlipperAndTheLataWearTheToonOutline` already applies it: *"an
+        /// effect parented to a prop is not part of the prop"*, and asking that question rather
+        /// than keeping a list is what exempts the next effect somebody parents here.
+        ///
+        /// ⚠️ IT NAMES WHAT IT LOOKED AT, because "the slipper has no renderer" and "every
+        /// renderer it has is an effect" are the same red with completely different causes.
+        /// </summary>
+        private static Renderer ModelRenderer(Slipper slipper, out string looked)
+        {
+            var names = new System.Text.StringBuilder();
+            Renderer model = null;
+
+            foreach (var r in slipper.GetComponentsInChildren<Renderer>(includeInactive: true))
+            {
+                bool effect = r.GetComponent<Visual.VfxRenderTag>() != null;
+                names.Append(names.Length > 0 ? ", " : "").Append(r.name)
+                     .Append(effect ? " (effect)" : " (model)");
+
+                if (!effect && model == null) model = r;
+            }
+
+            looked = names.Length > 0 ? names.ToString() : "none at all";
+            return model;
+        }
+
         [UnityTest]
         public IEnumerator ALandedTsinelasLightsInTheChosenColour()
         {
@@ -60,11 +130,13 @@ namespace TumbangPreso.PlayTests
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Default;
             SettingsStore.RaiseSlipperHighlightChanged();
 
-            var slipper = Object.FindFirstObjectByType<Slipper>();
-            Assert.IsNotNull(slipper, "the match built no slipper to test");
+            var slipper = LocalSlipper(out int localSeat);
+            Assert.IsNotNull(slipper,
+                $"the match built no tsinelas owned by the local seat ({localSeat}) to test");
 
-            var renderer = slipper.GetComponentInChildren<Renderer>();
-            Assert.IsNotNull(renderer, "the slipper has no renderer, so nothing can light");
+            var renderer = ModelRenderer(slipper, out string looked);
+            Assert.IsNotNull(renderer,
+                $"the slipper has no model renderer, so nothing can light. Looked at: {looked}");
 
             var lata = Object.FindFirstObjectByType<Lata>();
             Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
@@ -87,7 +159,8 @@ namespace TumbangPreso.PlayTests
             renderer.GetPropertyBlock(block);
 
             Assert.AreEqual(Balance.LandedRimStrength, block.GetFloat(RimStrengthId), 0.001f,
-                            "a landed tsinelas is not lit at the landed rim strength");
+                            $"a landed tsinelas is not lit at the landed rim strength. " +
+                            $"seat={localSeat} read '{renderer.name}' out of: {looked}");
 
             Color want = SlipperHighlights.ColourOf(SlipperHighlights.Default);
             Color got = block.GetColor(RimColorId);
@@ -114,11 +187,13 @@ namespace TumbangPreso.PlayTests
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Default;
             SettingsStore.RaiseSlipperHighlightChanged();
 
-            var slipper = Object.FindFirstObjectByType<Slipper>();
-            Assert.IsNotNull(slipper);
+            var slipper = LocalSlipper(out int localSeat);
+            Assert.IsNotNull(slipper,
+                $"the match built no tsinelas owned by the local seat ({localSeat}) to test");
 
-            var renderer = slipper.GetComponentInChildren<Renderer>();
-            Assert.IsNotNull(renderer);
+            var renderer = ModelRenderer(slipper, out string looked);
+            Assert.IsNotNull(renderer,
+                $"the slipper has no model renderer, so nothing can light. Looked at: {looked}");
 
             var lata = Object.FindFirstObjectByType<Lata>();
             Assert.IsNotNull(lata, "the arena has no lata to measure the floor from");
@@ -137,7 +212,8 @@ namespace TumbangPreso.PlayTests
             renderer.GetPropertyBlock(block);
             Assert.Greater(block.GetFloat(RimStrengthId), 0.0f,
                 $"it was not lit to begin with. state={slipper.State} " +
-                $"pos={slipper.transform.position} setting={SettingsStore.Current.SlipperHighlight}");
+                $"pos={slipper.transform.position} setting={SettingsStore.Current.SlipperHighlight} " +
+                $"seat={localSeat} read '{renderer.name}' out of: {looked}");
 
             // What the settings row does when the player cycles to Off.
             SettingsStore.Current.SlipperHighlight = SlipperHighlights.Off;

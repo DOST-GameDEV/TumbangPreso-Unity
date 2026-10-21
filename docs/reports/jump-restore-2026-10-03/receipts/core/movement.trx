@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="da777e09-fa37-4db7-8c70-de3326d5963a" name="@0d484f9718b6 2026-10-03 19:11:44" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-03T19:11:44.2639258+08:00" queuing="2026-10-03T19:11:44.2639258+08:00" start="2026-10-03T19:11:43.6425984+08:00" finish="2026-10-03T19:11:44.2690227+08:00" />
+  <TestSettings name="default" id="37e98ed2-2455-4d3e-9f6f-914956531187">
+    <Deployment runDeploymentRoot="_0d484f9718b6_2026-10-03_19_11_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="65909cb8-9d84-419a-b727-4619e7e12a41" testId="3e5b5ad2-4f9d-e5df-df83-bae2c40a070d" testName="TumbangPreso.Core.Tests.MovementRevisionTests.RolesUseTheOwnersAbsoluteWalkAndRunSpeeds" computerName="0d484f9718b6" duration="00:00:00.0008559" startTime="2026-10-03T19:11:44.1579045+08:00" endTime="2026-10-03T19:11:44.1579046+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="65909cb8-9d84-419a-b727-4619e7e12a41" />
+    <UnitTestResult executionId="bfcbf451-5227-4da5-a77f-250fb8e6d68d" testId="04701b08-dce3-3673-cbbc-ebd6e02255f6" testName="TumbangPreso.Core.Tests.MovementRevisionTests.StaminaMatchesTheOwnerValuesAndFatigueDoesNotSlowWalking" computerName="0d484f9718b6" duration="00:00:00.0061443" startTime="2026-10-03T19:11:44.1548764+08:00" endTime="2026-10-03T19:11:44.1548897+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bfcbf451-5227-4da5-a77f-250fb8e6d68d" />
+    <UnitTestResult executionId="8fca9d66-5a63-467c-80d2-92d392f20aa6" testId="266c0201-fb20-46c4-6ee5-0ec23574ade8" testName="TumbangPreso.Core.Tests.MovementRevisionTests.LungeRecoveryScalesFromTapToFullWhileSlideStaysUnchanged" computerName="0d484f9718b6" duration="00:00:00.0006223" startTime="2026-10-03T19:11:44.1576170+08:00" endTime="2026-10-03T19:11:44.1576170+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8fca9d66-5a63-467c-80d2-92d392f20aa6" />
+    <UnitTestResult executionId="c8367ded-03f6-422c-a3bd-d12f17255cf7" testId="4a127207-a2ea-9b5f-9953-68076436d5e8" testName="TumbangPreso.Core.Tests.MovementRevisionTests.JumpUsesTheRestoredLaunchGravityAndFallCap" computerName="0d484f9718b6" duration="00:00:00.0000823" startTime="2026-10-03T19:11:44.1578756+08:00" endTime="2026-10-03T19:11:44.1578757+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8367ded-03f6-422c-a3bd-d12f17255cf7" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.MovementRevisionTests.RolesUseTheOwnersAbsoluteWalkAndRunSpeeds" storage="/workspace/scratch/0ed9da4aed7f/tump/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="3e5b5ad2-4f9d-e5df-df83-bae2c40a070d">
+      <Execution id="65909cb8-9d84-419a-b727-4619e7e12a41" />
+      <TestMethod codeBase="/workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.MovementRevisionTests" name="RolesUseTheOwnersAbsoluteWalkAndRunSpeeds" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.MovementRevisionTests.LungeRecoveryScalesFromTapToFullWhileSlideStaysUnchanged" storage="/workspace/scratch/0ed9da4aed7f/tump/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="266c0201-fb20-46c4-6ee5-0ec23574ade8">
+      <Execution id="8fca9d66-5a63-467c-80d2-92d392f20aa6" />
+      <TestMethod codeBase="/workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.MovementRevisionTests" name="LungeRecoveryScalesFromTapToFullWhileSlideStaysUnchanged" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.MovementRevisionTests.StaminaMatchesTheOwnerValuesAndFatigueDoesNotSlowWalking" storage="/workspace/scratch/0ed9da4aed7f/tump/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="04701b08-dce3-3673-cbbc-ebd6e02255f6">
+      <Execution id="bfcbf451-5227-4da5-a77f-250fb8e6d68d" />
+      <TestMethod codeBase="/workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.MovementRevisionTests" name="StaminaMatchesTheOwnerValuesAndFatigueDoesNotSlowWalking" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.MovementRevisionTests.JumpUsesTheRestoredLaunchGravityAndFallCap" storage="/workspace/scratch/0ed9da4aed7f/tump/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="4a127207-a2ea-9b5f-9953-68076436d5e8">
+      <Execution id="c8367ded-03f6-422c-a3bd-d12f17255cf7" />
+      <TestMethod codeBase="/workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.MovementRevisionTests" name="JumpUsesTheRestoredLaunchGravityAndFallCap" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3e5b5ad2-4f9d-e5df-df83-bae2c40a070d" executionId="65909cb8-9d84-419a-b727-4619e7e12a41" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04701b08-dce3-3673-cbbc-ebd6e02255f6" executionId="bfcbf451-5227-4da5-a77f-250fb8e6d68d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="266c0201-fb20-46c4-6ee5-0ec23574ade8" executionId="8fca9d66-5a63-467c-80d2-92d392f20aa6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4a127207-a2ea-9b5f-9953-68076436d5e8" executionId="c8367ded-03f6-422c-a3bd-d12f17255cf7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.20)
+[xUnit.net 00:00:00.05]   Discovering: TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.13]   Discovered:  TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.14]   Starting:    TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.18]   Finished:    TumbangPreso.Core.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

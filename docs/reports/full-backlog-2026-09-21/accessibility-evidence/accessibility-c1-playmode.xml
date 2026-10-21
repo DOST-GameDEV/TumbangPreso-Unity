@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 09:48:03Z" end-time="2026-09-22 09:48:11Z" duration="8.6427891">
+  <test-suite type="TestSuite" id="1690" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="520" result="Failed" site="Child" start-time="2026-09-22 09:48:03Z" end-time="2026-09-22 09:48:11Z" duration="8.642789" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1684" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="520" result="Failed" site="Child" start-time="2026-09-22 09:48:03Z" end-time="2026-09-22 09:48:11Z" duration="8.631231" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15728" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1685" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="520" result="Failed" site="Child" start-time="2026-09-22 09:48:03Z" end-time="2026-09-22 09:48:11Z" duration="8.629895" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1686" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="520" result="Failed" site="Child" start-time="2026-09-22 09:48:03Z" end-time="2026-09-22 09:48:11Z" duration="8.629311" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1008" name="AccessibilityControlTests" fullname="TumbangPreso.PlayTests.AccessibilityControlTests" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-22 09:48:03Z" end-time="2026-09-22 09:48:11Z" duration="8.609916" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1011" name="FovPreferenceMovesTheLiveFirstPersonLensAndDiscardRestoresIt" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.FovPreferenceMovesTheLiveFirstPersonLensAndDiscardRestoresIt" methodname="FovPreferenceMovesTheLiveFirstPersonLensAndDiscardRestoresIt" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="155935397" result="Passed" start-time="2026-09-22 09:48:03Z" end-time="2026-09-22 09:48:08Z" duration="5.185273" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1009" name="SprintToggleSurvivesReleaseAndClearsAtMenuBoundary" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.SprintToggleSurvivesReleaseAndClearsAtMenuBoundary" methodname="SprintToggleSurvivesReleaseAndClearsAtMenuBoundary" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="433148543" result="Passed" start-time="2026-09-22 09:48:08Z" end-time="2026-09-22 09:48:09Z" duration="1.610621" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1010" name="ToggleRestoreCanBeCancelledThenFinishWithoutHolding" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.ToggleRestoreCanBeCancelledThenFinishWithoutHolding" methodname="ToggleRestoreCanBeCancelledThenFinishWithoutHolding" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="645255474" result="Failed" start-time="2026-09-22 09:48:09Z" end-time="2026-09-22 09:48:11Z" duration="1.796505" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AccessibilityControlTests+<ToggleRestoreCanBeCancelledThenFinishWithoutHolding>d__12.MoveNext () [0x0011d] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\AccessibilityControlTests.cs:83
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

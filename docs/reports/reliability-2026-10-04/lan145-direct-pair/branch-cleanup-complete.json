@@ -1,0 +1,111 @@
+{
+  "additionalLocalDeleted": [
+    {
+      "ref": "refs/heads/competition-pc-arrival-motion1004-retained",
+      "name": "competition-pc-arrival-motion1004-retained",
+      "sha": "63f5315952cc4ae7f0d2a6d8d760f1c6a9ea8a74",
+      "merged": false
+    },
+    {
+      "ref": "refs/heads/competition-pc-career-flush-candidate1004",
+      "name": "competition-pc-career-flush-candidate1004",
+      "sha": "e92a760c8b6a8e53e699baeadfd08a8bba8142b0",
+      "merged": false
+    },
+    {
+      "ref": "refs/heads/competition-pc-career-flush-owner1004",
+      "name": "competition-pc-career-flush-owner1004",
+      "sha": "ce0138a9144cb0b9763652e5a0ce439d1d02520c",
+      "merged": false
+    }
+  ],
+  "additionalRemoteDeleted": [
+    {
+      "ref": "refs/remotes/origin/competition-laptop-cleanup-directive1004",
+      "name": "competition-laptop-cleanup-directive1004",
+      "sha": "fcae2771797bacb4e330d1dd46f67e60492c7772",
+      "merged": true
+    },
+    {
+      "ref": "refs/remotes/origin/competition-laptop-scan-trim-proof1004",
+      "name": "competition-laptop-scan-trim-proof1004",
+      "sha": "34092fe02920469e58fd8e8fccd9418405b6305a",
+      "merged": true
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-arrival-clearance1004",
+      "name": "competition-pc-arrival-clearance1004",
+      "sha": "cfff8c772bce3d1194462c24ed293924b2f5ad99",
+      "merged": false
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-arrival-motion1004",
+      "name": "competition-pc-arrival-motion1004",
+      "sha": "63f5315952cc4ae7f0d2a6d8d760f1c6a9ea8a74",
+      "merged": false
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-build-memory1004",
+      "name": "competition-pc-build-memory1004",
+      "sha": "ad0026b01918da1eff7e28f1bd246beb1c32134c",
+      "merged": true
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-career-flush-candidate1004",
+      "name": "competition-pc-career-flush-candidate1004",
+      "sha": "e92a760c8b6a8e53e699baeadfd08a8bba8142b0",
+      "merged": false
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-career-flush-owner1004",
+      "name": "competition-pc-career-flush-owner1004",
+      "sha": "ce0138a9144cb0b9763652e5a0ce439d1d02520c",
+      "merged": false
+    }
+  ],
+  "supersededCommitsPreservedInBundle": [
+    {
+      "ref": "refs/heads/competition-pc-arrival-motion1004-retained",
+      "name": "competition-pc-arrival-motion1004-retained",
+      "sha": "63f5315952cc4ae7f0d2a6d8d760f1c6a9ea8a74",
+      "merged": false
+    },
+    {
+      "ref": "refs/heads/competition-pc-career-flush-candidate1004",
+      "name": "competition-pc-career-flush-candidate1004",
+      "sha": "e92a760c8b6a8e53e699baeadfd08a8bba8142b0",
+      "merged": false
+    },
+    {
+      "ref": "refs/heads/competition-pc-career-flush-owner1004",
+      "name": "competition-pc-career-flush-owner1004",
+      "sha": "ce0138a9144cb0b9763652e5a0ce439d1d02520c",
+      "merged": false
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-arrival-clearance1004",
+      "name": "competition-pc-arrival-clearance1004",
+      "sha": "cfff8c772bce3d1194462c24ed293924b2f5ad99",
+      "merged": false
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-arrival-motion1004",
+      "name": "competition-pc-arrival-motion1004",
+      "sha": "63f5315952cc4ae7f0d2a6d8d760f1c6a9ea8a74",
+      "merged": false
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-career-flush-candidate1004",
+      "name": "competition-pc-career-flush-candidate1004",
+      "sha": "e92a760c8b6a8e53e699baeadfd08a8bba8142b0",
+      "merged": false
+    },
+    {
+      "ref": "refs/remotes/origin/competition-pc-career-flush-owner1004",
+      "name": "competition-pc-career-flush-owner1004",
+      "sha": "ce0138a9144cb0b9763652e5a0ce439d1d02520c",
+      "merged": false
+    }
+  ],
+  "remaining": []
+}

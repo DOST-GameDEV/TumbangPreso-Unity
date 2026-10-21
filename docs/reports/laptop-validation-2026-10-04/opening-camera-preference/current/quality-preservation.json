@@ -1,0 +1,8 @@
+{
+  "preSha256": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "postSha256": "bbf257ff04e9c3b68401b02542f17540bde6a828692913adc89cbe56493e0702",
+  "postPreserved": true,
+  "restoredAfterTerminal": true,
+  "restoredBytesExact": true,
+  "limit": "Quality changes caused by settings initialization are preserved and restored separately; this sampler test does not render or qualify graphical quality."
+}

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:30:22Z" end-time="2026-10-04 15:31:24Z" duration="62.0048125">
+  <test-suite type="TestSuite" id="3064" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:30:22Z" end-time="2026-10-04 15:31:24Z" duration="62.004813" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3058" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:30:22Z" end-time="2026-10-04 15:31:24Z" duration="61.990427" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36860" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3059" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:30:22Z" end-time="2026-10-04 15:31:24Z" duration="61.981617" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3060" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:30:22Z" end-time="2026-10-04 15:31:24Z" duration="61.972159" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2172" name="PaeteKitPlayProbe" fullname="TumbangPreso.PlayTests.PaeteKitPlayProbe" classname="TumbangPreso.PlayTests.PaeteKitPlayProbe" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-10-04 15:30:22Z" end-time="2026-10-04 15:31:24Z" duration="61.859857" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2174" name="ReadyBakyaRecastThrowsAVisibleMovingSlipper" fullname="TumbangPreso.PlayTests.PaeteKitPlayProbe.ReadyBakyaRecastThrowsAVisibleMovingSlipper" methodname="ReadyBakyaRecastThrowsAVisibleMovingSlipper" classname="TumbangPreso.PlayTests.PaeteKitPlayProbe" runstate="Runnable" seed="976772813" result="Failed" start-time="2026-10-04 15:30:22Z" end-time="2026-10-04 15:30:50Z" duration="27.272714" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual ready recast spawned a shoe that dropped beside the plant.
+  Expected: greater than 2.0f
+  But was:  0.195121765f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PaeteKitPlayProbe+<ReadyBakyaRecastThrowsAVisibleMovingSlipper>d__9.MoveNext () [0x001fb] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\PaeteKitPlayProbe.cs:131
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2175" name="UngrownBakyaCommandStillRefusesToFire" fullname="TumbangPreso.PlayTests.PaeteKitPlayProbe.UngrownBakyaCommandStillRefusesToFire" methodname="UngrownBakyaCommandStillRefusesToFire" classname="TumbangPreso.PlayTests.PaeteKitPlayProbe" runstate="Runnable" seed="966225305" result="Passed" start-time="2026-10-04 15:30:50Z" end-time="2026-10-04 15:31:07Z" duration="17.417236" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2173" name="WoodenSlipperLeavesTheMuzzleAtAuthoredSpeed" fullname="TumbangPreso.PlayTests.PaeteKitPlayProbe.WoodenSlipperLeavesTheMuzzleAtAuthoredSpeed" methodname="WoodenSlipperLeavesTheMuzzleAtAuthoredSpeed" classname="TumbangPreso.PlayTests.PaeteKitPlayProbe" runstate="Runnable" seed="1330625897" result="Failed" start-time="2026-10-04 15:31:07Z" end-time="2026-10-04 15:31:24Z" duration="17.156716" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A ready wooden slipper fell beside its muzzle instead of flying at 13 m/s.
+  Expected: greater than 2.0f
+  But was:  0.211381912f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PaeteKitPlayProbe+<WoodenSlipperLeavesTheMuzzleAtAuthoredSpeed>d__8.MoveNext () [0x00135] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\PaeteKitPlayProbe.cs:108
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

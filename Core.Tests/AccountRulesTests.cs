@@ -225,9 +225,8 @@ namespace TumbangPreso.Core.Tests
                 isGuest, hasPassword, alreadyShown, offerAlreadyPending: false));
 
         /// <summary>
-        /// ⚠️ ONE NAME LENGTH, NOT TWO. `LanBeacon` truncates to `Balance.PlayerNameMax`, the
-        /// settings field limits to it and the HUD row was measured against it, so a longer
-        /// account name would arrive clipped and render past the measurement.
+        /// Player nicknames use one 14-character limit in account rules, settings and HUD.
+        /// Custom room titles are a separate 24-character presentation field.
         /// </summary>
         [Fact]
         public void TheAccountNameLimitIsTheOneTheWireAndTheHudUse()

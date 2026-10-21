@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:33:23Z" end-time="2026-10-03 05:33:25Z" duration="1.1068993">
+  <test-suite type="TestSuite" id="2659" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 05:33:23Z" end-time="2026-10-03 05:33:25Z" duration="1.106899" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2653" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 05:33:23Z" end-time="2026-10-03 05:33:25Z" duration="1.081303" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5996" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2654" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 05:33:23Z" end-time="2026-10-03 05:33:25Z" duration="1.064444" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2655" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 05:33:24Z" end-time="2026-10-03 05:33:25Z" duration="1.048269" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2017" name="PlayerHubDeletionLifetimeTests" fullname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests" classname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 05:33:24Z" end-time="2026-10-03 05:33:25Z" duration="1.006742" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2020" name="ActiveDeletionStillReportsSuccessAfterIdentityChanges" fullname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests.ActiveDeletionStillReportsSuccessAfterIdentityChanges" methodname="ActiveDeletionStillReportsSuccessAfterIdentityChanges" classname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests" runstate="Runnable" seed="1953690714" result="Passed" start-time="2026-10-03 05:33:24Z" end-time="2026-10-03 05:33:24Z" duration="0.682735" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2019" name="CancelledOwnerDeletionCannotPaintGuestErrors" fullname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests.CancelledOwnerDeletionCannotPaintGuestErrors" methodname="CancelledOwnerDeletionCannotPaintGuestErrors" classname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests" runstate="Runnable" seed="1294030973" result="Passed" start-time="2026-10-03 05:33:24Z" end-time="2026-10-03 05:33:24Z" duration="0.085436" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2018" name="CompletedDeletionCannotRepaintAReopenedSheet" fullname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests.CompletedDeletionCannotRepaintAReopenedSheet" methodname="CompletedDeletionCannotRepaintAReopenedSheet" classname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests" runstate="Runnable" seed="2039654555" result="Passed" start-time="2026-10-03 05:33:24Z" end-time="2026-10-03 05:33:24Z" duration="0.120867" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2021" name="GuestRoundTripCannotPaintTheRetiredDeletionError" fullname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests.GuestRoundTripCannotPaintTheRetiredDeletionError" methodname="GuestRoundTripCannotPaintTheRetiredDeletionError" classname="TumbangPreso.PlayTests.PlayerHubDeletionLifetimeTests" runstate="Runnable" seed="608190723" result="Passed" start-time="2026-10-03 05:33:24Z" end-time="2026-10-03 05:33:25Z" duration="0.100451" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

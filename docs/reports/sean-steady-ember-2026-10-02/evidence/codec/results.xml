@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:28:46Z" end-time="2026-10-02 05:28:47Z" duration="0.1783114">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-10-02 05:28:46Z" end-time="2026-10-02 05:28:47Z" duration="0.178311" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2075" name="TumbangPreso.Tests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.088038" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="79112" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2076" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.075218" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2077" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.066204" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1923" name="SeanSteadyEmberTests" fullname="TumbangPreso.Tests.SeanSteadyEmberTests" classname="TumbangPreso.Tests.SeanSteadyEmberTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.050234" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1927" name="AgedAndEmptyWindowsCannotAcquireNegativeTime" fullname="TumbangPreso.Tests.SeanSteadyEmberTests.AgedAndEmptyWindowsCannotAcquireNegativeTime" methodname="AgedAndEmptyWindowsCannotAcquireNegativeTime" classname="TumbangPreso.Tests.SeanSteadyEmberTests" runstate="Runnable" seed="244260237" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.022787" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1926" name="MalformedAndUnboundPassiveValuesAreRejected" fullname="TumbangPreso.Tests.SeanSteadyEmberTests.MalformedAndUnboundPassiveValuesAreRejected" methodname="MalformedAndUnboundPassiveValuesAreRejected" classname="TumbangPreso.Tests.SeanSteadyEmberTests" runstate="Runnable" seed="750672449" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.001243" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1924" name="OtherKitsRemainNeutralAndSeanStartsWithoutAWindow" fullname="TumbangPreso.Tests.SeanSteadyEmberTests.OtherKitsRemainNeutralAndSeanStartsWithoutAWindow" methodname="OtherKitsRemainNeutralAndSeanStartsWithoutAWindow" classname="TumbangPreso.Tests.SeanSteadyEmberTests" runstate="Runnable" seed="426668900" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.002509" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1925" name="PassiveRoundtripAgesIndependentlyOfTheLoadedSlipper" fullname="TumbangPreso.Tests.SeanSteadyEmberTests.PassiveRoundtripAgesIndependentlyOfTheLoadedSlipper" methodname="PassiveRoundtripAgesIndependentlyOfTheLoadedSlipper" classname="TumbangPreso.Tests.SeanSteadyEmberTests" runstate="Runnable" seed="1793913008" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.005299" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1928" name="TruncatedPassiveTailIsRejected" fullname="TumbangPreso.Tests.SeanSteadyEmberTests.TruncatedPassiveTailIsRejected" methodname="TruncatedPassiveTailIsRejected" classname="TumbangPreso.Tests.SeanSteadyEmberTests" runstate="Runnable" seed="1713331425" result="Passed" start-time="2026-10-02 05:28:47Z" end-time="2026-10-02 05:28:47Z" duration="0.000627" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

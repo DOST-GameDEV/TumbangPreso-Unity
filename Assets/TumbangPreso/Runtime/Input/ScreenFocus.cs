@@ -553,6 +553,30 @@ namespace TumbangPreso.InputLayer
                 && current.transform.IsChildOf(transform))
                 return;
 
+            // ⚠️⚠️ AND A SCREEN THAT IS NOT UNDER THIS ONE STILL OWNS ITS OWN SELECTION, WHICH
+            // IS THE OTHER HALF OF `Owns` AND WAS MISSING. The nested case is handled by the
+            // line above: a dropdown's popup is built as a child, so its controls ARE inside
+            // this screen and the check passes. **The owner-painted screens are not children of
+            // anything.** `OwnerUiLayout.Canvas` builds its root with `Rect(null, name)` and
+            // moves it into the scene, so the join card, the hub, the picker and the rules sheet
+            // are all SIBLINGS of the lobby at the scene root rather than subtrees of it.
+            //
+            // ⚠️⚠️ WITHOUT THIS THE TWO SCREENS FOUGHT OVER THE CARET AND THE PLAYER LOST.
+            // `LobbyTypingProbe` measured it: click JOIN CODE on the join card, and within ten
+            // frames the lobby's own `ScreenFocus` had taken the selection back to `_order[0]`,
+            // which is BACK. That is 🧑's *"hindi maka input ng code and lobby code sa lobby"*
+            // exactly, and it is invisible in a screenshot and to every click probe, because the
+            // click lands and the field is selected for one frame.
+            //
+            // ⚠️ IT IS A LIVE SCREEN THAT WINS, NOT ANY SCREEN. A selection left behind on a
+            // screen that has since been switched off fails `activeInHierarchy` above and is
+            // replaced, which is what stops a closed panel holding the pad hostage.
+            var holder = OwnerOf(current != null ? current.transform : null);
+
+            if (holder != null && holder != this && holder.isActiveAndEnabled
+                && current.activeInHierarchy)
+                return;
+
             system.SetSelectedGameObject(_order[0].gameObject);
         }
 

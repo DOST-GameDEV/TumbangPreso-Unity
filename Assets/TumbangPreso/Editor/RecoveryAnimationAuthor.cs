@@ -21,7 +21,8 @@ namespace TumbangPreso.EditorTools
             public Pose(Transform bone){Position=bone.localPosition;Rotation=bone.localRotation;}
         }
         public static void Run()=>EditorApplication.Exit(Execute()?0:1);
-        public static bool Execute()
+        public static bool EnsureMissing() => Execute(true);
+        public static bool Execute(bool onlyMissing = false)
         {
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
             var book=RosterBook.Load();if(book==null)return false;
@@ -32,6 +33,7 @@ namespace TumbangPreso.EditorTools
                 var sourceAnimator=entry.Model.GetComponentInChildren<Animator>();
                 string id=DanceClip.ResourceName(sourceAnimator!=null?sourceAnimator.transform:entry.Model.transform);
                 if(!authored.Add(id))continue;
+                if(onlyMissing && AssetDatabase.LoadAssetAtPath<GeneratedAnimationSet>(Folder+"/"+id+".asset")!=null)continue;
                 var fall=entry.Clips?.FirstOrDefault(c=>c!=null&&c.name=="die");
                 if(fall==null)throw new InvalidOperationException(entry.Id+" has no retained landing source");
                 var instance=Object.Instantiate(entry.Model);instance.hideFlags=HideFlags.HideAndDontSave;

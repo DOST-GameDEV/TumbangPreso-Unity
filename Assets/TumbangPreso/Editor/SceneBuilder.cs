@@ -96,7 +96,9 @@ namespace TumbangPreso.EditorTools
             go.name = "Ground";
 
             // A Unity plane is 10 units across, so scale is half-extent / 5.
-            float halfExtent = AIController.PlayableHalfZ + 4.0f;
+            // ⚠️ THE FARTHER Z WALL since the walls went per side (2026-09-27), so the square plane
+            // still reaches the far wall of an asymmetric arena. 13.0 either way on the defaults.
+            float halfExtent = Mathf.Max(-AIController.PlayableMinZ, AIController.PlayableMaxZ) + 4.0f;
             go.transform.localScale = Vector3.one * (halfExtent / 5.0f);
             go.transform.position = Vector3.zero;
         }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="8" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.6914466">
+  <test-suite type="TestSuite" id="2432" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1170" result="Failed" site="Child" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.691447" total="10" passed="8" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2426" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1170" result="Failed" site="Child" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.663372" total="10" passed="8" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24808" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2427" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1170" result="Failed" site="Child" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.644311" total="10" passed="8" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2428" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1170" result="Failed" site="Child" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.625842" total="10" passed="8" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1502" name="LandingCircleTests" fullname="TumbangPreso.PlayTests.LandingCircleTests" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.122622" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1505" name="BankShotMatchesTheGroundCircle" fullname="TumbangPreso.PlayTests.LandingCircleTests.BankShotMatchesTheGroundCircle" methodname="BankShotMatchesTheGroundCircle" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" seed="2006908588" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.106300" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2401" name="ZackBankShotTests" fullname="TumbangPreso.PlayTests.ZackBankShotTests" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.440546" total="9" passed="7" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2404" name="ActualCarrierThrowConsumesLoadWithoutSpeedBoostOrZap" fullname="TumbangPreso.PlayTests.ZackBankShotTests.ActualCarrierThrowConsumesLoadWithoutSpeedBoostOrZap" methodname="ActualCarrierThrowConsumesLoadWithoutSpeedBoostOrZap" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="426150070" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.109698" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2408" name="AgedLoadRecoveryWaitsForItsOwnEquipmentAndFlightSnapshotConsumesIt" fullname="TumbangPreso.PlayTests.ZackBankShotTests.AgedLoadRecoveryWaitsForItsOwnEquipmentAndFlightSnapshotConsumesIt" methodname="AgedLoadRecoveryWaitsForItsOwnEquipmentAndFlightSnapshotConsumesIt" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="96765675" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.045345" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2403" name="BankShotRequiresHeldSlipperInsteadOfRecallingLooseOne" fullname="TumbangPreso.PlayTests.ZackBankShotTests.BankShotRequiresHeldSlipperInsteadOfRecallingLooseOne" methodname="BankShotRequiresHeldSlipperInsteadOfRecallingLooseOne" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="116125478" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.038242" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2402" name="BankShotUsesCooldownAndEightSecondLoad" fullname="TumbangPreso.PlayTests.ZackBankShotTests.BankShotUsesCooldownAndEightSecondLoad" methodname="BankShotUsesCooldownAndEightSecondLoad" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1724460700" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.032597" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2405" name="LoadExpiresDropsAndRoundResetDoNotTransferToAnotherShoe" fullname="TumbangPreso.PlayTests.ZackBankShotTests.LoadExpiresDropsAndRoundResetDoNotTransferToAnotherShoe" methodname="LoadExpiresDropsAndRoundResetDoNotTransferToAnotherShoe" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1334242864" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.037435" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2407" name="OverclockThrowHasTwoLosingBanksThenClearsCreditAndCannotLeakToNextThrow" fullname="TumbangPreso.PlayTests.ZackBankShotTests.OverclockThrowHasTwoLosingBanksThenClearsCreditAndCannotLeakToNextThrow" methodname="OverclockThrowHasTwoLosingBanksThenClearsCreditAndCannotLeakToNextThrow" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="2016598666" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.037437" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2406" name="PoweredCornerCountsOnceAndSecondNormalBankLosesCredit" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredCornerCountsOnceAndSecondNormalBankLosesCredit" methodname="PoweredCornerCountsOnceAndSecondNormalBankLosesCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1727046146" result="Passed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.035497" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2411" name="PoweredGuideMatchesActualWallFlight" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.101130" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2409" name="PoweredGuideMatchesActualWallFlight(False)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight(False)" methodname="PoweredGuideMatchesActualWallFlight" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="744715890" result="Failed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.062266" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: less than 0.119999997f
+  But was:  2.55029821f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight (System.Boolean overclock) [0x0022f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ZackBankShotTests.cs:153
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2410" name="PoweredGuideMatchesActualWallFlight(True)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight(True)" methodname="PoweredGuideMatchesActualWallFlight" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="796633231" result="Failed" start-time="2026-10-01 11:22:50Z" end-time="2026-10-01 11:22:50Z" duration="0.037258" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: less than 0.119999997f
+  But was:  2.55029821f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight (System.Boolean overclock) [0x0022f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ZackBankShotTests.cs:153
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

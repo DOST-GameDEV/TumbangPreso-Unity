@@ -150,6 +150,15 @@ def is_event_target(expression):
 #
 # ⚠️ MEASURED 2026-09-05: thirteen sites, all thirteen safe, none of them previously counted.
 ANONYMOUS_FOREVER = [
+    ("HubCustom.cs", "_map.Changed", "(b) HubHost builds the dropdown under its own Form; destroying the screen destroys the event publisher."),
+    ("HubCustom.cs", "_codeField.onValidateInput", "(b) HubJoin owns the field below CodeEntry; this stateless uppercase validator has no external subscriber."),
+    ("HubLoadout.cs", "tile.Focused", "(b) Each rebuilt item tile is a child of the loadout grid; its event cannot outlive that screen."),
+    ("HubModeSelect.cs", "card.Attention", "(b) Card and its description shade share the mode-screen hierarchy and are destroyed together."),
+    ("HubSkillTree.cs", "node.Focused", "(b) Each rebuilt branch node is owned by the skill-tree screen that receives its focus event."),
+    ("ConvertedMainMenu.cs", "signIn.Opened", "SignInScreen and the home view are components of the same menu GameObject."),
+    ("PausePanel.cs", "settings.BackPressed", "The settings publisher is a child of this pause panel and is created once."),
+    ("PlayerHub.OwnerPainted.cs", "_signIn.Opened", "The sign-in publisher is a component of the same hub GameObject."),
+    ("PlayerHub.RecordBook.cs", "_signIn.Opened", "The retained alternate hub also owns its sign-in component on the same GameObject."),
     # -- (a) process-lifetime both ends -------------------------------------------------
     ("AudioDirector.cs", "sceneLoaded",
      "(a) `GameServices.Ensure` opens `if (_root != null) return;` over a DontDestroyOnLoad "
@@ -199,6 +208,7 @@ ANONYMOUS_FOREVER = [
 ]
 
 KNOWN_SAME_LIFETIME = [
+    ("ConvertedMainMenu.cs", "settings.BackPressed", "The settings publisher is a child of the menu that owns the home view."),
     # (file, target fragment, why the publisher cannot outlive the subscriber)
 
     # ⚠️⚠️ THESE THREE WERE INVISIBLE UNTIL `is_event_target` LEARNED camelCase, 2026-09-05,
@@ -282,8 +292,21 @@ def main():
     allowlist_hits = {f: 0 for f, frag, _w in KNOWN_SAME_LIFETIME if frag}
     anon_hits = {(f, frag): 0 for f, frag, _w in ANONYMOUS_FOREVER}
 
-    for path in sorted(RUNTIME.rglob("*.cs")):
-        code = strip_comments(path.read_text(encoding="utf-8", errors="replace"))
+    files = {path: strip_comments(path.read_text(encoding="utf-8", errors="replace"))
+             for path in sorted(RUNTIME.rglob("*.cs"))}
+    partial = re.compile(r"\bpartial\s+class\s+(\w+)")
+    groups = {}
+    for path, code in files.items():
+        match = partial.search(code)
+        key = (path.parent, match.group(1)) if match else path
+        groups.setdefault(key, []).append(code)
+
+    for path, code in files.items():
+        match = partial.search(code)
+        key = (path.parent, match.group(1)) if match else path
+        # Partial classes keep their teardown in the main file. Pair events
+        # across that class, never across unrelated files in the same directory.
+        class_code = "\n".join(groups[key])
 
         # ⚠️⚠️ THE PAIR IS KEYED ON THE EVENT AND THE HANDLER, NOT ON THE EXPRESSION THAT
         # REACHED THEM, AND THE FIRST VERSION GOT THIS BACKWARDS. `AIController` subscribes
@@ -294,7 +317,7 @@ def main():
         # the whole expression reported all five of that file's correct unsubscribes as
         # leaks, which would have taught the next reader to ignore this audit.
         released = set()
-        for m in UNSUBSCRIBE.finditer(code):
+        for m in UNSUBSCRIBE.finditer(class_code):
             released.add((event_name(m.group(1)), m.group(2).split(".")[-1]))
 
         for m in SUBSCRIBE.finditer(code):

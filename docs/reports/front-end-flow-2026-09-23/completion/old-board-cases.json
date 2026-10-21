@@ -1,0 +1,308 @@
+{
+  "source": "a45cba87a",
+  "filter": [
+    "AspectRatioProbes",
+    "BrandPickerTests",
+    "BrandPreparationTests",
+    "CosmeticSurfaceProbe",
+    "HeroPickerLayoutProbe",
+    "LoadoutSurfaceProbe",
+    "LobbyChatProbe",
+    "LobbyStyleProbe",
+    "LobbyTypingProbe",
+    "ModelPreviewTests",
+    "NetworkedLobbyTypingProbe",
+    "OwnerMenuEditsTests",
+    "OwnerPlayerHubTests",
+    "OwnerPreparationTests",
+    "OwnerUiAuthoringTests",
+    "PaperPurityProbe",
+    "PreviewDragProbe",
+    "TumpNativePickerTests",
+    "UiClickProbe",
+    "UiRuntimeShots"
+  ],
+  "summary": {
+    "id": "2",
+    "testcasecount": "53",
+    "result": "Failed(Child)",
+    "total": "53",
+    "passed": "51",
+    "failed": "2",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-09-23 04:03:11Z",
+    "end-time": "2026-09-23 04:08:11Z",
+    "duration": "300.2598312"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.AspectRatioProbes.EveryShippedResolutionKeepsTheWholeAuthoredLayoutOnScreen",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.BrandPickerTests.HeroSkillDetailsHaveOneSlotAtATimeAndKeepTheReturnPath",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.BrandPickerTests.RosterPreviewCanBeCancelledOrExplicitlySaved",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.BrandPreparationTests.PickerBackCanBePressedImmediatelyAfterOpening",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.BrandPreparationTests.PreparationKeepsWiredControlsReachableAtReviewSizes",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CosmeticSurfaceProbe.ATitleAndATayaTagStackRatherThanOverlap",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CosmeticSurfaceProbe.NoHeroTabDrawsAnyColourControlAtAll",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LoadoutSurfaceProbe.ALockedAlternateReadsItsProgressAndRefusesToEquip",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LoadoutSurfaceProbe.AnUnlockedAlternateEquipsAndSurvivesRebuildingTheBoard",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LoadoutSurfaceProbe.BothSlotHeadsCarryTheAbilitysOwnGlyph",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LoadoutSurfaceProbe.EveryTileLabelFitsItsTileAtEveryShippedResolution",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LoadoutSurfaceProbe.OnlyTheHeroOnTheStageHasTilesOnTheBoard",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LobbyChatProbe.TypingALinePutsSomethingOnTheLog",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LobbyStyleProbe.AdvancedRulesRemainReachableAfterRemovingTheMainFormatStepper",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LobbyStyleProbe.EveryLabelFitsItsBoxInBothStyles",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LobbyStyleProbe.TheProfileDoorOpensTheHub",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LobbyTypingProbe.EveryLobbyFieldTakesAndKeepsTheCaret",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.ModelPreviewTests.ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.ModelPreviewTests.TheCastAnimatesInAMatch",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.ModelPreviewTests.TheCharacterPreviewIsFramedPosedAndMovable",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.ModelPreviewTests.TheReplacedCharacterShowsOnTheSelectScreen",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.NetworkedLobbyTypingProbe.EveryLobbyFieldTakesTheCaretWithAHostListening",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.StartupLoginStaysSilentUntilGuestRevealsHome",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.TitleStreetIsOnePressWithHerWeatherMoving",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerPlayerHubTests.CareerRecordChoicesUseNativeOptionsWithoutChangingMatchMode",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerPlayerHubTests.HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerPlayerHubTests.PopulatedCareerAndHistoryRenderRealColumnsWithoutSavingFixtureData",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerPreparationTests.FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerPreparationTests.OfflinePreparationKeepsMapModeLoadoutAndBackRoutes",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerPreparationTests.RankedPreparationKeepsRankedStakeAndAccountState",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerPreparationTests.ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerUiAuthoringTests.OverridesMatchSourceTextAndDoNotAccumulateOffsets",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerUiAuthoringTests.RealPickerReportsItsOwnLightingAfterArenaLoad",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PaperPurityProbe.EveryLobbyControlSurvived",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PaperPurityProbe.NoFieldHighlightsInBlue",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PaperPurityProbe.NoLabelFakesItsWeight",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared",
+      "result": "Failed",
+      "failure": "  Original capabilities missing from current screen routes:\nbutton:TutorialButton -> missing button:TutorialButton\nbutton:TutorialButton -> missing button:TutorialButton\n  Expected: <empty>\n  But was:  < \"button:TutorialButton -> missing button:TutorialButton\", \"button:TutorialButton -> missing button:TutorialButton\" >\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PaperPurityProbe.NoWoodenSurfaceSurvivesOnTheLobby",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PreviewDragProbe.DraggingTheSubjectMovesItWithThePointer",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.TumpNativePickerTests.EveryHeroSkillGuideFitsItsActualVariationText",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.TumpNativePickerTests.NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath",
+      "result": "Failed",
+      "failure": "  rafi\n  Expected: not null\n  But was:  null\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.TumpNativePickerTests.RealPortraitsDriveSelectionAndPreviewDoesNotSave",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.UiClickProbe.EveryButtonIsReachable",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.UiRuntimeShots.EveryScreenBootsAndDraws",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.UiRuntimeShots.TheControllerMapDraws",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.UiRuntimeShots.TheLobbyDoorsDraw",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.UiRuntimeShots.TheLobbyDraws",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.UiRuntimeShots.TheSettingsPanelDraws",
+      "result": "Passed",
+      "failure": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.UiRuntimeShots.TheSignInScreenDraws",
+      "result": "Passed",
+      "failure": null
+    }
+  ]
+}

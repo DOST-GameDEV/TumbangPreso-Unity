@@ -1,5 +1,24 @@
 # Hero Strike: footprints, economy and the rework plan
 
+## Current objective economy, October 3 owner revision
+
+Objective income is +1 per can knockdown, +1 per successful tag, and +1 once when
+a player's defender round begins. Throws and own-slipper retrievals no longer
+award objective points. There is no per-second drip. Ultimate costs, meter cap,
+round-to-round carry, cast spending and new-match reset remain unchanged.
+Zack's existing five-second cooldown reduction per objective point follows these
+new income sources. Ordinary skill recharge hooks are unchanged.
+
+The older income table and pacing estimates below are historical and superseded
+by this revision; they must not be used to restore throw/retrieval income.
+
+
+**Current reader,2026-09-27:** the measurements/proposals below retain their named
+historical revisions. Do not treat their old roster or numbers as the latest kits.
+Read current Core/ability source,[kit method](HERO_KIT_METHOD.md),[network contract](SKILL_NETWORK_CONTRACT.md)
+and TODO. Preserve this rationale while recording actual balance changes explicitly;
+never silently reapply an old proposal during a cosmetic or network rework.
+
 **This file is the home of the per-ability footprint table.** `docs/VISION.md` § 2 sets the
 readability budget and used to point at `docs/TODO.md` § 1 for the numbers; § 1 became peer
 rematch voting and the numbers were never written anywhere. They are here now.

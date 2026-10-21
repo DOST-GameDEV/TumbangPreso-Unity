@@ -1,0 +1,26 @@
+{
+  "source": "9226f4f78ca21d98a8083d6d6832a6a1250714bd",
+  "protocol": 150,
+  "profile": "lpt-practice150-1005b",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\36bef35bd64416042cf9422bde5f6156f61edcdd1fcea44b52a4519fb9c4e623",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-9226f4f78-1004\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-practice150-1005b",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\qa-practice150-1005b\\player.log"
+  ],
+  "manifestSha256": "49c0fcfeb3d1d7c129d3829e23c8255d92d17aa95e32bd2a1392d5890310294f",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual normal Practice menu idle/resume/remove/readd and exit. Practice/input sources unchanged vs current5f6cdb665. No current151 visuals or hardware feel claim.",
+  "pid": 39860
+}

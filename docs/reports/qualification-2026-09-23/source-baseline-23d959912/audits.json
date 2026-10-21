@@ -1,0 +1,130 @@
+{
+  "ok": false,
+  "started": "2026-09-23T10:53:09",
+  "audits": [
+    {
+      "audit": "ability authority",
+      "script": "audit_ability_authority.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "54 effect call sites, 35 host-gated, 1 ungated on another body, 18 ungated on the caster"
+    },
+    {
+      "audit": "request call sites",
+      "script": "audit_request_call_sites.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "67 wire entry points, 0 unreachable."
+    },
+    {
+      "audit": "wire payloads",
+      "script": "audit_wire_payloads.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "87 named messages, 0 mismatched."
+    },
+    {
+      "audit": "audio reach",
+      "script": "audit_audio_reach.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "58 call sites, 0 host-only"
+    },
+    {
+      "audit": "positional audio ownership",
+      "script": "audit_positional_audio.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "24 positional calls classified; 0 findings"
+    },
+    {
+      "audit": "presentation reach",
+      "script": "audit_presentation_reach.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "100 presentation call sites, 100 reachable by every peer, 0 HOST-ONLY"
+    },
+    {
+      "audit": "cue relay",
+      "script": "audit_cue_relay.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "53 NetCue call sites: 22 host-only, 2 suppressed, 24 inside a kit, 5 owner-driven, 0 UNGATED."
+    },
+    {
+      "audit": "shader stripping",
+      "script": "audit_shader_stripping.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "28 shaders looked up by name, 0 would be missing from a player build."
+    },
+    {
+      "audit": "ability stat drift",
+      "script": "audit_ability_stat_drift.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "18 ability constructors across 18 files, 0 stat drift finding(s)."
+    },
+    {
+      "audit": "event subscriptions",
+      "script": "audit_event_subscriptions.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "163 named subscriptions in Runtime/, 17 anonymous, 0 finding(s), 0 stale allowlist entries."
+    },
+    {
+      "audit": "tournament defaults",
+      "script": "audit_tournament_defaults.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "12 tournament modifiers named, 108 exempted with a reason, 12 read cases, 12 write cases, 115 launch switches discovered, 0 finding(s)."
+    },
+    {
+      "audit": "gameplay clocks",
+      "script": "audit_gameplay_clocks.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "26 wall-clock reads across Runtime/ and the core, 33 gameplay-critical files checked, 0 finding(s)."
+    },
+    {
+      "audit": "harness contracts",
+      "script": "audit_harness_contracts.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "audit_harness_contracts: 152 checks, 0 finding(s)."
+    },
+    {
+      "audit": "wire finite values",
+      "script": "audit_wire_finite.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "audit_wire_finite: 72 wire handlers, 100 numeric field(s), 2 finding(s)."
+    },
+    {
+      "audit": "cue audio",
+      "script": "audit_cue_audio.py",
+      "ok": false,
+      "gating": false,
+      "exit": 1,
+      "summary": "134 files, 6 flagged"
+    }
+  ],
+  "reason": "wire finite values reported findings",
+  "stage": "audits",
+  "sha": "23d959912deb3bfe808bd91eb2960a3253c22c82",
+  "finished": "2026-09-23T10:53:09"
+}

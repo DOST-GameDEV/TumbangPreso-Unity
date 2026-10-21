@@ -1,0 +1,18 @@
+{
+  "Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs": {
+    "source": "3c89e7e4a1a1543ece0296e2660da8267ca784acca17b50f5ebbb866a8b0733c",
+    "candidate": "3c89e7e4a1a1543ece0296e2660da8267ca784acca17b50f5ebbb866a8b0733c"
+  },
+  "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs": {
+    "source": "644dbbe498f8fe1c04fc8857ad21bfbc47b20200a729ab42d21836c4f2d30f0f",
+    "candidate": "644dbbe498f8fe1c04fc8857ad21bfbc47b20200a729ab42d21836c4f2d30f0f"
+  },
+  "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.CourtHud.cs": {
+    "source": "e8babf3c10e8b9c7ac8aac86efe92ff644aaee85d4ff38b4cebeb91c4a40fc34",
+    "candidate": "e8babf3c10e8b9c7ac8aac86efe92ff644aaee85d4ff38b4cebeb91c4a40fc34"
+  },
+  "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs": {
+    "source": "90ee24cdabee1824d608115f7a40677ca9df453ea8fb1dda8c4e5859e9324d3e",
+    "candidate": "90ee24cdabee1824d608115f7a40677ca9df453ea8fb1dda8c4e5859e9324d3e"
+  }
+}

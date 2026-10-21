@@ -35,11 +35,14 @@ namespace TumbangPreso.EditorTools.MapKit
 
         private const string ResultPath = "Logs/arena-check.txt";
 
+        // ⚠️ THE NEAREST WALL ON EACH AXIS since the clamp went per side (2026-09-27): bound 3 asks
+        // whether the standoff ring fits on EVERY side, and the nearest side is the one it can
+        // fail on. On a symmetric arena it is the old half extent exactly.
         [MenuItem("Tumbang Preso/Check Arena Bounds")]
-        public static void RunFromMenu() => Execute(AIController.PlayableHalfX, AIController.PlayableHalfZ);
+        public static void RunFromMenu() => Execute(AIController.PlayableNearestX, AIController.PlayableNearestZ);
 
         public static void Run() =>
-            EditorApplication.Exit(Execute(AIController.PlayableHalfX, AIController.PlayableHalfZ) ? 0 : 1);
+            EditorApplication.Exit(Execute(AIController.PlayableNearestX, AIController.PlayableNearestZ) ? 0 : 1);
 
         /// <summary>
         /// All three bounds. ⚠️ THE THIRD ONE IS THE ONE NOBODY HAD WRITTEN DOWN, and it is
@@ -60,7 +63,7 @@ namespace TumbangPreso.EditorTools.MapKit
             sb.AppendLine($"  throwing line      : {throwLine:F2}");
             sb.AppendLine($"  attacker spawn ring: {spawnRing:F2}");
             sb.AppendLine($"  AI standoff + body : {standoff:F2}");
-            sb.AppendLine($"  wall faces         : x +/-{wallHalfX:F2}, z +/-{wallHalfZ:F2}");
+            sb.AppendLine($"  nearest wall faces: x +/-{wallHalfX:F2}, z +/-{wallHalfZ:F2}");
             sb.AppendLine();
 
             // BOUND 1. The throwing line must sit outside the chalk, or an attacker standing

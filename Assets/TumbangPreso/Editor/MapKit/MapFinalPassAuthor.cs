@@ -16,6 +16,40 @@ namespace TumbangPreso.EditorTools.MapKit
     public static class MapFinalPassAuthor
     {
         private const string Folder="Assets/TumbangPreso/Art/MapFinalPass";
+        public static void ExtendIlalimVisualGround()
+        {
+            var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath);
+            var report=new StringBuilder();var ground=SetIlalimVisualGround("IlalimNgTulay",report);
+            MapSurfaceAuthor.FinishLoadedScene("IlalimNgTulay",report,ground);
+            EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
+            Directory.CreateDirectory("Logs/ilalim-outer-ground");File.WriteAllText("Logs/ilalim-outer-ground/author.txt",report.ToString());
+            Debug.Log(report.ToString());EditorApplication.Exit(0);
+        }
+        private static Transform SetIlalimVisualGround(string map,StringBuilder report)
+        {
+            if(map!="IlalimNgTulay")return null;
+            var ground=GameObject.Find("IlalimNgTulay/Dressing/Lupa/FarGroundPlate");
+            if(ground==null||ground.GetComponentsInChildren<Collider>(true).Length!=0)
+                throw new InvalidOperationException("Expected the existing visual-only far ground plate.");
+            var filter=ground.GetComponent<MeshFilter>();var bounds=filter.sharedMesh.bounds;
+            float top=ground.GetComponent<MeshRenderer>().bounds.max.y;var scale=ground.transform.localScale;
+            var parent=ground.transform.parent.lossyScale;
+            scale.x=3000/bounds.size.x/parent.x;scale.z=3000/bounds.size.z/parent.z;
+            ground.transform.localScale=scale;PrefabUtility.RecordPrefabInstancePropertyModifications(ground.transform);
+            if(Mathf.Abs(ground.GetComponent<MeshRenderer>().bounds.max.y-top)>.0001f)
+                throw new InvalidOperationException("Far ground height changed.");
+            report.AppendLine("Existing240m visual-only ground now3000m wide; original height/material and gameplay collision retained.");
+            return ground.transform;
+        }
+        public static void StageEskinitaBackdrop()
+        {
+            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/Eskinita.unity");
+            var report=new StringBuilder();SetPaintedDistance("Eskinita",report);
+            EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
+            Directory.CreateDirectory("Logs/eskinita-backdrop");
+            File.WriteAllText("Logs/eskinita-backdrop/author.txt",report.ToString());
+            Debug.Log(report.ToString());EditorApplication.Exit(0);
+        }
         public static void Run()
         {
             var report=new StringBuilder();
@@ -28,7 +62,7 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             foreach(string map in maps)
             {
-                var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
+                var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.LegacyScenePath(map),OpenSceneMode.Single);
                 NeighborhoodFinishAuthor.FinishLoadedScene(map,report);
                 EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
                 MapFinalInventory.WriteLoadedScene(map, Environment.GetEnvironmentVariable("TUMP_MAP_INVENTORY") ?? "Logs/map-spatial-current");
@@ -39,6 +73,20 @@ namespace TumbangPreso.EditorTools.MapKit
 
         public static void FinishLoadedScene(string map,StringBuilder report)
         {
+            EskinitaContextAuthor.ClearPrevious(map);
+            EskinitaHouseFinishAuthor.ClearPrevious(map);
+            EskinitaDomesticFinishAuthor.ClearPrevious(map);
+            EskinitaVehicleAuthor.ClearPrevious(map);
+            EskinitaMasonryFinishAuthor.ClearPrevious(map);
+            EskinitaCanopyAuthor.ClearPrevious(map);
+            EskinitaShopSignAuthor.ClearPrevious(map);
+            BayanGardenAuthor.ClearPrevious(map);
+            BayanTownContextAuthor.ClearPrevious(map);
+            BayanPottedShrubAuthor.ClearPrevious(map);
+            BayanHouseFinishAuthor.ClearPrevious(map);
+            BayanHallFinishAuthor.ClearPrevious(map);
+            IlalimStructureFinishAuthor.ClearPrevious(map);
+            IlalimSkylineFinishAuthor.ClearPrevious(map);
             MapPlaceAuthor.ClearPrevious(map);
             EskinitaNeighborhoodAuthor.ClearPrevious(map);
             MapPlaceAuthor.PrepareExistingPlacement(map);
@@ -50,7 +98,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var dressing=GameObject.Find(map+"/Dressing")??GameObject.Find("Dressing");
             if(dressing!=null)root.SetParent(dressing.transform,false);
             ReplaceTrees(map,root,report);ArrangeFurniture(map,report);
-            ArrangeLooseDressing(map,report);SetPaintedDistance(map,report);FinishLight(map);
+            ArrangeLooseDressing(map,report);SetPaintedDistance(map,report);SetIlalimVisualGround(map,report);FinishLight(map);
             if(map=="BayanPlaza"){CompleteCivicBuildings(root);PlazaPaving(root);FinishCivicUse(root,report);}
             MapPlaceAuthor.FinishLoadedScene(map,report);
             CivicTownAuthor.FinishLoadedScene(map,report);
@@ -61,6 +109,43 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="IlalimNgTulay")AsphaltRoadSurface.CompleteIlalimStreetSurface();
             if(map=="IlalimNgTulay")HoardingSupportsAuthor.RepairLoaded();
             AmbientLifeAuthor.FinishLoadedScene(map,report);
+            MapSurfaceAuthor.FinishLoadedScene(map,report);
+            if(map=="Eskinita")EskinitaContextAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaHouseFinishAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaTimberFinishAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaDomesticFinishAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaVehicleAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaMasonryFinishAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaCanopyAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaShopSignAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaAuthoredSignAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanGardenAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanTownContextAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanPottedShrubAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanHouseFinishAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanHallFinishAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimStructureFinishAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimSkylineFinishAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimPrintShopAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimBakeryAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimLaundryAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimRepairShopAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimTindahanAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimUkayAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimBarberAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimParesAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimPisonetAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimVulcanizingAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimShopSignAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaDogHabitatAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaCatHabitatAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanDogHabitatAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanCatHabitatAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimDogHabitatAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimCatHabitatAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaBirdVisitAuthor.FinishLoadedScene(report);
+            if(map=="BayanPlaza")BayanBirdVisitAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimBirdVisitAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 
@@ -352,11 +437,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 var t = renderer.transform;
                 Vector3 at;
                 float width;
-                // The painting's top22% is transparent. Keep its actual peaks
-                // above the roofline without returning to the old looming cutouts.
-                if (t.name == "MountainBackdrop") { at = new Vector3(0, 28, 180); width = 180; }
-                else if (t.name == "Quad") { at = new Vector3(155, 34, 25); width = 140; }
-                else if (t.name == "Quad (1)") { at = new Vector3(-145, 34, -65); width = 140; }
+                // The painting's top22% is transparent. Its visible ridge should sit
+                // just above the district, not loom over near houses. The adopted
+                // bright atmosphere exposed the old elevated quads as huge triangles.
+                if (t.name == "MountainBackdrop") { at = new Vector3(0, -3, 180); width = 180; }
+                else if (t.name == "Quad") { at = new Vector3(155, -6, 25); width = 140; }
+                else if (t.name == "Quad (1)") { at = new Vector3(-145, -4, -65); width = 140; }
                 else continue;
                 var texture = renderer.sharedMaterial.mainTexture;
                 float aspect = texture != null && texture.height > 0 ? (float)texture.width / texture.height : 1.926f;

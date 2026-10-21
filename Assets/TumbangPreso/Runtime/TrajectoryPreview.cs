@@ -5,15 +5,15 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// A local directional guide, not an exact landing solution. Early/moving
-    /// holds show a short nominal path; settled holds show more of it. Actual
-    /// flight keeps bounded angular error and signed Pektus. No landing marker.
+    /// Local landing-circle UI for the current throw. Real gravity, signed curve,
+    /// world banks and supporting floor are predicted without changing gameplay.
+    /// Moving players, can impacts and later ability effects may still intercept it.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
     {
         public const int Samples = 36;
-        public const float WidthPerMetre = .0032f, WidthMin = .002f, WidthMax = .06f;
+        public const float WidthPerMetre = .004f, WidthMin = .002f, WidthMax = .075f;
         public const float AlphaMax = .92f;
         public const float NearFadeStart = .12f, NearFadeEnd = .65f;
         public const float FloorEpsilon = .018f;
@@ -26,6 +26,15 @@ namespace TumbangPreso
         private readonly List<Color> _colours = new List<Color>(Samples * 12);
         private readonly List<int> _tris = new List<int>(Samples * 12);
         private static Material _arcMaterial;
+        private readonly RaycastHit[] _hits = new RaycastHit[64];
+        private float _nextDraw, _drawStart;
+        private Vector3 _drawFrom;
+        private bool _hasLanding;
+        public const float PredictionInterval = .05f;
+        public Vector3 DisplayedLandingPoint { get; private set; }
+        public Vector3 LandingPoint { get; private set; }
+        public bool LandingVisible => _renderer != null && _renderer.enabled;
+        public const float CircleRadius = .4f;
 
         public static TrajectoryPreview AttachTo(CharacterMotor motor)
         {
@@ -53,7 +62,12 @@ namespace TumbangPreso
         private void LateUpdate()
         {
             if (!ShouldShow()) { Clear(); return; }
-            Rebuild();
+            if (Time.unscaledTime >= _nextDraw)
+            {
+                _nextDraw = Time.unscaledTime + PredictionInterval;
+                Rebuild();
+            }
+            else if (_hasLanding) DrawInterpolated(Time.unscaledTime);
         }
 
         private bool ShouldShow()
@@ -70,59 +84,55 @@ namespace TumbangPreso
 
         private void Clear()
         {
+            _nextDraw = 0;
+            _hasLanding = false;
             if (_renderer != null) _renderer.enabled = false;
             if (_mesh != null && _mesh.vertexCount > 0) _mesh.Clear();
+        }
+
+        public bool TryPredictLanding(Vector3 origin, Vector3 velocity, float spin, out Vector3 landing)
+        {
+            float skimDistance = _carrier != null && _carrier.Held != null &&
+                _motor?.AbilitySystem?.Kit is Abilities.RafiHeroKit rafi && rafi.IsSkimLoadedFor(_carrier.Held)
+                ? RafiRules.SkimDistance : 0;
+            return SlipperLandingPrediction.TryPredictLanding(origin, velocity, spin, _hits, out landing, _path,
+                skimDistance, false, _carrier?.Held != null ? _carrier.Held.RestHeight : Balance.SlipperRestHeight,
+                _motor?.AbilitySystem?.Kit is Abilities.ZackHeroKit zack ? zack.BankShotAffinityFor(_carrier?.Held) : SlipperAffinity.Normal);
         }
 
         private void Rebuild()
         {
             var camera = UnityEngine.Camera.main;
-            if (camera == null) { Clear(); return; }
-            Vector3 point = _carrier.AimGuideOrigin();
-            Vector3 velocity = _carrier.AimGuideVelocityNow();
-            float spin = _carrier.CurrentPektusSpin;
-            float step = _carrier.AimGuideHorizon / Samples;
-            _path.Clear(); _path.Add(point);
-            for (int i = 0; i < Samples; i++)
-            {
-                velocity.y -= Balance.Gravity * step;
-                var flat = new Vector3(velocity.x, 0, velocity.z);
-                if (Mathf.Abs(spin) > .01f && flat.sqrMagnitude > .1f)
-                    velocity += Vector3.Cross(flat.normalized, Vector3.up) * (spin * Balance.PektusCurveStrength * step);
-                Vector3 next = point + velocity * step;
-                // Stop at real scenery, not world y=0: raised courts and the
-                // guideway must not swallow the line or let it pass through them.
-                if (Physics.Linecast(point, next, out var hit, ~0, QueryTriggerInteraction.Ignore)
-                    && !hit.transform.IsChildOf(_motor.transform)
-                    && !hit.transform.IsChildOf(_carrier.Held.transform))
-                {
-                    _path.Add(hit.point + hit.normal * FloorEpsilon);
-                    break;
-                }
-                _path.Add(next); point = next;
-            }
+            if (camera == null || !TryPredictLanding(_carrier.AimGuideOrigin(), _carrier.AimGuideVelocityNow(), _carrier.CurrentPektusSpin, out var landing))
+            { Clear(); return; }
+            // Smooth only presentation. Never invent an interpolated ballistic result.
+            _drawFrom = !_hasLanding || Mathf.Abs(landing.y - LandingPoint.y) > .15f ||
+                Vector3.SqrMagnitude(landing - LandingPoint) > 64 ? landing : DisplayedLandingPoint;
+            LandingPoint = landing;
+            _drawStart = Time.unscaledTime;
+            _hasLanding = true;
+            DrawInterpolated(_drawStart);
+        }
+
+        private void DrawInterpolated(float now)
+        {
+            var camera = UnityEngine.Camera.main;
+            if (camera == null || !_hasLanding) return;
+            var landing = Vector3.Lerp(_drawFrom, LandingPoint, Mathf.Clamp01((now - _drawStart) / PredictionInterval));
+            DisplayedLandingPoint = landing;
             _verts.Clear(); _colours.Clear(); _tris.Clear();
             bool legal = GameServices.Round.CanThrow(_motor);
-            var tint = legal ? new Color(1, .92f, .58f) : new Color(.72f, .72f, .68f);
-            // A fine dark edge keeps the warm line readable on both bright
-            // plaza paving and dark alleys without a broad opaque band.
+            var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);
             for (int stroke = 0; stroke < 2; stroke++)
-            for (int i = 0; i < _path.Count - 1; i++)
+            for (int i = 0; i < Samples; i++)
             {
-                float fraction = i / (float)Mathf.Max(1, _path.Count - 1);
-                float fade = 1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.65f, 1, fraction));
-                float distance = Vector3.Distance((_path[i] + _path[i + 1]) * .5f, camera.transform.position);
-                float near = Mathf.InverseLerp(NearFadeStart, NearFadeEnd, distance);
-                var colour = stroke == 0 ? new Color(.018f, .012f, .008f) : tint;
-                colour.a = AlphaMax * fade * near;
-                float uncertainty = 1 + (1 - _carrier.AimGuideConfidence) * fraction * .65f;
-                AddQuad(_path[i], _path[i + 1], camera, colour, (stroke == 0 ? 1.7f : 1f) * uncertainty);
+                float a = i * Mathf.PI * 2 / Samples, b = (i + 1) * Mathf.PI * 2 / Samples;
+                Vector3 from = landing + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * CircleRadius;
+                Vector3 to = landing + new Vector3(Mathf.Cos(b), 0, Mathf.Sin(b)) * CircleRadius;
+                AddQuad(from, to, camera, stroke == 0 ? new Color(.018f, .012f, .008f, AlphaMax) : tint, stroke == 0 ? 1.7f : 1);
             }
-            if (_verts.Count == 0) { Clear(); return; }
-            _mesh.Clear();
-            _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
-            _mesh.RecalculateBounds();
-            _renderer.enabled = true;
+            _mesh.Clear(); _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
+            _mesh.RecalculateBounds(); _renderer.enabled = true;
         }
 
         private void AddQuad(Vector3 a, Vector3 b, Camera camera, Color colour, float widthScale)
@@ -131,7 +141,7 @@ namespace TumbangPreso
             if (along.sqrMagnitude < .00000001f) return;
             along.Normalize();
             var toEye = camera.transform.position - (a + b) * .5f;
-            var side = Vector3.Cross(along, toEye);
+            var side = Vector3.Cross(along, Vector3.up);
             if (side.sqrMagnitude < .0000001f) side = Vector3.ProjectOnPlane(camera.transform.right, along);
             if (side.sqrMagnitude < .0000001f) side = Vector3.ProjectOnPlane(camera.transform.up, along);
             float half = Mathf.Clamp(toEye.magnitude * WidthPerMetre, WidthMin, WidthMax) * widthScale;

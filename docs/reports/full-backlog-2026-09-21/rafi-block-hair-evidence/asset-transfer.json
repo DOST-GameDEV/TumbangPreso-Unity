@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Resources/Roster/person_rafi.asset",
+    "sha256": "37d01a796f9b8acf4d060141be1a7564479eaa1f56021b11b4001b700ca9fe20"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_left.asset",
+    "sha256": "4d2ecaa2a29fddb0abf4a959f8cad596ea6367cee3492aa0ac71ef2579057bc4"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_right.asset",
+    "sha256": "9eb8d257c55808ca7adbef0d05ac851684a01996f141987629350f3fa037a925"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/portraits/rafi.png",
+    "sha256": "d97a73073ac35e61966d5ba337b1abfd569d5fdfdad5c14de48270bcf0a4fd5a"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-cut.anim",
+    "sha256": "f07d6c545493de4213e7cbb5ce8631c7596a9f3d56214006202c976f1619a80c"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-feint.anim",
+    "sha256": "a61c986c3358c6d7a483558d294f8f737073e406d6269500a0846ec0497069e5"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-breakwater.anim",
+    "sha256": "ff36700148b10a125018ff7c5a1ee375a9200279e6db7e27f97bcb5397c105fa"
+  }
+]

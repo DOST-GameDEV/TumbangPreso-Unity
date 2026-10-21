@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using UnityEngine;
@@ -36,11 +37,9 @@ namespace TumbangPreso.PlayTests
     ///      leaves the field looking alive and behaving dead. `LobbyChat` calls
     ///      `ActivateInputField` from three places and one of them runs on a bare Return.
     ///
-    /// ⚠️ IT DOES NOT SYNTHESISE KEYSTROKES, AND THAT IS A LIMIT WORTH WRITING DOWN RATHER THAN
-    /// WORKING AROUND. Legacy `InputField` pulls characters from the OS event queue through
-    /// `Event.PopEvent`, which a test cannot fill: any "typing" here would be `field.text = "x"`,
-    /// which proves the setter works and nothing else. Selection is the part another component
-    /// can actually break, so selection is what is asserted.
+    /// ⚠️ THE ORIGINAL CARET CHECK DOES NOT TYPE. The focused HOST case below uses explicit
+    /// `InputField.ProcessEvent` calls to exercise Unity's key editing after a raycast press,
+    /// but it does not fill the OS `Event.PopEvent` queue. Neither is proof of physical typing.
     /// </summary>
     public class LobbyTypingProbe
     {
@@ -73,44 +72,166 @@ namespace TumbangPreso.PlayTests
         {
             var report = new StringBuilder();
             var broken = new List<string>();
-
-            if (!Application.CanStreamedLevelBeLoaded("MatchSetup"))
-            {
-                Assert.Ignore("MatchSetup is not in the build settings.");
-                yield break;
-            }
-
-            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            for (int i = 0; i < SettleFrames; i++) yield return null;
-            Canvas.ForceUpdateCanvases();
-
-            // The lobby's own furniture first, then the join card, which is built inactive and
-            // is the only place the join-code field exists.
-            yield return Check("lobby", report, broken);
-
-            var join = FindByName("LobbyJoinPanel");
-
-            if (join == null)
-            {
-                report.AppendLine("LobbyJoinPanel: NOT PRESENT");
-                broken.Add("LobbyJoinPanel was never built");
-            }
-            else
-            {
-                join.SetActive(true);
-                for (int i = 0; i < SettleFrames; i++) yield return null;
-                Canvas.ForceUpdateCanvases();
-
-                yield return Check("join card", report, broken);
-            }
-
+            yield return HubFlowTests.OpenHome();
+            yield return HubFlowTests.Press("NamePlate");
+            Assert.IsTrue(Object.FindFirstObjectByType<TumbangPreso.UI.PlayerHub>().IsOpen);
+            yield return Check("profile name", report, broken);
+            Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .First(b => b.name == "ClosePlayerHub" && b.isActiveAndEnabled).onClick.Invoke();
+            yield return null; yield return null;
+            yield return HubFlowTests.Press("ModeCard");
+            yield return HubFlowTests.Press("CustomCard");
+            yield return HubFlowTests.Press("HostDoor");
+            yield return Check("host room name", report, broken);
+            TumbangPreso.UI.Hub.TumpHub.Current.Back(); yield return null;
+            yield return HubFlowTests.Press("CustomCard");
+            yield return HubFlowTests.Press("JoinDoor");
+            yield return HubFlowTests.Press("Source2");
+            yield return Check("join code", report, broken);
             Directory.CreateDirectory("Logs");
             File.WriteAllText(OutPath, report.ToString(), new UTF8Encoding(false));
-            Debug.Log(report.ToString());
-
             Assert.IsEmpty(broken, "fields a player cannot type into:\n" + string.Join("\n", broken));
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator HostRoomNameRaycastsEditsAndCreatesTheTypedLanTitle()
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Any(arg =>
+                string.Equals(arg, "-tp-profile", System.StringComparison.OrdinalIgnoreCase)),
+                "Room creation needs a named isolated profile.");
+            var settings = TumbangPreso.Settings.SettingsStore.Current;
+            string savedSettings = JsonUtility.ToJson(settings);
+            bool networked = TumbangPreso.UI.SceneFlow.Networked;
+            var rules = TumbangPreso.UI.SceneFlow.SelectedRules.Clone();
+            bool pinned = TumbangPreso.UI.SceneFlow.RulesPinned;
+            string map = TumbangPreso.UI.SceneFlow.SelectedMap;
+            string roomTitle = TumbangPreso.Net.NetSession.RoomTitle;
+            string roomMap = TumbangPreso.Net.NetSession.RoomMap;
+            int roomVisibility = TumbangPreso.Net.NetSession.RoomVisibility;
+            try
+            {
+                yield return HubFlowTests.OpenHome();
+                yield return HubFlowTests.Press("ModeCard");
+                yield return HubFlowTests.Press("CustomCard");
+                yield return HubFlowTests.Press("HostDoor");
+
+                var hub = TumbangPreso.UI.Hub.TumpHub.Current;
+                // ⚠️ WAIT FOR THE SCREEN TO BE USABLE, AS A PLAYER DOES (2026-09-27): Host prepares a
+                // preview of every registered map behind the loading curtain, and the hub canvas is
+                // off while the curtain is open. Six courts (Kanto and the Lagoon Cove joined) take
+                // longer than the 0.45 s Press waits, so the field was checked under the curtain.
+                float usable = Time.realtimeSinceStartup + 15f;
+                while (!hub.Canvas.enabled && Time.realtimeSinceStartup < usable) yield return null;
+                Assert.IsTrue(hub.Canvas.enabled, "The host screen never became usable after its previews prepared.");
+                // A re-enabled canvas's graphics get their draw depth when it next renders, and the
+                // raycaster skips undrawn ones: let it draw before clicking, as a player's click
+                // can only land on a frame they have seen.
+                yield return null; yield return null;
+                Assert.IsInstanceOf<TumbangPreso.UI.Hub.HubHost>(hub.Top);
+                var field = hub.Top.GetComponentsInChildren<InputField>(false)
+                    .Single(input => input.name == "LobbyName");
+                var plate = field.targetGraphic;
+                Assert.IsNotNull(plate);
+                Assert.AreEqual("Plate", plate.name);
+                Assert.IsTrue(plate.transform.IsChildOf(field.transform));
+                Assert.AreEqual(TumbangPreso.Settings.GameSettings.RoomTitleMax, field.characterLimit);
+                const string full = "ABCDEFGHIJKLMNOPQRSTUVWX";
+                Assert.AreEqual(field.characterLimit, full.Length);
+                field.text = full; // Deterministic full prefill, never the edit under test.
+                Canvas.ForceUpdateCanvases();
+
+                var system = EventSystem.current;
+                Assert.IsNotNull(system);
+                var raycaster = hub.Canvas.GetComponent<GraphicRaycaster>();
+                Assert.IsNotNull(raycaster);
+                var camera = hub.Canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : hub.Canvas.worldCamera;
+                Vector2 point = RectTransformUtility.WorldToScreenPoint(camera,
+                    plate.rectTransform.TransformPoint(plate.rectTransform.rect.center));
+                var pointer = new PointerEventData(system)
+                {
+                    position = point,
+                    pressPosition = point,
+                    button = PointerEventData.InputButton.Left,
+                    eligibleForClick = true,
+                };
+                var canvasHits = new List<RaycastResult>();
+                raycaster.Raycast(pointer, canvasHits);
+                Assert.IsNotEmpty(canvasHits, "The HOST canvas raycast found no field plate.");
+                var allHits = new List<RaycastResult>();
+                system.RaycastAll(pointer, allHits);
+                Assert.IsNotEmpty(allHits, "The EventSystem found no visible HOST control.");
+                Assert.AreSame(plate.gameObject, canvasHits[0].gameObject,
+                    "Another HOST graphic covers the visible room-name plate.");
+                Assert.AreSame(plate.gameObject, allHits[0].gameObject,
+                    "Another canvas intercepts the room-name plate.");
+
+                system.SetSelectedGameObject(null);
+                pointer.pointerPressRaycast = allHits[0];
+                pointer.pointerCurrentRaycast = allHits[0];
+                Assert.AreSame(field.gameObject,
+                    ExecuteEvents.ExecuteHierarchy(allHits[0].gameObject, pointer, ExecuteEvents.pointerDownHandler));
+                Assert.AreSame(field.gameObject,
+                    ExecuteEvents.ExecuteHierarchy(allHits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler));
+                yield return null;
+                yield return null;
+                Assert.AreSame(field.gameObject, system.currentSelectedGameObject);
+                Assert.IsTrue(field.isFocused, "The raycast press did not activate the InputField.");
+
+                field.MoveTextEnd(false);
+                field.ProcessEvent(new Event { type = EventType.KeyDown, keyCode = KeyCode.Z, character = 'Z' });
+                Assert.AreEqual(full, field.text, "A full 24-character prefill must reject an append, not replacement.");
+                field.ProcessEvent(new Event { type = EventType.KeyDown, keyCode = KeyCode.A,
+                    modifiers = EventModifiers.Control });
+                field.ProcessEvent(new Event { type = EventType.KeyDown, keyCode = KeyCode.Backspace });
+                Assert.IsEmpty(field.text, "Control+A then Backspace did not replace the full prefill.");
+                const string edited = "QA04 ROOM EDITED";
+                foreach (char c in edited)
+                    field.ProcessEvent(new Event { type = EventType.KeyDown, character = c });
+                field.ForceLabelUpdate();
+                yield return null;
+                Canvas.ForceUpdateCanvases();
+                Assert.AreEqual(edited, field.text);
+                StringAssert.Contains(edited, field.textComponent.text);
+                for (int i = 0; i < HoldFrames; i++) yield return null;
+                Assert.AreSame(field.gameObject, system.currentSelectedGameObject);
+                Assert.IsTrue(field.isFocused, "The edited room-name field lost focus before CREATE.");
+                yield return TumpUiCapture.Capture("qa04-host-name-edited-960x540", hub.Canvas,
+                    960, 540, false, checkActionBounds: true);
+
+                yield return HubFlowTests.Press("CreateLobby"); // HOST defaults to LAN.
+                float until = Time.realtimeSinceStartup + 15;
+                while (!(hub.Top is TumbangPreso.UI.Hub.HubLobby) && Time.realtimeSinceStartup < until)
+                    yield return null;
+                Assert.IsInstanceOf<TumbangPreso.UI.Hub.HubLobby>(hub.Top,
+                    "CREATE did not open the local room; inspect the host status separately.");
+                Assert.IsFalse(TumbangPreso.Net.NetSession.Instance.IsRelay);
+                Assert.AreEqual(edited, TumbangPreso.Net.NetSession.RoomTitle);
+                Assert.AreEqual(edited, hub.Host.RoomTitle);
+                Assert.AreEqual(edited, TumbangPreso.Net.NetSession.Instance.Beacon.HostName);
+                var heading = hub.Top.Root.Find("Heading").GetComponent<Text>();
+                Assert.AreEqual(edited, heading.text);
+                yield return TumpUiCapture.Capture("qa04-host-name-created-960x540", hub.Canvas,
+                    960, 540, false, checkActionBounds: true);
+            }
+            finally
+            {
+                var hub = TumbangPreso.UI.Hub.TumpHub.Current;
+                if (hub != null) hub.Host.LeaveRoom();
+                TumbangPreso.Net.NetSession.Instance?.Stop();
+                TumbangPreso.Net.NetSession.ClearRoomSettings();
+                TumbangPreso.Net.NetSession.RoomTitle = roomTitle;
+                TumbangPreso.Net.NetSession.RoomMap = roomMap;
+                TumbangPreso.Net.NetSession.RoomVisibility = roomVisibility;
+                TumbangPreso.UI.SceneFlow.Networked = networked;
+                TumbangPreso.UI.SceneFlow.SelectedMap = map;
+                TumbangPreso.UI.SceneFlow.AdoptRemoteRules(rules);
+                TumbangPreso.UI.SceneFlow.SelectedRules.Password = rules.Password;
+                if (pinned) TumbangPreso.UI.SceneFlow.PinSelectedRules(rules);
+                else TumbangPreso.UI.SceneFlow.UnpinSelectedRules();
+                JsonUtility.FromJsonOverwrite(savedSettings, settings);
+                TumbangPreso.Settings.SettingsStore.Save();
+                if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+            }
         }
 
         /// <summary>
@@ -137,6 +258,9 @@ namespace TumbangPreso.PlayTests
             foreach (var field in Object.FindObjectsByType<InputField>(FindObjectsInactive.Exclude,
                                                                        FindObjectsSortMode.None))
             {
+                if (field.GetComponentsInParent<Canvas>().Any(c => !c.isActiveAndEnabled)) continue;
+                var chat = field.GetComponentInParent<TumbangPreso.UI.LobbyChat>();
+                if (chat != null && !chat.IsPresented) continue; // intentionally closed behind HOST/JOIN
                 var rect = field.transform as RectTransform;
                 if (rect == null) continue;
 
@@ -202,6 +326,57 @@ namespace TumbangPreso.PlayTests
 
                 report.AppendLine($"   {field.name}: ok (selected and held {HoldFrames} frames)");
             }
+        }
+
+        /// <summary>
+        /// Press CHAT the way a player does, and fall back to the component when the lobby on
+        /// screen has no such door. Reported either way, because "there was no CHAT button" is
+        /// the thing a reader of this log needs to know before believing the lines under it.
+        /// </summary>
+        internal static IEnumerator PresentTheChat(StringBuilder report)
+        {
+            // ⚠️ EVERY `LobbyChat` IN THE SCENE, NOT THE FIRST ONE. The lobby builds one and the
+            // join card builds its own, and this walk reports a field per surface: presenting
+            // one of the two left the other half of the list still red and reading exactly as
+            // it did before, which is the least useful shape a partial fix can have.
+            var chats = Object.FindObjectsByType<TumbangPreso.UI.LobbyChat>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            if (chats.Length == 0)
+            {
+                report.AppendLine("--- chat --- NOT BUILT");
+                yield break;
+            }
+
+            var door = FindByName("ChatDoor") ?? FindByName("ChatButton") ?? FindByName("ChatChip");
+            var button = door != null ? door.GetComponent<Button>() : null;
+
+            if (button != null && button.IsInteractable())
+            {
+                button.onClick.Invoke();
+                report.AppendLine($"--- chat --- opened by pressing {door.name}");
+            }
+
+            for (int i = 0; i < HoldFrames; i++) yield return null;
+
+            Assert.IsNotNull(button, "The live room has no visible chat door.");
+            Assert.IsTrue(chats.Any(chat => chat != null && chat.IsPresented), "CHAT did not open its field.");
+
+            for (int i = 0; i < HoldFrames; i++) yield return null;
+            Canvas.ForceUpdateCanvases();
+
+            foreach (var chat in chats)
+                if (chat != null && !chat.IsPresented)
+                    report.AppendLine($"--- chat --- {Path(chat.transform)} STILL CLOSED");
+        }
+
+        private static string Path(Transform t)
+        {
+            string path = t.name;
+
+            for (var p = t.parent; p != null; p = p.parent) path = p.name + "/" + path;
+
+            return path;
         }
 
         internal static GameObject FindByName(string name)

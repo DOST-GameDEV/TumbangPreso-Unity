@@ -1,0 +1,59 @@
+{
+  "base": "03f1c7412b76f1b3ecf5eb4efee6dc5ef93c2958",
+  "protocol": 74,
+  "native": {
+    "result": "Passed",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "0.2904714",
+    "unity": "6000.5.8f1",
+    "platform": "WindowsEditor",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.SkillReceiptTests.RestoredSentryKeepsCapturedSeatsAndBindsLateBodiesWithoutAnotherCatch",
+      "result": "Passed",
+      "duration": "0.192633"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.SkillReceiptTests.SentryTargetMaskUsesTheWorldFieldReceiverAndRejectsInvalidSeats",
+      "result": "Passed",
+      "duration": "0.030861"
+    }
+  ],
+  "originalXmlSha256": "48FE3879EBE2970776188462FB347EAC8EEA6EED9556071A0335254D9267D0A0",
+  "minimumFreeBytes": 6369206272.0,
+  "frozenInputs": 206,
+  "nativeInputChurn": 0,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PaeteHazards.cs",
+      "sha256": "22506D9D42A8C94CEBA64B9C8F0AFEF9B7114EAAA495948F3D0F5FCB747FF2F9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "400F9845037ACEFB728A51EA571DEE08A38E21A7495839C39D3EA4380FD6E43F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "EADBBE2AF13C3FCBCA631464A7D2704C16AB833528CD48B744103D2BEBA760D3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/WorldEffectSnapshot.cs",
+      "sha256": "FAC2AE356288DE69F2DDDFF5E6206E9232DA03632CBB19488E86D2D128D86F69"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "A9CFC9C06BDA50613639FA362383F6FB020207BC6ABEA348EAF6D2F651AC8F9C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "84DD752C934AB93278AEDCCFD59A3E2CCF7AC43BC32CCF36CD0FE563D7D13DC3"
+    }
+  ],
+  "limits": "Local native world-field receiver and restored sentry behavior, not fresh-cast convergence or actual peer/ranked/reconnect acceptance."
+}

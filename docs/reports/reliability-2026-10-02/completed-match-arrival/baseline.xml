@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.1951392">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="901" result="Failed" site="Child" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.195139" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2082" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="901" result="Failed" site="Child" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.182052" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23676" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2083" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="901" result="Failed" site="Child" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.178286" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2084" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="901" result="Failed" site="Child" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.174849" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1615" name="CompletedMatchArrivalTests" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.092318" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1624" name="APlainLobbySnapshotCannotOpenCompletedStandings" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.APlainLobbySnapshotCannotOpenCompletedStandings" methodname="APlainLobbySnapshotCannotOpenCompletedStandings" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1768351390" result="Passed" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:43Z" duration="0.045783" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1618" name="ColdArrivalReceivesCompletedStandingsWithoutALivePacket" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.017974" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1616" name="ColdArrivalReceivesCompletedStandingsWithoutALivePacket(False)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket(False)" methodname="ColdArrivalReceivesCompletedStandingsWithoutALivePacket" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1933670483" result="Failed" start-time="2026-10-02 04:25:43Z" end-time="2026-10-02 04:25:44Z" duration="0.009642" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An arriving client never received the real completed match event.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket (System.Boolean locallyStarted) [0x00036] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchStartRaceTests.cs:287
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1617" name="ColdArrivalReceivesCompletedStandingsWithoutALivePacket(True)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket(True)" methodname="ColdArrivalReceivesCompletedStandingsWithoutALivePacket" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="381733005" result="Failed" start-time="2026-10-02 04:25:44Z" end-time="2026-10-02 04:25:44Z" duration="0.005440" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An arriving client never received the real completed match event.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket (System.Boolean locallyStarted) [0x00036] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchStartRaceTests.cs:287
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1623" name="InvalidTerminalStateCannotBypassThePreStartGuard" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 04:25:44Z" end-time="2026-10-02 04:25:44Z" duration="0.006152" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1620" name="InvalidTerminalStateCannotBypassThePreStartGuard(&quot;negative-round&quot;)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard(&quot;negative-round&quot;)" methodname="InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="752737107" result="Passed" start-time="2026-10-02 04:25:44Z" end-time="2026-10-02 04:25:44Z" duration="0.002611" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1621" name="InvalidTerminalStateCannotBypassThePreStartGuard(&quot;beyond-final&quot;)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard(&quot;beyond-final&quot;)" methodname="InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1095406232" result="Passed" start-time="2026-10-02 04:25:44Z" end-time="2026-10-02 04:25:44Z" duration="0.000986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1622" name="InvalidTerminalStateCannotBypassThePreStartGuard(&quot;nonfinite-clock&quot;)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard(&quot;nonfinite-clock&quot;)" methodname="InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1940982275" result="Passed" start-time="2026-10-02 04:25:44Z" end-time="2026-10-02 04:25:44Z" duration="0.000921" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1619" name="PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder" methodname="PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="641920257" result="Passed" start-time="2026-10-02 04:25:44Z" end-time="2026-10-02 04:25:44Z" duration="0.004289" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

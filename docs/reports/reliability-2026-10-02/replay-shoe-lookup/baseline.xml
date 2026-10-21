@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 17:23:10Z" end-time="2026-10-01 17:23:10Z" duration="0.1945499">
+  <test-suite type="TestSuite" id="2494" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 17:23:10Z" end-time="2026-10-01 17:23:10Z" duration="0.194550" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2488" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 17:23:10Z" end-time="2026-10-01 17:23:10Z" duration="0.169964" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6288" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2489" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 17:23:10Z" end-time="2026-10-01 17:23:10Z" duration="0.153912" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2490" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 17:23:10Z" end-time="2026-10-01 17:23:10Z" duration="0.138353" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2013" name="RecordedEffectsTests" fullname="TumbangPreso.PlayTests.RecordedEffectsTests" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-01 17:23:10Z" end-time="2026-10-01 17:23:10Z" duration="0.101393" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2014" name="FlightCapturePreservesTrailDataAcrossObjectLifecycle" fullname="TumbangPreso.PlayTests.RecordedEffectsTests.FlightCapturePreservesTrailDataAcrossObjectLifecycle" methodname="FlightCapturePreservesTrailDataAcrossObjectLifecycle" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" seed="649499856" result="Failed" start-time="2026-10-01 17:23:10Z" end-time="2026-10-01 17:23:10Z" duration="0.085826" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: RGBA(0.100, 0.500, 0.800, 0.650)
+  But was:  RGBA(0.102, 0.502, 0.800, 0.651)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedEffectsTests+<FlightCapturePreservesTrailDataAcrossObjectLifecycle>d__2.MoveNext () [0x0012e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordedEffectsTests.cs:44
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

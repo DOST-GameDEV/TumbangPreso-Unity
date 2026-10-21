@@ -1,0 +1,501 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &20000000
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ShaderWarmup
+  m_Shaders:
+  - first: {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: _ALPHABLEND_ON
+        passType: 4
+      - keywords: _ALPHABLEND_ON _EMISSION
+        passType: 4
+      - keywords: _ALPHATEST_ON
+        passType: 4
+      - keywords: _EMISSION
+        passType: 4
+      - keywords: _NORMALMAP
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHABLEND_ON
+        passType: 8
+      - keywords: _ALPHATEST_ON
+        passType: 8
+      - keywords: 
+        passType: 11
+      - keywords: _EMISSION
+        passType: 11
+  - first: {fileID: 211, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+  - first: {fileID: 108, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: ddef6adcf332e554490fe236af2210a1, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 19a86c9a96bc62241998d0ef7a0666a4, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 6dfed62cadabde948963cc78485c6604, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 82e3b66de261af34f873be5072fa39e9, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 5996f47dfbfd432eb3bc75fcbf7b0758, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 7c1f4a2d9b3e46f4ab08d5c61e740392, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 2213d438396ea214fb0e36170c8057f1, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 4f6081c4a08a4c89878596289707f3cf, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 9e26b4f70c8a51d4b83f5a71c6042de9, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: _NORMALMAP
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+      - keywords: _NORMALMAP
+        passType: 11
+  - first: {fileID: 4800000, guid: 0dc29cbdc9d530f4582d85c532530d23, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 481afd07630f7a0429fe8737e9fc7432, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 34db8737995cb4b4c83081a9955f9204, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 43c49b35b4344de4be40900247d2bb19, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 10720, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 10750, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: bba2ce0ce293e0a43b65fc1aa96545ba, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: ecfa6ccdb5c2dd84e96f9b612a5bbce1, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 99fa998bbbed3408aafa652b466d261d, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: _ALPHABLEND_ON
+        passType: 4
+      - keywords: _ALPHABLEND_ON _METALLICGLOSSMAP _NORMALMAP
+        passType: 4
+      - keywords: _METALLICGLOSSMAP _NORMALMAP
+        passType: 4
+      - keywords: _METALLICGLOSSMAP _NORMALMAP _OCCLUSION
+        passType: 4
+      - keywords: _TEXTURE_TRANSFORM
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHABLEND_ON
+        passType: 8
+      - keywords: _TEXTURE_TRANSFORM
+        passType: 8
+      - keywords: 
+        passType: 11
+      - keywords: _TEXTURE_TRANSFORM
+        passType: 11
+  - first: {fileID: 4800000, guid: 375ab21e8dc0a314fb034ccf3c410c8c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 2b0a819687dca6c4db5a00eb5f9b714e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 14e8c796aaeb3dd4fae1a5f314b11f6a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+      - keywords: 
+        passType: 13
+  - first: {fileID: 4800000, guid: 9b4c2bb81879f9747b568c1ab0daab09, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 16e3463d3c23de84b935831ba0742b13, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 697b5856e54eee542b337609fdca8457, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+  - first: {fileID: 4800000, guid: f4ded61cd6cb75f4b8bd9a0326b405a9, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 9ea3dab42d6cdbe4bb56c930b2dab32e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: 
+        passType: 13
+  - first: {fileID: 4800000, guid: 0bdc9f5321b81e14b8d7e81ca6421089, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 47e43e3db8f890f4a8ee2970b8357337, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: e0387e9ca8e772241ad49eaae31bf3ed, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: be34937f66a6f984080b1005a910546f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 839f243549dd41c3a321ac682bdad969, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 6985e2243849cc2409b129538d012c6a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e14c0fd6cf494c3daa5b24a5572c58d6, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 968334daa55f48fbb2cb3dde3b284b3b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 06b3fad14384cdb4fa37d8125becfe90, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: b4c6c159a1336b3429d02b857d9ff799, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 5d1737bb55054a69bbc61f6fe01bd92e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 7cf5c4b023e846b19f9a09f6c767283f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: ecfbc1fec284f0c45ae3460b828ccfa4, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: d84817edadcdebe44966f66f8b76d5a4, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: 
+        passType: 4
+  - first: {fileID: 4800000, guid: c36d2d6f3d134172b2e4f3f47405aff6, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: b31ec34066bbeba4b9a0100751db9811, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: ac4d6b54eb3816a4086a581c2426d51f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: d8b9bee37e73ea5409adb2dcb0d78261, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 1271700fa70a2c04b9c8381b6c10d144, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 0a72330e17cb42209dc245d42e3597f0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: d2b20b6a6c07ad143998b8ddc8d19e0a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: cce1d018528b45bcb90a6d8568a019eb, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 7a7714c74e7a45e9b286a1d95597e074, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 2e1c73a411ca4fdb979a9dbb0bdec864, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: de16070f59104daea9fc5c56febd9fae, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 3fe70f3b6db17d34facfd9ab1371733b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e89fbfefc1017a94fbc1674a80acf46f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 77322ea1b4e8b3140a6fffd88412f06f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 5201ebbb2c5b4be5b8f315eba66444b7, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 981037b215682024a82d697a73216900, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f2be8bf5e02724843b61eb0dce48d2e3, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 6ab6eff42e9b4df39759452200fe073b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 0eb7939e7f6b1304b8bec5fc9ca4543a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: c27cc1fa85f648cf884834cede4b588c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: a52910df33a74b848b97810fbd625c40, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f853aafa0bc764a138f572608a37a73c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: _ALPHABLEND_ON
+        passType: 4
+      - keywords: _NORMALMAP _OCCLUSION _SPECGLOSSMAP
+        passType: 4
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHABLEND_ON
+        passType: 8
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: cb42059e904040a2b741e45a1571f0b8, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 4
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 1d8f2d652af1468e8be701cc865f35f2, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: f478f30ed5fc48cea7b4662cd433e501, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0

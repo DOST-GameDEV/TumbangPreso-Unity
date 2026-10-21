@@ -1,0 +1,15 @@
+{
+  "sourceOverlay": "62afc5d6ab12051e13790316174e9087a11ea9eb",
+  "unpublishedDiagnostics": [
+    "OwnerUiPlayerReview.cs",
+    "OwnerUiPlayerReview.WholeMatches.cs"
+  ],
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\competition-retry1002\\TumbangPreso.exe",
+  "runtimeSha256": "a5cc4379c1ace99e77e8e1c902e2aace0e647ef8ee0a349c73924ac4f5b042be",
+  "frozenInputs": 1276,
+  "inputDrift": [],
+  "buildLines": [
+    "[Build] identity aecc0ee2cf6c03f9705249022454106620743eb4, tree dirty, protocol 129, StandaloneWindows64",
+    "[Build] SUCCEEDED. 2432 MB, 91s -> Builds/competition-retry1002/TumbangPreso.exe"
+  ]
+}

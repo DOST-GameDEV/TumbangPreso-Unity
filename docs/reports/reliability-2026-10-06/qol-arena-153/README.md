@@ -1,0 +1,17 @@
+# Adopt QoL Arena presentation and layout confinement
+
+Normal merge of QoLUpdates 0d47e76df preserves ASTRA bot current-ultimate decisions, replay near-plane clearance, Arena active-scene ownership and arrival view ownership. The incoming authored walking/idle crossfade, four-abreast reveal, reactive stadium cards/replays and stage-sized circular danger zones are adopted. Other maps retain the square default. Incoming protocol153 intentionally rejects old152 peers because their boundary rules disagree; no new packet was introduced in this merge.
+
+Combined Core suite: 731 passed, zero failed/skipped, raw receipt retained. Native Unity compilation, combined lifecycle/AI/replay checks, actual Arena opening visuals and new matching protocol153 peers remain pending. Historical152 network acceptance is not current153 acceptance. Private Auditor settings and voxel source are preserved.
+
+## Combined native validation and visual acceptance
+
+Unity22292 executed 28 PlayMode cases, all passed: current AI ultimates9, public arrival ownership4, Arena owner lifetime9 and new boundary integration6. The filter requested35 but the seven replay cases are Editor-only; raw exactCaseCount=false is retained and the mismatch qualified rather than presented as35 passed. Separate EditMode Unity25096 executes exactly7 replay-clearance cases, all pass. Both runs restore21180 inputs/216 native deltas with preferences, quality and profile intact.
+
+The first real-opening observer Unity22888 encountered the test framework's unsupported WaitForEndOfFrame in batchmode. Its exact task-owned process was interrupted after that explicit harness error, not an arbitrary timeout. No fresh test result was produced; interruption, log and terminal/restoration receipts are retained. Corrected Unity8756 uses a next-frame yield and explicit camera rendering, with no actor/renderer visibility overrides. It passes the actual lifecycle in38.55s: full24.05s opening, all beats in order, correct seat0 Dante taya, layout2 landing, all four bodies on supported marks, no residual clock/input hold or listener lowpass and first live round after3.99s. Interrupted and corrected runs restore21182 inputs/216 deltas each with preferences, quality and profile intact.
+
+**Historical pre-Late capture finding, superseded by the capture-phase investigation below.** Nine selected frames were inspected directly. The walk/tunnel lacks the intended cast and the early spotlight frame09 shows an empty marked area; the cast remains grouped near the map centre in reveal frames05/06. The taya screen correctly shows Dante and the live round frame14 shows a body and first-person hands. Fourteen camera-only PNGs are retained; they do not establish HUD overlay quality, full walking motion or every stage. The next Root investigation traces captured model roots during cold arrival. Do not reinterpret this run as complete Arena/spectator readiness.
+
+## Corrected capture-phase classification
+
+The empty walk/spotlight PNGs above came from manual rendering before ArenaIntro.LateUpdate staged the frame. Same-production after-LateUpdate control and the corrected reusable probe both show the cast and pass actual root/stand checks; the final wide shot shows all four. This retires the missing cold-model hypothesis without changing game staging. Raw earlier captures remain preserved. [Cause/control and corrected probe](../arena-intro-capture-phase/README.md). Full presentation/device and fresh153 peer acceptance remain open.

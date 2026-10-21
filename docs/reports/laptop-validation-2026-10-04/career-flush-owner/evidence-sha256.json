@@ -1,0 +1,18 @@
+{
+  "original-tests.xml": "1acb4ddfdfa1da72689d3abff10a7aec4eb46c13f56715030f3bba8fbab687c2",
+  "original-job-receipt.json": "a312066128b4659fd4e34c21871cc858d480271132c8b52f3ce396bbd1dd2a5d",
+  "original-qualified-source.json": "10dbf30698e8fc100cadc29d3412016a9a9094f7815934b027a13adf0ca31b14",
+  "original-post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+  "original-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "original-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-tests.xml": "fd76d79c36ed2f2eab3f0523e912609834efaf39c626e8cc57a774f54fddf7b4",
+  "candidate-job-receipt.json": "8c87678f45d2eeae21a426bb92e9c6f2a94b98b4ab15e772691d5d50f3a0836c",
+  "candidate-qualified-source.json": "a69bdc0a10db09434535529189df216b0183c24ed8d1e84a6e9aff66d39270ea",
+  "candidate-post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+  "candidate-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "original-CareerStore.fixture": "a91c5063b7ad567e90c25e6d006f7902153fea35b35352c069618be004821fe5",
+  "candidate-CareerStore.fixture": "345212cd430ef71be2573ad7298bf030cd48aad94278edf2d3a3bbc2aec3dd04",
+  "tested-CareerFlushOwnerLifetimeTests.fixture": "25a288db7a1c925ae7d23c04391eabff67506df3221d47b3643c4da05bc99ebe",
+  "tested-CareerFlushOwnerLifetimeTests.meta.fixture": "17088297cd185bf7f56698e4e1d38ee69e5f45dd2d1c1872a6bf13f225891034"
+}

@@ -1,0 +1,12 @@
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[NetReport] writing C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Logs\feedback-haunt-player-1001\lan\demo-clean-direct\client.txt after 60 s.
+[Net] connecting to 127.0.0.1:8910
+[NetBoot] join requested to 127.0.0.1:8910: connecting
+[Net] connected
+[Net] connected as seat 2
+[NetBoot] join admission: seat assigned
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=True | s0:-+live+act | s1:-+ai+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[NetAuto] READY submitted from a client peer.
+[FamiliarProbe] prepared local=1 host=False case=haunt
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] disconnected: [Disconnect Event][Client-1][TransportClientId-4294967296][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.

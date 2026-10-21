@@ -1,0 +1,592 @@
+{
+  "runtimeCommit": "043d1e3d19746a7035d766da07077918c6822ded",
+  "build": "Builds/presentation-v25/TumbangPreso.exe",
+  "buildSeconds": 62,
+  "reportedMB": 1156,
+  "protocol": 47,
+  "replaySchema": 10,
+  "nonWhitespaceInputDiff": false,
+  "artifacts": {
+    "TumbangPreso.exe": {
+      "bytes": 667648,
+      "sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59"
+    },
+    "TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll": {
+      "bytes": 2329088,
+      "sha256": "f9170b62a834fe34de8e93798a346939a6e6ceac13ba867886985c377e77b120"
+    },
+    "TumbangPreso_Data/Managed/TumbangPreso.Core.dll": {
+      "bytes": 161280,
+      "sha256": "6fee16a70563c73052c057c01aca58128d33d3227ad334e0da18544d2bd2e551"
+    }
+  },
+  "native": {
+    "replay-final-hero-v25": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "measured": {
+          "host": {
+            "rows": 434,
+            "epoch": [
+              639255783058798164
+            ],
+            "clip": [
+              1
+            ],
+            "halfSamples": 149,
+            "viewSamples": 83,
+            "duration": 9.996000000000002,
+            "clockDrift": 0.0,
+            "score1": 100
+          },
+          "scorer": {
+            "rows": 433,
+            "epoch": [
+              639255783058798164
+            ],
+            "clip": [
+              1
+            ],
+            "halfSamples": 150,
+            "viewSamples": 82,
+            "duration": 10.036999999999999,
+            "clockDrift": 0.0,
+            "score1": 100
+          },
+          "observer": {
+            "rows": 370,
+            "epoch": [
+              639255783058798164
+            ],
+            "clip": [
+              1
+            ],
+            "halfSamples": 145,
+            "viewSamples": 79,
+            "duration": 9.700000000000003,
+            "clockDrift": 0.0,
+            "score1": 100
+          }
+        },
+        "fault": "none",
+        "link": {
+          "delayMs": 75.0,
+          "jitterMs": 20.0,
+          "loss": 0.02,
+          "seed": 52009
+        },
+        "sharedInputUnchanged": true,
+        "scope": "Three real local Windows peers: physical contact retained in round1, bounded verified transport, canonical participant playback at round4, shared halftime clock and round5 return. Optional old44client refusal. Link settings and packet-count log specify simulated conditions; no WAN or freeform-play claim."
+      },
+      "linkEnd": "[link] forwarded=2892 dropped=72 (2.4%) of which outage=0"
+    },
+    "net-ultimate-clock-impaired-v5": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "measured": {
+          "host": {
+            "rows": 152,
+            "holdSeconds": 2.794999999999998,
+            "clockDrift": 0.0,
+            "frozenClock": 83.821,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          },
+          "scorer": {
+            "rows": 154,
+            "holdSeconds": 2.696200000000001,
+            "clockDrift": 0.0,
+            "frozenClock": 83.821,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          },
+          "observer": {
+            "rows": 153,
+            "holdSeconds": 2.687899999999999,
+            "clockDrift": 0.0,
+            "frozenClock": 83.821,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          }
+        },
+        "link": {
+          "delayMs": 75.0,
+          "jitterMs": 20.0,
+          "loss": 0.02,
+          "seed": 52009
+        },
+        "sharedInputUnchanged": true,
+        "scope": "Three real local Windows peers: remote ultimate request plus same-host-frame cohort, frozen round clock, costs, full warning, denied late cast, duplicate and stale phase. Link settings and packet-count log specify simulated conditions; no late-join or WAN claim."
+      },
+      "linkEnd": "[link] forwarded=2823 dropped=72 (2.5%) of which outage=0"
+    },
+    "net-ultimate-disconnect-v1": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "measured": {
+          "host": {
+            "rows": 151,
+            "holdSeconds": 2.7665000000000006,
+            "clockDrift": 0.0,
+            "frozenClock": 83.881,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          },
+          "scorer": {
+            "disconnectedDuringPhase": true,
+            "rows": 58
+          },
+          "observer": {
+            "rows": 152,
+            "holdSeconds": 2.683200000000003,
+            "clockDrift": 0.0,
+            "frozenClock": 83.881,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          }
+        },
+        "disconnectCaster": true,
+        "lateJoin": false,
+        "link": {
+          "delayMs": 75.0,
+          "jitterMs": 20.0,
+          "loss": 0.02,
+          "seed": 52009
+        },
+        "sharedInputUnchanged": true,
+        "scope": "Three original Windows peers with optional actual fourth join or accepted-caster departure; enabled fixture flags define coverage. Remote ultimate request, shared cohort/clock, costs, full warning, denied late cast and duplicate/stale phase. Link settings and packet-count log specify simulated conditions; no WAN claim."
+      },
+      "linkEnd": "[link] forwarded=2443 dropped=65 (2.6%) of which outage=0"
+    },
+    "net-ultimate-latejoin-v1": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "measured": {
+          "host": {
+            "rows": 349,
+            "holdSeconds": 2.7856000000000023,
+            "clockDrift": 0.0,
+            "frozenClock": 83.781,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          },
+          "scorer": {
+            "rows": 348,
+            "holdSeconds": 2.6843000000000004,
+            "clockDrift": 0.0,
+            "frozenClock": 83.781,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          },
+          "observer": {
+            "rows": 349,
+            "holdSeconds": 2.7117000000000004,
+            "clockDrift": 0.0,
+            "frozenClock": 83.781,
+            "cohort": 2,
+            "initialWarning": 1.55,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          },
+          "late": {
+            "rows": 216,
+            "phaseSamples": 0,
+            "liveUltimateSamples": 197
+          }
+        },
+        "disconnectCaster": false,
+        "lateJoin": true,
+        "link": {
+          "delayMs": 75.0,
+          "jitterMs": 20.0,
+          "loss": 0.02,
+          "seed": 52009
+        },
+        "sharedInputUnchanged": true,
+        "scope": "Three original Windows peers with optional actual fourth join or accepted-caster departure; enabled fixture flags define coverage. Remote ultimate request, shared cohort/clock, costs, full warning, denied late cast and duplicate/stale phase. Link settings and packet-count log specify simulated conditions; no WAN claim."
+      },
+      "linkEnd": "[link] forwarded=5559 dropped=127 (2.2%) of which outage=0"
+    },
+    "busy-final-native-v25": {
+      "result": {
+        "passed": true,
+        "error": "",
+        "stages": [
+          "Classic-owner-busy-native",
+          "Classic-spectator-busy-native",
+          "HeroStrike-owner-busy-native",
+          "HeroStrike-spectator-busy-native",
+          "Both modes: native owner and live spectator captures with all four participants and actual game audio"
+        ],
+        "frameWindows": []
+      },
+      "runner": {
+        "exitCode": 0,
+        "sharedInputUnchanged": true,
+        "profile": "presentation-validation-20260921",
+        "existingFilesRestored": 4,
+        "reviewPassed": true,
+        "error": ""
+      }
+    },
+    "hero-replays-final-v25": {
+      "result": {
+        "passed": true,
+        "error": "",
+        "stages": [
+          "real shared ultimate route, six controlled native actor profiles",
+          "sean accepted introduction, return and live effect",
+          "sean actual retained body/props/effects/weather/audio playback captured",
+          "phaister accepted introduction, return and live effect",
+          "phaister actual retained body/props/effects/weather/audio playback captured",
+          "zack accepted introduction, return and live effect",
+          "zack actual retained body/props/effects/weather/audio playback captured",
+          "nemu accepted introduction, return and live effect",
+          "nemu actual retained body/props/effects/weather/audio playback captured",
+          "dante accepted introduction, return and live effect",
+          "dante actual retained body/props/effects/weather/audio playback captured",
+          "cheska accepted introduction, return and live effect",
+          "cheska actual retained body/props/effects/weather/audio playback captured",
+          "six real shared introductions returned into live abilities with actual game audio"
+        ],
+        "frameWindows": []
+      },
+      "runner": {
+        "exitCode": 0,
+        "sharedInputUnchanged": true,
+        "profile": "presentation-validation-20260921",
+        "existingFilesRestored": 4,
+        "reviewPassed": true,
+        "error": ""
+      }
+    },
+    "busy-low-comfort-native-v24": {
+      "result": {
+        "passed": true,
+        "error": "",
+        "stages": [
+          "Classic-owner-busy-native-low-comfort",
+          "Classic-spectator-busy-native-low-comfort",
+          "HeroStrike-owner-busy-native-low-comfort",
+          "HeroStrike-spectator-busy-native-low-comfort",
+          "Both modes: native owner and live spectator captures with all four participants and actual game audio"
+        ],
+        "frameWindows": []
+      },
+      "runner": {
+        "exitCode": 0,
+        "sharedInputUnchanged": true,
+        "profile": "presentation-busy-low-comfort-20260921",
+        "existingFilesRestored": 0,
+        "reviewPassed": true,
+        "error": ""
+      }
+    },
+    "halftime-popup-native-v21": {
+      "result": {
+        "passed": true,
+        "error": "",
+        "stages": [
+          "real native halftime, both modes, recorded legal catch and full return",
+          "Classic native full-screen replay, standings, next taya and round5 return captured",
+          "HeroStrike native full-screen replay, standings, next taya and round5 return captured"
+        ],
+        "frameWindows": []
+      },
+      "runner": {
+        "exitCode": 0,
+        "sharedInputUnchanged": true,
+        "profile": "presentation-halftime-popup-20260921",
+        "existingFilesRestored": 0,
+        "reviewPassed": true,
+        "error": ""
+      }
+    }
+  },
+  "focusedTests": {
+    "final-regressions-v1": {
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "seconds": "19.2114561",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.ReplayRetentionTests.RealExchangeRetainsDetachedBodiesAndPropsAcrossTheRoundBoundary",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SharedUltimatePhaseTests.FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SharedUltimatePhaseTests.ReducedViewAndRoundCancellationReleaseOnlyTheirOwnClockHold",
+          "result": "Passed"
+        }
+      ]
+    }
+  },
+  "captures": {
+    "Logs\\hero-replays-final-v25\\cheska-live-ultimate-motion": {
+      "images": 200,
+      "captureSeconds": 7.469429,
+      "audioSeconds": 7.488,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.26257,
+      "rms": 0.04118,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\cheska-retained-exchange": {
+      "images": 100,
+      "captureSeconds": 4.386277,
+      "audioSeconds": 4.437333333333333,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.13528,
+      "rms": 0.02528,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\dante-live-ultimate-motion": {
+      "images": 205,
+      "captureSeconds": 7.479194,
+      "audioSeconds": 7.509333333333333,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.29297,
+      "rms": 0.05584,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\dante-retained-exchange": {
+      "images": 97,
+      "captureSeconds": 4.362686,
+      "audioSeconds": 4.437333333333333,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.30478,
+      "rms": 0.05771,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\nemu-live-ultimate-motion": {
+      "images": 199,
+      "captureSeconds": 7.49601,
+      "audioSeconds": 7.530666666666667,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.29785,
+      "rms": 0.04908,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\nemu-retained-exchange": {
+      "images": 90,
+      "captureSeconds": 4.387749,
+      "audioSeconds": 4.458666666666667,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.24185,
+      "rms": 0.0549,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\phaister-live-ultimate-motion": {
+      "images": 192,
+      "captureSeconds": 7.501697,
+      "audioSeconds": 7.530666666666667,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.29013,
+      "rms": 0.0525,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\phaister-retained-exchange": {
+      "images": 85,
+      "captureSeconds": 4.387333,
+      "audioSeconds": 4.458666666666667,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.26672,
+      "rms": 0.04266,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\sean-live-ultimate-motion": {
+      "images": 198,
+      "captureSeconds": 7.488566,
+      "audioSeconds": 7.509333333333333,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.35306,
+      "rms": 0.04799,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\sean-retained-exchange": {
+      "images": 100,
+      "captureSeconds": 4.363449,
+      "audioSeconds": 4.437333333333333,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.39392,
+      "rms": 0.04511,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\zack-live-ultimate-motion": {
+      "images": 203,
+      "captureSeconds": 7.492846999999999,
+      "audioSeconds": 7.530666666666667,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.27747,
+      "rms": 0.05039,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\hero-replays-final-v25\\zack-retained-exchange": {
+      "images": 98,
+      "captureSeconds": 4.360623,
+      "audioSeconds": 4.416,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.24695,
+      "rms": 0.04604,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-final-native-v25\\Classic-owner-busy-native": {
+      "images": 547,
+      "captureSeconds": 19.995248,
+      "audioSeconds": 20.032,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.25549,
+      "rms": 0.03138,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-final-native-v25\\Classic-spectator-busy-native": {
+      "images": 537,
+      "captureSeconds": 19.977908,
+      "audioSeconds": 20.010666666666665,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.26657,
+      "rms": 0.03191,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-final-native-v25\\HeroStrike-owner-busy-native": {
+      "images": 547,
+      "captureSeconds": 19.985722000000003,
+      "audioSeconds": 20.010666666666665,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.40521,
+      "rms": 0.032,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-final-native-v25\\HeroStrike-spectator-busy-native": {
+      "images": 555,
+      "captureSeconds": 19.906918,
+      "audioSeconds": 20.053333333333335,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.24933,
+      "rms": 0.03237,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-low-comfort-native-v24\\Classic-owner-busy-native-low-comfort": {
+      "images": 366,
+      "captureSeconds": 19.993467,
+      "audioSeconds": 20.053333333333335,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.33774,
+      "rms": 0.03423,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-low-comfort-native-v24\\Classic-spectator-busy-native-low-comfort": {
+      "images": 345,
+      "captureSeconds": 19.947249999999997,
+      "audioSeconds": 20.032,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.2334,
+      "rms": 0.03265,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-low-comfort-native-v24\\HeroStrike-owner-busy-native-low-comfort": {
+      "images": 343,
+      "captureSeconds": 20.001248,
+      "audioSeconds": 20.074666666666666,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.29324,
+      "rms": 0.03456,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    },
+    "Logs\\busy-low-comfort-native-v24\\HeroStrike-spectator-busy-native-low-comfort": {
+      "images": 334,
+      "captureSeconds": 19.982045999999997,
+      "audioSeconds": 20.032,
+      "rate": 48000,
+      "channels": 2,
+      "peak": 0.26624,
+      "rms": 0.03449,
+      "clippedSamples": 0,
+      "movie": "observer-ordinary-speed-with-audio.mp4"
+    }
+  }
+}

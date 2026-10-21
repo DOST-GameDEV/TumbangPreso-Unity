@@ -1,0 +1,50 @@
+{
+  "source_head": "f9f7ecdfd3b4545305c58eb978a63c3e6e06ddfc",
+  "snapshot": "Worker source read after original terminal and before highlight candidate overlay; original XML and guard receipt also retained.",
+  "files": {
+    "Assets/TumbangPreso/Runtime/Slipper.cs": {
+      "native_original_sha256": "3065a02083d47b8ea1fe51b2e1854b9660f5734ec6d3eae7931218378f5de74a",
+      "candidate_primary_sha256": "adb50ce5e405621e69275db25bfc8a453582db7981a9c3e2ef124be781620497",
+      "git_baseline_sha256": "d0463850842a36b72b54ebc30410eac360b6c2e0ec5fe85c807000e3a55ec2f8",
+      "native_matches_git_baseline_ignoring_line_endings": true
+    },
+    "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs": {
+      "native_original_sha256": "85d003f8922c23843653c7a99147f162746b6a982f66ff645164db94837d8d1f",
+      "candidate_primary_sha256": "6a4d09973f3fba8c5390e4ab817677878b5d59c6dff964ae0229be27dbc33cc1",
+      "git_baseline_sha256": "8e9b2a4e52a707d001b80308a8fb572c86c14965448986bdbbea9289415c3ad0",
+      "native_matches_git_baseline_ignoring_line_endings": true
+    },
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedSlipperHighlightTests.cs": {
+      "native_original_sha256": "d6923d60a0ebe9557c15ce6a55dcd8c6ade419d81be5e8a3896dbe2f6fb75346",
+      "candidate_primary_sha256": "d6923d60a0ebe9557c15ce6a55dcd8c6ade419d81be5e8a3896dbe2f6fb75346",
+      "unchanged_fixture": true
+    }
+  },
+  "native_original": {
+    "job_id": "5d12db518ee548c9bf82c518e8b3cab7",
+    "guardTerminal": true,
+    "preservationCompleted": true,
+    "leaseHeld": false,
+    "failures": [
+      {
+        "case": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper",
+        "failure": "  Current landed rim leaked onto historical InFlight pose.\n  Expected: 0.0d +/- 0.0010000000474974513d\n  But was:  0.85000002384185791d\n"
+      },
+      {
+        "case": "TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalHeldSlipper",
+        "failure": "  Current landed rim leaked onto historical Held pose.\n  Expected: 0.0d +/- 0.0010000000474974513d\n  But was:  0.85000002384185791d\n"
+      }
+    ],
+    "fixture_repair_count": 0
+  },
+  "first_candidate_snapshot_note": "candidate_primary_sha256 values describe the unexecuted first candidate before review found cross-state highlight persistence.",
+  "current_review_corrected_candidate": {
+    "control_added_after_original_two_cases": "HistoricalLooseRestoresInitialHighlightAfterHeldAndFlightFrames",
+    "source_frozen": true,
+    "files": {
+      "Assets/TumbangPreso/Runtime/Slipper.cs": "adb50ce5e405621e69275db25bfc8a453582db7981a9c3e2ef124be781620497",
+      "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs": "b265e92587ab96385f289602d193d6ad83f5eeb7fcc5931a99d1bb52d24f9271",
+      "Assets/TumbangPreso/Tests/PlayMode/RecordedSlipperHighlightTests.cs": "0ea9d6b91bf1c8c59f3974b88859aaed5c711e9bcb6d32468e795e9779215c11"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+wrote tump/Assets/TumbangPreso/Art/characters/persons/team-zack.glb  (899272 bytes)
+{
+  "file": "team-zack.glb",
+  "clip": "hero-zack-circuit",
+  "duration": 0.64,
+  "samples": 43,
+  "authored_height": 0.79,
+  "original_clips_preserved": 36,
+  "original_binary_preserved": true,
+  "punch": 0.18,
+  "deepest_dip": 0.0,
+  "deepest_dip_at": 0.0,
+  "grounded_beats": [
+    0,
+    0.08,
+    0.18,
+    0.36,
+    0.48,
+    0.64
+  ],
+  "root_y_range": [
+    0.0,
+    0.0
+  ],
+  "largest_plant": 0.0
+}
+Blender 4.3.2
+
+Blender quit

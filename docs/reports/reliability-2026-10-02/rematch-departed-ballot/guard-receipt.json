@@ -1,0 +1,35 @@
+{
+  "resourceInterventions": 0,
+  "notes": "Both own guarded jobs and their Unity processes terminal before shared slot release. Profile runner restored shared Editor input preferences. No resource watchdog was added; owned processes and free memory were monitored. Other six frozen candidates retained their hashes.",
+  "nativeCases": 4,
+  "runs": [
+    {
+      "snapshot": "profile-preservation-4cdb7f8e7f83",
+      "execSession": 62084,
+      "shellExitCode": 1,
+      "run": "baseline",
+      "unityLogExitCode": 2,
+      "restoredEditorInputPreferences": 1,
+      "total": 4,
+      "skipped": 0,
+      "restoredProfileFiles": 0,
+      "failed": 4,
+      "passed": 0
+    },
+    {
+      "snapshot": "profile-preservation-d5e8d3825b6b",
+      "execSession": 41933,
+      "shellExitCode": 0,
+      "run": "final",
+      "unityLogExitCode": 0,
+      "restoredEditorInputPreferences": 1,
+      "total": 4,
+      "skipped": 0,
+      "restoredProfileFiles": 0,
+      "failed": 0,
+      "passed": 4
+    }
+  ],
+  "toolingRetries": 0,
+  "profile": "rematch-map-owner1002"
+}

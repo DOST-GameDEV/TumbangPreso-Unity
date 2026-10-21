@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 00:21:29Z" end-time="2026-10-02 00:21:38Z" duration="8.9337777">
+  <test-suite type="TestSuite" id="2505" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1231" result="Failed" site="Child" start-time="2026-10-02 00:21:29Z" end-time="2026-10-02 00:21:38Z" duration="8.933778" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2499" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1231" result="Failed" site="Child" start-time="2026-10-02 00:21:29Z" end-time="2026-10-02 00:21:38Z" duration="8.911262" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7944" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2500" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1231" result="Failed" site="Child" start-time="2026-10-02 00:21:29Z" end-time="2026-10-02 00:21:38Z" duration="8.897660" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2501" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1231" result="Failed" site="Child" start-time="2026-10-02 00:21:29Z" end-time="2026-10-02 00:21:38Z" duration="8.884385" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1857" name="OwnerPlayerHubTests" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 00:21:29Z" end-time="2026-10-02 00:21:38Z" duration="8.847438" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1861" name="HistoryCompletionRespectsNavigationCloseAndNewerRequests" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests.HistoryCompletionRespectsNavigationCloseAndNewerRequests" methodname="HistoryCompletionRespectsNavigationCloseAndNewerRequests" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" seed="1125480279" result="Failed" start-time="2026-10-02 00:21:29Z" end-time="2026-10-02 00:21:38Z" duration="8.831211" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  navigated: wrong completion acceptance; navigated: selected tab changed; navigated: response changed visible history; closed: wrong completion acceptance; closed: response changed visible history; newer-request: wrong completion acceptance; newer-request: response changed visible history; different-page: wrong completion acceptance; different-page: response changed visible history
+  Expected: <empty>
+  But was:  < "navigated: wrong completion acceptance", "navigated: selected tab changed", "navigated: response changed visible history", "closed: wrong completion acceptance", "closed: response changed visible history", "newer-request: wrong completion acceptance", "newer-request: response changed visible history", "different-page: wrong completion acceptance", "different-page: response changed visible history" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPlayerHubTests+<HistoryCompletionRespectsNavigationCloseAndNewerRequests>d__6.MoveNext () [0x004b9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\OwnerPlayerHubTests.cs:194
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

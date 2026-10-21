@@ -1,0 +1,26 @@
+{
+  "sourceRef": "86849453c0e57dcbdcf98e6d11d8998b807ec351",
+  "profile": "pc-browser-lifetime-original1004",
+  "filter": "TumbangPreso.Tests.ServerQueryBrowserLifetimeTests",
+  "expectedCases": 5,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-nographics",
+    "-tp-profile",
+    "pc-browser-lifetime-original1004",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.ServerQueryBrowserLifetimeTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\browser-lifetime1004\\original-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\browser-lifetime1004\\original-native\\editor.log"
+  ],
+  "pid": 17764
+}

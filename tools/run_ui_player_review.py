@@ -32,12 +32,39 @@ def main():
     parser.add_argument('--exe',required=True)
     parser.add_argument('--out',required=True)
     parser.add_argument('--profile',required=True)
+    parser.add_argument('--graphics-api',choices=('d3d11','d3d12'),help='Select a Windows renderer for a bounded native diagnostic; default keeps the player choice.')
+    parser.add_argument('--review-hero',help='Limit new-feature captures to this roster hero id.')
+    parser.add_argument('--review-map',help='Start selected hero routes on this registered arena scene.')
+    parser.add_argument('--ordinary-skills',action='store_true',help='Capture selected default ordinary skills through accepted input and actual game audio.')
+    parser.add_argument('--skill-variants',action='store_true',help='Capture selected kit choices in both roles, including resource-preserving role refusals.')
+    parser.add_argument('--variant-observer',action='store_true',help='Observe the staged skill-variant route from another actual body instead of the caster.')
+    parser.add_argument('--result-end-only',action='store_true',help='Run supported one-round/30-second bot matches to check natural result cleanup in both modes.')
+    parser.add_argument('--whole-matches',action='store_true',help='Observe complete default eight-round Classic/Hero matches and sampled native screen/audio windows.')
     parser.add_argument('--frame-poll',action='store_true',help='Diagnostic control: search for results every frame instead of at 10 Hz.')
+    parser.add_argument('--performance-only',action='store_true',help='Measure boot, current menus and controlled first/repeat hero use with compact CSV timing evidence.')
+    parser.add_argument('--performance-binary',action='store_true',help='Opt into binary Profiler traces with a 512 MiB sampled stopping budget; requires --performance-only and --review-hero.')
     parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
     parser.add_argument('--recovery-only',action='store_true',help='Only qualify the menu-to-recovery input boundary.')
+    parser.add_argument('--halftime-only',action='store_true',help='Capture full native halftime replay, standings and return in both modes.')
+    parser.add_argument('--hero-replays',action='store_true',help='Add retained real-exchange replay captures to the selected live ultimate route.')
+    parser.add_argument('--live-ultimates-only',action='store_true',help='Capture selected actual shared ultimate phases and live execution in the native player.')
+    parser.add_argument('--review-caster-roster',action='store_true',help='Busy Hero review with Sean, Phaister, Nemu and Cheska and explicit staged full meters for overlap stress.')
+    parser.add_argument('--review-muted',action='store_true',help='Record busy native play with master audio muted for visual communication review.')
+    parser.add_argument('--review-low-comfort',action='store_true',help='Use Low, reduced motion, no shake/flash/announcer and 1080p in the busy native route.')
+    parser.add_argument('--busy-exchange-only',action='store_true',help='Record native owner and live spectator views with four active bots and game audio in both modes.')
     parser.add_argument('--gameplay-only',action='store_true',help='Exercise shipped keyboard/mouse verbs in both modes with staged legal targets.')
     parser.add_argument('--spectator-only',action='store_true',help='Exercise the real spectator entry, camera controls and manual replay.')
+    parser.add_argument('--accessibility-only',action='store_true',help='Exercise accessible settings, save/discard and enlarged native gameplay overlays.')
+    parser.add_argument('--match-chat-only',action='store_true',help='Check first-message content and layout at enlarged HUD size on the real native match canvas.')
+    parser.add_argument('--sean-visual-only',action='store_true',help='Qualify the refined fire debris through Sean selection and a real ultimate.')
+    parser.add_argument('--introduction-bodies-only',action='store_true',help='Render six authored introduction body studies in the native player; no shared phase claim.')
+    parser.add_argument('--introduction-scenes',action='store_true',help='Include the private scene effects in the introduction art route.')
+    parser.add_argument('--map-surfaces-only',action='store_true',help='Inspect all native map finishes, matched quality views and isolated detail-cost windows.')
     args=parser.parse_args()
+    if args.variant_observer and not args.skill_variants:
+        parser.error('--variant-observer requires --skill-variants')
+    if args.performance_binary and (not args.performance_only or not args.review_hero):
+        parser.error('--performance-binary requires --performance-only and --review-hero')
     exe=Path(args.exe).resolve();out=Path(args.out).resolve()
     if not exe.is_file() or not build_paths.is_internal_build(exe):
         raise SystemExit('Use an existing internal Builds/... player, never the Desktop build.')
@@ -53,18 +80,41 @@ def main():
             shutil.copy2(source,destination);manifest[str(relative)]=hashlib.sha256(source.read_bytes()).hexdigest()
     before=read_input_preferences()
     (out/'native-input-before.json').write_text(json.dumps(before,indent=2))
-    startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
+    startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=1 if args.performance_only else 0
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
+    if args.graphics_api:command.append('-force-'+args.graphics_api)
+    if args.review_hero:command+=['-tp-review-hero',args.review_hero]
+    if args.review_map:command+=['-tp-review-map',args.review_map]
+    if args.map_surfaces_only:command.append('-tp-map-surfaces-only')
+    if args.ordinary_skills or args.skill_variants:command.append('-tp-ordinary-skills')
+    if args.skill_variants:command.append('-tp-skill-variants')
+    if args.variant_observer:command.append('-tp-variant-observer')
+    if args.result_end_only:command+=['-tp-whole-matches','-tp-result-end']
+    if args.whole_matches:command.append('-tp-whole-matches')
     if args.frame_poll:command.append('-tp-review-frame-poll')
+    if args.performance_only:command.append('-tp-performance-only')
+    if args.performance_binary:command.append('-tp-performance-binary')
     if args.menu_only:command.append('-tp-menu-review-only')
     if args.recovery_only:command.append('-tp-recovery-review-only')
+    if args.halftime_only:command.append('-tp-halftime-only')
+    if args.hero_replays:command+=['-tp-live-ultimates-only','-tp-hero-replays']
+    elif args.live_ultimates_only:command.append('-tp-live-ultimates-only')
+    if args.review_caster_roster:command.append('-tp-review-caster-roster')
+    if args.review_muted:command.append('-tp-review-muted')
+    if args.review_low_comfort:command.append('-tp-review-low-comfort')
+    if args.busy_exchange_only:command.append('-tp-busy-exchange-only')
     if args.gameplay_only:command.append('-tp-gameplay-review-only')
+    if args.introduction_bodies_only:command.append('-tp-introduction-bodies-only')
+    if args.introduction_scenes:command.append('-tp-introduction-scenes')
     if args.spectator_only:command.append('-tp-spectator-review-only')
+    if args.accessibility_only:command.append('-tp-accessibility-review-only')
+    if args.match_chat_only:command.append('-tp-match-chat-review-only')
+    if args.sean_visual_only:command.append('-tp-sean-visual-review-only')
     process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup)
     print('Started internal UI review, process',process.pid,flush=True)
     try:
-        code=process.wait(timeout=420)
+        code=process.wait(timeout=2300 if args.whole_matches else 1800 if args.performance_only else 900 if args.skill_variants else 420)
     except subprocess.TimeoutExpired:
         process.terminate();process.wait(timeout=15);code=1
     finally:
@@ -74,6 +124,7 @@ def main():
     after=read_input_preferences();unchanged=before==after
     result_path=out/'result.json';result=json.loads(result_path.read_text()) if result_path.exists() else {'passed':False,'error':'No review receipt.'}
     receipt={'exitCode':code,'sharedInputUnchanged':unchanged,'profile':args.profile,'existingFilesRestored':len(manifest),
+             'graphicsApiRequested':args.graphics_api or 'default',
              'reviewPassed':result.get('passed',False),'error':result.get('error','')}
     (out/'runner-result.json').write_text(json.dumps(receipt,indent=2));print(json.dumps(receipt),flush=True)
     if not unchanged:print('Shared standalone input preferences changed; retained for investigation, not overwritten.',flush=True)

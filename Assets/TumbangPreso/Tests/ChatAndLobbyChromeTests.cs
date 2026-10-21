@@ -1,6 +1,10 @@
 using NUnit.Framework;
+using System.Reflection;
+using System.Text;
 using TumbangPreso.Net;
 using TumbangPreso.UI;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace TumbangPreso.Tests
 {
@@ -16,6 +20,71 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class ChatAndLobbyChromeTests
     {
+        [Test]
+        public void ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello()
+        {
+            var previousSession = NetSession.Instance;
+            var previousProvider = NetAuthority.Provider;
+            var root = new GameObject("Protocol approval contract");
+            root.SetActive(false);
+            try
+            {
+                var session = root.AddComponent<NetSession>();
+                Assert.IsNull(root.GetComponent<NetworkManager>(), "The inactive fixture ran session Awake.");
+                Assert.AreSame(previousSession, NetSession.Instance);
+                Assert.AreSame(previousProvider, NetAuthority.Provider);
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var helloType = typeof(NetSession).GetNestedType("ConnectionHello", BindingFlags.NonPublic);
+                var hello = System.Activator.CreateInstance(helloType, true);
+                helloType.GetField("Token").SetValue(hello, "protocol-contract-lan");
+                helloType.GetField("Name").SetValue(hello, "Protocol contract");
+                // Empty account/proof is the supported LAN identity, not an authentication bypass.
+                helloType.GetField("AccountPlayerId").SetValue(hello, "");
+                helloType.GetField("HandleProof").SetValue(hello, "");
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
+                var approve = typeof(NetSession).GetMethod("ApproveConnection", flags);
+                var cached = (System.Collections.IDictionary)typeof(NetSession).GetField("_helloByClient", flags).GetValue(session);
+                NetworkManager.ConnectionApprovalResponse Submit(int protocol)
+                {
+                    helloType.GetField("Protocol").SetValue(hello, protocol);
+                    var request = new NetworkManager.ConnectionApprovalRequest
+                    {
+                        ClientNetworkId = 42,
+                        Payload = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello)),
+                    };
+                    var response = new NetworkManager.ConnectionApprovalResponse { Pending = true, CreatePlayerObject = true };
+                    approve.Invoke(session, new object[] { request, response });
+                    return response;
+                }
+                var old = Submit(NetSession.ProtocolVersion - 1);
+                Assert.IsFalse(old.Approved);
+                Assert.AreEqual($"Game version mismatch (network protocol {NetSession.ProtocolVersion})", old.Reason);
+                Assert.IsFalse(old.Pending);
+                Assert.IsFalse(cached.Contains(42UL), "The refused hello was cached as admitted.");
+                helloType.GetField("SkillContract").SetValue(hello, new string('0', 64));
+                var mismatched = Submit(NetSession.ProtocolVersion);
+                Assert.IsFalse(mismatched.Approved);
+                StringAssert.Contains("Skill rules differ", mismatched.Reason);
+                Assert.IsFalse(cached.Contains(42UL));
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
+                var current = Submit(NetSession.ProtocolVersion);
+                Assert.IsTrue(current.Approved, "A valid current-protocol LAN hello failed the positive control.");
+                Assert.IsFalse(current.Pending);
+                Assert.IsFalse(current.CreatePlayerObject);
+                Assert.AreEqual("", current.Reason);
+                Assert.IsTrue(cached.Contains(42UL));
+                Assert.IsNull(root.GetComponent<NetworkManager>());
+                Assert.AreSame(previousSession, NetSession.Instance);
+                Assert.AreSame(previousProvider, NetAuthority.Provider);
+            }
+            finally
+            {
+                Object.DestroyImmediate(root);
+                Assert.AreSame(previousSession, NetSession.Instance);
+                Assert.AreSame(previousProvider, NetAuthority.Provider);
+            }
+        }
+
         // -------------------------------------------------------------------
         // THE HOST'S CLAMP ON A CHAT LINE
         //
@@ -55,6 +124,36 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(clamped.Contains("\r"), "a carriage return survived the clamp.");
             StringAssert.Contains("one", clamped);
             StringAssert.Contains("four", clamped);
+        }
+
+        [TestCase(118), TestCase(119)]
+        public void ChatLengthBoundaryKeepsWholeUnicodeCharacters(int prefixLength)
+        {
+            string prefix = new string('x', prefixLength);
+            string face = "\uD83D\uDE42";
+            string clamped = MatchRpc.ClampChatLine(prefix + face + "extra");
+            Assert.DoesNotThrow(() => new UTF8Encoding(false, true).GetByteCount(clamped),
+                "The length cap must not create an unmatched surrogate from a valid message.");
+            Assert.AreEqual(prefixLength == 118 ? prefix + face : prefix, clamped);
+            Assert.LessOrEqual(clamped.Length, MatchRpc.MaxChatLength);
+        }
+
+        [Test]
+        public void ChatFieldPreclippingCannotSendHalfAnEmoji()
+        {
+            var go = new GameObject("Chat boundary field", typeof(RectTransform));
+            try
+            {
+                var field = go.AddComponent<UnityEngine.UI.InputField>();
+                field.characterLimit = MatchRpc.MaxChatLength;
+                string prefix = new string('x', MatchRpc.MaxChatLength - 1);
+                field.text = prefix + "\uD83D\uDE42";
+                Assert.LessOrEqual(field.text.Length, MatchRpc.MaxChatLength);
+                string clamped = MatchRpc.ClampChatLine(field.text);
+                Assert.DoesNotThrow(() => new UTF8Encoding(false, true).GetByteCount(clamped));
+                Assert.AreEqual(prefix, clamped);
+            }
+            finally { Object.DestroyImmediate(go); }
         }
 
         [Test]
@@ -259,7 +358,49 @@ namespace TumbangPreso.Tests
             //33 adds the atomic IceBegin/IceItem/IceEnd world snapshot.
             //34 restores the joining world's held fire-charge state.
             //37 extends atomic ground snapshots beyond the two ice field types.
-            Assert.AreEqual(37, NetSession.ProtocolVersion,
+            //49 adds the seventh Hero roster index and bounded Rafi water snapshots.
+            //50 distinguishes an explicit peer leave from an unclassified disconnection.
+            //51 carries explicit edge-climb state and requests; mixed builds cannot decode it.
+            //52 derives the shared ultimate phase length from the accepted heroes' introductions.
+            //53 carries the Whirled and Chilled status clocks and the Carry message (ability overhaul).
+            //54 adds Paete: his roster index, the Rooted clock, SproutKnock, ReqBreakFree, ReqUproot.
+            //55 appends the struggle flag and plant-pull progress to SubmitMove and SyncUnit.
+            //56 appends Concussed, Feared, Disoriented, Vulnerable and the fear source to SyncUnit (ABILITY-2).
+            //57 lengthens Paete's introduction to 5.0 s, and with it the shared phase a cohort containing him derives.
+            //58 keeps Paete's guardian off the can and holds its prisoners 1.4 m out; every peer computes both.
+            //59 makes Paete's introduction 6.5 s, places his ultimate where he looks, and hands the grown guardian back at the catch.
+            //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
+            //61 adds Featherfall pose/intent episode keys and timed restoration, with the updated 5 s / 40 s rules.
+            //62 and 63 (the world-field header and the shared ability serializer) are recorded in NetSession.
+            //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
+            //65 adds phase-aware world freshness and ability-owned prepared-effect recovery.
+            //87 changes what the map indices mean: LagoonCove at 4 (the first Lagoon vaulted), Kanto at 5.
+            //88 and 89 (intermission votes, rematch identities) are recorded in NetSession; this line was not moved with them.
+            //90 adds companion bodies (seats 4 to 7, `CompanionSet`).
+            //91 names the scoring body in `Score` and lengthens Phaister's introduction to 6.4 s (VOODOO DOLL v7).
+            //92 makes Phaister's introduction 6.35 s (THE TWIST) and the doll 0.5 of a player's speed.
+            //93 makes Phaister's introduction 6.0 s (it ends on the doll's stare).
+            //94 to 158 are recorded in `NetSession` beside the number; this line was not moved with them, so this test had
+            //been red since 94. It is moved now, deliberately, with:
+            //159 combines companion-aware clips with QoL movement, map and performance contracts.
+            //160 appends POSSESSED to SyncUnit and replaces Kuro's Haunt with LET THEM IN (first named PRUSISYON).
+            //161 appends BLINDED to SyncUnit and Blindfold to the world snapshot (Nemu's DON'T LOOK replaces KURO: SIT!).
+            //162 makes Nemu's SKITTER host-confirmed and LOOKOUT a can stand-up (no wire change; the rules differ).
+            //165 replaces Nemu's KURO! self speed with DEAD WEIGHT, a slow on rivals near her ghosts (no wire change; the rules differ).
+            //166 makes Concussed 5 s, the Wiki's number (no wire change; the rules differ).
+            //167 resolves CONTINENTAL DRIFT at the cutscene's cut: the lane throws everyone, Concussed on landing (no wire change).
+            //168 makes CONTINENTAL DRIFT's cascade play's again, band by band, each band throwing (no wire change).
+            //169 keeps the cutscenes' moves at the hand-back: Amihan's thrown mid-air, Nemu's where they ran (no wire change).
+            //170 makes a Concussed throw wobble harder and often misfire far off its aim (no wire change; the rules differ).
+            //171 gives Dante MOUNTAIN FORM after CONTINENTAL DRIFT: 30 s of status immunity, x1.25 throws that stagger and knock
+            //back, and its time left in the timed-kit snapshot's passive fields.
+            //QoLUpdates' own 159 (not the 159 above; the two lines took the number separately) makes Amihan's Whirlwind hit a
+            //circle under one whirlwind (radius 2.1 m, born 2.4 m ahead), not a bowed band.
+            //172 is where QoLUpdates and ASTRAReworks meet: one number above both (159 and 171), with both rule sets in.
+            //172 removes Bayan Plaza and Sa Bubong from the indexed map pool.
+            //173 joins the two 172s (the branch merge and the smaller pool) and appends Payo to the indexed map pool.
+            //174 merges the player's room: rules carry per-seat bots and an empty seat with no bot has no body.
+            Assert.AreEqual(174, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

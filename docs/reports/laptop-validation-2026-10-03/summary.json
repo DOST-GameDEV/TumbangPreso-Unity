@@ -1,0 +1,82 @@
+{
+  "account-edit42": {
+    "cases": 42,
+    "passed": 42,
+    "failed": 0,
+    "start": "2026-10-03 04:21:18Z",
+    "end": "2026-10-03 04:21:20Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  },
+  "ui-original-failed16": {
+    "cases": 16,
+    "passed": 0,
+    "failed": 16,
+    "start": "2026-10-03 05:02:57Z",
+    "end": "2026-10-03 05:02:58Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  },
+  "ui-anchor-candidate16": {
+    "cases": 16,
+    "passed": 16,
+    "failed": 0,
+    "start": "2026-10-03 05:15:04Z",
+    "end": "2026-10-03 05:15:05Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  },
+  "matchmaking-original9": {
+    "cases": 9,
+    "passed": 3,
+    "failed": 6,
+    "start": "2026-10-03 05:03:46Z",
+    "end": "2026-10-03 05:03:46Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  },
+  "matchmaking-candidate9": {
+    "cases": 9,
+    "passed": 9,
+    "failed": 0,
+    "start": "2026-10-03 04:40:20Z",
+    "end": "2026-10-03 04:40:20Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  },
+  "hosted-original7": {
+    "cases": 7,
+    "passed": 4,
+    "failed": 3,
+    "start": "2026-10-03 05:14:32Z",
+    "end": "2026-10-03 05:14:32Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  },
+  "hosted-candidate7": {
+    "cases": 7,
+    "passed": 7,
+    "failed": 0,
+    "start": "2026-10-03 05:27:11Z",
+    "end": "2026-10-03 05:27:12Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  },
+  "ready-original3": {
+    "cases": 3,
+    "passed": 1,
+    "failed": 2,
+    "start": "2026-10-03 05:27:31Z",
+    "end": "2026-10-03 05:27:31Z",
+    "guardTerminal": true,
+    "preservation": true,
+    "leaseHeld": false
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "status": "source candidate validated; primary owns publication and actual release package acceptance",
+  "native": "52924/session15058 terminal0, PerformanceTimingCaptureTests1PASS",
+  "restoration": "session54344 terminal0, all21387 frozen inputs/preferences restored",
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.cs": "1a91bca52ac70d1e699f065c74c3330121461db05c21571a3dd6f5e2d068ec71",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "349198724659dca31489b91e32a208af3f118e165b68695e4db7433a28a644a3"
+  },
+  "nativeChecks": {
+    "nativeFreshCapture": true,
+    "nonBinaryMode": true,
+    "binaryNotRequested": true,
+    "profilerOff": true,
+    "oneFrameContext": true,
+    "buildFlagsExplicit": true,
+    "calibrationSignalHonest": true,
+    "windowSentinelHonest": true,
+    "frameSentinelHonest": true,
+    "noBinaryTrace": true
+  },
+  "managedChecks": {
+    "guardCases": 4,
+    "calibrationSignalCases": 5,
+    "realCounterAvailable": true,
+    "calibrationOnce": true,
+    "retainedBytes": 4096,
+    "calibrationBytes": 4120,
+    "observedManagedAllocationBytes": 8216,
+    "unavailableSentinel": -1,
+    "scope": "Actual source methods compiled in PowerShell .NET; Unity/player backend coverage is separate."
+  },
+  "limits": "Native receipt is EditorMono, not an ordinary focused release-player measurement. Actual WindowsNone calibration/buildflags/performance remain primary-owned."
+}

@@ -1,0 +1,17 @@
+{
+  "sourceBase": "54ff40a4",
+  "validationBase": "831368991a142fc2b4bfac1b86d6161402ce2d13",
+  "explicitOverlaySha256": {
+    "Assets/TumbangPreso/Runtime/GuidedTraining.cs": "48de13eb2a319be152e8cdefc63666cc3a2725565731eed61e94cf83593c01f3",
+    "Assets/TumbangPreso/Runtime/UI/GuidedTrainingHud.OwnerPainted.cs": "3acddfa01d5665d608db6ee2914ac3953b07006c8c0c1b0a07eb2d9651cba89d",
+    "Assets/TumbangPreso/Runtime/UI/InputGlyphs.cs": "a40ab67ae801f0959ba92d617130214d3e03a47fbb57ae8f7fc4b750e50330d9",
+    "Assets/TumbangPreso/Tests/DeadFeatureAudit.cs": "6851881e117c9ac81aa52937392c77ea7eff41c60e970d58badc2d325511a263",
+    "Assets/TumbangPreso/Tests/PlayMode/OwnerTrainingUiTests.cs": "e2bb0784564414146534ca34d0c18b90ce9cea855975b9db0cc710a61335d5eb",
+    "Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs": "b6490f06a367499e527e6ad99f6bb56aaccef92281b1a1db8146abee5eee174f",
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Mouse_Simple_Key_Dark.png": "e6ed0216ee6f91f55f1694acd0c2ad9073674d640393b51afd580e5cf39e1d1c",
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Mouse_Simple_Key_Dark.png.meta": "80b6711b8d2177002a1f912a47aaa26c20b18e9624059f8f5048338c90392ff7",
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Mouse_Simple_Key_Light.png": "e47a2b4993fa9994a2031aacfa33e00ec7d2fa2ce99a72d165ee7dab82b2c6cf",
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Mouse_Simple_Key_Light.png.meta": "e8ff4d7ad93e368859eaef6fed6d0eda02a085fdecf55bf878d5818c190814b0"
+  },
+  "notes": "Focused cases ran incrementally on owned overlays. Final integration adds published round-freeze paths."
+}

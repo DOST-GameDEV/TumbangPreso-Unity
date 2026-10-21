@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:30:59Z" end-time="2026-10-04 15:31:04Z" duration="5.0781267">
+  <test-suite type="TestSuite" id="3063" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1682" result="Passed" start-time="2026-10-04 15:30:59Z" end-time="2026-10-04 15:31:04Z" duration="5.078127" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3057" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1682" result="Passed" start-time="2026-10-04 15:30:59Z" end-time="2026-10-04 15:31:04Z" duration="5.047226" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22952" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3058" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1682" result="Passed" start-time="2026-10-04 15:30:59Z" end-time="2026-10-04 15:31:04Z" duration="5.027240" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3059" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1682" result="Passed" start-time="2026-10-04 15:30:59Z" end-time="2026-10-04 15:31:04Z" duration="5.006951" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <output><![CDATA[[NetIdentity] Signed in to UGS as I8nfRFOZ6r3613yn4YQoZAFFq8cn on profile pc-room-publication1004. Relay and Lobby are available.
+]]></output>
+          <test-suite type="TestFixture" id="2102" name="OnlineRoomPublicationProbe" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-04 15:30:59Z" end-time="2026-10-04 15:31:04Z" duration="4.868983" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="Ugs" />
+            </properties>
+            <test-case id="2103" name="RelayRoomPublishesTheCodeAndPublicListing" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayRoomPublishesTheCodeAndPublicListing" methodname="RelayRoomPublishesTheCodeAndPublicListing" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="135538213" result="Passed" start-time="2026-10-04 15:30:59Z" end-time="2026-10-04 15:31:04Z" duration="4.847982" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] relay hosting active, code 5VBN (relay KQFCBP)
+[RoomPublication] host=True status=relay hosting active, code 5VBN (relay KQFCBP)
+[Query] Created UGS Lobby LUSbnuDq3fFF8QAEZknz9F with JoinCode 5VBN
+[RoomPublication] code=5VBN id=LUSbnuDq3fFF8QAEZknz9F onlineLookup=1 public=True
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

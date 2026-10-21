@@ -1,0 +1,30 @@
+{
+  "job": {
+    "id": "b7d30a6467d2483aa40b43253388251c",
+    "ownerPid": 21748,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-02T03:13:07Z",
+    "kind": "cpu",
+    "memoryMb": 65536,
+    "reserveMb": 2048,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930\\library",
+    "profile": "concurrency-refusal-probe1002",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-02T03:13:07Z",
+  "status": "refused",
+  "exitCode": 1,
+  "reason": "A Unity process outside this pool is active",
+  "endedUtc": "2026-10-02T03:13:07Z",
+  "guardTerminal": true,
+  "preservationCompleted": false,
+  "availableMbAtEnd": 2462,
+  "leaseHeld": false
+}

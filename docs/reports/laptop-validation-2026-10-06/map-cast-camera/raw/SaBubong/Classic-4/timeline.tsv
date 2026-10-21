@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.001	89.000	Quiet	QuietEstablish	the street	1	0
+1.501	88.500	Quiet	QuietEstablish	the street	1	0
+2.002	88.000	Quiet	QuietEstablish	the street	1	0
+2.502	87.500	SlipperLanded	Objective	the can	2	0
+3.002	87.001	SlipperLanded	Objective	the can	2	0
+3.502	86.501	SlipperLanded	Objective	the can	2	0
+4.003	85.981	SlipperLanded	Objective	the can	2	0
+4.503	85.481	ThrowPrep	Objective	throw · MANG KANOR	2	0
+5.209	84.781	ThrowPrep	Objective	throw · MANG KANOR	2	0
+5.709	84.341	Tag	Defender	tag · ATE GIRLIE	3	0
+6.210	83.841	Tag	Defender	tag · ATE GIRLIE	3	0
+6.710	83.341	Tag	Defender	tag · ATE GIRLIE	3	0
+7.211	82.841	Tag	Defender	tag · ATE GIRLIE	3	0
+7.711	82.341	Tag	Defender	tag · ATE GIRLIE	3	0
+8.212	81.841	Downed	Recovery	down · MARING	3	0
+8.713	81.341	Downed	Recovery	down · MARING	3	0
+9.213	80.842	Downed	Recovery	down · MARING	3	0
+9.714	80.342	Downed	Recovery	down · MARING	3	0
+10.215	79.842	Downed	Recovery	down · MARING	3	0
+10.716	79.342	Downed	Recovery	down · OWNER UPDATED	4	0
+11.217	78.842	Downed	Recovery	down · OWNER UPDATED	4	0
+11.718	78.342	Downed	Recovery	down · OWNER UPDATED	4	0
+12.219	77.902	Tag	Defender	tag · ATE GIRLIE	5	0
+12.719	77.382	Tag	Defender	tag · ATE GIRLIE	5	0
+13.219	76.882	Tag	Defender	tag · ATE GIRLIE	5	0
+13.720	76.382	Tag	Defender	tag · ATE GIRLIE	5	0
+14.221	75.882	Tag	Defender	tag · ATE GIRLIE	5	0
+14.722	75.382	Tag	Defender	tag · ATE GIRLIE	5	0

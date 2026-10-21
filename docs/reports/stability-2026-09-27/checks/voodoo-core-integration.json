@@ -1,0 +1,99 @@
+{
+  "parents": [
+    "d178294c",
+    "b8c698f0"
+  ],
+  "compiler": "Core, Runtime, Editor, Tests and PlayTests exit0",
+  "coreTests": [
+    {
+      "testName": "TumbangPreso.Core.Tests.VoodooKitRulesTests.ThePassiveMovesTenPercentFromTheMarkedToHer",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001794"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.VoodooKitRulesTests.TheOwnersNumbersAreTheOnesInTheKit",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000679"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.VoodooKitRulesTests.AHexMarkArmsAtTenSecondsAndFraysAwayUnused",
+      "outcome": "Passed",
+      "duration": "00:00:00.0001084"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.VoodooKitRulesTests.TheReachStartsInsideNineMetresAndSnapsPastEleven",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000933"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.VoodooKitRulesTests.TheVoodooStatusesAreTheOwnersRows",
+      "outcome": "Passed",
+      "duration": "00:00:00.0023388"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.VoodooKitRulesTests.DrainedEmptiesTheBarAndHoldsItEmptyForTwoAndAHalfSeconds",
+      "outcome": "Passed",
+      "duration": "00:00:00.1561819"
+    }
+  ],
+  "nativeTests": "Not rerun; seven earlier native cases remain evidence only for their earlier candidate",
+  "incomingPathsPreserved": 14,
+  "files": [
+    {
+      "path": "ArtSource/phaister/doll-20260927/design-brief.md",
+      "sha256": "297D58B440E72CA2237B3EDB69F1A2B20D3266AADDCADE5ECBC6B47EC23646B3"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/palette.json",
+      "sha256": "C067281B6A6FD5E94116B96631244B74CC16DCB165F7F73267AA78E7E77A7ECC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/persons/phaister-doll.glb",
+      "sha256": "738A6191008B9D785886A1663F2219D2782DFA684FB50C82F8C76EB09FCEDEA6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/PhaisterDollReview.cs",
+      "sha256": "1E0739AD03875E6083BDE52AA352CDC8B3D3412E6AA24D77D8BC9492B81F548C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader",
+      "sha256": "D9A04E2C7AAD91DAD910D7755891E4D114244E4685156AE7778AE528DE5F2AF9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader.meta",
+      "sha256": "79048DD01E2CE6ACCE7BC7F4B26F0DDB07B9FF6025AED34E86C84F65CA8D0850"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterDollArt.cs",
+      "sha256": "059451875431F5DEDBF73EFB520D34916FD077CA3BC3270189D3357A7DEF19F5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterDollArt.cs.meta",
+      "sha256": "122ED83A953B70DBD8496BCCFB7CEDC12D1B83C3E8980BFE60904C2E4B5EF3B7"
+    },
+    {
+      "path": "Core.Tests/StatusAndAmihanRulesTests.cs",
+      "sha256": "E79EC53CD7A642D608F43F8712D0668D52E3F036D259333D588DD747352966ED"
+    },
+    {
+      "path": "Core.Tests/VoodooKitRulesTests.cs",
+      "sha256": "059008FFDB848B76F5D1C60842D3F5788D906D256FD78E0D600FE7E82102FE9C"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs",
+      "sha256": "C337C261C96252600D84A4877457F8965561ABEF3627B2117B5BDCBC0381A474"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/Stamina.cs",
+      "sha256": "FEAE9917A26C4901E8FD2FEB4A80972500989531644344AFC7651572B9BCC6C5"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/StatusRules.cs",
+      "sha256": "E87CA45261F13467FC73A1F5EC95F469C1D6865479C404CB1783377A3D0B3421"
+    },
+    {
+      "path": "tools/build_phaister_doll_voxel.py",
+      "sha256": "BA3EAF0E7A9FAD2F8727B5582E4F99B80377DAC538C33C7C7D73565D2AFDA50D"
+    }
+  ]
+}

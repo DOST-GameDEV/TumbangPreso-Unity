@@ -1,0 +1,26 @@
+{
+  "source": "25fab6cabe67ba6bacf956b6f9bcedf913c40a2a",
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\readiness129-refresh1002\\TumbangPreso.exe",
+  "runtimeSha256": "c838dd34d3037ae123bba4582075415c3c8b3e4f65411f3be569f8f0e95f34e0",
+  "inputChecks": {
+    "Assets/TumbangPreso/Runtime/Camera/RecordedFlightStroke.cs": true,
+    "Assets/TumbangPreso/Runtime/Map/SidewalkLife.cs": true,
+    "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": true,
+    "Assets/TumbangPreso/Runtime/Net/CloudCode.cs": true,
+    "Assets/TumbangPreso/Runtime/Net/Matchmaker.cs": true,
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": true,
+    "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity": true,
+    "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs": true,
+    "Assets/TumbangPreso/Tests/PlayMode/CloudRequestTimeoutTests.cs": true,
+    "Assets/TumbangPreso/Tests/PlayMode/CloudRequestTimeoutTests.cs.meta": true,
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedEffectsTests.cs": true,
+    "Assets/TumbangPreso/Tests/PlayMode/RemadeMapPreviewTests.cs": true,
+    "Assets/TumbangPreso/Tests/PlayMode/SessionRestartTests.cs": true,
+    "ProjectSettings/EditorBuildSettings.asset": true
+  },
+  "buildLines": [
+    "[Build] identity aecc0ee2cf6c03f9705249022454106620743eb4, tree dirty, protocol 129, StandaloneWindows64",
+    "[Build] SUCCEEDED. 2432 MB, 79s -> Builds/readiness129-refresh1002/TumbangPreso.exe"
+  ],
+  "scope": "Committed overlays in imported isolated checkout; critical/changed hashes, unchanged asset evidence reused, not pristine certification"
+}

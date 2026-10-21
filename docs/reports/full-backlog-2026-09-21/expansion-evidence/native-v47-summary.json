@@ -1,0 +1,35 @@
+{
+  "rafi-native-owner-v47": {
+    "exitCode": 0,
+    "sharedInputUnchanged": true,
+    "profile": "rafi-native-owner-v47",
+    "existingFilesRestored": 0,
+    "reviewPassed": true,
+    "error": ""
+  },
+  "rafi-native-observer-v47": {
+    "exitCode": 0,
+    "sharedInputUnchanged": true,
+    "profile": "rafi-native-observer-v47",
+    "existingFilesRestored": 0,
+    "reviewPassed": true,
+    "error": ""
+  },
+  "rafi-native-ultimate-v47": {
+    "exitCode": 1,
+    "sharedInputUnchanged": true,
+    "profile": "rafi-native-ultimate-v47",
+    "existingFilesRestored": 0,
+    "reviewPassed": false,
+    "error": "System.InvalidOperationException: rafi did not retain its live exchange: Ability visual track incomplete for this window\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<RetainedHeroView>d__17.MoveNext () [0x00082] in <6ecf6ca26436415f9d3c5b783124fb94>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__40.MoveNext () [0x00054] in <6ecf6ca26436415f9d3c5b783124fb94>:0 "
+  },
+  "lagoon-native-v47": {
+    "exitCode": 0,
+    "sharedInputUnchanged": true,
+    "profile": "lagoon-native-v47",
+    "existingFilesRestored": 0,
+    "reviewPassed": true,
+    "error": ""
+  },
+  "scope": "v47 staged native actions, input/resource outcomes, shared phase, quality views and walking. Replay failure preserved; coverage-list fix pending v48. Not human taste, balance, listening or peer proof."
+}

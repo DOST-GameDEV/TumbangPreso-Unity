@@ -14,8 +14,8 @@ namespace TumbangPreso.UI
             var ground = OwnerUiLayout.Rect(_root.transform, "PlayerRecordGround").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(ground.rectTransform); ground.color = new Color32(46, 62, 46, 255); ground.raycastTarget = false;
             var design = OwnerUiLayout.DesignArea(_root.transform, "HubComposition");
-            var back = OwnerTextAction.Create(design, "ClosePlayerHub", "BACK", Close, 52, 22, 170, 72, 30);
-            back.GetComponentInChildren<Text>().color = OwnerUiTheme.Current.Pale;
+            var back = OwnerTextAction.CreateBack(design, "ClosePlayerHub", Close, 52, 22);
+            back.GetComponentInChildren<OwnerUiGlyph>().color = OwnerUiTheme.Current.Pale;
             _ownerPortrait = OwnerPortraitArt.Create(design, "ProfilePortrait", "UI/portraits/bayan");
             OwnerUiLayout.Place(_ownerPortrait.rectTransform, 87, 114, 143, 143);
             _handle = OwnerUiLayout.Text(design, "AccountHandle", "", 55, OwnerUiLayout.TypeRole.Display);

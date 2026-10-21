@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:12Z" duration="1.0478381">
+  <test-suite type="TestSuite" id="3129" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1739" result="Passed" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:12Z" duration="1.047838" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3121" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1739" result="Passed" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:12Z" duration="1.010351" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21052" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3122" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1739" result="Passed" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:12Z" duration="0.987569" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3125" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1737" result="Passed" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:12Z" duration="0.962828" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1774" name="LateJoinRulesTests" fullname="TumbangPreso.PlayTests.LateJoinRulesTests" classname="TumbangPreso.PlayTests.LateJoinRulesTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:12Z" duration="0.869266" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1775" name="FirstArrivalReceivesRulesChosenBeforeJoining" fullname="TumbangPreso.PlayTests.LateJoinRulesTests.FirstArrivalReceivesRulesChosenBeforeJoining" methodname="FirstArrivalReceivesRulesChosenBeforeJoining" classname="TumbangPreso.PlayTests.LateJoinRulesTests" runstate="Runnable" seed="1031805303" result="Passed" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:12Z" duration="0.795656" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18701, join code E4BQ
+[Net] 1 connected, seat 0
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="1776" name="RepeatedIntroductionReceivesCurrentRulesWithoutChangingHostPreferences" fullname="TumbangPreso.PlayTests.LateJoinRulesTests.RepeatedIntroductionReceivesCurrentRulesWithoutChangingHostPreferences" methodname="RepeatedIntroductionReceivesCurrentRulesWithoutChangingHostPreferences" classname="TumbangPreso.PlayTests.LateJoinRulesTests" runstate="Runnable" seed="634927288" result="Passed" start-time="2026-10-04 23:33:12Z" end-time="2026-10-04 23:33:12Z" duration="0.052525" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18702, join code PDQS
+[Net] 1 connected, seat 0
+[Net] 1 connected, seat 0
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

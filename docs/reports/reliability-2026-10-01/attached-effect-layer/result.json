@@ -1,0 +1,10 @@
+{
+  "source": "e618fa7fefbf6093ba83c2a09001e577c9368ba3",
+  "protocol": 127,
+  "baseline": "corrected case fails host30/aura0 mismatch",
+  "final": "1/1 passed actual particles and scoped-camera pixel readback",
+  "inputCount": 771,
+  "inputDrift": [],
+  "toolingRepairs": 1,
+  "fixtureRepair": "StopEmittingAndClear before fixed random seed"
+}

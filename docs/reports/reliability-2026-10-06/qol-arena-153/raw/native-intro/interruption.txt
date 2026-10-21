@@ -1,0 +1,1 @@
+Stopped exact task-owned Unity22888 after native test framework reported unsupported WaitForEndOfFrame in batchmode. No current game failure classification. Parent preservation finally must finish before retry.

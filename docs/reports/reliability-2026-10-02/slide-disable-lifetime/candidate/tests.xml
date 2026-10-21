@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.3548862">
+  <test-suite type="TestSuite" id="2581" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1288" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.354886" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2575" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1288" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.332810" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11188" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2576" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1288" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.319223" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2577" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1288" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.306206" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2304" name="SlideDisableLifetimeTests" fullname="TumbangPreso.PlayTests.SlideDisableLifetimeTests" classname="TumbangPreso.PlayTests.SlideDisableLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.279179" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2306" name="AClockHoldPreservesRetrievalWhileTheBodyStaysEnabled" fullname="TumbangPreso.PlayTests.SlideDisableLifetimeTests.AClockHoldPreservesRetrievalWhileTheBodyStaysEnabled" methodname="AClockHoldPreservesRetrievalWhileTheBodyStaysEnabled" classname="TumbangPreso.PlayTests.SlideDisableLifetimeTests" runstate="Runnable" seed="1849109278" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.195131" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2305" name="BodyRetirementCannotResumeTheOldRetrievalButKeepsItsSpentCooldown" fullname="TumbangPreso.PlayTests.SlideDisableLifetimeTests.BodyRetirementCannotResumeTheOldRetrievalButKeepsItsSpentCooldown" methodname="BodyRetirementCannotResumeTheOldRetrievalButKeepsItsSpentCooldown" classname="TumbangPreso.PlayTests.SlideDisableLifetimeTests" runstate="Runnable" seed="48610729" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.034501" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2307" name="IdleBodyRetirementDoesNotCreateRetrievalOrCooldown" fullname="TumbangPreso.PlayTests.SlideDisableLifetimeTests.IdleBodyRetirementDoesNotCreateRetrievalOrCooldown" methodname="IdleBodyRetirementDoesNotCreateRetrievalOrCooldown" classname="TumbangPreso.PlayTests.SlideDisableLifetimeTests" runstate="Runnable" seed="1007103899" result="Passed" start-time="2026-10-02 10:23:46Z" end-time="2026-10-02 10:23:46Z" duration="0.034004" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

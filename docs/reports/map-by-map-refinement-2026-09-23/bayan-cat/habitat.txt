@@ -1,0 +1,4 @@
+BayanPlaza pusakal-ginger only: 108 supported nodes, 773 clear links.
+Paving seam investigation / Investigate at (9.50, 0.10, -8.50)
+North plaza watch / Watch at (9.50, 0.10, -1.50)
+South corner watch / Watch at (8.00, 0.10, -11.60)

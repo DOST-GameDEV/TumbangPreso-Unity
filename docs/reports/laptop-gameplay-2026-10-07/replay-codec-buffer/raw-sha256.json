@@ -1,0 +1,20 @@
+{
+  ".gitattributes": "85e48d232edc7b02f6cecf8fbbf905f3b126c467b594d8dd16c4f8fa283a8320",
+  "candidate28/classified-result.json": "2d9969d9a18a842b8b00530d1cbca27cd0f157ddea5c8e39f870e56f4defe6b2",
+  "candidate28/launch.json": "bea910c112b0c3ce734bb98e61d7bc624b1952aa13761f14ded673910f548b8f",
+  "candidate28/measurements.txt": "8cc8cb6493bbef02989c73d3e6d893b8b06286dab3a7c01b39337735e48f9891",
+  "candidate28/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "candidate28/tested-source.json": "1556741ac691cf8d8448475d42f949611749d830bb1929e47e26298b83d8ab66",
+  "candidate28/tests.xml": "6f3ce7a326e70616e556f1f1ba715205c4b8266106aca75aa9379b8aa9de8bc7",
+  "comparison.json": "6f876020f91877e85475d31f82548b634b4f4838d9704d5c4c32fc1551671ccd",
+  "native28-source/ArenaFxRecordedTests.cs": "5a7cddb067112c0be35a3f488e07d799a4a70dbde34a33e2ebe2fe60fb06f1ca",
+  "native28-source/LocalReplayEffectsCodec.cs": "7ac182bff1eea4dd4042fb81a3c71894a72b61831ceb6d3d26b0d4d6c317bae1",
+  "original27/classified-result.json": "834529ae07ea9c841bbd5affede57a2add36e34009605738a85ac9f64ee9cdcf",
+  "original27/launch.json": "13dc8ecb1b1e01d5f61342221a537efd112a0cb67be9182337daf2232f1bbf25",
+  "original27/measurements.txt": "3de7ce3544279bee2a29d0877e8f6bf218a548fb578afe04d9d29e8379efb1a0",
+  "original27/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "original27/tested-source.json": "6c54244b5b11982bd058f0f44271cae9fae34f975f50700c862c2ad584042cfd",
+  "original27/tests.xml": "1750e353247395bfc8b793176fab5d9f741631d6b6ca2f2b8fa7f6cc30d3a7c7",
+  "publication-source-proof.json": "46ce9183024257ea5deeeee307ca5034540d01bd7d3997c613eaff6ef525a200",
+  "README.md": "97e4149d57d25928f42e970c1cc73ca9802269239dca6858d1a650c13bd1e8ed"
+}

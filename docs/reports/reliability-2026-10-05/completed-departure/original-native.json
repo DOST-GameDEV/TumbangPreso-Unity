@@ -1,0 +1,37 @@
+{
+  "sourceRef": "eb12c2bf082b9c84ee63aa5c0a2cc9856c6c227c",
+  "pid": 21484,
+  "profile": "pc-end-orig1005",
+  "filter": "TumbangPreso.Tests.CompletedMatchDepartureTests",
+  "expectedCases": 4,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.CompletedMatchDepartureTests.APreStartLobbySnapshotIsNotACompletedMatch",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CompletedMatchDepartureTests.CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn(False)",
+      "result": "Failed",
+      "message": "  Expected: not String containing \"ABANDONED\"\n  But was:  \"HostLost: ABANDONED at round 4 of 8; this peer may no longer resolve anything\"\n"
+    },
+    {
+      "name": "TumbangPreso.Tests.CompletedMatchDepartureTests.CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn(True)",
+      "result": "Failed",
+      "message": "  Expected: not String containing \"ABANDONED\"\n  But was:  \"HostLost: ABANDONED at round 4 of 8; this peer may no longer resolve anything\"\n"
+    },
+    {
+      "name": "TumbangPreso.Tests.CompletedMatchDepartureTests.FreshLiveMatchAfterCompletionStillReportsRealHostLoss",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "terminal": true,
+  "protectedCount": 19286
+}

@@ -1,0 +1,9 @@
+{
+  "question": "Suppress only actual hidden practice barrier refusal and clear its cache, preserve visible barrier/sprint warning and real throw input",
+  "expected_cases": 1,
+  "fixture_repairs_used": 1,
+  "sha256": {
+    "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.Warnings.cs": "f18b27c7ef5f35ca3f8ba72b78ec92d60bd34eddefeb3ab464982715b60d95a4",
+    "Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs": "e7db1c1fae7ded139880d00e5f8ee11402bbfc7d6125105ae4bab0f0a8746e15"
+  }
+}

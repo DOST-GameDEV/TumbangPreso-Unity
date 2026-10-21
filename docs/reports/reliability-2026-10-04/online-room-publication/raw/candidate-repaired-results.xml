@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:16Z" duration="7.8295342">
+  <test-suite type="TestSuite" id="3067" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:16Z" duration="7.829534" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3061" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:16Z" duration="7.803058" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22920" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3062" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:16Z" duration="7.784656" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3063" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:16Z" duration="7.767526" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <output><![CDATA[[NetIdentity] Signed in to UGS as jmwg7FYDbKfJ7DL2AO3mcITTPCnO on profile pc-room-candidate1004. Relay and Lobby are available.
+]]></output>
+          <test-suite type="TestFixture" id="2102" name="OnlineRoomPublicationProbe" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:16Z" duration="7.657822" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="Ugs" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2107" name="DirectLanHostStillAdvertisesItsReachableAddress" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.DirectLanHostStillAdvertisesItsReachableAddress" methodname="DirectLanHostStillAdvertisesItsReachableAddress" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1011474230" result="Passed" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:09Z" duration="0.599095" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 49171, join code V6FR
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2104" name="FailedPublicationCannotLeaveASuccessfulGhostRoom" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.FailedPublicationCannotLeaveASuccessfulGhostRoom" methodname="FailedPublicationCannotLeaveASuccessfulGhostRoom" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="169802499" result="Passed" start-time="2026-10-04 15:46:09Z" end-time="2026-10-04 15:46:12Z" duration="2.368832" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[NetIdentity] Lobby creation failed while the session was live (signed in as jmwg7FYDbKfJ7DL2AO3mcITTPCnO). This is not a sign-in problem. [InvalidOperationException: Injected registration refusal]
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] Could not publish the online room. Injected registration refusal
+]]></output>
+            </test-case>
+            <test-case id="2105" name="OnlineHostWaitsUntilItsCodeIsPublished" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.OnlineHostWaitsUntilItsCodeIsPublished" methodname="OnlineHostWaitsUntilItsCodeIsPublished" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1666158680" result="Passed" start-time="2026-10-04 15:46:12Z" end-time="2026-10-04 15:46:13Z" duration="1.550899" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby owned-delayed-fixture with JoinCode 46B6
+[Net] relay hosting active, code 46B6 (relay GWWGR9)
+[Query] Deleted UGS Lobby owned-delayed-fixture
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2106" name="RelayHostDoesNotOfferAnUnreachableDirectLanAddress" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayHostDoesNotOfferAnUnreachableDirectLanAddress" methodname="RelayHostDoesNotOfferAnUnreachableDirectLanAddress" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1638139453" result="Failed" start-time="2026-10-04 15:46:13Z" end-time="2026-10-04 15:46:15Z" duration="1.542942" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Could not publish the online room. Object reference not set to an instance of an object
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlineRoomPublicationProbe+<RelayHostDoesNotOfferAnUnreachableDirectLanAddress>d__6.MoveNext () [0x00076] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OnlineRoomPublicationProbe.cs:111
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[NetIdentity] Lobby creation failed while the session was live (signed in as jmwg7FYDbKfJ7DL2AO3mcITTPCnO). This is not a sign-in problem. [NullReferenceException: Object reference not set to an instance of an object]
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] Could not publish the online room. Object reference not set to an instance of an object
+]]></output>
+            </test-case>
+            <test-case id="2103" name="RelayRoomPublishesTheCodeAndPublicListing" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayRoomPublishesTheCodeAndPublicListing" methodname="RelayRoomPublishesTheCodeAndPublicListing" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="812071136" result="Failed" start-time="2026-10-04 15:46:15Z" end-time="2026-10-04 15:46:16Z" duration="1.572804" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Could not publish the online room. Object reference not set to an instance of an object
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlineRoomPublicationProbe+<RelayRoomPublishesTheCodeAndPublicListing>d__3.MoveNext () [0x000f0] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OnlineRoomPublicationProbe.cs:37
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[NetIdentity] Lobby creation failed while the session was live (signed in as jmwg7FYDbKfJ7DL2AO3mcITTPCnO). This is not a sign-in problem. [NullReferenceException: Object reference not set to an instance of an object]
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] Could not publish the online room. Object reference not set to an instance of an object
+[RoomPublication] host=False status=Could not publish the online room. Object reference not set to an instance of an object
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

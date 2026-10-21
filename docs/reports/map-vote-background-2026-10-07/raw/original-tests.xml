@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 17:50:05Z" end-time="2026-10-06 17:50:08Z" duration="3.7986594">
+  <test-suite type="TestSuite" id="3411" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1958" result="Failed" site="Child" start-time="2026-10-06 17:50:05Z" end-time="2026-10-06 17:50:08Z" duration="3.798659" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3403" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1958" result="Failed" site="Child" start-time="2026-10-06 17:50:05Z" end-time="2026-10-06 17:50:08Z" duration="3.784184" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="56676" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3404" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1958" result="Failed" site="Child" start-time="2026-10-06 17:50:05Z" end-time="2026-10-06 17:50:08Z" duration="3.776254" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3407" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1956" result="Failed" site="Child" start-time="2026-10-06 17:50:05Z" end-time="2026-10-06 17:50:08Z" duration="3.768620" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2071" name="MapVoteBackgroundTests" fullname="TumbangPreso.PlayTests.MapVoteBackgroundTests" classname="TumbangPreso.PlayTests.MapVoteBackgroundTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-06 17:50:05Z" end-time="2026-10-06 17:50:08Z" duration="3.738679" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2072" name="BrowsingChangesTheBackgroundBeforeExplicitVoteConfirmation" fullname="TumbangPreso.PlayTests.MapVoteBackgroundTests.BrowsingChangesTheBackgroundBeforeExplicitVoteConfirmation" methodname="BrowsingChangesTheBackgroundBeforeExplicitVoteConfirmation" classname="TumbangPreso.PlayTests.MapVoteBackgroundTests" runstate="Runnable" seed="1537975607" result="Failed" start-time="2026-10-06 17:50:05Z" end-time="2026-10-06 17:50:08Z" duration="3.179109" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  MapVote-background-1920x1080/TumpHubCanvas/Screens/HubMapVote/MapChoices/VoteMap0/Body/Votes clips its content.
+  Expected: less than or equal to 41.0f
+  But was:  76.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x0094c] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:222
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code SNC7
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <92253452b64b4feb8cf8eacf5854dfad>:0 
+  at TumbangPreso.PlayTests.MapVoteBackgroundTests+<After>d__1.MoveNext () [0x00017] in <ee76f10b90bb419aab6233cb17e969f0>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="2073" name="EveryRecordedMapCanDecodeWithoutInstantiatingItsArena" fullname="TumbangPreso.PlayTests.MapVoteBackgroundTests.EveryRecordedMapCanDecodeWithoutInstantiatingItsArena" methodname="EveryRecordedMapCanDecodeWithoutInstantiatingItsArena" classname="TumbangPreso.PlayTests.MapVoteBackgroundTests" runstate="Runnable" seed="252577330" result="Passed" start-time="2026-10-06 17:50:08Z" end-time="2026-10-06 17:50:08Z" duration="0.545530" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

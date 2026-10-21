@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -61,8 +63,32 @@ namespace TumbangPreso.Visual
         private float _fadeFrom = 1.0f;
         private Color _tint = Color.white;
         private int _cell;
+        private static readonly Dictionary<string, Texture2D> Textures =
+            new Dictionary<string, Texture2D>(VfxSheets.All.Length);
 
         public float LifeSeconds => _life;
+
+        private static Texture2D LoadTexture(string resource)
+        {
+            if (Textures.TryGetValue(resource, out var texture) && texture != null) return texture;
+            texture = Resources.Load<Texture2D>(VfxSheets.Folder + resource);
+            if (texture != null) Textures[resource] = texture;
+            return texture;
+        }
+
+        public static IEnumerator Warmup()
+        {
+            foreach (var sheet in VfxSheets.All)
+            {
+                if (!Textures.TryGetValue(sheet.Resource, out var cached) || cached == null)
+                {
+                    var load = Resources.LoadAsync<Texture2D>(VfxSheets.Folder + sheet.Resource);
+                    yield return load;
+                    if (load.asset is Texture2D texture) Textures[sheet.Resource] = texture;
+                }
+                yield return null;
+            }
+        }
 
         /// <summary>
         /// Play a sheet once at <paramref name="position"/>, sized so the cell is
@@ -147,7 +173,7 @@ namespace TumbangPreso.Visual
                                          float height, Facing facing, Color? tint,
                                          Quaternion? rotation)
         {
-            var texture = Resources.Load<Texture2D>(VfxSheets.Folder + sheet.Resource);
+            var texture = LoadTexture(sheet.Resource);
             if (texture == null)
             {
                 // ⚠️ A WARNING AND A NULL, NEVER AN EXCEPTION. This is decoration on a code path

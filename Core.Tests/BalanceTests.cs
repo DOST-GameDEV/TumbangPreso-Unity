@@ -68,7 +68,7 @@ namespace TumbangPreso.Core.Tests
             // This one says what that formula currently WORKS OUT TO, which is the number a
             // player experiences. `ASprintBuysOneCrossingOfTheDangerZone` holds the invariant
             // that says whether it is the right number.
-            Assert.Equal(2.1f, elapsed, 1);
+            Assert.Equal(2.5f, elapsed, 1);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace TumbangPreso.Core.Tests
             // delay on top here was wrong, and Design.md's measured 2.97 s says so: the
             // pool over the rate is 3.0 s, and it lands there directly.
             Assert.Equal(Balance.StaminaMax / Balance.StaminaRegenRate, refill, 1);
-            Assert.Equal(3.0f, refill, 1);
+            Assert.Equal(2.5f, refill, 1);
         }
 
         /// <summary>
@@ -177,6 +177,34 @@ namespace TumbangPreso.Core.Tests
 
             Assert.Equal(1.0f, scale, 3);
             Assert.False(s.IsSprinting);
+        }
+
+        [Fact]
+        public void NetworkStaminaCorrectionPreservesAnExistingSprintBelowTheStartFloor()
+        {
+            var stamina = new Stamina();
+            stamina.Step(.1f, moving: true, sprintHeld: true);
+            stamina.ApplyNetworkSnapshot(Balance.StaminaSprintFloor - 1, 0, 0);
+            Assert.True(stamina.IsSprinting);
+            Assert.Equal(Balance.SprintScale, stamina.Step(.01f, moving: true, sprintHeld: true));
+            stamina.Step(.01f, moving: true, sprintHeld: false);
+            stamina.ApplyNetworkSnapshot(Balance.StaminaSprintFloor - 1, 0, 0);
+            Assert.Equal(1f, stamina.Step(.01f, moving: true, sprintHeld: true));
+            Assert.False(stamina.IsSprinting);
+        }
+
+        [Fact]
+        public void NetworkStaminaEmptyOrFatiguedCorrectionStillEndsSprint()
+        {
+            var stamina = new Stamina();
+            stamina.Step(.1f, moving: true, sprintHeld: true);
+            stamina.ApplyNetworkSnapshot(0, 0, Balance.FatigueTime);
+            Assert.False(stamina.IsSprinting); Assert.True(stamina.IsFatigued);
+            stamina.ApplyNetworkSnapshot(Balance.StaminaMax, 0, 0);
+            Assert.False(stamina.IsSprinting);
+            stamina.Step(.1f, moving: true, sprintHeld: true);
+            stamina.ApplyNetworkSnapshot(0, 0, 0);
+            Assert.False(stamina.IsSprinting);
         }
 
         /// <summary>
@@ -219,21 +247,11 @@ namespace TumbangPreso.Core.Tests
         /// radius and twice it is a design decision, and anything outside is an accident.
         /// </summary>
         [Fact]
-        public void ASprintBuysOneCrossingOfTheDangerZone()
+        public void OwnerSprintBarProvidesTwoPointFiveSecondsAtExplicitRunSpeed()
         {
-            float sprintSpeed = Balance.Speed * Balance.AttackerSpeedScale * Balance.SprintScale;
             float seconds = Balance.StaminaMax / Balance.StaminaDrainRate;
-            float distance = sprintSpeed * seconds;
-
-            Assert.True(distance >= Balance.ConfinementRadius,
-                $"a full bar sprints {distance:0.00} m and the danger zone is "
-                + $"{Balance.ConfinementRadius:0.00} m across. An attacker who can sprint in and "
-                + "not out cannot retrieve, which is the game.");
-
-            Assert.True(distance <= Balance.ConfinementRadius * 2.0f,
-                $"a full bar sprints {distance:0.00} m, which is more than twice the "
-                + $"{Balance.ConfinementRadius:0.00} m zone. A sprint that crosses it twice over "
-                + "makes the taya's positioning free to ignore.");
+            Assert.Equal(2.5f, seconds, 4);
+            Assert.Equal(12.5f, Balance.AttackerRunSpeed * seconds, 4);
         }
 
         /// <summary>
@@ -252,10 +270,10 @@ namespace TumbangPreso.Core.Tests
             Assert.True(s.Spend(Balance.ShoveStaminaCost));
             Assert.Equal(Balance.StaminaMax - Balance.ShoveStaminaCost, s.Current, 3);
 
-            Assert.Equal(Balance.DefenderSpeedScale, Stamina.RoleSpeedScale(isDefender: true), 3);
-            Assert.Equal(Balance.AttackerSpeedScale, Stamina.RoleSpeedScale(isDefender: false), 3);
+            Assert.Equal(Balance.DefenderWalkSpeed, Stamina.MovementSpeed(isDefender: true, running: false), 3);
+            Assert.Equal(Balance.AttackerWalkSpeed, Stamina.MovementSpeed(isDefender: false, running: false), 3);
 
-            Assert.True(Balance.DefenderSpeedScale > Balance.AttackerSpeedScale,
+            Assert.True(Balance.DefenderWalkSpeed > Balance.AttackerWalkSpeed,
                         "the taya must stay the faster role");
         }
 
@@ -271,24 +289,18 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️ 2.30 m, WHERE Design.md REPORTS 3.20 m AS MEASURED. ✅ RESOLVED 2026-08-15:
-        /// the CODE is right and the doc's measurement is stale. LUNGE_SPEED went
-        /// 12.247 → 7.746 in commit 071061c on explicit human instruction ("a short 1-meter
-        /// forward dash"), re-derived as sqrt(1.0 × 60) rather than nudged.
-        ///
-        /// ⚠️ AND THE REACH LOSS IS COMPENSATED, WHICH IS WHY THIS IS NOT A REGRESSION. The
-        /// same commit gave the taya a SECOND tag verb. The punch has 1.7 m of reach, no
-        /// charge and a 0.9 s cooldown, and covers exactly the close-range case the
-        /// shortened lunge gives up: the lunge is for somebody running PAST you, and its
-        /// charge is precisely long enough for somebody standing next to you to leave.
-        /// §2.6's measurement predates both changes. See docs/Design_Drift_Report.md.
+        /// The owner requested a longer lunge on 2026-09-30. Full travel is 3m;
+        /// the charge, sweep radius and active window keep their existing rules.
         /// </summary>
         [Fact]
         public void LungeReach_IsDashPlusSweepRadius()
         {
-            Assert.Equal(1.00f, Combat.LungeDash(), 2);
-            Assert.Equal(1.00f + Balance.LungeTagRadius, Combat.LungeReach(), 2);
-            Assert.Equal(2.30f, Combat.LungeReach(), 2);
+            Assert.Equal(3.50f, Combat.LungeDash(), 2);
+            Assert.Equal(3.50f + Balance.LungeTagRadius, Combat.LungeReach(), 2);
+            Assert.Equal(4.80f, Combat.LungeReach(), 2);
+            Assert.True(Balance.LungeSpeed / Balance.Friction <= Balance.LungeActiveTime);
+            Assert.Equal(3.5f * Balance.LungeMinPower * Balance.LungeMinPower,
+                Combat.LungeDash(0), 3);
         }
 
         /// <summary>
@@ -642,7 +654,7 @@ namespace TumbangPreso.Core.Tests
         {
             const float widestHazardFootprint = 2.6f;
 
-            float attackerSpeed = Balance.Speed * Balance.AttackerSpeedScale;
+            float attackerSpeed = Balance.AttackerWalkSpeed;
             float carried = attackerSpeed * Balance.TripGraceAfterGetUp;
 
             Assert.True(carried > widestHazardFootprint,
@@ -676,7 +688,7 @@ namespace TumbangPreso.Core.Tests
             Assert.True(ThrowRules.HitWindow(boyben) < ThrowRules.HitWindow(pasip));
         }
 
-        /// <summary>All five conditions, each refused on its own.</summary>
+        /// <summary>All six conditions, each refused on its own.</summary>
         [Fact]
         public void CanThrow_RefusesOnEachConditionIndependently()
         {
@@ -689,13 +701,7 @@ namespace TumbangPreso.Core.Tests
             c = ok; c.HoldingSlipper = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.ThrowCooldownLeft = 0.5f; Assert.False(ThrowRules.CanThrow(c));
 
-            // ⚠️⚠️ A DOWN LATA NO LONGER REFUSES THE THROW, AND THAT IS ASSERTED RATHER THAN
-            // MERELY NOT TESTED. Changed 2026-08-26 on 🧑's report that a charge held against a
-            // downed can could be neither spent nor cleared. The reason the clause existed,
-            // protecting the reset channel, is `ThrowCooldownLeft` on the line above and the
-            // lata's own protection shield, and a slipper that reaches a downed lata cannot
-            // score because `Lata.HostKnockDown` returns while it is not upright. If somebody
-            // re-adds the refusal, this line is what tells them it was deliberate.
+            // Can orientation does not prohibit throwing; restore decay is a carrier lock.
             c = ok; c.LataUpright = false; Assert.True(ThrowRules.CanThrow(c));
             c = ok; c.X = 0.0f; c.Z = 0.0f; Assert.False(ThrowRules.CanThrow(c)); // inside
         }
@@ -894,8 +900,9 @@ namespace TumbangPreso.Core.Tests
         public void AllPersonRows_AreDistinct()
         {
             Assert.Equal(12, Roster.ClassicPeople.Count);
-            Assert.Equal(6, Roster.HeroPeople.Count);
-            Assert.Equal(18, Roster.AllPeople.Count);
+            Assert.Equal(9, Roster.HeroPeople.Count);
+            Assert.Equal(21, Roster.AllPeople.Count);
+            Assert.DoesNotContain(Roster.ClassicPeople, person => person.Id == "rafi");
 
             var seenClassic = new HashSet<string>();
             foreach (var e in Roster.ClassicPeople)
@@ -1031,8 +1038,20 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️ THE TWO STAT TABLES COMPOSE AND NEITHER KNOWS ABOUT THE OTHER. A crocs thrown
-        /// at Bebang (grit 5) barely moves her; the same throw rocks Jun-Jun (grit 2).
+        /// ⚠️⚠️ THE TWO STAT TABLES COMPOSE AND NEITHER KNOWS ABOUT THE OTHER, BUT ONLY ONE
+        /// OF THEM IS STILL ALLOWED TO SPEAK IN CLASSIC. `Make Classic character choices
+        /// cosmetic` archived the person table there, so `Roster.PersonGritScale` answers a
+        /// flat 1.0 for every Classic index and a blocker's own grit divides nothing. The
+        /// equipment half is untouched, in both modes.
+        ///
+        /// ⚠️ THIS FIXTURE ASSERTED THE PRE-COSMETIC COMPOSITION AND HAD BEEN RED SINCE. The
+        /// published pair below is kept, because it is still exactly reproducible: it was
+        /// measured on Jun-Jun, whose tatag is 2, and 2 was never the reason for either
+        /// figure. Design.md's sentence names Bebang and Jun-Jun and its measurement then
+        /// says "on one blocker", which reads as one slipper on two people and is two
+        /// slippers on one: 5.618 / 4.238 is the IMPACT ratio 1.14 / 0.86 and no grit ratio.
+        /// What changed under it is the DIVISOR, which is 1.0 in Classic and the blocker's
+        /// own grit in Hero Strike, so the pair now reproduces against Classic exactly.
         /// </summary>
         [Fact]
         public void BodyBlock_ScalesByThrowerImpactAndDividesByBlockerGrit()
@@ -1042,18 +1061,44 @@ namespace TumbangPreso.Core.Tests
             int bebang = IndexOf(Roster.People, "bebang");
             int junjun = IndexOf(Roster.People, "jun_jun");
 
-            // ⚠️ THE PUBLISHED PAIR IS TWO SLIPPERS ON ONE BLOCKER, NOT ONE SLIPPER ON
-            // TWO. Design.md's sentence names Bebang and Jun-Jun and its measurement then
-            // says "on one blocker", which reads as the former and is the latter: the
-            // ratio 5.618 / 4.238 is exactly the IMPACT ratio 1.14 / 0.86, not any grit
-            // ratio. Both figures reproduce to three decimals against Jun-Jun.
-            Assert.Equal(4.238f, Combat.BlockKnockbackSpeed(pantulog, junjun), 2);
-            Assert.Equal(5.618f, Combat.BlockKnockbackSpeed(crocs, junjun), 2);
+            // The impact half, which is equipment and survives the archive. Both published
+            // figures are the neutral push scaled by the slipper alone.
+            Assert.Equal(3.941f, Combat.BlockKnockbackSpeed(pantulog, junjun), 2);
+            Assert.Equal(5.224f, Combat.BlockKnockbackSpeed(crocs, junjun), 2);
+            Assert.Equal(1.14f / 0.86f,
+                Combat.BlockKnockbackSpeed(crocs, junjun) / Combat.BlockKnockbackSpeed(pantulog, junjun), 3);
 
-            // And the sentence's own claim, which is a separate comparison: the same
-            // throw moves the heavy pick less than the fragile one.
-            Assert.True(Combat.BlockKnockbackSpeed(crocs, junjun) > Combat.BlockKnockbackSpeed(crocs, bebang),
-                "grit must reduce the push a block costs you");
+            // ⚠️ AND THE REVERSAL ITSELF, ASSERTED SO IT CANNOT COME BACK BY ACCIDENT.
+            // Bebang is grit 5 and Jun-Jun is grit 2 and in Classic they take the identical
+            // push, because the character a Classic player picks is a costume.
+            Assert.Equal(Combat.BlockKnockbackSpeed(crocs, bebang),
+                         Combat.BlockKnockbackSpeed(crocs, junjun), 6);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE SENTENCE'S OWN CLAIM STILL HOLDS, IN THE MODE THAT STILL HAS CHARACTERS.
+        /// Hero Strike keeps its own person table, so grit there divides the push a body
+        /// block costs the blocker exactly as `Design.md` describes. `CombatVerbs` passed
+        /// `victim.Mode` for the tag and the shove already; the body block did not, so this
+        /// comparison was 1.00 for every hero in the game until `Combat.BlockKnockbackSpeed`
+        /// grew the mode overload this asserts.
+        /// </summary>
+        [Fact]
+        public void BodyBlock_InHeroStrike_IsStillDividedByTheBlockersGrit()
+        {
+            int crocs = IndexOf(Roster.Slippers, "crocs");
+            int dante = IndexOf(Roster.HeroPeople, "dante"); // tatag 5, scale 1.14
+            int zack = IndexOf(Roster.HeroPeople, "zack");  // tatag 3, scale 1.00
+
+            float onDante = Combat.BlockKnockbackSpeed(crocs, dante, GameMode.HeroStrike);
+            float onZack = Combat.BlockKnockbackSpeed(crocs, zack, GameMode.HeroStrike);
+
+            Assert.True(onDante < onZack, "grit must reduce the push a block costs you");
+            Assert.Equal(onZack / 1.14f, onDante, 3);
+
+            // And Classic is the flat case beside it, off the same throw.
+            Assert.Equal(Combat.BlockKnockbackSpeed(crocs, dante, GameMode.Classic),
+                         Combat.BlockKnockbackSpeed(crocs, zack, GameMode.Classic), 6);
         }
 
         /// <summary>
@@ -1096,7 +1141,13 @@ namespace TumbangPreso.Core.Tests
             Assert.True(Balance.TayaCampWarningTime < Balance.TayaCampGracePeriod);
             Assert.True(Balance.TayaCampClearRadius > Balance.TayaCampRadius);
             Assert.True(Balance.SlipperUnretrievedWarningTime < Balance.SlipperUnretrievedGracePeriod);
-            Assert.Equal(10.0f, Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(15.0f, Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(7.5f, Balance.SlipperUnretrievedWarningTime);
+            Assert.Equal(2.5f, Balance.TayaCampWarningTime);
+            Assert.Equal(1.5f, Balance.TayaCampRadius);
+            Assert.Equal(2.0f, Balance.TayaCampClearRadius);
+            Assert.Equal(2.5f, Balance.FatigueTime);
+            Assert.Equal(1f, Balance.FatigueSpeedScale);
         }
 
         [Fact]
@@ -1123,35 +1174,13 @@ namespace TumbangPreso.Core.Tests
         /// cannot be satisfied by a bad constant the way a 10-second window could.
         /// </summary>
         [Fact]
-        public void HeroUltimateEconomy_FavorsObjectivesOverWaiting()
+        public void HeroUltimateEconomy_UsesOnlyTheOwnersThreeIncomeSources()
         {
-            // The risky act must out-earn the safe one. VISION.md § 0: throwing is safe and
-            // free, and the retrieval is the only moment you can be caught.
-            Assert.True(Balance.UltimateChargeOwnSlipperRetrieved > Balance.UltimateChargeLegalThrow);
-
-            // The objective must out-earn both.
-            Assert.True(Balance.UltimateChargeLataKnock > Balance.UltimateChargeOwnSlipperRetrieved);
-            Assert.True(Balance.UltimateChargeTag > Balance.UltimateChargeOwnSlipperRetrieved);
-
-            // Everything still pays something. A round where nobody throws is not a round.
-            Assert.True(Balance.UltimateChargeLegalThrow > 0.0f);
-
-            // ⚠️ THE WHOLE-ROUND BOUND, which is what the old assertion should have been. The
-            // cheapest ultimate in the game costs 10 (`NemuHeroKit.UltimateCost`). Nothing may
-            // accrue on a timer, so a player who acts zero times must earn zero, and there is no
-            // longer any per-second term for this to be written against. If a passive term is
-            // ever reintroduced, 90 seconds of it must not approach the cheapest cost.
-            //
-            // ⚠️⚠️ THE METER COUNTS EVENTS, AND THESE FOUR NUMBERS ARE THAT RULE. 🧑 2026-08-27:
-            // *"i want downing can and tayaing to only give one point for the charges"*. A
-            // knockdown was 25 and a tag 20 against costs of 90 to 150; both objectives are worth
-            // exactly one charge now and an ultimate costs 10 to 20. `Balance`'s ultimate economy
-            // block has the rescale, the one deliberate change inside it (the tag, from 0.8 of a
-            // knockdown to a full 1.0) and the pacing arithmetic.
-            Assert.Equal(0.15f, Balance.UltimateChargeLegalThrow);
-            Assert.Equal(0.5f, Balance.UltimateChargeOwnSlipperRetrieved);
-            Assert.Equal(1.0f, Balance.UltimateChargeLataKnock);
-            Assert.Equal(1.0f, Balance.UltimateChargeTag);
+            Assert.Equal(0f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(0f, Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(1f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(1f, Balance.UltimateChargeTag);
+            Assert.Equal(1f, Balance.UltimateChargeDefenderRound);
         }
 
         /// <summary>
@@ -1169,7 +1198,8 @@ namespace TumbangPreso.Core.Tests
 
             // A fraction of the objective, both of them, and in the order VISION.md § 0 sets.
             Assert.True(Balance.UltimateChargeOwnSlipperRetrieved < Balance.UltimateChargeLataKnock);
-            Assert.True(Balance.UltimateChargeLegalThrow < Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(0f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(0f, Balance.UltimateChargeOwnSlipperRetrieved);
         }
 
         [Fact]
@@ -1229,6 +1259,17 @@ namespace TumbangPreso.Core.Tests
         /// to its seat number makes a host in seat 1 collide with client id 1 and strands the
         /// gate one vote short forever.
         /// </summary>
+        [Fact]
+        public void Rematch_WithdrawnEligibilityCannotSatisfyTheRemainingQuorum()
+        {
+            var vote = new RematchVote(); vote.Add(0); vote.Add(1); vote.Add(2);
+            vote.RetainEligible(peer => peer == 0);
+            Assert.Equal(1, vote.Count); Assert.True(vote.HasVoted(0));
+            Assert.False(vote.HasVoted(1)); Assert.False(vote.Satisfied(2));
+            vote.RetainEligible(_ => false);
+            Assert.False(vote.Satisfied(0));
+        }
+
         [Fact]
         public void Rematch_HostPeerZeroNeverCollidesWithClientOne()
         {

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.5678787">
+  <test-suite type="TestSuite" id="1042" name="TUMP Bank Runtime1004" fullname="TUMP Bank Runtime1004" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.567879" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1036" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.561671" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21817" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1037" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.561122" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1038" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.560777" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1003" name="ViewmodelRosterFallbackTests" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.559724" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1009" name="CatalogFailuresKeepTheAuthoredIdentityFallback" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.556803" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1004" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;missing&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;missing&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="1815233877" result="Failed" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.298002" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.NullReferenceException: Object reference not set to an instance of an object
+  at TumbangPreso.CameraSystem.ViewmodelArms.MatchCharacter (TumbangPreso.CharacterMotor character) [0x00112] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs:1595 
+  at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests+<>c__DisplayClass8_0.<CatalogFailuresKeepTheAuthoredIdentityFallback>b__0 () [0x00000] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback (System.String hero, System.String state) [0x00183] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1005" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;rafi&quot;,&quot;missing&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;rafi&quot;,&quot;missing&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="737704652" result="Failed" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.084323" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.NullReferenceException: Object reference not set to an instance of an object
+  at TumbangPreso.CameraSystem.ViewmodelArms.MatchCharacter (TumbangPreso.CharacterMotor character) [0x00112] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs:1595 
+  at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests+<>c__DisplayClass8_0.<CatalogFailuresKeepTheAuthoredIdentityFallback>b__0 () [0x00000] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback (System.String hero, System.String state) [0x00183] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1006" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-list&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-list&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="1063955954" result="Failed" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.052142" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.NullReferenceException: Object reference not set to an instance of an object
+  at TumbangPreso.CameraSystem.ViewmodelArms.MatchCharacter (TumbangPreso.CharacterMotor character) [0x00112] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs:1595 
+  at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests+<>c__DisplayClass8_0.<CatalogFailuresKeepTheAuthoredIdentityFallback>b__0 () [0x00000] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback (System.String hero, System.String state) [0x00183] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1007" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-row&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-row&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="1587737881" result="Failed" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.051571" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.NullReferenceException: Object reference not set to an instance of an object
+  at TumbangPreso.CameraSystem.ViewmodelArms.MatchCharacter (TumbangPreso.CharacterMotor character) [0x0012e] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs:1596 
+  at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests+<>c__DisplayClass8_0.<CatalogFailuresKeepTheAuthoredIdentityFallback>b__0 () [0x00000] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback (System.String hero, System.String state) [0x00183] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ViewmodelRosterFallbackTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1008" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;matched-control&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;matched-control&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="320241216" result="Passed" start-time="2026-10-04 05:21:54Z" end-time="2026-10-04 05:21:54Z" duration="0.061310" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Bank Runtime1004/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

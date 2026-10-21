@@ -1,0 +1,7 @@
+{
+  "source": "built-in image generation",
+  "date": "2026-09-24",
+  "sha256": "16146a4f5c8c0966d7f48228dd7a7187f093455daf4e097cf9ca7890b3746ac5",
+  "use": "reference only, not shipped texture",
+  "critique": "Keep grouped canopies, open sand crescent, selected rock edges and grounded mangrove roots. Reject dense individual roots/leaves, dramatic water detail, new mountain geography and photoreal shading."
+}

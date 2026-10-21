@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.2459264">
+  <test-suite type="TestSuite" id="2593" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.245926" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2587" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.229757" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24364" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2588" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.223187" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2589" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.216089" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1538" name="InputFocusLifetimeTests" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.189141" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1540" name="LosingFocusRetiresBufferedRecoveryInput" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.LosingFocusRetiresBufferedRecoveryInput" methodname="LosingFocusRetiresBufferedRecoveryInput" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="1425642809" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.101855" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1539" name="LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" methodname="LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="228713497" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.035874" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1541" name="OrdinaryReleaseKeepsTheConfiguredSprintToggle" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.OrdinaryReleaseKeepsTheConfiguredSprintToggle" methodname="OrdinaryReleaseKeepsTheConfiguredSprintToggle" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="1502029810" result="Passed" start-time="2026-10-02 12:05:07Z" end-time="2026-10-02 12:05:07Z" duration="0.035956" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

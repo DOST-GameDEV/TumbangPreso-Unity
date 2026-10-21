@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 17:16:58Z" end-time="2026-10-08 17:17:34Z" duration="36.4182993">
+  <test-suite type="TestSuite" id="3666" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2156" result="Failed" site="Child" start-time="2026-10-08 17:16:58Z" end-time="2026-10-08 17:17:34Z" duration="36.418299" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3658" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2156" result="Failed" site="Child" start-time="2026-10-08 17:16:58Z" end-time="2026-10-08 17:17:34Z" duration="36.384145" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="66012" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3659" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2156" result="Failed" site="Child" start-time="2026-10-08 17:16:58Z" end-time="2026-10-08 17:17:34Z" duration="36.358834" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3662" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2154" result="Failed" site="Child" start-time="2026-10-08 17:16:58Z" end-time="2026-10-08 17:17:34Z" duration="36.332976" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2862" name="RecordedCompanionTests" fullname="TumbangPreso.PlayTests.RecordedCompanionTests" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-08 17:16:58Z" end-time="2026-10-08 17:17:34Z" duration="36.274675" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2863" name="ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" fullname="TumbangPreso.PlayTests.RecordedCompanionTests.ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" methodname="ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" seed="505459065" result="Failed" start-time="2026-10-08 17:16:58Z" end-time="2026-10-08 17:17:34Z" duration="36.258795" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual companion slipper must be a valid recorded object.
+  Expected: No Exception to be thrown
+  But was:  <System.IO.InvalidDataException: Invalid recorded object
+  at TumbangPreso.CameraSystem.RecordedMatchClip.Encode (System.Boolean local) [0x00610] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Runtime\Camera\RecordedMatchClip.cs:94 
+  at TumbangPreso.CameraSystem.RecordedMatchClip.EncodeLocal () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Runtime\Camera\RecordedMatchClip.cs:40 
+  at TumbangPreso.PlayTests.RecordedCompanionTests+<>c__DisplayClass2_0.<ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\RecordedCompanionTests.cs:42 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedCompanionTests+<ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies>d__2.MoveNext () [0x001ee] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\RecordedCompanionTests.cs:42
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 23:37:53Z" end-time="2026-10-04 23:39:33Z" duration="100.4924865">
+  <test-suite type="TestSuite" id="3129" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1739" result="Passed" start-time="2026-10-04 23:37:53Z" end-time="2026-10-04 23:39:33Z" duration="100.492487" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3121" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1739" result="Passed" start-time="2026-10-04 23:37:53Z" end-time="2026-10-04 23:39:33Z" duration="100.483700" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="177769" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3122" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1739" result="Passed" start-time="2026-10-04 23:37:53Z" end-time="2026-10-04 23:39:33Z" duration="100.481286" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3125" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1737" result="Passed" start-time="2026-10-04 23:37:53Z" end-time="2026-10-04 23:39:33Z" duration="100.478995" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1235" name="CarryTests" fullname="TumbangPreso.PlayTests.CarryTests" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 23:37:53Z" end-time="2026-10-04 23:39:33Z" duration="100.063276" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1238" name="TheViewmodelCarriesItsOwnSlipperInFirstPerson" fullname="TumbangPreso.PlayTests.CarryTests.TheViewmodelCarriesItsOwnSlipperInFirstPerson" methodname="TheViewmodelCarriesItsOwnSlipperInFirstPerson" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1828689445" result="Passed" start-time="2026-10-04 23:37:53Z" end-time="2026-10-04 23:39:33Z" duration="100.050292" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1774" name="LateJoinRulesTests" fullname="TumbangPreso.PlayTests.LateJoinRulesTests" classname="TumbangPreso.PlayTests.LateJoinRulesTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 23:39:33Z" end-time="2026-10-04 23:39:33Z" duration="0.370726" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1775" name="FirstArrivalReceivesRulesChosenBeforeJoining" fullname="TumbangPreso.PlayTests.LateJoinRulesTests.FirstArrivalReceivesRulesChosenBeforeJoining" methodname="FirstArrivalReceivesRulesChosenBeforeJoining" classname="TumbangPreso.PlayTests.LateJoinRulesTests" runstate="Runnable" seed="1319256917" result="Passed" start-time="2026-10-04 23:39:33Z" end-time="2026-10-04 23:39:33Z" duration="0.316147" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18701, join code 4K7V
+[Net] 1 connected, seat 0
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="1776" name="RepeatedIntroductionReceivesCurrentRulesWithoutChangingHostPreferences" fullname="TumbangPreso.PlayTests.LateJoinRulesTests.RepeatedIntroductionReceivesCurrentRulesWithoutChangingHostPreferences" methodname="RepeatedIntroductionReceivesCurrentRulesWithoutChangingHostPreferences" classname="TumbangPreso.PlayTests.LateJoinRulesTests" runstate="Runnable" seed="973488579" result="Passed" start-time="2026-10-04 23:39:33Z" end-time="2026-10-04 23:39:33Z" duration="0.053056" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18702, join code AJ4T
+[Net] 1 connected, seat 0
+[Net] 1 connected, seat 0
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

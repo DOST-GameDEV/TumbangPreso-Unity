@@ -1,0 +1,13 @@
+[NetIdentity] Signed in to UGS as Ly4Co6EF7BNOzmQ1HcdJVu3fY0I7 on profile pc-room-failure-original1004. Relay and Lobby are available.
+[Net] signing in to online services...
+[Net] allocating relay server...
+[Net] connected as seat 1
+[Net] relay hosting active, code 5CGN (relay KCQJ69)
+[NetIdentity] Lobby creation failed while the session was live (signed in as Ly4Co6EF7BNOzmQ1HcdJVu3fY0I7). This is not a sign-in problem. [InvalidOperationException: Injected registration refusal]
+[Net] offline
+[Net] signing in to online services...
+[Net] allocating relay server...
+[Net] connected as seat 1
+[Net] relay hosting active, code RQTA (relay MWMKH6)
+[Query] Created UGS Lobby  with JoinCode RQTA
+[Net] offline

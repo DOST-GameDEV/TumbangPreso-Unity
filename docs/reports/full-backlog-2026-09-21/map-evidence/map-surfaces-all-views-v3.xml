@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 16:23:19Z" end-time="2026-09-21 16:24:30Z" duration="70.309774">
+  <test-suite type="TestSuite" id="1672" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="505" result="Passed" start-time="2026-09-21 16:23:19Z" end-time="2026-09-21 16:24:30Z" duration="70.309774" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1666" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="505" result="Passed" start-time="2026-09-21 16:23:19Z" end-time="2026-09-21 16:24:30Z" duration="70.294347" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26268" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1667" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="505" result="Passed" start-time="2026-09-21 16:23:19Z" end-time="2026-09-21 16:24:30Z" duration="70.288837" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1668" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="505" result="Passed" start-time="2026-09-21 16:23:19Z" end-time="2026-09-21 16:24:30Z" duration="70.283576" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1248" name="MapExperienceProbe" fullname="TumbangPreso.PlayTests.MapExperienceProbe" classname="TumbangPreso.PlayTests.MapExperienceProbe" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-21 16:23:19Z" end-time="2026-09-21 16:24:30Z" duration="70.261269" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1249" name="LegalFirstPersonViewsAtMatchedQualityProfiles" fullname="TumbangPreso.PlayTests.MapExperienceProbe.LegalFirstPersonViewsAtMatchedQualityProfiles" methodname="LegalFirstPersonViewsAtMatchedQualityProfiles" classname="TumbangPreso.PlayTests.MapExperienceProbe" runstate="Runnable" seed="206788209" result="Passed" start-time="2026-09-21 16:23:19Z" end-time="2026-09-21 16:24:30Z" duration="70.242125" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 248 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-Classic-with-hud.png
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 592 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-with-hud.png
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2107 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-with-hud.png
+[Env] repainted 0 of 203 renderers, 0 with a roof variant.
+[NearFade] 2205 occluder nodes matched, 32 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-Classic-with-hud.png
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 248 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/Eskinita-HeroStrike-with-hud.png
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 592 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/BayanPlaza-HeroStrike-with-hud.png
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2107 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/IlalimNgTulay-HeroStrike-with-hud.png
+[Env] repainted 0 of 203 renderers, 0 with a roof variant.
+[NearFade] 2205 occluder nodes matched, 32 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-0-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-0-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-0-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-0-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-0-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-0-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-1-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-1-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-1-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-1-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-1-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-1-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-2-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-2-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-2-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-2-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-2-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-2-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-3-court-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-3-court-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-3-court-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-3-edge-Low.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-3-edge-Balanced.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-3-edge-High.png
+[Play] wrote Logs/map-surfaces-all-views-v3/SaBubong-HeroStrike-with-hud.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,10 @@
+{
+  "base": "af6c2144fd75530ab1bd7eae9e762068bd81ab60",
+  "filter": "TumbangPreso.PlayTests.HomeModeCardReadabilityTests",
+  "expected": 2,
+  "candidateNormalizedLF": "f5e8f7ad921f3833105eaa294ac7a396d42f5ce1c3dcf620c50954ac5ce5deb8",
+  "candidateRawCRLFHashPrevious": "07bbf99941f3606ba11acadce51052f1880e737caf2c9144f05e5e01da1b60d6",
+  "fixtureLF": "b1075acdb660c1db85c2043de44f53395bb12242ceda6790779a8c08a47c29ed",
+  "publicationOwner": "Desktop",
+  "required": "6actual mode/viewport PNGs,door/backcontrol,visualartscale/text/map/subtitleinspection"
+}

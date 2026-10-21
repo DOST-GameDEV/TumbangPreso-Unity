@@ -1,3 +1,6 @@
+// V2 owner map: accepted contact | one burst/moment | rule or power colour |
+// actual contact; travel | streak | seat identity | moving object. Events are
+// host accepted; camera confirmation belongs only to the participating viewer.
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -33,6 +36,10 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class MatchFlair
     {
+        // Every peer observes the same accepted event. Subscribers present it;
+        // they never award score or infer an outcome from a camera effect.
+        public static event System.Action<Kind, int, int, Vector3, float> Presented;
+
         /// <summary>
         /// What happened. ⚠️ THE VALUES ARE ON THE WIRE, so appending is free and reordering is
         /// a protocol break. `NetSession.ProtocolVersion` is what makes that safe.
@@ -105,6 +112,9 @@ namespace TumbangPreso.Visual
 
             /// <summary>Zack's bolt reaching the street. `at` is the strike.</summary>
             Thunder = 15,
+
+            /// <summary>Existing ultimate camera feedback, only on the named victim's view.</summary>
+            UltimateImpact = 16,
         }
 
         /// <summary>
@@ -140,6 +150,7 @@ namespace TumbangPreso.Visual
             // ⚠️ IT AWARDS NOTHING. `Diagnostics.MatchHighlights` cannot reach `AddScore` and no
             // caller of it can either, which is `docs/VISION.md` § 4 kept rather than restated.
             RecordHighlight(kind, actor, subject, at, strength);
+            Presented?.Invoke(kind, actor, subject, at, strength);
 
             switch (kind)
             {
@@ -152,6 +163,11 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.BankShot:
+                    // A powered contact's mark is the approved star and sparks while Bank Shot's silk look is on
+                    // (`ZackBankFlight`, drawn from the shoe itself); the old gold flick only with it off.
+                    if (strength == BankShotContact.FlairStrength && !ZackBankFlight.Silk)
+                        BankShotContact.Spawn(at, Settings.SettingsStore.Current.GraphicsQuality == 0,
+                            Settings.SettingsStore.Current.ReducedUiMotion);
                     ComicPopup.Spawn(at + Vector3.up * 0.35f, "BANK!", UI.UiTheme.Highlight, 1.0f);
                     break;
 
@@ -163,6 +179,7 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.LataDown:
+                    PlayCanConfirmation(Seat(actor), at);
                     break;
 
                 case Kind.Throw:
@@ -199,10 +216,18 @@ namespace TumbangPreso.Visual
 
                 case Kind.IceShatter:
                     ComicPopup.Freeze(at);
+                    // ⚠️ GLACIAL WALL BREAKS ON EVERY SCREEN (ABILITY-2). The host counts the three hits
+                    // and shatters its copy; this flair reaches every peer, so each breaks its own.
+                    foreach (var wall in Object.FindObjectsByType<Abilities.HeroHazards.IceBarricadeComponent>(FindObjectsSortMode.None))
+                        if (wall != null && (wall.transform.position - at).sqrMagnitude < 1.5f * 1.5f) wall.Shatter();
                     break;
 
                 case Kind.Thunder:
                     ComicPopup.Zap(at);
+                    break;
+
+                case Kind.UltimateImpact:
+                    HitFeel.Land(Seat(subject), HitFeel.Weight.Ultimate, AccentOf(Seat(actor)), at);
                     break;
             }
         }
@@ -211,7 +236,7 @@ namespace TumbangPreso.Visual
         /// Turns a flair event into a highlight marker where one is justified.
         ///
         /// ⚠️⚠️ NOT EVERY FLAIR IS A HIGHLIGHT AND THE LIST IS SHORT ON PURPOSE. `Kind` has
-        /// sixteen values and most of them are a hero power landing on a body, which happens
+        /// several values and most of them are a hero power landing on a body, which happens
         /// several times a round in Hero Strike and is the thing `docs/VISION.md` § 2 already
         /// calls unreadable when there is too much of it. A highlight reel of every stagger is a
         /// reel nobody watches. `docs/TODO.md` § 147: *"detect events that can be established
@@ -221,6 +246,15 @@ namespace TumbangPreso.Visual
         /// for and which nothing else on `LataDown` was using. Measuring it here from the actor's
         /// CURRENT position would be measuring where the thrower has run to since.
         /// </summary>
+        private static void PlayCanConfirmation(CharacterMotor scorer, Vector3 at)
+        {
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
+            if (scorer == null || rig == null || !rig.IsFollowing(scorer)) return;
+            UI.Hud.TriggerHitmarker(UI.UiTheme.Offense);
+            Vector3 towardCan = at - scorer.transform.position;
+            rig.ImpactPunch(towardCan.sqrMagnitude > .01f ? towardCan.normalized : scorer.transform.forward, .22f);
+        }
+
         private static void RecordHighlight(Kind kind, int actor, int subject, Vector3 at,
                                             float strength)
         {
@@ -279,8 +313,8 @@ namespace TumbangPreso.Visual
             // `-victim.transform.forward` instead: **every hero skill in the game shoved the
             // victim's camera straight backwards regardless of where the attack actually came
             // from**, which is not a missing effect but a WRONG one, and a player turning to face
-            // it turned away. The two ultimates that call `Land` directly
-            // (`CheskaHeroKit`, `DanteHeroKit`) always passed `ctx.Position` and were correct;
+            // it turned away. The two ultimates routed through UltimateImpact
+            // (`CheskaHeroKit`, `DanteHeroKit`) preserve their accepted `ctx.Position`;
             // this method routes all five of the skill-weight hits and passed nothing.
             //
             // ⚠️ THE CASTER WAS ALREADY IN HAND: `AccentOf(caster)` on the line above is the
@@ -320,6 +354,8 @@ namespace TumbangPreso.Visual
         private static Color AccentOf(CharacterMotor caster)
         {
             if (caster == null) return UI.UiTheme.HeroEarthBright;
+            string heroId = caster.AbilitySystem?.HeroId;
+            if (!string.IsNullOrEmpty(heroId)) return UI.UiTheme.BrightForHero(heroId);
 
             var heroes = Roster.GetPeople(GameMode.HeroStrike);
             if (heroes == null || caster.CharacterIndex < 0 || caster.CharacterIndex >= heroes.Count)
@@ -346,6 +382,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private static void PlayTag(CharacterMotor taya, CharacterMotor victim, Vector3 at)
         {
+            taya?.GetComponent<CharacterAnimator>()?.PresentTagContact(victim, at);
             if (victim != null)
             {
                 DizzyStars.Attach(victim.transform, Balance.TagStunTime, UI.UiTheme.Defense);
@@ -364,7 +401,7 @@ namespace TumbangPreso.Visual
             // random stream. Only this participant's first-person rendering is hidden.
             ComicPopup.Spawn(at, "TAGGED!", UI.UiTheme.Defense, 1.4f,
                 ComicPopup.Weight.Cast, participantFpp ? rig.Following : null);
-            ImpactBurst.SpawnAt(at);
+            TagContactAccent.Play(taya, victim, at);
             Hitstop.Trigger();
 
             if (taya != null && victim != null)
@@ -387,6 +424,7 @@ namespace TumbangPreso.Visual
             // for a commentary track: each machine says its own line off the event it has just
             // been told about, and nobody hears somebody else's announcer.
             GameServices.Voice?.OnAttackerTagged();
+            GameServices.HeroVoice?.OnTagged(taya, victim);
         }
 
         private static void PlayBlock(CharacterMotor blocker, Vector3 at, float alongSpeed)
@@ -423,13 +461,8 @@ namespace TumbangPreso.Visual
         {
             if (slot < 0) return null;
 
-            var round = GameServices.Round;
-            if (round == null) return null;
-
-            foreach (var p in round.Players)
-                if (p != null && p.PlayerSlot == slot) return p;
-
-            return null;
+            // `BodyAt`: a companion's seat (Phaister's doll) has a body too.
+            return GameServices.Round != null ? GameServices.Round.BodyAt(slot) : null;
         }
     }
 }

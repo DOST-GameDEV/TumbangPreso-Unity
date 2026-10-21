@@ -1,0 +1,755 @@
+using TumbangPreso.Core;
+using UnityEngine;
+
+namespace TumbangPreso
+{
+    /// <summary>
+    /// ⚠️⚠️ THE STATUSES, THE CARRY AND FLIGHT (ability overhaul, owner 2026-09-25).
+    ///
+    /// The owner's status table is the one list: WHIRLED, CHILLED, FROZEN, TAGGED
+    /// (`Core.StatusRules`). Frozen and Tagged are stuns and live in the stun stack the motor
+    /// already has, so they are READ here rather than stored twice; Whirled and Chilled are not
+    /// stuns (a Whirled body runs, a Chilled one walks) and get timers of their own. Every timer
+    /// overlaps by `Max()` (`CLAUDE.md` § 4).
+    ///
+    /// The carry and flight are what Amihan's kit moves bodies with; both are written as distances
+    /// and heights and solved in `Core.AmihanRules` / `Core.CarryRules`.
+    /// </summary>
+    public sealed partial class CharacterMotor
+    {
+        // ------------------------------------------------------------------ WHIRLED and CHILLED
+
+        private float _whirledLeft, _chilledLeft, _hauntedLeft;
+        private float _zappedLeft;
+        public float ZappedLeft => _zappedLeft;
+        public bool IsZapped => _zappedLeft > 0;
+        public float HauntedLeft => _hauntedLeft;
+        public bool IsHaunted => _hauntedLeft > 0;
+
+        /// <summary>Seconds of Whirled left: no slipper retrieval while it runs.</summary>
+        public float WhirledLeft => _whirledLeft;
+
+        /// <summary>Seconds of Chilled left: half movement speed while it runs.</summary>
+        public float ChilledLeft => _chilledLeft;
+
+        public bool IsWhirled => _whirledLeft > 0.0f;
+        public bool IsChilled => _chilledLeft > 0.0f;
+
+        /// <summary>
+        /// ⚠️ TAGGED IS READ OFF THE STUN, NOT STORED. The tag is the only stun that is 5 s long
+        /// and carries no element (`StunElement.None` is "a rule, not a fight"), so the pair is
+        /// the status exactly; `CatchReconstruction` already asks the same question the same way.
+        /// </summary>
+        public bool IsTagged => _stunLeft > 0.0f && _stunElement == StunElement.None
+                                && _stunTotal >= StatusRules.TaggedSeconds - 0.05f;
+
+        /// <summary>Frozen is an Ice-element hold (Glacial Nova, the barricade's freeze).</summary>
+        public bool IsFrozen => _stunLeft > 0.0f && _stunElement == StunElement.Ice;
+
+        /// <summary>Raised on every peer when this body gains a status, for the mark and the cue.</summary>
+        public event System.Action<CharacterMotor, StatusKind> StatusGained;
+
+        /// <summary>The seconds left on one status, 0 when it is not running.</summary>
+        public float StatusLeft(StatusKind kind)
+        {
+            switch (kind)
+            {
+                case StatusKind.Whirled: return _whirledLeft;
+                case StatusKind.Chilled: return _chilledLeft;
+                case StatusKind.Frozen: return IsFrozen ? _stunLeft : 0.0f;
+                case StatusKind.Tagged: return IsTagged ? _stunLeft : 0.0f;
+                case StatusKind.Rooted: return _rootedLeft;
+                case StatusKind.Concussed: return _concussedLeft;
+                case StatusKind.Feared: return _fearedLeft;
+                case StatusKind.Disoriented: return _disorientedLeft;
+                case StatusKind.Vulnerable: return _vulnerableLeft;
+                case StatusKind.Drained: return _drainedLeft;
+                case StatusKind.Hexed: return _hexedLeft;
+                case StatusKind.Haunted: return _hauntedLeft;
+                case StatusKind.Zapped: return _zappedLeft;
+                case StatusKind.Possessed: return _possessedLeft;
+                case StatusKind.Blinded: return _blindedLeft;
+                default: return 0.0f;
+            }
+        }
+
+        /// <summary>What the status started at, for the draining ring.</summary>
+        public float StatusTotal(StatusKind kind)
+        {
+            switch (kind)
+            {
+                case StatusKind.Frozen: return IsFrozen ? Mathf.Max(_stunTotal, 0.01f) : 1.0f;
+                case StatusKind.Tagged: return IsTagged ? Mathf.Max(_stunTotal, 0.01f) : 1.0f;
+                default: return StatusRules.For(kind)?.Seconds ?? 1.0f;
+            }
+        }
+
+        /// <summary>
+        /// The movement multiplier every live status puts on this body. 1 = none. Phaister's VOODOO passive rides here too
+        /// (`VoodooSpeedScale`): slower while her mark is on this body, faster while her mark is on someone else.
+        /// </summary>
+        public float StatusSpeedScale => IsRooted ? 0.0f
+            : (IsChilled ? StatusRules.ChilledSpeedScale : 1.0f) * (IsConcussed ? StatusRules.ConcussedSpeedScale : 1.0f)
+              * VoodooSpeedScale
+              * (IsPossessed ? NemuRules.PossessedSpeedScale : 1.0f)
+              * BlindedSpeedScale
+              * DeadWeightSpeedScale;
+
+        /// <summary>
+        /// WHIRLED: *"Drops slipper if currently in hand. Prevents slipper retrieval for 2.5
+        /// seconds."* (owner's table).
+        ///
+        /// ⚠️⚠️ THE DROP IS A DECISION AND HAPPENS ON THE HOST ONLY. A peer predicting its own body
+        /// may start its own timer (so its own pickup refuses at once), but only the host takes a
+        /// slipper out of a hand, and `BroadcastSlipperState` tells everybody else.
+        /// </summary>
+        public void ApplyWhirled(float seconds = StatusRules.WhirledSeconds)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (Refuses(StatusKind.Whirled, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
+
+            bool fresh = _whirledLeft <= 0.0f;
+            _whirledLeft = StatusRules.Refresh(_whirledLeft, seconds);
+
+            if (NetAuthority.ShouldResolve())
+            {
+                var carrier = GetComponent<Carrier>();
+                var held = carrier != null ? carrier.Held : null;
+                if (held != null && held.HostDisarm())
+                {
+                    // Knocked loose a little way out of the hand, on the ground, never under her.
+                    held.HostScatter(transform.forward * -0.35f + transform.right * 0.45f);
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(held);
+                }
+            }
+
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Whirled);
+        }
+
+        /// <summary>CHILLED: *"Decreases movement speed by 50% for 5 seconds."*</summary>
+        public void ApplyChilled(float seconds = StatusRules.ChilledSeconds)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (Refuses(StatusKind.Chilled, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
+            bool fresh = _chilledLeft <= 0.0f;
+            _chilledLeft = StatusRules.Refresh(_chilledLeft, seconds);
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Chilled);
+        }
+
+        public void ApplyZapped(float seconds = StatusRules.ZappedSeconds)
+        {
+            if (!MayMutateGameplayState() || !float.IsFinite(seconds) || seconds <= 0 || AbilitySystem?.IsImmuneToStuns == true) return;
+            bool fresh = !IsZapped;
+            _zappedLeft = StatusRules.Refresh(_zappedLeft, Mathf.Min(seconds, StatusRules.ZappedSeconds));
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Zapped);
+        }
+
+        public void ApplyHaunted(float seconds = StatusRules.HauntedSeconds)
+        {
+            if (!MayMutateGameplayState() || !float.IsFinite(seconds) || seconds <= 0) return;
+            // The current Wiki explicitly excludes Haunted from status immunity.
+            bool fresh = !IsHaunted;
+            _hauntedLeft = StatusRules.Refresh(_hauntedLeft, Mathf.Min(seconds, StatusRules.HauntedSeconds));
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Haunted);
+        }
+
+        /// <summary>
+        /// TAGGED: *"Prevents movement or interaction for 5 seconds. Cannot be removed or be immune
+        /// to."* (owner's table).
+        ///
+        /// ⚠️⚠️ IT DOES NOT ASK `IsImmuneToStuns`, AND THAT IS THE WHOLE DIFFERENCE FROM
+        /// `ApplyStagger`. The tag went through `ApplyStagger`, which returns early under Demonic
+        /// Carapace: an armoured attacker could be tagged, scored against, teleported, and then
+        /// walk straight back in because the five seconds never landed. The element stays `None`,
+        /// which is what already makes it unmashable (`MashOutOfStun` refuses `None`).
+        /// </summary>
+        public void ApplyTagged()
+        {
+            if (!MayMutateGameplayState()) return;
+            AdvanceRecoveryEpisode();
+            ReleaseCommitment();
+            EndFlightImmediately();
+            _carryLeft = 0.0f;
+            ClearSpeedBoost();
+            _stunLeft = Combat.ApplyStagger(_stunLeft, StatusRules.TaggedSeconds);
+            _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
+            _stunElement = StunElement.None;
+            _stunBreakPresses = Balance.StunBreakPressesDefault;
+            _stunMashPresses = 0;
+            // Owner, 2026-09-25: *"a rooted player can be tagged and theyre out of the root after
+            // getting tagged"*. The tag's five seconds replace the roots.
+            EndRooted();
+            StatusGained?.Invoke(this, StatusKind.Tagged);
+        }
+
+        // ------------------------------------------------------------------ ROOTED (Paete)
+
+        private float _rootedLeft, _breakFreeHeld;
+        private bool _breakFreeRequested;
+
+        /// <summary>Seconds of Rooted left: the sentry's remaining life, at most.</summary>
+        public float RootedLeft => _rootedLeft;
+        public bool IsRooted => _rootedLeft > 0.0f;
+
+        /// <summary>How much of the break-free hold is done, 0 to 1 (the ring on the HUD).</summary>
+        public float BreakFreeProgress => Mathf.Clamp01(_breakFreeHeld / PaeteRules.BreakFreeHoldSeconds);
+
+        private bool _struggling, _netStruggling;
+        private float _pullProgress, _netPullProgress;
+
+        /// <summary>
+        /// How far this body's pull on Paete's plant has got, 0 to 1 (the HUD ring and the heave pose).
+        /// ⚠️ THE PEER THAT SIMULATES THE BODY WRITES IT (`PaetePlant.StepPullers`); every other peer
+        /// reads the copy the wire carried (`SubmitMove` to the host, `SyncUnit` to everyone, protocol
+        /// 55), so the heave is seen on all four screens and not only in the puller's own shadow.
+        /// </summary>
+        public float PullingPlantProgress
+        {
+            get => IsLocallySimulated() ? _pullProgress : _netPullProgress;
+            set => _pullProgress = Mathf.Clamp01(value);
+        }
+
+        /// <summary>True while this body's owner is holding Interact against the roots, for the struggle pose. Carried like the pull.</summary>
+        public bool IsStruggling => IsLocallySimulated() ? _struggling : _netStruggling;
+
+        /// <summary>The struggle and the pull, off the wire, for a body this peer does not simulate.</summary>
+        public void ApplyNetworkEffort(bool struggling, float pullProgress)
+        {
+            _netStruggling = struggling;
+            _netPullProgress = float.IsNaN(pullProgress) ? 0f : Mathf.Clamp01(pullProgress);
+        }
+
+        /// <summary>Bits0..3: struggle,movement,sprint,Interact; pull presentation is separate in255ths.</summary>
+        public byte EffortFlags => (byte)((IsStruggling ? 1 : 0) | ResourceIntentFlags);
+        public byte PullWire => (byte)Mathf.RoundToInt(PullingPlantProgress * 255f);
+
+        /// <summary>
+        /// ROOTED: pulled to Paete's sentry and held by the roots. No movement; throwing and skills
+        /// still work (owner: *"theyre js rooted"*). Host-decided: the sentry calls this after the
+        /// pull lands, and `SyncUnit` carries it to everyone.
+        /// </summary>
+        public void ApplyRooted(float seconds = StatusRules.RootedSeconds)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (Refuses(StatusKind.Rooted, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
+            if (IsTagged) return; // already held harder, and a tag ends roots anyway
+            bool fresh = _rootedLeft <= 0.0f;
+            _rootedLeft = StatusRules.Refresh(_rootedLeft, seconds);
+            if (fresh) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; }
+            EndFlightImmediately();
+            ReleaseCommitment();
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Rooted);
+        }
+
+        /// <summary>Ends Rooted: the hold was finished, a tag landed, or the sentry withered.</summary>
+        public void EndRooted()
+        {
+            _rootedLeft = 0.0f;
+            _breakFreeHeld = 0.0f;
+            _breakFreeRequested = false;
+            _struggling = false;
+        }
+
+        /// <summary>
+        /// Local feedback and the host's remote hold use the same clock. Root progress
+        /// survives release; only the host completes escape from its accepted input.
+        /// </summary>
+        private void StepBreakFree(float dt)
+        {
+            _struggling = false;
+            if (!IsRooted || (!IsLocallySimulated() && !NetAuthority.ShouldResolve())) return;
+            if (!InteractionHeldForSimulation) return;
+            _struggling = true;
+            _breakFreeHeld += dt;
+            if (_breakFreeHeld < PaeteRules.BreakFreeHoldSeconds) return;
+            if (NetAuthority.ShouldResolve()) { HostBreakFree(); return; }
+            if (_breakFreeRequested) return;
+            _breakFreeRequested = true;
+            Net.MatchRpc.Instance?.RequestBreakFree(_playerSlot);
+        }
+
+        /// <summary>The host's answer to a client's break-free request.</summary>
+        public void HostBreakFree()
+        {
+            if (!NetAuthority.ShouldResolve() || !IsRooted || _breakFreeHeld < PaeteRules.BreakFreeHoldSeconds) return;
+            EndRooted();
+        }
+
+        /// <summary>Ends Whirled and Chilled. For the round reset and the respawn only.</summary>
+        public void ClearStatuses()
+        {
+            _zappedLeft = 0;
+            _whirledLeft = 0.0f;
+            _chilledLeft = 0.0f;
+            _hauntedLeft = 0.0f;
+            ClearPossession();
+            ClearBlinded();
+            _carryLeft = 0.0f;
+            EndHaul();
+            EndSwing();
+            ClearSpeedBoost();
+            ClearReworkStatuses();
+            ClearVoodoo();
+            EndRooted();
+            InvalidateFlightEpisode();
+        }
+
+        /// <summary>The host's status timers, off the wire (`SyncUnit`).</summary>
+        public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft, float rootedLeft = 0.0f, float hauntedLeft = 0.0f, float zappedLeft = 0)
+        {
+            bool zapped = !IsZapped && zappedLeft > 0;
+            _zappedLeft = float.IsFinite(zappedLeft) ? Mathf.Clamp(zappedLeft, 0, StatusRules.ZappedSeconds) : 0;
+            if (zapped) StatusGained?.Invoke(this, StatusKind.Zapped);
+            bool haunted = !IsHaunted && hauntedLeft > 0;
+            _hauntedLeft = float.IsFinite(hauntedLeft) ? Mathf.Clamp(hauntedLeft, 0, StatusRules.HauntedSeconds) : 0;
+            if (haunted) StatusGained?.Invoke(this, StatusKind.Haunted);
+            bool rooted = _rootedLeft <= 0.0f && rootedLeft > 0.0f;
+            if (rootedLeft <= 0.0f && _rootedLeft > 0.0f) EndRooted();
+            else if (rootedLeft > 0.0f)
+            {
+                if (rooted) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; }
+                _rootedLeft = Mathf.Clamp(rootedLeft, 0.0f, StatusRules.RootedSeconds + 0.01f);
+                EndFlightImmediately();
+            }
+            if (rooted) StatusGained?.Invoke(this, StatusKind.Rooted);
+            bool whirled = _whirledLeft <= 0.0f && whirledLeft > 0.0f;
+            bool chilled = _chilledLeft <= 0.0f && chilledLeft > 0.0f;
+            _whirledLeft = Mathf.Clamp(whirledLeft, 0.0f, StatusRules.WhirledSeconds + 0.01f);
+            // ⚠️ Absolute Zero chills for the freeze plus the thaw (ABILITY-2), so the bound is the sum.
+            _chilledLeft = Mathf.Clamp(chilledLeft, 0.0f, StatusRules.ChilledSeconds + StatusRules.FrozenSeconds + 0.01f);
+            if (whirled) StatusGained?.Invoke(this, StatusKind.Whirled);
+            if (chilled) StatusGained?.Invoke(this, StatusKind.Chilled);
+        }
+
+        private void StepStatuses(float dt)
+        {
+            if (_zappedLeft > 0) _zappedLeft = Mathf.Max(0, _zappedLeft - dt);
+            if (_hauntedLeft > 0) _hauntedLeft = Mathf.Max(0, _hauntedLeft - dt);
+            StepPossession(dt);
+            StepBlinded(dt);
+            if (_whirledLeft > 0.0f) _whirledLeft = Mathf.Max(0.0f, _whirledLeft - dt);
+            if (_chilledLeft > 0.0f) _chilledLeft = Mathf.Max(0.0f, _chilledLeft - dt);
+            if (_rootedLeft > 0.0f)
+            {
+                _rootedLeft = Mathf.Max(0.0f, _rootedLeft - dt);
+                if (_rootedLeft <= 0.0f) EndRooted();
+            }
+            // The host's `ApplyTagged` runs on its own copy; the owning client learns of the tag from
+            // the replicated stun, so the boost is dropped here as well.
+            if (_speedBoostLeft > 0.0f)
+                _speedBoostLeft = IsTagged ? 0.0f : Mathf.Max(0.0f, _speedBoostLeft - dt);
+            StepReworkStatuses(dt);
+            StepVoodoo(dt);
+            StepBreakFree(dt);
+        }
+
+        // ------------------------------------------------------------------ THE SPEED BOOST (map pads)
+
+        /// <summary>The bounds every caller's numbers are held to, so no pad can pass the host's move budget.</summary>
+        public const float SpeedBoostMaxScale = 2.0f, SpeedBoostMaxSeconds = 5.0f;
+
+        private float _speedBoostLeft, _speedBoostScale = 1.0f;
+
+        public bool IsSpeedBoosted => _speedBoostLeft > 0.0f;
+        public float SpeedBoostLeft => _speedBoostLeft;
+
+        /// <summary>The boost's term in the speed formula: its scale while it runs, 1 otherwise.</summary>
+        public float SpeedBoostScale => _speedBoostLeft > 0.0f ? _speedBoostScale : 1.0f;
+
+        /// <summary>
+        /// A map pad's timed speed-up (`ArenaSpeedPad`, `OverclockBoostPad`). Only on the peer that
+        /// simulates this unit, like `LaunchUp`; returns whether it took.
+        ///
+        /// ⚠️ IT IS ITS OWN MULTIPLIER BECAUSE `SpeedZoneStack` CANNOT SPEED ANYTHING UP: that stack
+        /// takes the LOWEST value starting from 1.0, so a 1.5 entered there is ignored. Slows still
+        /// apply on top (a chilled or fatigued body on a pad is still chilled or fatigued).
+        ///
+        /// ⚠️ REFRESHED BY Max, NEVER STACKED, the rule the stuns use: a second pad while one is
+        /// running keeps the larger scale and the longer time left. Nothing goes on the wire: the
+        /// owner moves faster and its poses travel as they always do. The clamp (scale 1 to 2,
+        /// seconds 0 to 5) keeps the fastest body far under `Core.MoveBudget.MetresPerSecond`.
+        /// </summary>
+        public bool BeginSpeedBoost(float scale, float seconds)
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated() || !CanMove()) return false;
+            if (!float.IsFinite(scale) || !float.IsFinite(seconds)) return false;
+            scale = Mathf.Clamp(scale, 1.0f, SpeedBoostMaxScale);
+            seconds = Mathf.Clamp(seconds, 0.0f, SpeedBoostMaxSeconds);
+            if (scale <= 1.0f || seconds <= 0.0f) return false;
+
+            bool fresh = _speedBoostLeft <= 0.0f;
+            _speedBoostScale = fresh ? scale : Mathf.Max(_speedBoostScale, scale);
+            _speedBoostLeft = Mathf.Max(_speedBoostLeft, seconds);
+            // ⚠️ ON THE EDGE ONLY: a pad asks every frame a body stands on it.
+            if (fresh) NetCue.PlayVaried("dash", transform.position, 1.15f, 1.3f, 0.7f);
+            return true;
+        }
+
+        /// <summary>Ends a boost early, for a pad that is switched off with its layout. The simulating peer only.</summary>
+        public void EndSpeedBoost()
+        {
+            if (MayMutateGameplayState() && IsLocallySimulated()) ClearSpeedBoost();
+        }
+
+        private void ClearSpeedBoost()
+        {
+            _speedBoostLeft = 0.0f;
+            _speedBoostScale = 1.0f;
+        }
+
+        // ------------------------------------------------------------------ THE CARRY
+
+        private Vector3 _carryVelocity;
+        private float _carryLeft, _keepMomentumUntil;
+
+        /// <summary>A carry that ends within <paramref name="seconds"/> from now is this body's own leap: see `StepCarry`.</summary>
+        public void KeepCarryMomentumFor(float seconds) => _keepMomentumUntil = Time.time + Mathf.Clamp(seconds, 0.0f, 4.0f);
+
+        /// <summary>True while the wind (or a dash) is holding this body at a set speed.</summary>
+        public bool IsCarried => _carryLeft > 0.0f;
+
+        /// <summary>
+        /// Hold this body at <paramref name="velocity"/> (horizontal) for <paramref name="seconds"/>,
+        /// then let it slide out against `Friction`. See `Core.CarryRules` for why a carry exists
+        /// and how its time is solved from the written distance. A vertical component is a one-off
+        /// lift, capped like every other.
+        ///
+        /// ⚠️ THE OWNER OF THE BODY APPLIES IT, like `ApplyImpulse`: a host resolving a hit on a
+        /// client-driven body uses <see cref="ApplyResolvedCarry"/>, which sends it there.
+        /// </summary>
+        public void BeginCarry(Vector3 velocity, float seconds)
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            if (!Finite(velocity) || float.IsNaN(seconds) || float.IsInfinity(seconds)) return;
+            var flat = new Vector3(velocity.x, 0.0f, velocity.z);
+            if (flat.magnitude > Balance.MaxKnockbackSpeed) flat = flat.normalized * Balance.MaxKnockbackSpeed;
+            float scale=IncomingKnockbackSpeedScale;
+            flat*=scale;
+            _carryVelocity = flat;
+            // Scaling both held speed and time halves held travel and its friction tail.
+            _carryLeft = Mathf.Clamp(seconds, 0.0f, 3.0f)*scale;
+            // ⚠️ A LEAP THAT KEEPS ITS MOMENTUM IS HELD THE WHOLE WAY (owner, 2026-10-07, of the first cut: "trying to leap on
+            // the ground immediately stops me like 25% of the way to the cluster"). A carry's time is solved so that the
+            // hold PLUS its slide-out against `Friction` (v squared over 2 x Friction, 3.3 m at the vines' 14 m/s) is the
+            // written distance. Handing the speed to the body at the end of the hold swapped that slide-out for the
+            // rework's own ground friction, which stops far sooner. So the slide-out's distance is held at full speed
+            // instead, and the hand-over happens where the leap was always going to end.
+            if (Time.time < _keepMomentumUntil && ReworkDrivesThisBody && _carryLeft > 0.0f)
+                _carryLeft += flat.magnitude / (2.0f * Balance.Friction);
+            _externalVelocity = flat;
+            if (velocity.y > 0.0f) _velocity.y = Mathf.Min(velocity.y, Balance.MaxKnockbackLift);
+            // A carried body is not steering where it chose, and must not out-walk the wind.
+            if (_carryLeft > 0.0f) Commit(_carryLeft);
+        }
+
+        /// <summary>The host's carry on any body: applied here if this peer simulates it, sent to
+        /// the owner otherwise. The same split as <see cref="ApplyResolvedImpact"/>.</summary>
+        public void ApplyResolvedCarry(Vector3 velocity, float seconds)
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            _paetePull?.Stop("new carry");
+            if (!IsLocallySimulated())
+            {
+                Net.MatchRpc.Instance?.BroadcastCarry(_playerSlot, velocity, seconds);
+                return;
+            }
+            BeginCarry(velocity, seconds);
+        }
+
+        /// <summary>
+        /// The host puts a body where an ultimate's cutscene left it (owner, 2026-10-17: *"Play keeps the cutscene's moves: at the
+        /// cut, put each player where the cutscene left them"*): mid-air down a lane, or where they ran to. Unlike
+        /// <see cref="Teleport"/> it keeps every status and does not pin the body for the spawn settle, so a carry applied
+        /// right after (<see cref="ApplyResolvedCarry"/>) flies it on from there. Sent to every peer as the host's teleport.
+        /// </summary>
+        public void ApplyResolvedRelocate(Vector3 position)
+        {
+            if (!NetAuthority.ShouldResolve() || !MayMutateGameplayState() || !Finite(position)) return;
+            var flat = AIController.ClampToPlayable(position);
+            position = new Vector3(flat.x, position.y, flat.z);
+            _cc.enabled = false;
+            transform.position = position;
+            _cc.enabled = true;
+            _networkTargetPosition = position;
+            _networkTargetVelocity = Vector3.zero;
+            _networkSmoothVelocity = Vector3.zero;
+            GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
+            if (NetAuthority.IsNetworked && GameServices.Round?.PlayerAt(_playerSlot) == this)
+                Net.MatchRpc.Instance?.BroadcastTeleport(_playerSlot, position, transform.eulerAngles.y);
+        }
+
+        /// <summary>Called from the physics step: hold the carry, before `Friction` decays it.</summary>
+        private void StepCarry(float dt)
+        {
+            if (_carryLeft <= 0.0f) return;
+            _carryLeft = Mathf.Max(0.0f, _carryLeft - dt);
+            _externalVelocity.x = _carryVelocity.x;
+            _externalVelocity.z = _carryVelocity.z;
+            // ⚠️ THE LEAP KEEPS ITS MOMENTUM (owner, 2026-10-07: "does the leap let you keep your momentum? i'm trying to
+            // leap on the ground then slide, but i immediately slow down"). A carry ends into `Friction`, 30 m/s a second:
+            // half a second and it is gone, and none of it was ever the body's own speed, so the movement rework's slide
+            // saw a body standing still. Where the rework drives this body and the carry was his own leap
+            // (`KeepCarryMomentumFor`), the speed is handed to the body as the carry ends, and the rework's own ground
+            // friction, slide and air rules take it from there. Everywhere else a carry ends as it always did.
+            if (_carryLeft <= 0.0f && Time.time < _keepMomentumUntil && ReworkDrivesThisBody)
+            {
+                Vector3 kept = Vector3.ClampMagnitude(new Vector3(_carryVelocity.x, 0.0f, _carryVelocity.z), MovementRework.MaxSpeed);
+                _velocity.x = kept.x; _velocity.z = kept.z;
+                _externalVelocity = Vector3.zero;
+                _keepMomentumUntil = 0.0f;
+                _rwLeapHandedOverUntil = Time.time + 0.5f;
+                ReleaseCommitment();
+            }
+        }
+
+        // ------------------------------------------------------------------ THE HAUL
+
+        private Vector3 _haulVia, _haulTo;
+        private float _haulSpeed, _haulUntil;
+
+        /// <summary>How far over the landing's floor a hauled body crosses to it, and the longest a haul may last.</summary>
+        public const float HaulClearance = 0.45f, HaulMaxSeconds = 2.5f;
+
+        /// <summary>True while a line is hauling this body up and over to a landing.</summary>
+        public bool IsHauled => Time.time < _haulUntil;
+
+        /// <summary>
+        /// Haul this body out of a drop: across to the column over <paramref name="via"/> at the
+        /// height it is at, straight up that column until its feet are `HaulClearance` over
+        /// <paramref name="landing"/>, then across to the landing, and let go. A carry cannot do
+        /// this: it is horizontal, and its lift is one push against gravity.
+        ///
+        /// ⚠️ ONLY THE ARENA ASKS FOR IT (Paete's vines on a body in its shaft,
+        /// `Map.ArenaFallRecovery.VineCatch`), so no other map's movement can change by it.
+        ///
+        /// ⚠️ THE OWNER OF THE BODY APPLIES IT, like `BeginCarry`, and nothing is sent: the body
+        /// moves at `speed` (never over `Balance.MaxKnockbackSpeed`, far under the host's move
+        /// budget) and its poses travel as they always do. It ends at the landing, at its
+        /// deadline, under anything overhead, and on a stun, a root, a teleport or a round reset.
+        /// </summary>
+        public bool BeginHaul(Vector3 via, Vector3 landing, float speed)
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated()) return false;
+            if (!Finite(via) || !Finite(landing) || !float.IsFinite(speed)) return false;
+            if (IsEdgeRecovering || IsStunned || IsRooted || IsFlying) return false;
+            Vector3 at = transform.position;
+            _haulVia = via; _haulTo = landing;
+            _haulSpeed = Mathf.Clamp(speed, 1.0f, Balance.MaxKnockbackSpeed);
+            float path = Flat(via - at) + Mathf.Max(0.0f, landing.y + HaulClearance - at.y) + Flat(landing - via);
+            _haulUntil = Time.time + Mathf.Min(HaulMaxSeconds, path / _haulSpeed + 0.4f);
+            _carryLeft = 0.0f;
+            _externalVelocity = Vector3.zero;
+            _grounded = false;
+            return true;
+        }
+
+        private void EndHaul() => _haulUntil = 0.0f;
+
+        private static float Flat(Vector3 v) => Mathf.Sqrt(v.x * v.x + v.z * v.z);
+
+        /// <summary>Called from the physics step after gravity: while a haul lasts, the velocity is the line's.</summary>
+        private void StepHaul(float dt)
+        {
+            if (!IsHauled) return;
+            if (IsStunned || IsRooted || IsFlying) { EndHaul(); return; }
+
+            Vector3 at = transform.position;
+            float rise = _haulTo.y + HaulClearance - at.y;
+            bool under = rise > 0.05f;
+            Vector3 across = (under ? _haulVia : _haulTo) - at; across.y = 0.0f;
+            float left = across.magnitude;
+
+            Vector3 velocity;
+            if (left > 0.1f) velocity = across / left * Mathf.Min(_haulSpeed, left / dt);
+            else if (under) velocity = Vector3.up * Mathf.Min(_haulSpeed, rise / dt);
+            else
+            {
+                // Over the landing: let go, and gravity sets the body down the last of the way.
+                EndHaul();
+                _velocity = Vector3.zero;
+                _externalVelocity = Vector3.zero;
+                return;
+            }
+            _velocity = velocity;
+            _externalVelocity = Vector3.zero;
+        }
+
+        private static bool Finite(Vector3 v)
+            => !(float.IsNaN(v.x) || float.IsNaN(v.y) || float.IsNaN(v.z)
+                 || float.IsInfinity(v.x) || float.IsInfinity(v.y) || float.IsInfinity(v.z));
+
+        // ------------------------------------------------------------------ FLIGHT
+
+        private enum FlightMode : byte { Grounded, Aloft, Descending }
+        private FlightMode _flight;
+        private float _flightCeiling, _flightRiseSpeed, _flightDescent;
+        private ulong _flightPoseReceipt, _flightDescentReceipt;
+        private ulong _flightSnapshotPoseFloor;
+        private long _flightEpisode, _previousFlightEpisode, _acceptedFlightEpisode, _networkFlightEpisode;
+        private long _terminalFlightEpisode;
+        private bool _flightEpisodePredicted, _previousFlightWasTerminal;
+        public byte FlightPhase => (byte)_flight;
+        public float FlightCeiling => _flightCeiling;
+        public long FlightEpisode => _flightEpisode;
+        internal long PreviousFlightEpisode => _previousFlightEpisode;
+        internal bool PreviousFlightWasTerminal => _previousFlightWasTerminal;
+        internal bool FlightEpisodeIsTerminal(long episode) => episode != 0 && _terminalFlightEpisode == episode;
+
+        /// <summary>
+        /// True while held up in the air by a flight (Updraft). A body ALOFT cannot pick up a
+        /// slipper and is out of the taya's reach; one DESCENDING is neither, because it is on its
+        /// way to exactly the ground where both apply again. Owner, 2026-09-25: *"flies high and can
+        /// throw slippers but cant pick up unless they choose to go down"*.
+        /// </summary>
+        public bool IsAloft => _flight == FlightMode.Aloft;
+
+        /// <summary>Aloft or on the glide down. For the pose and the hover VFX.</summary>
+        public bool IsFlying => _flight != FlightMode.Grounded;
+
+        /// <summary>
+        /// Lift this body to <paramref name="height"/> metres above where it stands, reaching it in
+        /// <paramref name="riseSeconds"/>, and hold it there until <see cref="EndFlight"/>.
+        ///
+        /// ⚠️ SET ON EVERY PEER, SIMULATED ON THE OWNER. The ability runs on every peer (the cast is
+        /// broadcast), so every peer knows the body is flying, for the pose and for the host's
+        /// pickup and tag gates; only the peer that simulates the body moves it.
+        /// </summary>
+        public void BeginFlight(float height, float riseSeconds, float descentSpeed)
+        {
+            _flightCeiling = transform.position.y + Mathf.Max(0.0f, height);
+            _flightRiseSpeed = Mathf.Max(0.5f, height / Mathf.Max(0.1f, riseSeconds));
+            _flightDescent = Mathf.Max(0.5f, descentSpeed);
+            _flight = FlightMode.Aloft;
+            _previousFlightEpisode = _acceptedFlightEpisode;
+            _previousFlightWasTerminal = FlightEpisodeIsTerminal(_acceptedFlightEpisode);
+            _flightEpisode = 0;
+            _flightEpisodePredicted = false;
+            _flightDescentReceipt = _flightPoseReceipt;
+            _flightSnapshotPoseFloor = _lastNetworkPoseSerial;
+            _grounded = false;
+            ReleaseCommitment();
+        }
+
+        /// <summary>The glide down. The flight is over when the feet touch.</summary>
+        public void EndFlight()
+        {
+            if (_flight == FlightMode.Aloft)
+            {
+                _flight = FlightMode.Descending;
+                _flightDescentReceipt = _flightPoseReceipt;
+            }
+        }
+
+        /// <summary>No glide: a hard status returns the body to gravity without rekeying its movement stream.</summary>
+        public void EndFlightImmediately()
+        {
+            _flight = FlightMode.Grounded;
+            if (_flightEpisode != 0) _terminalFlightEpisode = _flightEpisode;
+        }
+
+        /// <summary>Coordinated spawn, kit/role/round reset or movement-epoch replacement only.</summary>
+        internal void InvalidateFlightEpisode()
+        {
+            EndFlightImmediately();
+            _flightEpisode = _previousFlightEpisode = _acceptedFlightEpisode = 0;
+            _terminalFlightEpisode = 0;
+            _flightEpisodePredicted = false;
+            _previousFlightWasTerminal = false;
+        }
+
+        internal void IdentifyFlightTakeoff(long episode, bool predicted = false)
+        {
+            if (episode == 0 || episode == long.MinValue || _flight != FlightMode.Aloft || _flightEpisode != 0) return;
+            _flightEpisode = episode;
+            _flightEpisodePredicted = predicted;
+            if (!predicted) { _acceptedFlightEpisode = episode; _terminalFlightEpisode = 0; }
+        }
+
+        internal bool PredictedFlightMatches(long request) => _flightEpisodePredicted && _flightEpisode == request;
+        internal void ConfirmFlightTakeoff(long request)
+        {
+            if (_flightEpisode != request) return;
+            _flightEpisodePredicted = false; _acceptedFlightEpisode = request;
+            if (_terminalFlightEpisode != request) _terminalFlightEpisode = 0;
+        }
+        internal void RestoreRejectedFlightEpisode(long previous, bool terminal)
+        {
+            _flightEpisode = _acceptedFlightEpisode = previous; _flightEpisodePredicted = false;
+            _terminalFlightEpisode = terminal ? previous : 0;
+        }
+
+        public bool AcceptsFlightPoseEpisode(long episode) => episode == _flightEpisode;
+
+        internal void FlightPoseEvidence(out bool grounded, out long episode)
+        {
+            bool replica = AbilitySystem?.Kit is Abilities.AmihanHeroKit && !IsLocallySimulated();
+            grounded = replica ? _networkGrounded : _grounded;
+            episode = replica ? _networkFlightEpisode : _flightEpisode;
+        }
+
+        public bool RestoreFlight(byte phase, float ceiling, ulong snapshotPoseSerial, long episode)
+        {
+            if (phase > 2 || episode == long.MinValue || (phase != 0 && (episode == 0 || FlightEpisodeIsTerminal(episode)))
+                || float.IsNaN(ceiling) || float.IsInfinity(ceiling) || Mathf.Abs(ceiling) > 256) return false;
+            _flight = (FlightMode)phase;
+            _flightEpisode = episode;
+            _acceptedFlightEpisode = episode;
+            _flightEpisodePredicted = false;
+            _terminalFlightEpisode = phase == 0 ? episode : 0;
+            _flightCeiling = ceiling;
+            _flightRiseSpeed = Core.AmihanRules.UpdraftHeight / Core.AmihanRules.UpdraftRiseSeconds;
+            _flightDescent = Core.AmihanRules.UpdraftDescentSpeed;
+            _flightDescentReceipt = _flightPoseReceipt;
+            _flightSnapshotPoseFloor = snapshotPoseSerial;
+            if (phase != 0) _grounded = false;
+            return true;
+        }
+
+        private void ObserveFlightPose(bool grounded, long episode)
+        {
+            _networkFlightEpisode = episode;
+            _flightPoseReceipt++;
+            if (!NetAuthority.IsNetworked || IsLocallySimulated() || _flight == FlightMode.Grounded) return;
+            if (grounded && _flight == FlightMode.Descending && episode != 0 && episode == _flightEpisode
+                && _flightPoseReceipt > _flightDescentReceipt
+                && (NetAuthority.IsHost || _lastNetworkPoseSerial > _flightSnapshotPoseFloor))
+            {
+                EndFlightImmediately();
+                _grounded = true;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ RETURNS TRUE WHEN FLIGHT OWNS THE VERTICAL THIS STEP, so `ApplyGravity` skips its own
+        /// gravity and jump. A stun while aloft turns the hold into the glide down rather than a
+        /// drop, so a Frozen flyer does not fall 2.8 m onto the chalk.
+        /// </summary>
+        private bool StepFlightVertical(float dt)
+        {
+            if (IsSwimming && _flight != FlightMode.Grounded) EndFlightImmediately();
+            if (_flight == FlightMode.Grounded) return false;
+            if (_flight == FlightMode.Aloft && IsStunned) _flight = FlightMode.Descending;
+
+            if (_flight == FlightMode.Aloft)
+            {
+                float gap = _flightCeiling - transform.position.y;
+                // Ease into the ceiling: full rise speed far below it, settling as it arrives, and
+                // a gentle bob so a hovering body is never dead still.
+                float bob = Mathf.Sin(Time.time * 2.6f) * 0.12f;
+                _velocity.y = Mathf.Clamp(gap * 6.0f + bob, -_flightRiseSpeed, _flightRiseSpeed);
+                return true;
+            }
+
+            // Descending: a steady glide, finished by the ground.
+            if (_grounded && _velocity.y <= 0.0f)
+            {
+                EndFlightImmediately();
+                _velocity.y = GroundedRestVelocityY;
+                return true;
+            }
+            _velocity.y = -_flightDescent;
+            return true;
+        }
+    }
+}

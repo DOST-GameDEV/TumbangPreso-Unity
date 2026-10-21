@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "path": "Assets/TumbangPreso/Resources/ShaderWarmup.shadervariants",
+  "frozenBeforeSha256": "92833e8e8864fe0ce31bf7d6e98faca006d5d3806b2169100a62c4b254976c29",
+  "currentSha256": "a1d7d18b5a4a5d49459a53b92930ef1846fc6f266870548dd0b9f4062f03ba9e",
+  "addedShaderGuid": "f478f30ed5fc48cea7b4662cd433e501",
+  "addedVariants": 1,
+  "proof": "Removing the exact new Frostbite keyword-free pass0 entry reproduces the frozen pre-build bytes and SHA256."
+}

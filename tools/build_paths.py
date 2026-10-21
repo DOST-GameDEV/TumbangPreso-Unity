@@ -55,13 +55,16 @@ def mac_app():
 
 def is_internal_build(path):
     """
-    Whether `path` is a player inside a `Builds/` folder: the main checkout's or this one's.
-    The same two roots `GameBuilder.IsInsideBuildsFolder` accepts, so a player the builder was
-    allowed to write is a player these harnesses are allowed to launch.
+    Whether `path` is a player inside the main checkout's `Builds/`. The one root
+    `GameBuilder.IsInsideBuildsFolder` accepts, so a player the builder was allowed to write is
+    a player these harnesses are allowed to launch. A relative path is read from the main
+    checkout, as `GameBuilder.CommandLineOutput` reads `-buildOutput`.
     """
-    path = pathlib.Path(path).resolve()
-    return any(path.is_relative_to(root.resolve())
-               for root in (builds_root(), REPO / "Builds"))
+    root = builds_root().resolve()
+    path = pathlib.Path(path)
+    if not path.is_absolute():
+        path = root.parent / path
+    return path.resolve().is_relative_to(root)
 
 
 if __name__ == "__main__":

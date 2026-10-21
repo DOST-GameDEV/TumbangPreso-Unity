@@ -1,0 +1,7 @@
+{
+  "base": "aecc0ee2c",
+  "sourceEquivalent": "181015d30 plus tutorial lobby route",
+  "question": "Real Finish button leaves training, clears match/launch state and opens the existing hub route",
+  "expectedCases": 1,
+  "retry": 0
+}

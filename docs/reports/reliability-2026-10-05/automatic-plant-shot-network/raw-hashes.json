@@ -1,0 +1,9 @@
+{
+  ".gitattributes": "85e48d232edc7b02f6cecf8fbbf905f3b126c467b594d8dd16c4f8fa283a8320",
+  "AutomaticPlantShotPacketTests.cs": "30c5f0b536f2dd2e1c87b2b0ecf2b0927a74eb2fb3f91365d4863157b3869f18",
+  "classification.json": "17d45b43db01f1800897f43218fce6aaca50e95fc62f95c801900b86b3c3a9bf",
+  "launch.json": "661a4cede620dc6a295f81abae18e098a20127a562fe5aa14dce078305cee547",
+  "MatchRpc.PaeteAutomaticShot.cs": "06c347f2f32a30b89304e4bd9a58d8743898cfcba1e48a991a1b1dc20869a009",
+  "result.json": "5ae4a45371f965cfe5b564f7209af9eba469006db118f160d3953dc5592ec2f1",
+  "results.xml": "71bb4aad0543d7e174c34df5f561dc570272dd2601cab6ab82b39f2318866d12"
+}

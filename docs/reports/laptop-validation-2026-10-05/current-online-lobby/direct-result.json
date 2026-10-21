@@ -1,0 +1,35 @@
+{
+  "terminal": true,
+  "source": "61a650049b4949bda2c60d8df8991ff1e8705ed0",
+  "roles": {
+    "host": {
+      "pid": 16344,
+      "exitCode": 0,
+      "savedHashes": {
+        "career.json": "5dedfedc193d1fbaf29260c0c6cae1822a5456f7359d410d621eb2391b262d18",
+        "settings.json": "273031fe7cd764d4ef36d830ef5df54a8a152a570423b5ac4c2d8f16d7e259a7",
+        "settings.json.bak": "36e70b82c51e4146eece64a767d0a9bb93fd0beaf2d986da7acf69751a2a213c",
+        "social.json": "dd90e7a89d1d2db2e5461e070025e5e640abc6b031784262169d7ce80ab4e625",
+        "wallet.json": "ad83d9884f689aadfba70116008b771be044e655102c4918bb752b1bc9425e8c",
+        "wallet.json.bak": "ad83d9884f689aadfba70116008b771be044e655102c4918bb752b1bc9425e8c"
+      },
+      "seedRestored": true
+    },
+    "client": {
+      "pid": 22344,
+      "exitCode": 0,
+      "savedHashes": {
+        "career.json": "39f3b96fff3c3da71b032b825229da35986c7c548ec8378c9879bd4f200bc411",
+        "settings.json": "1035062846ea05907cabd5744d6a362ca6e327f012ee70736a0e5f0f01f1b6b5",
+        "settings.json.bak": "74b55e7d45bc92c1cc1608868d5f5ff1c9f70418fb3be0099d356094ca86d906",
+        "social.json": "ad09237b84eef6d8680eaf2a673ca24ecc2e2feef869f8c5470aa9966c5c4d4c",
+        "wallet.json": "db78aedeae92309fbfabdede75d239c8411de3b0443a998ba9d25d90f8d7c06d",
+        "wallet.json.bak": "db78aedeae92309fbfabdede75d239c8411de3b0443a998ba9d25d90f8d7c06d"
+      },
+      "seedRestored": true
+    }
+  },
+  "inputRestored": true,
+  "artifactUnchanged": true,
+  "scope": "Same artifact; two local instances only"
+}

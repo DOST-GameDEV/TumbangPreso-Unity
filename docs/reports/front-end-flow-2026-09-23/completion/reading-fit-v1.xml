@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 06:02:48Z" end-time="2026-09-23 06:03:53Z" duration="64.8744705">
+  <test-suite type="TestSuite" id="1731" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:02:48Z" end-time="2026-09-23 06:03:53Z" duration="64.874471" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1725" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:02:48Z" end-time="2026-09-23 06:03:53Z" duration="64.855715" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16900" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1726" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:02:48Z" end-time="2026-09-23 06:03:53Z" duration="64.850157" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1727" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:02:48Z" end-time="2026-09-23 06:03:53Z" duration="64.845660" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1196" name="HubFlowTests" fullname="TumbangPreso.PlayTests.HubFlowTests" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-23 06:02:48Z" end-time="2026-09-23 06:03:13Z" duration="25.163033" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1200" name="HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" fullname="TumbangPreso.PlayTests.HubFlowTests.HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" methodname="HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="394084609" result="Failed" start-time="2026-09-23 06:02:48Z" end-time="2026-09-23 06:03:13Z" duration="25.140644" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Hub-A11y-Loadout-960x540/TumpHubCanvas/Screens/HubLoadout/EquipButton/Body/Label clips its content.
+  Expected: less than or equal to 139.0f
+  But was:  174.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x0094c] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:217
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-A11y-Home-960x540 cream source=252,211,159 pixel=104,90,73; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1280x720 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1920x1080 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1280x960 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1600x680 cream source=252,211,159 pixel=89,69,55; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-960x540 cream source=252,211,159 pixel=66,52,40; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1280x720 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1920x1080 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1280x960 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1600x680 cream source=252,211,159 pixel=59,41,30; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-Hero-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-Hero-960x540/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpUiCapture] Hub-A11y-Hero-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x720/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpUiCapture] Hub-A11y-Hero-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-Hero-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-Hero-1920x1080/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpUiCapture] Hub-A11y-Hero-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x960/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpUiCapture] Hub-A11y-Hero-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-Hero-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-Hero-1600x680/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpUiCapture] Hub-A11y-Hero-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=64, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-960x540 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=64, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1280x720 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=64, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1920x1080 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=64, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1280x960 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=40, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=64, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1600x680 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1621" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 06:03:13Z" end-time="2026-09-23 06:03:27Z" duration="14.119799" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1626" name="OwnerLoadingCyclesIllustrationsWithInlineTipsAndRealProgress" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.OwnerLoadingCyclesIllustrationsWithInlineTipsAndRealProgress" methodname="OwnerLoadingCyclesIllustrationsWithInlineTipsAndRealProgress" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="480121845" result="Passed" start-time="2026-09-23 06:03:13Z" end-time="2026-09-23 06:03:27Z" duration="14.107700" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLoading-v1 cream source=252,211,159 pixel=249,182,90; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-960x540 cream source=252,211,159 pixel=249,182,90; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1280x720 cream source=252,211,159 pixel=249,182,90; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1920x1080 cream source=252,211,159 pixel=249,182,90; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1280x960 cream source=252,211,159 pixel=251,183,92; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1600x680 cream source=252,211,159 pixel=247,175,84; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-960x540 cream source=252,211,159 pixel=79,181,206; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1280x720 cream source=252,211,159 pixel=78,182,206; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1920x1080 cream source=252,211,159 pixel=79,181,206; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1280x960 cream source=252,211,159 pixel=80,185,207; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1600x680 cream source=252,211,159 pixel=244,233,207; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-960x540 cream source=252,211,159 pixel=249,131,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1280x720 cream source=252,211,159 pixel=249,130,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1920x1080 cream source=252,211,159 pixel=249,130,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1280x960 cream source=252,211,159 pixel=250,129,82; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1600x680 cream source=252,211,159 pixel=250,196,143; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1634" name="TumpNativePickerTests" fullname="TumbangPreso.PlayTests.TumpNativePickerTests" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-23 06:03:27Z" end-time="2026-09-23 06:03:53Z" duration="25.492502" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1637" name="EveryHeroSkillGuideFitsItsActualVariationText" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.EveryHeroSkillGuideFitsItsActualVariationText" methodname="EveryHeroSkillGuideFitsItsActualVariationText" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="387791227" result="Passed" start-time="2026-09-23 06:03:27Z" end-time="2026-09-23 06:03:53Z" duration="25.407113" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] Hub-variant-dante-dante.1.stomp/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-variant-dante-dante.1.stomp/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-dante-dante.1.stomp/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-dante-dante.1.stomp/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-dante-dante.1.stomp cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-dante-dante.1.tremor/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-dante-dante.1.tremor/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-dante-dante.1.tremor/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-dante-dante.1.tremor/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-dante-dante.1.tremor cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-dante-dante.2.carapace/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-dante-dante.2.carapace/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-dante-dante.2.carapace/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-dante-dante.2.carapace/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-dante-dante.2.carapace cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-dante-dante.2.plating/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-dante-dante.2.plating/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-dante-dante.2.plating/Glyph: vertices=28, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] Hub-variant-dante-dante.2.plating/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-dante-dante.2.plating cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-cheska-cheska.1.sheet/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.1.sheet/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.1.sheet/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.1.sheet/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-cheska-cheska.1.sheet cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-cheska-cheska.1.blackice/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.1.blackice/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.1.blackice/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.1.blackice/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-cheska-cheska.1.blackice cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-cheska-cheska.2.barricade/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.2.barricade/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.2.barricade/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.2.barricade/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-cheska-cheska.2.barricade cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-cheska-cheska.2.spires/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.2.spires/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.2.spires/Glyph: vertices=36, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] Hub-variant-cheska-cheska.2.spires/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-cheska-cheska.2.spires cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-sean-sean.1.rush/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-variant-sean-sean.1.rush/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-sean-sean.1.rush/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-sean-sean.1.rush/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-sean-sean.1.rush cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-sean-sean.1.afterburn/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-sean-sean.1.afterburn/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-sean-sean.1.afterburn/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-sean-sean.1.afterburn/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-sean-sean.1.afterburn cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-sean-sean.2.cannon/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-sean-sean.2.cannon/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-sean-sean.2.cannon/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-sean-sean.2.cannon/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-sean-sean.2.cannon cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-sean-sean.2.flare/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-sean-sean.2.flare/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-sean-sean.2.flare/Glyph: vertices=36, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] Hub-variant-sean-sean.2.flare/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-sean-sean.2.flare cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-zack-zack.1.sprint/Glyph: vertices=44, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-variant-zack-zack.1.sprint/Glyph: vertices=44, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-zack-zack.1.sprint/Glyph: vertices=56, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-zack-zack.1.sprint/Glyph: vertices=56, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-zack-zack.1.sprint cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-zack-zack.1.arcline/Glyph: vertices=44, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-zack-zack.1.arcline/Glyph: vertices=44, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-zack-zack.1.arcline/Glyph: vertices=56, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-zack-zack.1.arcline/Glyph: vertices=56, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-zack-zack.1.arcline cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-zack-zack.2.charge/Glyph: vertices=44, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-zack-zack.2.charge/Glyph: vertices=44, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-zack-zack.2.charge/Glyph: vertices=56, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-zack-zack.2.charge/Glyph: vertices=56, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-zack-zack.2.charge cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-zack-zack.2.discharge/Glyph: vertices=44, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-zack-zack.2.discharge/Glyph: vertices=44, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-zack-zack.2.discharge/Glyph: vertices=56, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] Hub-variant-zack-zack.2.discharge/Glyph: vertices=56, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-zack-zack.2.discharge cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-nemu-nemu.1.veil/Glyph: vertices=228, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.1.veil/Glyph: vertices=228, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.1.veil/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.1.veil/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-nemu-nemu.1.veil cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-nemu-nemu.1.fade/Glyph: vertices=228, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.1.fade/Glyph: vertices=228, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.1.fade/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.1.fade/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-nemu-nemu.1.fade cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-nemu-nemu.2.hijack/Glyph: vertices=228, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.2.hijack/Glyph: vertices=228, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.2.hijack/Glyph: vertices=36, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.2.hijack/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-nemu-nemu.2.hijack cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-nemu-nemu.2.leash/Glyph: vertices=228, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.2.leash/Glyph: vertices=228, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.2.leash/Glyph: vertices=36, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] Hub-variant-nemu-nemu.2.leash/Glyph: vertices=36, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-nemu-nemu.2.leash cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-phaister-phaister.1.hex/Glyph: vertices=116, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.1.hex/Glyph: vertices=116, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.1.hex/Glyph: vertices=24, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.1.hex/Glyph: vertices=24, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-phaister-phaister.1.hex cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-phaister-phaister.1.brand/Glyph: vertices=116, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.1.brand/Glyph: vertices=116, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.1.brand/Glyph: vertices=24, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.1.brand/Glyph: vertices=24, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-phaister-phaister.1.brand cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-phaister-phaister.2.blink/Glyph: vertices=116, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.2.blink/Glyph: vertices=116, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.2.blink/Glyph: vertices=24, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.2.blink/Glyph: vertices=24, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-phaister-phaister.2.blink cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-phaister-phaister.2.stride/Glyph: vertices=116, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.2.stride/Glyph: vertices=116, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.2.stride/Glyph: vertices=24, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] Hub-variant-phaister-phaister.2.stride/Glyph: vertices=24, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-phaister-phaister.2.stride cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-rafi-rafi.1.current/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.1.current/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.1.current/Glyph: vertices=216, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.1.current/Glyph: vertices=216, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-rafi-rafi.1.current cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-rafi-rafi.1.tightcut/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.1.tightcut/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.1.tightcut/Glyph: vertices=216, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.1.tightcut/Glyph: vertices=216, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-rafi-rafi.1.tightcut cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-rafi-rafi.2.mirror/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.2.mirror/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.2.mirror/Glyph: vertices=216, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.2.mirror/Glyph: vertices=216, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-rafi-rafi.2.mirror cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-variant-rafi-rafi.2.longwake/Glyph: vertices=28, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.2.longwake/Glyph: vertices=28, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.2.longwake/Glyph: vertices=216, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] Hub-variant-rafi-rafi.2.longwake/Glyph: vertices=216, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-variant-rafi-rafi.2.longwake cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

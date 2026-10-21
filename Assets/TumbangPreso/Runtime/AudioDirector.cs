@@ -22,7 +22,7 @@ namespace TumbangPreso
     /// copies the pose `CameraRig.LateUpdate` has just written, and two `LateUpdate`s with no
     /// declared order run in whichever order Unity felt like.
     [DefaultExecutionOrder(1000)]
-    public sealed class AudioDirector : MonoBehaviour
+    public sealed partial class AudioDirector : MonoBehaviour
     {
         private struct Cue
         {
@@ -32,6 +32,9 @@ namespace TumbangPreso
         }
 
         private readonly Dictionary<string, Cue> _cues = new Dictionary<string, Cue>();
+        private readonly System.Random _variation = new System.Random(0x54554d50);
+        private float PresentationPitch(float a, float b)
+            => Mathf.Min(a, b) + (float)_variation.NextDouble() * Mathf.Abs(b - a);
 
         /// <summary>
         /// ⚠️⚠️ WITHOUT AN AudioListener THE WHOLE GAME IS SILENT, AND NOTHING WARNS YOU.
@@ -130,9 +133,11 @@ namespace TumbangPreso
         /// </summary>
         private void LateUpdate()
         {
+            UpdateCourtDanger();
             if (_ears == null) return;
 
             var head = UnityEngine.Camera.main;
+            UpdateHauntedAudio(head);
 
             if (head == null)
             {
@@ -234,6 +239,49 @@ namespace TumbangPreso
 
         public void PlayAt(string id, Vector3 position)
             => PlayAtVaried(id, position, 1.0f, 1.0f, 1.0f);
+        public static event System.Action<string,Vector3,float,float> WorldCuePlayed;
+        private readonly AudioSource[] _replayVoices=new AudioSource[8];
+        private int _replayVoice;
+
+        private int _replayMixDepth;
+        private readonly Dictionary<AudioSource,bool> _replayMuted=new Dictionary<AudioSource,bool>();
+        public System.IDisposable EnterReplayMix()
+        {
+            SetCourtDanger(0,true);
+            if(_replayMixDepth++==0)foreach(var voice in _voices)if(voice!=null){_replayMuted[voice]=voice.mute;voice.mute=true;}
+            return new ReplayMixLease(this);
+        }
+        private sealed class ReplayMixLease:System.IDisposable
+        {
+            private AudioDirector _owner;
+            public ReplayMixLease(AudioDirector owner)=>_owner=owner;
+            public void Dispose()
+            {
+                if(_owner==null)return;
+                if(--_owner._replayMixDepth==0)
+                {foreach(var entry in _owner._replayMuted)if(entry.Key!=null)entry.Key.mute=entry.Value;_owner._replayMuted.Clear();}
+                _owner=null;
+            }
+        }
+
+        public void PlayReplayCue(string id,float pitch,float gain,float pan)
+        {
+            if(!Audio.AudioCues.Audible(id))return;
+            if(!_cues.TryGetValue(id,out var cue))return;
+            int index=_replayVoice++%_replayVoices.Length;
+            var voice=_replayVoices[index];
+            if(voice==null)
+            {
+                var go=new GameObject("ReplayVoice"+index);go.transform.SetParent(transform,false);
+                voice=go.AddComponent<AudioSource>();voice.playOnAwake=false;voice.spatialBlend=0;voice.dopplerLevel=0;
+                _replayVoices[index]=voice;
+            }
+            voice.Stop();voice.clip=cue.Clip;voice.pitch=Mathf.Clamp(pitch,.25f,3);
+            voice.panStereo=Mathf.Clamp(pan,-1,1);voice.volume=Mathf.Clamp01(gain*SfxScale());voice.Play();
+            // Deliberately no relay, world-record callback, award or announcer path.
+        }
+        public void StopReplayCues()
+        {foreach(var voice in _replayVoices)if(voice!=null)voice.Stop();}
 
         /// <summary>
         /// The clip and its authored mix level, for a caller that has to drive its own
@@ -276,6 +324,9 @@ namespace TumbangPreso
         /// <summary>The player's SFX slider, for a caller driving its own source.</summary>
         public float SfxVolume => SfxScale();
 
+        /// <summary>The player's Ambience slider under Master, for ambient beds driving their own sources.</summary>
+        public float AmbienceVolume => Settings.SettingsStore.Current.AmbienceGain;
+
         /// <summary>
         /// Plays a world cue with a small pitch window. Repeated slippers, footsteps and
         /// impacts otherwise expose that they are the exact same recording within seconds.
@@ -285,6 +336,8 @@ namespace TumbangPreso
         public void PlayAtVaried(string id, Vector3 position, float pitchMin = 0.94f,
                                  float pitchMax = 1.06f, float volumeScale = 1.0f)
         {
+            // Hero skill sounds are off until they are reworked (`AudioCues.SkillSfxOn`).
+            if (!Audio.AudioCues.Audible(id)) return;
             if (!_cues.TryGetValue(id, out var cue))
             {
                 Debug.LogWarning($"[Audio] no cue registered for '{id}'.");
@@ -302,11 +355,11 @@ namespace TumbangPreso
 
             voice.transform.position = position;
             voice.clip = cue.Clip;
-            voice.pitch = Random.Range(Mathf.Min(pitchMin, pitchMax),
-                                       Mathf.Max(pitchMin, pitchMax));
+            voice.pitch = PresentationPitch(pitchMin, pitchMax);
             voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
 
+            WorldCuePlayed?.Invoke(id,position,voice.pitch,cue.Volume*Mathf.Clamp(volumeScale,0,1.25f));
             DuckIfAnnouncement(id);
         }
 
@@ -344,6 +397,7 @@ namespace TumbangPreso
         public void PlayUiVaried(string id, float pitchMin = 1.0f, float pitchMax = 1.0f,
                                  float volumeScale = 1.0f)
         {
+            if (!Audio.AudioCues.Audible(id)) return;
             if (!_cues.TryGetValue(id, out var cue))
             {
                 Debug.LogWarning($"[Audio] no cue registered for '{id}'.");
@@ -356,8 +410,7 @@ namespace TumbangPreso
             var voice = TakeUiVoice();
 
             voice.clip = cue.Clip;
-            voice.pitch = Random.Range(Mathf.Min(pitchMin, pitchMax),
-                                       Mathf.Max(pitchMin, pitchMax));
+            voice.pitch = PresentationPitch(pitchMin, pitchMax);
             voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
 
@@ -399,15 +452,23 @@ namespace TumbangPreso
         /// supplies weight while the primary keeps the event recognisable. A very short music
         /// duck makes room for the transient without making the whole mix louder.
         /// </summary>
+        private float _impactBodyUntil=float.NegativeInfinity;
         public void PlayImpact(string primary, string weightLayer, Vector3 position,
                                float energy = 1.0f)
         {
             energy = Mathf.Clamp01(energy);
+            // Keep every spatial attack audible. When contacts overlap inside one
+            // transient, only the first gets the full low body; following bodies
+            // leave headroom rather than stacking identical bass peaks. Captures
+            // record the resulting gains, so replay does not re-decide the mix.
+            float bodyGain=Time.unscaledTime<_impactBodyUntil
+                ? Mathf.Lerp(1,.30f,Visual.WorldCueProfile.Current.ImpactSeparation):1;
+            if(bodyGain>=.999f)_impactBodyUntil=Time.unscaledTime+.10f;
             PlayAtVaried(primary, position, 0.96f, 1.04f, Mathf.Lerp(0.82f, 1.0f, energy));
 
             if (!string.IsNullOrEmpty(weightLayer) && weightLayer != primary)
                 PlayAtVaried(weightLayer, position, 0.72f, 0.84f,
-                             Mathf.Lerp(0.28f, 0.52f, energy));
+                             Mathf.Lerp(0.28f, 0.52f, energy)*bodyGain);
 
             GameServices.Music?.Duck(Mathf.Lerp(-2.5f, -5.0f, energy),
                                      Mathf.Lerp(0.10f, 0.20f, energy));
@@ -524,6 +585,7 @@ namespace TumbangPreso
                 made.minDistance = 2.0f;
                 made.maxDistance = 32.0f;
 
+                if(_replayMixDepth>0){_replayMuted[made]=made.mute;made.mute=true;}
                 _voices.Add(made);
                 return made;
             }
@@ -559,6 +621,7 @@ namespace TumbangPreso
                 var made = go.AddComponent<AudioSource>();
 
                 made.spatialBlend = 0.0f;
+                made.bypassListenerEffects = true;
                 made.playOnAwake = false;
                 made.dopplerLevel = 0.0f;
 

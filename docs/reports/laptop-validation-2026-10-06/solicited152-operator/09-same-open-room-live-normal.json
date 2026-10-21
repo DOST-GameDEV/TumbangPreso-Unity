@@ -1,0 +1,28 @@
+{
+  "pid": 45284,
+  "window": 9242226,
+  "foregroundBeforeAndAfter": true,
+  "physicalClientRect": [
+    160,
+    104,
+    1760,
+    1004
+  ],
+  "physicalClientWidth": 1600,
+  "physicalClientHeight": 900,
+  "physicalWindowRect": [
+    151,
+    66,
+    1769,
+    1013
+  ],
+  "windowDpi": 120,
+  "dpiAwareness": 2,
+  "observerDpiContext": "PerMonitorV2 for read-only coordinates; restored afterward",
+  "image": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lossless-capture1005\\solicited152\\09-same-open-room-live-normal.png",
+  "format": "PNG",
+  "sha256": "8088e98fca2c04cee31c2b22406fbfd3bb2ace75764feaa0562e9542c7eda97c",
+  "resampling": false,
+  "jpegConversion": false,
+  "scope": "Physical foreground desktop client pixels; not engine backbuffer/audio/input acceptance"
+}

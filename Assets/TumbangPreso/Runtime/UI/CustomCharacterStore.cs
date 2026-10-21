@@ -39,7 +39,7 @@ namespace TumbangPreso.UI
                 if (_cached != null) return _cached;
 
                 var settings = Settings.SettingsStore.Current;
-                var profile = new CustomCharacterProfile { Slots = new List<CustomCharacter>() };
+                var profile = new CustomCharacterProfile();
 
                 if (settings?.CustomCharacterWires != null)
                 {
@@ -47,8 +47,9 @@ namespace TumbangPreso.UI
                                     && i < CustomCharacterRules.MaxSlots; i++)
                     {
                         string wire = settings.CustomCharacterWires[i];
-                        if (string.IsNullOrEmpty(wire)) break;
-                        profile.Slots.Add(CustomCharacterRules.DecodeWire(wire, i));
+                        // A missing slot keeps its own starter; later saved slots retain their indices.
+                        if (string.IsNullOrEmpty(wire)) continue;
+                        profile.SetSlot(i, CustomCharacterRules.DecodeWire(wire, i));
                     }
                 }
 

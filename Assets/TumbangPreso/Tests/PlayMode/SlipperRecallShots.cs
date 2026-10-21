@@ -4,6 +4,11 @@ using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.UI;
+using TumbangPreso.InputLayer;
+using TumbangPreso.Settings;
 
 namespace TumbangPreso.PlayTests
 {
@@ -42,6 +47,49 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown]
         public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
 
+        [UnityTest]
+        public IEnumerator SlipperCircleAppearsOnlyAfterLandingAndClearsOnPickupOrRelaunch()
+        {
+            GameServices.Ensure();GameServices.Round.Clear();
+            var floor=GameObject.CreatePrimitive(PrimitiveType.Cube);floor.name="Recall review floor";
+            floor.transform.position=Vector3.down*.5f;floor.transform.localScale=new Vector3(40,1,40);
+            var actor=new GameObject("Recall review owner",typeof(CharacterController));
+            var who=actor.AddComponent<CharacterMotor>();who.enabled=false;who.PlayerSlot=1;who.IsBot=true;
+            who.transform.position=new Vector3(0,.1f,-8);who.IsDefender=false;
+            var carrier=actor.AddComponent<Carrier>();carrier.enabled=false;GameServices.Round.Register(who);
+            GameServices.Match.ApplySnapshot(new int[4],1,true);GameServices.Round.ApplySnapshot(90,true,0,true);
+            var camera=new GameObject("Recall review camera",typeof(Camera));camera.tag="MainCamera";
+            camera.transform.position=new Vector3(0,2,-8);camera.transform.LookAt(new Vector3(0,0,1));
+            var light=new GameObject("Recall review light").AddComponent<Light>();light.type=LightType.Directional;
+            light.transform.rotation=Quaternion.Euler(45,-30,0);
+            var shoe=new GameObject("Recall review slipper").AddComponent<Slipper>();shoe.enabled=false;
+            shoe.OwnerSlot=shoe.SeatOfOrigin=1;
+            var art=Resources.Load<RosterEntryAsset>("Roster/slipper_loafers");
+            var model=Object.Instantiate(art.Model,shoe.transform);Visual.ToonSkin.ApplySlipper(model,Visual.ToonSkin.PropOutlineWidth);
+            Assert.IsTrue(shoe.HostForceEquip(who));
+            var recall=new GameObject("Recall review").AddComponent<UI.SlipperRecall>();recall.Build(recall.transform);
+            yield return null;Canvas.ForceUpdateCanvases();
+            recall.Track(who,shoe);Assert.IsFalse(recall.Drawing,"Held slippers must have no circle.");
+            shoe.HostThrow(who,new Vector3(0,1.1f,-4),new Vector3(0,2,6));
+            recall.Track(who,shoe);Assert.AreEqual(SlipperState.InFlight,shoe.State);Assert.IsFalse(recall.Drawing,"Flying slippers must have no circle.");
+            var canvas=GameObject.Find("TumpRecallCanvas").GetComponent<Canvas>();
+            yield return TumpUiCapture.Capture("Slipper-circle-flight-hidden",canvas,960,540,false,true,
+                inspectViewport:()=>recall.Track(who,shoe));
+            Physics.SyncTransforms();
+            var flight=typeof(Slipper).GetMethod("FixedUpdate",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            for(int i=0;i<400&&shoe.State==SlipperState.InFlight;i++)flight.Invoke(shoe,null);
+            Assert.AreEqual(SlipperState.Loose,shoe.State,"Use an actual landed flight, not a guessed presentation timer.");
+            recall.Track(who,shoe);Assert.IsTrue(recall.Drawing);
+            yield return TumpUiCapture.Capture("Slipper-circle-landed-visible",canvas,960,540,false,true,
+                inspectViewport:()=>recall.Track(who,shoe));
+            var landed=shoe.transform.position;
+            shoe.ApplySnapshotState(SlipperState.InFlight,null,landed+Vector3.up,Quaternion.identity,Vector3.forward,0,SlipperAffinity.Normal,1);
+            recall.Track(who,shoe);Assert.IsFalse(recall.Drawing,"Replica relaunch clears the existing circle.");
+            shoe.ApplySnapshotState(SlipperState.Loose,null,landed,Quaternion.identity,Vector3.zero,0,SlipperAffinity.Normal,1);
+            recall.Track(who,shoe);Assert.IsTrue(recall.Drawing,"Replica landing restores it.");
+            Assert.IsTrue(shoe.HostForceEquip(who));recall.Track(who,shoe);Assert.IsFalse(recall.Drawing,"Pickup clears the landed circle immediately.");
+        }
+
         private const string OutDir = "Logs/shots-recall";
 
         /// <summary>
@@ -54,6 +102,144 @@ namespace TumbangPreso.PlayTests
         private const int ShortHigh = 720;
 
         [UnityTest]
+        public IEnumerator LiveRecallFollowsRebindingAndDeviceChangesWithoutRebuilding()
+        {
+            var asset=Resources.Load<InputActionAsset>("TumbangPreso");
+            string overrides=asset.SaveBindingOverridesAsJson();
+            var oldDevice=LastInputDevice.Current;
+            bool oldTouch=TouchInput.Active;var oldMove=TouchInput.Move;
+            bool bots=GameLaunch.AllBots,spectator=GameLaunch.Spectator,pinned=UI.SceneFlow.RulesPinned;
+            int seat=GameLaunch.SoloSeat;var rules=UI.SceneFlow.SelectedRules.Clone();
+            var keyboard=InputSystem.AddDevice<Keyboard>();var pad=InputSystem.AddDevice<Gamepad>();
+            var inputSettings=InputSystem.settings;var background=inputSettings.backgroundBehavior;var editorInput=inputSettings.editorInputBehaviorInPlayMode;
+            inputSettings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            inputSettings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.EnableDevice(keyboard);InputSystem.EnableDevice(pad);
+            try
+            {
+                yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
+                GameServices.Round.BeginRound();
+                var who=GameServices.Round.PlayerAt(1);
+                who.Teleport(new Vector3(0,.12f,-10));who.transform.rotation=Quaternion.identity;
+                Object.FindFirstObjectByType<CameraSystem.CameraRig>().Follow(who);
+                var mine=who.GetComponent<Carrier>().Held;Assert.IsNotNull(mine);
+                Assert.IsTrue(mine.HostDisarm());
+                mine.transform.position=new Vector3(0,mine.RestHeight,-4);
+                var recall=Object.FindFirstObjectByType<UI.SlipperRecall>();Assert.IsNotNull(recall);
+                TouchInput.Active=false;TouchInput.Move=Vector2.zero;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.F10));InputSystem.Update();keyboard.MakeCurrent();LastInputDevice.Sample();
+                yield return null;
+                recall.Track(who,mine);Assert.IsTrue(recall.Drawing);
+                var cap=GameObject.Find("RecallKeyCap").GetComponent<Image>();
+                var label=GameObject.Find("RecallKeyLabel").GetComponent<Text>();
+                var marker=(RectTransform)cap.transform.parent;
+                var before=marker.anchoredPosition;
+
+                Assert.IsNull(Rebinding.TryRebind(asset,"Grab",keyboard.f10Key));
+                recall.Track(who,mine);
+                Assert.AreEqual("F10",UI.Hud.KeyLabelFor("Grab"));
+                var f10=UI.InputGlyphs.For("F10",onDark:true);
+                Assert.IsTrue(f10!=null?cap.enabled&&cap.sprite==f10:label.enabled&&label.text=="F10",
+                    "The live mark retained its previous binding after a successful rebind.");
+                var keyboardSprite=cap.sprite;
+                mine.transform.position+=Vector3.right*1.25f;recall.Track(who,mine);
+                Assert.Greater(Vector2.Distance(before,marker.anchoredPosition),1,"Rebinding stopped world tracking.");
+
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());
+                InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));
+                InputSystem.Update();LastInputDevice.Sample();recall.Track(who,mine);
+                Assert.AreEqual(InputDeviceKind.Gamepad,LastInputDevice.Current);
+                Assert.IsTrue(cap.enabled&&cap.sprite!=null&&!label.enabled,"Gamepad pickup glyph was not visible.");
+                Assert.AreNotSame(keyboardSprite,cap.sprite,"Device change left the keyboard cap cached.");
+
+                InputSystem.QueueStateEvent(pad,new GamepadState());InputSystem.Update();
+                TouchInput.Active=true;TouchInput.Move=Vector2.right;LastInputDevice.Sample();recall.Track(who,mine);
+                Assert.AreEqual(InputDeviceKind.Touch,LastInputDevice.Current);
+                Assert.IsTrue(recall.Drawing);Assert.IsFalse(cap.enabled||label.enabled,"Touch retained a keyboard/pad instruction.");
+
+                TouchInput.Active=false;TouchInput.Move=Vector2.zero;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.F10));InputSystem.Update();
+                Assert.IsTrue(keyboard.f10Key.isPressed,"The synthetic return key did not reach the Input System.");
+                keyboard.MakeCurrent();LastInputDevice.Sample();
+                recall.Track(who,mine);
+                Assert.AreEqual(InputDeviceKind.KeyboardMouse,LastInputDevice.Current);
+                Assert.IsTrue(f10!=null?cap.enabled&&cap.sprite==f10:label.enabled&&label.text=="F10");
+                Assert.AreSame(marker,cap.transform.parent,"The test must exercise the existing cached mark.");
+                Assert.IsTrue(recall.Drawing);
+            }
+            finally
+            {
+                asset.LoadBindingOverridesFromJson(overrides);Rebinding.Invalidate();Rebinding.Save(asset);
+                TouchInput.Active=oldTouch;TouchInput.Move=oldMove;
+                InputSystem.RemoveDevice(pad);InputSystem.RemoveDevice(keyboard);
+                inputSettings.backgroundBehavior=background;inputSettings.editorInputBehaviorInPlayMode=editorInput;
+                typeof(LastInputDevice).GetMethod("Set",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(null,new object[]{oldDevice});
+                GameLaunch.AllBots=bots;GameLaunch.Spectator=spectator;GameLaunch.SoloSeat=seat;
+                UI.SceneFlow.AdoptRemoteRules(rules);if(pinned)UI.SceneFlow.PinSelectedRules(rules);else UI.SceneFlow.UnpinSelectedRules();
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CapturedRebindConflictsPreservePriorOverridesAndDeviceFamilies()
+        {
+            var shared=Resources.Load<InputActionAsset>("TumbangPreso");string saved=shared.SaveBindingOverridesAsJson();
+            var asset=Object.Instantiate(shared);asset.RemoveAllBindingOverrides();
+            var keyboard=InputSystem.AddDevice<Keyboard>();var pad=InputSystem.AddDevice<Gamepad>();
+            var settings=InputSystem.settings;var background=settings.backgroundBehavior;var editorInput=settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.EnableDevice(keyboard);InputSystem.EnableDevice(pad);
+            RebindSession session=null;
+            try
+            {
+                Assert.IsTrue(Rebinding.ResolveBindingIndexFor(asset,"Grab",InputDeviceKind.KeyboardMouse,out var grab,out int index));
+                grab.ApplyBindingOverride(index,"<Keyboard>/f10");
+                RebindOutcome? outcome=null;
+                session=RebindSession.Begin(asset,"Grab",InputDeviceKind.KeyboardMouse,(result,_)=>outcome=result);
+                Assert.IsNotNull(session);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Space));InputSystem.Update();
+                // Unity's interactive operation deliberately waits50ms after a
+                // candidate. Empty batch frames are not a wall-clock deadline.
+                for(float end=Time.realtimeSinceStartup+1;!outcome.HasValue&&Time.realtimeSinceStartup<end;)yield return null;
+                Assert.AreEqual(RebindOutcome.Conflict,outcome);
+                Assert.AreEqual("<Keyboard>/f10",grab.bindings[index].effectivePath,"A refused replacement erased the player's previous key.");
+                Assert.IsTrue(grab.enabled);
+                session.Dispose();session=null;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());InputSystem.Update();yield return null;
+
+                outcome=null;
+                session=RebindSession.Begin(asset,"Grab",InputDeviceKind.KeyboardMouse,(result,_)=>outcome=result);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.F9));InputSystem.Update();
+                for(float end=Time.realtimeSinceStartup+1;!outcome.HasValue&&Time.realtimeSinceStartup<end;)yield return null;
+                Assert.AreEqual(RebindOutcome.Bound,outcome);
+                Assert.AreEqual("<Keyboard>/f9",grab.bindings[index].effectivePath);
+                Assert.AreEqual("<Gamepad>/buttonWest",Rebinding.PathFor(asset,"Grab",InputDeviceKind.Gamepad));
+                session.Dispose();session=null;
+
+                Assert.IsNull(Rebinding.TryRebind(asset,"SpecialAbility",keyboard.f8Key),"A keyboard key must be accepted for a mouse action on the same controls page.");
+                Assert.AreEqual("<Keyboard>/f8",Rebinding.PathFor(asset,"SpecialAbility",InputDeviceKind.KeyboardMouse));
+                Assert.AreEqual("<Gamepad>/rightTrigger",Rebinding.PathFor(asset,"SpecialAbility",InputDeviceKind.Gamepad));
+                Assert.IsNull(Rebinding.TryRebind(asset,"Grab",pad.buttonWest));
+                Assert.AreEqual("<Gamepad>/buttonWest",Rebinding.PathFor(asset,"Grab",InputDeviceKind.Gamepad));
+                Assert.AreEqual("<Keyboard>/f9",grab.bindings[index].effectivePath);
+
+                string fullscreen=Rebinding.PathFor(asset,"ToggleFullscreen",InputDeviceKind.KeyboardMouse);
+                Assert.IsNotNull(Rebinding.TryRebind(asset,"ToggleFullscreen",pad.rightStickButton));
+                Assert.AreEqual(fullscreen,Rebinding.PathFor(asset,"ToggleFullscreen",InputDeviceKind.KeyboardMouse));
+                outcome=null;session=RebindSession.Begin(asset,"Grab",InputDeviceKind.KeyboardMouse,(result,_)=>outcome=result);
+                session.Cancel();Assert.AreEqual(RebindOutcome.Cancelled,outcome);
+                Assert.AreEqual("<Keyboard>/f9",grab.bindings[index].effectivePath);
+            }
+            finally
+            {
+                session?.Dispose();InputSystem.RemoveDevice(pad);InputSystem.RemoveDevice(keyboard);Object.Destroy(asset);
+                settings.backgroundBehavior=background;settings.editorInputBehaviorInPlayMode=editorInput;
+                shared.LoadBindingOverridesFromJson(saved);Rebinding.Invalidate();Rebinding.Save(shared);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator TheRecallMarkIsPhotographedInEveryState()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
@@ -63,6 +249,19 @@ namespace TumbangPreso.PlayTests
 
             var round = GameServices.Round;
             Assert.IsNotNull(round, "the arena registered no round");
+
+            // ⚠️⚠️ THE HIGHLIGHT COLOUR IS SET EXPLICITLY, AND THE FIRST RUN OF THE BEAM FRAMES
+            // IS WHY. `SettingsStore.Current` persists to disk, so these shots were taken in
+            // whatever colour this machine happened to have chosen last: the witness frame came
+            // back RED while the shipped default is Blue. `LandedHighlightTests` opens the same
+            // way and records the same reason, that a stale `settings.json` must not be able to
+            // decide what a test measures or what a render shows.
+            //
+            // ⚠️ RAISED AS WELL AS WRITTEN. Setting the field alone leaves every listener on
+            // whatever it last cached, which for the beam means a column already standing in the
+            // old colour.
+            Settings.SettingsStore.Current.SlipperHighlight = Settings.SlipperHighlights.Default;
+            Settings.SettingsStore.RaiseSlipperHighlightChanged();
 
             // ⚠️⚠️ THE ROUND IS STARTED, AND NOT DOING SO COST THIS PROBE TWO RUNS. A freshly
             // loaded arena sits in the READY window: the HUD reads *"Warm up freely. Powers start
@@ -153,7 +352,7 @@ namespace TumbangPreso.PlayTests
             Face(me, mine.transform.position);
             for (int i = 0; i < 6; i++) yield return null;
 
-            yield return Shot(mine, me, "recall-1-inflight", SlipperState.InFlight);
+            yield return Shot(mine, me, "recall-1-inflight", SlipperState.InFlight, drawing: false);
 
             // ---- 2 · LOOSE, AT RANGE ------------------------------------------------------
             // Ring plus the live GRAB cap. This is the state the whole feature is for.
@@ -182,11 +381,57 @@ namespace TumbangPreso.PlayTests
 
             yield return Settle(mine, me, inward, 6.0f, faceShoe: true);
 
+            // § THE RECALL BEAM, which is the world half of the same question and is asserted in
+            // the same frame the screen mark is, on purpose: *"there shouldnt be any conflict
+            // with the slipperRecall"* is a claim about the two of them TOGETHER, and a picture
+            // of each on its own cannot show it.
+            var beam = mine.GetComponent<Visual.SlipperBeam>();
+            Assert.IsNotNull(beam,
+                "no beam was built for a loose tsinelas this seat owns, with the highlight on");
+            Assert.IsTrue(beam.Drawing,
+                $"the beam is not standing. state={mine.State} owner={mine.OwnerSlot} " +
+                $"seat={me.PlayerSlot} setting={Settings.SettingsStore.Current.SlipperHighlight}");
+
+            Color want = Settings.SlipperHighlights.ColourOf(
+                Settings.SettingsStore.Current.SlipperHighlight);
+
+            Assert.AreEqual(want.r, beam.Colour.r, 0.01f, "beam red");
+            Assert.AreEqual(want.g, beam.Colour.g, 0.01f, "beam green");
+            Assert.AreEqual(want.b, beam.Colour.b, 0.01f, "beam blue");
+
+            // ⚠️⚠️ THE SHADER IS ASSERTED SEPARATELY FROM THE PICTURE BECAUSE THE PICTURE CANNOT
+            // SHOW THE DIFFERENCE RELIABLY. 🧑 asked for this effect to be *"a shader not a
+            // model"*, and `VfxMaterial.Beam`'s fallback is a flat coloured cylinder standing in
+            // the same place at the same height: from the player's own eyes looking down at the
+            // road the two frames are very nearly identical, and one of them is the version he
+            // rejected. A lookup that fails in a player and nowhere else is exactly the split
+            // `GameBuilder.EnsureRuntimeShaders` exists to prevent, so this is the editor-side
+            // guard for it.
+            Assert.IsTrue(beam.Shaded,
+                "the beam fell back to a flat column, so TumbangPreso/SlipperBeam did not load");
+
+            MeasureBeamFrameFraction(beam, "range", 1280, 720);
+
             yield return Shot(mine, me, "recall-2-loose-at-range", SlipperState.Loose);
+
+            // ⚠️ A SIDE CAMERA, BECAUSE A COLUMN CANNOT BE JUDGED FROM ABOVE IT. The frames above
+            // are the player's own eyes looking down at the road, which is the right view for the
+            // ring and the wrong one for a 1.9 m vertical: § 127.3 records the identical finding
+            // about a floor marker caught only edge-on. This is the one that shows its height
+            // against a body.
+            yield return Witness(mine, me, "beam-witness");
+            yield return Witness(mine, me, "beam-witness-far", 11f);
 
             // The same frame at his own window, which is the shape § 6.2b says nobody has seen.
             yield return Shot(mine, me, "recall-2-loose-at-range-shortwide",
                               SlipperState.Loose, ShortWide, ShortHigh);
+
+            foreach (float fade in new[] { .15f, .5f, 1f })
+            {
+                yield return Settle(mine, me, inward, Balance.PickupRadius + fade, faceShoe: true);
+                MeasureBeamFrameFraction(beam, "fade-" + Mathf.RoundToInt(fade * 100), 1280, 720);
+                MeasureBeamFrameFraction(beam, "fade-wide-" + Mathf.RoundToInt(fade * 100), ShortWide, ShortHigh);
+            }
 
             // ---- 3 · IN REACH, WHERE THE MARK HANDS OVER ----------------------------------
             // ⚠️⚠️ THIS FRAME ASSERTS AN ABSENCE, AND IT IS THE MOST VALUABLE ONE HERE. The first
@@ -207,6 +452,15 @@ namespace TumbangPreso.PlayTests
                 $"radius={Balance.PickupRadius} holding={me.HoldingSlipper} " +
                 $"owner={mine.OwnerSlot} seat={me.PlayerSlot} canAct={me.CanAct()}");
 
+            // ⚠️⚠️ BOTH STAND DOWN, AND ASSERTING ONLY ONE OF THEM WOULD MISS THE POINT OF THE
+            // WHOLE HAND-OFF. The mark leaves the screen and the beam leaves the world, on the
+            // same `Balance.PickupRadius`, so the player standing over their own tsinelas sees
+            // `[X] Pick up` and nothing else competing with it.
+            Assert.IsFalse(beam.Drawing,
+                $"the beam is still standing inside the pickup radius. " +
+                $"d={Vector3.Distance(me.transform.position, mine.transform.position):0.00} " +
+                $"radius={Balance.PickupRadius} fade={Visual.SlipperBeam.FadeMetres}");
+
             yield return Shot(mine, me, "recall-3-in-reach-handover", SlipperState.Loose,
                               drawing: false);
 
@@ -222,6 +476,40 @@ namespace TumbangPreso.PlayTests
 
             if (reader != null) reader.enabled = true;
             if (bot != null) bot.enabled = true;
+        }
+
+        /// <summary>
+        /// A camera beside the tsinelas rather than above it, so a vertical reads as a vertical.
+        ///
+        /// ⚠️ IT FRAMES THE SHOE AND THE PLAYER TOGETHER. A column photographed alone has no
+        /// scale in it, and the one thing a person has to judge here is whether the line's
+        /// `SlipperBeam.Height` is right next to a body, a number picked against the two maps
+        /// that are built under a roof.
+        /// </summary>
+        private static IEnumerator Witness(Slipper mine, CharacterMotor me, string name, float distance = 5.5f)
+        {
+            Vector3 shoe = mine.transform.position;
+            Vector3 mid = (shoe + me.transform.position) * 0.5f;
+
+            Vector3 along = me.transform.position - shoe;
+            along.y = 0.0f;
+            if (along.sqrMagnitude < 0.01f) along = Vector3.forward;
+            along.Normalize();
+
+            // Off to the side of the line between the two, so neither hides the other.
+            Vector3 side = Vector3.Cross(Vector3.up, along);
+
+            var go = new GameObject("BeamWitnessCam");
+            var cam = go.AddComponent<Camera>();
+            cam.fieldOfView = 45.0f;
+            cam.nearClipPlane = 0.05f;
+            cam.farClipPlane = 200.0f;
+            cam.transform.position = mid + side * distance + Vector3.up * 1.7f;
+            cam.transform.LookAt(shoe + Vector3.up * 1.0f);
+
+            yield return GameplayShots.Render(cam, name, flipCanvases: false, outDir: OutDir);
+
+            Object.DestroyImmediate(go);
         }
 
         /// <summary>
@@ -277,6 +565,54 @@ namespace TumbangPreso.PlayTests
             look.y = 0.0f;
             if (look.sqrMagnitude < 0.0001f) return;
             who.transform.rotation = Quaternion.LookRotation(look.normalized);
+        }
+
+        private static void MeasureBeamFrameFraction(Visual.SlipperBeam beam, string label, int width, int height)
+        {
+            // Same-camera, same-frame A/B includes the column, pool, lamp and bloom.
+            // Count changed pixels, not just white ones: a saturated blue wash can
+            // obscure play without turning white. This is visual coverage, not GPU cost.
+            Assert.IsTrue(beam.Drawing, label + ": there is no beam to measure");
+            var camera = Camera.main;
+            var oldTarget = camera.targetTexture; var oldActive = RenderTexture.active;
+            var target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+            var pixels = new Texture2D(width, height, TextureFormat.RGB24, false);
+            var colour = beam.Colour;
+            string folder = System.Environment.GetEnvironmentVariable("TUMP_BEAM_EVIDENCE");
+            if (string.IsNullOrWhiteSpace(folder))
+                folder = System.IO.Path.Combine(OutDir, "beam-fraction-" + System.DateTime.UtcNow.Ticks);
+            System.IO.Directory.CreateDirectory(folder);
+            try
+            {
+                camera.targetTexture = target;
+                beam.Set(false, colour); camera.Render(); RenderTexture.active = target;
+                pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0); pixels.Apply();
+                var before = pixels.GetPixels32();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder, label + "-off.png"), pixels.EncodeToPNG());
+                beam.Set(true, colour); camera.Render(); RenderTexture.active = target;
+                pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0); pixels.Apply();
+                var after = pixels.GetPixels32();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder, label + "-on.png"), pixels.EncodeToPNG());
+                int changed = 0, newlyWhite = 0;
+                for (int i = 0; i < before.Length; i++)
+                {
+                    int delta = Mathf.Abs(after[i].r - before[i].r) + Mathf.Abs(after[i].g - before[i].g) + Mathf.Abs(after[i].b - before[i].b);
+                    if (delta > 9) changed++;
+                    if (after[i].r > 245 && after[i].g > 245 && after[i].b > 245
+                        && (before[i].r <= 245 || before[i].g <= 245 || before[i].b <= 245)) newlyWhite++;
+                }
+                float fraction = changed / (float)before.Length, white = newlyWhite / (float)before.Length;
+                string row = System.FormattableString.Invariant($"{label},{width},{height},{changed},{fraction:F6},{newlyWhite},{white:F6}");
+                System.IO.File.AppendAllText(System.IO.Path.Combine(folder, "coverage.csv"), row + "\n");
+                Debug.Log("[RecallBeamCoverage] " + row);
+                Assert.Greater(changed, 0, label + ": the beam never contributed visible pixels");
+                Assert.Less(fraction, .12f, label + ": recall effect exceeds the 12-percent frame budget");
+            }
+            finally
+            {
+                beam.Set(true, colour); camera.targetTexture = oldTarget; RenderTexture.active = oldActive;
+                target.Release(); Object.Destroy(target); Object.Destroy(pixels);
+            }
         }
 
         /// <summary>

@@ -1,0 +1,11 @@
+Faulting application name: TumbangPreso.exe, version: 6000.5.8.47071, time stamp: 0x6a7366ef
+Faulting module name: D3D12Core.dll, version: 1.618.1.0, time stamp: 0x68d311e6
+Exception code: 0xc0000005
+Fault offset: 0x000000000000a1f5
+Faulting process id: 0x2524
+Faulting application start time: 0x01dd4c2bed4d32d0
+Faulting application path: C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Builds\shutdown-diagnosis-v57-20260924\TumbangPreso.exe
+Faulting module path: C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Builds\shutdown-diagnosis-v57-20260924\D3D12\D3D12Core.dll
+Report Id: 00540324-73bd-49ee-8a5e-71b84014ecda
+Faulting package full name: 
+Faulting package-relative application ID: 

@@ -1,0 +1,3 @@
+*.xml -text -whitespace
+*.json -text whitespace=cr-at-eol
+*.fixture -text -whitespace

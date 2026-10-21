@@ -1,0 +1,69 @@
+{
+  "passed": false,
+  "case": "leave",
+  "mode": "classic",
+  "errors": [
+    "host: missing or wrong departure notice: {'passed': True, 'spectator': False, 'visibleToast': True, 'bot': True, 'local': 0, 'expected': 0, 'notices': 1, 'match': 639256625148624236, 'text': 'Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER', 'error': '', 'mode': 'Classic'}",
+    "other: missing or wrong departure notice: {'passed': True, 'spectator': False, 'visibleToast': True, 'bot': True, 'local': 2, 'expected': 2, 'notices': 1, 'match': 639256625148624236, 'text': 'Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER', 'error': '', 'mode': 'Classic'}",
+    "fourth: missing or wrong departure notice: {'passed': True, 'spectator': False, 'visibleToast': True, 'bot': True, 'local': 3, 'expected': 3, 'notices': 1, 'match': 639256625148624236, 'text': 'Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER', 'error': '', 'mode': 'Classic'}",
+    "spectator: missing or wrong departure notice: {'passed': True, 'spectator': True, 'visibleToast': True, 'bot': True, 'local': -1, 'expected': -1, 'notices': 1, 'match': 639256625148624236, 'text': 'Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER', 'error': '', 'mode': 'Classic'}"
+  ],
+  "measured": {
+    "host": {
+      "passed": true,
+      "spectator": false,
+      "visibleToast": true,
+      "bot": true,
+      "local": 0,
+      "expected": 0,
+      "notices": 1,
+      "match": 639256625148624236,
+      "text": "Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "Classic"
+    },
+    "other": {
+      "passed": true,
+      "spectator": false,
+      "visibleToast": true,
+      "bot": true,
+      "local": 2,
+      "expected": 2,
+      "notices": 1,
+      "match": 639256625148624236,
+      "text": "Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "Classic"
+    },
+    "fourth": {
+      "passed": true,
+      "spectator": false,
+      "visibleToast": true,
+      "bot": true,
+      "local": 3,
+      "expected": 3,
+      "notices": 1,
+      "match": 639256625148624236,
+      "text": "Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "Classic"
+    },
+    "spectator": {
+      "passed": true,
+      "spectator": true,
+      "visibleToast": true,
+      "bot": true,
+      "local": -1,
+      "expected": -1,
+      "notices": 1,
+      "match": 639256625148624236,
+      "text": "Player#6261 DISCONNECTED \u00c2\u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "Classic"
+    }
+  },
+  "sharedInputUnchanged": true,
+  "existingFilesRestored": 0,
+  "runtimeSha256": "02e6a320b0b6a6e2418ba594b31a24c5a59b14515a26190628eec59f478816ec",
+  "scope": "Five actual local peers including a fifth-join spectator; one orderly leave or killed test process. Not WAN or human playtesting."
+}

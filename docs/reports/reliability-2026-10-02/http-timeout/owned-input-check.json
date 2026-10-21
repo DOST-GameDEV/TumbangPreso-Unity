@@ -1,0 +1,10 @@
+{
+  "source": "0971d8b0173d32703b2f046559f289ad6497f1d7",
+  "checks": {
+    "Assets/TumbangPreso/Runtime/Net/CloudCode.cs": true,
+    "Assets/TumbangPreso/Tests/PlayMode/CloudRequestTimeoutTests.cs": true,
+    "Assets/TumbangPreso/Tests/PlayMode/CloudRequestTimeoutTests.cs.meta": true
+  },
+  "retry": 0,
+  "scope": "Native UnityWebRequest built by production setup against task-owned loopback TCP listener, ephemeral port"
+}

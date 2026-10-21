@@ -1,0 +1,7 @@
+showing=Kanto
+total=2321
+enabled=2316
+visible=804
+badShaders=0
+cameraEnabled=True
+lookScoped=True

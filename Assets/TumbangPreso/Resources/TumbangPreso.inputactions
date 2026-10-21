@@ -285,6 +285,26 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "6f1a2b30-0000-4000-8000-0000000000a1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Crouch",
+                    "type": "Button",
+                    "id": "6f1a2b30-0000-4000-8000-0000000000b1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -379,7 +399,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000005",
-                    "path": "<Keyboard>/x",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -390,7 +410,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000007",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -401,7 +421,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000009",
-                    "path": "<Keyboard>/b",
+                    "path": "<Keyboard>/t",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -412,7 +432,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-00000000000a",
-                    "path": "<Keyboard>/r",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -456,7 +476,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000020",
-                    "path": "<Keyboard>/q",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -467,7 +487,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000021",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -478,7 +498,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000022",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -500,7 +520,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000101",
-                    "path": "<Keyboard>/z",
+                    "path": "<Mouse>/scroll/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -511,7 +531,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000102",
-                    "path": "<Keyboard>/c",
+                    "path": "<Mouse>/scroll/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -923,6 +943,50 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "SpectatorPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f1a2b30-0002-4000-8000-0000000000a1",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f1a2b30-0002-4000-8000-0000000000a2",
+                    "path": "<Gamepad>/rightStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f1a2b30-0002-4000-8000-0000000000b1",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f1a2b30-0002-4000-8000-0000000000b2",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,0 +1,12 @@
+ALL CHECKS, ONE LAUNCH
+
+  FAIL  headless       Logs/headless-check.txt
+  OK    arena          Logs/arena-check.txt
+  OK    map geometry   Logs/map-geometry-check.txt
+  FAIL  audio cues     Logs/audio-cue-check.txt
+  OK    scene scripts  Logs/scene-script-check.txt
+  OK    input surface  Logs/input-surface-check.txt
+  OK    scene dependencies Logs/scene-dependency-check.txt
+  OK    shader warmup  
+
+RESULT: FAILED. headless, audio cues. Open that check's own report file above.

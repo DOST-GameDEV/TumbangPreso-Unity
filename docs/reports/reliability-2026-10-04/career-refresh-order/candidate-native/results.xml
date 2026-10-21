@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.1386329">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1314" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.138633" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2615" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1314" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.124941" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13072" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2616" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1314" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.120701" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2617" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1314" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.116759" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1248" name="CareerRefreshOrderingTests" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.083295" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1249" name="OlderRefreshCannotEraseAcknowledgedCareer" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests.OlderRefreshCannotEraseAcknowledgedCareer" methodname="OlderRefreshCannotEraseAcknowledgedCareer" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" seed="866766377" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.053593" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1250" name="OrdinaryRefreshStillAdoptsServerCareer" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests.OrdinaryRefreshStillAdoptsServerCareer" methodname="OrdinaryRefreshStillAdoptsServerCareer" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" seed="470428283" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.005264" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1251" name="OrdinarySubmissionStillAcknowledgesCareer" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests.OrdinarySubmissionStillAcknowledgesCareer" methodname="OrdinarySubmissionStillAcknowledgesCareer" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" seed="1353356267" result="Passed" start-time="2026-10-04 08:23:58Z" end-time="2026-10-04 08:23:58Z" duration="0.007489" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

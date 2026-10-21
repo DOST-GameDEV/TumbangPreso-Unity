@@ -1,0 +1,12 @@
+{
+  "Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs": "c1d7e204ddc7b0e7d404aa9a7e90a7139dc86803a1b015a901d47892d32841a7",
+  "Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs.meta": "9ed3a709b88e524ef596212ca0dbe59f2e2fc3167e655623c4c8967244cb145f",
+  "Assets/TumbangPreso/Runtime/AIController.cs": "a8e8ad1fbaf67c59357c51d8eedcf53e20c4af52270a193f0381791e3a382575",
+  "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs": "918652322f1ccda6a9e64d50c3851b41c0e3cd08366b68076e08aa982c24ceaf",
+  "Assets/TumbangPreso/Runtime/InputIntent.cs": "a46576471cf7a8fa85b2953a1bf480fb26fb7196aafa720b5375e3ac57c79b79",
+  "Assets/TumbangPreso/Runtime/PresentationClock.cs": "9c176cd36579a61124775edb5aa347bbfe0f1b05114292b4768563dd170a663b",
+  "Assets/TumbangPreso/Tests/PlayMode/DefenderUltimateResetRecoveryTests.cs": "1fe117a5debd761fb72f2bc67385bfd77608d3ed1bb127ffc62072eba4b77225",
+  "Assets/TumbangPreso/Tests/PlayMode/DefenderUltimateResetRecoveryTests.cs.meta": "aa2b18f8934bec1af02e64aa6d2310c6bbf62c00d65ba830812d299a201c6006",
+  "Assets/TumbangPreso/Runtime/Carrier.cs": "3b2e1b609a2adad7a947147a9aac5cdf1c65c44a1d73ae30ec995ce22612d458",
+  "Assets/TumbangPreso/Runtime/CombatVerbs.cs": "0d93959e5510cd7ddb886fd642bb59220b10b57a8d4df6b295c7d654af7fb9b4"
+}

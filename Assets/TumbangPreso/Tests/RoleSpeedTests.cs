@@ -30,11 +30,11 @@ namespace TumbangPreso.Tests
         [Test]
         public void TheTwoRolesMoveAtDifferentSpeeds()
         {
-            float taya = Stamina.RoleSpeedScale(isDefender: true);
-            float attacker = Stamina.RoleSpeedScale(isDefender: false);
+            float taya = Stamina.MovementSpeed(isDefender: true, running: false);
+            float attacker = Stamina.MovementSpeed(isDefender: false, running: false);
 
-            Assert.AreEqual(Balance.DefenderSpeedScale, taya, 0.0001f);
-            Assert.AreEqual(Balance.AttackerSpeedScale, attacker, 0.0001f);
+            Assert.AreEqual(Balance.DefenderWalkSpeed, taya, 0.0001f);
+            Assert.AreEqual(Balance.AttackerWalkSpeed, attacker, 0.0001f);
 
             Assert.Greater(taya, attacker,
                 "the taya is the faster role, which is the whole balance of chase versus escape");
@@ -56,10 +56,10 @@ namespace TumbangPreso.Tests
         {
             string source = File.ReadAllText(Motor);
 
-            StringAssert.Contains("Stamina.RoleSpeedScale(_isDefender)", source,
+            StringAssert.Contains("Stamina.MovementSpeed(_isDefender, Stamina.IsSprinting)", source,
                 "the role term must be read from the live flag where the speed is composed");
 
-            int at = source.IndexOf("Stamina.RoleSpeedScale(_isDefender)");
+            int at = source.IndexOf("Stamina.MovementSpeed(_isDefender, Stamina.IsSprinting)");
             int fixedUpdate = source.IndexOf("private void FixedUpdate()");
 
             Assert.Greater(at, fixedUpdate,
@@ -112,7 +112,7 @@ namespace TumbangPreso.Tests
         {
             string source = File.ReadAllText(Motor);
 
-            int first = source.IndexOf("float speed = Balance.Speed");
+            int first = source.IndexOf("float speed = Stamina.MovementSpeed");
             Assert.Greater(first, -1, "the speed product has moved; this test is out of date");
 
             int end = source.IndexOf(";", first);
@@ -120,7 +120,7 @@ namespace TumbangPreso.Tests
 
             int roleTerms = 0;
             foreach (string term in product.Split('*'))
-                if (term.Contains("RoleSpeedScale") || term.Contains("IsDefender")) roleTerms++;
+                if (term.Contains("MovementSpeed") || term.Contains("_isDefender")) roleTerms++;
 
             Assert.AreEqual(1, roleTerms,
                 $"the role must appear once in the speed product and appears {roleTerms} times:\n"

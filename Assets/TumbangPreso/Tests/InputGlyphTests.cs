@@ -26,6 +26,60 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class InputGlyphTests
     {
+        [TestCase("F")]
+        [TestCase("RMB")]
+        [TestCase("LEFT SHIFT")]
+        public void XeluPromptsUseWholeSuppliedImagesOnBothGrounds(string label)
+        {
+            var dark = InputGlyphs.For(label, true);
+            var light = InputGlyphs.For(label, false);
+            Assert.IsNotNull(dark); Assert.IsNotNull(light);
+            StringAssert.StartsWith("xelu:", dark.name);
+            StringAssert.StartsWith("xelu:", light.name);
+            Assert.AreNotSame(dark.texture, light.texture);
+            Assert.AreEqual(dark.texture.width, dark.rect.width);
+            Assert.AreEqual(dark.texture.height, dark.rect.height);
+            Assert.AreEqual(FilterMode.Bilinear, dark.texture.filterMode);
+            Assert.AreSame(dark, InputGlyphs.For(label, true), "An unchanged control rebuilt its sprite.");
+        }
+
+        [Test]
+        public void XeluControllerFamiliesKeepTheirActualButtonNames()
+        {
+            var xbox = InputGlyphs.For("BUTTON SOUTH", true, InputGlyphs.PadFamily.Xbox);
+            var ps = InputGlyphs.For("BUTTON SOUTH", true, InputGlyphs.PadFamily.PlayStation);
+            StringAssert.Contains("XboxSeriesX_A", xbox.name);
+            StringAssert.Contains("PS5_Cross", ps.name);
+            Assert.AreNotSame(xbox.texture, ps.texture);
+            Assert.IsNotNull(InputGlyphs.For("WHEEL UP", true), "Missing pack variants must retain the established fallback.");
+            Assert.IsNull(InputGlyphs.For("NOT A REAL CONTROL", true));
+        }
+
+        [TestCase("WHEEL UP")]
+        [TestCase("WHEEL DOWN")]
+        public void OwnerScrollPromptsAreCenteredDistinctAndCached(string label)
+        {
+            var sprite = InputGlyphs.For(label, true);
+            Assert.IsNotNull(sprite);
+            StringAssert.StartsWith("owner-scroll:", sprite.name);
+            Assert.AreSame(sprite, InputGlyphs.For(label.ToLowerInvariant(), false));
+            Assert.AreEqual(135, sprite.rect.width);
+            Assert.AreEqual(100, sprite.rect.height);
+            Assert.AreEqual(sprite.texture.width, sprite.rect.width);
+            Assert.AreEqual(sprite.texture.height, sprite.rect.height);
+            Assert.AreEqual(97.2f, InputGlyphs.PromptWidth(sprite, 72), .001f);
+            Assert.AreEqual(sprite.rect.size * .5f, sprite.pivot);
+            Assert.AreEqual(FilterMode.Bilinear, sprite.texture.filterMode);
+            Assert.AreEqual(100, sprite.rect.height);
+            var other = InputGlyphs.For(label == "WHEEL UP" ? "WHEEL DOWN" : "WHEEL UP", true);
+            Assert.AreNotSame(sprite.texture, other.texture);
+            Assert.AreEqual(sprite.rect.size, other.rect.size);
+            Assert.AreEqual(sprite.rect.y, other.rect.y);
+            Assert.AreNotEqual(sprite.texture.name, other.texture.name);
+            Assert.IsTrue(InputGlyphs.Has(label));
+            StringAssert.StartsWith("xelu:", InputGlyphs.For("MMB", true).name);
+        }
+
         private static InputActionAsset Asset()
         {
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");
@@ -56,7 +110,11 @@ namespace TumbangPreso.Tests
             if (key == "Right Button" || key == "RightButton") return "RMB";
             if (key == "Middle Button" || key == "MiddleButton") return "MMB";
 
-            return key.ToUpperInvariant();
+            string upper = key.ToUpperInvariant();
+            if (upper == "SCROLL/UP" || upper == "SCROLL UP") return "WHEEL UP";
+            if (upper == "SCROLL/DOWN" || upper == "SCROLL DOWN") return "WHEEL DOWN";
+
+            return upper;
         }
 
         [Test]

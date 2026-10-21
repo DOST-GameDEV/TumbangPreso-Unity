@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:16Z" duration="13.9142464">
+  <test-suite type="TestSuite" id="2296" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1048" result="Failed" site="Child" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:16Z" duration="13.914246" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2290" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1048" result="Failed" site="Child" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:16Z" duration="13.897435" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29464" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2291" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1048" result="Failed" site="Child" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:16Z" duration="13.891325" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2292" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1048" result="Failed" site="Child" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:16Z" duration="13.884659" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1353" name="HauntedRuntimeTests" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:16Z" duration="13.664899" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1356" name="AnObserverCannotCreateHauntedButCanAdoptAuthoritativeRemainingTime" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests.AnObserverCannotCreateHauntedButCanAdoptAuthoritativeRemainingTime" methodname="AnObserverCannotCreateHauntedButCanAdoptAuthoritativeRemainingTime" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" seed="282443622" result="Passed" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:02Z" duration="0.091884" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1358" name="HauntedHidesBothRealHudMarkersAndExpiryRestoresThem" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests.HauntedHidesBothRealHudMarkersAndExpiryRestoresThem" methodname="HauntedHidesBothRealHudMarkersAndExpiryRestoresThem" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" seed="1730494120" result="Failed" start-time="2026-10-01 00:27:02Z" end-time="2026-10-01 00:27:16Z" duration="13.435413" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HauntedRuntimeTests+<HauntedHidesBothRealHudMarkersAndExpiryRestoresThem>d__16.MoveNext () [0x0010d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\HauntedRuntimeTests.cs:94
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1355" name="HauntedIgnoresStatusImmunityButAnExplicitCleanseStillEndsIt" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests.HauntedIgnoresStatusImmunityButAnExplicitCleanseStillEndsIt" methodname="HauntedIgnoresStatusImmunityButAnExplicitCleanseStillEndsIt" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" seed="1032042294" result="Passed" start-time="2026-10-01 00:27:16Z" end-time="2026-10-01 00:27:16Z" duration="0.043354" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1354" name="HauntedRefreshesWithoutStackingAndExpiresWithoutBlockingActions" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests.HauntedRefreshesWithoutStackingAndExpiresWithoutBlockingActions" methodname="HauntedRefreshesWithoutStackingAndExpiresWithoutBlockingActions" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" seed="42019092" result="Passed" start-time="2026-10-01 00:27:16Z" end-time="2026-10-01 00:27:16Z" duration="0.038936" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1357" name="InvalidHauntDurationsCannotPoisonTheTimer" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests.InvalidHauntDurationsCannotPoisonTheTimer" methodname="InvalidHauntDurationsCannotPoisonTheTimer" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" seed="555404383" result="Passed" start-time="2026-10-01 00:27:16Z" end-time="2026-10-01 00:27:16Z" duration="0.038848" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2034" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-01 00:27:16Z" end-time="2026-10-01 00:27:16Z" duration="0.154627" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2052" name="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" fullname="TumbangPreso.PlayTests.SkillReceiptTests.VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" methodname="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1103997037" result="Passed" start-time="2026-10-01 00:27:16Z" end-time="2026-10-01 00:27:16Z" duration="0.146865" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,62 @@
+{
+  "sourceCommit": "5e74518c6fba15147dff46b5d6432496e55f9b98",
+  "workerCommit": "05b2ee1563fc16879631aa481e9b34ac7591f271",
+  "question": "Do the pending 8 deletion, 3 initialization, 7 hosted-lobby and 3 countdown cases pass natively?",
+  "expectedCases": 21,
+  "retryCount": 0,
+  "deadlineSeconds": 360,
+  "paths": {
+    "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs": {
+      "before": "36818477842ed4e2329c34b4b873949f5738520796a1ee28997a108a3ef23ad8",
+      "candidate": "f2cb1c21918b19bd04d1e985f6dd098756482e490e094a9a716e7d297beed25c"
+    },
+    "Assets/TumbangPreso/Runtime/Net/ServerQuery.cs": {
+      "before": "4383946d1957bae1c15433d70ba6b18bd703c909c6db9ab20322c797b66a0770",
+      "candidate": "9f2e7f543f68d766be86bfad43549071e78b33f96b3c366aa78f8cfee44862f0"
+    },
+    "Assets/TumbangPreso/Runtime/ReadyGate.cs": {
+      "before": "08e8fd42a20172377f6dc13e40799fe25a08a6b3001ea3b1881f0ab93b1eb277",
+      "candidate": "0a3062ab814c1e2c202c453dd4960d1a837062343f1740494991d3f13d8bf068"
+    },
+    "Assets/TumbangPreso/Tests/AccountDeleteLifetimeTests.cs": {
+      "before": null,
+      "candidate": "10971690ac8e1401ac40e93d4f834d1a171b8e6af35f0406762d6c88ac03b1bd"
+    },
+    "Assets/TumbangPreso/Tests/AccountDeleteLifetimeTests.cs.meta": {
+      "before": null,
+      "candidate": "0a972e2e1fa40d68f3c687c6bbc8516ef13b0f1f9dffbe036c376ad915bc78f6"
+    },
+    "Assets/TumbangPreso/Tests/AccountInitializationOwnerTests.cs": {
+      "before": null,
+      "candidate": "a0e4f458e671ac40b49b63e3851c35168de52378e79bb2f4b3ab8a6c9370abb0"
+    },
+    "Assets/TumbangPreso/Tests/AccountInitializationOwnerTests.cs.meta": {
+      "before": null,
+      "candidate": "df8bd2d71468c252e8eac7d073efe99fa3645215aef97d3d7e210a354a4b46e4"
+    },
+    "Assets/TumbangPreso/Tests/HostedLobbyLifetimeTests.cs": {
+      "before": null,
+      "candidate": "67e307143f0e9825a91a9d60d9ec061c16d7164fa67f4f731abfaa02c010bc4e"
+    },
+    "Assets/TumbangPreso/Tests/HostedLobbyLifetimeTests.cs.meta": {
+      "before": null,
+      "candidate": "e12097c489b800094148a43c6c9e39bb6790cffe4d543d022139c678c22515a6"
+    },
+    "Assets/TumbangPreso/Tests/ReadyCountdownAbandonTests.cs": {
+      "before": null,
+      "candidate": "ed07f113de34b7bc126ede8a50171808ed43e45e2c9523c12b7dfd4c93ac84bd"
+    },
+    "Assets/TumbangPreso/Tests/ReadyCountdownAbandonTests.cs.meta": {
+      "before": null,
+      "candidate": "5f02ad463d1e99b96a088e548c35ac1ba2c62b20618f8b059c3c2166253d9f48"
+    },
+    "tools/run_unity_guarded.py": {
+      "before": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "candidate": "e40742eb3bf98c6ee9ca0de4c2a448080a95cd2f5aa437815ccc8ad5ce3db9f1"
+    },
+    "tools/playerprefs_guard.py": {
+      "before": "2d229dabda11c8cb0154d5f822d1d21f174deea638029f2888eeaa59eb5312ac",
+      "candidate": "431ce58bddc0787ec9e20b39cf9fc49c1eda5d81dc67a641f9bc37b92bd0a362"
+    }
+  }
+}

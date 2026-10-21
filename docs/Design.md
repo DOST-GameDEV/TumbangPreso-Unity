@@ -1,4 +1,27 @@
+## Current basic-action revision, October 3
+
+Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative
+hit and0.5s on a miss. Defender lunge remains0.5s full charge with0.5s tap to2.5s
+full-charge recovery. Attacker shove is7.5s hit/0.5s miss. Retrieval slide is
+removed; attackers approach and pick up normally, and right-click only shoves.
+This supersedes historical slide/timing descriptions below. Protocol144.
+[Checks](reports/action-timings-2026-10-03/README.md).
+
 # Design — the rules, and every number that decides them
+
+## Current movement values, October 3 owner revision
+
+In both modes, attackers walk at 2.5 m/s and run at 5 m/s; defenders walk at
+3.75 m/s and run at 7.5 m/s. No innate role/hero speed multipliers. Stamina
+capacity is 250, drain/regen 100 per second, sprint start floor 50, regen delay
+1 second. Fatigue lasts 2.5 seconds with no walking penalty and no sprint/regen.
+Jump launch is 5.75 m/s, character gravity 20 m/s², maximum falling speed 25 m/s.
+Ideal flat-ground jump is about 0.827 m high and 0.575 s airborne; physics steps
+and collision affect actual measurements. This supersedes the earlier 1 m / 0.5 s revision.
+Shove and defender lunge cost no stamina and are usable during fatigue.
+Separate retrieval slide remains 1.75 m / 25 stamina / 2.45 s cooldown.
+Defender lunge remains 3.5 m with 0.5 s tap / 2.5 s full-hold cooldown.
+
 
 **Model/art requirement:** new and reworked models must belong to TUMP's cute
 blocky visual language and avoid unnecessary detail. Gameplay changes and stronger
@@ -211,7 +234,10 @@ that is designed rather than inherited. `main.gd`'s `get_nodes_in_group("hazard_
 sweep is now a no-op over an empty group. **The speed-zone STACK it feeds
 (`enter_speed_zone`/`exit_speed_zone`) is still live** — fatigue rides it (§3).
 
-## 3 · Movement and stamina — every player
+## 3 · Historical movement and stamina rationale
+
+The following dated port table is historical. The current October 3 playtest
+contract at the top of this document supersedes these values.
 
 | Constant | Value | Note |
 |---|---|---|
@@ -223,7 +249,7 @@ sweep is now a no-op over an empty group. **The speed-zone STACK it feeds
 | `STAMINA_REGEN_RATE` | **20.0 /s** | a full bar refills in 3.0 s |
 | `STAMINA_REGEN_DELAY` | **1.0 s** | after the last sprint frame |
 | `STAMINA_SPRINT_FLOOR` | 7.5 | you cannot *start* a sprint below this, so the bar cannot be feathered |
-| `FATIGUE_TIME` | **2.0 s** | triggered by reaching 0. **Regen is locked for its whole duration** |
+| `FATIGUE_TIME` | **2.5 s** | triggered by reaching 0. **Regen is locked for its whole duration** |
 | `FATIGUE_SPEED_SCALE` | **0.75** | −25% speed, sprint locked out |
 | `JUMP_VELOCITY` | 5.8 | |
 | `GRAVITY` | 20.0 | |
@@ -237,13 +263,13 @@ Points every 0.25 seconds"*; it is implemented as a continuous 40/s, which spend
 identical 10 points per quarter-second held and cannot be feathered by tapping Shift
 on a sub-tick rhythm.
 
-⚠️ **FATIGUE NOW LOCKS REGEN, NOT JUST SPEED.** Reaching 0 costs 2.0 s at 0.75 speed
+⚠️ **FATIGUE NOW LOCKS REGEN, NOT JUST SPEED.** Reaching 0 costs 2.5 s at 0.75 speed
 with sprint locked out **and the bar refusing to refill at all**. Previously it
 refilled at full rate during the penalty, so the punishment did not touch the
 resource it was punishing.
 
 ⚠️ **§2.5 MEASURED 2026-08-01, ON THE 50-POINT POOL, BEFORE THE RAISE**
-(`tools/mech_probe.tscn`): sprint to empty **1.25 s** exactly, fatigue lockout **2.00 s**
+(`tools/mech_probe.tscn`, historical tuning): sprint to empty **1.25 s** exactly, fatigue lockout **2.00 s**
 exactly, and empty → full again in **2.97 s**. Every constant did what the table said.
 **On the 60-point pool that ships, sprint to empty is 1.50 s and a refill is 3.00 s.** The
 probe has not been re-run since the raise; those two are arithmetic on drain and regen rates
@@ -269,24 +295,34 @@ winning.
 | Input | Action |
 |---|---|
 | **WASD** | 8-way movement |
-| **Shift** | sprint |
+| **Left Shift** | sprint |
 | **Space** | jump |
-| **Left-click** | hold to charge a throw, release to throw |
-| **E** | contextual — see below |
+| **Left click** | Throw / Tag: hold to charge a throw, release to throw; the taya's jab tag |
+| **Right click** | Shove / Lunge: an attacker's shove (or the retrieval slide); the taya's lunge |
+| **Mouse wheel** | Curve Throw while charging: up curves right, down curves left |
+| **F** | Interact / Use: pick up, reset the can, break free, pull out |
+| **E / Q / X** | Hero Strike: Signature, Attacking or Defending, Ultimate |
+| **Tab** | Ability Tooltips (hold) |
+| **T** | Emote Wheel |
 
-⚠️ **E DOES THREE JOBS AND PICKS BY WHAT IS IN FRONT OF YOU.** The GDD gives it all
-three; rather than inventing two more keybinds for a game whose brief is "simpler", the
-press resolves against context. `carrier.gd` gets first refusal, and only a press
-neither pickup nor channel consumed reaches the shove.
+⚠️⚠️ **THE OWNER'S DEFAULT LAYOUT, 2026-09-27, KEY FOR KEY** (`Settings.Rebinding`'s class
+note; `InputMapAndAbilityTests.TheDefaultsAreTheOwnersLayout`). It split the old contextual
+E (then X) key: picking up and resetting stay on Interact / Use, and the shove joined the
+lunge on the other mouse button, so each mouse button is one verb by role.
 
 | Press | Condition | Result |
 |---|---|---|
-| **E tap** | Attacker, loose slipper within `PICKUP_RADIUS` | **pick up** |
-| **E tap** | Attacker, nothing grabbable | **shove**, instantly |
-| **E hold** | Defender, in the lata's ring, lata down | **reset the lata** |
-| **E hold 0.5 s** | Defender, anything else | charge, release to **lunge** and tag |
-| **Left-click** | Defender | **punch** — a quick close-range tag |
-| **Right-click** | Defender | the lunge again, kept as a second binding |
+| **F tap** | Attacker, loose slipper within `PICKUP_RADIUS` with clear street reach | **pick up** |
+| **F hold** | Defender, in the lata's ring, lata down | **reset the lata** |
+| **Right click** | Attacker, loose slipper in slide reach ahead | **retrieval slide** |
+| **Right click** | Attacker, anything else | **shove**, instantly |
+| **Right click hold 0.5 s** | Defender | charge, release to **lunge** and tag |
+| **Left click** | Defender | **punch**, a quick close-range tag |
+
+Pickup and retrieval slide refuse a shoe through solid street geometry. The
+shared reach query ignores triggers, players and slippers, while checking for
+a solid blocker behind them. Ownership, status, empty-hand and range rules
+still apply; forced round equipment does not use the loose-shoe reach gate.
 
 ⚠️⚠️ **THE TAYA HAS TWO TAG VERBS SINCE 2026-08-01**, on human instruction: *"Melee
 Punch Tag (Left-Click) ... a quick close-range punch"* and *"Lunge Tag (Hold E for
@@ -315,7 +351,7 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 
 | Constant | Value | Where |
 |---|---|---|
-| `CHARGE_FULL_TIME` | **2.5 s** | `carrier.gd` |
+| `CHARGE_FULL_TIME` | **1.25 s** | Current Feedback: faster ordinary throw wind-up; power range and launch speed unchanged |
 | `CHARGE_MIN_POWER` | 0.35 | a tap still throws |
 | `THROW_LOCK_TIME` | **1.25 s** | after a pickup; ÷ the tsinelas' GRIT (§9) → 1.03–1.42 s |
 | `LAUNCH_SPEED` | **18.5 m/s** | at full charge, `slipper.gd`; × the tsinelas' SPEED (§9) → 17.6–19.4 |
@@ -325,31 +361,18 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 | `MAX_FLIGHT_TIME` | 6.0 s | |
 | `THROWER_IGNORE_TIME` | 0.25 s | you cannot block your own throw on release |
 
-**All three of these must hold or the throw is refused** (`ThrowRules.CanThrow`):
+**All of these must hold or an attacker throw is refused** (`ThrowRules.CanThrow`):
 
-1. holding a slipper;
-2. **outside the box** — `max(|x|,|z|) >= CONFINEMENT_RADIUS` (**7.0**). ⚠️ Written as a
-   bare `5.0` here until 2026-08-23; the code has always tested the constant, and the constant
-   was raised twice on 2026-08-01 (§2). Name it, never number it;
-3. the post-restore cooldown has expired.
+1. The round is live and the player is an attacker holding a slipper.
+2. The player is outside the confinement box, using the shared geometry rule.
+3. No pickup lock or active restore-charge decay is blocking release.
 
-⚠️⚠️ **THERE WERE FOUR, AND "THE LATA IS UPRIGHT" WAS REMOVED ON 2026-08-26. THIS IS A
-DELIBERATE RULE CHANGE, NOT A NINTH DRIFT**, and `Design_Drift_Report.md` § 9 records it as such.
-
-🧑, off the built player, twice: *"my charge still pauses when lata is down"*, *"i dont want it
-to pause"*. The refusal had ended up in the worst possible shape. An earlier pass had already
-stopped a down lata CANCELLING a wind-up, because snapping every charged arm to idle on a
-teammate's knockdown *"made the shared knockdown feel like an animation error"*. So the charge
-was maintained and the release was then rejected: the player held a fully wound arm, pressed the
-button, and nothing happened, with no way to spend or clear the commitment.
-
-**Nothing is lost by allowing it.** A slipper that reaches a lata already on its side cannot
-score: `Lata.HostKnockDown` returns on its second line while `!_isUpright`. The reason the clause
-was written, protecting the reset channel from a shot banked on its last frame, is condition 3
-above (`Balance.ThrowRestoreCooldown`) together with the lata's own `IsProtected` shield, and
-both of those were added **specifically because this clause did not cover an airborne slipper**.
-It was guarding a door that already had two locks on it and jamming the player's arm in the
-process.
+Can-down and can-barrier states no longer forbid starting or releasing a throw.
+Knockdown keeps an existing charge. On the actual down-to-upright transition,
+a held wind-up lowers smoothly to zero over0.5s; release is blocked during that
+return and is not buffered. Continuing to hold begins a fresh charge afterwards.
+Already airborne slippers and the can's contact protection are unchanged.
+This applies to Classic and Hero Strike with matching protocol146clients.
 
 ⚠️ **§2.16 MEASURED 2026-08-01 — THE DOTTED ARC LANDS WHERE THE SLIPPER LANDS.**
 `tools/mech_probe.tscn` integrates the preview's own scheme from the velocity it is
@@ -407,14 +430,13 @@ on the last frame of the reset channel.
   to keep bots from converging on, and repeatedly stealing, a human's shoe. They were
   **already unreachable before the lock** (the live fetch path is `MySlipper`, which has
   always been owner-scoped), so the lock did not strand them. `docs/TODO.md` § 154.
-* ⚠️⚠️ **AN UNOWNED SLIPPER IS STILL FREE, AND THAT IS THE PRACTICE LOBBY RATHER THAN A
-  LOOPHOLE.** `SliceRunner.EquipOwnedSlippers` writes `owner_slot = -1` in two cases
-  that look identical through the field and are opposite in intent: the taya's shoe,
-  which is **deactivated** and refused on the first line of the grab gate anyway, and an
-  **absent seat's spare**, which is left lying in the street deliberately. With the
-  practice lobby set to NONE that is three of the four tsinelas, and `SoloPracticeTests`
-  fails outright if they stop being retrievable. The test is therefore
-  `owner_slot >= 0 && owner_slot != who`, never `owner_slot != who`.
+* **Ownerless stock is only training equipment.** The 2026-09-21 pass keeps the
+  absent seats' spare slippers usable in an offline one-seat practice lobby and
+  the guided tutorial. `OwnershipAllows` refuses ownerless stock in live multiplayer
+  and populated matches. This preserves practice without creating an ownership
+  bypass. The same identity gate protects force equip and credited throws;
+  environmental ability displacement with no thrower still moves loose slippers.
+  The taya's own slipper remains parked. `SeatOfOrigin` remains the stable address.
 * **`owner_slot` still exists and is still assigned at round start.** It is what the
   recall mark and the owner glow read. It is no longer only a label: it gates
   `can_be_grabbed_by()`. ⚠️ It is still **not an address**. `SeatOfOrigin` is the
@@ -556,6 +578,11 @@ another slipper inside the box, so a taya who tagged well ended up standing on a
 of them. The penalty that remains is real — the safe-zone teleport, 5 s stunned, and
 the whole trip to make again.
 
+**Current Unity tuning, owner feedback2026-09-30:** the ordinary defender lunge
+now targets3m of travel, about13.416m/s, with4.3m standing sweep reach. Native
+local-input/host-travel and near/far tag checks pass. [Evidence](reports/feedback-2026-09-30/defender-lunge.md).
+The following August measurement history predates that request.
+
 ⚠️⚠️ **THE LUNGE REACHES 2.30 m, NOT 3.20 m.** `LUNGE_SPEED` is **7.746**, a **1.0 m**
 dash by `v²/60`, plus the 1.3 m sweep radius. It entered at 12.247 (a 2.5 m dash, 3.20 m of
 reach) on 2026-08-01 and was cut to 7.746 later the same day in `071061c`, on instruction:
@@ -653,6 +680,14 @@ overlap, and it can only happen where the score is written.
 
 ### 7.1 · The hit window is not the collider, and that is the fairness ruling
 
+Current Unity contact also requires vertical overlap with the upright Visual
+mesh's measured bottom/top, expanded by the existing slipper hit radius. This
+closes the infinite-height column that knocked cans down from high overflights.
+The horizontal stance-based window below remains unchanged; shields and world
+cues are excluded from measured height. Model replacement refreshes the cached
+height. Protocol120 peers are required for the finite-height contact rule.
+
+
 ⚠️⚠️ **THE NUMBER THAT DECIDES EVERY KNOCKDOWN IN THE GAME WAS AN UNNAMED LITERAL IN
 ANOTHER FILE UNTIL 2026-08-01.** A thrown slipper connects when its flat distance to the
 can is inside `Slipper.HIT_RADIUS + Lata.HIT_MARGIN` = **0.53 m** at neutral, tested per
@@ -703,8 +738,8 @@ mesh's own AABB so it follows the skin. **Verified: `tools/models/lata_floor_pro
 reports all four skins at +0.0001 or better, upright and downed** — it exits
 non-zero if any skin sinks, so re-run it after touching a profile or the topple.
 
-`is_upright` gates **four** separate rules: the throw, the tag, passive scoring and the
-reset channel. It is host-authoritative and replicated through an **explicit RPC, not a
+`is_upright` gates tagging and the reset channel; its restoration edge lowers
+held throw charges. It no longer gates throw permission. It is host-authoritative and replicated through an **explicit RPC, not a
 `MultiplayerSynchronizer` property** — a synchronizer writes a property directly, so a
 setter's `signal` never fires on the peer that *received* it. That exact defect cost a
 whole session on 2026-07-30 (one setter, three symptoms).
@@ -1065,3 +1100,14 @@ Classic already uses. `docs/TODO.md` § 2 has the full collision table. **Until 
 ⚠️ **WHERE A HERO SYSTEM CONTRADICTS A NUMBER ABOVE, THE HERO SYSTEM IS SCOPED TO ITS MODE**
 and the number above still stands for Classic. Nothing in the ability layer is allowed to
 change a Classic constant; if one ever needs to, it moves here in the same commit, per § 0.
+
+## Current anti-stall timing
+
+The current Feedback revision uses 1.5 m camping entry and 2.0 m clear distance.
+Warn after 2.5 seconds near an upright can; the penalty state begins at 5 seconds
+and deducts 5 points per second while suspending normal 10 points/sec defense income.
+An owned loose slipper warns at 7.5 seconds; its existing highlight counts the
+remaining 7.5 seconds until the 15-second penalty threshold. Both clocks hold
+while the player cannot act. Retrieving the slipper clears its episode. Scores
+retain their zero floor. Exhaustion now lasts 2.5 seconds at 75% speed with sprint
+and regeneration locked throughout. These shared timings require protocol 119.

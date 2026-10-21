@@ -1,0 +1,56 @@
+{
+  "source": "97a313e3365727d31d47dea7bd8b1469b2f0ed1f",
+  "protocol": 151,
+  "scope": "Two normal visible players on this PC, named profiles; LAN controls and terminal departure. Not two-machine/WAN acceptance. One parent restores shared input only after BOTH exit.",
+  "artifactManifest": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-97a313e33-1005-manifest.json",
+  "roles": {
+    "host": {
+      "pid": 6600,
+      "profile": "pc-pair151-host1005b",
+      "command": [
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-97a313e33-1005\\TumbangPreso.exe",
+        "-force-d3d11",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "1280",
+        "-screen-height",
+        "720",
+        "-tp-framecap",
+        "60",
+        "-tp-profile",
+        "pc-pair151-host1005b",
+        "-logFile",
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-lan1511005\\local-ui-pair\\host\\player.log"
+      ],
+      "settingsRestored": true,
+      "exitCode": 0
+    },
+    "client": {
+      "pid": 19856,
+      "profile": "pc-pair151-client1005b",
+      "command": [
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-97a313e33-1005\\TumbangPreso.exe",
+        "-force-d3d11",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "1280",
+        "-screen-height",
+        "720",
+        "-tp-framecap",
+        "60",
+        "-tp-profile",
+        "pc-pair151-client1005b",
+        "-logFile",
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-lan1511005\\local-ui-pair\\client\\player.log"
+      ],
+      "settingsRestored": true,
+      "exitCode": 0
+    }
+  },
+  "inputRestored": true,
+  "runtimeUnchanged": true,
+  "exeUnchanged": true,
+  "terminal": true
+}

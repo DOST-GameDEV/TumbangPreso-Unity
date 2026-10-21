@@ -1,0 +1,180 @@
+161 fixtures discovered in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode
+
+  destroyer  (1)
+   ⚠️⚠️ `InputSurfaceProbe` ALONE, AND `CLAUDE.md` § 7 ALREADY SAID SO IN CAPITALS: "RUN IT ALONE. It loads every scene in the build settings and opens every overlay it can discover, so it is the most destructive fixture in the suite: in a twelve-suite run it took most of the group down with it and the numbers were meaningless." § 126.8b sorted a whole run by start time and found it clean for 57 case
+      InputSurfaceProbe
+
+  screens  (45)
+   Everything that builds a menu, an overlay or a screen. They contend for the same canvases, the same EventSystem and the same `DontDestroyOnLoad` chrome (`MatchResult`, `PausePanel`, `BootSting`), and § 126.8d measured that isolating them from the match fixtures turns every one of them green.
+      AspectRatioProbes
+      CustomCharacterScreenProbe
+      CustomGameScreenProbe
+      HomeFlowTests
+      HeroPickerLayoutProbe
+      HudLayoutProbe
+      HudOverflowProbe
+      LoadoutSurfaceProbe
+      LobbyChatProbe
+      LobbyChatStripProbe
+      LobbyStyleProbe
+      LobbyTypingProbe
+      NestedCanvasProbe
+      NetworkedLobbyTypingProbe
+      PaperPurityProbe
+      PhaseSurfaceLayoutProbe
+      PlayerHubLayoutProbe
+      PreviewDragProbe
+      QueueCardLayoutProbe
+      SettingsScrollProbe
+      SettingsWheelProbe
+      UiClickProbe
+      UiRuntimeShots
+      WardrobeSheetProbe
+      ModelPreviewProbe
+      ModelPreviewTests
+      MatchRecordIdentityProbe
+      BrandPickerTests
+      BrandPreparationTests
+      BrandSettingsTests
+      CloseFeedbackViewProbe
+      ModelPreviewPixelTests
+      OwnerMenuEditsTests
+      OwnerMenuSkyTests
+      OwnerPasswordTests
+      OwnerPlayerHubTests
+      OwnerPreparationTests
+      OwnerUiAuthoringTests
+      PlayHeadingScaleTests
+      ReducedActionFocusProbe
+      SwimmingNameplateTests
+      TumpNativeFrontEndTests
+      TumpNativeJoinTests
+      TumpNativePickerTests
+      TumpNativeSettingsTests
+
+  match  (89)
+   Everything that installs an arena and runs a round. `MapPreviewSurface` loads arenas ADDITIVELY AND CACHES THEM (§ 126.8b), so a cached map landing inside a screen suite brings a whole arena's lights, cameras and post stack with it, and the reverse leaves a match fixture with no main camera. Keeping the two apart is the same boundary read from either side.
+      AiLaneTests
+      ArenaBoundsProbe
+      BotMotionProbe
+      CarriedSlipperSelfHideProbe
+      CarryTests
+      MapRetrievalProbe
+      EmoteCameraProbe
+      EmoteLifecycleProbe
+      FppFrameProbe
+      CheskaIceContractProbe
+      IceTractionProbe
+      NemuKitContractProbe
+      MapRouteProbe
+      RetrievalSlideTests
+      HitFreezeProbe
+      SecondMatchLifecycleProbe
+      AudioListenerProbe
+      FppOccluderProbe
+      LandedHighlightTests
+      LataFloatProbe
+      MatchRunTests
+      MultiplayerModelSwapSelfHideProbe
+      ScoreWitnessProbe
+      SeatAnnouncementTests
+      SessionRestartTests
+      SoloPracticeTests
+      SteeringTests
+      StunFrostTests
+      TrainingStreetProbe
+      TutorialDefenderProbe
+      TutorialLessonHonestyProbe
+      VolcanicZoneTests
+      InputEdgeTests
+      InputReaderTests
+      MatchSoakProbe
+      ScoreIdempotencyTests
+      AmbientLifeProbe
+      BlackIceFootingProbe
+      CheskaNovaSlipperProbe
+      ClassicCosmeticMotorProbe
+      ClientRoundBoundaryProbe
+      DanteStompContractProbe
+      EquipmentIntegrationProbe
+      FootSupportProbe
+      FppHandsReviewProbe
+      FppSlipperShadowProbe
+      IceWorldSnapshotProbe
+      MapGraphicsReviewProbe
+      MovementSnapshotProbe
+      OwnerTrainingUiTests
+      PendingPreparationTests
+      PendingPresentationProbe
+      PhaisterRitualContractProbe
+      PickupPressOwnershipProbe
+      PinnedFetchProbe
+      RecoveryDeviceProbe
+      RecoveryMenuBoundaryProbe
+      ResidentLaundrySceneTests
+      RooftopRecoveryProbe
+      RooftopSwimmingProbe
+      SeanSkillTimingProbe
+      SlipperLookupCostProbe
+      SpectatorReplayOwnershipProbe
+      SplitSpiresPassageProbe
+      ThrowAimIntegrationProbe
+      ThrowMotionReviewProbe
+      TumpNativeHudTests
+      TumpNativeResultTests
+      ZackKitAcceptanceProbe
+      ZackSkillPresentationProbe
+      ActionChainIntegrationTests
+      BlockContactTests
+      CatchReconstructionTests
+      CloseCallPresentationTests
+      ExchangeAudioTests
+      ExchangeMotionTests
+      ExchangePresenceTests
+      ExchangePresentationTests
+      FamiliarReadoutTests
+      MapPreviewTransitionTests
+      MatchFinishPresentationTests
+      MatchMomentTests
+      RecordedEffectsTests
+      ReplayRetentionTests
+      RoundFieldCleanupTests
+      ScoreFeedbackTests
+      SharedUltimatePhaseTests
+      SkillReceiptTests
+      SpectatorExchangeTests
+
+  capture  (21)
+   The fixtures whose job is to photograph something. They replace cameras, drive the render pipeline and write files, and a replaced camera is what several of the `MissingReferenceException: the object of type 'UnityEngine.Camera' has been destroyed` failures are holding.
+      AntiAliasStateProbe
+      CosmeticSurfaceProbe
+      GameplayShots
+      ModelFacingProbe
+      MsaaResolveProbe
+      NationalsShowcaseProbe
+      ImprovementEvidenceProbe
+      NearFadeProbe
+      ToneSweep
+      WorldOutlineCoverageProbe
+      MatchFrameRateProbe
+      HudPerformanceProbe
+      ReplayCaptureProbe
+      AbilityStressProbe
+      KuroIdleReviewProbe
+      KuroMapClearanceProbe
+      MapExperienceProbe
+      SlipperRecallShots
+      BusyExchangeProbe
+      ThrowCancellationProbe
+      UltimateIntroductionProbe
+
+  services  (3)
+   ⚠️ THE ONLY GROUP WHOSE STATE LIVES ON SOMEBODY ELSE'S SERVER, so "tear the world down" does not reach it and neither does isolation from this side. § 126.8's own note: six of its cases went red in one run having passed in the previous one with nothing changed that touches authentication. In batch mode `NetIdentity` refuses UGS sign-in by design and these report SKIPPED with the reason.
+      UgsServicesProbe
+      OnlineSignInProbe
+      CloudEndpointActionProbe
+
+  bots  (2)
+   The long seeded probes. `BotBehaviourProbe` runs whole matches in both modes on two maps and is minutes rather than seconds; it shares nothing with the screens and would otherwise dominate a group's wall time.
+      BotBehaviourProbe
+      AiDiagnosticProbe

@@ -1,0 +1,69 @@
+{
+  "sourceCommit": "3bbc90c61cf48b72ec0feeaaa113b661a8ec8ae1",
+  "expectedCases": 10,
+  "testFilter": "TumbangPreso.PlayTests.GameplayChatInputTests",
+  "expectedBaseline": "4 causalchat failures,6 controls pass",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/ReadyGate.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\ReadyGate.cs.baseline.txt",
+      "sha256": "3158AD98B0008020B90148119DA4F739AAD311048DEA600F9C5B1E86E338954A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/ReadyGate.cs",
+      "variant": "final",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\ReadyGate.cs.candidate.txt",
+      "sha256": "6765AF158DDD40A7A1962DD51636C083EFF879685CFB4BF4ACBB053F78F315A1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/BufferSkipVote.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\BufferSkipVote.cs.baseline.txt",
+      "sha256": "F705DFF06372950D69AACFEE0B3BD1873F2528861F60C7D7A4AD025039801D87"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/BufferSkipVote.cs",
+      "variant": "final",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\BufferSkipVote.cs.candidate.txt",
+      "sha256": "EA3275B9241CB69DF6F88B035797D1B9B2F4EE63E0EB074032E64B7C32D1C485"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\EmoteWheel.cs.baseline.txt",
+      "sha256": "C67249CC7018F140D3BA153EE3DF22058FF33BC1C1F98F1835BA3C2D2758CBBA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+      "variant": "final",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\EmoteWheel.cs.candidate.txt",
+      "sha256": "0D97C2C0F1D1A7B9A47E08E7D0B034B1ADEE496F0118ADAC370513CEBB94B6DA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GameplayChatInputTests.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\GameplayChatInputTests.cs",
+      "sha256": "77EDDA40098968EA3379521711544DFD6DE7990D89A0A20B88883FE3E2BE6EDB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GameplayChatInputTests.cs",
+      "variant": "final",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\GameplayChatInputTests.cs",
+      "sha256": "77EDDA40098968EA3379521711544DFD6DE7990D89A0A20B88883FE3E2BE6EDB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GameplayChatInputTests.cs.meta",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\GameplayChatInputTests.cs.meta",
+      "sha256": "0A7FB4904CBD7321A2E3AA5BA510362039AAD97D8B0C1F55AF17A24BE0B1807F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GameplayChatInputTests.cs.meta",
+      "variant": "final",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\GameplayChatInputTests.cs.meta",
+      "sha256": "0A7FB4904CBD7321A2E3AA5BA510362039AAD97D8B0C1F55AF17A24BE0B1807F"
+    }
+  ],
+  "context": "PlayMode realpress/release; sameInputSettings object/two scoped focus scalar flags only"
+}

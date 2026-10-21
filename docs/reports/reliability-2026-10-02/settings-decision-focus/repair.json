@@ -1,0 +1,7 @@
+{
+  "reason": "First native run total0: invalid33-character GUID caused Unity to ignore the new fixture. One metadata-only repair; no source/assertion changes.",
+  "originalMetaSha256": "82d48fb4ace76ff1fe1c8d1fae733b569d331e9020d2a0e03bde76a662aa06f7",
+  "candidateMetaSha256": "0d3efd01a05dd5564b93aab7e84b9af45874e82b53b3ee002bda216ea213774e",
+  "originalRun": "baseline",
+  "repairedBaselineRun": "baseline-repair"
+}

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 14:31:47Z" end-time="2026-10-04 14:31:58Z" duration="11.0563081">
+  <test-suite type="TestSuite" id="3054" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:31:47Z" end-time="2026-10-04 14:31:58Z" duration="11.056308" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3048" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:31:47Z" end-time="2026-10-04 14:31:58Z" duration="11.037210" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12828" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3049" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:31:47Z" end-time="2026-10-04 14:31:58Z" duration="11.027078" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3050" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:31:47Z" end-time="2026-10-04 14:31:58Z" duration="11.017027" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1625" name="HomeFlowTests" fullname="TumbangPreso.PlayTests.HomeFlowTests" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 14:31:47Z" end-time="2026-10-04 14:31:50Z" duration="2.633560" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1626" name="TitleKeepsSuppliedPaintingSharpAndOneContinueTarget" fullname="TumbangPreso.PlayTests.HomeFlowTests.TitleKeepsSuppliedPaintingSharpAndOneContinueTarget" methodname="TitleKeepsSuppliedPaintingSharpAndOneContinueTarget" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" seed="1636818070" result="Passed" start-time="2026-10-04 14:31:47Z" end-time="2026-10-04 14:31:50Z" duration="2.617480" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Title-clean-1080p cream source=252,211,159 pixel=244,183,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Title-clean-720p cream source=252,211,159 pixel=245,181,119; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Title-clean-shortwide cream source=252,211,159 pixel=247,181,120; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2103" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-04 14:31:50Z" end-time="2026-10-04 14:31:58Z" duration="8.285945" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2118" name="StartupLoginStaysSilentUntilGuestRevealsHome" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.StartupLoginStaysSilentUntilGuestRevealsHome" methodname="StartupLoginStaysSilentUntilGuestRevealsHome" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="2137071100" result="Passed" start-time="2026-10-04 14:31:50Z" end-time="2026-10-04 14:31:58Z" duration="8.281509" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLogin-v7-create-1920x1080 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-960x540 cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-1280x960 cream source=252,211,159 pixel=244,135,100; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-3440x1440 cream source=252,211,159 pixel=242,140,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-normal cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-large cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpGeometry] Login-consent-checked/AcceptedCheck: vertices=24, cull=False, alpha=1, depth=34, material=1
+[TumpUiCapture] Login-consent-checked cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v8-valid-marks/Disc: vertices=384, cull=False, alpha=0.999, depth=13, material=1
+[TumpGeometry] OwnerLogin-v8-valid-marks/Tick: vertices=24, cull=False, alpha=0.999, depth=14, material=1
+[TumpGeometry] OwnerLogin-v8-valid-marks/AcceptedCheck: vertices=24, cull=False, alpha=1, depth=34, material=1
+[TumpUiCapture] OwnerLogin-v8-valid-marks cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-password-fault/Disc: vertices=384, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] OwnerLogin-password-fault/Tick: vertices=24, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] OwnerLogin-password-fault/AcceptedCheck: vertices=24, cull=False, alpha=1, depth=34, material=1
+[TumpUiCapture] OwnerLogin-password-fault cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v7-signin/Disc: vertices=384, cull=False, alpha=0.003, depth=13, material=1
+[TumpGeometry] OwnerLogin-v7-signin/Tick: vertices=24, cull=False, alpha=0.003, depth=14, material=1
+[TumpUiCapture] OwnerLogin-v7-signin cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

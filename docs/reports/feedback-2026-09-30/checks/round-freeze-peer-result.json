@@ -1,0 +1,25 @@
+{
+  "playerCheckExit": 0,
+  "phaseResults": {
+    "host": {
+      "samples": 95,
+      "span": 9.873199462890625,
+      "began": 109.467993964413,
+      "frame": [
+        1920,
+        1080
+      ]
+    },
+    "client": {
+      "samples": 97,
+      "span": 9.976699829101562,
+      "began": 109.467993964413,
+      "frame": [
+        1920,
+        1080
+      ]
+    }
+  },
+  "failures": [],
+  "passed": true
+}

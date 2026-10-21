@@ -52,42 +52,26 @@ namespace TumbangPreso.UI
         public static Canvas Build(Transform owner,Action settings,Action credits)
         {
             var canvas=OwnerUiLayout.Canvas(owner,"OwnerHomeCanvas",100);
+            var paper=OwnerUiLayout.Rect(canvas.transform,"TitleArrivalPaper").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Fill(paper.rectTransform);paper.color=new Color32(252,211,159,255);paper.raycastTarget=false;
             var background=OwnerUiLayout.Rect(canvas.transform,"OwnerMainMenuBackground");
             OwnerUiLayout.Fill(background);
             var image=background.gameObject.AddComponent<RawImage>();
             var scene=background.gameObject.AddComponent<HomeCourtScene>();
             scene.Illustration=OwnerMenuArt.Texture("main2-background");scene.Drift=0;
             image.texture=scene.Illustration;
-            background.gameObject.AddComponent<OwnerMenuAir>();
-
-            var dust=OwnerUiLayout.Rect(background,"BackgroundRoadDust").gameObject.AddComponent<OwnerRoadDust>();
-            OwnerUiLayout.Fill(dust.rectTransform);dust.Background=image;dust.raycastTarget=false;
-            var leaves=OwnerUiLayout.Rect(background,"BackgroundLeaves").gameObject.AddComponent<OwnerMenuLeaves>();
-            OwnerUiLayout.Fill(leaves.rectTransform);leaves.Background=image;leaves.raycastTarget=false;
 
             var design=OwnerUiLayout.DesignArea(canvas.transform,"OwnerMainMenuComposition");
 
-            // ⚠️ THE PRESS TARGET COVERS THE CANVAS, NOT THE DESIGN AREA. The design
-            // area is a fixed 1920x1080 rect in the middle of a canvas that is wider
-            // than that on his window, so a press in the outer band would land on
-            // nothing on the one screen whose entire instruction is "tap anywhere".
-            var surface=OwnerUiLayout.Rect(canvas.transform,"StartButton");
-            OwnerUiLayout.Fill(surface);
-            var hit=surface.gameObject.AddComponent<Image>();hit.color=Color.clear;
-            var press=surface.gameObject.AddComponent<Button>();
-            press.targetGraphic=hit;press.transition=Selectable.Transition.None;
-            press.onClick.AddListener(()=>{MenuSfx.Start();SceneFlow.Go(SceneFlow.ModeSelect);});
-
-            var prompt=OwnerUiLayout.Text(design,"ContinuePrompt","",CaptionSize,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(prompt.rectTransform,Caption.x,Caption.y,Caption.width,Caption.height);
-            prompt.alignment=TextAnchor.MiddleCenter;prompt.color=Color.white;prompt.raycastTarget=false;
-            prompt.horizontalOverflow=HorizontalWrapMode.Overflow;prompt.verticalOverflow=VerticalWrapMode.Overflow;
-            // Her caption is white on a sunlit road. A soft ink shadow under it is
-            // the difference between readable and nearly readable, and it is the
-            // same warm ink the rest of the front end uses rather than black.
-            var shade=prompt.gameObject.AddComponent<Shadow>();
-            shade.effectColor=new Color32(28,15,6,150);shade.effectDistance=new Vector2(2,-2);
-            prompt.gameObject.AddComponent<OwnerMenuPrompt>().Press=press;
+            // The supplied title is the automatic Home-loading surface. Its small
+            // progress rail replaces the previous full-screen continuation target.
+            var rail=OwnerUiLayout.Rect(design,"LoadingProgressTrack").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Place(rail.rectTransform,775,1018,370,7);
+            rail.color=new Color(1,1,1,.24f);rail.raycastTarget=false;
+            var progress=OwnerUiLayout.Rect(design,"ActualProgress").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Place(progress.rectTransform,775,1018,370,7);
+            progress.color=Color.white;progress.raycastTarget=false;
+            progress.rectTransform.sizeDelta=new Vector2(0,7);
 
             canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             return canvas;

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 20:08:58Z" end-time="2026-09-30 20:09:04Z" duration="5.7877297">
+  <test-suite type="TestSuite" id="2222" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-09-30 20:08:58Z" end-time="2026-09-30 20:09:04Z" duration="5.787730" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2216" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-09-30 20:08:58Z" end-time="2026-09-30 20:09:04Z" duration="5.779206" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="170165" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2217" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-09-30 20:08:58Z" end-time="2026-09-30 20:09:04Z" duration="5.776959" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2218" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-09-30 20:08:58Z" end-time="2026-09-30 20:09:04Z" duration="5.775022" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1170" name="CheskaExpiryPresentationTests" fullname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" classname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-30 20:08:58Z" end-time="2026-09-30 20:09:04Z" duration="5.734996" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1172" name="ReplicatedFlairUsesTheRotatedLocalWall" fullname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests.ReplicatedFlairUsesTheRotatedLocalWall" methodname="ReplicatedFlairUsesTheRotatedLocalWall" classname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" runstate="Runnable" seed="1072393065" result="Failed" start-time="2026-09-30 20:08:58Z" end-time="2026-09-30 20:09:02Z" duration="3.746478" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A center-only puff does not break across the actual arc.
+  Expected: greater than 2.5f
+  But was:  1.13572764f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaExpiryPresentationTests+<CheckWallBreak>d__4.MoveNext () [0x0047f] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CheskaExpiryPresentationTests.cs:67
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[WallBreak] pieces=8 localSpan=1.135728
+]]></output>
+            </test-case>
+            <test-case id="1171" name="ThirdHitBreaksAcrossTheRealArcWithoutPhysicalDebris" fullname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests.ThirdHitBreaksAcrossTheRealArcWithoutPhysicalDebris" methodname="ThirdHitBreaksAcrossTheRealArcWithoutPhysicalDebris" classname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" runstate="Runnable" seed="2122320664" result="Failed" start-time="2026-09-30 20:09:02Z" end-time="2026-09-30 20:09:04Z" duration="1.975149" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A center-only puff does not break across the actual arc.
+  Expected: greater than 2.5f
+  But was:  0.926783323f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaExpiryPresentationTests+<CheckWallBreak>d__4.MoveNext () [0x0047f] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CheskaExpiryPresentationTests.cs:67
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[WallBreak] pieces=8 localSpan=0.9267833
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

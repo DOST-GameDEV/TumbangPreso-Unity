@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Passed" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:14Z" duration="0.6908296">
+  <test-suite type="TestSuite" id="2115" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="893" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:14Z" duration="0.690830" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2109" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="893" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:14Z" duration="0.671117" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="70931" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2110" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="893" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:14Z" duration="0.660433" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2111" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="893" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.650773" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1798" name="ScoreStockPacketTests" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.628306" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1819" name="NonHostSenderAndHostLoopbackCannotPublish" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.NonHostSenderAndHostLoopbackCannotPublish" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.121904" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1817" name="NonHostSenderAndHostLoopbackCannotPublish(False)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.NonHostSenderAndHostLoopbackCannotPublish(False)" methodname="NonHostSenderAndHostLoopbackCannotPublish" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1475823496" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.075199" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1818" name="NonHostSenderAndHostLoopbackCannotPublish(True)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.NonHostSenderAndHostLoopbackCannotPublish(True)" methodname="NonHostSenderAndHostLoopbackCannotPublish" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="957513632" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.039464" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1816" name="PublishedStockCountsKeepTheirExistingMeaning" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.100008" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1813" name="PublishedStockCountsKeepTheirExistingMeaning(0)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning(0)" methodname="PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1438321479" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.034894" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1814" name="PublishedStockCountsKeepTheirExistingMeaning(2)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning(2)" methodname="PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="295458465" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.030510" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1815" name="PublishedStockCountsKeepTheirExistingMeaning(4)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning(4)" methodname="PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="2010959664" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.033082" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1804" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.168541" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1799" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(0)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(0)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="658844959" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.034182" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1800" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(4)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(4)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1422196198" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.032224" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1801" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(8)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(8)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1073026619" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.031730" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1802" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(11)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(11)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1992539905" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.032033" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1803" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(13)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(13)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1124264065" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.036395" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1808" name="StocksRejectTruncatedHeaderWithoutMutation" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.121556" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1805" name="StocksRejectTruncatedHeaderWithoutMutation(0)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation(0)" methodname="StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1913451083" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.033463" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1806" name="StocksRejectTruncatedHeaderWithoutMutation(4)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation(4)" methodname="StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="358798408" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.034013" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1807" name="StocksRejectTruncatedHeaderWithoutMutation(7)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation(7)" methodname="StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="421711034" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.052472" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1811" name="StockTableRequiresExactlyItsDeclaredCount" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.066097" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1809" name="StockTableRequiresExactlyItsDeclaredCount(False)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount(False)" methodname="StockTableRequiresExactlyItsDeclaredCount" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="386311797" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.034283" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1810" name="StockTableRequiresExactlyItsDeclaredCount(True)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount(True)" methodname="StockTableRequiresExactlyItsDeclaredCount" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1628877599" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.030220" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1812" name="ValidScorePublishesOnceWithoutAddingToReplicatedTotal" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ValidScorePublishesOnceWithoutAddingToReplicatedTotal" methodname="ValidScorePublishesOnceWithoutAddingToReplicatedTotal" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="610883266" result="Passed" start-time="2026-09-30 08:56:13Z" end-time="2026-09-30 08:56:13Z" duration="0.039255" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

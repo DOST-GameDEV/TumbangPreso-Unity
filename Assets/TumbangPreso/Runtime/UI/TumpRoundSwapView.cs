@@ -9,7 +9,7 @@ namespace TumbangPreso.UI
     public sealed partial class TumpRoundSwapView : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
-        private Text _round, _name, _buffer;
+        private Text _round, _name, _buffer, _continueLabel;
         private Image _portrait;
         private readonly Text[] _names = new Text[4], _scores = new Text[4];
         private readonly Image[] _portraits = new Image[4];
@@ -63,27 +63,45 @@ namespace TumbangPreso.UI
             _buffer = TumpUiFactory.Text(root, "WarmupTime", "", 26);
             TumpUiFactory.Place(_buffer.rectTransform, 104, 960, 710, 66);
         }
-        public void Show(int nextRound, int defender)
+        public void Show(int nextRound,int defender)
         {
-            _round.text = "Round " + Mathf.Max(1, nextRound - 1) + " complete";
-            var who = GameServices.Round?.PlayerAt(defender);
-            _name.text = who != null ? who.DisplayName() : "P" + (defender + 1);
-            _portrait.sprite = Portrait(who); _portrait.enabled = _portrait.sprite != null;
-            var match = GameServices.Match;
-            if (match != null)
+            _entered=Time.unscaledTime;_remainingStart=0;_nextRoundNumber=nextRound;_halftime=HalftimePresentation.Instance?.IsHalftime==true;_fallback=null;
+            _round.text=_halftime?"HALFTIME":"NEXT ROUND";
+            var who=GameServices.Round?.PlayerAt(defender);
+            _name.text=_popupBuilt?SeatLabel.Raw(defender):PlayerIdentity.Label(defender)+" · "+SeatLabel.Raw(defender);
+            _portrait.sprite=Portrait(who);_portrait.enabled=_portrait.sprite!=null;
+            if(_nextRound!=null)_nextRound.text="ROUND "+nextRound;
+            if(_notice!=null)_notice.text="";
+            var match=GameServices.Match;
+            if(match!=null)
             {
-                var order = match.Ranking();
-                for (int i = 0; i < 4; i++)
+                var order=match.Ranking();bool uniqueLeader=match.ScoreFor(order[0])>match.ScoreFor(order[1]);
+                for(int i=0;i<4;i++)
                 {
-                    var actor = GameServices.Round?.PlayerAt(order[i]);
-                    _names[i].text = actor != null ? actor.DisplayName() : "P" + (order[i] + 1);
-                    _scores[i].text = match.ScoreFor(order[i]).ToString();
-                    _portraits[i].sprite = Portrait(actor); _portraits[i].enabled = _portraits[i].sprite != null;
+                    var actor=GameServices.Round?.PlayerAt(order[i]);
+                    // VISUAL-1.17: the seat tag on the chip, a crown for the leader (not red,
+                    // which means "something is wrong"); the portrait carries who it is.
+                    _names[i].text=_popupBuilt?PlayerIdentity.Label(order[i]):PlayerIdentity.Label(order[i])+" · "+SeatLabel.Raw(order[i]);
+                    _names[i].color=_scores[i].color=_popupBuilt?HudDraw.CardInk:CourtPresentationPalette.Ink;
+                    TumpMatchReadout.PaintScoreValue(_scores[i], match.ScoreFor(order[i]), _popupBuilt ? 44 : 46);
+                    _portraits[i].sprite=Portrait(actor);_portraits[i].enabled=_portraits[i].sprite!=null;
                 }
+                PaintChips(order,defender,uniqueLeader);
             }
-            Canvas.gameObject.SetActive(true); Canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
+            Canvas.gameObject.SetActive(true);
         }
-        public void Remaining(float seconds) => _buffer.text = "Warmup · " + Mathf.CeilToInt(seconds) + "s until the next round";
+        private bool _halftime;private string _fallback;
+        public void SetBreakContext(bool halftime,string fallback)
+        {
+            _halftime=halftime;_fallback=fallback;_round.text=halftime?"HALFTIME":"NEXT ROUND";
+            if(_notice!=null)_notice.text=fallback!=null?"HIGHLIGHT UNAVAILABLE":"";
+        }
+        public void Remaining(float seconds)
+        {
+            // The first reading of a break is its length, so the return ring starts full.
+            if(seconds>_remaining+.5f||_remainingStart<=0)_remainingStart=seconds;
+            _remaining=seconds;_buffer.text=_popupBuilt?Mathf.CeilToInt(seconds).ToString():Mathf.CeilToInt(seconds)+"s";
+        }
         private static Sprite Portrait(CharacterMotor actor)
         {
             if (actor == null) return null;

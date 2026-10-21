@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs": "e7c3e8bb041b592796e927b086e158f356e6cb2c164860bebd6ce9db7787e354",
+  "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.CourtHud.cs": "884d1a817c9ee4619c407d2dc1469388be8b13caed9a779f958764b6443970fb",
+  "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs": "bebed00c37de5af3e950caa80adf5f6df72df7b2cb019c6d2c91340c5fb83a5d",
+  "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.OwnerDeck.cs": "d5cf2ca7b7fa2bfd3161469ccf56b04723ca6457bf4a211a731243f086d22b97",
+  "Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs": "ca285185d55a8987fc26eeeb05736b7f4f362fb5f819d8c32ebf002708063ada"
+}

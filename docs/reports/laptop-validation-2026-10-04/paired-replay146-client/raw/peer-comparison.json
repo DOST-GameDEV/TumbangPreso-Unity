@@ -1,0 +1,62 @@
+{
+  "host": {
+    "rows": 671,
+    "viewRows": 100,
+    "halfRows": 183,
+    "epochs": [
+      "639267125897668305"
+    ],
+    "clips": [
+      "1"
+    ],
+    "scores": [
+      [
+        170,
+        0,
+        0,
+        0
+      ]
+    ],
+    "simTimes": [
+      "8.8959"
+    ],
+    "heldAll": true,
+    "round5": true,
+    "viewWindow": [
+      "31.342",
+      "36.831"
+    ]
+  },
+  "client": {
+    "rows": 578,
+    "viewRows": 91,
+    "halfRows": 168,
+    "epochs": [
+      "639267125897668305"
+    ],
+    "clips": [
+      "1"
+    ],
+    "scores": [
+      [
+        170,
+        0,
+        0,
+        0
+      ]
+    ],
+    "simTimes": [
+      "9.3660"
+    ],
+    "heldAll": true,
+    "round5": true,
+    "viewWindow": [
+      "24.861",
+      "30.376"
+    ]
+  },
+  "retainedToReadyObservedSeconds": 0.479,
+  "observedTransferStart": "First retained clip seen in CSV, not exact send-start",
+  "clipBytes": 12456,
+  "sameEpochClipScores": true
+}

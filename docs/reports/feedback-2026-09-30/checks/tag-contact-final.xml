@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 08:00:32Z" end-time="2026-09-30 08:00:39Z" duration="7.6158352">
+  <test-suite type="TestSuite" id="2090" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="875" result="Passed" start-time="2026-09-30 08:00:32Z" end-time="2026-09-30 08:00:39Z" duration="7.615835" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2084" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="875" result="Passed" start-time="2026-09-30 08:00:32Z" end-time="2026-09-30 08:00:39Z" duration="7.607472" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61751" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2085" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="875" result="Passed" start-time="2026-09-30 08:00:32Z" end-time="2026-09-30 08:00:39Z" duration="7.605740" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2086" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="875" result="Passed" start-time="2026-09-30 08:00:32Z" end-time="2026-09-30 08:00:39Z" duration="7.604328" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1111" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-30 08:00:32Z" end-time="2026-09-30 08:00:39Z" duration="7.568893" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1116" name="ContactCameraShowsTheActualReachingHand" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ContactCameraShowsTheActualReachingHand" methodname="ContactCameraShowsTheActualReachingHand" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="992864869" result="Passed" start-time="2026-09-30 08:00:32Z" end-time="2026-09-30 08:00:36Z" duration="3.991166" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1 contactGap=0 contactAlpha=1 sampleError=0.006319687 frames=34
+]]></output>
+            </test-case>
+            <test-case id="1117" name="FarAcceptedTagHasVisibleHandContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.FarAcceptedTagHasVisibleHandContact" methodname="FarAcceptedTagHasVisibleHandContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1371199127" result="Passed" start-time="2026-09-30 08:00:36Z" end-time="2026-09-30 08:00:39Z" duration="3.563211" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.009901598 frames=33
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -10,11 +10,14 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 RUNTIME=ROOT/"Assets/TumbangPreso/Runtime"
 RULES={
+ ("Abilities/AmihanHazards.cs","Spawn"):("EVERY-PEER","The replicated ultimate's wind-up spawns the storm on each peer; its gather cue is local, never relayed."),
+ ("Abilities/AmihanHazards.cs","Release"):("EVERY-PEER","Each peer's storm releases on its own copy of the ultimate's clock; the release cue is local."),
+ ("Visual/AmihanVfx.cs","LateUpdate"):("EVERY-PEER","Status marks attach on each peer from the replicated status timer; the status cue plays once per peer."),
+ ("Map/MooredBoatMotion.cs","LateUpdate"):("EVERY-PEER","Each active map copy samples its moored boats with a local cooldown; ambient lap sound is not relayed."),
  ("Carrier.cs","NotifyHolding"):("EVERY-PEER","Possession snapshots and local equips use the same idempotent notification."),
  ("Abilities/HeroAbilitySystem.cs","PlayUltimatePresentation"):("EVERY-PEER","Accepted cast presentation runs locally and through ApplyNetworkCast."),
  ("Abilities/HeroHazards.cs","SpawnIceBarricade"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
  ("Abilities/HeroHazards.cs","SpawnIceSheet"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
- ("Abilities/HeroHazards.cs","SpawnSeanceVoid"):("EVERY-PEER","Legacy visual builder; the live ultimate uses KuroUnbound."),
  ("Abilities/HeroHazards.cs","SpawnKuroUnbound"):("EVERY-PEER","The actual replicated Nemu ultimate creates this effect."),
  ("Abilities/HeroHazards.cs","SpawnHexSigil"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
  ("Audio/NetCue.cs","Play"):("RELAY-BRIDGE","Local sound followed by the guarded relay."),
@@ -31,6 +34,8 @@ RULES={
  ("Visual/GhostPetCompanion.cs","BeginPossession"):("EVERY-PEER","Kit activation enters possession on each peer."),
  ("Visual/GhostPetCompanion.cs","EndPossession"):("EVERY-PEER","Kit end restores the companion on each peer."),
  ("Visual/MotionFoley.cs","LateUpdate"):("EVERY-PEER","Observed grounded displacement; never an input-only proximity cue."),
+ ("Visual/CourtBoundaryPresentation.cs","LateUpdate"):("EVERY-PEER","Observed physical court escape with teleport/round guards; played and recorded locally without relay duplication."),
+ ("Visual/CharacterAnimator.cs","PlayAction"):("EVERY-PEER","Live replicated lunge action owns its rush; restoring a pose suppresses sound."),
 }
 SIG=re.compile(r"(?:public|private|protected|internal)\s+(?:static\s+)?[\w<>,.?\[\]]+\s+(\w+)\s*\(")
 seen=set();errors=[];lines=[]

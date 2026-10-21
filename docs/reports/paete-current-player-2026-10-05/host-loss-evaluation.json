@@ -1,0 +1,17 @@
+{
+  "source": "16fdcdaef16cf6d6f52ad57892815d7017fd0ea4",
+  "ok": true,
+  "scope": "Actual host process stopped while owner trace had an active vine. Both surviving peers observed HostLost and authority revocation. This does not inspect their constraints after scene teardown or prove rejoin.",
+  "observations": {
+    "owner": {
+      "line": "[Abandon] HostLost: ABANDONED at round 1 of 8; this peer may no longer resolve anything",
+      "delaySinceHostStop": 2.22253680229187,
+      "processAliveAtObservation": true
+    },
+    "observer": {
+      "line": "[Abandon] HostLost: ABANDONED at round 1 of 8; this peer may no longer resolve anything",
+      "delaySinceHostStop": 2.2226316928863525,
+      "processAliveAtObservation": true
+    }
+  }
+}

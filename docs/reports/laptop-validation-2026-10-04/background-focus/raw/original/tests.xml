@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.2980243">
+  <test-suite type="TestSuite" id="2975" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1607" result="Failed" site="Child" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.298024" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2969" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1607" result="Failed" site="Child" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.283164" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30892" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2970" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1607" result="Failed" site="Child" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.272723" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2971" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1607" result="Failed" site="Child" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.263691" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2331" name="ReaderBackgroundFocusTests" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.242000" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2332" name="BackgroundFramesCannotRestoreHeldMovement" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.BackgroundFramesCannotRestoreHeldMovement" methodname="BackgroundFramesCannotRestoreHeldMovement" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="1129153854" result="Failed" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.138160" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Background frames restored hardware movement after focus retirement.
+  Expected: (0.00, 0.00)
+  But was:  (0.00, 1.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderBackgroundFocusTests.BackgroundFramesCannotRestoreHeldMovement () [0x0004f] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ReaderBackgroundFocusTests.cs:66
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2335" name="FocusedHardwareAndRecoveredMovementRemainAvailable" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.FocusedHardwareAndRecoveredMovementRemainAvailable" methodname="FocusedHardwareAndRecoveredMovementRemainAvailable" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="1027841125" result="Passed" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.033208" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2334" name="FocusReturnWaitsForBackgroundHeldButtonRelease" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.FocusReturnWaitsForBackgroundHeldButtonRelease" methodname="FocusReturnWaitsForBackgroundHeldButtonRelease" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="195389736" result="Failed" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.032706" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Focus return imported a button already held in the background.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderBackgroundFocusTests+<FocusReturnWaitsForBackgroundHeldButtonRelease>d__14.MoveNext () [0x00066] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ReaderBackgroundFocusTests.cs:81
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2333" name="NewBackgroundButtonCannotBufferRecovery" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.NewBackgroundButtonCannotBufferRecovery" methodname="NewBackgroundButtonCannotBufferRecovery" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="427809740" result="Passed" start-time="2026-10-04 03:43:54Z" end-time="2026-10-04 03:43:54Z" duration="0.027818" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

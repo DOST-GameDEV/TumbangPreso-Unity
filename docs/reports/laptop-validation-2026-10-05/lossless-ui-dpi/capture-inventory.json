@@ -1,0 +1,61 @@
+{
+  "captures": [
+    {
+      "path": "01-login-native1600.png",
+      "format": "PNG",
+      "size": [
+        1600,
+        900
+      ],
+      "sha256": "558376e14a825b4e910cb1c18a9523003feadf5ec48b901777e0d48534a8bb71"
+    },
+    {
+      "path": "02-home-native1600.png",
+      "format": "PNG",
+      "size": [
+        1600,
+        900
+      ],
+      "sha256": "0caf7de5a834ab8b6d0dfd8f1f5df80b6eb42576aa523cfb4a7195561a90f420"
+    },
+    {
+      "path": "03-display-native1080.png",
+      "format": "PNG",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "f2464a8e68f8cd73195e6b283556ed6f2b1e9c07bd30d6b07acc2bbaeac4efac"
+    },
+    {
+      "path": "04-home-native1080.png",
+      "format": "PNG",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "7df67f44ecfc3885cf0841df18033dcc6def3b4778f114b86d57d5e57c6e86a2"
+    },
+    {
+      "path": "05-join-native1080.png",
+      "format": "PNG",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "ef361fa51e2c950ea656002a4fb57a2d0627819508f2e5890354fa97c2edd5c9"
+    },
+    {
+      "path": "06-own-quit-native1080.png",
+      "format": "PNG",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "f72dbf37a1aae92d096cb526f9e9956516113161c4703f98de24b1052d702053"
+    }
+  ],
+  "requested1280PhysicalGate": "Not achieved; OS caller virtualized1280x720 was actually1600x900",
+  "qualityChange": "None",
+  "native1080Gate": "Measured1920x1080 client, foreground before and after, PNG unresized"
+}

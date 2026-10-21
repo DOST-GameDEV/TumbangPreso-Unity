@@ -1,0 +1,50 @@
+{
+  "base": "1d0bb16e8eb8e1c24977cca6a6971dbf6209e47e",
+  "protocol": 85,
+  "scope": "Bounded familiar effect codec and accepted-lifetime hydration",
+  "result": "Passed",
+  "total": 2,
+  "duration": 1.035006,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/FamiliarEffectState.cs",
+      "sha256": "312CF01F57D26F5AD4F16613CD6CFE1A6F4A8CCB297ED44F27865D509DE907F4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/FamiliarEffectState.cs.meta",
+      "sha256": "EE6E2F49FCB33C1E0690575AB9150257C5B05A0FF5907410A6EB0B327B95AFEB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.FamiliarEffects.cs",
+      "sha256": "600391B9A4E6BED41880A1AA8C89F645E97E3B7C1E0DF7C3FC3B2CB6B9E09E46"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.FamiliarEffects.cs.meta",
+      "sha256": "E378FE5A7D8AA9AB1AF008FC1CB75CD1ADA2601C2A92A0A8EC662568EF716CB7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "CE8D63B09403BDF7E6CCC42DB450C2A5F3D6348B145BC30A0AF3A52914AA6795"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "350A0231757629B0E73435671FEFD730348B258562360B8D708D26AA068E5F1F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs",
+      "sha256": "BA49DECA68290B3A23D71AEFA9F7BEFC04878431B9E9E6BCD2192C67BA1E4E8A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "B1053E7816251E04D8EDB9FDD0EA5AFE80E9299B4BD3C2FE339CE4F55166B0DA"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 5184987136.0,
+  "retryCount": 0,
+  "unverified": [
+    "Actual sockets or peer cutscenes",
+    "Visual judgment",
+    "Pause-aware recovery aging: next correction"
+  ]
+}

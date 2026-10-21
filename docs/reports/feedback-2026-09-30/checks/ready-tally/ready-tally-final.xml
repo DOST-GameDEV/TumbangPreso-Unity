@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="25" result="Passed" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.2029573">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="716" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.202957" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1837" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="716" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.181107" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1838" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="716" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.169433" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1839" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="716" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.158381" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1623" name="ReadyTallyPacketTests" fullname="TumbangPreso.Tests.ReadyTallyPacketTests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.095199" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1652" name="HostLoopbackDoesNotDuplicateTheLocallyPublishedTally" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.HostLoopbackDoesNotDuplicateTheLocallyPublishedTally" methodname="HostLoopbackDoesNotDuplicateTheLocallyPublishedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="898516901" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.033908" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1641" name="ImpossibleCountsCannotReachTheLobby" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.012057" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1635" name="ImpossibleCountsCannotReachTheLobby(-1,3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(-1,3)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="2022228009" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.001137" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1636" name="ImpossibleCountsCannotReachTheLobby(0,-1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(0,-1)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="237184229" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1637" name="ImpossibleCountsCannotReachTheLobby(4,3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(4,3)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="647552160" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000403" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1638" name="ImpossibleCountsCannotReachTheLobby(0,5)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(0,5)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="803110764" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000561" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1639" name="ImpossibleCountsCannotReachTheLobby(int.MaxValue,4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(int.MaxValue,4)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="913932599" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000393" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1640" name="ImpossibleCountsCannotReachTheLobby(0,int.MaxValue)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(0,int.MaxValue)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1334359634" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000454" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1634" name="MalformedLengthCannotThrowOrPublishATally" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.012555" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1624" name="MalformedLengthCannotThrowOrPublishATally(0)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(0)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="59094940" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000921" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1625" name="MalformedLengthCannotThrowOrPublishATally(1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(1)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1605810211" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000418" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1626" name="MalformedLengthCannotThrowOrPublishATally(2)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(2)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="2074747407" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000448" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1627" name="MalformedLengthCannotThrowOrPublishATally(3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(3)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="256159922" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000501" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1628" name="MalformedLengthCannotThrowOrPublishATally(4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(4)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1981161152" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000409" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1629" name="MalformedLengthCannotThrowOrPublishATally(5)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(5)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1236770826" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000410" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1630" name="MalformedLengthCannotThrowOrPublishATally(6)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(6)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="386102070" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000409" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1631" name="MalformedLengthCannotThrowOrPublishATally(7)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(7)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="582512097" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000399" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1632" name="MalformedLengthCannotThrowOrPublishATally(9)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(9)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="285473663" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000481" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1633" name="MalformedLengthCannotThrowOrPublishATally(12)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(12)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="624926364" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000517" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1651" name="NonHostCannotPublishEvenAMalformedTally" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.NonHostCannotPublishEvenAMalformedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.006325" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1649" name="NonHostCannotPublishEvenAMalformedTally(0)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.NonHostCannotPublishEvenAMalformedTally(0)" methodname="NonHostCannotPublishEvenAMalformedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1530358057" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000939" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1650" name="NonHostCannotPublishEvenAMalformedTally(8)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.NonHostCannotPublishEvenAMalformedTally(8)" methodname="NonHostCannotPublishEvenAMalformedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1035315814" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000568" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1648" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.009621" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1642" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,0)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,0)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1846700673" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000914" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1643" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,1)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="95468623" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000490" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1644" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(1,1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(1,1)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1919596080" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000506" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1645" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(2,3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(2,3)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1332222402" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000446" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1646" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,4)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="250102410" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000383" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1647" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(4,4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(4,4)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1331255363" result="Passed" start-time="2026-09-30 14:44:20Z" end-time="2026-09-30 14:44:20Z" duration="0.000541" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

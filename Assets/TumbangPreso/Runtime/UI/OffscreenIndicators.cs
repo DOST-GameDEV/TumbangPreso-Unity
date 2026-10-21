@@ -46,9 +46,23 @@ namespace TumbangPreso.UI
         public const int GlyphOutline = 6;
 
         private RectTransform _canvasRect;
-        private RectTransform _canArrow;
+        private RectTransform _canArrow, _direction;
+        private Text _markerState;
+        private TumpSymbol _canSymbol;
+        // VISUAL-1.5: the can marker speaks in the HUD's glyph family, not in words.
+        private HudBadge _canBadge;
+        private HudRing _canClock;
+        public bool CanMarkerVisible => _canArrow != null && _canArrow.gameObject.activeInHierarchy;
+        public string CanMarkerState => _markerState != null ? _markerState.text : "";
 
         private void Awake() => BuildNative();
+        private void HideMarker(){if(_canArrow!=null)_canArrow.gameObject.SetActive(false);}
+        private void LateUpdate()
+        {
+            // The canvas has an independent lifetime. A finished match can stop
+            // HUD tracking altogether, leaving its last projected mark otherwise.
+            if(PresentationClock.Held||ScreenTakeover.AnyOpen)HideMarker();
+        }
 
         private void BuildNative()
         {
@@ -57,16 +71,39 @@ namespace TumbangPreso.UI
             var focus = canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
             _canArrow = NativeArrow(_canvasRect, "CanArrow", TumpUiTheme.Current.Yellow, "UI/portraits/" + Core.Roster.Cans[0].Id);
         }
-        private static RectTransform NativeArrow(Transform parent, string name, Color tint, string portrait)
+        private RectTransform NativeArrow(Transform parent, string name, Color tint, string portrait)
         {
             var rect = TumpUiFactory.Rect(parent, name);
-            TumpUiFactory.Anchor(rect, new Vector2(.5f, .5f), Vector2.zero, new Vector2(58, 66));
-            var pointer = rect.gameObject.AddComponent<TumpTargetPointer>(); pointer.color = tint; pointer.raycastTarget = false;
-            var icon = TumpUiFactory.Art(rect, "TargetPortrait", TumpUiFactory.Sprite(portrait));
-            TumpUiFactory.Anchor(icon.rectTransform, new Vector2(.5f, .5f), new Vector2(0, -38), new Vector2(40, 40));
+            TumpUiFactory.Anchor(rect, new Vector2(.5f, .5f), Vector2.zero, new Vector2(42, 52));
+            _direction = TumpUiFactory.Rect(rect, "Direction");
+            TumpUiFactory.Anchor(_direction, new Vector2(.5f, .5f), new Vector2(0, -16), new Vector2(22, 24));
+            var pointer = _direction.gameObject.AddComponent<TumpTargetPointer>(); pointer.color = tint; pointer.raycastTarget = false;
+            _canSymbol = TumpUiFactory.Rect(rect, "CanSymbol").gameObject.AddComponent<TumpSymbol>();
+            _canSymbol.Kind = TumpSymbol.Icon.Can; _canSymbol.raycastTarget = false;
+            TumpUiFactory.Anchor(_canSymbol.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 12), new Vector2(28, 32));
+            var edge = _canSymbol.gameObject.AddComponent<Outline>();
+            edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(2, -2);
+            // ⚠️ VISUAL-1.5: "CAN PROTECTED", "DOWN" and "RESETTING" were a 20-unit caption
+            // under the marker, below the reading floor and the fourth copy of the can's state.
+            // The marker now wears the match bar's glyphs: the can standing or lying down, with
+            // a ring that drains with the protection or fills with the taya's restore. The
+            // caption is kept, never drawn, as the state record `CanMarkerState` reads.
+            _canSymbol.enabled = false;
+            _canClock = TumpUiFactory.Rect(rect, "CanClock").gameObject.AddComponent<HudRing>();
+            TumpUiFactory.Anchor(_canClock.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 12), new Vector2(46, 46));
+            _canClock.Thickness = 4; _canClock.Track = Color.clear; _canClock.Fill = 0; _canClock.raycastTarget = false;
+            _canBadge = TumpUiFactory.Rect(rect, "CanBadge").gameObject.AddComponent<HudBadge>();
+            TumpUiFactory.Anchor(_canBadge.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 12), new Vector2(34, 34));
+            _canBadge.Detail = HudDraw.Plate; _canBadge.Backing = HudDraw.Plate; _canBadge.raycastTarget = false;
+            _markerState = OwnerUiLayout.Text(rect, "ObjectiveState", "", 20, OwnerUiLayout.TypeRole.Reading);
+            _markerState.alignment = TextAnchor.MiddleCenter; _markerState.raycastTarget = false;
+            TumpUiFactory.Anchor(_markerState.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 43), new Vector2(144, 28));
+            var textEdge = _markerState.gameObject.AddComponent<Outline>();
+            textEdge.effectColor = UiTheme.InGameOutline; textEdge.effectDistance = new Vector2(1.5f, -1.5f);
+            _markerState.enabled = false;
             rect.gameObject.SetActive(false); return rect;
         }
-        private void OnDisable() { if (_canvasRect != null) _canvasRect.gameObject.SetActive(false); }
+        private void OnDisable() { HideMarker();if (_canvasRect != null) _canvasRect.gameObject.SetActive(false); }
         private void OnEnable() { if (_canvasRect != null) _canvasRect.gameObject.SetActive(true); }
 
         private void Build()
@@ -107,7 +144,7 @@ namespace TumbangPreso.UI
             label.raycastTarget = false;
 
             var outline = go.AddComponent<Outline>();
-            outline.effectColor = UiTheme.Ink;
+            outline.effectColor = UiTheme.InGameOutline;
             outline.effectDistance = new Vector2(GlyphOutline * 0.5f, -GlyphOutline * 0.5f);
 
             go.SetActive(false);
@@ -123,12 +160,30 @@ namespace TumbangPreso.UI
         /// </summary>
         public void SetCanArrowColour(Color colour)
         {
-            if (_canArrow == null) return;
-
-            var label = _canArrow.GetComponent<Text>();
-            if (label != null) label.color = colour;
-            var pointer = _canArrow.GetComponent<TumpTargetPointer>();
-            if (pointer != null) pointer.color = colour;
+            if (_direction == null) return;
+            var lata = GameServices.Round != null ? GameServices.Round.Lata : null;
+            var taya = GameServices.Match != null && GameServices.Round != null
+                ? GameServices.Round.PlayerAt(GameServices.Match.DefenderSlot) : null;
+            bool restoring = lata != null && !lata.IsUpright && taya != null &&
+                             taya.GetComponent<Carrier>()?.ChannelRatio > 0;
+            string state = lata == null ? "" : !lata.IsUpright ? (restoring ? "RESETTING" : "DOWN") :
+                lata.IsProtected ? "CAN PROTECTED" : "";
+            colour = lata != null && !lata.IsUpright ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
+            _direction.GetComponent<TumpTargetPointer>().color = colour;
+            if (_markerState != null) { _markerState.text = state; _markerState.color = colour; }
+            if (_canBadge != null)
+            {
+                bool down = lata != null && !lata.IsUpright;
+                _canBadge.Show(down ? HudBadge.Glyph.CanDown : HudBadge.Glyph.Can, down ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Paper, HudDraw.Plate);
+                float clock = restoring ? taya.GetComponent<Carrier>().ChannelRatio
+                    : lata != null && lata.IsProtected ? lata.ProtectionLeft / Mathf.Max(.01f, Core.Balance.ThrowRestoreCooldown) : 0;
+                _canClock.Set(clock); _canClock.Paint(restoring ? UiTheme.Defense : CourtPresentationPalette.Paper, Color.clear);
+            }
+            if (_canSymbol != null)
+            {
+                _canSymbol.color = colour;
+                _canSymbol.rectTransform.localRotation = Quaternion.Euler(0, 0, lata != null && !lata.IsUpright ? -65 : 0);
+            }
         }
 
         /// <summary>
@@ -140,7 +195,7 @@ namespace TumbangPreso.UI
         public void UpdateArrows(CharacterMotor local, Transform can)
         {
             var cam = UnityEngine.Camera.main;
-            if (cam == null || local == null)
+            if (PresentationClock.Held || ScreenTakeover.AnyOpen || cam == null || local == null || local.IsHaunted || local.EyesCovered)
             {
                 _canArrow.gameObject.SetActive(false);
                 return;
@@ -179,33 +234,16 @@ namespace TumbangPreso.UI
             var viewport = new Vector2(cam.pixelWidth, cam.pixelHeight);
             Vector2 canvas = _canvasRect != null ? _canvasRect.rect.size : viewport;
 
-            var track = ScreenTrack.Project(cam, target.position + ScreenTrack.ChestHeight,
-                                            canvas, viewport, 0.0f);
-
-            if (!track.Visible || !track.Clamped)
-            {
-                arrow.gameObject.SetActive(false);
-                return;
-            }
-
-            // The clamp itself has to keep the glyph's own body inside the frame, which the edge
-            // test above deliberately does not do. Re-asking with the margin is one extra
-            // projection of one point per frame and keeps both behaviours exactly as shipped.
-            track = ScreenTrack.Project(cam, target.position + ScreenTrack.ChestHeight,
-                                        canvas, viewport, EdgeMargin);
-            if (!track.Visible)
-            {
-                arrow.gameObject.SetActive(false);
-                return;
-            }
-
+            var track = ScreenTrack.Project(cam, target.position + Vector3.up * .85f,
+                                            canvas, viewport, EdgeMargin + 26);
+            if (!track.Visible) { arrow.gameObject.SetActive(false); return; }
             arrow.gameObject.SetActive(true);
             arrow.anchoredPosition = track.Anchored;
-
-            // The glyph points up at rotation 0, and the bearing is measured from +X, so it
-            // needs the quarter turn to line up.
-            arrow.localRotation =
-                Quaternion.Euler(0.0f, 0.0f, track.Bearing * Mathf.Rad2Deg - 90.0f);
+            // Only the arrow turns. Can silhouette and state remain readable at
+            // every screen edge, and the on-screen marker sits above the aim point.
+            _direction.localRotation = Quaternion.Euler(0, 0,
+                track.Clamped ? track.Bearing * Mathf.Rad2Deg - 90 : 180);
+            SetCanArrowColour(Color.white);
         }
     }
 }

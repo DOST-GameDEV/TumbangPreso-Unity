@@ -1,0 +1,17 @@
+{
+  "acceptance.md": "ad57e979554e48bc72b65a12fe568dc0651c6947ad94c2a11cb35f710a2ede6d",
+  "baseline-inputs.json": "5780d1102b76006f3a48f5211ab1d3cf78d3527a06202ffbefc03bfcc2a3c06c",
+  "counts.json": "4756b4b116f82451bfcff8e9c1e74bec1c3dcdef206c60e7d0819e8d1f72f88f",
+  "final-inputs.json": "c8321c8cea819be277aa0cf305914b558a182366c0efa4dd666befb8ed8da257",
+  "frozen-inputs.json": "5347327798f8a4b31c1a8dd751753e4e06f19282b20962fe6fc6292c225e8130",
+  "protected-inputs.json": "9a9436e64c59bd7573907fcc59922522172dcd68cd50a33de2899a98096b6e17",
+  "protected-post.json": "c384c9d94460f98c9e88eb1525134a65ac1c8a0a4d4046bfa59ce9fd5393e4b9",
+  "baseline/guard-stdout.log": "7cbc9cf467a84715912c6cbc5032c51a236c2e60f1128f1f9d16d6e3525f37c9",
+  "baseline/job-receipt.json": "482a5b4834210c6cd8ef23f928b34ecb0c6bd80d449af75d6379c96fc2ee68bf",
+  "baseline/tests.xml": "dab8b20df16e6ac2f23dc5b21c1edabcc6a58329b592935c99650ff0428b573d",
+  "baseline/unity.log": "68a9d9f68350ecb66657b4e5a85f85f9c992e33d3a8dcc0c9f2247e84ec186d5",
+  "final/guard-stdout.log": "a2c0ce5b9406accc9e16cdc9df5cc03028dbdcac2d52c30fe4c43ce6fbbfe045",
+  "final/job-receipt.json": "51ac6e27597da052a9ed8df8951a8816352a7b87b8963e91b4e3b746f4b86b1f",
+  "final/tests.xml": "a5b5df6f17e821038c7fa923ac075c047b919fa1c5c353dc161996af8cd0d550",
+  "final/unity.log": "028d51d3aa25b21686952564ba4712e99b331f6435a3a8a1b5fbc5d51974cc28"
+}

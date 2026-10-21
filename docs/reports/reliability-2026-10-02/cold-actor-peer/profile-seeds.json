@@ -1,0 +1,12 @@
+{
+  "host": {
+    "name": "completed-arrival-host-dc1ee203c7",
+    "root": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8a16a274099855b5d6965687d31b6e7d17757e13d677d53ced53dea23c85ad3e",
+    "seedSha256": "67e73c9fa49747a16d6735cda2d3353b63d62536891d62c3ea299b643f1ccba6"
+  },
+  "client": {
+    "name": "completed-arrival-client-dc1ee203c7",
+    "root": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\1c32c4e04cdb7b8c85deb63c1a7c93092c2e36f8bf11dfe6d528586bab40aa7d",
+    "seedSha256": "15a2a47d5ca8e70470a855e4344063d434777b2626899690f0f7d05b99506895"
+  }
+}

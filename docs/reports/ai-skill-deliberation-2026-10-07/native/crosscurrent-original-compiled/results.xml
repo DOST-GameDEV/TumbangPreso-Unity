@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.3025084">
+  <test-suite type="TestSuite" id="3537" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2053" result="Failed" site="Child" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.302508" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3529" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2053" result="Failed" site="Child" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.291353" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50956" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3530" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2053" result="Failed" site="Child" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.289757" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3533" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2051" result="Failed" site="Child" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.288786" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1027" name="AiCrosscurrentDecisionTests" fullname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests" classname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.227753" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1030" name="IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan" fullname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests.IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan" classname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.222904" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1028" name="IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan(True)" fullname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests.IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan(True)" methodname="IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan" classname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests" runstate="Runnable" seed="1739723498" result="Failed" start-time="2026-10-07 08:02:07Z" end-time="2026-10-07 08:02:08Z" duration="0.168109" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiCrosscurrentDecisionTests.IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan (System.Boolean incoming) [0x000fc] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiCrosscurrentDecisionTests.cs:41
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1029" name="IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan(False)" fullname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests.IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan(False)" methodname="IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan" classname="TumbangPreso.PlayTests.AiCrosscurrentDecisionTests" runstate="Runnable" seed="747961062" result="Failed" start-time="2026-10-07 08:02:08Z" end-time="2026-10-07 08:02:08Z" duration="0.041169" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiCrosscurrentDecisionTests.IncomingFlightSetsTheRealCurrentsAimRatherThanTheCan (System.Boolean incoming) [0x000fc] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiCrosscurrentDecisionTests.cs:41
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

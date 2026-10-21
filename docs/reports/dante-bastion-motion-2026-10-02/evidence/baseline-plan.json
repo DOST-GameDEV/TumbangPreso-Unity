@@ -1,0 +1,7 @@
+{
+  "head": "7564eb7d9c04dae19c9ba2b17e5d762781dbe7bb",
+  "question": "Actual defender input produces following7.5s field and reset cleanup, but shares signature roar",
+  "expected": "One test, failure only at distinct action assertion after behavioral checks and body/owner capture",
+  "retry_count": 0,
+  "test_sha256": "b8709154e10d72b24048db3608e82b6242953d56306eab4d203b4d5945eb1e52"
+}

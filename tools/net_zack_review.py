@@ -23,6 +23,8 @@ def rows(path):
 
 def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     data = {name: rows(folder / (name + ".csv")) for name in ("host", "owner", "observer")}
+    if case == "circuit":
+        return evaluate_circuit(data, delay)
     errors, measurements = [], {}
     host = data["host"]
     cast = next((row["time"] for row in host if row["charged"] == 1), None) if case == "magnet" else next((row["time"] for row in host if row["ultcharge"] < 1), None)
@@ -104,16 +106,66 @@ def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     return {"ok": not errors, "errors": errors, "measurements": measurements}
 
 
+def evaluate_circuit(data, delay=0):
+    errors, measurements = [], {}
+    for name, all_records in data.items():
+        seat = {"host": 0, "owner": 1, "observer": 2}[name]
+        records = [r for r in all_records if r["round"] == 2]
+        if len(records) < 150 or any(r["local"] != seat or r["defender"] != 1 for r in records):
+            errors.append(name + " lacks a complete real defending-round trace")
+            continue
+        failed = [r for r in records if 2.5 < r["elapsed"] < 4.5]
+        first = next((r for r in records if r["frontZap"] > 0), None)
+        second = next((r for r in records if r["secondZap"] > 0), None)
+        acquisitions = [r for r in records if r["phase"] == 1]
+        followups = [r for r in records if r["phase"] == 2]
+        tail = records[-1]
+        result = {"samples": len(records), "acquiring_samples": len(acquisitions),
+                  "followup_samples": len(followups), "last_episode": tail["episode"],
+                  "first_contact_elapsed": first["elapsed"] if first else None,
+                  "second_contact_elapsed": second["elapsed"] if second else None,
+                  "final_cooldown": tail["cooldown"], "final_front_zap": tail["frontZap"],
+                  "final_second_zap": tail["secondZap"]}
+        measurements[name] = result
+        if not failed or any(r["frontZap"] or r["secondZap"] or r["cooldown"] > .1 for r in failed):
+            errors.append(name + " spent status/cooldown on the broken initial lock")
+        if not first or not second or not (5.25 <= first["elapsed"] < 6 and 6.05 <= second["elapsed"] < 6.9):
+            errors.append(name + " did not observe two timed authoritative contacts")
+        if not acquisitions or not followups or not any(r["tells"] for r in acquisitions):
+            errors.append(name + " lacks replicated acquisition/follow-up/tell evidence")
+        if tail["episode"] != 3 or not 28 < tail["cooldown"] < 31 or tail["phase"] or tail["tells"]:
+            errors.append(name + " restarted a third cast, cooldown, or leaked the tell")
+        if tail["frontZap"] or tail["secondZap"]:
+            errors.append(name + " did not expire the real Zapped statuses")
+        if any(r["overclock"] != 1 for r in records):
+            errors.append(name + " lost match-long Overclock across the natural round transition")
+        # The uncontested upright can legitimately pays DefenseTick (+10 each second).
+        # Require exactly that cadence rather than incorrectly demanding a frozen score.
+        score_changes = []
+        previous_score = records[0]["score"]
+        for record in records[1:]:
+            if record["score"] != previous_score:
+                score_changes.append((record["elapsed"], record["score"] - previous_score))
+                previous_score = record["score"]
+        result["defence_ticks"] = len(score_changes)
+        if (len(score_changes) != 10 or any(delta != 10 for _, delta in score_changes)
+                or any(abs(at - (index + 1)) > .3 + 2 * delay / 1000
+                       for index, (at, _) in enumerate(score_changes))):
+            errors.append(name + " score differs from the existing uncontested defence cadence")
+    return {"ok": not errors, "errors": errors, "measurements": measurements}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", type=Path)
-    parser.add_argument("--case", choices=["magnet", "thunderstrike"], required=True)
+    parser.add_argument("--case", choices=["magnet", "thunderstrike", "circuit"], required=True)
     parser.add_argument("--delay", type=float, default=0)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--hold-charge", action="store_true")
     parser.add_argument("--reconnect", action="store_true")
     parser.add_argument("--rejoin-seat", choices=["owner", "observer"], default="observer")
     args = parser.parse_args()
+    if args.case == "circuit" and (args.reconnect or args.hold_charge): parser.error("Circuit uses its own two-round acquisition scenario")
     if args.reconnect and not args.hold_charge: parser.error("Reconnect qualification requires the held window")
     folder = args.out.resolve(); folder.mkdir(parents=True, exist_ok=False)
     backups = []
@@ -136,7 +188,7 @@ def main():
             return launch([str(args.exe.resolve()), "-batchmode", "-screen-width", "640", "-screen-height", "360",
                            "-screen-fullscreen", "0", "-tp-framecap", "60", "-tp-autostart", "3", "-tp-profile", "zack" + name,
                            "-tp-zackcase", args.case, "-tp-zacktrace", str(folder / (name + ".csv")),
-                           "-logFile", str(folder / (name + ".log"))] + (["-tp-holdcharge"] if args.hold_charge else [])
+                           "-logFile", str(folder / (name + ".log"))] + (["-force-glcore"] if sys.platform.startswith("linux") else []) + (["-tp-holdcharge"] if args.hold_charge else [])
                           + (["-tp-zack-observe-existing"] if observe_existing else []) + route)
         host = peer("host", ["-tp-host", "8990"])
         deadline = time.monotonic() + 45

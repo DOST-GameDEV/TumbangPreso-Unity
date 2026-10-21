@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:09Z" duration="0.65159">
+  <test-suite type="TestSuite" id="2573" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1282" result="Failed" site="Child" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:09Z" duration="0.651590" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2567" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1282" result="Failed" site="Child" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:09Z" duration="0.624428" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23748" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2568" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1282" result="Failed" site="Child" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:09Z" duration="0.605949" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2569" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1282" result="Failed" site="Child" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:09Z" duration="0.587453" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2365" name="TouchLayoutHudLifecycleTests" fullname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests" classname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:09Z" duration="0.553232" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2367" name="CancellingTheEditorPreservesItsBorrowedGameplayHud" fullname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests.CancellingTheEditorPreservesItsBorrowedGameplayHud" methodname="CancellingTheEditorPreservesItsBorrowedGameplayHud" classname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests" runstate="Runnable" seed="910461449" result="Passed" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:08Z" duration="0.417728" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2366" name="CancelThenImmediateReopenUsesFreshControlsInsteadOfTheRetiringPreview" fullname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests.CancelThenImmediateReopenUsesFreshControlsInsteadOfTheRetiringPreview" methodname="CancelThenImmediateReopenUsesFreshControlsInsteadOfTheRetiringPreview" classname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests" runstate="Runnable" seed="615773170" result="Failed" start-time="2026-10-02 09:23:08Z" end-time="2026-10-02 09:23:09Z" duration="0.067313" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Immediate reopen borrowed the preview scheduled for destruction.
+  Expected: not same as <TouchControls (TumbangPreso.InputLayer.TouchHud)>
+  But was:  <TouchControls (TumbangPreso.InputLayer.TouchHud)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests+<CancelThenImmediateReopenUsesFreshControlsInsteadOfTheRetiringPreview>d__12.MoveNext () [0x000a2] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\TouchLayoutHudLifecycleTests.cs:62
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2368" name="RetiringAnOldHudDoesNotReleaseTheReplacementsHeldInput" fullname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests.RetiringAnOldHudDoesNotReleaseTheReplacementsHeldInput" methodname="RetiringAnOldHudDoesNotReleaseTheReplacementsHeldInput" classname="TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests" runstate="Runnable" seed="1197205085" result="Failed" start-time="2026-10-02 09:23:09Z" end-time="2026-10-02 09:23:09Z" duration="0.052305" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TouchLayoutHudLifecycleTests+<RetiringAnOldHudDoesNotReleaseTheReplacementsHeldInput>d__14.MoveNext () [0x00089] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\TouchLayoutHudLifecycleTests.cs:90
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -26,6 +26,23 @@ namespace TumbangPreso.Net
         private Task _initialiseTask;
         private AccountProfile _profile;
         private AccountProfile _primaryProfile;
+        private Func<string, Task<string>> _saveProfileDispatch;
+        private Func<string, Task<string>> _updateNameDispatch;
+        private long _renameRequest;
+        private Func<Task<string>> _proofDispatch;
+        private string _proofOwner = "";
+        private long _proofRequest;
+        private long _deleteRequest;
+        private Func<Task> _deleteCloudDispatch;
+        private Func<string, Task> _deleteAuthDispatch;
+        private Func<Task> _deleteRestartDispatch;
+        private Func<AccountProfile, Task> _initialiseDispatch;
+        private Func<Task> _initialiseDelayDispatch;
+        private Func<(string PlayerId, string Username)> _refreshIdentityDispatch;
+        private Func<Task<string>> _refreshNameDispatch;
+        private Func<Task<string>> _refreshLoadDispatch;
+        private long _refreshRequest;
+        private long _saveProfileRequest;
 
         [Serializable]
         private sealed class CloudProfileResponse
@@ -79,13 +96,15 @@ namespace TumbangPreso.Net
         /// </summary>
         private async Task InitialiseInternalAsync()
         {
+            var requestedProfile = Profile;
             AccountProfile local = ReadLocal();
-            Task remote = SignInAndRefreshAsync(local);
-            Task winner = await Task.WhenAny(remote, Task.Delay(BootNetworkBudgetMs));
+            Task remote = _initialiseDispatch == null ? SignInAndRefreshAsync(local, requestedProfile) : _initialiseDispatch(local);
+            Task delay = _initialiseDelayDispatch == null ? Task.Delay(BootNetworkBudgetMs) : _initialiseDelayDispatch();
+            Task winner = await Task.WhenAny(remote, delay);
 
             if (winner != remote)
             {
-                Apply(local, signedIn: false, "UGS did not answer before the menu. Using local profile.");
+                ApplyInitialFallback(requestedProfile, local, "UGS did not answer before the menu. Using local profile.");
                 _ = AwaitLateAnswerAsync(remote);
                 return;
             }
@@ -94,11 +113,24 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 Debug.LogWarning($"[PlayerAccount] sign-in failed; local profile kept: {e.Message}");
-                Apply(local, signedIn: false, NetIdentity.StateReason);
+                ApplyInitialFallback(requestedProfile, local, NetIdentity.StateReason);
             }
         }
 
-        private async Task SignInAndRefreshAsync(AccountProfile local)
+        private void ApplyInitialFallback(AccountProfile requestedProfile, AccountProfile local, string status)
+        {
+            if (this == null) return;
+            if (IsGuest)
+            {
+                if (ReferenceEquals(_primaryProfile, requestedProfile))
+                    _primaryProfile = AccountRules.Normalise(local);
+                return;
+            }
+            if (!ReferenceEquals(_profile, requestedProfile)) return;
+            Apply(local, signedIn: false, status);
+        }
+
+        private async Task SignInAndRefreshAsync(AccountProfile local, AccountProfile requestedProfile)
         {
             bool online;
             try { online = await NetIdentity.EnsureSignedInAsync(); }
@@ -106,10 +138,11 @@ namespace TumbangPreso.Net
 
             if (!online)
             {
-                Apply(local, signedIn: false, NetIdentity.StateReason);
+                ApplyInitialFallback(requestedProfile, local, NetIdentity.StateReason);
                 return;
             }
 
+            if (this == null || (IsGuest ? _primaryProfile : _profile)?.PlayerId != requestedProfile.PlayerId) return;
             await RefreshFromAuthenticationAsync(local);
         }
 
@@ -136,17 +169,27 @@ namespace TumbangPreso.Net
 
         private async Task RefreshFromAuthenticationAsync(AccountProfile local)
         {
-            var auth = AuthenticationService.Instance;
+            var requestedProfile = IsGuest ? _primaryProfile : Profile;
+            var auth = _refreshIdentityDispatch == null ? AuthenticationService.Instance : null;
+            (string PlayerId, string Username) identity = _refreshIdentityDispatch == null
+                ? (auth.PlayerId ?? "", auth.PlayerInfo?.Username ?? "")
+                : _refreshIdentityDispatch();
+            string owner = identity.PlayerId;
+            long request = ++_refreshRequest;
+            if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
             var remote = new AccountProfile
             {
-                PlayerId = auth.PlayerId ?? "",
-                Username = auth.PlayerInfo?.Username ?? "",
+                PlayerId = owner,
+                Username = identity.Username,
                 CreatedUtc = local.CreatedUtc,
             };
 
             try
             {
-                string fullName = await auth.GetPlayerNameAsync(autoGenerate: false);
+                string fullName = _refreshNameDispatch == null
+                    ? await auth.GetPlayerNameAsync(autoGenerate: false)
+                    : await _refreshNameDispatch();
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 if (AccountRules.TrySplitHandle(fullName, out string name, out _))
                 {
                     remote.DisplayName = name;
@@ -155,8 +198,11 @@ namespace TumbangPreso.Net
                 {
                     string seed = AccountRules.TryDisplayName(local.DisplayName, out string clean)
                         ? clean
-                        : $"Player{ShortId(auth.PlayerId)}";
-                    fullName = await auth.UpdatePlayerNameAsync(seed.Replace(" ", "_"));
+                        : $"Player{ShortId(owner)}";
+                    fullName = _updateNameDispatch == null
+                        ? await auth.UpdatePlayerNameAsync(seed.Replace(" ", "_"))
+                        : await _updateNameDispatch(seed.Replace(" ", "_"));
+                    if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                     if (AccountRules.TrySplitHandle(fullName, out name, out _))
                         remote.DisplayName = name.Replace('_', ' ');
                 }
@@ -174,6 +220,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 // Authentication succeeded, so Relay may still be used. Player Names is a
                 // separate endpoint and its outage must only cost the remote profile refresh.
                 Debug.LogWarning($"[PlayerAccount] player-name refresh failed: {e.Message}");
@@ -183,7 +230,7 @@ namespace TumbangPreso.Net
             // needs no service at all, so a Player Names outage must not leave the account
             // carrying whatever tag happened to be on disk. That is the one case where the
             // client and the server would compute different handles for the same account.
-            remote.Discriminator = AccountRules.DerivedTag(auth.PlayerId);
+            remote.Discriminator = AccountRules.DerivedTag(owner);
 
             remote.Bio = local.Bio;
             remote.Country = local.Country;
@@ -192,14 +239,17 @@ namespace TumbangPreso.Net
             bool cloudHoldsAProfile = false;
             try
             {
-                var response = await CallCloudAsync("load");
+                var response = _refreshLoadDispatch == null
+                    ? await CallCloudAsync("load")
+                    : JsonUtility.FromJson<CloudProfileResponse>(await _refreshLoadDispatch());
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 if (response != null && !string.IsNullOrWhiteSpace(response.profile))
                 {
                     var cloud = JsonUtility.FromJson<AccountProfile>(response.profile);
                     if (cloud != null)
                     {
                         cloudHoldsAProfile = true;
-                        cloud.PlayerId = auth.PlayerId;
+                        cloud.PlayerId = owner;
                         cloud.Username = remote.Username;
                         remote = AccountRules.Resolve(remote, cloud, remoteAvailable: true);
                     }
@@ -207,9 +257,11 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 Debug.LogWarning($"[PlayerAccount] Cloud Save profile load failed; local profile kept: {e.Message}");
                 cloudHoldsAProfile = true;
             }
+            if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
             AccountProfile resolved = AccountRules.Resolve(local, remote, remoteAvailable: true);
 
             // ⚠️ A GUEST SESSION OWNS THE VISIBLE PROFILE UNTIL IT LEAVES. This can land after
@@ -237,8 +289,18 @@ namespace TumbangPreso.Net
             // same way an empty profile does, and writing on that branch would overwrite a real
             // stored profile with whatever this machine had on disk the moment the network
             // wobbled. Missing a first write costs one boot; the other way round costs an account.
-            if (!cloudHoldsAProfile) await SaveCloudProfileAsync();
+            if (!cloudHoldsAProfile && request == _refreshRequest && !IsGuest &&
+                PlayerId == owner && CurrentRefreshOwner() == owner) await SaveCloudProfileAsync();
         }
+
+        private string CurrentRefreshOwner()
+            => _refreshIdentityDispatch == null ? AuthenticationService.Instance.PlayerId : _refreshIdentityDispatch().PlayerId;
+
+        private bool OwnsRefreshRequest(AccountProfile requestedProfile, AccountProfile local, string owner, long request)
+            => this != null && requestedProfile != null && !string.IsNullOrEmpty(owner) &&
+                request == _refreshRequest && (ReferenceEquals(IsGuest ? _primaryProfile : _profile, requestedProfile) ||
+                    ReferenceEquals(IsGuest ? _primaryProfile : _profile, local)) &&
+                CurrentRefreshOwner() == owner;
 
         // -------------------------------------------------------------------
         // HANDLE PROOFS. `docs/TODO.md` § 88.1c and § 90.
@@ -261,7 +323,7 @@ namespace TumbangPreso.Net
         /// endpoint whether the handle it is claiming is really its own. Empty means "no proof",
         /// which is a normal state: offline, LAN, a guest, or an account with nothing stored yet.
         /// </summary>
-        public string HandleProof => _proof;
+        public string HandleProof => !IsGuest && IsSignedIn && _proofOwner == PlayerId ? _proof : "";
 
         /// <summary>
         /// Mints a handle proof if there is not already a live one, and answers with it.
@@ -278,17 +340,24 @@ namespace TumbangPreso.Net
         public async Task<string> EnsureHandleProofAsync()
         {
             if (IsGuest || !IsSignedIn) return "";
-            if (!string.IsNullOrEmpty(_proof) && DateTime.UtcNow < _proofExpiresUtc.AddMinutes(-1))
-                return _proof;
+            if (!string.IsNullOrEmpty(HandleProof) && DateTime.UtcNow < _proofExpiresUtc.AddMinutes(-1))
+                return HandleProof;
+
+            string owner = PlayerId;
+            long request = ++_proofRequest;
 
             try
             {
-                string output = await CloudCode.CallAsync("player-account", new { action = "attest" });
+                string output = _proofDispatch == null
+                    ? await CloudCode.CallAsync("player-account", new { action = "attest" })
+                    : await _proofDispatch();
+                if (!OwnsProofRequest(owner, request)) return "";
                 var response = string.IsNullOrWhiteSpace(output)
                     ? null
                     : JsonUtility.FromJson<HandleProofResponse>(output);
 
                 _proof = response?.proof ?? "";
+                _proofOwner = owner;
                 _proofExpiresUtc = DateTime.TryParse(
                     response?.expires, null,
                     System.Globalization.DateTimeStyles.AdjustToUniversal |
@@ -299,13 +368,18 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!OwnsProofRequest(owner, request)) return "";
                 Debug.LogWarning($"[PlayerAccount] handle proof unavailable; arriving unverified: {e.Message}");
                 _proof = "";
+                _proofOwner = "";
                 _proofExpiresUtc = DateTime.MinValue;
             }
 
-            return _proof;
+            return HandleProof;
         }
+
+        private bool OwnsProofRequest(string owner, long request)
+            => this != null && !IsGuest && IsSignedIn && PlayerId == owner && request == _proofRequest;
 
         /// <summary>
         /// The host half: asks the endpoint whether <paramref name="playerId"/> minted
@@ -647,20 +721,30 @@ namespace TumbangPreso.Net
                 throw new InvalidOperationException(
                     "Leave the guest session before deleting an account; a guest has nothing to delete.");
 
+            string owner = PlayerId;
+            long request = ++_deleteRequest;
             await InitializeAsync();
+            RequireDeleteOwner(owner, request);
             if (IsSignedIn)
             {
+                RequireAuthenticatedDeleteOwner(owner);
                 try
                 {
-                    await CallCloudAsync("delete");
+                    if (_deleteCloudDispatch == null) await CallCloudAsync("delete");
+                    else await _deleteCloudDispatch();
                 }
                 catch (Exception e)
                 {
+                    RequireDeleteOwner(owner, request);
                     Debug.LogWarning($"[PlayerAccount] profile clear failed before deletion: {e.Message}");
                 }
-                await AuthenticationService.Instance.DeleteAccountAsync();
+                RequireDeleteOwner(owner, request);
+                RequireAuthenticatedDeleteOwner(owner);
+                if (_deleteAuthDispatch == null) await AuthenticationService.Instance.DeleteAccountAsync();
+                else await _deleteAuthDispatch(owner);
             }
 
+            RequireDeleteOwner(owner, request);
             var settings = SettingsStore.Current;
             settings.AccountPlayerId = "";
             settings.AccountUsername = "";
@@ -684,8 +768,22 @@ namespace TumbangPreso.Net
             _proof = "";
             _proofExpiresUtc = DateTime.MinValue;
             _profile = ReadLocal();
-            _initialiseTask = InitialiseInternalAsync();
+            _initialiseTask = _deleteRestartDispatch == null ? InitialiseInternalAsync() : _deleteRestartDispatch();
             await _initialiseTask;
+            if (this == null || IsGuest || request != _deleteRequest)
+                throw new OperationCanceledException("The deletion view changed while the local account restarted.");
+        }
+
+        private void RequireDeleteOwner(string owner, long request)
+        {
+            if (this == null || IsGuest || PlayerId != owner || request != _deleteRequest)
+                throw new OperationCanceledException("The account selected for deletion is no longer active.");
+        }
+
+        private void RequireAuthenticatedDeleteOwner(string owner)
+        {
+            if (_deleteAuthDispatch == null && AuthenticationService.Instance.PlayerId != owner)
+                throw new OperationCanceledException("The authenticated account selected for deletion changed.");
         }
 
         /// <summary>
@@ -698,6 +796,9 @@ namespace TumbangPreso.Net
             if (!AccountRules.TryDisplayName(displayName, out string clean))
                 throw new ArgumentException($"Guest name must be {AccountRules.DisplayNameMin} to {AccountRules.DisplayNameMax} letters or numbers.");
 
+            ++_renameRequest;
+            ++_proofRequest;
+            ++_deleteRequest;
             if (!IsGuest) _primaryProfile = Profile;
             string id = "guest-" + Guid.NewGuid().ToString("N");
             _profile = AccountRules.Normalise(new AccountProfile
@@ -717,6 +818,9 @@ namespace TumbangPreso.Net
         public void LeaveGuest()
         {
             if (!IsGuest) return;
+            ++_renameRequest;
+            ++_proofRequest;
+            ++_deleteRequest;
             IsGuest = false;
             _profile = _primaryProfile ?? ReadLocal();
             _primaryProfile = null;
@@ -731,26 +835,35 @@ namespace TumbangPreso.Net
             if (!AccountRules.TryDisplayName(displayName, out string clean))
                 throw new ArgumentException($"Display name must be {AccountRules.DisplayNameMin} to {AccountRules.DisplayNameMax} letters or numbers.");
 
-            Profile.DisplayName = clean;
-            Profile.Bio = AccountRules.Bio(bio);
-            Profile.Country = AccountRules.Country(country);
-            Profile.Pronouns = AccountRules.Pronouns(pronouns);
+            var requestedProfile = Profile;
+            string requestedOwner = requestedProfile.PlayerId;
+            long request = ++_renameRequest;
+            requestedProfile.DisplayName = clean;
+            requestedProfile.Bio = AccountRules.Bio(bio);
+            requestedProfile.Country = AccountRules.Country(country);
+            requestedProfile.Pronouns = AccountRules.Pronouns(pronouns);
 
             if (IsSignedIn)
             {
-                string full = await AuthenticationService.Instance.UpdatePlayerNameAsync(clean.Replace(" ", "_"));
+                string full = _updateNameDispatch == null
+                    ? await AuthenticationService.Instance.UpdatePlayerNameAsync(clean.Replace(" ", "_"))
+                    : await _updateNameDispatch(clean.Replace(" ", "_"));
+                // The answer belongs to this edit and account, including across
+                // a guest handover that later restores the same primary object.
+                if (this == null || IsGuest || !IsSignedIn || request != _renameRequest ||
+                    !ReferenceEquals(_profile, requestedProfile) || PlayerId != requestedOwner) return;
                 if (AccountRules.TrySplitHandle(full, out string remoteName, out _))
-                    Profile.DisplayName = remoteName.Replace('_', ' ');
+                    requestedProfile.DisplayName = remoteName.Replace('_', ' ');
 
                 // ⚠️ THE TAG IS NOT PLAYER NAMES' TO DECIDE ANY MORE, for the reason
                 // `RefreshFromAuthenticationAsync` sets out at length: one tag source, derived
                 // from the player id, or the impersonation guard has nothing to check against.
                 // A rename must not move somebody's discriminator either; that is the number
                 // their friends recognise them by.
-                Profile.Discriminator = AccountRules.DerivedTag(Profile.PlayerId);
+                requestedProfile.Discriminator = AccountRules.DerivedTag(requestedOwner);
             }
 
-            Apply(Profile, IsSignedIn, IsSignedIn ? "Profile saved" : "Profile saved locally");
+            Apply(requestedProfile, IsSignedIn, IsSignedIn ? "Profile saved" : "Profile saved locally");
             if (IsSignedIn) await SaveCloudProfileAsync();
         }
 
@@ -821,13 +934,25 @@ namespace TumbangPreso.Net
 
         private async Task SaveCloudProfileAsync()
         {
+            var requestedProfile = Profile;
+            string requestedOwner = requestedProfile.PlayerId;
+            string profileJson = JsonUtility.ToJson(requestedProfile);
+            long request = ++_saveProfileRequest;
             try
             {
-                var response = await CallCloudAsync("save", JsonUtility.ToJson(Profile));
+                var response = _saveProfileDispatch == null
+                    ? await CallCloudAsync("save", profileJson)
+                    : JsonUtility.FromJson<CloudProfileResponse>(await _saveProfileDispatch(profileJson));
+                // A canonical reply belongs to the submitted profile and edit, not the
+                // account or newer local changes selected while the request was pending.
+                if (this == null || IsGuest || !IsSignedIn || request != _saveProfileRequest ||
+                    !ReferenceEquals(_profile, requestedProfile) || PlayerId != requestedOwner ||
+                    JsonUtility.ToJson(requestedProfile) != profileJson) return;
                 if (response != null && !string.IsNullOrWhiteSpace(response.profile))
                 {
                     var canonical = JsonUtility.FromJson<AccountProfile>(response.profile);
-                    if (canonical != null) _profile = AccountRules.Resolve(Profile, canonical, true);
+                    if (canonical == null || canonical.PlayerId != requestedOwner) return;
+                    _profile = AccountRules.Resolve(requestedProfile, canonical, true);
                     Persist();
                 }
             }

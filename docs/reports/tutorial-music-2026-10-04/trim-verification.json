@@ -1,0 +1,12 @@
+{
+  "source": "Tutorial.mp3",
+  "removedSeconds": 3,
+  "removedFramesPerChannel": 132300,
+  "sampleRate": 44100,
+  "channels": 2,
+  "remainingFramesPerChannel": 3594420,
+  "durationSeconds": 81.5061224489796,
+  "decodedPcmEqualsOriginalAfterExactTrim": true,
+  "sourceSha256": "3a948b891ebd55998e3f7d61899d51612d3b3859dbfe5bcfdd82be0b004ecf23",
+  "assetSha256": "d1289e4181e11591ac8cd205bf0057af1d1d3723ddfdbef05acbe9392f9e80b8"
+}

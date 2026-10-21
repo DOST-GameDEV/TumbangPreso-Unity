@@ -1,0 +1,18 @@
+PASS dante receives mastery from an active match
+PASS profile write failure retries without duplicate history or reward
+PASS ordinary duplicate keeps rewards and history once
+PASS new history preserves an existing different match
+{"passed":4,"failed":5,"scope":"actual endpoint; local Cloud Save stand-in"}
+FAIL rafi receives mastery from an active match: earned hero mastery is missing
+FAIL amihan receives mastery from an active match: earned hero mastery is missing
+FAIL paete receives mastery from an active match: earned hero mastery is missing
+FAIL history write failure is recovered by resubmission: Expected values to be strictly equal:
+
+0 !== 1
+
+FAIL offline record remains uncounted and unwritten: Expected values to be strictly equal:
++ actual - expected
+
++ 'pending'
+- 'offline'
+

@@ -1,3 +1,6 @@
+// V2 owner map: identity | authored body | cast palette | world body; powers
+// retain their own coat/rim. Catchable | upper rim | Defense | taya camera only.
+// Camera overrides are restored before recording the underlying body state.
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,7 +24,7 @@ namespace TumbangPreso.Visual
     /// ⚠️ THE ART HERE IS ALL PLACEHOLDER (docs/Port_Plan.md section 8). Invest in the
     /// MECHANISM, which survives the swap, not in matching the current look.
     /// </summary>
-    public sealed class CharacterVisual : MonoBehaviour
+    public sealed partial class CharacterVisual : MonoBehaviour
     {
         /// <summary>
         /// ⚠️⚠️ FOUR SPELLINGS, AND WRITING ONLY TWO OF THEM MADE EVERY CHARACTER TINT A SILENT
@@ -98,6 +101,26 @@ namespace TumbangPreso.Visual
         /// not be re-derived by eye against a screenshot.
         /// </summary>
         public const float PersonScale = 2.38f;
+
+        /// <summary>
+        /// ⚠️⚠️ ONE CHARACTER'S OWN SIZE ON TOP OF `PersonScale`, SET BY HAND PER BODY, NEVER A SWEEP (CLAUDE.md section 0).
+        /// Owner, 2026-09-26 and 27: *"can u make the size paete bigger he looks so small and scuffed"*, *"supposed to be larger
+        /// than sean"*, *"can u make Paete like bigger already"*. Measured on the bind poses: Paete stands 0.594 mesh units to
+        /// Sean's 0.518 (1.41 m to 1.23 m in play), under 15 per cent taller, and the antlers are most of that, so beside Sean he
+        /// read as the same size. 1.3 puts him at 1.84 m, half a head over Sean: the guardian of a mountain. It is VISUAL: the
+        /// capsule, the reach and every rule stay the cast's, so a bigger tree is not a bigger target or a longer arm in the
+        /// rules (`Core` never sees this). Used by the match body and by `ModelPreview`, so the screens show the size he plays at.
+        /// </summary>
+        public static float BodyScaleFor(string modelName)
+        {
+            string name = string.IsNullOrEmpty(modelName) ? "" : modelName.Replace("(Clone)", "").Trim();
+            switch (name)
+            {
+                // His redesign is the same tree at the same size (`paete-redesign.glb`, 2026-10-05).
+                case "team-paete": case "paete-redesign": return 1.3f;
+                default: return 1f;
+            }
+        }
 
         /// <summary>
         /// ⚠️⚠️ RE-MEASURED 2026-08-18 AND IT IS 0, NOT 180. `character_visual.gd:54` carries
@@ -261,7 +284,7 @@ namespace TumbangPreso.Visual
 
                 // See PersonScale. A Prop is authored at its own size and keeps it, exactly as
                 // `character_visual.gd` only scales the branch it took for a Person.
-                _instance.transform.localScale = person ? Vector3.one * PersonScale : Vector3.one;
+                _instance.transform.localScale = person ? Vector3.one * (PersonScale * BodyScaleFor(prefab.name)) : Vector3.one;
             }
 
             CacheRenderers();
@@ -284,8 +307,9 @@ namespace TumbangPreso.Visual
             // inside it, as its own comment records.
             ToonSkin.Apply(_instance, person ? ToonSkin.PersonOutlineWidth
                                              : ToonSkin.PropOutlineWidth, palette);
-
-            AlignToCapsuleFloor();
+            // Phaister's voodoo doll carries its light as two meshes of its own; the toon paint above treats them as cloth.
+            // Only renderers by those names are touched, so every other model passes through unchanged.
+            PhaisterDollArt.ApplyGlow(_instance);
 
             if (petModel != null)
             {
@@ -309,7 +333,9 @@ namespace TumbangPreso.Visual
             // character simply stands still and no error is ever logged.
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
+            anim.GaitSource = prefab != null ? prefab.name : null;
             if (_instance != null) anim.Bind(_instance, clips);
+            AlignToCapsuleFloor();
 
             // ⚠️⚠️ NO SECONDARY CLOTH SOLVER ON THE BODY EITHER. DELETED 2026-08-27 along with
             // `BaggyClothingPhysics` and the first-person `ViewmodelClothPhysics`.
@@ -344,6 +370,12 @@ namespace TumbangPreso.Visual
         public Transform HandAnchor { get; private set; }
 
         /// <summary>
+        /// The rig's `torso` bone, or null. HERO-10 v3: a carried slipper tucked into the belt while a cast needs the hand
+        /// (`Carrier`, `CharacterMotor.StowsCarriedSlipper`) rides the waist through the torso's own lean. Found with the hand.
+        /// </summary>
+        public Transform TorsoBone { get; private set; }
+
+        /// <summary>
         /// The node the model hangs under. Exposed so `Carrier` has something body-shaped to
         /// hang a held slipper off while <see cref="HandAnchor"/> is still null — see its
         /// `CarryAnchor`. Read-only on purpose: <see cref="SetModelRoot"/> is the one writer.
@@ -351,8 +383,14 @@ namespace TumbangPreso.Visual
         public Transform ModelRoot => _modelRoot;
 
         /// <summary>`character_visual.gd::HAND_BONE_CANDIDATES`. The right arm first, because
-        /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.</summary>
-        private static readonly string[] HandBones = { "arm-right", "arm-left" };
+        /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.
+        ///
+        /// ⚠️ THE FOREARM FIRST, WHERE A RIG HAS ONE. The redesign prototypes add an elbow
+        /// (`forearm-right`, `forearm-left`) and their hand is skinned to it, so on those rigs
+        /// `arm-right` is only the upper arm: measuring the palm there parks a carried tsinelas
+        /// at the elbow, and it then ignores the bend. A cast rig has no such bone and falls
+        /// through to `arm-right` exactly as before.</summary>
+        private static readonly string[] HandBones = { "forearm-right", "arm-right", "forearm-left", "arm-left" };
 
         /// <summary>
         /// How far above the measured palm centre the carried shoe's ORIGIN sits, along the
@@ -367,6 +405,24 @@ namespace TumbangPreso.Visual
         /// bare number while the palm centre below has to be measured rather than copied.
         /// </summary>
         public const float HandTopLift = 0.0617f;
+
+        /// <summary>
+        /// The bone that carries one side's HAND (`side` is "left" or "right") and the palm centre in that bone's space.
+        ///
+        /// ⚠️ ASK THIS, NOT `arm-left` BY NAME. On a rig with elbows the hand is skinned to `forearm-<side>` and the far end
+        /// of `arm-<side>` is the ELBOW, so anything that measured its palm on the arm bone put its prop, its grip or its
+        /// wire on the elbow (2026-10-05). A seven-bone cast rig has no forearm and gets its arm bone, exactly as before.
+        /// </summary>
+        public static bool HandBone(SkinnedMeshRenderer skinned, string side, out int bone, out Vector3 palm)
+        {
+            bone = -1; palm = Vector3.zero;
+            if (skinned == null || skinned.sharedMesh == null || skinned.bones == null) return false;
+            foreach (string wanted in new[] { "forearm-" + side, "arm-" + side })
+                for (int i = 0; i < skinned.bones.Length; i++)
+                    if (skinned.bones[i] != null && skinned.bones[i].name == wanted && PalmCentre(skinned, i, out palm))
+                    { bone = i; return true; }
+            return false;
+        }
 
         /// <summary>
         /// Finds the hand bone and parks an anchor on the top of its hand.
@@ -394,10 +450,14 @@ namespace TumbangPreso.Visual
         private void BuildHandAnchor()
         {
             HandAnchor = null;
+            TorsoBone = null;
             if (_instance == null) return;
 
             var skinned = _instance.GetComponentInChildren<SkinnedMeshRenderer>();
             if (skinned == null || skinned.sharedMesh == null || skinned.bones == null) return;
+
+            foreach (var b in skinned.bones)
+                if (b != null && string.Equals(b.name, "torso", System.StringComparison.OrdinalIgnoreCase)) { TorsoBone = b; break; }
 
             int bone = -1;
 
@@ -423,10 +483,12 @@ namespace TumbangPreso.Visual
                 return;
             }
 
+            // Every current rig has a different hand thickness and some have
+            // separated fingers. Fit the support to actual weighted triangles,
+            // not a height copied from an older human model.
             if (!PalmCentre(skinned, bone, out Vector3 palm)) return;
-
-            // The shoe rests ON the hand. See HandTopLift.
-            palm.y += HandTopLift;
+            if (!PalmSurface(skinned, bone, palm, out palm)) return;
+            palm.y += .003f / Mathf.Max(.001f, skinned.bones[bone].TransformVector(Vector3.up).magnitude);
 
             var anchorGo = new GameObject("HandAnchor");
             anchorGo.transform.SetParent(skinned.bones[bone], false);
@@ -450,7 +512,7 @@ namespace TumbangPreso.Visual
         /// wrong values the Godot side recorded all came from measuring in a frame nobody else
         /// was measuring in. It is a read with no side effects, so exposing it costs nothing.
         /// </summary>
-        public static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm)
+        public static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm, bool onSurface = false)
         {
             palm = Vector3.zero;
 
@@ -526,8 +588,64 @@ namespace TumbangPreso.Visual
 
             foreach (var v in blob) palm += v;
             palm /= blob.Count;
+            if (onSurface)
+            {
+                float top = float.NegativeInfinity;
+                foreach (var v in blob) top = Mathf.Max(top, v.y);
+                palm.y = top;
+            }
 
             return true;
+        }
+
+        private static bool PalmSurface(SkinnedMeshRenderer skin, int bone, Vector3 target, out Vector3 surface)
+        {
+            var mesh = skin.sharedMesh; var vertices = mesh.vertices;
+            var weights = mesh.boneWeights; var triangles = mesh.triangles;
+            var local = new Vector3[vertices.Length]; var valid = new bool[vertices.Length];
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var w = weights[i];
+                float influence = (w.boneIndex0 == bone ? w.weight0 : 0) + (w.boneIndex1 == bone ? w.weight1 : 0)
+                    + (w.boneIndex2 == bone ? w.weight2 : 0) + (w.boneIndex3 == bone ? w.weight3 : 0);
+                valid[i] = influence >= .5f;
+                local[i] = mesh.bindposes[bone].MultiplyPoint3x4(vertices[i]);
+            }
+            surface = target; float nearest = float.PositiveInfinity; bool found = false;
+            for (int i = 0; i < triangles.Length; i += 3)
+            {
+                int ia = triangles[i], ib = triangles[i + 1], ic = triangles[i + 2];
+                if (!valid[ia] || !valid[ib] || !valid[ic]) continue;
+                Vector3 a = local[ia], b = local[ib], c = local[ic];
+                float den = (b.z-c.z)*(a.x-c.x)+(c.x-b.x)*(a.z-c.z);
+                if (Mathf.Abs(den) < .00000001f) continue;
+                float u = ((b.z-c.z)*(target.x-c.x)+(c.x-b.x)*(target.z-c.z))/den;
+                float v = ((c.z-a.z)*(target.x-c.x)+(a.x-c.x)*(target.z-c.z))/den;
+                Vector3 hit;
+                if (u >= 0 && v >= 0 && u+v <= 1) hit = u*a+v*b+(1-u-v)*c;
+                else
+                {
+                    hit = PalmEdge(a,b,target);
+                    var bc = PalmEdge(b,c,target); var ca = PalmEdge(c,a,target);
+                    if (PalmDistance(bc,target) < PalmDistance(hit,target)) hit = bc;
+                    if (PalmDistance(ca,target) < PalmDistance(hit,target)) hit = ca;
+                }
+                float distance = PalmDistance(hit,target);
+                if (distance > nearest + .00000001f) continue;
+                if (Mathf.Abs(distance-nearest) <= .00000001f && found && hit.y <= surface.y) continue;
+                nearest = distance; surface = hit; found = true;
+            }
+            return found;
+        }
+
+        private static float PalmDistance(Vector3 a, Vector3 b)
+            => (a.x-b.x)*(a.x-b.x)+(a.z-b.z)*(a.z-b.z);
+
+        private static Vector3 PalmEdge(Vector3 a, Vector3 b, Vector3 target)
+        {
+            var d = b-a; float length = d.x*d.x+d.z*d.z;
+            float t = length > .00000001f ? Mathf.Clamp01(((target.x-a.x)*d.x+(target.z-a.z)*d.z)/length) : 0;
+            return Vector3.Lerp(a,b,t);
         }
 
         /// <summary>
@@ -567,7 +685,7 @@ namespace TumbangPreso.Visual
 
                 // Turning it off returns the mesh to the body immediately; leaving the offset
                 // behind would park every character permanently beside itself.
-                if (!_smoothRemote) SnapRemoteTransform();
+                if (!_smoothRemote) SnapRemotePose(false);
             }
         }
 
@@ -580,16 +698,20 @@ namespace TumbangPreso.Visual
         /// the body without walking it, and a visual that glides to the new spot crosses the
         /// whole arena in front of everybody. The Godot side records this as its own rule.
         /// </summary>
-        public void SnapRemoteTransform()
+        public void SnapRemoteTransform() => SnapRemotePose(true);
+
+        private void SnapRemotePose(bool reseatGround)
         {
-            _groundContact=0;
+            // A teleport must sample its new surface. Merely changing who owns
+            // smoothing keeps the current foot seating instead of popping upward.
+            if(reseatGround)_groundContact=0;
             _smoothedWorld = transform.position;
             _smoothedYawDeg = transform.eulerAngles.y;
             _smoothing = true;
 
             if (_modelRoot == null || _modelRoot == transform) return;
 
-            _modelRoot.localPosition = _alignedLocal;
+            _modelRoot.localPosition = _alignedLocal+transform.InverseTransformVector(Vector3.down*_groundContact);
             _modelRoot.localRotation = Quaternion.identity;
         }
 
@@ -722,7 +844,8 @@ namespace TumbangPreso.Visual
             if (!any) return;
 
             float capsuleBase = transform.position.y;
-            float drop = combined.min.y - capsuleBase;
+            float sole=AnimatedSoleHeight();
+            float drop = (float.IsPositiveInfinity(sole)?combined.min.y:sole) - capsuleBase;
 
             if (Mathf.Abs(drop) > 0.0005f)
                 _modelRoot.position -= new Vector3(0.0f, drop, 0.0f);
@@ -730,6 +853,32 @@ namespace TumbangPreso.Visual
             // The alignment is the model root's resting place, and the remote smoothing offsets
             // from it rather than replacing it. See StepRemoteSmoothing.
             _alignedLocal = _modelRoot == transform ? Vector3.zero : _modelRoot.localPosition;
+        }
+
+        private float AnimatedSoleHeight()
+        {
+            if(_instance==null)return float.PositiveInfinity;
+            float sole=float.PositiveInfinity;var baked=new Mesh();
+            try
+            {
+                foreach(var skin in _instance.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    if(skin.sharedMesh==null)continue;
+                    var bones=skin.bones;var weights=skin.sharedMesh.boneWeights;
+                    if(weights.Length==0)continue;
+                    skin.BakeMesh(baked,true);var vertices=baked.vertices;
+                    if(weights.Length!=vertices.Length)continue;
+                    bool Leg(int index)=>index>=0&&index<bones.Length&&bones[index]!=null&&(bones[index].name=="leg-left"||bones[index].name=="leg-right");
+                    for(int i=0;i<vertices.Length;i++)
+                    {
+                        var w=weights[i];float leg=(Leg(w.boneIndex0)?w.weight0:0)+(Leg(w.boneIndex1)?w.weight1:0)
+                            +(Leg(w.boneIndex2)?w.weight2:0)+(Leg(w.boneIndex3)?w.weight3:0);
+                        if(leg>.5f)sole=Mathf.Min(sole,skin.transform.TransformPoint(vertices[i]).y);
+                    }
+                }
+            }
+            finally{if(Application.isPlaying)Destroy(baked);else DestroyImmediate(baked);}
+            return sole;
         }
 
         /// <summary>
@@ -813,7 +962,23 @@ namespace TumbangPreso.Visual
         private float _frostLevel;
 
         /// <summary>0 = normal, 1 = fully iced.</summary>
+        private MaterialPropertyBlock _recordedAccentRead;
+        public bool CaptureRecordedAccent(out float strength,out Color colour)
+        {
+            strength=0;colour=Color.white;if(_renderers==null)return false;
+            _recordedAccentRead??=new MaterialPropertyBlock();
+            foreach(var renderer in _renderers)
+            {
+                if(renderer==null)continue;renderer.GetPropertyBlock(_recordedAccentRead);
+                if(!_recordedAccentRead.HasFloat("_RimStrength"))continue;
+                strength=_recordedAccentRead.GetFloat("_RimStrength");
+                colour=_recordedAccentRead.HasColor("_RimColor")?_recordedAccentRead.GetColor("_RimColor"):Color.white;return true;
+            }
+            return false;
+        }
         public float FrostLevel => _frostLevel;
+        public void CaptureRecordedCoat(out float frost,out float flash,out StunElement element)
+        {frost=_frostLevel;flash=_flashTime<=0?0:Mathf.Clamp01(_flashLeft/_flashTime);element=_stunElement;}
 
         /// <summary>
         /// ⚠️ WRITTEN THROUGH THE SAME PROPERTY BLOCK AS THE TINT AND THE FLASH, which is what
@@ -906,7 +1071,7 @@ namespace TumbangPreso.Visual
                 if (tinted)
                     foreach (int id in ColourIds) _block.SetColor(id, _tint);
 
-                _block.SetFloat(FlashAmountId, flash);
+                _block.SetFloat(FlashAmountId, flash * Settings.SettingsStore.Current.EffectiveFlashIntensity);
                 // ⚠️ ONE LEVEL, ROUTED BY ELEMENT. See the note at the end of `ProcessFrost`.
                 bool ability = _stunElement != StunElement.None;
 

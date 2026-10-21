@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 22:27:52Z" end-time="2026-09-26 22:27:58Z" duration="5.8261319">
+  <test-suite type="TestSuite" id="1869" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:27:52Z" end-time="2026-09-26 22:27:58Z" duration="5.826132" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:27:52Z" end-time="2026-09-26 22:27:58Z" duration="5.816359" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="56100" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:27:52Z" end-time="2026-09-26 22:27:58Z" duration="5.812575" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1865" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:27:52Z" end-time="2026-09-26 22:27:58Z" duration="5.808642" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1383" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-26 22:27:52Z" end-time="2026-09-26 22:27:58Z" duration="5.795530" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1386" name="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" methodname="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1343617117" result="Passed" start-time="2026-09-26 22:27:52Z" end-time="2026-09-26 22:27:58Z" duration="5.784634" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code S2CA
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] qa11-owned-hero cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=100, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] qa11-unowned-hero cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

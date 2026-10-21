@@ -146,22 +146,15 @@ namespace TumbangPreso.PlayTests
             report.AppendLine("networked lobby: host listening, SceneFlow.Networked = true");
             report.AppendLine(Inventory());
 
+            // The same door, for the same reason: a closed chat is untypeable by design and its
+            // twin probe's note has the whole of it.
+            yield return LobbyTypingProbe.PresentTheChat(report);
+
             yield return LobbyTypingProbe.Check("networked lobby", report, broken);
 
-            var join = LobbyTypingProbe.FindByName("LobbyJoinPanel");
-
-            if (join == null)
-            {
-                report.AppendLine("LobbyJoinPanel: NOT PRESENT");
-            }
-            else
-            {
-                join.SetActive(true);
-                for (int i = 0; i < SettleFrames; i++) yield return null;
-                Canvas.ForceUpdateCanvases();
-
-                yield return LobbyTypingProbe.Check("networked join card", report, broken);
-            }
+            // UX-1 has no join form over an occupied room. Code/host/profile entry is covered by
+            // the offline fixture; this case keeps the real listener alive while chat owns the caret.
+            Assert.IsTrue(NetSession.Instance.IsNetworked, "Caret interaction must not leave the room.");
 
             Directory.CreateDirectory("Logs");
             File.WriteAllText(OutPath, report.ToString(), new UTF8Encoding(false));

@@ -1,0 +1,3 @@
+faulted=True
+state=Hosting
+busy=False

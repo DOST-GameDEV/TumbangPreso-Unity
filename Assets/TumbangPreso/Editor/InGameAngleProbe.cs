@@ -295,7 +295,7 @@ namespace TumbangPreso.EditorTools
             {
                 new { Path = "Assets/TumbangPreso/Art/characters/persons/character-male-b.glb", RosterId = "kuya_boy", Label = "Base (male-b)" },
                 new { Path = "Assets/TumbangPreso/Art/characters/persons/team-inday.glb", RosterId = "inday", Label = "Inday" },
-                new { Path = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb", RosterId = "zack", Label = "Zack" },
+                new { Path = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb", RosterId = "zack", Label = "Isagani" },
                 new { Path = "Assets/TumbangPreso/Art/characters/persons/team-bayan.glb", RosterId = "bayan", Label = "Bayan" },
                 new { Path = "Assets/TumbangPreso/Art/characters/persons/team-iggy.glb", RosterId = "kuya_boy", Label = "Iggy (Heavyweight)" },
             };

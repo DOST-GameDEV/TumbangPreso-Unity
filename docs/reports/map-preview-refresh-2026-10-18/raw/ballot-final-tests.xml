@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 11:59:31Z" end-time="2026-10-18 11:59:50Z" duration="19.0980369">
+  <test-suite type="TestSuite" id="3703" name="TUMP Map Preview Refresh 1018" fullname="TUMP Map Preview Refresh 1018" runstate="Runnable" testcasecount="2180" result="Passed" start-time="2026-10-18 11:59:31Z" end-time="2026-10-18 11:59:50Z" duration="19.098037" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3695" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-map1018/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2180" result="Passed" start-time="2026-10-18 11:59:31Z" end-time="2026-10-18 11:59:50Z" duration="19.070965" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19032" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3696" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2180" result="Passed" start-time="2026-10-18 11:59:31Z" end-time="2026-10-18 11:59:50Z" duration="19.053553" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3699" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2178" result="Passed" start-time="2026-10-18 11:59:31Z" end-time="2026-10-18 11:59:50Z" duration="19.035698" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2308" name="MapVotePreviewTests" fullname="TumbangPreso.PlayTests.MapVotePreviewTests" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-18 11:59:31Z" end-time="2026-10-18 11:59:50Z" duration="18.977791" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2309" name="NormalHostBallotSupportsPreviewThenLock" fullname="TumbangPreso.PlayTests.MapVotePreviewTests.NormalHostBallotSupportsPreviewThenLock" methodname="NormalHostBallotSupportsPreviewThenLock" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" seed="1875641111" result="Passed" start-time="2026-10-18 11:59:31Z" end-time="2026-10-18 11:59:37Z" duration="5.421759" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 77D5
+[TumpUiCapture] FiveMapVote-1920x1080 cream source=252,211,159 pixel=164,166,163; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FiveMapVote-1280x720 cream source=252,211,159 pixel=164,166,163; isolated UI camera, no ColourGrade.
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <b74bdaa8ce234a429c4a6df48fb65ab5>:0 
+  at TumbangPreso.PlayTests.MapVotePreviewTests+<After>d__1.MoveNext () [0x00017] in <41a32725aa624f6cbba887bb7b9cecfc>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="2310" name="UnansweredBallotResolvesAtTheNormalDeadline" fullname="TumbangPreso.PlayTests.MapVotePreviewTests.UnansweredBallotResolvesAtTheNormalDeadline" methodname="UnansweredBallotResolvesAtTheNormalDeadline" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" seed="2034591269" result="Passed" start-time="2026-10-18 11:59:37Z" end-time="2026-10-18 11:59:50Z" duration="13.540098" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code WVCW
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <b74bdaa8ce234a429c4a6df48fb65ab5>:0 
+  at TumbangPreso.PlayTests.MapVotePreviewTests+<After>d__1.MoveNext () [0x00017] in <41a32725aa624f6cbba887bb7b9cecfc>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios Validation/TUMP Map Preview Refresh 1018\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

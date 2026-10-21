@@ -227,7 +227,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 if(renderers.Length==0)continue;
                 var bounds=BoundsOf(mark.gameObject);
                 if(bounds.size.y<=0)throw new InvalidOperationException("Court mark has no measured thickness: "+mark.name);
-                var scale=mark.localScale;scale.y*=.002f/bounds.size.y;mark.localScale=scale;
+                var scale=mark.localScale;
+                // Re-measuring world bounds introduces float cancellation at
+                // this2mm thickness. Canonicalize well below a visible unit so
+                // repeated authoring does not keep multiplying that roundoff.
+                scale.y=Mathf.Round(scale.y*(.002f/bounds.size.y)*100000f)/100000f;
+                mark.localScale=scale;
                 bounds=BoundsOf(mark.gameObject);
                 mark.position+=Vector3.up*(.103f-bounds.min.y);
                 if(PrefabUtility.IsPartOfPrefabInstance(mark))PrefabUtility.RecordPrefabInstancePropertyModifications(mark);

@@ -107,7 +107,9 @@ namespace TumbangPreso.Core
             _current = System.Math.Clamp(current, 0.0f, Balance.StaminaMax);
             _idle = System.Math.Max(0.0f, idle);
             _fatigueLeft = System.Math.Clamp(fatigueLeft, 0.0f, Balance.FatigueTime);
-            _isSprinting = false;
+            // A resource correction is not a release of the owner's sprint key.
+            // Preserve continuation below the start floor; empty/fatigue still stop it.
+            _isSprinting = _isSprinting && _current > 0 && !willBeFatigued;
         }
 
         /// <summary>
@@ -151,12 +153,31 @@ namespace TumbangPreso.Core
             }
 
             _idle += delta;
-            if (_idle >= Balance.StaminaRegenDelay)
+            if (_idle >= Balance.StaminaRegenDelay && !RecoveryBlocked)
             {
                 _current += Balance.StaminaRegenRate * delta;
                 if (_current > Balance.StaminaMax) _current = Balance.StaminaMax;
             }
             return 1.0f;
+        }
+
+        /// <summary>
+        /// ⚠️ DRAINED (HERO-10 v3, the owner's table): *"Prevents stamina recovery for 2.5 seconds."* Set every step by
+        /// the body from its own replicated status timer, so the bar and the icon cannot disagree and a joining peer needs
+        /// nothing extra. The idle clock keeps counting through it, so recovery resumes the moment the status ends rather
+        /// than a regen delay later.
+        /// </summary>
+        public bool RecoveryBlocked { get; set; }
+
+        /// <summary>
+        /// ⚠️ DRAINED: *"Depletes stamina to 0."* The bar empties and any sprint stops. It is NOT fatigue: the owner's
+        /// row says nothing about the fatigue slow, so none is added; an empty bar already refuses a sprint start
+        /// (`StaminaSprintFloor`) and every paid verb.
+        /// </summary>
+        public void Deplete()
+        {
+            _current = 0.0f;
+            _isSprinting = false;
         }
 
         /// <summary>
@@ -265,22 +286,9 @@ namespace TumbangPreso.Core
             _isSprinting = false;
         }
 
-        /// <summary>
-        /// Role scale is permanent and by ROLE, not by pick: an attacker walks at
-        /// `AttackerSpeedScale` of the base speed for the whole round they attack, and the taya
-        /// at `DefenderSpeedScale`, for the whole round they defend.
-        ///
-        /// ⚠️ BOTH SIDES ARE NAMED CONSTANTS NOW. The taya's was a literal `1.0f` here, which is
-        /// how it survived every retune of the attacker's: a number with no name is a number
-        /// nobody searching for "defender speed" can find. Both headers in `Balance` carry the
-        /// 2026-08-29 quotes that moved them.
-        ///
-        /// ⚠️ IT IS READ PER FRAME OFF `IsDefender`, SO THE ROLE SWAP REVERTS IT WITH NOTHING
-        /// TO REMEMBER. 🧑 asked for exactly that about the block radius — *"make sure it
-        /// reverts to nroaml when theyre attacker"* — and the same property is what makes it
-        /// true here: there is no per-match state to unwind when the taya rotates.
-        /// </summary>
-        public static float RoleSpeedScale(bool isDefender) =>
-            isDefender ? Balance.DefenderSpeedScale : Balance.AttackerSpeedScale;
+        /// <summary>Absolute ordinary locomotion speed; character traits do not scale it.</summary>
+        public static float MovementSpeed(bool isDefender, bool running) => isDefender
+            ? (running ? Balance.DefenderRunSpeed : Balance.DefenderWalkSpeed)
+            : (running ? Balance.AttackerRunSpeed : Balance.AttackerWalkSpeed);
     }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 07:24:15Z" end-time="2026-10-01 07:24:17Z" duration="1.8184697">
+  <test-suite type="TestSuite" id="2367" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 07:24:15Z" end-time="2026-10-01 07:24:17Z" duration="1.818470" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2361" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 07:24:15Z" end-time="2026-10-01 07:24:17Z" duration="1.790761" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12076" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2362" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 07:24:15Z" end-time="2026-10-01 07:24:17Z" duration="1.773207" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2363" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 07:24:15Z" end-time="2026-10-01 07:24:17Z" duration="1.754405" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2069" name="SessionRestartTests" fullname="TumbangPreso.PlayTests.SessionRestartTests" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-10-01 07:24:15Z" end-time="2026-10-01 07:24:17Z" duration="1.716357" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2076" name="ValidIdentifyFrameStillUsesApprovedIdentityOnTheConnectedHost" fullname="TumbangPreso.PlayTests.SessionRestartTests.ValidIdentifyFrameStillUsesApprovedIdentityOnTheConnectedHost" methodname="ValidIdentifyFrameStillUsesApprovedIdentityOnTheConnectedHost" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1438640780" result="Passed" start-time="2026-10-01 07:24:15Z" end-time="2026-10-01 07:24:17Z" duration="1.698032" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18694, join code 68WF
+[Net] 1 connected, seat 0
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

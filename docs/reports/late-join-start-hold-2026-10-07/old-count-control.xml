@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 12:43:55Z" end-time="2026-10-07 12:43:59Z" duration="3.8582607">
+  <test-suite type="TestSuite" id="3612" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2114" result="Failed" site="Child" start-time="2026-10-07 12:43:55Z" end-time="2026-10-07 12:43:59Z" duration="3.858261" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3604" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2114" result="Failed" site="Child" start-time="2026-10-07 12:43:55Z" end-time="2026-10-07 12:43:59Z" duration="3.823077" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19274" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3605" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2114" result="Failed" site="Child" start-time="2026-10-07 12:43:55Z" end-time="2026-10-07 12:43:59Z" duration="3.798114" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3608" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2112" result="Failed" site="Child" start-time="2026-10-07 12:43:55Z" end-time="2026-10-07 12:43:59Z" duration="3.773994" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2836" name="ReadyGateNetworkTests" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-07 12:43:55Z" end-time="2026-10-07 12:43:59Z" duration="3.715493" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2842" name="ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" methodname="ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1874002862" result="Failed" start-time="2026-10-07 12:43:55Z" end-time="2026-10-07 12:43:59Z" duration="3.700256" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 6
+  But was:  4
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReadyGateNetworkTests+<ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion>d__13.MoveNext () [0x002ce] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs:315
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

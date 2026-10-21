@@ -1,0 +1,742 @@
+{
+  "sourceCommit": "001d80b568fc0a13fb3603a8ccc23123a61f9a42",
+  "runtimeSha256": "2005a5d0ac9bb5c4573e77a46eb0bc115f700f49e22d05afa06891702c242a20",
+  "runs": [
+    {
+      "mode": "baseline",
+      "pid": 66940,
+      "threadingMode": "kGfxThreadingModeClientWorkerJobs",
+      "settingsVerified": true,
+      "windows": [
+        {
+          "mode": "00-boot-to-title",
+          "samples": 1039,
+          "duration": 4.775108814239502,
+          "maxMs": 615.2711181640625,
+          "medianMs": 3.331899881362915,
+          "p95Ms": 3.4670000076293945,
+          "p99Ms": 3.8875999450683594,
+          "framesOver33Ms": 3,
+          "framesOver50Ms": 3,
+          "framesOver100Ms": 2
+        },
+        {
+          "mode": "01-title-to-home",
+          "samples": 614,
+          "duration": 7.94321346282959,
+          "maxMs": 1099.4903564453125,
+          "medianMs": 4.257299900054932,
+          "p95Ms": 16.778200149536133,
+          "p99Ms": 110.7969970703125,
+          "framesOver33Ms": 12,
+          "framesOver50Ms": 10,
+          "framesOver100Ms": 7
+        },
+        {
+          "mode": "02-home-idle",
+          "samples": 360,
+          "duration": 3.0039925575256348,
+          "maxMs": 16.823699951171875,
+          "medianMs": 4.3125,
+          "p95Ms": 13.660200119018555,
+          "p99Ms": 16.6033992767334,
+          "framesOver33Ms": 0,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        },
+        {
+          "mode": "menu-HeroButton",
+          "samples": 152,
+          "duration": 1.34958016872406,
+          "maxMs": 39.68349838256836,
+          "medianMs": 10.106900215148926,
+          "p95Ms": 13.526100158691406,
+          "p99Ms": 29.094600677490234,
+          "framesOver33Ms": 1,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        },
+        {
+          "mode": "menu-HeroButton-repeat",
+          "samples": 159,
+          "duration": 1.3261165618896484,
+          "maxMs": 18.270700454711914,
+          "medianMs": 7.684899806976318,
+          "p95Ms": 14.277999877929688,
+          "p99Ms": 16.836599349975586,
+          "framesOver33Ms": 0,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        }
+      ],
+      "loadingSpikes": [
+        {
+          "sample": "503",
+          "frameMs": 1099.49,
+          "context": {
+            "sample": "503",
+            "real_seconds": "6.908493",
+            "simulation_seconds": "9.107811",
+            "round_left": "90.000000",
+            "gc0": "63",
+            "gc1": "63",
+            "gc2": "63",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "107",
+          "frameMs": 526.7555,
+          "context": {
+            "sample": "107",
+            "real_seconds": "2.299271",
+            "simulation_seconds": "5.254728",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "61",
+          "frameMs": 350.6497,
+          "context": {
+            "sample": "61",
+            "real_seconds": "1.373463",
+            "simulation_seconds": "4.507969",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "43",
+          "frameMs": 309.9502,
+          "context": {
+            "sample": "43",
+            "real_seconds": "0.882649",
+            "simulation_seconds": "4.057978",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "387",
+          "frameMs": 145.3701,
+          "context": {
+            "sample": "387",
+            "real_seconds": "4.801320",
+            "simulation_seconds": "7.944595",
+            "round_left": "90.000000",
+            "gc0": "51",
+            "gc1": "51",
+            "gc2": "51",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "504",
+          "frameMs": 139.5136,
+          "context": {
+            "sample": "504",
+            "real_seconds": "7.048007",
+            "simulation_seconds": "9.107811",
+            "round_left": "90.000000",
+            "gc0": "63",
+            "gc1": "63",
+            "gc2": "63",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "0",
+          "frameMs": 110.797,
+          "context": {
+            "sample": "0",
+            "real_seconds": "0.110798",
+            "simulation_seconds": "3.524564",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "12",
+          "frameMs": 89.8754,
+          "context": {
+            "sample": "12",
+            "real_seconds": "0.259346",
+            "simulation_seconds": "3.654682",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        }
+      ],
+      "asyncStages": [
+        {
+          "stage": "roster-resource-wait",
+          "wallMs": 2498.692,
+          "scope": "async-wait-not-main-thread-cost"
+        },
+        {
+          "stage": "gameplay-preparation",
+          "wallMs": 2315.749,
+          "scope": "coroutine-total-includes-yields"
+        },
+        {
+          "stage": "mode-posters",
+          "wallMs": 266.014,
+          "scope": "async-wait-includes-yields"
+        }
+      ],
+      "retainedFileSha256": {
+        "00-boot-to-title-frame-context.csv": "de6092bde81358ca2644ad16337c0eb654fa4031fd0e145713d3fc3743960553",
+        "00-boot-to-title-frame-times.csv": "f516e68467a120dd29f005f222298ce140691cf6597ff7642ea08ba1f3c11107",
+        "01-title-to-home-frame-context.csv": "5149c765134d91dde215f24f4919a81a0ca033e378ca1c144049edce164a3210",
+        "01-title-to-home-frame-times.csv": "1053592dbf818ba7650933152f6fe56d24849eb1307b2396b238f2590bf706d7",
+        "02-home-idle-frame-context.csv": "325785d932fe949407b53d7f6f41ead90779fbad1aa2420be02251d1b6151fbc",
+        "02-home-idle-frame-times.csv": "805f31300295a834fd49ddc70105eb3007cb05e5ba97c21cfa36f3507cd28f5b",
+        "editor-input-before.json": "3bda9ce6d50d5c641f94d012ec5c535a474134d81fd02c9c03a78e6f0d97b43c",
+        "input-before.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "launch.json": "b638c0fbb03e8e6304b7cf41ea06d4f0213eb3e9d340d942fd0830c94ada7980",
+        "menu-AvatarButton-frame-context.csv": "21bac6d7ad64bf6bb57d001f1e67b135e55b3fb09d95bef7505ee3cda3d5b76a",
+        "menu-AvatarButton-frame-times.csv": "62a33c55a1bdefe34efb5b3a96448c5c995c89d98bb3cddaf5eba121eb76f7de",
+        "menu-hero-selection-frame-context.csv": "066f13c4ead2605be9bfcb31b5fd0a8122cc783e898a7416f184c32088bcaed5",
+        "menu-hero-selection-frame-times.csv": "8823740dfdc4278a9492ce499480fbf0248f1a4a92098ceeafb4f388087531ec",
+        "menu-HeroButton-frame-context.csv": "83f12d0b79a8d7dbff4355991a43113cb6d6e146c4f31038505c0ea9e15cba70",
+        "menu-HeroButton-frame-times.csv": "714b1a286d03f3af6efca91065e4d3571ed154dadf8c373d79f544df938433c3",
+        "menu-HeroButton-repeat-frame-context.csv": "c4f33f9d9b978aeedb6614129f90614972ef12acedf230549d35cb7d790d513e",
+        "menu-HeroButton-repeat-frame-times.csv": "1e3d2360966a4eac1f509c22c007e683832445e649ab898e74d1801027b7a201",
+        "menu-LoadoutButton-frame-context.csv": "b5c3313ee9ef6c5214d47594690920fe533946092dea40430e0898d4cba15f8c",
+        "menu-LoadoutButton-frame-times.csv": "8e2ea49659e79790e9ebb7e59646eae301f538e32469b2cb4c2253dd4c46a5b5",
+        "menu-MenuButton-frame-context.csv": "c0a6243cf9be8df1cd016805236c864b659364c9edbad7c9e749859554a96a15",
+        "menu-MenuButton-frame-times.csv": "621fe4acf7fdee57caedb10e25705f4a9bde246e1a9c9f03ad56639442421a68",
+        "menu-ModeCard-frame-context.csv": "22da733bb7b5f377aaeb8e294945f46c5a086ee931194efbdae63b741941ac22",
+        "menu-ModeCard-frame-times.csv": "e44ec097d45b7f2481b7cd0cbee95cb39bc9b5da1259c976025ab7763687cedc",
+        "menu-profile-frame-context.csv": "f471a4e8895cc47cb657b36446b2595f79fe04177e9d18746bbc4ab8f9b2b439",
+        "menu-profile-frame-times.csv": "1a352c8c19c889d46abe5748343210f3239a022e7f24c0b7f4b9195dd1c54221",
+        "menu-settings-frame-context.csv": "d62ecc65679645614363864e2a62e21278435fe5ff68e5c4aead954ef38d78d2",
+        "menu-settings-frame-times.csv": "fd8fb55d9b1296522ace7aa5b0889b2cc6a2beada07bfb1682847f3f9b8ebd6c",
+        "menu-ShopButton-frame-context.csv": "be396dcde69801d06544d532a046f90fd4d556e7bcd4106707715e93de4cbacb",
+        "menu-ShopButton-frame-times.csv": "c5da0dcaf72e25648a089fc862b5664645dcaf5369942c3b8e5a92972dfe410f",
+        "menu-TaskButton-frame-context.csv": "bc74fd5dbd312c6d75c87ff6272dd3767eda24521cfebb1a7ea3bdcd12822a6a",
+        "menu-TaskButton-frame-times.csv": "730ea1a7390e5d1ff28490c9f8f065f63b4d03837e590fa56c2f78532537cb85",
+        "performance-actions.json": "4fbc48433b294d0029cfbe48fa033010cee747b7e65b4e29f30d721eb749ef9d",
+        "player.log": "fb2f34d9f4f5613157431245779b6ecfc3ad764e6f5e942e7f0d06ad386a4e42",
+        "result.json": "4191fda17a9c8bdbcc4220631ce90c7dadddf65cdd12c1054765f8c12978889a",
+        "runner-result.json": "da2dad7b900966cbc23046563f6235010c48817027108d9988cd29c8dca09fc4"
+      }
+    },
+    {
+      "mode": "direct",
+      "pid": 28080,
+      "threadingMode": "kGfxThreadingModeDirect",
+      "settingsVerified": true,
+      "windows": [
+        {
+          "mode": "00-boot-to-title",
+          "samples": 1010,
+          "duration": 4.643063068389893,
+          "maxMs": 662.7716064453125,
+          "medianMs": 3.331899881362915,
+          "p95Ms": 3.8935999870300293,
+          "p99Ms": 6.720900058746338,
+          "framesOver33Ms": 3,
+          "framesOver50Ms": 3,
+          "framesOver100Ms": 2
+        },
+        {
+          "mode": "01-title-to-home",
+          "samples": 586,
+          "duration": 7.1264472007751465,
+          "maxMs": 818.523193359375,
+          "medianMs": 6.755499839782715,
+          "p95Ms": 17.779499053955078,
+          "p99Ms": 115.97820281982422,
+          "framesOver33Ms": 13,
+          "framesOver50Ms": 11,
+          "framesOver100Ms": 8
+        },
+        {
+          "mode": "02-home-idle",
+          "samples": 358,
+          "duration": 3.005606174468994,
+          "maxMs": 23.60379981994629,
+          "medianMs": 7.29010009765625,
+          "p95Ms": 13.97719955444336,
+          "p99Ms": 16.973100662231445,
+          "framesOver33Ms": 0,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        },
+        {
+          "mode": "menu-HeroButton",
+          "samples": 148,
+          "duration": 1.338083028793335,
+          "maxMs": 44.62419891357422,
+          "medianMs": 7.22790002822876,
+          "p95Ms": 14.908699989318848,
+          "p99Ms": 37.215999603271484,
+          "framesOver33Ms": 3,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        },
+        {
+          "mode": "menu-HeroButton-repeat",
+          "samples": 160,
+          "duration": 1.3263417482376099,
+          "maxMs": 16.954999923706055,
+          "medianMs": 5.993100166320801,
+          "p95Ms": 14.049300193786621,
+          "p99Ms": 16.934099197387695,
+          "framesOver33Ms": 0,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        }
+      ],
+      "loadingSpikes": [
+        {
+          "sample": "472",
+          "frameMs": 818.5232,
+          "context": {
+            "sample": "472",
+            "real_seconds": "6.088854",
+            "simulation_seconds": "8.688861",
+            "round_left": "90.000000",
+            "gc0": "63",
+            "gc1": "63",
+            "gc2": "63",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "42",
+          "frameMs": 290.2733,
+          "context": {
+            "sample": "42",
+            "real_seconds": "0.777325",
+            "simulation_seconds": "3.915840",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "92",
+          "frameMs": 283.5444,
+          "context": {
+            "sample": "92",
+            "real_seconds": "1.900703",
+            "simulation_seconds": "5.035773",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "61",
+          "frameMs": 203.8515,
+          "context": {
+            "sample": "61",
+            "real_seconds": "1.246723",
+            "simulation_seconds": "4.439117",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "305",
+          "frameMs": 157.4106,
+          "context": {
+            "sample": "305",
+            "real_seconds": "3.877785",
+            "simulation_seconds": "7.138959",
+            "round_left": "90.000000",
+            "gc0": "51",
+            "gc1": "51",
+            "gc2": "51",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "44",
+          "frameMs": 115.9782,
+          "context": {
+            "sample": "44",
+            "real_seconds": "0.895179",
+            "simulation_seconds": "3.939203",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "473",
+          "frameMs": 114.9586,
+          "context": {
+            "sample": "473",
+            "real_seconds": "6.203812",
+            "simulation_seconds": "8.688861",
+            "round_left": "90.000000",
+            "gc0": "63",
+            "gc1": "63",
+            "gc2": "63",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "78",
+          "frameMs": 109.9102,
+          "context": {
+            "sample": "78",
+            "real_seconds": "1.527019",
+            "simulation_seconds": "4.849106",
+            "round_left": "90.000000",
+            "gc0": "49",
+            "gc1": "49",
+            "gc2": "49",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        }
+      ],
+      "asyncStages": [
+        {
+          "stage": "roster-resource-wait",
+          "wallMs": 2317.606,
+          "scope": "async-wait-not-main-thread-cost"
+        },
+        {
+          "stage": "gameplay-preparation",
+          "wallMs": 1601.47,
+          "scope": "coroutine-total-includes-yields"
+        },
+        {
+          "stage": "mode-posters",
+          "wallMs": 135.803,
+          "scope": "async-wait-includes-yields"
+        }
+      ],
+      "retainedFileSha256": {
+        "00-boot-to-title-frame-context.csv": "b542ef43d68f002e803d171ab1695d36ccc76bf5574066d202a2f4ef8273f43c",
+        "00-boot-to-title-frame-times.csv": "ad83c34af41693442e4d492cbfccd3d1f23dedef5c45d09479161f2b7015adab",
+        "01-title-to-home-frame-context.csv": "c3b72800340d15973e15a30ec21b3ed2cc0812f02dc5dc0a4d491a08c0b90578",
+        "01-title-to-home-frame-times.csv": "485cd5020ee884978ee8edf1637205786c818a00c2510f4b31eef4eae11363e9",
+        "02-home-idle-frame-context.csv": "07231a6e658e648658698667ba7b6fea891e7780b615607b40de72c3d1d6477f",
+        "02-home-idle-frame-times.csv": "fcfe7f2363123a00753a887f4ea548eef5aa600d842ee92939ebb6ebee906178",
+        "editor-input-before.json": "3bda9ce6d50d5c641f94d012ec5c535a474134d81fd02c9c03a78e6f0d97b43c",
+        "input-before.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "launch.json": "1f4fd9da010a8b1d47446f63d50439a88fd4562337a4cb201afa7ebcea769793",
+        "menu-AvatarButton-frame-context.csv": "09a07b4b2234460f91eba8304fdd1e6665d203a36f1281b445065aba9da8d728",
+        "menu-AvatarButton-frame-times.csv": "d7018a660a8a213ffbf3ebce56c3df8dd3ba95696f809e9ce609c36dcae51067",
+        "menu-hero-selection-frame-context.csv": "6502c29d5bf48b06a0a756625fad59ae0371386c8190c379a71aacd30cbceec5",
+        "menu-hero-selection-frame-times.csv": "f9900ec126fb0eda14bb7afe84ef8675668a870bbb58e4a752561396f833b9fe",
+        "menu-HeroButton-frame-context.csv": "74e5b99a47b8d1e8ec2cc370ae9492ed980af34c79b34bd85211d2a7c99308c9",
+        "menu-HeroButton-frame-times.csv": "7aea982608291e58af1a2c3f1f322051ca477c6774bf37baeb7e3782d1682c19",
+        "menu-HeroButton-repeat-frame-context.csv": "82826a1857e47202dbfc72e0b049f4e3258688539e75066da79f238af8bdaf07",
+        "menu-HeroButton-repeat-frame-times.csv": "115e7d983574b66898099fec5b59b8331a17e527f54857b075c311619e68206c",
+        "menu-LoadoutButton-frame-context.csv": "d3761ed2538eab6378b0273e87ba8c3d4e03a02fe8a12dad31edf7e497829549",
+        "menu-LoadoutButton-frame-times.csv": "c4862593e7fae40dbe0f85f6d0d93b86a5c5d98576e193f32ee9a024a2238b0c",
+        "menu-MenuButton-frame-context.csv": "5847cabe42e1b2545866da16166b562d83594264d7236635e152ed8ddc20a948",
+        "menu-MenuButton-frame-times.csv": "d5409395e81ed7ed92924f92097a0b2db4620662b127bfaca97a5a9565e7a34b",
+        "menu-ModeCard-frame-context.csv": "3bea40c0e919987a8d0a26404a4b82b9bcf4ea581365a0208f0afb596d2bcb97",
+        "menu-ModeCard-frame-times.csv": "4f84e614326bfc4f17f4f9d60f1bf8910c440d1ee28733066dad4cc67969d6c0",
+        "menu-profile-frame-context.csv": "7e5b0b5f8244f287a75bfc9b29a5322a0838e48307a1de697c0b329866a8019a",
+        "menu-profile-frame-times.csv": "751223ce8ac5fa2b455756a3c71d665e72014ef806a54594db72dea7b6d74a94",
+        "menu-settings-frame-context.csv": "6d671c712d1e578bb6b0f6dee1644c7428ae9d15249a3975705c71ca3de7ef87",
+        "menu-settings-frame-times.csv": "6a5bbb2276043c4ff1e41a40d07dcd5f85d55fa28818cfd5f8fe8215b0fe3272",
+        "menu-ShopButton-frame-context.csv": "356721c590a28e8f961ef9be878f7bf6e238d73f6a3caf7b63628ff02c40a3de",
+        "menu-ShopButton-frame-times.csv": "089511126ec536d4dd1eafc27c63f085efd81dbc0d0be1ffdfa43cbd2bf53dcb",
+        "menu-TaskButton-frame-context.csv": "81da0e89ec522b02104968fc6a30d464fa8ca6e1786fd46147a4bf5bcc0baf93",
+        "menu-TaskButton-frame-times.csv": "3003556a013a2d089993d9f5d3f1f8ddc67766f6df415c99043b750dbd717469",
+        "performance-actions.json": "4fbc48433b294d0029cfbe48fa033010cee747b7e65b4e29f30d721eb749ef9d",
+        "player.log": "8a5c2f0b9d8035d6d7cf262867cd3b5c82cab6e62c47aeaf9f4a3d1b454d8d5e",
+        "result.json": "01cc70b1f8017274b8285a0298cf948164f5f4c9248fd218593e1bd371081653",
+        "runner-result.json": "b6c56e64bd180aed182d820bc3adc236c98385f56bb6703e405e7dab4abfccec"
+      }
+    },
+    {
+      "mode": "baseline-repeat",
+      "pid": 53308,
+      "threadingMode": "kGfxThreadingModeClientWorkerJobs",
+      "settingsVerified": true,
+      "windows": [
+        {
+          "mode": "00-boot-to-title",
+          "samples": 1039,
+          "duration": 4.822070598602295,
+          "maxMs": 696.3593139648438,
+          "medianMs": 3.3304998874664307,
+          "p95Ms": 3.907599925994873,
+          "p99Ms": 6.515900135040283,
+          "framesOver33Ms": 3,
+          "framesOver50Ms": 3,
+          "framesOver100Ms": 2
+        },
+        {
+          "mode": "01-title-to-home",
+          "samples": 590,
+          "duration": 8.03274154663086,
+          "maxMs": 832.2932739257812,
+          "medianMs": 4.087600231170654,
+          "p95Ms": 16.682899475097656,
+          "p99Ms": 96.70850372314453,
+          "framesOver33Ms": 15,
+          "framesOver50Ms": 12,
+          "framesOver100Ms": 5
+        },
+        {
+          "mode": "02-home-idle",
+          "samples": 362,
+          "duration": 3.0116562843322754,
+          "maxMs": 17.044700622558594,
+          "medianMs": 3.5297999382019043,
+          "p95Ms": 13.662500381469727,
+          "p99Ms": 16.802600860595703,
+          "framesOver33Ms": 0,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        },
+        {
+          "mode": "menu-HeroButton",
+          "samples": 145,
+          "duration": 1.4173141717910767,
+          "maxMs": 73.40650177001953,
+          "medianMs": 9.639100074768066,
+          "p95Ms": 16.818300247192383,
+          "p99Ms": 51.7307014465332,
+          "framesOver33Ms": 4,
+          "framesOver50Ms": 3,
+          "framesOver100Ms": 0
+        },
+        {
+          "mode": "menu-HeroButton-repeat",
+          "samples": 161,
+          "duration": 1.3315144777297974,
+          "maxMs": 23.11240005493164,
+          "medianMs": 6.453000068664551,
+          "p95Ms": 13.698800086975098,
+          "p99Ms": 18.191099166870117,
+          "framesOver33Ms": 0,
+          "framesOver50Ms": 0,
+          "framesOver100Ms": 0
+        }
+      ],
+      "loadingSpikes": [
+        {
+          "sample": "475",
+          "frameMs": 832.2933,
+          "context": {
+            "sample": "475",
+            "real_seconds": "7.014241",
+            "simulation_seconds": "8.983270",
+            "round_left": "90.000000",
+            "gc0": "64",
+            "gc1": "64",
+            "gc2": "64",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "38",
+          "frameMs": 686.7281,
+          "context": {
+            "sample": "38",
+            "real_seconds": "1.199031",
+            "simulation_seconds": "4.050106",
+            "round_left": "90.000000",
+            "gc0": "50",
+            "gc1": "50",
+            "gc2": "50",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "86",
+          "frameMs": 680.2393,
+          "context": {
+            "sample": "86",
+            "real_seconds": "2.709014",
+            "simulation_seconds": "5.163489",
+            "round_left": "90.000000",
+            "gc0": "50",
+            "gc1": "50",
+            "gc2": "50",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "57",
+          "frameMs": 393.3691,
+          "context": {
+            "sample": "57",
+            "real_seconds": "1.772232",
+            "simulation_seconds": "4.563459",
+            "round_left": "90.000000",
+            "gc0": "50",
+            "gc1": "50",
+            "gc2": "50",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "354",
+          "frameMs": 141.8071,
+          "context": {
+            "sample": "354",
+            "real_seconds": "5.087142",
+            "simulation_seconds": "7.733381",
+            "round_left": "90.000000",
+            "gc0": "52",
+            "gc1": "52",
+            "gc2": "52",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "10",
+          "frameMs": 96.7085,
+          "context": {
+            "sample": "10",
+            "real_seconds": "0.225726",
+            "simulation_seconds": "3.666733",
+            "round_left": "90.000000",
+            "gc0": "50",
+            "gc1": "50",
+            "gc2": "50",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "476",
+          "frameMs": 95.3565,
+          "context": {
+            "sample": "476",
+            "real_seconds": "7.109597",
+            "simulation_seconds": "8.983270",
+            "round_left": "90.000000",
+            "gc0": "64",
+            "gc1": "64",
+            "gc2": "64",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        },
+        {
+          "sample": "13",
+          "frameMs": 76.5741,
+          "context": {
+            "sample": "13",
+            "real_seconds": "0.325557",
+            "simulation_seconds": "3.773353",
+            "round_left": "90.000000",
+            "gc0": "50",
+            "gc1": "50",
+            "gc2": "50",
+            "main_thread_allocated_bytes": "-1",
+            "allocation_counter_available": "0"
+          }
+        }
+      ],
+      "asyncStages": [
+        {
+          "stage": "roster-resource-wait",
+          "wallMs": 2946.256,
+          "scope": "async-wait-not-main-thread-cost"
+        },
+        {
+          "stage": "gameplay-preparation",
+          "wallMs": 2197.668,
+          "scope": "coroutine-total-includes-yields"
+        },
+        {
+          "stage": "mode-posters",
+          "wallMs": 313.38,
+          "scope": "async-wait-includes-yields"
+        }
+      ],
+      "retainedFileSha256": {
+        "00-boot-to-title-frame-context.csv": "9fd05f727d9a9c7d5f1e41e2d1e8901a10974cd7b9db37bf573bcfe965964ee4",
+        "00-boot-to-title-frame-times.csv": "27f13e203d52c95a5f3a5900eea545a5ecce42e5c3cbdad9f2772e267380ad6b",
+        "01-title-to-home-frame-context.csv": "e6fcb75bddd8373bcd63718020b82e3ec4cc4d45a07405f646caf93df11e954a",
+        "01-title-to-home-frame-times.csv": "6776200b4f70567e0a6681eaea775622a0b303e21efea9982b3992b1ddc4fe52",
+        "02-home-idle-frame-context.csv": "821f1a866690493b167bab510283451807e64cbc75859e70077c52186e1972f9",
+        "02-home-idle-frame-times.csv": "d4dabe1efd154ffb12fece11faeddfb7ab09d903990e60715c0ac85ec9fce6b3",
+        "editor-input-before.json": "3bda9ce6d50d5c641f94d012ec5c535a474134d81fd02c9c03a78e6f0d97b43c",
+        "input-before.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "launch.json": "915d26e8784e238e388da78fb88653f1727e25cfef899b2913d521907399ea20",
+        "menu-AvatarButton-frame-context.csv": "69fb738b8b8cb9645f191c75ca202633cf70e97ed00b2d294ddaafe61bdf35f8",
+        "menu-AvatarButton-frame-times.csv": "b17e052cca10f6b21b14b9a31d34e550a1ed2f7243dacc1b875b1343f74a950e",
+        "menu-hero-selection-frame-context.csv": "da9345ec9792a4a45fc2cccaa82fd7a8130249cf6de541e7ac4c39d29334d5a4",
+        "menu-hero-selection-frame-times.csv": "4ae627a6f0ef6e391441d8cd24ac8f540f4df51673077cf0c03bae76748a2992",
+        "menu-HeroButton-frame-context.csv": "1a2af5a72adbb1bb577ee8c54d8f7c21c5e8a2e97f0443352dd8cc2ca245c2de",
+        "menu-HeroButton-frame-times.csv": "7ac70207b69ac2e82857cdab14612eba9ef67b3f97fc067cff08cab06737354b",
+        "menu-HeroButton-repeat-frame-context.csv": "375bd1e416c5a7781cd39f84b701a0e169b789a422090838ba5d5b8181a9303c",
+        "menu-HeroButton-repeat-frame-times.csv": "1ba8efb7781350334813c6e5298dbf9bcf495d59f15948fb73b6eb6949882c5c",
+        "menu-LoadoutButton-frame-context.csv": "24da072a2da9025e7740a1d784db5bba5e2630794739dd9b32b3877d97430026",
+        "menu-LoadoutButton-frame-times.csv": "23d4bc57731022e814ea29029a9a2dd42ae4722ccd0f94593cb3573eef785179",
+        "menu-MenuButton-frame-context.csv": "22e09a9266c9d1288e2699f5122ef75c7dc7bd0cf72b03947068a72ddf03c75f",
+        "menu-MenuButton-frame-times.csv": "756ceb64451e222e30053fedfae0559d57bafecf1dfd3695515db5b8cbafacf5",
+        "menu-ModeCard-frame-context.csv": "18768aa3ff62d5570684c3cd11a369ca66f0864efb20b4e46932f0c1acda7d10",
+        "menu-ModeCard-frame-times.csv": "52f2f6c436251bcfdf923bb213725629ff6fd2cb29969c3c332a6154d9f229c8",
+        "menu-profile-frame-context.csv": "00a564885fbf4e4f33eaefdfce53d51c7c70a0fcdb8a6023e2bf55c7dfd50164",
+        "menu-profile-frame-times.csv": "ac618c4c74c52624335c2da8b938a0b4ab75b3b169e4f51470277994501a163c",
+        "menu-settings-frame-context.csv": "4bb080099b35eb83b4ec844ab1e9d3654b9ad9fed51b2c8ffb2c4212c56cff9a",
+        "menu-settings-frame-times.csv": "1c2770c308a15bdcbaf1244eacc7874cef6959f21799fbe03aeca12ecb0172e7",
+        "menu-ShopButton-frame-context.csv": "d8ba2b204a4c507fd11ef892153047e5a98c79aeb5f62009555c0097ca261c34",
+        "menu-ShopButton-frame-times.csv": "b8f9d716cac56b66088402b122045bc659730e494bdc23ee03a01a33b386da2c",
+        "menu-TaskButton-frame-context.csv": "7a4886f1a04cd72fd3dc0d56db876643f4c5f3b7eb3146fb29577642d61416aa",
+        "menu-TaskButton-frame-times.csv": "bd32b00a42baad61f7ba18de1daec61b5ac9e5295a9384ee31dd73efcce3cadb",
+        "performance-actions.json": "4fbc48433b294d0029cfbe48fa033010cee747b7e65b4e29f30d721eb749ef9d",
+        "player.log": "2bac60cb779d3050f63c594c9bc796a3634fa08a5457f74211df35e366df30c5",
+        "result.json": "da291fd720da6607407a213ea30849f5a934c10150d72f02c3d5bbcb1dd42e51",
+        "runner-result.json": "1d50f20a553294f8562aa6cb7cf6f1f9cc52cd1a1994aad08809ada93409f0d9"
+      }
+    }
+  ],
+  "productionChanges": false,
+  "buildsCreated": 0,
+  "desktopModified": false,
+  "conclusion": "Direct graphics threading does not remove the loading stall. No adoption; resource/upload and CPU attribution remain unresolved. ABA ordering checks warm-cache/run-order confounding; timings are hidden-player wall-clock evidence, not actual GPU durations or human acceptance."
+}

@@ -1,0 +1,1200 @@
+{
+  "pid": 68416,
+  "terminal": true,
+  "exitCode": 2,
+  "passed": 0,
+  "failed": 1,
+  "expected": 1,
+  "cases": [
+    {
+      "name": "ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint",
+      "result": "Failed"
+    }
+  ],
+  "inputCount": 21379,
+  "generatedDeltas": {
+    "Assets/TumbangPreso/Art/ui/brand/owner_app_icon.png.meta": {
+      "before": "c9a633657514b08eaf64ef12943d659841a0fc8e8dda51353a4cb042e988a7ff",
+      "after": "236f5f0a5a0a5078c8bb952ba4cb6de7ff5b106f02cc380429e75768bcc692a3"
+    },
+    "Assets/TumbangPreso/Art/ui/brand/tsinelas_hit.png.meta": {
+      "before": "98d612ceffa0af63b93cf72cd6aa48a42e66c83b6496c7a92ce2c1fb5cb47d49",
+      "after": "92c5289b1b5b7f9497c730c2e1511866d9984d6eefe9d044cd5689735f9d3a92"
+    },
+    "Assets/TumbangPreso/Art/ui/brand/tsinelas_mark.png.meta": {
+      "before": "fa8f2234f19972d9f1b2b261979107937ce09f61f5ad1b5908d4cd8ce0e63358",
+      "after": "cb6390121fc4b41e4e72025b2513c0ead3d17c618c9c8ca4b52e46490f44e7d0"
+    },
+    "Assets/TumbangPreso/Art/ui/brand/tump_logo.png.meta": {
+      "before": "a0a469f8eb60db95ff3a9615f140178970a1ad4b7bec4022c32b21426fb9d504",
+      "after": "cc4da0421ebccb6a56370c7d7f6b7faa5f1257d8dbb3174480364472b2a351da"
+    },
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_ink.png.meta": {
+      "before": "d4c946201ebf18f230876ec8bbb76073632ecb288aef701e0cf4d314de4fcce1",
+      "after": "f394ff0573ce6fdcc99f55baae39d7cd89b0e6071a279bd14a1b6cce81220ee6"
+    },
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_lobby.png.meta": {
+      "before": "aa5a3ef29b5a16301c60f82862752bcd5036b33736d40b429162deb181407ed4",
+      "after": "f2926e2cdf7567fce70be467f9e3bc165e4f1ad8795d17885ea627de5c5820f4"
+    },
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_login.png.meta": {
+      "before": "9a68de43023187b8af3bea453cb32ce653f8fb56468417e87121718d68b881e5",
+      "after": "f7dc8690a49e6571c73e77f5edf2761ae6085e039ea187ee3bf0e190b8501bb2"
+    },
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_stage.png.meta": {
+      "before": "e634b90f97d50926b14ab087d177195e118f52b4602a244b68da356d799db409",
+      "after": "37e9bae9ba22632c60bf8445be2823fa595966fea45e531068beadde017de4c2"
+    },
+    "Assets/TumbangPreso/Resources/Models/PaeteProps/Textures/colormap.png.meta": {
+      "before": "02b9806132734346e7616c4a150b541304254e880f2c39ae2fba2cd8f3755751",
+      "after": "d778f44bf71aefe282e03ec021ea5c6d99bf04260b695b2f08e8a8bf66156814"
+    },
+    "Assets/TumbangPreso/Resources/Models/PhaisterProps/Textures/colormap.png.meta": {
+      "before": "c551887a9865ddc1e1c6288844b572227ec6f5fcc6bc6eb58c11e56ca60422db",
+      "after": "c10d621eee4e450028cef4032addab4d6905347d21d2f7ffe1a2a3d5ebde87ab"
+    },
+    "Assets/TumbangPreso/Resources/Models/ReworkProps/Textures/colormap.png.meta": {
+      "before": "2b3a58875ab8796da1eada18fb3216a19a229266ed3de26d548a708f933eab52",
+      "after": "501d4be3be8199021cf771915f59e7b24035706cb8f60a89a87614e56cbc13c3"
+    },
+    "Assets/TumbangPreso/Resources/UI/brand/tsinelas_hit.png.meta": {
+      "before": "526465c4475d1376e4f327c59016e7bff9616eba4ad420f241da902dec729a4e",
+      "after": "bed78d3e7fc9b31ea957f8b7fe483bdc81bef730b82987d336b328855c92c8ac"
+    },
+    "Assets/TumbangPreso/Resources/UI/brand/tsinelas_mark.png.meta": {
+      "before": "37fafb5e5536b831f3269a906468a70df89209b00e09dff5d0aa491f67464d7c",
+      "after": "d36ec6351f9c7c550c2a4ab9124dcff7cdffac4b4ae26daa551ede6caf04dc55"
+    },
+    "Assets/TumbangPreso/Resources/UI/brand/tump_logo.png.meta": {
+      "before": "f3487f47c1621f6c397c704374db9ed33bfc09b0af3e6dfa66a755ef09157cdf",
+      "after": "b47848ee2434f3e6b7d7bd38a26004615aeb2880894d0bb262529959c3b32689"
+    },
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_ink.png.meta": {
+      "before": "d0b60b63fd669a7880bad6e045618659b5bf8426986c0c3bcb975c476f869a8d",
+      "after": "9dd9cd9dba257dad37776823c2a0c7490c1c397f796a4fc9f0f63eb4b17fb358"
+    },
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_lobby.png.meta": {
+      "before": "f7cdb42ba3dbdaa1dc07bb6adef57ced05e8cc10ecb3bf7432362f24affedfc5",
+      "after": "46cc39beccba0d4c7674a694931ce8ca6b4688eba31d44ec04ddbc4f17eb3828"
+    },
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_login.png.meta": {
+      "before": "0c9a677b193208a37bb06d6388aa48971ef9e876c63b20a4d85fc0a0aa417f50",
+      "after": "708d6b87663a3c32a7ae3a111cc48968207efa58f292bfa8ad3b90f1280d08f2"
+    },
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_stage.png.meta": {
+      "before": "641917c07b4cf5d4e6f2f4f5f425aa65be88012f057ba3e2f5363904c22fa379",
+      "after": "fb5580a5a94b8116184e4f023bf841d6bd1f7504e4dcc2ebd7a0810f682c420f"
+    },
+    "Assets/TumbangPreso/Resources/UI/composition-redesign/home-court.png.meta": {
+      "before": "92fd3d0630babf03a1150dabb9d594ee24d6dabfe7674956c29a23353387af6b",
+      "after": "701b95abccf1cc37658bcf38616cac20550beab4627e7ff96d258046a7067881"
+    },
+    "Assets/TumbangPreso/Resources/UI/composition-redesign/loading-street.png.meta": {
+      "before": "eb020474ef81cb0bcba5b778d3e028ae9a4b6d547547baaadefa8ee0a41f6f75",
+      "after": "a0f8d82bbcffe52998864ffe9a3fc301612bd64a2baa3a0ffdcb3152c8987d77"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/0_Key_Dark.png.meta": {
+      "before": "1a5e9c568bd3a1e2359d20c4b016ff682c36b38dc31760d43e4ba000c2746b91",
+      "after": "7afa62b371cf21fc2007263142f1d457eb158d37b8325da514bf8323e69c8998"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/1_Key_Dark.png.meta": {
+      "before": "ff1321dc76598a6d2c2689ba8f9e70eaca9dce421a1e09d4637b802484c9cba4",
+      "after": "34921cd0a5b7c2473f5644049c8ce482b00e3f2c318aa0e7b7b9fe7c9f781f43"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/2_Key_Dark.png.meta": {
+      "before": "c007ce322f8224abd192a0b0124facb5f7ba5b830610426e581a551f2182a427",
+      "after": "72a4a065415f97eacb58a31e65038cedeb7db02c3c5a3cd3355edf527c426bc0"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/3_Key_Dark.png.meta": {
+      "before": "598aeb7ce75439693ee19c8804169b3f7846aa0e58b25d469b4a374599fedf17",
+      "after": "f7e4575284d9cd96d6d815dd944c8c91223bef874d7e8ddfd518df03912dfedf"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/4_Key_Dark.png.meta": {
+      "before": "e7a76d936b0801bd7f1395ade381cbde7a445fa7c376de078d920a66fe6f47f2",
+      "after": "93378638c95b19b935d3070c3ec0a20e521d10ff8a441f72b4e90dfedfaf25a7"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/5_Key_Dark.png.meta": {
+      "before": "2b872412b693dc2e54bb574052ddaf62db0aa3087e724607ddbbadef178de61e",
+      "after": "03281bf13d527c1f97826a265c65994e37d72b64d40dea51910f8718c27f7891"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/6_Key_Dark.png.meta": {
+      "before": "6e5e76b785916cbf47bcb3e5ceecb93c380aacc2d5361141c343e862d13185ba",
+      "after": "64339435b12472bbea8b8c1a554a12f53a800d81af980b65aba8f93f9bee1b71"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/7_Key_Dark.png.meta": {
+      "before": "8e932bc5328d793a9acf664e2e979c6d96c88f7f8991b182fd4c000aafa33a94",
+      "after": "98224380da54a3414637a37256c55c2a43a73d0b4915361ef88322e67e0a71bb"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/8_Key_Dark.png.meta": {
+      "before": "46032ed94eb0296c37f99b19911fecac970e35bbaa65da80a43206191cf54405",
+      "after": "a8600a5400be3c1a8251faf19ed467166a45b21cef1e8dcc1d33f247a99f4727"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/9_Key_Dark.png.meta": {
+      "before": "c56740efe1cd5a9037efd3479cc3c0b3575ac97c2540b5778380a846a38d03ab",
+      "after": "dd3ac01df801ea117f57a9a2193c611d4eac98fa4fc06cb1342b35dbc31456ea"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/A_Key_Dark.png.meta": {
+      "before": "ee60893581f42db0c74f5312a26124e393bccfb7308abb5b0c124cfc93670bfe",
+      "after": "5ad1b6e0907686019a30d656a0677180ad2cea041b1c74e351ff60513347cfb7"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Alt_Key_Dark.png.meta": {
+      "before": "809aa178b5056c8c1a54a5851ba41ec39710489d56b961a88d97c833106574f5",
+      "after": "25f645b137da17d5db0c2eadcc822cf8e9b50a4c4ae6483e6375cdca06b94941"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Arrow_Down_Key_Dark.png.meta": {
+      "before": "7cce74422f20782e87ecc01515707da82ecdf2d3ca76af61b6d9e51331298b1e",
+      "after": "18fd8fa0f537e6efb65cfcb0b5f04eb30e01e1b17f4d2e91975119c38b5affa8"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Arrow_Left_Key_Dark.png.meta": {
+      "before": "cce6c1aec64564f0241fb28203fb8a94b40f7bded21d9b77774424707a5fe149",
+      "after": "f189454ca25c8215c069643e033192b9c45b2ba2a32e7cda9aafcc65d2aa87ec"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Arrow_Right_Key_Dark.png.meta": {
+      "before": "6da1624789651bc409a7b7af9ff43e6c4f8c6c052c315bf980e109922d0e2588",
+      "after": "35054781b5687433fc0ec314f1d0fc39db70c1a23f0373e696af4084ae17a2aa"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Arrow_Up_Key_Dark.png.meta": {
+      "before": "eadbbe2f344b3aa92af9e3ca81a484dd2fc541dffc4da2011c73b77dc9d6dd96",
+      "after": "421681217db1f199553753356d364996fb8a03b8efc8c822c2f8ee8dffb71d3a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/B_Key_Dark.png.meta": {
+      "before": "5c6c5da838e6b539718462d4650336c9473d90ac221e2fe880fe0ac7c199519d",
+      "after": "19a8ffd89b5aa38da6ab39166166e3d031c9aa252dfbf1f139c61f5202407f2e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Backspace_Key_Dark.png.meta": {
+      "before": "5da633765f5031d045af31783b74326b54fcff1db119d8901db0f2dd47ec3851",
+      "after": "5e7d94f333ea82a8f30e1a6404957e533ae2741c733021081ccb37445c9a5190"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Bracket_Left_Key_Dark.png.meta": {
+      "before": "1701a965cb0626ce4b8e14ed23c3678d65265d98529e56f617aaf0507f1b0f73",
+      "after": "d7891a6b0e54d354c2305cf104e43b5dae5b3a603eccd11a08da2928feaed761"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Bracket_Right_Key_Dark.png.meta": {
+      "before": "b114e8e7ba527c3a6e0ee34925c0c8a8771b6f046858963d7860baec6a6c964a",
+      "after": "cdcb7e732cde447fc24be05c325834b36cd71c93c9f5174b89af21a7365e4b7a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/C_Key_Dark.png.meta": {
+      "before": "055960fb341e1c57818b011bd5907d22b6100b1336f5ce9f6db4ab9d4f88940d",
+      "after": "c7569f3d08f446d4b819e37899df41d650f2d9cc2ff87290636494276323bbd3"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Caps_Lock_Key_Dark.png.meta": {
+      "before": "ac761579420a48148e6d52da83fbee8a8c0ce29162d5061a9bd0a297b0f5449b",
+      "after": "7040caad7fdbf5ae63ece92f94eb5326d0a2a6dee6f5a64d9b30da92e7b390bc"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Ctrl_Key_Dark.png.meta": {
+      "before": "94cca9c9921656a74e2d16a18ce18efbfe3a8239dd8ee0465ae85184af9a28a7",
+      "after": "0f7876ce3364f5153b6365b7d032a8546203c8adf24bc60480dbc8f42e915890"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/D_Key_Dark.png.meta": {
+      "before": "d9dbaba088d70702124c58e074a9bd1129130e999bb56324c11fcca9c02e2cab",
+      "after": "839760d9a1bf1356642f36e5f5c06942473c18c7745badca74b08b17244dce9f"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Del_Key_Dark.png.meta": {
+      "before": "db58a4b4c69a839b049b6a277e0595ba192f8fb5ea99deb7f7193eb72144c84e",
+      "after": "1869b04ea78a53a1de7d35d5c08a4dbfd76a63f185735875f528f89c673eb0d6"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/E_Key_Dark.png.meta": {
+      "before": "a9ffa52f4418dd5ff52c6e99df617e26d2204e7bb91ce6513f1f846529704abd",
+      "after": "4a2ccaf3279f37903cb967c10787aab53881ada4a53613006032c79274738e68"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/End_Key_Dark.png.meta": {
+      "before": "e2e013509ef9ebc21a87e155e1699a1025bbdf86a25568c8ffa48a56541103e2",
+      "after": "5dbfd1cffdc0c3426e1b5e704a26475147f305c9d98b55b767e8f39d9b11ec00"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Enter_Key_Dark.png.meta": {
+      "before": "33f70b8320bd5c84de94cc26766c4ae28c9f28cdd6246a874c7d12b5f7f7ab18",
+      "after": "2bf9698da535406686b78d6c6c4c8a5452ab1427b765fced653cac14c2014643"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Esc_Key_Dark.png.meta": {
+      "before": "eb1077e1f0a31fede97f0c9a6c0b9a72f12b944d2c1d0ffffe9c0679d9fde92d",
+      "after": "009c6dc91abb80e1d0261328974cc938544f7d2220d13079e0de5ab2f6761fe8"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F10_Key_Dark.png.meta": {
+      "before": "2737c24d75b3d2e3b95ab76efef2c0d062bd230e44cea313baf499cff026011c",
+      "after": "493c01708352072eab77894f7afabeb8251a36b609a71077be70fe643dd1d8cb"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F11_Key_Dark.png.meta": {
+      "before": "c57b1bc4b535fd39c5a1339d7e53986ae144420e4da560fd35e1c31133590d5a",
+      "after": "36d3706574c694786709f8a983eb11d8f9ad3c69e5f3e475205220ebf8e3e4cb"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F12_Key_Dark.png.meta": {
+      "before": "a51fac16d1eb3b7429d90bd0613f48d94cf7e1a8c0aea1e4241c82eea588cb69",
+      "after": "75cc5f9b027348b1b45b955d56e6e762030448e7d0f4b739c08e0e815128ae61"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F1_Key_Dark.png.meta": {
+      "before": "b0d218fe26d0e5f96b793a406617fbb96a8121128657c5e6bffa912fc7759018",
+      "after": "2b862ada31487b568e0c85d28647096a0558b47bf18a4936cf0fc2eca3058193"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F2_Key_Dark.png.meta": {
+      "before": "4179d96dec0fed256cabdb6919cbda0242e307c1b15f9f351c8d33fdaf3f53de",
+      "after": "129dcb3f96ee293d5e2c68d5dee22b6244af494febb29881f17bfbbc359c9462"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F3_Key_Dark.png.meta": {
+      "before": "fa5416fd467e1787de494bd509499d53e1d0a2e00da073938548f6130c36a4af",
+      "after": "46c92d6522603eda3e71ca2573b1da51ec2a2ffb6412c2b2571b1f4000951a6e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F4_Key_Dark.png.meta": {
+      "before": "f6a1c5c58021b1ddbda3432c792e4e87f1b780ecfd3559a1b59c17f2523fb168",
+      "after": "fd91783606685197dce09eac509664b197be70ead53282f22eca0f6b7c2eca0e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F5_Key_Dark.png.meta": {
+      "before": "fba922a2658d642bb4ed87f063b106c9e4180152094ac92c3d6c76d23b20a941",
+      "after": "6159a9fb5ea4a503b991731689894f1cc5d11663041ee18b0792f0878c6fd8fe"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F6_Key_Dark.png.meta": {
+      "before": "379a13b163b8fedb1a6da71ac2e4084a54c9a2b3605c223720baaa0a2781f024",
+      "after": "e350fac349ae491ea12a55b04e4f8b85c34657b4cc9b3e56c271a79a625321fb"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F7_Key_Dark.png.meta": {
+      "before": "2e86635e15a045b856ba297422312fc8d840f7ada652ae6ad0f05667444aa9fb",
+      "after": "bc2e6d46362dbec7ee49caad2cacbaf0bd2c04594120aba1e16032ddcebb639e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F8_Key_Dark.png.meta": {
+      "before": "f89c1f6a53ec6196c462d77e8ecb56fd94d10547501ee855f151d7f7645a6db2",
+      "after": "7b4d7cf92ee14c0606b90a01aaa4e75fc0128bba408100151ee62dcd54fed428"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F9_Key_Dark.png.meta": {
+      "before": "46b848a6153a9965c138f891b489c0f035a5ef73dd734d4758e4423e7ffe1935",
+      "after": "b5ce837e2d0d4695a4bf402d502f7ca22dfdb5cc2588f91c870aa3e8a36b00b5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/F_Key_Dark.png.meta": {
+      "before": "09798d9f7a55567407bf050e54db3349ec241f7d032b9444bf2d6f239d6e4ba7",
+      "after": "b1773ec30199454dd3cae90700be3d996d772739825eaae2b17289f27e04e144"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/G_Key_Dark.png.meta": {
+      "before": "b723701fab82f9b69523b77291ee2ae2881caf98f05219f8a04746cb5220fa13",
+      "after": "5e0397898ed7a6b2448691249da7bf6b1c3717d863d50e76a638cefcbf31b391"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/H_Key_Dark.png.meta": {
+      "before": "4c7572c0a3812117b50e4f74fe5053a6d7c1a62f15afcdd9699c2b48bcb99911",
+      "after": "975ec0ec1ad72e8ec41bc6b62367968789bd759221b8eb813624a747c3ca5419"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Home_Key_Dark.png.meta": {
+      "before": "2e6ec0ded36edcae010f4230e14eff9583d529d4a6621823a4831c1a0025633c",
+      "after": "40d8f4079541183280795941007286803bddebed58e719aa3b6210e3d9fe120e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/I_Key_Dark.png.meta": {
+      "before": "c1c3b1b18eac1e85ed1ad71999ca59a190a4d1f0d402f449dfd31728b0d099fc",
+      "after": "e49d4acad9d61e4f0043a0f6caa5a3e0059fdfcd8b9397c8fb53073726ec8552"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Insert_Key_Dark.png.meta": {
+      "before": "66cf0fdcbb6bcce6a496e18c4f622a774aa71ea2e2e9c3b45cd15ddf8a40071f",
+      "after": "a3dca458867de543b44298ed638c3b1a1a0492bf31c80e039debe180057f21c6"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/J_Key_Dark.png.meta": {
+      "before": "21fe5c70de4dc9a2de0e1390eb1cc63d66b0760a8a002d14d028dab5c5209634",
+      "after": "c796b8270795fe22fe2b5b9352240c9bd222b07f4ae4503dfcfcacdd1e751e70"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/K_Key_Dark.png.meta": {
+      "before": "ae73c2d7914d25637d9506c015cf0f554e3b33d6a79019e58cd1141f450ff741",
+      "after": "beabd6f68df6b12df386b3917f6fb1967ddf3754515d21769fddb205f601db07"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/L_Key_Dark.png.meta": {
+      "before": "d6ae9e610c2b535b5240a331e31b84a68c43706e33ee6ffaf19dd44598d75f9c",
+      "after": "9cb767357514f0f584080daf7b821b31d27781a99a966063157cdb0a75ebba5a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/M_Key_Dark.png.meta": {
+      "before": "28df4e3acc4410dafd4013d31dc51d2f154af4ba813e563122ab217dc4006e59",
+      "after": "5eaa63bc15348d99d64cf512cdbbf816c4067c1e60a80f3ebca42a55b0a185c2"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Minus_Key_Dark.png.meta": {
+      "before": "89ea380b89c04bb6fcd3d4493b7a69aac51c23c0fea6e4670c06c76fa2667a80",
+      "after": "21bdba39d2c1132be463d76e52f3b83294f708f9c0de79f591a1bd394d4e1a78"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Mouse_Left_Key_Dark.png.meta": {
+      "before": "25df76837e56a327f8de1e4e4667665162bac1781b3cfe65d1b056771ece270c",
+      "after": "3ee212688a4e1c052b0e65e949ecdf19948301d0ef11183db3c9fba205d0e45a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Mouse_Middle_Key_Dark.png.meta": {
+      "before": "d06466cbced57ed41749628ebc1a4d514979e2747387e80d57a016027ebfc49a",
+      "after": "bcbeadab9d2b28a6f3d2de7f54a7d7851fe4d7faf3de151b3e835a2f3a731b51"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Mouse_Right_Key_Dark.png.meta": {
+      "before": "ba5ee6af5166e9d3f17081c6d761179389ada17d7eb759e895af0d7f9558e964",
+      "after": "784c44cc47e671ebfe92eb04e78ff24acbdbe5cec93b4b7cce05c8f48c88bbbf"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Mouse_Simple_Key_Dark.png.meta": {
+      "before": "1977bf81bb983fe8d157f35346d71c036e61f53ffd9ff303956ea898d5284acc",
+      "after": "e5e0fa4c0248fc67d04b45b3b96698fb947781d11de85b0a0b6dceec5b3f4d91"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/N_Key_Dark.png.meta": {
+      "before": "e0e9f1f5ad8d6d6fa3b64e4ac22118a76a631a159dd6aa2cdbe3fcc605d3de0a",
+      "after": "a5479c7a6323ad8dedb6ff3c04654485d96a74e772c4e33bd15547772ba0b74f"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Num_Lock_Key_Dark.png.meta": {
+      "before": "c3f42848c9cd59d6422d8881ef1d219fe391b7c7eaf3510ce3ba05ff6bd04f92",
+      "after": "278c0c8006009230f22b01d1e62dddb3de3ca4b8a4fa3f3a0a2fa96c2b5b6e80"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/O_Key_Dark.png.meta": {
+      "before": "eec4cc83119372477dc1bcccbcc988281d7cfe8ef3956100ce98922842a3bbac",
+      "after": "883948384eab8e339689cf1424fdf5696f167e90807d670ccb7f99248746b46e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/P_Key_Dark.png.meta": {
+      "before": "4853891197f547e4c131965d28d4a762c8c73ac74077fe9718a43cce835698e0",
+      "after": "d9ed4f94050c5b48940ad4235a3bbe7a440f2764520cb7d45d8d955a11b7be3c"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Page_Down_Key_Dark.png.meta": {
+      "before": "710c89fc751fa946fa966599cdd8ccfe7e714fef061e42f67f52ef5e235e595f",
+      "after": "a394f274f449fc9fc276e733bb63e9b8f1e741435b831fc1c8844668390105b7"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Page_Up_Key_Dark.png.meta": {
+      "before": "a42139eea8223bccc1a62b72e126086cd0b6c408be3891a7e80bc1cda9a3ece4",
+      "after": "b6ac1126a8dcc4361a986fa449229c23d4b930c6aab304aef4fb6dd2358cd943"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Plus_Key_Dark.png.meta": {
+      "before": "5dd04a443abafd82651c7919529202654626ce275a6c728c2a5e8bca381da284",
+      "after": "e4e5d08e01662c2d4d44b166d94e3309620f19a4f5f03c3cd14fbfc7e0605f7e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Q_Key_Dark.png.meta": {
+      "before": "dd023f2ad9216b5ac616effbc2e75677f682dc19bfacebc348f09323c08853bc",
+      "after": "cc7bbcf704329242252c03ece923adeb7b8d09a33d646110db44da63c28b5244"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Quote_Key_Dark.png.meta": {
+      "before": "475c46432515bdf29a50b5bc957db16c45818fd34ded9b0c36b9cda9394ec9f0",
+      "after": "4317d49cbed2c50de1a62a23dcf177e080eabfee281aca53c92f0eb43d327d32"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/R_Key_Dark.png.meta": {
+      "before": "f47e48e2d89ee270d92068196874f39af5018f3cc36eb66cb7ed110ed0920629",
+      "after": "9e28fe26712490b5a1d97bebbeaf9aa08935c4aa2465a6d3194983f70753f0b8"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/S_Key_Dark.png.meta": {
+      "before": "ac3bdd4fcee0de87cbe4762c74f957c7b45cef0493ecb4849e5708202cf5ace9",
+      "after": "178a1f974282dd5fa5781c1056d32714e1c8fed9a590d01ee92e143294ed7b76"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Semicolon_Key_Dark.png.meta": {
+      "before": "5f03477738659775a25c657c9a6333f797bc74f1ed9bd224fe99519d01387831",
+      "after": "a16c8605ecf2298e741191577940ffa873659886e15b21ea9da9b5d154cf1c7f"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Shift_Key_Dark.png.meta": {
+      "before": "b604b3afc2dfa6b63cb1f84c3298d124518e5925f39b69f92fe2e3fac3d4890c",
+      "after": "520b321e377e206ea101d329f1298b2d790575a688944f5a006a448bc4ad4308"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Slash_Key_Dark.png.meta": {
+      "before": "5bf36518bb69163adb2bf802c0f4e71ac4f7da06c94b532d98c941e1f2a260f9",
+      "after": "8bbfc13a2d86ef89d56ede8a4ccb1b0ac21a42c7fe40d34b311db56cf44d3b41"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Space_Key_Dark.png.meta": {
+      "before": "881e4a4cd628371d91bdf62cd557ab77a5d8936266ff2cf0a84a364b1e2b6c53",
+      "after": "d099dbc5ecf432f8296c94079cf96da755d36d2d6100f35ab75c839638a7dde3"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/T_Key_Dark.png.meta": {
+      "before": "4d51ae24e7bdd61934fa435050290795f1410c250b94b936c06552bf571de7fd",
+      "after": "ef93d3de855e791ebc4721911706b0d5811bd31004823160ba0d28c74feaead6"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Tab_Key_Dark.png.meta": {
+      "before": "6e53207e24bb901696f31f5efe4f766d6bf4fbc8ade9fbfca31b30271887b917",
+      "after": "66a519bc2b927a655dd669a78c56fe36320533766dc2abc25b4631cec8df0180"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Tilda_Key_Dark.png.meta": {
+      "before": "f6f43392fc5dcc6a766cce82cfd8afabf1d812fd05e8d6499683f35fb79e257e",
+      "after": "e7f9c6659f00114f1b5ab8f01f32977693b7121a226a2428da6d061854263ecc"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/U_Key_Dark.png.meta": {
+      "before": "da53d0ef905a71984b6d454fd6f671f92f30bbdf3d495913f9a4f50716ec6e0a",
+      "after": "d11edb5a95e2ff47c9d1374946ae6426082ab8b5d35a27a4e26420d07035b1ed"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/V_Key_Dark.png.meta": {
+      "before": "78077e523159b4eb2701ec509ef7008122699b4d317a53491492f3c135b28707",
+      "after": "da8fcec683229d80de1bda236088decfd7c44cf57e9f91975c0b49f8d7b68fbd"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/W_Key_Dark.png.meta": {
+      "before": "f452bec7170e9a4c97033a95ffa2101fd89715ca26c328e3909314fbe28e1935",
+      "after": "3b61f74f9b0c5d5067c3b852468a66e535d7d98c62ee47d3d1284c5b19acf932"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Win_Key_Dark.png.meta": {
+      "before": "cf56bd9aeed7fa7655c6fa769090fa9f002607310e0f63c6a4cc0b356eabea4c",
+      "after": "f6400dbe32bf55b69fec72a56b4769a719fa61cd15dfa392f636bd0cd1ac7698"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/X_Key_Dark.png.meta": {
+      "before": "4ffe2bf8fc26e814f58d4367ba4a1704244bf2f86ced9d53f8e01a8466dbf5a4",
+      "after": "8bd500a97e605c642a38caf3aedf63e5843744837bd661dc6f7c0dfe448b8eea"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Y_Key_Dark.png.meta": {
+      "before": "ffb3013a1423d16c70b6e8e03f9750b5dc51fc4dc91702e48e3c43bba3e24a7e",
+      "after": "993923d7631ac7293c7fc6ab1e67ef3938bbbcbc6efc58ae71fc3e3eaa3d9496"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/dark/Z_Key_Dark.png.meta": {
+      "before": "ab515ffe95e2a82a175b6ac1fbb9e149427d00ca046a617e344929733dfcf137",
+      "after": "aa7d673ee6513f3b541901dd40c0db2ff3f2040f9e3158383cc880db2c05685a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/0_Key_Light.png.meta": {
+      "before": "c16fd37e141a93f0ac41c7ae2cb35ec3415a4154ca5d2efc9022575b8301376e",
+      "after": "2a1b6b856e4dca0654d1caa9fc88f62cfce2c2a00efe9703ae9702de3f1b8b1b"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/1_Key_Light.png.meta": {
+      "before": "979386efedb5cd1f5b70fbc91354ed99358eeeaf1253c1754fd49dc7a854842f",
+      "after": "1d314ace6d1bebdbc6e50a407c9115f6eac00fba5938c9fd09a39f90d0eddb40"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/2_Key_Light.png.meta": {
+      "before": "3b2aa07319d68ce3a64ff7cf002e41d20ae3fcbadb3f6b2e1f3f7f86636a8191",
+      "after": "fb695a0d884a615b8eb9b9a94136f8aaa849ffa009dc5cf379ba36732421b51a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/3_Key_Light.png.meta": {
+      "before": "8d988dc5d618e1a37519f6ffe84f32545c4d4e91b733f4bbec96a83c76eeba6a",
+      "after": "d4eb56e92cf6cf5601d62c2de8e2bfbe5d37c1bd9834d861e42d686216cc9df1"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/4_Key_Light.png.meta": {
+      "before": "81d3ff68910c464bc2935b1157bfa17038b842e5c053d1d40ce5e86a81f12205",
+      "after": "a506646f635758667a8e8a0d491977ca7d3115b8dbb9c32d4da19cf4f1e8b7f9"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/5_Key_Light.png.meta": {
+      "before": "b9a2b0ceeeb271e7949b2e5b99392bd230e145f3e51884a1bd3e300687c162a7",
+      "after": "98d918f0cb75691192d6d16364afc7574ee94a24bacfcd3fb881908d78ea9dd9"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/6_Key_Light.png.meta": {
+      "before": "b1fedff555389b160d029b8a815bb833a88edda010f9ff526456bc3a9f1210b0",
+      "after": "4fe3e1da9c7619091f87c23fd831d4846fbebca991dd23c4468ebf5984c249b8"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/7_Key_Light.png.meta": {
+      "before": "f80747550207ed90f7d12a622d060c1d512b2bb6ed77ce395426c408d43208f8",
+      "after": "0c4367910a2bf524656ce7cc71ae7015eec4b838172d48b81e9618d4a1eae277"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/8_Key_Light.png.meta": {
+      "before": "28be3bd509abb630148eb7583c39112974b888ecd3e28bea3c4db46cdacaccc5",
+      "after": "2ba57cb4863d3315f7cf13816ed47b77431f766ba0482e1d4379d33700ed8ac5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/9_Key_Light.png.meta": {
+      "before": "6728b6f25554cec1705d68d9b3145052177af59bfee12d9f3b18fd48261f55f8",
+      "after": "1813ed8ff027f5a9945c0acaed188cc1fde71b00bcbda7bd3988b22589a61d70"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/A_Key_Light.png.meta": {
+      "before": "e5b00f4a4543cb2b64416258b71fc46433cc1598a7afdbd5ccb934f020b3c248",
+      "after": "a2883f65ef5966a06ae753b87284a269ba291c557cc7ec9485ec1a1dc0372bfc"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Alt_Key_Light.png.meta": {
+      "before": "a50d35f8f1e2ba16c4ef5294bf76b2c416437112573258e9b86a6cb36704b7c5",
+      "after": "a21f99a7ece88f410d32c2829746bd2fe8a1de13a91b595ef4bba58e00b07b84"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Arrow_Down_Key_Light.png.meta": {
+      "before": "ee7d11f8ff053d029a3fec8a3bb78afa6d6e97d60e16f6bfb358a2dd1f2c0929",
+      "after": "076199f6cd3aa635bd17c73d4307686d2ce368456aac13cfb5e51cac48943a7c"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Arrow_Left_Key_Light.png.meta": {
+      "before": "10f32ab1ea0c6b80bb96ee929e4505f4375fa69c1a7d09f38a7a9dbc2f127482",
+      "after": "c287f6802601c5b48d59e791103e8438d1323bc73c99b62b62e86a7286fbf977"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Arrow_Right_Key_Light.png.meta": {
+      "before": "5cff0a1c58058fca61f58d0dc1321f34c29188c2802f260be6d9ca5dae694999",
+      "after": "c9e9c19b4dd0e85f46659bb753b61b74855088932c5ce08728f9edf0f67c3556"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Arrow_Up_Key_Light.png.meta": {
+      "before": "dd8f59eb941ae90bdffc6c885d4d19729e72a91bf579b22dc1fc402f3ca6d0a1",
+      "after": "bab0565998be5b74a6047bd1d4b2ea3a125e165eda750da6d790194b4a9b8e4a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/B_Key_Light.png.meta": {
+      "before": "c75b4a247d39d2488c6ae7b124091eea14a7fcca62960064d090019ea12c073e",
+      "after": "f2aae298325c77cfd3e6a62b10751b3cc240414baa3abfbdfb9ef2ffe6d50c6d"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Backspace_Key_Light.png.meta": {
+      "before": "e264c46f9b16ca4125aa1da9e5ebe63c3f14146dd11b51a6d510eb475c5c5567",
+      "after": "0f79f3129703420da4c21a3b9743679b589dc0743059d9ea178aa069bb05a96b"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Bracket_Left_Key_Light.png.meta": {
+      "before": "84feb42e904345d2e4703d6c05a2c5a651069fb2625f5681787bb8700d9da36e",
+      "after": "dc5ce06d447a949b825ac857e47da90f47984ac6605e77d4426d6dc57fd87243"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Bracket_Right_Key_Light.png.meta": {
+      "before": "e257ed8ff667fa22d25abd5202f7defff09fc02fbfbec2002935939e96e3cdcc",
+      "after": "8f1bb858e15433949159029e65ac954a463ce93457d678fa72570c37614717dc"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/C_Key_Light.png.meta": {
+      "before": "5756f154515662ee49669ce5bff0ba6058f0547389cc134340874484d4022bec",
+      "after": "cac0714adb6e90570daf69e38fbb71e3a4f1755b44ec437304fadd0346af9c58"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Caps_Lock_Key_Light.png.meta": {
+      "before": "87cb9b24909ff822ef2bf804b308bdeee03a406a2a19f8452c46e9efddbea4f6",
+      "after": "9047fc619b86068926aebacd6f1da46ddfa49944361cf389f227488924edadec"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Ctrl_Key_Light.png.meta": {
+      "before": "87b2aebe617f870a14152f4728dee278526ddb1cb25396520538f883c2441041",
+      "after": "f918cc5286c3133a1b53a7c39c8bee6e59e5433edc343a21c14c59bcf7686a05"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/D_Key_Light.png.meta": {
+      "before": "2505798153da09df74dc63a1173f5f583d58522e9ed554526437235f869a5995",
+      "after": "8b8622d71453c7ef2b2bb482a8bb781bccc924170bc1d96e8608987ce1f1009c"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Del_Key_Light.png.meta": {
+      "before": "e37b9c573c4f6d7acbeb221e429f9c12af6c7b3290605d32b01fb22d3f15b4df",
+      "after": "42069044ec177c40a06dd3e7c63d39d4154f56d3af35262be5e3d02b51723fed"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/E_Key_Light.png.meta": {
+      "before": "3bb10f6b48d482bf35f0cc0b12796a0ff1a8e1370e35f253192ee794dcbf6323",
+      "after": "15526f6e1ef88b0410229f7c7c025e9b55530d3cb160d5bab65788e13ba70438"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/End_Key_Light.png.meta": {
+      "before": "2c2a7c3fb0985fadb9d9814de6bf6dc2a7297d5f6e94fba2728ec5498cfcf4c2",
+      "after": "0b588f8b94d65a0d8465a1a3fc7f3ec0cb22ee80201583795850fccf11f5dd83"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Enter_Key_Light.png.meta": {
+      "before": "122c2adfbae8baba380131008650329fc5f769a99fec1cd03f0916a25d65e62f",
+      "after": "31521e202424a073b08afe2c4fe3bbafc7100eb6eba1516ac4e465bd7e94b475"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Esc_Key_Light.png.meta": {
+      "before": "923452fdba657479079188bc026ddf032891eaa1076ea06e6544bde4c68529f3",
+      "after": "de68040ce8584a246b66365918916637492b20ed1eaa3df918d88f592c92f2a4"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F10_Key_Light.png.meta": {
+      "before": "1746c82ca82f126a1ae85aaa28dee7eebe4cad1a8a0de93947f12089fc8345c7",
+      "after": "efe778dd6ce42aaf5ef5a0cd8ca20c2904acb5b223916b7412d632937c52c47d"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F11_Key_Light.png.meta": {
+      "before": "bb6e4985d6216bc4e874da3c4922cb769677bed42cfd85a0d3ee7afa9601cb0d",
+      "after": "044677f512ee03d8e4367e5bcec0c19160a806d3d352b4d21816c3d301328e35"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F12_Key_Light.png.meta": {
+      "before": "ddd738cc5dd23351590893d966c6b3ecc20ef2de6d797aeb771b0f4db3ad74d6",
+      "after": "5076282e0b1adad1cf2eccc477988e23f546a13db85d2ad1290afeae318a2297"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F1_Key_Light.png.meta": {
+      "before": "f02d55edad3bd3f8585a581f2cbddd7c8a743dc87939ed0943dae8628dc1a2dc",
+      "after": "bcae05e4f4ca16dee73c2b3475fc83f09b153fee8218c3b8a409f24e06ce8372"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F2_Key_Light.png.meta": {
+      "before": "dad5825eb32c7c9d796e4a566cd515768aacba68e02afd0f4cf4ffd48a100217",
+      "after": "786f30cb89821621d98e37d9c4fd47c1d6aa4153613e5a02594acec51604fc81"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F3_Key_Light.png.meta": {
+      "before": "4d60538574b3154a4722e4fd0b7b92bb9d6ce6d527158e61bd21f02c37a23002",
+      "after": "227e26eaff58c222e3e7272220416b7555da04079bc02f3db4370de6ddbf6456"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F4_Key_Light.png.meta": {
+      "before": "abd22a372f18990bf70d04cb9d1fa448010892d4f795f885ac2274427d96c639",
+      "after": "21dae03834a3fd758ad84c2a08b07ee90e523d1fe2569cc05c0f4a5c10449d5a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F5_Key_Light.png.meta": {
+      "before": "13ca415612d108a058a8d383d6e58a6fd21b81b9cd1e4d3e22c1326a4d39d6e4",
+      "after": "af6f85fa1ef4470ae4dfa85a6a3da5d8c654ca44aad7f1727b2cfc488420b048"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F6_Key_Light.png.meta": {
+      "before": "1afb673baa43e0053aa560123e8818ab3461a1f1138f22a4d2cbb20b13060a3c",
+      "after": "ee2ed43219767981be751bc2785c218292f298a3ba4187e5c6ec178fe28894c8"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F7_Key_Light.png.meta": {
+      "before": "892c867a400115f7669088c9b0f3d699dae43c97be1aea36888c030bbe59d6f5",
+      "after": "a3029733487bb635f425d51b445fa0284d9de6e111ff453e85bf9e9a0d9bd1c0"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F8_Key_Light.png.meta": {
+      "before": "52ecd4892c74295b798df879ad5ea1af22926c99ca7c2bc336ac134f83dd6ce4",
+      "after": "945e42f4bbd9c14e3f7125163abd15a3dc51c47edcfb935aca312828ed55321e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F9_Key_Light.png.meta": {
+      "before": "ec049d7d7ba886b98274fbb092b2c22de3631d4944b2a9ca2177ece53b2eec9a",
+      "after": "37a450095275e630367b1e74e5190fdf8851fe3e50cf79c7e24c45e5a16e17e4"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/F_Key_Light.png.meta": {
+      "before": "04d30f2b81f65d133b5178d8c628cbc2157dab50338e1c884a196458b4a90ab6",
+      "after": "f143752182dca879a7765cc120ea863ec9b484858943755a0af9118e432232a5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/G_Key_Light.png.meta": {
+      "before": "e9511c9a74f1c3cbc7c39717271c7d7fe6df1fc6198c2307990205dd15639cb4",
+      "after": "fecac7a241097cfb680d758c3165b5abbd8d96fe9cc817b5e83dbb773f421995"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/H_Key_Light.png.meta": {
+      "before": "4ff6670bf5608ceb5ef6154bb0115bee50919adf0c67a20c601b3f6d8adf4cb3",
+      "after": "97ff3cf73867b2b63baddce2efa38cd7a47dc2e8846d624ec3dde259c24dac6b"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Home_Key_Light.png.meta": {
+      "before": "5d181693d179ff44fc9dba011774d3caa85892333f3de46560c8ab777788e24c",
+      "after": "fc4fa6844e57774af17471ebcc9f914b8b631a3fa4181dbeba9d989fa7475fc7"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/I_Key_Light.png.meta": {
+      "before": "e41f01c5a8dc21b981de12c5c41dfe815596bb78bb05bcbb12ee54115d659446",
+      "after": "55e7bee92189bd33e09cf86cc9cc26030da98e2022a102f89aa2d90af01f88d8"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Insert_Key_Light.png.meta": {
+      "before": "c45cdecd5fa495498cf9e128d8d813b42a51ac22ce802db2ec76b1ee81559f7f",
+      "after": "0d891fbc7ec1860c47cf081e913ed0640a1474e769abfee99106272a8ed625a0"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/J_Key_Light.png.meta": {
+      "before": "8a7ebba4586334da75ad6f8d72d26ed7fbcdec5bf5e61855ac24e53b0329a05e",
+      "after": "69243d9dfe52773d72dd03a5fe2e36415364879d816320eb5f2313d31598a85e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/K_Key_Light.png.meta": {
+      "before": "32dd00e08d19b3e95e14ae59699f200715a8f7224659ca9a4193e46d8a822e93",
+      "after": "5b24b96c9106e26d3066000a35ae34b4b3fe7db879c57fd4f2408e4e19f47a49"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/L_Key_Light.png.meta": {
+      "before": "f09a4d7682ef3b5bc7375f2415cd5d41111cd4331d8c20ba7cfb279811ce5cae",
+      "after": "bfa5abad82bf29196670682eaa77eb67212e3a750b7ca19c185cba46df139a18"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/M_Key_Light.png.meta": {
+      "before": "94505632f01efb034d47301c62ac94541261ebee9c3de0d0196f7f53b954d3ce",
+      "after": "9cd8d54dd62cd05da326afd337aea572a3e5dc2a007560f9f967db80a616f02a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Minus_Key_Light.png.meta": {
+      "before": "0e17012da48e5197b7161e8ec41026749caa5df2ce4152c831118c6e30a61851",
+      "after": "536aea3e80bdf48b8445f108444bcc298e8825e1d8abfd258e1bf48ef6a44c73"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Mouse_Left_Key_Light.png.meta": {
+      "before": "ccf7e1e643c6112a9683a2410c2d52c5415d5d34c5a077cd150cecbdb88a2c6d",
+      "after": "c73c824efaa7a02c554e547cdc0057ae0011eeb3d344b1227863ac92e530ebff"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Mouse_Middle_Key_Light.png.meta": {
+      "before": "0f4b98a7dded36ad81b1117971f73883600a07f871f3479d809585cabd35475a",
+      "after": "5ed62caf04088d29aa740ca95e0b88079cd30efb0e3742743d119da3d249438a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Mouse_Right_Key_Light.png.meta": {
+      "before": "f6f970821c7726a30e8c8c7abc6c9cc262309937db291e18d67a37b41915d4a8",
+      "after": "c1ae163c8987c7cccdfacb4b73a564e6d251a7e712b0dbf4f01c513d04eb5aa5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Mouse_Simple_Key_Light.png.meta": {
+      "before": "497b83b279be6d2fe2ca1634a8a4b87ea0c107e49c01fd8e2b189815cdbaacbb",
+      "after": "e8d203227ddf1982874b6037059a02f514ebc82bfbcec0dba63c88bc2c1f9e2f"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/N_Key_Light.png.meta": {
+      "before": "12de76dd2625532775ef67e0b13a8c6ade3dbbbf79584f16bf0709a9920aa2ec",
+      "after": "2e330c85c43005b10da64cda6f0e17355850f9ae10353e2345530ef33b726124"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Num_Lock_Key_Light.png.meta": {
+      "before": "1e779dd983e2b37a282babdbdb126b44162de639dece1d1c3778dc2f72b65645",
+      "after": "f359985a0b4caa19f2dd66fc036e12d1a455e7c8da7fdba4581a08dbd1205eb7"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/O_Key_Light.png.meta": {
+      "before": "65e139324536d8a975d0b9e2b072a8cec14b09ec96b0a332c52c3034ed20504f",
+      "after": "0a821919c1450d7151769c5aec2deef56ed586690f88876f40eee332596aac5c"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/P_Key_Light.png.meta": {
+      "before": "aa18e3101bd5bbf7cac28173675e1be3924f485a1d2b5430dc4dcf6e41ecaa35",
+      "after": "011d54a39f01d3bb974206561009a5a505f16c66a8a5ed87887bf0ad36937b0e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Page_Down_Key_Light.png.meta": {
+      "before": "45654d7393f1f00f231cdddbaf94c18e3ac15d96395016334bd0d9eac26c3e1d",
+      "after": "adc08370287c7ecbc88a3f23ae949599476a3629dd5fa4f566e42a007eeebecc"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Page_Up_Key_Light.png.meta": {
+      "before": "8f5d3d711d324218bb0fd8b2ac51031f767404be81cb687a1c3f3d12d27d89c6",
+      "after": "d93c3ad4dff033cf76e235628d86bbe042f6758d7dcb270915ad90402f0461aa"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Plus_Key_Light.png.meta": {
+      "before": "11cc9c804c7ea30be502ce2e9ad9408d8eafe5767fa3ded2e6663d1e1f89a570",
+      "after": "0a921234bdeaf30e73a074437569ca64adb94ee42266190e8bbcbff4e6f81ac5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Q_Key_Light.png.meta": {
+      "before": "5db6500dfa3cfa8b494465f240ab52199821f8fa3dd27db6b599cd4d4faa8c05",
+      "after": "92754e2a6bed58c8e0d6072fd6f1dba74e3c74401ccaf40ef9a9b3c503fac381"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Quote_Key_Light.png.meta": {
+      "before": "25ba24505331de4221be415e89c4ea21032e0efb8ddcd7c89dc6da196e1d6c17",
+      "after": "09effa3b9d3991d0cc8153a448a29d591627478afe2b43efb75e66574589adc2"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/R_Key_Light.png.meta": {
+      "before": "03db37ca38e070878e930ab2a1c2d8ea863122be0827311b82584484e8707ed7",
+      "after": "caae5457bd4180662ee2f95f4867e420598be14e92eaf8266fbc42b314030f91"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/S_Key_Light.png.meta": {
+      "before": "d0227a2b40e4cad8bca1741cf92882f5d25bafd4eb6f3182ac50afdfe7938911",
+      "after": "5efeab17102e383facf945e65dd3d87ebbfc774d2029cf81e7ed93eabe111c2b"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Semicolon_Key_Light.png.meta": {
+      "before": "242f45ca14e3bb7e090f46394eef114361eee06a2ed93f3dad25dec280b1bec0",
+      "after": "817c8d25ebdc59a3dede99712d063b32a71c34407f2e0c14ec4841c31cab344b"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Shift_Key_Light.png.meta": {
+      "before": "6581ea19182fb8e0eb0508c607b27b1c7ff1fbd93f29c8e8575c05a8e1a2c505",
+      "after": "54bef2082df1cede7c79888f8cee7f544149f8ab0ec5a3f79ad83b6c74e8d223"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Slash_Key_Light.png.meta": {
+      "before": "b209f517169e74ba842e35e530a038797059cfbb3ea92435313ead06326e783c",
+      "after": "3e1e5297f1d229241384842bb93d46273a1b734cef49dcac6dbc652a79fd1f96"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Space_Key_Light.png.meta": {
+      "before": "8b3c5cf92d28623dc44cee75c1614378e9e474b220bd355ecc5aed690f0d9563",
+      "after": "80e8761351f3e6d43974e9afeaf3067fc9c228b5fda45554d37e1df3b8a1694a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/T_Key_Light.png.meta": {
+      "before": "caea37e48e76424c4f50b25342d7874b024fd1419d9a6b9ece139240e8bf4faa",
+      "after": "3b1471e7e03f7d0c353c8306e35e4af4911885cda5b0e682817c4128aff03446"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Tab_Key_Light.png.meta": {
+      "before": "4eb5ecc761b37162c20a3b2155135a36e810b08148156fd65bcc081b19a4edd1",
+      "after": "26c077702d988e3ada8d45887c97f217aa27fb9752352f45c5ab470aa5816ff5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Tilda_Key_Light.png.meta": {
+      "before": "5285a3701bf16b3e946d3a3fabe9713cd4d4ca1974f49e5a138c652de7599dce",
+      "after": "0a8326e7cca5c379383eeff0f3581e59de056d1762ffed9743a04c846c33946a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/U_Key_Light.png.meta": {
+      "before": "39ed0feb599b85f7a8c2f695362ed1b66ba9b568e8db8b85121505ecade1ab09",
+      "after": "446450f4dc8d1a62487e9876aa13c97c27f67daabb22f30d97ff723f01135fc5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/V_Key_Light.png.meta": {
+      "before": "9a48bbb427369fe979466f0a152d65c72d68d7be1f662aa8196b95b65c832d1a",
+      "after": "884b69fab241940a94e84a380ac70ee3e1e62d3eabcde05c827bd5f6a0890b45"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/W_Key_Light.png.meta": {
+      "before": "1a25ffb7bb475a3f6e7da836647c51149e4864c495164f10aed1afa822241687",
+      "after": "3241577fa119da5ac2e19bc1235ad5b76efe28a166c714ba1f8df039f7426430"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Win_Key_Light.png.meta": {
+      "before": "4bd1e420b5f87f5c67091b1f342f5d8ef03f328c0b30f95b6b55ea9188657213",
+      "after": "6540bb35c0825e45f3af5fea05da57cbf95a652105e72a96ca58aaaf34f9a383"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/X_Key_Light.png.meta": {
+      "before": "fcb6304ea0cda5c35297015cf489efe59d3e1a7ea514f9183296916d7c2e13b6",
+      "after": "672214cb5ba036f7d1fedda16667a819173e4d6a7050adc293bc7077772d00b6"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Y_Key_Light.png.meta": {
+      "before": "d451b2e8916ddf98aebc529e01e664c73c60d1da50d51b4d38b6ed1ea480e9c2",
+      "after": "1f9e58ed1dfddb98b0374af7e2c59e3d5f1c7c8ed866223c84d506beb6176874"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/light/Z_Key_Light.png.meta": {
+      "before": "b9464f4e46fbc2a7b3c1bd75f7f96e29a61c5608db0f78f54c7d0f2b34676f91",
+      "after": "a2252a72b788c9aaf5d36d9e81ce0d6f889fc8132cbc4d2365efefe90b8fc9db"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Circle.png.meta": {
+      "before": "eea24da72a42e681e7e1313bfcf3cf5931ab2f45a2eeea4703ebb2656156501d",
+      "after": "a9edae86beba2ba07e6c60543f58bda027cd67d2228a67f72a316488abec2091"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Cross.png.meta": {
+      "before": "ada0c06b94ef778b95cc937692258313efbb943851c920c8c79244c61046bddb",
+      "after": "d76ff15e85d3bc9c6eb247cd10a5afcf24cc7fbdf13bf9eeb5a603260a4b0483"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Dpad.png.meta": {
+      "before": "5ec10dd378ac50e4da332859a09e46713e08e47afb795aedad0c9f5b8a052342",
+      "after": "a90e0a12579a3f2eefd3658ccda8707255bed801576ad59f1a125a79d8098fe0"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Dpad_Down.png.meta": {
+      "before": "87f8f9722c98379e15099465320fdd4aa6197e90fd6504a2a1bd1dcf62ebc3f3",
+      "after": "79931705f8fd9b41ba55e276a5d89edee42e98fa682012d5c3e92069d6c8f63a"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Dpad_Left.png.meta": {
+      "before": "6fb33ca8f24f609961dcea26b5b498585ab67d76bab834bd0cc2521ad689071b",
+      "after": "93317540aa09d05e81b8771ad564e076b1fdd6f9122f3a5cdacf051d19741c49"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Dpad_Right.png.meta": {
+      "before": "f010bf86d66fd453fd86048e34d6fde56afefc813f8cc96bf78fef51f8b5e174",
+      "after": "bb9af63b3612981f3974c5643eee1e68dc9d254334e483e23eec52d9d9a83d0d"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Dpad_Up.png.meta": {
+      "before": "3a0f90c3e130112546e25cec884a0767a6f3fb5b48cc99bf84947a7abaa321ed",
+      "after": "20bfe44f2e31740408169039a9f06fe9215320784d99cf1fa07beaf8a758f254"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_L1.png.meta": {
+      "before": "7f5fea1344b3bac9d19015e1504bafa6e01b3f1a02753208e44669cdc9403755",
+      "after": "000c1257e920d9947d13803435afd3e666b53006e346dd631fd627dc1ea6fe49"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_L2.png.meta": {
+      "before": "702cb18e44a9bca90c00f6c1a93a7cc965be874cf43ac424ca38000a82f68006",
+      "after": "fcc76447bf6e113aa55578701a13e406b64aac151a276872b4fed7696d934118"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Left_Stick.png.meta": {
+      "before": "9a03e3c318349fb70d31737b7945fa219b4b52c356d2d2e7f8f75c87d2046eca",
+      "after": "165a5a70547686a4c13bdcb35515110038f38507bf87bc2b15ae49a8318f9aeb"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Left_Stick_Click.png.meta": {
+      "before": "5dd5298d8ae48f48a0ba11d8fe8faf949cf2da544cf814b95f781d83e31c0c7e",
+      "after": "dc53a844e5568bac8fa5ce4e541763e3ac715616d3ad97e4f4ae640ac18080cf"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Options.png.meta": {
+      "before": "974d6d61691410b8ab0167705eeaf1427d3c7becc870cd7e7925526774dff9f9",
+      "after": "4802b2ccf3319a92622eb0b0491114a10f5d53b72ae191741aed13101667bd79"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_R1.png.meta": {
+      "before": "0d75c4e061adbe1fa7add5f3747281888b2e2a6c9d57c14b3199a6db4570fdce",
+      "after": "3e43ff2b868abfc91e6a672dfc9814e2c9874bac68067ae6260442144112b6e9"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_R2.png.meta": {
+      "before": "63853183b5644ebf04a7082772e58bad3882cdc5a08405161393f815352f1650",
+      "after": "0d1afac96b83e05c19fe2119bf9dc8270d92c00f2b3cdd0ee76d04c9a3f6b876"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Right_Stick.png.meta": {
+      "before": "03115d5075bdbab8bae00a5110fd19dbdd291040d4421c21b3b1938b4cfd4634",
+      "after": "79cd6ee902722cb0108c82272c135d2dff2820213888d75c933fecc09d39e711"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Right_Stick_Click.png.meta": {
+      "before": "4e85e051a619b06def18f1c40bb8a8b2c48b9efe7a588972ce4919e0587f76c9",
+      "after": "d7690527fb06cc29f50073a1c2c5f5894fe715294e1f666e915fa500832ddb4d"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Share.png.meta": {
+      "before": "9fd0320cf91b30087837b6f4d62c4791d3cd48a91fd03c9ba643c9c504dfc7a1",
+      "after": "1c018790df4f64e9f20d6991c94c11f1273452ab5c5c2fa325ca6f5e29cd02f7"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Square.png.meta": {
+      "before": "10be3b4245a5ec203ebc2d7c27d7e1a50a09bb2c912e3f8383bf6e069daa737a",
+      "after": "a90e044b94afff4493fd880efd1eadc6fe6115574d78010f9c5e3bc8af403bde"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/ps/PS5_Triangle.png.meta": {
+      "before": "de47bcd6e759f7c3f0e09570bff60993762ce864ea67b95278720dade74a52a3",
+      "after": "afe5048468c902907b23e1c3ae857cf7ff20ad48f51ca4e8b3239d1a05b8e6bf"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_A.png.meta": {
+      "before": "df188c4dbdd6b49db27ecc49970ad6389b0c3693e33ae47e74a761ac356ff22a",
+      "after": "8b0a2b6a7cda8bca9d942f4a698c3445694536ebeaec748997471d8321ba99dd"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_B.png.meta": {
+      "before": "d6e40beabbe38676bd4683537161a2b62ba2abf277b1a3e5fa5b295289538a76",
+      "after": "81949bb393bbf48f567e73f7c9f86d76ea695e79c3e4f0e064a193f02b768274"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Dpad.png.meta": {
+      "before": "1f59d3ca4509f82839a90779116ab13e04b7ff228780fe07d1ec61cfa9664fbb",
+      "after": "c65b0b9d89914ec63576d3cf7ec1d0eefce8391ebb34edeec0bc54247b8c6ac3"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Dpad_Down.png.meta": {
+      "before": "4b72fd7059fcfaf86ee143a9315c25b199c94e9d8d0865f1c83243fb3ff69bed",
+      "after": "55a84a16337e0f132038a4e667c35b7abecd7108e79cd329f56382965d908030"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Dpad_Left.png.meta": {
+      "before": "16bfa8dff45511491456546a7584acde35063279d2519d08196528f2c05be401",
+      "after": "ad41429c4cf85a7898e9581f05e110d6229951739c9e9dc222a4a9288ff4e452"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Dpad_Right.png.meta": {
+      "before": "82161cac533c469c88e630ec3739340becc8fc8c267a50f94a8f82443d61ff05",
+      "after": "e36b01d18614c044193a538f33199f1bb3c801debc5dcbc960357bdeb7083cd5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Dpad_Up.png.meta": {
+      "before": "9f69f3d64b6ef5bf2733d3e98a58897cd293c417fcf50e3d8f12f07b07ad7f09",
+      "after": "ece515845e7806971c0db70a8a3af30c6a7fe27aee669e1254e841201fa3907c"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_LB.png.meta": {
+      "before": "488a8272baf1535b743e4d5b5f59fd3b9f4b6399b4f8591c2348d626087a1335",
+      "after": "9d62515757fbe6d8fb3cf76397dbf7a6becb98e807c4e59d0ddf5cac58f2ff11"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_LT.png.meta": {
+      "before": "f3bade5f42fcd92bf483d59b05eee2526e2e745be12829b413f2b9ba4c63408d",
+      "after": "8804ef11fe976a2d3839625a5e00674836be99eb70b09f1ae911351e5b04ec1b"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Left_Stick.png.meta": {
+      "before": "b0bd4f02ae615c7a537d90748fb5f0383ba637b815bbefe888c3a08d9cb7a53b",
+      "after": "34a2e50593e79735ab44c78144b444210e565c86546ff2db34b967356560fb36"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Left_Stick_Click.png.meta": {
+      "before": "7ce9f13f8046a97fd3e206b50df288ec873ab8f1979cd84d8d4dc669321cf104",
+      "after": "ecb197acc8d882c471cbe14acb27dc710cf8b204d3d3c3a5ab696c5ece8cfe79"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Menu.png.meta": {
+      "before": "d2dca6f2a55e48db7c6145ecfbd80b94517c8a29f782b5329c59818703453aa6",
+      "after": "1452e4f3af79b054a395fbdbe82bd677126f9cbd75ed4e91cfa1caeb886835cc"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_RB.png.meta": {
+      "before": "5657a04426617ad2dd3e576cf7563a3a0a73f43e49aea2375e104ccac1bcb4ae",
+      "after": "b7ba21a0002ff1dccf88ac53ce86730638ef51b87b555f80f48524287eca165e"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_RT.png.meta": {
+      "before": "57570cd652844c216ee3df5f8428bc6d83e6301e9be6fc1cef8bfe0a52bb8d1f",
+      "after": "1ea1f5634a849460aa72ee1996c6696c3e2e6f734ba2671e46eec4f9a8a52dc4"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Right_Stick.png.meta": {
+      "before": "eb11a6c4d6f0657c23e24d298dd32e4d7735b58bf396c9825569bd57d50def18",
+      "after": "4ccb51507f465333804cdbc496b53a36a685f70572d66d976733ad63c5f747f5"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Right_Stick_Click.png.meta": {
+      "before": "c24206794acdff2c1bbaf440035a8ec80eb02def64e6c161c99c1c047064e2ca",
+      "after": "3a40be38102a3f0e58d2ba3477e46eddfdb1f4e04342b7b6ce9a32270a23cdec"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_View.png.meta": {
+      "before": "93f4de959838da6eff393bc1149702047d911a5c83d1f2f626ef1e61e16fe88d",
+      "after": "c1ffef5464af78dbbd6a1026704ffa06393bca8260f3c817745a8a3c14e0ea73"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_X.png.meta": {
+      "before": "d0a802cd1a28120dc74d1604f102618732b74bca235511000aada749fe90ec98",
+      "after": "3e2db674a7385912f71f1d740ec817656ea243998ffd4151c545b36d28ded799"
+    },
+    "Assets/TumbangPreso/Resources/UI/input/xelu/xbox/XboxSeriesX_Y.png.meta": {
+      "before": "77bf0440c467c1e6cb06171bf1a58dc52a6371ec27dc0934bf91a59c43f7e798",
+      "after": "c6692702fb92f31123cd8f2e80eabadbc251efc04852a499eb864dfb81029248"
+    },
+    "Assets/TumbangPreso/Resources/UI/main-menu/MENU BACKDROP.png.meta": {
+      "before": "06f123f84c4e741d9308de6654a0d85f1ee835f0180df0a6e05cb11d842295dd",
+      "after": "8ae84de8077884eebf46c4f94725c66d0508a4f3bc60c80484500d034966ec30"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/Arena.png.meta": {
+      "before": "967541d22c72445584d37655e07f3590ee54a22537731ee1ba0775962def35b9",
+      "after": "f8562f8c95f7a4de154184fd7502ede28ad0d514a82c39d50015753e9565e3eb"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/BayanPlaza.png.meta": {
+      "before": "c0ca2f0c396156f3b12822182f9c4be533bf1ea106fd9d0b1549311f4b3b6e9d",
+      "after": "b9f48aad3e95ca4638d861ba39d192ea495e1bd86fbb6b64be1aea524f1de80d"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/Eskinita.png.meta": {
+      "before": "ae5e7159d49c7b1099b5e414bccf13fcceee7aa934009a880182cb41a4a98ba1",
+      "after": "df65b881fcd012d483210bd06417039c67ec2e8eee5b9899d9bd1116027190ac"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/IlalimNgTulay.png.meta": {
+      "before": "a7a80f76e133e98874ad4ceb31ba5de3508e62183da51dd19190d6bd2315846d",
+      "after": "4815c064fdeb8604c1c94eb162f9f7066cf68c5b79184f8f07a842555920b9fe"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/Kanto.png.meta": {
+      "before": "871a46ecd5593476013e00c5440965d45429b9b7f73a33eeb5667431951c25d0",
+      "after": "4d3d65543268fc3e8d9804f029e94e6719c6b501dc414451aa6017eab1c34768"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/Lagoon.png.meta": {
+      "before": "76d540ab3810b1bfd01cb0cb77ebc54d9548fb37be1bf202d36383898833e797",
+      "after": "5914a771cab3116b5f2ba7a4efa1d10008131ae97dfecd4df3b820a09557c732"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/LagoonCove.png.meta": {
+      "before": "08c4da6432b21f57acfa1e133b3a6c33ced2462b748bb359fa51efdacb8fff52",
+      "after": "96f59ba4c40f4cb29ecf3231b4df6f2b02b7d8dfd61827d3c2f735a19cc8af2d"
+    },
+    "Assets/TumbangPreso/Resources/UI/map-cards/SaBubong.png.meta": {
+      "before": "e8f5ca58c5b5294b37e9833dbb061c0e21db0e2cd3858c7b92cc833db724ae90",
+      "after": "5001f0128271dce1ad79fba0c4b920a6ebe0cc0d3f1f59a3b15d2f948e0068ca"
+    },
+    "Assets/TumbangPreso/Resources/UI/mode-cards/ClassicCard.png.meta": {
+      "before": "508fad4118b48f40972366ee3f2a5298737b489090f76a5dc9cf8837e0547b4c",
+      "after": "81daec4b35d0f9ec95cb3412e7dfc140559a358e3d79b8865c5d645f8f5f2aa7"
+    },
+    "Assets/TumbangPreso/Resources/UI/mode-cards/ClassicChoice.png.meta": {
+      "before": "f46e6d95947d1a1804c4cba6acb44c18fd504da2c06aff22f4d0dc3cb8cecc7d",
+      "after": "b255f328579e8cc64b6d0edfde88454aa4f8d1bcae14f8cbf2d32333c2a28e3e"
+    },
+    "Assets/TumbangPreso/Resources/UI/mode-cards/CustomCard.png.meta": {
+      "before": "37c106e7259e0b7d7a6966353ed603d4a50210bccb7fba8408de0ecf07a9ab56",
+      "after": "cdbcab364674fadf44bc695af5bb439620792bcb3cfef203069c2c7eef67aec5"
+    },
+    "Assets/TumbangPreso/Resources/UI/mode-cards/HeroStrikeChoice.png.meta": {
+      "before": "8c17dff99f7c4c78c86ff645ebccd877e26a01b335bbbcc18a635890dc3f99ab",
+      "after": "3c2d34da303c68d67fd91a571d1f828cdef74176d9e750748d6b167b9905aae2"
+    },
+    "Assets/TumbangPreso/Resources/UI/mode-cards/PracticeCard.png.meta": {
+      "before": "1db995299296f0d2455f1ae9e15029cc708c03f3ef59f5bcfee68b5b277f566f",
+      "after": "e21298f0605c0a970ea7bcd4e8075245651e02b77301575fcf16b6e960829a57"
+    },
+    "Assets/TumbangPreso/Resources/UI/mode-cards/RankedCard.png.meta": {
+      "before": "1fddde63288db52b59aa6c02924ab6fe5ad1ea8b3abf5e5bfc248603493d66d2",
+      "after": "856cb514c0b264b0987fa10e3c2f51fba2d2a297138688f78c477f5065e39851"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/cloud-bank-a.png.meta": {
+      "before": "698ce73a2db6e612e22e58f936740f154e79c0796e5b1a6e55492d6fd82ff486",
+      "after": "a41526a8b327cd0f9bf7693c01428ba3bd5ebac1cbed71007f0c89eae5a761da"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/cloud-bank-b.png.meta": {
+      "before": "50abf0bcb55e9e894b5b2307bd4b8ac05c9bd52f2ec4c9fe224ad08dbfce650d",
+      "after": "abee2ea8e3781305ce6b74a483d53c5e61661f185ee49691d5929a5f65356812"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-background.png.meta": {
+      "before": "555f08de35743367864fc8f95ac6c0bc68c52582a158cd79aae4dc70c2052695",
+      "after": "bb8b5e641d7d055c701ffc577152f9c5d64b7d753f968ad355378d9ca25bdb8b"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-checkbox.png.meta": {
+      "before": "748090b5ab1af3b00ec0deacbd28886ab41af8157fa7ab4d0dfa7429d267cc66",
+      "after": "dc92fe8092691309881aa3c9d94aea407fe1f42b690af298e0847b4f25837694"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-field1.png.meta": {
+      "before": "eaed23392939c29ea1b7fb8962dc7c0a0594c013b6bb164dfc0478267696ef8d",
+      "after": "50e3158eb0e5a126ce407899c449e2008784a838d8ef50a7902985db30a7f785"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-field2.png.meta": {
+      "before": "a582da254be61b55aaccec87393a78ca8c28ab91e540d8b535faaa62e4c0d25b",
+      "after": "7164a3cc79eb3ee2de2ebd7b4229b26c837d958d82015814286a7137135de81c"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-field3.png.meta": {
+      "before": "97da9471db40938db38f0e94431f5c420b5414def4f6e4a77286f8d7c106989a",
+      "after": "33f6452ad0205d2916e72fb87d40325646d9c79a22db2909f6bc7998f1e28545"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-guest.png.meta": {
+      "before": "adf69addc3e28e29729aed61f6457307956cc660c1a3b6cccfd09961698dbc3b",
+      "after": "b8733596021a68a7775311283311f0f597214a62ab204893ddd02dd10f5f86a8"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-logo.png.meta": {
+      "before": "5ac8d0e7a41d4e54181f93e692afbe3330cebb078f7c5d9b9f3168850662bd0c",
+      "after": "50b501c458c980f2870b30888135f933e56f7fc64f098ee3c30f5f91bffac0d7"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-primary.png.meta": {
+      "before": "5d056a3d889a612567c519b2c3453d098f54aa85b8730af6c8091e33ed88ba7d",
+      "after": "35587eea099718382af6b150af4a214ea9f8cf3a850bbfbc98868864d1af432c"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-rule-left.png.meta": {
+      "before": "0bd3f0e77c1e2cf704a1ecaefbeca6296221d02f3f6e10be114621fde3aba83f",
+      "after": "5ef0b4a0752ec3e78053bdda60b3038ec042179ecb10066149a038c9498cf2d2"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-rule-right.png.meta": {
+      "before": "4fb9b45f2ca70150de5d5a608db6cec75643cff4043867d217acbc926d726578",
+      "after": "861d3f82c24da91c4705de37cd300b55e07668562a8e3f5fa54fdcddae40dab9"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-tabs.png.meta": {
+      "before": "3403e71c5501c8229ba221a66178a7715a3541e2f8aa3da38cb3fa332795be2d",
+      "after": "607d73d705f38be6cf0043e6e2b8668d5bf1581ce162c7b0f798e427356a3682"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-check.png.meta": {
+      "before": "12922af25dc06258669364b9bc3593e581d17c9b9d93e5574156f113a353c462",
+      "after": "866a8155bf6950540640bd4576effc5805b15148ca82b6e0ca04a9224dd70595"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-confirm.png.meta": {
+      "before": "b31764b29f306115283b898d2de8305c234c7b6bfdb332df97ec2cdd0c00af55",
+      "after": "ed6a4dacb9d13d5dfe646f547830dca47d0844cbf05c8740d7da4430cc4ada41"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-guest.png.meta": {
+      "before": "7a5838afeede20c15e8b63bcaf072bffe00295aefaaa199210596e63a343209a",
+      "after": "33537c2369e37f2ee12d537cae2c2a427caa492ed85212396d63dab3b2f888e8"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-logo.png.meta": {
+      "before": "18a1a87b5e2eeab99c472c2ea7854d0dc7efdee30ba28efd2cbd22e48423e305",
+      "after": "36162195f66196f9eda3643e6f4ea53808dc0f3167a1365c62c8413b03594cef"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-pass-in.png.meta": {
+      "before": "9fbfdeabd26c0de39e7dd179ec84bf8f6255e4f8f39982e4a324473051abbd58",
+      "after": "3e50281cd52caf5b8b5a29e8fb9c94c221cd1a246e9b189eb31ac65b5659555b"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-pass-up.png.meta": {
+      "before": "870b153e619d1a2f76bbd851e129a92abc046f693415323d21c0820d89080e57",
+      "after": "bc4f9824c12a20920d04f61413974a3735bb75dbdbeb8327da6955ca164e6efe"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-primary-in.png.meta": {
+      "before": "59b494857b9f1c9dd83a94aaac5f8f915a08e682de5baff2d690f1eae56b2b46",
+      "after": "d4ba41ed4e6aa9abb8438f767970a7f08b7f0bb558b1a9c135e039339f7ecb46"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-primary-up.png.meta": {
+      "before": "c3b814fe82239677dabff9c6941826a865ec1ec8265901a0e279b4ee3651c944",
+      "after": "7032cf29094f070b41ed0f1ca1e17fabf94d464f3d4d66bf55348507e357f6e0"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-tabs-left.png.meta": {
+      "before": "68610a1fd3a0645eab68b624e118ea085a08b03513dbd5255ae921e18262ed3d",
+      "after": "9e28276549aebf1f9faf78af7472886d13162c9dcab473d19675de3d01e04fde"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-tabs-right.png.meta": {
+      "before": "11c637284e1095115c544c99b77e3d062367a64fce2e969728cc11a51ca384f0",
+      "after": "033cbe835a41d0a15f8a2d0e1e0d14fe1682b825408aae494b52d4036803566b"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-user-in.png.meta": {
+      "before": "14c50d06c86073c37c5a61ca3872c143f8d64e79614dd6870e84a8619fbbd7b8",
+      "after": "8a9c5556e6e5ac00d3bbac023c349cb036924f713487559f7bf9ba5e35b5df6d"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-user-up.png.meta": {
+      "before": "14273aab5ca5f85459304d2e1b8b3d3fdc1ed841218d8f6e5b7a65a5dfe4c501",
+      "after": "ce5d4b3384c18fd40f5fb2a4a6b7b07563f060d282a53816348d0318e1710d87"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-accepted-tick.png.meta": {
+      "before": "66cbf35a18c3161efcdbe0dd7050d0118318ff545aa9f06729c9674755160537",
+      "after": "c064eed77826a3e466c271a3d6ebf2f4971469ecaccbef3b33501f95a06a5a8e"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-checkbox.png.meta": {
+      "before": "e8b6095aa4fdae5324788191c0ac1dfb45a6cae217c15f1fa0b12cb9d1f0f456",
+      "after": "e0e4e3569166ed40fb13e6da1c09b37d52051a00af81a6261ca9a54d6d23835a"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-eye-open.png.meta": {
+      "before": "791366b4a74c6c26903bab134bbab2a578151128c6ddb7554b0d4162269f70de",
+      "after": "5d20dd4f850151adc67725657bc2a35394ce55222dcabe1188cd235aff7168ca"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-eye-shut.png.meta": {
+      "before": "86ddf2069c90febcc340cac376e4b9dce79f9182c8707604d5c9d478f4bc959c",
+      "after": "99db5d41bf000430d3d470efe360ab31858490c8f4a35752db9dcb5db0a909c3"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-eye.png.meta": {
+      "before": "612bc6b66419a9a8a888a4f5cd9c180fd61adcb0b65612dd4fd52c8bbb7d1e34",
+      "after": "45c8703c42dc339de00d9246558c3e5e9618878566da9c37137a4f5eaf085cb7"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-field-confirm.png.meta": {
+      "before": "c20dc2e8460dddb37ccd8fec409f26923e54d81eaa1fe44bf8daf0b8af322ba8",
+      "after": "9d8de91ed5b28fc0f784522b1a1c0451cf49e3fc97be2cb5e2d55befdfb2bd16"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-field-pass.png.meta": {
+      "before": "6e22cae3ff4283cba21f97866b6f878b38b36fea17ba59136353c9d4091fb0af",
+      "after": "172e1bce25394a660ec461448c23143782dd713e9dc950a72ede35f55a320192"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-field-user.png.meta": {
+      "before": "5429636c5e0df5ff42e3c31692d833e3c9db5fb6b1e591b22098051a241aaac3",
+      "after": "9e1238786543096a44a5f46df1c10e4631bdeda64f587ae83405d06677d87c97"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-google.png.meta": {
+      "before": "0008946a6681fba5dd849ba8921f601594e041fd8550b34d471cff0abbb5bfe5",
+      "after": "61962c3b22e1f838d2019d4769fbc833080fd2de75f30664deb05a8630741164"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-guest.png.meta": {
+      "before": "2c00fbb6176ec781fce06b8c8b29cffe1dc7e4ee5d8f6eb48492e088b4c5776e",
+      "after": "153ae9b8317711a8440bdd6698e5fc694c3f1db3259be50d4d5ef96b1963c0c9"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-invalid.png.meta": {
+      "before": "88655e34d6fd412c97951ba34ec824a01bd678bc262d834c8fb2c85f775896e8",
+      "after": "d2ae8154e41a3bf698021ac9b41b67d038e3d01f1c45649c645de2ced427a9fe"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-key.png.meta": {
+      "before": "a38ff6e1fe460cf0f806ff16977e3caa16f2060a959462fd988c031ac432737e",
+      "after": "04e00b80a3a469c3554860028af960f1c5baedf4827a35524fb0e360337d1441"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-logo.png.meta": {
+      "before": "3fc23bee775ffe786fc2633f700bc46c1625e51a38d5c62d9e9b67ded40fecf1",
+      "after": "5f9bbfa17b3f496bd6c52be16b4024f794206d8b212bf7cf82810e9c5a6bbb8a"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-primary.png.meta": {
+      "before": "6448664842d14dd4e4d818c59e1c13d7b7e279049b85e272fdeaa07cb22b8a53",
+      "after": "6faa93821485c571a719b457e1a1c875e8b8fb85d352581e517f280c5cf219a5"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-rule-left.png.meta": {
+      "before": "875f5911fee07a781c8d90239ce55f894cb66e861e67478b34e45ec32a21d1cc",
+      "after": "b82ff2ae80ed54a9d49c5a8f2bba9a5ee5a9eb6d7206f2bbeec6e0e72341d0c6"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-rule-right.png.meta": {
+      "before": "56b7ff9af3e567b6e1e27c663e156a0ff3630a5834e951f7fc95f0a6207ace76",
+      "after": "ee8c03f358623a6779752348874f0ab69a3dd45ce79f64f366c2519107a3be33"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-tabs-pill.png.meta": {
+      "before": "f19fd0e73e5dc0a28f2867828d0f22b6e649437f201fb10c8f2d3f0e8cd14df5",
+      "after": "e14a6a9d6407aa2cef96e8606bcab502aa769964c48d341f7be06a4ab0a1d971"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-tabs-track.png.meta": {
+      "before": "01c0856cfd96d32d8e4dfe2bf36fbb3b0320bb1a749995df1d07e60c6f745694",
+      "after": "315ed64d47e3a11c9e937d3a288b5894e13dc5aa7b0eef3cedc9b1ee0dfb5007"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-tabs.png.meta": {
+      "before": "5f8fe642b20561e201a8cae75d20d1c3fd97fd123fc486fe907898feb0c14405",
+      "after": "28b08dc046b198dcd2cd3e0f07c1396c2b386dbeabc5a8f70487968c306347be"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-background.png.meta": {
+      "before": "456f8b5a4b5c124ca584855addaa5b7c3e127ff6cecf645f483eab005c75f7a0",
+      "after": "b74a467fa8ae224725a8984483446aae9a59df13ecddc035e130ef9f7e45413a"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-ground-mask.png.meta": {
+      "before": "44ecca13992933f3029fc3eea636848f4f0cca7dde5725efcce40796e433b9df",
+      "after": "76d662fa4c9d810ba518c83a852789e1dd795ba9a7ee62302701089131a97f81"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-logo.png.meta": {
+      "before": "944172ca47b33696a109d78bf79285588ebe6eab5b613acb7431f04d7e7c1d51",
+      "after": "1c4f222673eee36ef51c58c61eafef4b2fc99fc3f27cb9fc93845b1433d27ea4"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-play.png.meta": {
+      "before": "1418c571a6e82057df5ca315e4180c5e60868c2b0b4116784bd7d30562360e44",
+      "after": "cb7252fc956ba5abb416244dab825ebea9756ed5031bc118f6b4365c19e76c3d"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-quit.png.meta": {
+      "before": "c3a9ccf65966a1d9209f67bcfe7229fb4f17d405e7c9bf5b5c7e245d30bc4b95",
+      "after": "3bed9eb38835736a085af957b446667d394bb5e2e4c712e8c85f4d137758b658"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-settings.png.meta": {
+      "before": "51a4a24e2a880907cfbe679a2a5a6e440b635bd5a547b8ddd0c60386d5c808b3",
+      "after": "5d6dcb3f1b92e9545ef45291424f616864f3f48a6a74277c77dd2c6989bc2c3d"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-sky-background-data.png.meta": {
+      "before": "bffbdcea500fc7faf889dc3f99abb50cb1ce656062598186898ea9714b0b7018",
+      "after": "2790cb1dc5499ba2760c13b692a4c1b32fc4972aabfc683fa1017e2ce674380e"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-sky-cutout.png.meta": {
+      "before": "1d9395f3b1042e8a4f3cedc03692dd73cf325a073009c982d92e756446acda1e",
+      "after": "645dba984a4fa77470e37c95af232f2c71d8ed62e63379c6a2e7c4a40e0e3236"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-sky-mask.png.meta": {
+      "before": "42a2f37f173442e6641770ffcc3a218ead482151752781f5fa27fd897e70c105",
+      "after": "7a1dd394c0459f2d9244be2eb04004110269f9968b63139e11a2d6b45b324f65"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-tutorial.png.meta": {
+      "before": "b60682cc17e555fe72e3222cace0fe7194500f737fb026e039b3ee083a92714a",
+      "after": "fa7ab1ceb6db573d929701b7e2c58e235d03f7c9d1f43577fa6e718423df86e4"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-background.png.meta": {
+      "before": "aec1c515093239a41f2e3d1de71f9c79c9f10793d68c7558e5e80e798b01cd10",
+      "after": "9027927a72fc6a4f02e906057b734068df4415f2311407361cedf6365a8d2e91"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-cloud.png.meta": {
+      "before": "3029f745090525d7624373305faa2013f60e58fee08b6c6d8504ab336ff71735",
+      "after": "9c7049322031e435497c129fe1bb491ee75fac213f57352fcdcf8822975e831c"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-leaf.png.meta": {
+      "before": "9073e9ff4490d80449dcbbc4a50098ba0e35271f1f6ea109d851f3ae4898aaf4",
+      "after": "90d2d49509a59eeeaa4b7b00898bf43ca1573985e58a0a1ed785e2966d9cbf5e"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-shadow.png.meta": {
+      "before": "791995a7200ea60c9dcb2745de614f4e3518ded0c13640f4c538036b02dc2dff",
+      "after": "78b52b8a4cf32ed92ca41b6e630a0faa127e8751532967914ea784adecfadcc3"
+    },
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-sky-mask.png.meta": {
+      "before": "0a0551417210dca49e1f4f54a1c0e704f90915ea76e2021d0a019eeb54265251",
+      "after": "49234b9e29670b626d0bb2b8521a6f7cb1ffc01903f42d19c18827df53013208"
+    },
+    "ProjectSettings/ProjectAuditorSettings.asset": {
+      "before": "45b12b6b55a6af51617594ca259af79aa6b39dc53249a720540b53c8a7e6fad0",
+      "after": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85"
+    }
+  },
+  "allInputsRestored": true,
+  "unknownChangesPreserved": [],
+  "existingPrefsRestored": 13
+}

@@ -1,0 +1,10 @@
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(113,121): error CS0619: 'Object.GetInstanceID()' is obsolete: 'Use GetEntityId instead.'
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(114,123): error CS0619: 'Object.GetInstanceID()' is obsolete: 'Use GetEntityId instead.'
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(116,32): error CS0234: The type or namespace name 'Verb' does not exist in the namespace 'TumbangPreso.Core' (are you missing an assembly reference?)
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(120,65): error CS0234: The type or namespace name 'Verb' does not exist in the namespace 'TumbangPreso.Core' (are you missing an assembly reference?)
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(125,32): error CS0234: The type or namespace name 'Verb' does not exist in the namespace 'TumbangPreso.Core' (are you missing an assembly reference?)
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(131,119): error CS0619: 'Object.GetInstanceID()' is obsolete: 'Use GetEntityId instead.'
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(138,63): error CS0619: 'Object.GetInstanceID()' is obsolete: 'Use GetEntityId instead.'
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(142,119): error CS0619: 'Object.GetInstanceID()' is obsolete: 'Use GetEntityId instead.'
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(142,152): error CS0619: 'Object.GetInstanceID()' is obsolete: 'Use GetEntityId instead.'
+Assets\TumbangPreso\Tests\PlayMode\SupernovaOpacityPairProbe.cs(174,101): error CS0619: 'Object.GetInstanceID()' is obsolete: 'Use GetEntityId instead.'

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:21:05Z" end-time="2026-10-02 07:21:06Z" duration="0.2460616">
+  <test-suite type="TestSuite" id="2547" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1263" result="Passed" start-time="2026-10-02 07:21:05Z" end-time="2026-10-02 07:21:06Z" duration="0.246062" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2541" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1263" result="Passed" start-time="2026-10-02 07:21:05Z" end-time="2026-10-02 07:21:06Z" duration="0.231783" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21640" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2542" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1263" result="Passed" start-time="2026-10-02 07:21:05Z" end-time="2026-10-02 07:21:06Z" duration="0.226040" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2543" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1263" result="Passed" start-time="2026-10-02 07:21:05Z" end-time="2026-10-02 07:21:06Z" duration="0.220844" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1293" name="ColdArrivalActorFreezeTests" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 07:21:05Z" end-time="2026-10-02 07:21:06Z" duration="0.181593" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1294" name="CompletedSnapshotBeforeBeginFreezesAllFourActors" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests.CompletedSnapshotBeforeBeginFreezesAllFourActors" methodname="CompletedSnapshotBeforeBeginFreezesAllFourActors" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" seed="440907376" result="Passed" start-time="2026-10-02 07:21:05Z" end-time="2026-10-02 07:21:06Z" duration="0.096003" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] match over. scores: 10 / 20 / 350 / 40. seat 2 wins
+]]></output>
+            </test-case>
+            <test-case id="1296" name="DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests.DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot" methodname="DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" seed="1456676187" result="Passed" start-time="2026-10-02 07:21:06Z" end-time="2026-10-02 07:21:06Z" duration="0.033498" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1295" name="PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests.PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam" methodname="PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" seed="1206514746" result="Passed" start-time="2026-10-02 07:21:06Z" end-time="2026-10-02 07:21:06Z" duration="0.035884" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

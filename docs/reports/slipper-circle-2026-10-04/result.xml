@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 10:24:06Z" end-time="2026-10-04 10:24:06Z" duration="0.7677504">
+  <test-suite type="TestSuite" id="3020" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1642" result="Passed" start-time="2026-10-04 10:24:06Z" end-time="2026-10-04 10:24:06Z" duration="0.767750" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3014" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1642" result="Passed" start-time="2026-10-04 10:24:06Z" end-time="2026-10-04 10:24:06Z" duration="0.750713" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="70775" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3015" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1642" result="Passed" start-time="2026-10-04 10:24:06Z" end-time="2026-10-04 10:24:06Z" duration="0.739678" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3016" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1642" result="Passed" start-time="2026-10-04 10:24:06Z" end-time="2026-10-04 10:24:06Z" duration="0.728853" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2658" name="SlipperRecallShots" fullname="TumbangPreso.PlayTests.SlipperRecallShots" classname="TumbangPreso.PlayTests.SlipperRecallShots" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 10:24:06Z" end-time="2026-10-04 10:24:06Z" duration="0.707754" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2659" name="SlipperCircleAppearsOnlyAfterLandingAndClearsOnPickupOrRelaunch" fullname="TumbangPreso.PlayTests.SlipperRecallShots.SlipperCircleAppearsOnlyAfterLandingAndClearsOnPickupOrRelaunch" methodname="SlipperCircleAppearsOnlyAfterLandingAndClearsOnPickupOrRelaunch" classname="TumbangPreso.PlayTests.SlipperRecallShots" runstate="Runnable" seed="2056937865" result="Passed" start-time="2026-10-04 10:24:06Z" end-time="2026-10-04 10:24:06Z" duration="0.696901" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Slipper-circle-flight-hidden cream source=252,211,159 pixel=49,77,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Slipper-circle-landed-visible cream source=252,211,159 pixel=49,77,121; isolated UI camera, no ColourGrade.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

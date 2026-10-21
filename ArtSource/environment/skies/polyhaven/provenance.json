@@ -1,0 +1,75 @@
+{
+  "downloadedUtc": "2026-09-21T15:20:51.857905+00:00",
+  "provider": "Poly Haven",
+  "apiDocumentation": "https://polyhaven.com/our-api",
+  "assets": [
+    {
+      "asset": "kloofendal_38d_partly_cloudy_puresky",
+      "name": "Kloofendal 38d Partly Cloudy (Pure Sky)",
+      "authors": {
+        "Greg Zaal": "Original",
+        "Jarod Guest": "Sky edits"
+      },
+      "page": "https://polyhaven.com/a/kloofendal_38d_partly_cloudy_puresky",
+      "license": "CC0 1.0",
+      "licensePage": "https://polyhaven.com/license",
+      "download": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/kloofendal_38d_partly_cloudy_puresky_2k.hdr",
+      "bytes": 5294817,
+      "md5": "38ee83ed18b97311af058e41056999ea",
+      "sha256": "a24bde75b46707fb51770626fad7dbd6986eb80754e4b05bc76739d4f3122cd7",
+      "sourcePath": "ArtSource/environment/skies/polyhaven/kloofendal_38d_partly_cloudy_puresky_2k.hdr",
+      "purpose": "Unmodified source cloud form for stylized TUMP sky shader; not a replacement environment model."
+    },
+    {
+      "asset": "kloofendal_48d_partly_cloudy_puresky",
+      "name": "Kloofendal 48d Partly Cloudy (Pure Sky)",
+      "authors": {
+        "Greg Zaal": "Original",
+        "Jarod Guest": "Sky edits"
+      },
+      "page": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+      "license": "CC0 1.0",
+      "licensePage": "https://polyhaven.com/license",
+      "download": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/kloofendal_48d_partly_cloudy_puresky_2k.hdr",
+      "bytes": 5451493,
+      "md5": "2eba3a4d7eeb23cbfbeca364c97e7980",
+      "sha256": "5244534e9cf5b606f2ff513aa00ddb161b0a4826ffd88a0d3bd03ac29247d198",
+      "sourcePath": "ArtSource/environment/skies/polyhaven/kloofendal_48d_partly_cloudy_puresky_2k.hdr",
+      "purpose": "Unmodified source cloud form for stylized TUMP sky shader; not a replacement environment model."
+    },
+    {
+      "asset": "kloppenheim_03_puresky",
+      "name": "Kloppenheim 03 (Pure Sky)",
+      "authors": {
+        "Greg Zaal": "Original",
+        "Jarod Guest": "Sky Edits"
+      },
+      "page": "https://polyhaven.com/a/kloppenheim_03_puresky",
+      "license": "CC0 1.0",
+      "licensePage": "https://polyhaven.com/license",
+      "download": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/kloppenheim_03_puresky_2k.hdr",
+      "bytes": 5324445,
+      "md5": "06abf490739e537e9339d619a2a3c941",
+      "sha256": "cf28b37889826b2c9af5059b67110d11fff159d6cef31226ba117034e27c7287",
+      "sourcePath": "ArtSource/environment/skies/polyhaven/kloppenheim_03_puresky_2k.hdr",
+      "purpose": "Unmodified source cloud form for stylized TUMP sky shader; not a replacement environment model."
+    },
+    {
+      "asset": "wasteland_clouds_puresky",
+      "name": "Wasteland Clouds (Pure Sky)",
+      "authors": {
+        "Jarod Guest": "Sky Edits",
+        "Sergej Majboroda": "Original"
+      },
+      "page": "https://polyhaven.com/a/wasteland_clouds_puresky",
+      "license": "CC0 1.0",
+      "licensePage": "https://polyhaven.com/license",
+      "download": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/wasteland_clouds_puresky_2k.hdr",
+      "bytes": 4614016,
+      "md5": "90a7de35ebef115e92c66b28aaac338e",
+      "sha256": "c9be5b722797528f2deae5969d6af061e75fca912675bcb11d467de5eea427c6",
+      "sourcePath": "ArtSource/environment/skies/polyhaven/wasteland_clouds_puresky_2k.hdr",
+      "purpose": "Unmodified source cloud form for stylized TUMP sky shader; not a replacement environment model."
+    }
+  ]
+}

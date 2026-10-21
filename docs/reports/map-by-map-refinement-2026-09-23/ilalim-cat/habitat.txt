@@ -1,0 +1,4 @@
+IlalimNgTulay pusakal-tuxedo only: 53 supported nodes, 310 clear links.
+Pisonet-side watch / Watch at (9.50, 0.21, 3.50)
+Bakeryward watch / Watch at (9.50, 0.21, 9.50)
+Pavement seam investigation / Investigate at (10.00, 0.21, 3.00)

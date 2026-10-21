@@ -1,0 +1,16 @@
+{
+  "baselineExpected": {
+    "total": 7,
+    "causalFailures": 2,
+    "controls": 5
+  },
+  "finalExpected": {
+    "total": 12,
+    "passed": 12
+  },
+  "baselineFilter": "TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket;TumbangPreso.Tests.CompletedMatchArrivalTests.PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder;TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard;TumbangPreso.Tests.CompletedMatchArrivalTests.APlainLobbySnapshotCannotOpenCompletedStandings",
+  "finalFilter": "TumbangPreso.Tests.CompletedMatchArrivalTests",
+  "repairLimit": 1,
+  "repairsUsed": 0,
+  "scope": "Controlled public world snapshot transition and retained host-record eligibility. No transport, WAN, scene UI rendering, SDK or career dispatch."
+}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:37:53Z" end-time="2026-10-02 02:38:11Z" duration="17.506879">
+  <test-suite type="TestSuite" id="2515" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1239" result="Failed" site="Child" start-time="2026-10-02 02:37:53Z" end-time="2026-10-02 02:38:11Z" duration="17.506879" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2509" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1239" result="Failed" site="Child" start-time="2026-10-02 02:37:53Z" end-time="2026-10-02 02:38:11Z" duration="17.480157" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21788" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2510" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1239" result="Failed" site="Child" start-time="2026-10-02 02:37:53Z" end-time="2026-10-02 02:38:11Z" duration="17.465155" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2511" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1239" result="Failed" site="Child" start-time="2026-10-02 02:37:53Z" end-time="2026-10-02 02:38:11Z" duration="17.451366" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1949" name="PlayerHubFriendJoinTests" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 02:37:53Z" end-time="2026-10-02 02:38:11Z" duration="17.415516" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1950" name="FriendJoinFromHomeUsesExistingPanelAndKeepsRefusalVisible" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests.FriendJoinFromHomeUsesExistingPanelAndKeepsRefusalVisible" methodname="FriendJoinFromHomeUsesExistingPanelAndKeepsRefusalVisible" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" runstate="Runnable" seed="743737913" result="Failed" label="Error" start-time="2026-10-02 02:37:53Z" end-time="2026-10-02 02:38:05Z" duration="11.203582" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.PlayTests.PlayerHubFriendJoinTests.PressFriendJoin (System.String code) [0x000ae] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PlayerHubFriendJoinTests.cs:81 
+  at TumbangPreso.PlayTests.PlayerHubFriendJoinTests+<FriendJoinFromHomeUsesExistingPanelAndKeepsRefusalVisible>d__13.MoveNext () [0x000c7] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PlayerHubFriendJoinTests.cs:113 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1951" name="FriendJoinFromHostedRoomCanCancelWithoutLateLobbyEntry" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests.FriendJoinFromHostedRoomCanCancelWithoutLateLobbyEntry" methodname="FriendJoinFromHostedRoomCanCancelWithoutLateLobbyEntry" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" runstate="Runnable" seed="1552207266" result="Failed" label="Error" start-time="2026-10-02 02:38:05Z" end-time="2026-10-02 02:38:08Z" duration="3.632437" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.PlayTests.PlayerHubFriendJoinTests.PressFriendJoin (System.String code) [0x000ae] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PlayerHubFriendJoinTests.cs:81 
+  at TumbangPreso.PlayTests.PlayerHubFriendJoinTests+<FriendJoinFromHostedRoomCanCancelWithoutLateLobbyEntry>d__14.MoveNext () [0x00141] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PlayerHubFriendJoinTests.cs:154 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 50455, join code MWNM
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="1952" name="HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests.HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission" methodname="HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" runstate="Runnable" seed="1977516709" result="Failed" start-time="2026-10-02 02:38:08Z" end-time="2026-10-02 02:38:11Z" duration="2.558486" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A transport still awaiting admission was exposed as an entered room.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PlayerHubFriendJoinTests+<HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission>d__15.MoveNext () [0x000ee] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PlayerHubFriendJoinTests.cs:179
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] connecting to 127.0.0.1:52168
+[Net] offline
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.6519599">
+  <test-suite type="TestSuite" id="2119" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.651960" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2113" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.641505" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="73494" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2114" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.639595" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2115" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="895" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.638388" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1032" name="AiTagCommitmentTests" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.609773" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1035" name="NearTargetUsesOneTagCommitment" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.602860" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1033" name="NearTargetUsesOneTagCommitment(False)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(False)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1359851826" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:16Z" duration="0.440687" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1034" name="NearTargetUsesOneTagCommitment(True)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(True)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1515418938" result="Passed" start-time="2026-09-30 09:09:16Z" end-time="2026-09-30 09:09:17Z" duration="0.128466" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

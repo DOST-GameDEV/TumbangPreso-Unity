@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 21:22:10Z" end-time="2026-10-07 21:22:17Z" duration="7.7300865">
+  <test-suite type="TestSuite" id="3651" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2146" result="Passed" start-time="2026-10-07 21:22:10Z" end-time="2026-10-07 21:22:17Z" duration="7.730087" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3643" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2146" result="Passed" start-time="2026-10-07 21:22:10Z" end-time="2026-10-07 21:22:17Z" duration="7.710930" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24100" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3644" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2146" result="Passed" start-time="2026-10-07 21:22:10Z" end-time="2026-10-07 21:22:17Z" duration="7.700604" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3647" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2144" result="Passed" start-time="2026-10-07 21:22:10Z" end-time="2026-10-07 21:22:17Z" duration="7.690337" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1711" name="DeferredHeroViewTests" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 21:22:10Z" end-time="2026-10-07 21:22:17Z" duration="7.632170" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1714" name="AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests.AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate" methodname="AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" seed="1587521729" result="Passed" start-time="2026-10-07 21:22:10Z" end-time="2026-10-07 21:22:14Z" duration="4.371612" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1713" name="BackCancelsPendingHeroWithoutLeavingItsPreview" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests.BackCancelsPendingHeroWithoutLeavingItsPreview" methodname="BackCancelsPendingHeroWithoutLeavingItsPreview" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" seed="990106244" result="Passed" start-time="2026-10-07 21:22:14Z" end-time="2026-10-07 21:22:16Z" duration="1.561403" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1712" name="HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests.HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary" methodname="HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" seed="1136603184" result="Passed" start-time="2026-10-07 21:22:16Z" end-time="2026-10-07 21:22:17Z" duration="1.681594" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

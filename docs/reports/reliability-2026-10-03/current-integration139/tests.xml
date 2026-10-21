@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="19" result="Passed" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.2058792">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-codex-slot1003" fullname="TumpWorker-codex-slot1003" runstate="Runnable" testcasecount="1159" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.205879" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2419" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-codex-slot1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1159" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.183775" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11292" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2420" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1159" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.171078" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2421" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1159" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.158342" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1945" name="NetworkBotRosterConsistencyTests" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.066229" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1948" name="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.058955" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1946" name="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(Classic)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(Classic)" methodname="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="599105682" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.045665" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1947" name="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(HeroStrike)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(HeroStrike)" methodname="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="1874636060" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000499" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1951" name="OfflineBotsKeepTheSavedHumanPickRotation" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.OfflineBotsKeepTheSavedHumanPickRotation" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.002144" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1949" name="OfflineBotsKeepTheSavedHumanPickRotation(Classic)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.OfflineBotsKeepTheSavedHumanPickRotation(Classic)" methodname="OfflineBotsKeepTheSavedHumanPickRotation" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="820622236" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000794" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1950" name="OfflineBotsKeepTheSavedHumanPickRotation(HeroStrike)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.OfflineBotsKeepTheSavedHumanPickRotation(HeroStrike)" methodname="OfflineBotsKeepTheSavedHumanPickRotation" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="1994723112" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000272" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1972" name="OfflineBotRosterCoverageTests" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.005228" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1975" name="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.002967" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1973" name="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(Classic)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(Classic)" methodname="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="908217452" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.002034" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1974" name="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(HeroStrike)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(HeroStrike)" methodname="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="1238576786" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000144" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1978" name="SharedNetworkDefaultSelectionIsUnchanged" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.SharedNetworkDefaultSelectionIsUnchanged" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.001259" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1976" name="SharedNetworkDefaultSelectionIsUnchanged(Classic)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.SharedNetworkDefaultSelectionIsUnchanged(Classic)" methodname="SharedNetworkDefaultSelectionIsUnchanged" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="496714762" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000263" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1977" name="SharedNetworkDefaultSelectionIsUnchanged(HeroStrike)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.SharedNetworkDefaultSelectionIsUnchanged(HeroStrike)" methodname="SharedNetworkDefaultSelectionIsUnchanged" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="1537491149" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000089" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2353" name="TutorialRosterUniquenessTests" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.013686" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2365" name="ClassicTutorialPartnersRemainDistinct" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.ClassicTutorialPartnersRemainDistinct" methodname="ClassicTutorialPartnersRemainDistinct" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1124158738" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.001309" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2363" name="EveryTutorialStudentGetsThreeDistinctHeroPartners" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.010150" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2354" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(0)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(0)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1969020260" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.004545" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2355" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(1)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(1)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1954963509" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000335" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2356" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(2)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(2)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="6243051" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000294" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2357" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(3)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(3)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1421453890" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000294" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2358" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(4)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(4)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1153590420" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000297" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2359" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(5)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(5)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="425461641" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000312" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2360" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(6)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(6)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="2071586936" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000299" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2361" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(7)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(7)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="862332881" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000297" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2362" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(8)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(8)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="2031021671" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000293" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2364" name="OrdinaryHeroMatchKeepsItsExistingSelectionPolicy" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.OrdinaryHeroMatchKeepsItsExistingSelectionPolicy" methodname="OrdinaryHeroMatchKeepsItsExistingSelectionPolicy" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="44409422" result="Passed" start-time="2026-10-03 09:55:13Z" end-time="2026-10-03 09:55:13Z" duration="0.000409" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios Validation/TumpWorker-codex-slot1003\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

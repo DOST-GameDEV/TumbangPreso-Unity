@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 10:38:21Z" end-time="2026-10-04 10:38:30Z" duration="9.2321924">
+  <test-suite type="TestSuite" id="3022" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1644" result="Failed" site="Child" start-time="2026-10-04 10:38:21Z" end-time="2026-10-04 10:38:30Z" duration="9.232192" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3016" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1644" result="Failed" site="Child" start-time="2026-10-04 10:38:21Z" end-time="2026-10-04 10:38:30Z" duration="9.210860" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="72587" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3017" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1644" result="Failed" site="Child" start-time="2026-10-04 10:38:21Z" end-time="2026-10-04 10:38:30Z" duration="9.197641" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3018" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1644" result="Failed" site="Child" start-time="2026-10-04 10:38:21Z" end-time="2026-10-04 10:38:30Z" duration="9.184811" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2896" name="UltimateIntroductionProbe" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" testcasecount="14" result="Failed" site="Child" start-time="2026-10-04 10:38:21Z" end-time="2026-10-04 10:38:30Z" duration="9.144269" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2910" name="BasilioEmptyHandsVisualReview" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe.BasilioEmptyHandsVisualReview" methodname="BasilioEmptyHandsVisualReview" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" seed="1811810677" result="Passed" start-time="2026-10-04 10:38:21Z" end-time="2026-10-04 10:38:26Z" duration="4.888390" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2909" name="BasilioTitanFissureVisualReview" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe.BasilioTitanFissureVisualReview" methodname="BasilioTitanFissureVisualReview" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" seed="916289732" result="Failed" start-time="2026-10-04 10:38:26Z" end-time="2026-10-04 10:38:30Z" duration="4.242993" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  dante put held equipment through its face.
+  Expected: 0
+  But was:  4
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.UltimateIntroductionProbe+<Study>d__17.MoveNext () [0x01654] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/UltimateIntroductionProbe.cs:332
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

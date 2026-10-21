@@ -1,0 +1,111 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.062 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 65 of 65 cues.
+UnloadTime: 0.988900 ms
+[Build] TUMBANG PRESO 1.0.0 | 97a313e33657+dirty | protocol 151 | StandaloneWindows64
+[NetIdentity] Signed in to UGS as Q0wBEwNldJXTFUguvwOF7Q2lAsXh on profile pc-pair151-client1005b. Relay and Lobby are available.
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/sharedassets0.resource
+[Career] the cached career belongs to another account; starting a fresh one.
+[SplashShaders] shaders=76 variants=139 warmed=139 complete=True calls=139 frames=26 budget_ms=2.0 elapsed_ms=456.203 max_slice_ms=6.448
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/resources.resource
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Splash] map asset warmup completed in 3.15 s.
+[Splash] preload retained 9509 assets in memory.
+Unloading 9 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.177200 ms
+Unloading 346 unused Assets to reduce memory usage. Loaded Objects now: 12751.
+Total: 10.506900 ms (FindLiveObjects: 1.040100 ms CreateObjectMapping: 2.820400 ms MarkObjects: 6.486800 ms  DeleteObjects: 0.159300 ms)
+
+[Splash] boot loading finished after 22.46 s (work-driven, no reading window).
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.994100 ms
+Unloading 32 unused Assets to reduce memory usage. Loaded Objects now: 12292.
+Total: 9.601000 ms (FindLiveObjects: 0.982900 ms CreateObjectMapping: 2.174700 ms MarkObjects: 6.367000 ms  DeleteObjects: 0.076100 ms)
+
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[Net] connecting to 192.168.1.7:8910
+[Net] connected
+[Net] connected as seat 2
+[Link] Good at 167 ms round trip (client).
+[Link] Bad at 663 ms round trip (client).
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 14.471200 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'Main Camera' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Unloading 88 unused Assets to reduce memory usage. Loaded Objects now: 20405.
+Total: 21.102700 ms (FindLiveObjects: 1.678100 ms CreateObjectMapping: 3.010900 ms MarkObjects: 9.336500 ms  DeleteObjects: 7.076900 ms)
+
+[Link] Good at 37 ms round trip (client).
+[ArenaPrewarm] drew 20 views in 0.37 s.
+[HubLoading] Eskinita ready after 1.49 s.
+[Link] Poor at 326 ms round trip (client).
+[Link] Good at 34 ms round trip (client).
+[Slice] round 1 begins, taya is seat 0
+[Slice] match over. scores: 20 / 70 / 640 / 640. draw
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] disconnected: The host left the game.
+[Abandon] HostLost: connection ended after completed match at round 4 of 4; authority revoked
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 16.490200 ms
+Unloading 439 unused Assets to reduce memory usage. Loaded Objects now: 12412.
+Total: 16.171000 ms (FindLiveObjects: 1.168000 ms CreateObjectMapping: 3.116700 ms MarkObjects: 11.155100 ms  DeleteObjects: 0.730900 ms)
+
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 4H3E
+[Link] Unknown at 0 ms round trip (host, worst peer).
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-97a313e33-1005/TumbangPreso_Data/resources.resource
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

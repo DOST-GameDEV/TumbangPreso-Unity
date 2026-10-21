@@ -1,0 +1,34 @@
+{
+  "source": "1d40158032414d9f442c43b64bc5bc91da4f8cbf",
+  "protocol": 151,
+  "scope": "One normal visible latest player for updated Rules/menu UI acceptance. Named profile; no whole-network or physical-skill claim.",
+  "artifactManifest": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-1d4015803-1005-manifest.json",
+  "roles": {
+    "host": {
+      "pid": 19352,
+      "profile": "pc-menu-latest-host1005a",
+      "command": [
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-1d4015803-1005\\TumbangPreso.exe",
+        "-force-d3d11",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "1280",
+        "-screen-height",
+        "720",
+        "-tp-framecap",
+        "60",
+        "-tp-profile",
+        "pc-menu-latest-host1005a",
+        "-logFile",
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-menu-integration1005\\normal-ui-player\\host\\player.log"
+      ],
+      "settingsRestored": true,
+      "exitCode": 3221225477
+    }
+  },
+  "inputRestored": true,
+  "runtimeUnchanged": true,
+  "exeUnchanged": true,
+  "terminal": true
+}

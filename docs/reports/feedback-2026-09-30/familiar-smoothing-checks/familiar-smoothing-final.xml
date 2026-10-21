@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 03:04:59Z" end-time="2026-10-01 03:05:01Z" duration="1.8196179">
+  <test-suite type="TestSuite" id="2323" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1070" result="Passed" start-time="2026-10-01 03:04:59Z" end-time="2026-10-01 03:05:01Z" duration="1.819618" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2317" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1070" result="Passed" start-time="2026-10-01 03:04:59Z" end-time="2026-10-01 03:05:01Z" duration="1.789267" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8044" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2318" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1070" result="Passed" start-time="2026-10-01 03:04:59Z" end-time="2026-10-01 03:05:01Z" duration="1.773749" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2319" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1070" result="Passed" start-time="2026-10-01 03:04:59Z" end-time="2026-10-01 03:05:01Z" duration="1.758163" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1674" name="NemuFamiliarPoseTests" fullname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" classname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 03:04:59Z" end-time="2026-10-01 03:05:00Z" duration="1.525380" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1676" name="CompletionAndNewLifetimeCannotCarryOldMovementAcrossTheirBoundary" fullname="TumbangPreso.PlayTests.NemuFamiliarPoseTests.CompletionAndNewLifetimeCannotCarryOldMovementAcrossTheirBoundary" methodname="CompletionAndNewLifetimeCannotCarryOldMovementAcrossTheirBoundary" classname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" runstate="Runnable" seed="2014087419" result="Passed" start-time="2026-10-01 03:04:59Z" end-time="2026-10-01 03:05:00Z" duration="1.400501" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1675" name="LiveMovingReceiptPreservesTheDrawnPoseThenConvergesWithoutReplayingGameplay" fullname="TumbangPreso.PlayTests.NemuFamiliarPoseTests.LiveMovingReceiptPreservesTheDrawnPoseThenConvergesWithoutReplayingGameplay" methodname="LiveMovingReceiptPreservesTheDrawnPoseThenConvergesWithoutReplayingGameplay" classname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" runstate="Runnable" seed="1455477979" result="Passed" start-time="2026-10-01 03:05:00Z" end-time="2026-10-01 03:05:00Z" duration="0.097329" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2060" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-01 03:05:00Z" end-time="2026-10-01 03:05:01Z" duration="0.131942" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2062" name="FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime" fullname="TumbangPreso.PlayTests.SkillReceiptTests.FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime" methodname="FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="383035168" result="Passed" start-time="2026-10-01 03:05:00Z" end-time="2026-10-01 03:05:01Z" duration="0.118501" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

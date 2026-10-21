@@ -1,8 +1,10 @@
 # Editing the owner-painted UI
 
-Current visuals are NOT approved: the owner rejected repeated main-menu assets
-on 2026-09-15. These authoring facilities preserve editability, not the current
-composition. Create new art/designs inspired by the source and old PDF layouts;
+These authoring facilities preserve editability; they do not establish visual
+approval. The owner rejected repeated main-menu assets on2026-09-15. That dated
+rejection is not a blanket description of every later screen: read the current
+[ledger](ACTIVE_REWORK_LEDGER.md),[UI method](UI_DESIGN_METHOD.md) and screen's
+source/evidence before changing it. Preserve successful supplied compositions;
 do not make every control use the same sheet piece.
 
 The original artwork is preserved in ArtSource/ui/owner-handdrawn-2026-09-15.
@@ -14,9 +16,31 @@ the source sheets to change a label or stretch an image to fit a layout.
 OwnerUiTheme.asset contains the actual artwork/pattern references, font assets,
 palette and motion timing. Named sprite rectangles in OwnerUiTheme.cs address
 the original sheet pixels. Input frames and painted actions preserve aspect.
-Use Darumadrop One for larger display text, Kawit Free Ext Italic for accents,
-and Lydian for reading and typed input. The existing fonts are under UI/fonts.
+Current OwnerUiTheme uses Darumadrop One for display, Paalalabas Display Wide
+for accents and Nunito Bold for reading/typed input. The assigned theme asset
+can override these fallbacks. Kawit and Lydian are retained historical assets;
+do not restore them from older guidance. Existing fonts are under UI/fonts.
 Text roles have distinct measured colors; avoid one blanket ink color.
+
+## Supplying new painted artwork
+
+Keep the original full-resolution ibis Paint project. Export PNG for painted
+images and transparency; avoid JPEG and screenshots. Size the original canvas
+for the largest intended on-screen use before drawing. Enlarging an already
+small bitmap cannot recover detail. Keep each control/icon as a separate asset
+with transparent padding and preserve its proportions.
+
+If Canva is used to compose the sheet, retain the original PNGs alongside the
+final export. Keep the composition at its intended pixel dimensions and do not
+shrink then enlarge it. Supply the final PNG rather than a chat screenshot.
+Keep live labels as editable game text where practical. A PNG remains raster
+art; tracing it to vector is a separate step and must preserve the artwork.
+
+The scoped Unity artwork importers preserve source dimensions, alpha and
+uncompressed UI color and prevent platform presets or world mip limits from
+silently shrinking supported owner/brand/map/mode artwork. This protection
+does not upscale a low-resolution source or remove a white border painted into
+the pixels. Review the actual imported dimensions and largest target viewport.
 
 OwnerUiPaper has Reading, Note and Dialog treatments. Reading uses a quiet peach
 edge, Note uses a smaller pale surface, and Dialog has an ink outline/offset

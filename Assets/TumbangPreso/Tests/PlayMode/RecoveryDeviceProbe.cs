@@ -16,11 +16,21 @@ namespace TumbangPreso.PlayTests
     [Category("WallClock")]
     public sealed class RecoveryDeviceProbe
     {
-        [UnitySetUp] public IEnumerator Before()=>PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After()=>PlayModeWorld.Reset();
+        private int _qualityBefore,_mipBefore;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _qualityBefore=QualitySettings.GetQualityLevel();_mipBefore=QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.SetQualityLevel(0,true);QualitySettings.globalTextureMipmapLimit=2;
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();QualitySettings.SetQualityLevel(_qualityBefore,true);
+            QualitySettings.globalTextureMipmapLimit=_mipBefore;
+        }
 
         [UnityTest,Timeout(120000)]
-        public IEnumerator QuickTouchDownAndUpSurvivesUntilTheRecoveryConsumer()
+        public IEnumerator QuickTouchAndHeldInputCannotShortenTimedRecovery()
         {
             bool visible=TouchHud.ForceVisible;
             int oldFps=Application.targetFrameRate,oldVsync=QualitySettings.vSyncCount;
@@ -48,12 +58,12 @@ namespace TumbangPreso.PlayTests
                     button.OnPointerUp(pointer);reader.SendMessage("Update");
                     Assert.IsFalse(TouchInput.Pressed(Verb.Jump));
                     yield return new WaitForFixedUpdate();
-                    Assert.AreEqual(1,trip?who.MashPresses:who.StunMashPresses,"Quick touch tap was lost before recovery");
+                    Assert.AreEqual(0,trip?who.MashPresses:who.StunMashPresses,"Touch tap reactivated retired recovery");
                     yield return new WaitForSeconds(.15f);
-                    Assert.AreEqual(1,trip?who.MashPresses:who.StunMashPresses,"Released touch became repeat recovery");
+                    Assert.AreEqual(0,trip?who.MashPresses:who.StunMashPresses,"Released touch reactivated recovery");
                     button.OnPointerDown(pointer);reader.SendMessage("Update");
                     yield return new WaitForSeconds(.32f);
-                    Assert.AreEqual(2,trip?who.MashPresses:who.StunMashPresses,"Held touch did not produce exactly one additional press");
+                    Assert.AreEqual(0,trip?who.MashPresses:who.StunMashPresses,"Held touch must not shorten recovery");
                     button.OnPointerUp(pointer);reader.SendMessage("Update");
                 }
             }
@@ -68,7 +78,7 @@ namespace TumbangPreso.PlayTests
             foreach(float tag in new[]{1.5f,4f})
             {
                 who.ClearTrip();who.ClearStun();who.ApplyStagger(tag,StunElement.None,6);who.ApplyTrip();
-                Assert.IsTrue(who.MashRecover());
+                Assert.IsFalse(who.MashRecover());
                 Assert.AreEqual(tag,who.StunLeft,.001f,"Getting up from a trip also changed the independent tag penalty");
             }
         }
@@ -82,7 +92,7 @@ namespace TumbangPreso.PlayTests
             try
             {
                 NetAuthority.Provider=new OwnerProvider();int episode=who.RecoveryEpisode+1;
-                Snapshot(0);Assert.IsTrue(who.RecoverFromInput());float predicted=who.TripLeft;
+                Snapshot(0);Assert.IsFalse(who.RecoverFromInput());float predicted=who.TripLeft;
                 Snapshot(0);Snapshot(0);
                 Assert.AreEqual(predicted,who.TripLeft,.001f,"Repeated delayed snapshots spent a pending tap twice");
                 Assert.AreEqual(4,who.StunLeft,.001f,"Trip prediction spent an overlapping tag timer");
@@ -100,8 +110,8 @@ namespace TumbangPreso.PlayTests
             public int LocalSlot=>1;public int LocalPeerId=>1;public bool IsSeatlessReferee=>false;
         }
 
-        [UnityTest,Timeout(180000)] public IEnumerator KeyboardRecoveryUsesTheConfiguredReaderAcrossCadences()=>HardwareMatrix(false);
-        [UnityTest,Timeout(180000)] public IEnumerator GamepadRecoveryUsesTheConfiguredReaderAcrossCadences()=>HardwareMatrix(true);
+        [UnityTest,Timeout(180000)] public IEnumerator KeyboardInputCannotShortenRecoveryAcrossCadences()=>HardwareMatrix(false);
+        [UnityTest,Timeout(180000)] public IEnumerator GamepadInputCannotShortenRecoveryAcrossCadences()=>HardwareMatrix(true);
 
         private IEnumerator HardwareMatrix(bool gamepad)
         {
@@ -134,12 +144,12 @@ namespace TumbangPreso.PlayTests
                         if(element.HasValue)who.ApplyStagger(4,element.Value,6);else who.ApplyTrip();
                         Queue(true);yield return null;Queue(false);yield return null;yield return new WaitForFixedUpdate();
                         int presses=element.HasValue?who.StunMashPresses:who.MashPresses;
-                        Assert.AreEqual(1,presses,$"{gamepad}/{cadence}/{element}: mapped one-frame tap did not arrive once");
+                        Assert.AreEqual(0,presses,$"{gamepad}/{cadence}/{element}: mapped tap must not shorten recovery");
                         yield return new WaitForSeconds(.15f);
                         Queue(true);yield return new WaitForSeconds(.32f);
-                        Assert.AreEqual(2,element.HasValue?who.StunMashPresses:who.MashPresses,"Held hardware generated repeat presses or lost its edge");
+                        Assert.AreEqual(0,element.HasValue?who.StunMashPresses:who.MashPresses,"Held hardware must not shorten recovery");
                         Queue(false);yield return null;
-                        Debug.Log($"[Recovery device] {(gamepad?"gamepad":"keyboard")} requestedFPS={cadence} observedFrameMS={Time.unscaledDeltaTime*1000:F2} context={element?.ToString()??"trip"} tap=1 hold=1");
+                        Debug.Log($"[Recovery device] {(gamepad?"gamepad":"keyboard")} requestedFPS={cadence} observedFrameMS={Time.unscaledDeltaTime*1000:F2} context={element?.ToString()??"trip"} tap=0 hold=0");
                         cases++;
                     }
                 }

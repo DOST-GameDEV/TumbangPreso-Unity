@@ -17,12 +17,15 @@ namespace TumbangPreso.UI
         public bool IsOpen => _canvas != null && _canvas.gameObject.activeSelf;
         public void Open(Transform owner, string hero, Action back)
         {
-            _hero = hero; _selected = null; _back = back;
+            _hero = hero; _selected = null; _slot = 1; _back = back;
             if (_canvas == null) _canvas = OwnerUiLayout.Canvas(owner, "OwnerSkillsCanvas", 720);
             _canvas.gameObject.SetActive(true); Build();
         }
         private void OnDisable() { if (_canvas != null) _canvas.gameObject.SetActive(false); }
         public void Back() { if (_canvas != null) _canvas.gameObject.SetActive(false); _back?.Invoke(); }
+
+        private static int GuideSlotAt(int index, int count) => index == count - 1 ? 0 : index + 1;
+        private static int GuideIndexFor(int slot, int count) => slot == 0 ? count - 1 : Mathf.Clamp(slot - 1, 0, count - 2);
 
         private void BuildPrevious()
         {

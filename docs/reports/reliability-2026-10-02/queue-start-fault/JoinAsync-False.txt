@@ -1,0 +1,3 @@
+faulted=False
+state=Searching
+busy=False

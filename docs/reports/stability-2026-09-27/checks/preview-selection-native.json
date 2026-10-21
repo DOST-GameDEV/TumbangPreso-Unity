@@ -1,0 +1,25 @@
+{
+  "base": "3e5249469406d89fd7cc6499c4b6b9c05d155977",
+  "scope": "Unchanged preview instance reuse, changed inputs, immediate retirement",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.9847954,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ModelPreview.cs",
+      "sha256": "45ED28B8287874247155C28CD2EC09C09D960766279D0B08F2A099EC4D3C7645"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ModelPreviewTests.cs",
+      "sha256": "A572380BC7DD20EB99C467772754EC19A6978A8D0BC9716C00EA8FE270AEA928"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6358962176,
+  "preflightHolds": 1,
+  "actualRuns": 1,
+  "unverified": [
+    "Player click timings",
+    "Generated valid Avatar ownership"
+  ]
+}

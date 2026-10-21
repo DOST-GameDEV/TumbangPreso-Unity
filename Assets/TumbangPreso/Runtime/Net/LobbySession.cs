@@ -164,6 +164,15 @@ namespace TumbangPreso.Net
 
         /// <summary>Seats vacated mid-match, held for their original token.</summary>
         private readonly Dictionary<int, string> _heldSeats = new Dictionary<int, string>();
+        private readonly Dictionary<int, HeldPicks> _heldPicks = new Dictionary<int, HeldPicks>();
+        private readonly struct HeldPicks
+        {
+            public readonly int Character, Can, Slipper, Rating;
+            public HeldPicks(PeerRecord peer)
+            { Character=peer.CharacterPick; Can=peer.CanPick; Slipper=peer.SlipperPick; Rating=peer.Rating; }
+            public void Restore(PeerRecord peer)
+            { peer.CharacterPick=Character; peer.CanPick=Can; peer.SlipperPick=Slipper; peer.Rating=Rating; }
+        }
 
         public string JoinCode { get; private set; } = "";
         /// <summary>
@@ -215,7 +224,9 @@ namespace TumbangPreso.Net
             _peers.Clear();
             _seenThisMatch.Clear();
             _heldSeats.Clear();
+            _heldPicks.Clear();
             MatchInProgress = false;
+            _benchedSeats.Clear();
 
             if (LeaderPeerId != -1)
             {
@@ -341,6 +352,9 @@ namespace TumbangPreso.Net
                 // peer's own introduction, and the field would read 0 for every peer that ever
                 // completed a join. `docs/TODO.md` § 144.7.
                 record.Rating = replaced.Rating;
+                // The ordinary Identify introduction must not erase the identity
+                // received with approval. Handle verification remains independent.
+                record.AccountPlayerId = replaced.AccountPlayerId;
                 _peers.Remove(replaced.PeerId);
 
                 if (LeaderPeerId == replaced.PeerId)
@@ -373,7 +387,7 @@ namespace TumbangPreso.Net
                 switch (RuleOnArrival(record.Token))
                 {
                     case MidMatchRuling.Reclaim:
-                        record.Seat = ReclaimSeatFor(record.Token);
+                        record.Seat = ReclaimSeatFor(record.Token, record);
                         break;
 
                     case MidMatchRuling.Seat:
@@ -445,7 +459,10 @@ namespace TumbangPreso.Net
             if (!_peers.TryGetValue(peerId, out var record)) return null;
 
             if (MatchInProgress && record.Seat >= 0 && !string.IsNullOrEmpty(record.Token))
+            {
                 _heldSeats[record.Seat] = record.Token;
+                _heldPicks[record.Seat] = new HeldPicks(record);
+            }
 
             _peers.Remove(peerId);
 
@@ -453,13 +470,15 @@ namespace TumbangPreso.Net
             return record;
         }
 
-        private int ReclaimSeatFor(string token)
+        private int ReclaimSeatFor(string token, PeerRecord returning)
         {
             foreach (var kv in _heldSeats)
             {
                 if (kv.Value != token) continue;
 
                 int seat = kv.Key;
+                if (_heldPicks.TryGetValue(seat, out var picks)) picks.Restore(returning);
+                _heldPicks.Remove(seat);
                 _heldSeats.Remove(seat);
                 return seat;
             }
@@ -472,7 +491,41 @@ namespace TumbangPreso.Net
             foreach (var p in _peers.Values)
                 if (p.Seat >= 0) taken++;
 
-            return Mathf.Max(0, MaxPlayers - taken - _heldSeats.Count);
+            int benched = 0;
+            if (MatchInProgress)
+                foreach (int seat in _benchedSeats)
+                    if (!_heldSeats.ContainsKey(seat) && !SeatTaken(seat)) benched++;
+
+            return Mathf.Max(0, MaxPlayers - taken - _heldSeats.Count - benched);
+        }
+
+        /// <summary>
+        /// Seats that have no body in the running match: a custom room's empty seat with no bot.
+        ///
+        /// ⚠️⚠️ A NEWCOMER MUST NOT BE SEATED IN ONE, owner 2026-10-19: removing every bot used to
+        /// leave four standing bodies, so those seats are no longer built at all
+        /// (`MatchInstaller.SeatHasABody`). A seat with no body cannot be driven, scored or
+        /// shown, so a player arriving mid-match into one would be a camera with nothing to
+        /// follow. They watch instead (`RuleOnArrival` branch 3), and the seat is a normal free
+        /// seat again the moment the match ends.
+        /// </summary>
+        private readonly HashSet<int> _benchedSeats = new HashSet<int>();
+
+        public void BenchSeats(IEnumerable<int> seats)
+        {
+            _benchedSeats.Clear();
+            if (seats != null)
+                foreach (int seat in seats)
+                    if (seat >= 0 && seat < MaxPlayers) _benchedSeats.Add(seat);
+        }
+
+        public bool IsSeatBenched(int seat) => MatchInProgress && _benchedSeats.Contains(seat);
+
+        private bool SeatTaken(int seat)
+        {
+            foreach (var p in _peers.Values)
+                if (p.Seat == seat) return true;
+            return false;
         }
 
         public int FirstFreeSeat()
@@ -480,6 +533,7 @@ namespace TumbangPreso.Net
             for (int seat = 0; seat < MaxPlayers; seat++)
             {
                 if (_heldSeats.ContainsKey(seat)) continue;
+                if (IsSeatBenched(seat)) continue;
 
                 bool used = false;
                 foreach (var p in _peers.Values)
@@ -578,6 +632,18 @@ namespace TumbangPreso.Net
             // Somebody who was spectating and has just sat down is now electable, and on a
             // lobby whose only seated peer left there may be no leader at all.
             ClaimLeaderIfVacant(peerId);
+            return true;
+        }
+
+        internal bool TrySwapSeats(PeerRecord from, PeerRecord to, int fromSeat, int toSeat)
+        {
+            if (MatchInProgress || from == null || to == null || ReferenceEquals(from, to)
+                || fromSeat < 0 || toSeat < 0 || fromSeat >= MaxPlayers || toSeat >= MaxPlayers
+                || from.Spectator || to.Spectator || IsSeatlessReferee(from.PeerId) || IsSeatlessReferee(to.PeerId)
+                || !ReferenceEquals(PeerInSeat(fromSeat), from) || !ReferenceEquals(PeerInSeat(toSeat), to)
+                || !ReferenceEquals(PeerById(from.PeerId), from) || !ReferenceEquals(PeerById(to.PeerId), to)
+                || _heldSeats.ContainsKey(fromSeat) || _heldSeats.ContainsKey(toSeat)) return false;
+            from.Seat = toSeat; to.Seat = fromSeat;
             return true;
         }
 
@@ -737,20 +803,33 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>Everyone actually holding a seat: no referee, no spectators.</summary>
+        public bool IsSeatedPeer(int peerId)
+        {
+            var peer = PeerById(peerId);
+            return peer != null && !IsSeatlessReferee(peerId) && !peer.Spectator &&
+                   peer.Seat >= 0 && peer.Seat < 4;
+        }
+
         public List<int> SeatedPeerIds()
         {
             var ids = new List<int>();
 
             foreach (var p in _peers.Values)
             {
-                if (IsSeatlessReferee(p.PeerId) || p.Spectator) continue;
+                if (!IsSeatedPeer(p.PeerId)) continue;
                 ids.Add(p.PeerId);
             }
 
             return ids;
         }
 
-        public int SeatedPeerCount() => SeatedPeerIds().Count;
+        public int SeatedPeerCount()
+        {
+            int count = 0;
+            foreach (var peer in _peers.Values)
+                if (IsSeatedPeer(peer.PeerId)) count++;
+            return count;
+        }
 
         /// <summary>How many seated guests can answer the host's READY question. The host is
         /// excluded because its action is START MATCH, not READY; including it creates an
@@ -842,6 +921,20 @@ namespace TumbangPreso.Net
         /// unit, because a peer on an older build legitimately sends indices this build has no
         /// entry for.
         /// </summary>
+        public void SetArrivalPicks(int peerId, int character, int can, int slipper)
+        {
+            if (!_peers.TryGetValue(peerId, out var record)) return;
+            if (MatchInProgress)
+            {
+                // Reconnect and repeated Identify cannot replace match choices.
+                // A fresh backfill can still initialize fields not chosen yet.
+                if (record.CharacterPick >= 0) character=record.CharacterPick;
+                if (record.CanPick >= 0) can=record.CanPick;
+                if (record.SlipperPick >= 0) slipper=record.SlipperPick;
+            }
+            SetPicks(peerId,character,can,slipper);
+        }
+
         public void SetPicks(int peerId, int character, int can, int slipper)
         {
             if (!_peers.TryGetValue(peerId, out var record)) return;
@@ -868,6 +961,8 @@ namespace TumbangPreso.Net
         {
             MatchInProgress = true;
             _heldSeats.Clear();
+            _benchedSeats.Clear();
+            _heldPicks.Clear();
         }
 
         /// <summary>
@@ -899,12 +994,16 @@ namespace TumbangPreso.Net
         {
             MatchInProgress = false;
             _heldSeats.Clear();
+            _benchedSeats.Clear();
+            _heldPicks.Clear();
         }
 
         public void EndMatch()
         {
             MatchInProgress = false;
             _heldSeats.Clear();
+            _benchedSeats.Clear();
+            _heldPicks.Clear();
             _seenThisMatch.Clear();
             SetJoinCode("");
         }

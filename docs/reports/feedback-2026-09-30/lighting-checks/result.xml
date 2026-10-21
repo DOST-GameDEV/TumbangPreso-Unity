@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 20:59:36Z" end-time="2026-09-30 20:59:46Z" duration="10.3852187">
+  <test-suite type="TestSuite" id="2230" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="992" result="Passed" start-time="2026-09-30 20:59:36Z" end-time="2026-09-30 20:59:46Z" duration="10.385219" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2224" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="992" result="Passed" start-time="2026-09-30 20:59:36Z" end-time="2026-09-30 20:59:46Z" duration="10.367684" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="179709" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2225" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="992" result="Passed" start-time="2026-09-30 20:59:36Z" end-time="2026-09-30 20:59:46Z" duration="10.357165" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2226" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="992" result="Passed" start-time="2026-09-30 20:59:36Z" end-time="2026-09-30 20:59:46Z" duration="10.346518" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2112" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-30 20:59:36Z" end-time="2026-09-30 20:59:38Z" duration="1.916922" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2116" name="LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard" methodname="LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="486983177" result="Passed" start-time="2026-09-30 20:59:36Z" end-time="2026-09-30 20:59:38Z" duration="1.903110" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] LightingStyleCards-1920x1080/BackIcon: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpGeometry] LightingStyleCards-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] LightingStyleCards-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] LightingStyleCards-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=69, material=1
+[TumpGeometry] LightingStyleCards-1920x1080/Switch: vertices=79, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] LightingStyleCards-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=87, material=1
+[TumpGeometry] LightingStyleCards-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=95, material=1
+[TumpUiCapture] LightingStyleCards-1920x1080 cream source=252,211,159 pixel=34,31,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] LightingStyleCards-1600x680/BackIcon: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpGeometry] LightingStyleCards-1600x680/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] LightingStyleCards-1600x680/Expand: vertices=12, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] LightingStyleCards-1600x680/Expand: vertices=12, cull=False, alpha=1, depth=69, material=1
+[TumpGeometry] LightingStyleCards-1600x680/Switch: vertices=79, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] LightingStyleCards-1600x680/Expand: vertices=12, cull=False, alpha=1, depth=87, material=1
+[TumpGeometry] LightingStyleCards-1600x680/Expand: vertices=12, cull=False, alpha=1, depth=95, material=1
+[TumpUiCapture] LightingStyleCards-1600x680 cream source=252,211,159 pixel=34,31,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] LightingStyleCards-picked-Nostalgic/BackIcon: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpGeometry] LightingStyleCards-picked-Nostalgic/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] LightingStyleCards-picked-Nostalgic/Expand: vertices=12, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] LightingStyleCards-picked-Nostalgic/Expand: vertices=12, cull=False, alpha=1, depth=69, material=1
+[TumpGeometry] LightingStyleCards-picked-Nostalgic/Switch: vertices=79, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] LightingStyleCards-picked-Nostalgic/Expand: vertices=12, cull=False, alpha=1, depth=87, material=1
+[TumpGeometry] LightingStyleCards-picked-Nostalgic/Expand: vertices=12, cull=False, alpha=1, depth=95, material=1
+[TumpUiCapture] LightingStyleCards-picked-Nostalgic cream source=252,211,159 pixel=34,31,29; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2176" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="31" result="Passed" start-time="2026-09-30 20:59:38Z" end-time="2026-09-30 20:59:46Z" duration="8.394247" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2188" name="LightingStyleThumbnails" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.LightingStyleThumbnails" methodname="LightingStyleThumbnails" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="1505266453" result="Passed" start-time="2026-09-30 20:59:38Z" end-time="2026-09-30 20:59:46Z" duration="8.387159" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/lighting-style-qualification/captures/LightingStyle-nostalgic.png
+[Play] wrote Logs/lighting-style-qualification/captures/LightingStyle-standard.png
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

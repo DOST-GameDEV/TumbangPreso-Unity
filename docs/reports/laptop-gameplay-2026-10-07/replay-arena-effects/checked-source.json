@@ -1,0 +1,149 @@
+{
+  "base": "7f9104fa49ab57eddce21cf4c5880026654d2939",
+  "paths": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs",
+      "nativeRawSha256": "95c79887c9a93d6542378677b6df09477ce0cdc5a9b07cb7b2bfe96c5af23968"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs.meta",
+      "nativeRawSha256": "d66afdff24162eee6f6c017e52a6dfa12abf6f9e04e32e7e5067cf8c76401acd"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+      "nativeRawSha256": "99c6326340a8da9d8fad8bdfdf4a9b844f9c34a982b37b14d7124403e33b7957"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs.meta",
+      "nativeRawSha256": "be01043d641802818f43d85bcbee98a5c919647b732e3dffb9c937582b909434"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+      "nativeRawSha256": "c23250448206f4e4f4a4b3f135e112738770ea6158e3bb5a399d03ab8be077c7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs.meta",
+      "nativeRawSha256": "6017b0af08a46723852111d855cf4ba089e36c70821705d88d32c2b29ee61ed9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs",
+      "nativeRawSha256": "3e19f8df65bd4cc7d23a8c7ef0e2efe622563346edb7990c128f19734678c1ae"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs.meta",
+      "nativeRawSha256": "1299b293fe73d67a8c6eb11d921d77c29603ed850ec6f0bb4ab0b9b206e2d52e"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+      "nativeRawSha256": "dc4090031f21bfddcda4a796a0aa8ad224fe28882cdddf70d35674f904271217"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs.meta",
+      "nativeRawSha256": "26853ce3e1fedb572529c0a24c35cfd3185163f9c966c10866fca42eb3efb03e"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs",
+      "nativeRawSha256": "d99aec0a2bdfd2ab951475a57c7a49f2e6f3fd53e9e4acb73e2c652abec49737"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs.meta",
+      "nativeRawSha256": "12827ae0463c6159fa38b34cc73f537b960fadb991ad8bd51c295b55d382cd39"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedShaderClock.cs",
+      "nativeRawSha256": "011c26ec4ab2e5d15a571184f845e15ed9ea3ec8a6b503f4b22b4a0bccccfa02"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedShaderClock.cs.meta",
+      "nativeRawSha256": "e93c46fdd318e1965d974bfc27934b2a4542149f8c324d20e8ffedab778b2410"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/RecordedShaderClockTests.cs",
+      "nativeRawSha256": "2b9896d82bb6b44ce4acb9275e2dfc2e4e5b4cf29e26f71c9c290597e88ca8b1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/RecordedShaderClockTests.cs.meta",
+      "nativeRawSha256": "18326f8a2157b03910b79e9ffedbd262d53b4f13064a883b65b1f1425d63ccaf"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs",
+      "nativeRawSha256": "6ef123966a28137b049e902093864ab08d3f7a30c5dcba559fe5cfde01e9154b"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs.meta",
+      "nativeRawSha256": "053f4d753878bc138e4a131c21db9eb4b4b71d2cb8b9d16766f9492cae0c72f3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs",
+      "nativeRawSha256": "33402252a699df4009bfe50fa7025c08f1dddf9ff2285f2fc2e07367835ff9ea"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs.meta",
+      "nativeRawSha256": "eac0afdd4f5d6d5689f5a2331df96dc0911635f0b5126218e84391115c8ccbb7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs",
+      "nativeRawSha256": "2e53d9e41539e848878e5fd9f46422630ade64a47a9efbe53f1b08dcc35727bd"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs.meta",
+      "nativeRawSha256": "dc147bec8850f372715d07eff007ac23f425bb6ef23677b7e286960e26e82fce"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs",
+      "nativeRawSha256": "ead608c6b4fd57dbef6dd7f6a5eba542af230b88304f057590f35f7312c08103"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs.meta",
+      "nativeRawSha256": "2b43061bba77f5304a888a52e863ee32d76f38a7dc7ce7fe7ad74983c629e2e9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Map/ArenaFx.cs",
+      "nativeRawSha256": "8e2795e0284d8f8af342c66215d9af3de85029af32b5d18eee3699b377518cf7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Map/ArenaFx.cs.meta",
+      "nativeRawSha256": "ca4d2167561c38881560f8242ac6ae1db8341fd69d0ae5e7cef2a199ac58704d"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Map/ArenaFx.Recorded.cs",
+      "nativeRawSha256": "713e28587145757f6e5e0d112250d08829e180e1c264cdde04c5f1ca54426b7c"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Map/ArenaFx.Recorded.cs.meta",
+      "nativeRawSha256": "0bb74ef039f5e980b899638f85e7319edd880301c3d3ddc0a1773f7272fb4b6a"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs",
+      "nativeRawSha256": "6485e09c847c780d239c8c22207de859ddf826a661bc1561888db223bf6550fa"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs.meta",
+      "nativeRawSha256": "9a0ad945a9c14e7a2316da442cf64fc072a803cf3c669f1cba747ee33bb92339"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedArenaEffects.cs",
+      "nativeRawSha256": "691f4cf3189e8f6ab2339397cd91c0a8ca7d9f0baaf6c48994ebe17591f3afdd"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedArenaEffects.cs.meta",
+      "nativeRawSha256": "96eee47c230c2422a4620841da750ddcf7c5bfea2aa6998d0c4a8a9cda2cb648"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayEffectsCodec.cs",
+      "nativeRawSha256": "44dc1006098a5a02722fe710c3c6fb47f025fa7faad88917c1188529d57c326a"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayEffectsCodec.cs.meta",
+      "nativeRawSha256": "a6c0bc2880eda672ccaf45b92d6109e3e30a476ffffaf86df9167a2dd4be439e"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+      "nativeRawSha256": "e06f62df39a0f586e1b23ec98ba65cb4bf1c70864f1fe99e7b3e6d66395e5569"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs.meta",
+      "nativeRawSha256": "536e3abbe231226f8103274b2272182a239f3344dc605580354191d8a32de1e0"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 18:59:03Z" end-time="2026-10-08 18:59:35Z" duration="32.197811">
+  <test-suite type="TestSuite" id="3668" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2158" result="Passed" start-time="2026-10-08 18:59:03Z" end-time="2026-10-08 18:59:35Z" duration="32.197811" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3660" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2158" result="Passed" start-time="2026-10-08 18:59:03Z" end-time="2026-10-08 18:59:35Z" duration="32.148097" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="76228" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3661" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2158" result="Passed" start-time="2026-10-08 18:59:03Z" end-time="2026-10-08 18:59:35Z" duration="32.113769" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3664" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2156" result="Passed" start-time="2026-10-08 18:59:03Z" end-time="2026-10-08 18:59:35Z" duration="32.082735" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2862" name="RecordedCompanionTests" fullname="TumbangPreso.PlayTests.RecordedCompanionTests" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-08 18:59:03Z" end-time="2026-10-08 18:59:35Z" duration="31.863910" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2865" name="ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" fullname="TumbangPreso.PlayTests.RecordedCompanionTests.ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" methodname="ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" seed="1061402367" result="Passed" start-time="2026-10-08 18:59:03Z" end-time="2026-10-08 18:59:35Z" duration="31.756713" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[RecordedCompanion] seat=5 bytes=4811 objects=11 held samples=20
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2864" name="CurrentCompanionSeatsAndHoldersRemainBounded" fullname="TumbangPreso.PlayTests.RecordedCompanionTests.CurrentCompanionSeatsAndHoldersRemainBounded" methodname="CurrentCompanionSeatsAndHoldersRemainBounded" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" seed="2137388738" result="Passed" start-time="2026-10-08 18:59:35Z" end-time="2026-10-08 18:59:35Z" duration="0.047200" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2863" name="Version14PlayerClipsRemainReadableAndRejectCompanionSeats" fullname="TumbangPreso.PlayTests.RecordedCompanionTests.Version14PlayerClipsRemainReadableAndRejectCompanionSeats" methodname="Version14PlayerClipsRemainReadableAndRejectCompanionSeats" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" seed="516992349" result="Passed" start-time="2026-10-08 18:59:35Z" end-time="2026-10-08 18:59:35Z" duration="0.039954" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

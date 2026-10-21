@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/MatchInstaller.cs": true,
+  "Assets/TumbangPreso/Runtime/CharacterMotor.cs": true,
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs": true,
+  "Assets/TumbangPreso/Tests/PlayMode/SeatProducerTransferLifetimeTests.cs": true,
+  "Assets/TumbangPreso/Tests/PlayMode/SeatProducerTransferLifetimeTests.cs.meta": true
+}

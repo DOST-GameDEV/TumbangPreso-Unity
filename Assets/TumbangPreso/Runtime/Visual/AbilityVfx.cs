@@ -36,6 +36,16 @@ namespace TumbangPreso.Visual
             GetParticleMaterial();
         }
 
+        public static System.Collections.IEnumerator WarmupAssets()
+        {
+            Warmup();
+            _ = Chip; yield return null;
+            _ = Grain; yield return null;
+            _ = Flake; yield return null;
+            _ = ElectricNeedle; yield return null;
+            _ = Runes; yield return null;
+        }
+
         /// <summary>
         /// Stop a freshly added emitter dead before anything is written to it.
         ///
@@ -169,6 +179,7 @@ namespace TumbangPreso.Visual
 
             var go = new GameObject("Vfx_Aura_" + aura);
             go.transform.SetParent(host, false);
+            go.layer = host.gameObject.layer;
             go.transform.localPosition = new Vector3(0.0f, 0.9f, 0.0f);
 
             var ps = go.AddComponent<ParticleSystem>();
@@ -387,6 +398,7 @@ namespace TumbangPreso.Visual
                 new Keyframe(1.00f, 0.14f));
             emission.rateOverTime = new ParticleSystem.MinMaxCurve(peakRate, falloff);
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -775,6 +787,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             colorOverLifetime.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -848,6 +861,7 @@ namespace TumbangPreso.Visual
                         new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -894,6 +908,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -939,6 +954,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(0.0f, 0.0f), new GradientAlphaKey(0.8f, 0.3f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -990,6 +1006,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -1036,6 +1053,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -1123,6 +1141,7 @@ namespace TumbangPreso.Visual
             }
 
             col.color = grad;
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }

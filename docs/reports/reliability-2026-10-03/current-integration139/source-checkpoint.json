@@ -1,0 +1,11 @@
+{
+  "sourceCommit": "70a9ede94072d2fc45de55c0b1244bbdf360b056",
+  "workerCommit": "ca95f6e22",
+  "protocol": 139,
+  "session": 3459,
+  "expectedCases": 19,
+  "profile": "current-integration139",
+  "output": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-codex-slot1003\\Logs\\current-integration139",
+  "sourceCodeDeltaEmpty": true,
+  "next": "Inspect native XML and terminal guard restoration; never count absent/zero results as pass"
+}

@@ -95,6 +95,22 @@ namespace TumbangPreso.UI
             return false;
         }
 
+        /// <summary>
+        /// A parent canvas must step aside for external screens, not for its own nested chat
+        /// history. Disabling that parent also removes the history's picture and hit targets.
+        /// </summary>
+        public static bool AnyOpenOutside(Transform root)
+        {
+            for (int i = Registered.Count - 1; i >= 0; i--)
+            {
+                var entry = Registered[i];
+                if (entry.Owner == null) { Registered.RemoveAt(i); continue; }
+                if (root != null && entry.Owner.transform.IsChildOf(root)) continue;
+                if (entry.IsOpen()) return true;
+            }
+            return false;
+        }
+
         /// <summary>True while any registered screen is covering the game.</summary>
         public static bool AnyOpen
         {

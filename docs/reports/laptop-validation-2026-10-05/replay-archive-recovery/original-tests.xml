@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 10:26:53Z" end-time="2026-10-05 10:27:46Z" duration="52.641533">
+  <test-suite type="TestSuite" id="3150" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1755" result="Failed" site="Child" start-time="2026-10-05 10:26:53Z" end-time="2026-10-05 10:27:46Z" duration="52.641533" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3142" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1755" result="Failed" site="Child" start-time="2026-10-05 10:26:53Z" end-time="2026-10-05 10:27:46Z" duration="52.624687" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43228" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3143" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1755" result="Failed" site="Child" start-time="2026-10-05 10:26:53Z" end-time="2026-10-05 10:27:46Z" duration="52.613823" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3146" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1753" result="Failed" site="Child" start-time="2026-10-05 10:26:53Z" end-time="2026-10-05 10:27:46Z" duration="52.603032" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2517" name="ReplayArchiveRecoveryTests" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-05 10:26:53Z" end-time="2026-10-05 10:27:46Z" duration="52.579158" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2520" name="DisabledArchiveDoesNotRecordEvenWhenRebound" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests.DisabledArchiveDoesNotRecordEvenWhenRebound" methodname="DisabledArchiveDoesNotRecordEvenWhenRebound" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" seed="497790922" result="Failed" start-time="2026-10-05 10:26:53Z" end-time="2026-10-05 10:27:11Z" duration="17.372904" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A disabled archive still consumed live pose samples.
+  Expected: 10
+  But was:  14
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReplayArchiveRecoveryTests+<DisabledArchiveDoesNotRecordEvenWhenRebound>d__5.MoveNext () [0x000fd] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ReplayArchiveRecoveryTests.cs:60
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2518" name="ReenabledArchiveRetainsANewActualCatch" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests.ReenabledArchiveRetainsANewActualCatch" methodname="ReenabledArchiveRetainsANewActualCatch" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" seed="1212970867" result="Failed" start-time="2026-10-05 10:27:11Z" end-time="2026-10-05 10:27:28Z" duration="17.628742" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A fresh accepted catch was not retained after archive recovery: 
+  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReplayArchiveRecoveryTests+<Catch>d__4.MoveNext () [0x001c6] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ReplayArchiveRecoveryTests.cs:42
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2519" name="UninterruptedArchiveStillRetainsANewActualCatch" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests.UninterruptedArchiveStillRetainsANewActualCatch" methodname="UninterruptedArchiveStillRetainsANewActualCatch" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" seed="451901032" result="Passed" start-time="2026-10-05 10:27:28Z" end-time="2026-10-05 10:27:46Z" duration="17.567150" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
@@ -32,6 +34,16 @@ namespace TumbangPreso.UI
     {
         private TumpHomeView _nativeHome;
         private TumpCreditsView _nativeCredits;
+        private bool _bootLoading;
+        private AsyncOperation _homePreload;
+        private bool _homeAssetsStarted, _homeAssetsReady;
+        private float _homeAssetsProgress;
+        private bool _homeArrival;
+        public const float MinimumLoadingViewSeconds = 5;
+        private float _loadingViewBegan;
+        private ThreadPriority _previousLoadingPriority;
+        private bool _ownsLoadingPriority;
+        public bool IsPrepared { get; private set; }
 
         /// <summary>
         /// ⚠️⚠️ THE TITLE SCREEN LEAVES THE GAME ON ESCAPE, AND SINCE 2026-09-18 IT IS THE ONLY
@@ -72,9 +84,153 @@ namespace TumbangPreso.UI
             });
             var signIn = GetComponent<SignInScreen>();
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
-            signIn.Opened += open => { if (open) _nativeHome.Suspend(); else _nativeHome.Resume(); };
-            Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+            signIn.Opened += OnLoginVisibility;
+            CursorMode.Release();
+            _bootLoading = false;
             OfferTheLoginStep();
+            IsPrepared = true;
+            if(!_bootLoading && !signIn.IsOpen) BeginHomeArrival();
+        }
+
+        internal void CompleteBootLoading()
+        {
+            if (!_bootLoading) return;
+            _bootLoading = false;
+            _nativeHome.SetLoading(true);
+            // Install ran behind loading; the welcome timer starts only when revealed.
+            OfferTheLoginStep();
+            var signIn=GetComponent<SignInScreen>();
+            if(signIn==null || !signIn.IsOpen) BeginHomeArrival();
+        }
+
+        private void OnLoginVisibility(bool open)
+        {
+            if(open)
+            {
+                _nativeHome.Suspend();
+                BeginHomePreload();
+            }
+            else
+            {
+                _nativeHome.Resume();
+                BeginHomeArrival();
+            }
+        }
+
+        private void BeginHomePreload()
+        {
+            if(_homeAssetsStarted) return;
+            _homeAssetsStarted=true;
+            // Resource requests leave Unity's scene queue free while login is open.
+            // Defer scene activation and its component work until login completes.
+            _previousLoadingPriority=Application.backgroundLoadingPriority;
+            _ownsLoadingPriority=true;
+            Application.backgroundLoadingPriority=ThreadPriority.Low;
+            StartCoroutine(PreloadHomeAssets());
+        }
+
+        private IEnumerator PreloadHomeAssets()
+        {
+            yield return null;
+            // The Hero door and match setup share this resource cache. Prepare it
+            // while the existing login/title surface owns the loading work.
+            long rosterBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            yield return RosterBook.Warmup();
+            if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-tp-ui-code-warmup")>=0)
+                yield return UiCodePreparation.Prepare();
+            if(ModelPreview.LoadTimingEnabled)
+                Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=roster-resource-wait wall_ms={ModelPreview.LoadElapsedMs(rosterBegan):F3} scope=async-wait-not-main-thread-cost"));
+            long visualsBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            yield return PreloadRosterVisuals(RosterBook.Load());
+            if(ModelPreview.LoadTimingEnabled)
+                Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=roster-visual-preparation wall_ms={ModelPreview.LoadElapsedMs(visualsBegan):F3} scope=coroutine-total-includes-yields"));
+            _homeAssetsProgress=.3f;
+            // The retired splash preparation no longer runs on this route.
+            // Keep its yielded shared icons, props and effect data ready here.
+            long gameplayBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.3f+.25f*done);
+            if(ModelPreview.LoadTimingEnabled)
+                Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=gameplay-preparation wall_ms={ModelPreview.LoadElapsedMs(gameplayBegan):F3} scope=coroutine-total-includes-yields"));
+            long postersBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            yield return OwnerPortraitArt.WarmupModeCards(done=>_homeAssetsProgress=.55f+.1f*done);
+            if(ModelPreview.LoadTimingEnabled)
+                Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=mode-posters wall_ms={ModelPreview.LoadElapsedMs(postersBegan):F3} scope=async-wait-includes-yields"));
+            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.65f+.15f*done);
+            // Reuse the existing caches and decoder preparation rather than
+            // making a second copy of the Home resource set.
+            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.8f+.2f*done);
+            _homeAssetsReady=true;
+        }
+
+        private IEnumerator PreloadRosterVisuals(RosterBook book)
+        {
+            if(book==null) yield break;
+            // These session caches used to be prepared by the retired splash.
+            // Preserve that first-use work behind the current loading view without
+            // creating actors, animation graphs or changing authored materials.
+            var models=new HashSet<GameObject>();
+            if(book.People!=null)
+                for(int index=0;index<book.People.Count;index++)
+                {
+                    var person=book.People[index];
+                    if(person!=null)
+                    {
+                        if(person.Model!=null) models.Add(person.Model);
+                        if(person.ArmModel!=null) models.Add(person.ArmModel);
+                        if(person.PetModel!=null) models.Add(person.PetModel);
+                        yield return Visual.GeneratedMotionAssets.Warmup(person.Model);
+                    }
+                    _homeAssetsProgress=.2f+.04f*(index+1)/Mathf.Max(1,book.People.Count);
+                }
+            if(book.Cans!=null)
+                foreach(var can in book.Cans)
+                    if(can!=null && can.Model!=null) models.Add(can.Model);
+            if(book.Slippers!=null)
+                foreach(var slipper in book.Slippers)
+                    if(slipper!=null && slipper.Model!=null) models.Add(slipper.Model);
+            int prepared=0;
+            foreach(var model in models)
+            {
+                yield return Visual.OutlineNormals.Warmup(model);
+                _homeAssetsProgress=.24f+.06f*(++prepared)/Mathf.Max(1,models.Count);
+            }
+        }
+
+        private void BeginHomeArrival()
+        {
+            if(_homeArrival) return;
+            _homeArrival=true;
+            _nativeHome.SetLoading(true);
+            BeginHomePreload();
+            StartCoroutine(ArriveHome());
+        }
+
+        private IEnumerator ArriveHome()
+        {
+            // Admission callbacks and first canvas work can occupy this frame.
+            // Give the revealed title a rendered frame before its visible-time gate.
+            yield return null;
+            _loadingViewBegan=Time.realtimeSinceStartup;
+            while(!_homeAssetsReady || Time.realtimeSinceStartup-_loadingViewBegan<MinimumLoadingViewSeconds)
+            {
+                _nativeHome.SetLoadingProgress(_homeAssetsProgress*.65f);
+                yield return null;
+            }
+            SceneFlow.Networked=false;
+            PlaySelectionScreen.RequestedLobbyMode=null;
+            Hub.TumpHub.PendingEntry=Hub.HubEntry.Home;
+            _homePreload=SceneManager.LoadSceneAsync(SceneFlow.MatchSetup,LoadSceneMode.Single);
+            while(_homePreload!=null && !_homePreload.isDone)
+            {
+                _nativeHome.SetLoadingProgress(.65f+.35f*_homePreload.progress);
+                yield return null;
+            }
+            _nativeHome.SetLoadingProgress(1);
+        }
+
+        private void OnDestroy()
+        {
+            if(_ownsLoadingPriority) Application.backgroundLoadingPriority=_previousLoadingPriority;
         }
 
         private void WireLegacyReference()
@@ -127,8 +283,7 @@ namespace TumbangPreso.UI
             Overlay("CreditsButton", "CreditsPanel");
 
             // The title screen is where the mouse comes back. A match captures it.
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            CursorMode.Release();
 
             GameServices.Music?.Play("menu", GameServices.MenuTrack);
 

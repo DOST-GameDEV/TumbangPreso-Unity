@@ -1,0 +1,14 @@
+{
+  "oldMaps": [
+    "Eskinita",
+    "BayanPlaza",
+    "SaBubong",
+    "Arena"
+  ],
+  "excludedChangedBranches": [
+    "IlalimNgTulay",
+    "LagoonCove"
+  ],
+  "AimAtWithoutNewMapOnlyBranchesEqualsOld": true,
+  "ignoredDifference": "one blank line before final brace"
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.2632094">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.263209" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.213215" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25560" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.198158" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1865" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.184522" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1603" name="PeerDepartureTests" fullname="TumbangPreso.Tests.PeerDepartureTests" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.150570" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1607" name="CompleteNoticeAfterTheNgoNameHashStillArrivesOnce" fullname="TumbangPreso.Tests.PeerDepartureTests.CompleteNoticeAfterTheNgoNameHashStillArrivesOnce" methodname="CompleteNoticeAfterTheNgoNameHashStillArrivesOnce" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="1092745502" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.097212" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1609" name="IntentLengthUsesTheUnreadPayloadAfterTheNgoNameHash" fullname="TumbangPreso.Tests.PeerDepartureTests.IntentLengthUsesTheUnreadPayloadAfterTheNgoNameHash" methodname="IntentLengthUsesTheUnreadPayloadAfterTheNgoNameHash" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="145358386" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.003181" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1610" name="NewTransportClearsNoticeStateAndNamesCannotInjectMarkup" fullname="TumbangPreso.Tests.PeerDepartureTests.NewTransportClearsNoticeStateAndNamesCannotInjectMarkup" methodname="NewTransportClearsNoticeStateAndNamesCannotInjectMarkup" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="1745347187" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.006947" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1608" name="OnlyFreshHostNoticesReachThePlayerOnce" fullname="TumbangPreso.Tests.PeerDepartureTests.OnlyFreshHostNoticesReachThePlayerOnce" methodname="OnlyFreshHostNoticesReachThePlayerOnce" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="1178460523" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.000684" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1606" name="TrailingPayloadCannotShowANoticeOrConsumeItsSequence" fullname="TumbangPreso.Tests.PeerDepartureTests.TrailingPayloadCannotShowANoticeOrConsumeItsSequence" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.004605" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1604" name="TrailingPayloadCannotShowANoticeOrConsumeItsSequence(1)" fullname="TumbangPreso.Tests.PeerDepartureTests.TrailingPayloadCannotShowANoticeOrConsumeItsSequence(1)" methodname="TrailingPayloadCannotShowANoticeOrConsumeItsSequence" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="1394320809" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.000940" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1605" name="TrailingPayloadCannotShowANoticeOrConsumeItsSequence(64)" fullname="TumbangPreso.Tests.PeerDepartureTests.TrailingPayloadCannotShowANoticeOrConsumeItsSequence(64)" methodname="TrailingPayloadCannotShowANoticeOrConsumeItsSequence" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="1293343116" result="Passed" start-time="2026-10-01 05:11:43Z" end-time="2026-10-01 05:11:43Z" duration="0.000426" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

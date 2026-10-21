@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 19:54:07Z" end-time="2026-10-04 19:54:26Z" duration="18.9867903">
+  <test-suite type="TestSuite" id="3117" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1728" result="Failed" site="Child" start-time="2026-10-04 19:54:07Z" end-time="2026-10-04 19:54:26Z" duration="18.986790" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3109" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1728" result="Failed" site="Child" start-time="2026-10-04 19:54:07Z" end-time="2026-10-04 19:54:26Z" duration="18.977518" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="162718" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3110" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1728" result="Failed" site="Child" start-time="2026-10-04 19:54:07Z" end-time="2026-10-04 19:54:26Z" duration="18.974972" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3113" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1726" result="Failed" site="Child" start-time="2026-10-04 19:54:07Z" end-time="2026-10-04 19:54:26Z" duration="18.972612" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1248" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="43" result="Failed" site="Child" start-time="2026-10-04 19:54:07Z" end-time="2026-10-04 19:54:26Z" duration="18.946000" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1261" name="AuthoredMapCloseTagAtSixtyHzRetainsContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapCloseTagAtSixtyHzRetainsContact" methodname="AuthoredMapCloseTagAtSixtyHzRetainsContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="365729647" result="Failed" start-time="2026-10-04 19:54:07Z" end-time="2026-10-04 19:54:26Z" duration="18.930623" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual rendered reaching hand must reach the accepted victim's visible body bounds.
+  Expected: less than 0.0799999982f
+  But was:  0.373223394f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__42.MoveNext () [0x00b98] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs:441
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+distance=1 contactGap=0.3732234 contactAlpha=1 sampleError=0 frames=20 bodyShift=0 torsoLean=4.999985 armStretch=1 skinSurfaceGap=0.8217009
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

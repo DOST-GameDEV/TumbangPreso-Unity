@@ -1,0 +1,72 @@
+{
+  "sourceRef": "bff14e59ee69c28c5c35ae60e37fdede7566ef9a",
+  "profile": "pc-relay-timeout-await1005",
+  "filter": "TumbangPreso.Tests.RelayJoinTimeoutTests",
+  "expectedCases": 7,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-relay-timeout-await1005",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.RelayJoinTimeoutTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\relay-join-timeout1005\\candidate-awaited-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\relay-join-timeout1005\\candidate-awaited-native\\editor.log"
+  ],
+  "pid": 14752,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.AlreadySuccessfulRequestDoesNotRepeat",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.CancelledAttemptCannotRetry",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.RepeatedTimeoutStopsAfterOneRetry",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.ReplacedAttemptCannotRetryOrInvalidateItsSuccessor",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(NetworkError)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(RequestTimeOut)",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19294,
+  "terminal": true
+}

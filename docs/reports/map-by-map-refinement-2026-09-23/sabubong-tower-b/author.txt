@@ -1,0 +1,4 @@
+CityBlock_1: 3 secondary divisions within original glass planes.
+CityBlock_6: 6 secondary divisions within original glass planes.
+CityBlock_11: 6 secondary divisions within original glass planes.
+Three B towers retained with 15secondary mullions, 60vertices/one renderer. Original glass/palette/body/primary frames and other tower families untouched; no new collision/shadow caster.

@@ -1,0 +1,29 @@
+{
+  "base": "a60d3f672d02d54700ce86f678ec9cbbfb4f1db6",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0",
+  "core": "Unchanged Core/ref assemblies reused",
+  "nativeTests": "NOT RUN: existing disk reserve boundary; no repeated editor launch",
+  "runtimeAssemblySha256": "66EF8D5F936212A2646DB24A1FFF9754B36B69AEDD6A3E12CBB0E46E35E7EC3A",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs",
+      "sha256": "52D951F8C87D1E590BA6CE19A4502705FB76C3E5BC40D9C615D32457197C58EC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "0C4FCA70A6529E02A1D5DC767C7BE208DCE60F57A0BBE9D7155ACE47C337B629"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/AmihanVfx.cs",
+      "sha256": "09192D56581541A03A9E6BDFEC0CE3F3FF6B657405C236B8411432387DB63B0F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CheskaIceVisuals.cs",
+      "sha256": "DFC0E2FC3987381FBA8E37AB3F6B2DE9B628E2F1DE376DE90E902782E1804A3C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "A6100188BCA97A1E529D0ACA906A75886FAD967F55F48E207E07622FE160278A"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "baselineExpected": {
+    "total": 3,
+    "causalFailures": 3
+  },
+  "finalExpected": {
+    "total": 3,
+    "passed": 3
+  },
+  "filter": "TumbangPreso.PlayTests.SpectatorCameraLifetimeTests",
+  "platform": "PlayMode",
+  "repairsUsed": 0,
+  "repairLimit": 1,
+  "scope": "Actual Unity OnEnable/OnDisable, Unity Camera flags and public RebindLocalSeat with minimalbody. No rawkeypress,InputSettings mutation,renderedframe,mapload,authoredhero camera change ortransportclaim."
+}

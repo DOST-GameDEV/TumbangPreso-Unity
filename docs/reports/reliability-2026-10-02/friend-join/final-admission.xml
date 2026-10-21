@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:40:37Z" end-time="2026-10-02 02:40:43Z" duration="5.3105253">
+  <test-suite type="TestSuite" id="2515" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1239" result="Passed" start-time="2026-10-02 02:40:37Z" end-time="2026-10-02 02:40:43Z" duration="5.310525" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2509" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1239" result="Passed" start-time="2026-10-02 02:40:37Z" end-time="2026-10-02 02:40:43Z" duration="5.286085" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17056" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2510" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1239" result="Passed" start-time="2026-10-02 02:40:37Z" end-time="2026-10-02 02:40:43Z" duration="5.270698" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2511" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1239" result="Passed" start-time="2026-10-02 02:40:37Z" end-time="2026-10-02 02:40:43Z" duration="5.255039" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1949" name="PlayerHubFriendJoinTests" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 02:40:37Z" end-time="2026-10-02 02:40:43Z" duration="5.203590" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1952" name="HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests.HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission" methodname="HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinTests" runstate="Runnable" seed="1696161422" result="Passed" start-time="2026-10-02 02:40:37Z" end-time="2026-10-02 02:40:43Z" duration="5.186316" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] connecting to 127.0.0.1:56178
+[Net] connected as seat 2
+[Net] connected as spectator
+[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 51104, join code XF2W
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

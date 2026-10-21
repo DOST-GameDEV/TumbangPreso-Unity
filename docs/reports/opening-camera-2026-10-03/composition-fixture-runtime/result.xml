@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 15:55:15Z" end-time="2026-10-03 15:55:17Z" duration="1.448269">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1130" result="Failed" site="Child" start-time="2026-10-03 15:55:15Z" end-time="2026-10-03 15:55:17Z" duration="1.448269" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2379" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1130" result="Failed" site="Child" start-time="2026-10-03 15:55:15Z" end-time="2026-10-03 15:55:17Z" duration="1.431609" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="119980" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2380" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1130" result="Failed" site="Child" start-time="2026-10-03 15:55:15Z" end-time="2026-10-03 15:55:17Z" duration="1.422467" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2381" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1130" result="Failed" site="Child" start-time="2026-10-03 15:55:15Z" end-time="2026-10-03 15:55:17Z" duration="1.413807" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1953" name="OpeningCameraCompositionTests" fullname="TumbangPreso.Tests.OpeningCameraCompositionTests" classname="TumbangPreso.Tests.OpeningCameraCompositionTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-03 15:55:15Z" end-time="2026-10-03 15:55:17Z" duration="1.396329" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1954" name="PhotographActualArenaAndCharactersUsingProductionCameraSamples" fullname="TumbangPreso.Tests.OpeningCameraCompositionTests.PhotographActualArenaAndCharactersUsingProductionCameraSamples" methodname="PhotographActualArenaAndCharactersUsingProductionCameraSamples" classname="TumbangPreso.Tests.OpeningCameraCompositionTests" runstate="Explicit" seed="1089692654" result="Failed" label="Error" start-time="2026-10-03 15:55:15Z" end-time="2026-10-03 15:55:17Z" duration="1.382736" asserts="0">
+              <properties>
+                <property name="_SKIPREASON" value="Actual arena composition capture, without runtime match bootstrap" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at TumbangPreso.Tests.OpeningCameraCompositionTests.PhotographActualArenaAndCharactersUsingProductionCameraSamples () [0x005cd] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/OpeningCameraCompositionTests.cs:85 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <94b103fb80364239bfc0542bee09d001>:0 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

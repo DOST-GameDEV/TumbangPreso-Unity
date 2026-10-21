@@ -87,6 +87,20 @@ namespace TumbangPreso.Tests
             Assert.Less(Quaternion.Angle(grip, arm.localRotation), .1f, "The gait mask reaches the carrying arm.");
         }
 
+        [Test]
+        public void CommittedSlideKeepsItsAuthoredLegsInsteadOfTheWalkingLayer()
+        {
+            Set(_motor, "_grounded", true);
+            Set(_motor, "_velocity", new Vector3(0, 0, 2.4f));
+            _motor.HoldingSlipper = true;
+            _driver.PlayAction("slide");
+            Assert.IsTrue(_driver.IsPlayingAction);
+            Set(_driver, "_gaitWeight", 1f);
+            Invoke(_driver, "AdvanceGait", .1f);
+            Assert.AreEqual(0, Get<float>(_driver, "_gaitWeight"),
+                "Mobile upper-body exceptions must not erase the slide's authored support pose.");
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting(bool holding)
@@ -172,52 +186,64 @@ namespace TumbangPreso.Tests
             }
         }
 
+        /// <summary>
+        /// ⚠️ THE CADENCE IS EACH CHARACTER'S OWN STRIDE TIMES ITS OWN GLIDE (2026-09-27). This used to measure the shared `walk` and
+        /// `sprint` clips' feet against the calibration; the legs are now posed from each body's `GaitStyle` (the clips' legs are
+        /// never drawn while walking), so the question is whether the body travels what its drawn stride covers, times the slide
+        /// that character is allowed (`Gait.Glide`: these sub-metre bodies at 2.3 to 4.2 m/s would otherwise take 4 to 8 steps
+        /// a second). The glide is capped so no character skates: at most 1.7, a stride covering at least 59 per cent of the
+        /// ground. And every body must resolve to its OWN style, never the fallback.
+        /// </summary>
         [Test]
         public void GaitCadenceMatchesTheActualFootTravelOnEveryRosterRig()
         {
             var failures = new System.Collections.Generic.List<string>();
-            var rows = new System.Collections.Generic.List<string> { "id,gait,authored_cycle_metres,calibrated_cycle_metres" };
+            var rows = new System.Collections.Generic.List<string> { "id,style,gait,stride_cycle_metres,calibrated_cycle_metres,glide" };
             foreach (var entry in Resources.Load<RosterBook>("RosterBook").People)
             {
                 var old = _model;
                 _model = Object.Instantiate(entry.Model, _seat.transform);
                 _model.transform.localScale = Vector3.one * CharacterVisual.PersonScale;
+                _driver.GaitSource = entry.Model.name;
                 _driver.Bind(_model, entry.Clips);
                 Object.DestroyImmediate(old);
-                var graph = Get<PlayableGraph>(_driver, "_graph");
-                graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
-                var skin = _model.GetComponentsInChildren<SkinnedMeshRenderer>().First(s =>
-                    s.bones.Any(b => b.name == "leg-left"));
+                var style = _driver.Style;
+                if (style == GaitStyles.Custom && !entry.Id.StartsWith("custom"))
+                    failures.Add($"{entry.Id} ({entry.Model.name}) walks with the fallback style, not its own");
+                var skin = _model.GetComponentsInChildren<SkinnedMeshRenderer>().First(s => s.bones.Any(b => b.name == "leg-left"));
                 int index = System.Array.FindIndex(skin.bones, b => b.name == "leg-left");
-                var vertices = skin.sharedMesh.vertices;
-                var weights = skin.sharedMesh.boneWeights;
-                var inverse = skin.sharedMesh.bindposes[index];
-                var foot = Enumerable.Range(0, vertices.Length)
-                    .Where(i => weights[i].boneIndex0 == index && weights[i].weight0 > .99f)
-                    .Select(i => inverse.MultiplyPoint3x4(vertices[i])).ToArray();
-                float floor = foot.Min(p => p.y);
-                var sole = foot.Where(p => p.y < floor + .02f).ToArray();
-                Vector3 local = sole.Aggregate(Vector3.zero, (sum,p) => sum+p) / sole.Length;
+                float reach = (skin.sharedMesh.bindposes[index].inverse.MultiplyPoint3x4(Vector3.zero).y - skin.sharedMesh.bounds.min.y)
+                    * skin.transform.TransformVector(Vector3.up).magnitude;
                 foreach (string gait in new[] { "walk", "sprint" })
                 {
-                    _driver.PlayOneShot(gait);
-                    Set(_driver,"_weight",1f); Invoke(_driver,"Blend");
-                    var front = (AnimationClipPlayable)Invoke(_driver,"Front");
-                    float duration = front.GetAnimationClip().length;
-                    front.SetTime(duration*.25f); graph.Evaluate(0);
-                    Vector3 first = skin.bones[index].TransformPoint(local);
-                    front.SetTime(duration*.75f); graph.Evaluate(0);
-                    Vector3 last = skin.bones[index].TransformPoint(local);
-                    float cycle = 2f * Mathf.Abs(Vector3.Dot(last-first,_model.transform.forward));
-                    float calibrated = duration * Get<float>(_driver,gait=="walk"?"_walkReference":"_runReference");
-                    rows.Add($"{entry.Id},{gait},{cycle:F4},{calibrated:F4}");
-                    if (cycle < .1f || Mathf.Abs(calibrated-cycle) > cycle*.15f)
-                        failures.Add($"{entry.Id}/{gait}: feet travel {cycle:F3} m per cycle, calibration moves the body {calibrated:F3} m");
+                    var g = gait == "walk" ? style.Walk : style.Run;
+                    float stride = 2f * reach * (Mathf.Sin(g.LegForward * Mathf.Deg2Rad) + Mathf.Sin(g.LegBack * Mathf.Deg2Rad)) * Mathf.Cos(g.Stance * Mathf.Deg2Rad);
+                    var clip = Get<System.Collections.Generic.Dictionary<string, AnimationClip>>(_driver, "_clips")[gait];
+                    float calibrated = clip.length * Get<float>(_driver, gait == "walk" ? "_walkReference" : "_runReference");
+                    rows.Add($"{entry.Id},{style.Name},{gait},{stride:F4},{calibrated:F4},{g.Glide:F2}");
+                    if (stride < .1f || Mathf.Abs(calibrated - stride * Mathf.Max(1f, g.Glide)) > stride * .02f)
+                        failures.Add($"{entry.Id}/{gait}: stride {stride:F3} m x glide {g.Glide:F2}, calibration moves the body {calibrated:F3} m");
+                    float cap = style.Floats ? 3f : 1.7f;
+                    if (g.Glide < 1f || g.Glide > cap)
+                        failures.Add($"{entry.Id}/{gait}: glide {g.Glide:F2} is outside 1 to {cap} (feet skate, or the cadence is a blur)");
                 }
             }
             System.IO.Directory.CreateDirectory("Logs");
             System.IO.File.WriteAllLines("Logs/gait-cadence.csv",rows);
             Assert.IsEmpty(failures,string.Join("\n",failures));
+        }
+
+        [Test]
+        public void NemuKeepsHerMouthInHerCowl()
+        {
+            // Her cowl rides the torso and her mouth the head: any chin lift against the chest bares her mouth. The weight
+            // layer lifts the chin up to 0.45 of an 8 degree lean on a hard start, so the gait keeps 3.6 degrees in hand.
+            for (float run = 0; run <= 1.001f; run += .25f)
+                for (float t = 0; t < 4; t += .05f)
+                {
+                    var p = GaitStyles.Nemu.Evaluate(t * .7f % 1f, run, t, 1.4f);
+                    Assert.GreaterOrEqual(p.HeadPitch, 3.6f, $"run {run:F2}, t {t:F2}: her chin lifts out of the cowl");
+                }
         }
 
         private static T Get<T>(object target, string name) => (T)target.GetType().GetField(name, Private).GetValue(target);

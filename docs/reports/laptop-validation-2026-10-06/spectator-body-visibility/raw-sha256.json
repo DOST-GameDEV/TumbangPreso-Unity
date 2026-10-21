@@ -1,0 +1,15 @@
+{
+  "raw/original-launch.json": "1aedb9417a9d1ea99a987155ca73fb924597ef7a483f1cac28c69cea707dedcc",
+  "raw/original-classified-result.json": "5cc13ed76a5bdd1afd8bcc3b3ade6fb136ecd459d818ea11f1bed219e20e0816",
+  "raw/original-tests.xml": "7b9cc6efcb71f155859d26781ff876d8f2715fb928d613350ea318b15bb2a409",
+  "raw/candidate-launch.json": "48bf0893bb8d8f2eb9e3dad189e7d62961933276d25ef7a632e66d3eb3bda6ca",
+  "raw/candidate-classified-result.json": "6b803973de8c4685491b3e6115edc84c749f25aa494be13b20850c287e8a9830",
+  "raw/candidate-tests.xml": "3443a0b8d224744000ee35855e80baa6e0aedda57d4bad569c4952caff756ec2",
+  "raw/lifetime-launch.json": "181815f5712ef837e181c6cdda00e1f47111468eb6ad39fa5cb28879d07ab77d",
+  "raw/lifetime-classified-result.json": "7fe8269c8ecbc88ce6143c2ea36c7bc9a53f9b0adcf906fee6e66ddbedebf8f0",
+  "raw/lifetime-tests.xml": "a790f6df50f07e3b3a0a973b807080b1ca297e659d9bf6fc3e31fe470a7da10c",
+  "raw/original-director.cs": "c32ff39cd2189054e45de6432cd26ac6b7111e06492052a745157ad9df58a388",
+  "raw/qualified-fixture.cs": "6e27bc65c10492c2ff56409cff5a2414b94f965c1e5904065c94caaaab40b3fd",
+  "raw/candidate-director.cs": "1f746ca8e70ea13734d865a9c78d6a6a0805aa7b6221619d072c8d0feb6d51a7",
+  "raw/prelaunch-failure.txt": "df4ca9042376f27d74107a221a6dbd2ab9c2391ec25c832d651571d4b7d9889d"
+}

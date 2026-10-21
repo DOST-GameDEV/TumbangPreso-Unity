@@ -41,9 +41,11 @@ namespace TumbangPreso.UI
         private readonly Card[] _cards = new Card[3];
         private Text _title;
         private Text _hint;
+        private Text _passive;
 
         private float _open;          // 0 closed, 1 open
         private HeroKit _boundKit;
+        private HeroAbility _boundRoleAbility;
 
         private sealed class Card
         {
@@ -99,7 +101,8 @@ namespace TumbangPreso.UI
             _rt.anchorMax = new Vector2(0.5f, 0.0f);
             _rt.pivot = new Vector2(0.5f, 0.0f);
             _rt.anchoredPosition = new Vector2(0, RestY);
-            _rt.sizeDelta = new Vector2(1060, 276);
+            // 276 for the header and cards, plus the passive line (48) and its gap (6).
+            _rt.sizeDelta = new Vector2(1060, 330);
 
             // ⚠️ THE WOOD SET, NOT A SLATE-BLUE GLASS OF ITS OWN. This tray opens over a
             // live match with the wooden scoreboard and clock already on screen, so it was the
@@ -144,6 +147,13 @@ namespace TumbangPreso.UI
             _hint.text = "HOLD [TAB] TO INSPECT";
             var hintLe = _hint.gameObject.AddComponent<LayoutElement>();
             hintLe.minWidth = 220;
+
+            // ---- Passive line: always on, so it has no key or card of its own ----
+            // Two lines at the readable floor fit the longest Wiki passive (Backwash).
+            _passive = Label(transform, "Passive", MenuKit.MinReadableUnits, UiTheme.Cream,
+                             TextAnchor.MiddleLeft);
+            _passive.supportRichText = true;
+            Height(_passive.gameObject, 48);
 
             // ---- Cards Row (3 side-by-side columns) ----
             var cardsRow = new GameObject("CardsRow", typeof(RectTransform));
@@ -230,7 +240,7 @@ namespace TumbangPreso.UI
             var glyphGo = new GameObject("Glyph");
             glyphGo.transform.SetParent(tileGo.transform, false);
             card.Glyph = glyphGo.AddComponent<Image>();
-            card.Glyph.color = UiTheme.HeroGlyphOn;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
             card.Glyph.preserveAspect = true;
             card.Glyph.raycastTarget = false;
             MenuKit.Stretch(card.Glyph.rectTransform);
@@ -384,12 +394,21 @@ namespace TumbangPreso.UI
 
         public void Bind(HeroKit kit)
         {
-            if (kit == null || kit == _boundKit) return;
+            if (kit == null || (kit == _boundKit && kit.Skill2 == _boundRoleAbility)) return;
 
             _boundKit = kit;
+            // A round can change the role without replacing the kit object.
+            // Recall must describe the ability actually available in that role.
+            _boundRoleAbility = kit.Skill2;
             Color hero = UiTheme.ColorForHero(kit.HeroId);
             _title.text = (kit.HeroName + "  ·  HERO POWERS").ToUpperInvariant();
             _title.color = hero;
+
+            var passive = HeroPassives.For(kit.HeroId);
+            _passive.gameObject.SetActive(passive.Exists);
+            if (passive.Exists)
+                _passive.text = $"<color=#{ColorUtility.ToHtmlStringRGB(hero)}>PASSIVE · {passive.Name}</color>   {passive.Description}"
+                    + (passive.KitRule != null ? "\n" + passive.KitRule : "");
 
             Fill(_cards[0], kit.Skill1, "Skill1", hero);
             Fill(_cards[1], kit.Skill2, "Skill2", hero);
@@ -409,7 +428,7 @@ namespace TumbangPreso.UI
             card.Rt.gameObject.SetActive(true);
             card.Tile.color = Color.white;
             card.Glyph.sprite = AbilityIcons.For(ability.Glyph);
-            card.Glyph.color = hero;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, hero);
             card.Key.text = Hud.KeyLabelFor(action);
             // ⚠️⚠️ `EffectiveName` AND `EffectiveSummary`, WHICH IS `VISION.md` § 3's RECALL
             // LAYER FINALLY SHOWING THE BUILD. This panel IS the hold-key layer that section
@@ -611,7 +630,7 @@ namespace TumbangPreso.UI
             go.transform.SetParent(parent, false);
 
             var t = go.AddComponent<Text>();
-            t.font = MenuKit.Font;
+            t.font = InGameTypography.Resolve(MenuKit.Font, name == "Title" || name == "Name" || name == "Key", t);
             t.fontSize = size;
             t.color = colour;
             t.alignment = align;
@@ -641,8 +660,7 @@ namespace TumbangPreso.UI
             // One pixel each way is enough to give a glyph a hard boundary at any scale, which is
             // exactly what was missing.
             var outline = go.AddComponent<Outline>();
-            outline.effectColor = new Color(Visual.ToonSkin.Ink.r, Visual.ToonSkin.Ink.g,
-                                            Visual.ToonSkin.Ink.b, 0.85f);
+            outline.effectColor = new Color(0, 0, 0, 0.85f);
             outline.effectDistance = new Vector2(1.0f, -1.0f);
             outline.useGraphicAlpha = true;
 

@@ -1,0 +1,29 @@
+{
+  "passed": false,
+  "case": "leave",
+  "mode": "classic",
+  "errors": [
+    "host: missing or wrong departure notice: {}",
+    "host: wrong match identity",
+    "host: wrong game mode",
+    "host: actual HUD capture missing",
+    "other: missing or wrong departure notice: {}",
+    "other: wrong match identity",
+    "other: wrong game mode",
+    "other: actual HUD capture missing",
+    "fourth: missing or wrong departure notice: {}",
+    "fourth: wrong match identity",
+    "fourth: wrong game mode",
+    "fourth: actual HUD capture missing",
+    "spectator: missing or wrong departure notice: {}",
+    "spectator: wrong match identity",
+    "spectator: wrong game mode",
+    "spectator: actual HUD capture missing",
+    "Remaining peers disagree on the authoritative notice."
+  ],
+  "measured": {},
+  "sharedInputUnchanged": true,
+  "existingFilesRestored": 0,
+  "runtimeSha256": "02e6a320b0b6a6e2418ba594b31a24c5a59b14515a26190628eec59f478816ec",
+  "scope": "Five actual local peers including a fifth-join spectator; one orderly leave or killed test process. Not WAN or human playtesting."
+}

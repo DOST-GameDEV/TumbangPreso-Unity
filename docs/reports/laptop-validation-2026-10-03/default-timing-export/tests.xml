@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:00:19Z" end-time="2026-10-03 14:00:19Z" duration="0.0833197">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1201" result="Passed" start-time="2026-10-03 14:00:19Z" end-time="2026-10-03 14:00:19Z" duration="0.083320" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2472" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1201" result="Passed" start-time="2026-10-03 14:00:19Z" end-time="2026-10-03 14:00:19Z" duration="0.070003" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17312" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2473" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1201" result="Passed" start-time="2026-10-03 14:00:19Z" end-time="2026-10-03 14:00:19Z" duration="0.063365" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2474" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1201" result="Passed" start-time="2026-10-03 14:00:19Z" end-time="2026-10-03 14:00:19Z" duration="0.056844" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2026" name="PerformanceTimingCaptureTests" fullname="TumbangPreso.Tests.PerformanceTimingCaptureTests" classname="TumbangPreso.Tests.PerformanceTimingCaptureTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 14:00:19Z" end-time="2026-10-03 14:00:19Z" duration="0.043506" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2027" name="RoutineTimingWritesSamplesWithoutBinaryProfilerCapture" fullname="TumbangPreso.Tests.PerformanceTimingCaptureTests.RoutineTimingWritesSamplesWithoutBinaryProfilerCapture" methodname="RoutineTimingWritesSamplesWithoutBinaryProfilerCapture" classname="TumbangPreso.Tests.PerformanceTimingCaptureTests" runstate="Runnable" seed="1463247576" result="Passed" start-time="2026-10-03 14:00:19Z" end-time="2026-10-03 14:00:19Z" duration="0.033695" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

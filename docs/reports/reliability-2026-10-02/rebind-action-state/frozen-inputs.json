@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "066bb51eeb4e08ba3182955388c9e2b8715fa509",
+  "expectedCases": 10,
+  "testFilter": "TumbangPreso.Tests.RebindActionStateTests",
+  "baselineExpected": "4 disabled endings fail; 4 enabled endings and 2 refused controls pass",
+  "nativeStatus": "not launched; waiting for exclusive slot",
+  "inputs": [
+    {
+      "name": "RebindActionStateTests.cs",
+      "sha256": "A48D8079D0922B0D8AE663B2230701CBED85BC74903E6463F087A2BFDD8048A3"
+    },
+    {
+      "name": "RebindActionStateTests.cs.meta",
+      "sha256": "849BEF1EDC5A401DCBFBC81D3D35FD28D90D84319123BB2A7C814FBA2EF90DB4"
+    },
+    {
+      "name": "RebindSession.baseline.cs",
+      "sha256": "D108277A64D8404258DFBDB57D46A3D49EC9A9436CE261B12B117D153DE25FB2"
+    },
+    {
+      "name": "RebindSession.candidate.cs",
+      "sha256": "37B74BD7003B59C0DEBFB00E1A04272676174A720E145E14D8001FDCE600BB58"
+    }
+  ]
+}

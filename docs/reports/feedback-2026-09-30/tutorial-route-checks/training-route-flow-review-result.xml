@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 12:54:53Z" end-time="2026-09-30 12:55:47Z" duration="54.4731977">
+  <test-suite type="TestSuite" id="2138" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="912" result="Passed" start-time="2026-09-30 12:54:53Z" end-time="2026-09-30 12:55:47Z" duration="54.473198" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2132" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="912" result="Passed" start-time="2026-09-30 12:54:53Z" end-time="2026-09-30 12:55:47Z" duration="54.455294" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="110580" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2133" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="912" result="Passed" start-time="2026-09-30 12:54:53Z" end-time="2026-09-30 12:55:47Z" duration="54.445979" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2134" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="912" result="Passed" start-time="2026-09-30 12:54:53Z" end-time="2026-09-30 12:55:47Z" duration="54.436891" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1649" name="OwnerTrainingUiTests" fullname="TumbangPreso.PlayTests.OwnerTrainingUiTests" classname="TumbangPreso.PlayTests.OwnerTrainingUiTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-30 12:54:53Z" end-time="2026-09-30 12:55:35Z" duration="41.689752" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1658" name="CurveLungeAndEmoteLessonsNeedTheActualActions" fullname="TumbangPreso.PlayTests.OwnerTrainingUiTests.CurveLungeAndEmoteLessonsNeedTheActualActions" methodname="CurveLungeAndEmoteLessonsNeedTheActualActions" classname="TumbangPreso.PlayTests.OwnerTrainingUiTests" runstate="Runnable" seed="675041676" result="Passed" start-time="2026-09-30 12:54:53Z" end-time="2026-09-30 12:55:01Z" duration="7.591491" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1652" name="TrainingUsesOwnerThemeAndRealSkipQuitCallbacks" fullname="TumbangPreso.PlayTests.OwnerTrainingUiTests.TrainingUsesOwnerThemeAndRealSkipQuitCallbacks" methodname="TrainingUsesOwnerThemeAndRealSkipQuitCallbacks" classname="TumbangPreso.PlayTests.OwnerTrainingUiTests" runstate="Runnable" seed="887833050" result="Passed" start-time="2026-09-30 12:55:01Z" end-time="2026-09-30 12:55:35Z" duration="34.082482" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] TrainingSidebar-look-960x540 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-1280x720 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-1366x768 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-1920x1080 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-1920x1200 cream source=252,211,159 pixel=199,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-1280x960 cream source=252,211,159 pixel=194,215,230; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-2560x1440 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-3440x1440 cream source=252,211,159 pixel=206,196,231; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-3840x1080 cream source=252,211,159 pixel=161,130,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-look-3840x2160 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-0 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-1 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-2 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-3 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-4 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-5 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-6 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-7 cream source=252,211,159 pixel=202,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-8 cream source=252,211,159 pixel=202,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-9 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-10 cream source=252,211,159 pixel=195,187,222; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-11 cream source=252,211,159 pixel=195,187,222; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-12 cream source=252,211,159 pixel=195,187,222; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-13 cream source=252,211,159 pixel=195,187,222; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-14 cream source=252,211,159 pixel=195,187,222; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-15 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-16 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-17 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-18 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-19 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-lesson-20 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] TrainingSidebar-complete cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2040" name="TutorialLessonHonestyProbe" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-30 12:55:35Z" end-time="2026-09-30 12:55:47Z" duration="12.668257" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2041" name="ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe.ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen" methodname="ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" seed="2096218621" result="Passed" start-time="2026-09-30 12:55:35Z" end-time="2026-09-30 12:55:38Z" duration="3.518775" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Feedback0930-tutorial-three-jumps cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="2042" name="TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe.TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction" methodname="TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" seed="987061952" result="Passed" start-time="2026-09-30 12:55:38Z" end-time="2026-09-30 12:55:47Z" duration="9.144991" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Feedback0930-tutorial-tab-960x540 cream source=252,211,159 pixel=201,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Feedback0930-tutorial-tab-1600x680 cream source=252,211,159 pixel=70,67,86; isolated UI camera, no ColourGrade.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

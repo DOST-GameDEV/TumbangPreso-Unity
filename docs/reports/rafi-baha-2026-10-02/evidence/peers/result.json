@@ -1,0 +1,79 @@
+{
+  "passed": true,
+  "errors": [],
+  "measured": {
+    "backwash": {
+      "host": {
+        "rows": 344,
+        "activeSamples": 30,
+        "regrabSamples": 22,
+        "finalPassive": 0.0
+      },
+      "owner": {
+        "rows": 337,
+        "activeSamples": 30,
+        "regrabSamples": 22,
+        "finalPassive": 0.0,
+        "normalSpeed": 2.6564998626708984,
+        "boostedSpeed": 3.1877999305725098,
+        "measuredRatio": 1.200000035899656
+      },
+      "observer": {
+        "rows": 332,
+        "activeSamples": 31,
+        "regrabSamples": 22,
+        "finalPassive": 0.0
+      },
+      "finalPositionSpread": 0.10999999195337296
+    },
+    "baha": {
+      "host": {
+        "fieldIds": [
+          1
+        ],
+        "activeSamples": 130,
+        "warningSamples": 16,
+        "maxTargetVelocity": 0.0,
+        "finalUltimate": 0.0,
+        "starts": 1,
+        "snapshots": 2,
+        "looseCarry": 2.9999983310699463,
+        "targetTravel": 0.3359999656677246
+      },
+      "owner": {
+        "fieldIds": [
+          1
+        ],
+        "activeSamples": 130,
+        "warningSamples": 17,
+        "maxTargetVelocity": 0.0,
+        "finalUltimate": 0.0,
+        "starts": 1,
+        "snapshots": 0,
+        "looseCarry": 2.9999983310699463,
+        "targetTravel": 0.3359997272491455
+      },
+      "observer": {
+        "fieldIds": [
+          1
+        ],
+        "activeSamples": 130,
+        "warningSamples": 17,
+        "maxTargetVelocity": 3.6000006198883057,
+        "finalUltimate": 0.0,
+        "starts": 1,
+        "snapshots": 0,
+        "looseCarry": 2.9999983310699463,
+        "targetTravel": 0.3359999656677246
+      }
+    }
+  },
+  "runtimeSha256": "2b2f0da847692986b4c0a041bf430d70bcc117518d7c2abafda55ecfb93a7e70",
+  "link": {
+    "delayMs": 0,
+    "jitterMs": 0,
+    "loss": 0,
+    "seed": 52009
+  },
+  "scope": "Three actual linux peers on Eskinita; genuine retrieval, drop/regrab, measured movement, Baha warning/carry/nudge/retirement. Staged input; no WAN/device/human approval."
+}

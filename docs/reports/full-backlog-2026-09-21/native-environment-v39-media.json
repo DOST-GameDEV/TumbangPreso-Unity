@@ -1,0 +1,95 @@
+{
+  "artifactScope": "Internal environment-v39, dirty pinned db976126 validation plus explicitly copied owned inputs; protocol48/schema10. Not the final all-TODO candidate.",
+  "binary": [
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Builds/environment-v39/TumbangPreso.exe",
+      "bytes": 667648,
+      "sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Builds/environment-v39/TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll",
+      "bytes": 2368512,
+      "sha256": "63718cef3971a92a22190d2d0022ec63f2eb8a6c8fd83aba4b5c155b913932c7"
+    }
+  ],
+  "movies": [
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/BayanPlaza-Classic-walk.mp4",
+      "bytes": 4841622,
+      "sha256": "8886eecc81a68c2c6c3b0fcef3dde07d882b261af722035fbe9be6d0ccb2b300",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/BayanPlaza-Classic-walk/frames.csv",
+      "timingSha256": "f2f82cb9343a0dbb6d4ddd494b634092dd0ddd6afdaabfe943160673a1528f98"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/BayanPlaza-HeroStrike-walk.mp4",
+      "bytes": 4922761,
+      "sha256": "ea58d745828532d4ab355d53ae66e6ba5f9b1d62801f175352d8c3e267f188c0",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/BayanPlaza-HeroStrike-walk/frames.csv",
+      "timingSha256": "60e786a4290be3b778ccec38c719cfab76229990d90e84a5c065986e339a70a3"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/Eskinita-Classic-walk.mp4",
+      "bytes": 5601528,
+      "sha256": "f57f486e41791bfaaff56cfff291ee7d4b1d3ec82c0886a1af3bbfff0615da5c",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/Eskinita-Classic-walk/frames.csv",
+      "timingSha256": "e7b3e2c36dc20fbf40ac419800ed721ad06b53912bc1bf178c5512958708dd22"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/Eskinita-HeroStrike-walk.mp4",
+      "bytes": 6304357,
+      "sha256": "a58bff515f85dc7f1d0358462016ac8c31e4cca9e73f6842655af327dac087b1",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/Eskinita-HeroStrike-walk/frames.csv",
+      "timingSha256": "4c03a857e0ac4807d1499cbb16e1f1bde4beed5f74bedb41c4f1dc0b1aa96429"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/IlalimNgTulay-Classic-walk.mp4",
+      "bytes": 5426482,
+      "sha256": "d0846baaa472628e93e4dffd8e656212012a5936eac8ac09807d93353b3876a6",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/IlalimNgTulay-Classic-walk/frames.csv",
+      "timingSha256": "ce8d749638ca087db2f5040903f5dc3846745505097d8cb68ae53fd199560827"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/IlalimNgTulay-HeroStrike-walk.mp4",
+      "bytes": 5207903,
+      "sha256": "18f215e69dd9c35080e173b91811aa201fbfef8d348c5dd41f50da559f9f0a8d",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/IlalimNgTulay-HeroStrike-walk/frames.csv",
+      "timingSha256": "727d0754b6fb708c7696ba422de7d55348df1ef6d61610bcd8ddcc5f9d7a6cb0"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/SaBubong-Classic-walk.mp4",
+      "bytes": 3665735,
+      "sha256": "6ee0c3ce8a8fd3de9390d2b0c0aca07a5e1ce6943109e1a2dde4e88d503bcdf4",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/SaBubong-Classic-walk/frames.csv",
+      "timingSha256": "6200d9baff03f89e84c4eabfab502e7165eeb9158df4a786aa66b862cb9b0acd"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/SaBubong-HeroStrike-walk.mp4",
+      "bytes": 3539157,
+      "sha256": "63585f50f294a29cbdc6b1842cb3a17afb3043d8cbecdcf75d56979f15f80c4b",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/SaBubong-HeroStrike-walk/frames.csv",
+      "timingSha256": "ac2ec5f6c5a528742de5399db4d57b86eaf582e79f491ab55541c8aea730fe54"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/sky-drift-realtime.mp4",
+      "bytes": 893422,
+      "sha256": "83327dcd4480730b225b9910b6cd489646c502c78ea122c528199b3de3e388cb",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-native/sky-drift-realtime/frames.csv",
+      "timingSha256": "6be9089742c34f5b430139f73705ce09c1eb0801a99cb22e1e9fcf06364167a1"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-busy-low/HeroStrike-owner-busy-native-low-comfort-mixed-casters-staged-meters.mp4",
+      "bytes": 24414305,
+      "sha256": "2bdb34ad5b12b06c57691385115668c0fcfb1a8940b5fd3edc7f1e72208aafc3",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-busy-low/HeroStrike-owner-busy-native-low-comfort-mixed-casters-staged-meters/frames.csv",
+      "timingSha256": "69a16872d121f419a8a9025ba16ca45b911eec446cb60b8ced90d706c277277f"
+    },
+    {
+      "path": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-busy-low/HeroStrike-spectator-busy-native-low-comfort-mixed-casters-staged-meters.mp4",
+      "bytes": 40251453,
+      "sha256": "7ec3a1a808013b3fe8f5cc6e275a94dc25b2fe1d34bd8af40631d7d5d46eb876",
+      "timing": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/environment-v39-busy-low/HeroStrike-spectator-busy-native-low-comfort-mixed-casters-staged-meters/frames.csv",
+      "timingSha256": "0f0c40965f2dde54c2493c18b865574b832bdc26b00698c1ba5e057a259cabbb"
+    }
+  ],
+  "inspection": "Inspected final native Eskinita High edge and SaBubong Low court, plus earlier v37/v38 motion/close material studies. Audio recorded, not listened to. Movie timing follows frames.csv; no fixed invented FPS."
+}

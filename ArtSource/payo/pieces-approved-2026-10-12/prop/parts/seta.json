@@ -1,0 +1,154 @@
+{
+ "atlas": "seta-atlas.png",
+ "size": 2048,
+ "ppm": 330,
+ "used": 0.78,
+ "props": [
+  {
+   "name": "offering_table",
+   "real": "1.15 x 0.52 x 0.66 m",
+   "note": "",
+   "at": [
+    0.0,
+    -0.9
+   ],
+   "yaw": 0.0,
+   "pieces": 22,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    1.32,
+    0.66,
+    0.95
+   ]
+  },
+  {
+   "name": "tapuy_jar_large",
+   "real": "0.56 wide x 0.82 m tall",
+   "note": "",
+   "at": [
+    -1.75,
+    -0.75
+   ],
+   "yaw": 0.0,
+   "pieces": 10,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    0.66,
+    0.96,
+    0.66
+   ]
+  },
+  {
+   "name": "tapuy_jar_open",
+   "real": "0.46 wide x 0.86 m tall with its ladle",
+   "note": "",
+   "at": [
+    -1.2,
+    -0.25
+   ],
+   "yaw": 0.0,
+   "pieces": 7,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    0.71,
+    1.05,
+    0.53
+   ]
+  },
+  {
+   "name": "tapuy_jar_small",
+   "real": "0.40 wide x 0.50 m tall",
+   "note": "",
+   "at": [
+    -2.15,
+    0.05
+   ],
+   "yaw": 0.0,
+   "pieces": 8,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    0.46,
+    0.58,
+    0.48
+   ]
+  },
+  {
+   "name": "basket_stack",
+   "real": "0.72 wide x 0.92 m tall",
+   "note": "",
+   "at": [
+    1.75,
+    -0.8
+   ],
+   "yaw": 0.0,
+   "pieces": 6,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    0.79,
+    1.02,
+    0.79
+   ]
+  },
+  {
+   "name": "bilao_rice",
+   "real": "0.74 m across x 0.16 m",
+   "note": "",
+   "at": [
+    1.45,
+    0.25
+   ],
+   "yaw": 0.0,
+   "pieces": 5,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    0.86,
+    0.2,
+    0.86
+   ]
+  },
+  {
+   "name": "mortar_pestles",
+   "real": "0.62 wide x 1.5 m tall with the pestles",
+   "note": "",
+   "at": [
+    -0.55,
+    0.75
+   ],
+   "yaw": 0.0,
+   "pieces": 4,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    1.39,
+    2.15,
+    0.92
+   ]
+  },
+  {
+   "name": "hearth_pot",
+   "real": "0.86 wide x 0.74 m tall",
+   "note": "",
+   "at": [
+    0.7,
+    0.85
+   ],
+   "yaw": 0.0,
+   "pieces": 16,
+   "lift": 0.0,
+   "groups": [
+    "flame"
+   ],
+   "size": [
+    1.14,
+    0.94,
+    1.14
+   ]
+  }
+ ]
+}

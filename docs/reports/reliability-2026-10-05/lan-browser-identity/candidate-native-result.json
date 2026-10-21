@@ -1,0 +1,57 @@
+{
+  "sourceRef": "8d8822d3153ab2eac9ce931eb7c3984320069892",
+  "profile": "pc-lan-cand1005",
+  "filter": "TumbangPreso.Tests.LanBrowserIdentityTests",
+  "expectedCases": 4,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-lan-cand1005",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.LanBrowserIdentityTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\lan-browser-identity1005\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\lan-browser-identity1005\\candidate-native\\editor.log"
+  ],
+  "pid": 22388,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.LanBrowserIdentityTests.HostHintPrefersUsableIpv4OverLinkLocalAdapters",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.LanBrowserIdentityTests.OlderBeaconsWithoutIdentityKeepDistinctEndpoints",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.LanBrowserIdentityTests.OneHostAcrossAdaptersHasOneUsableCurrentRow",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.LanBrowserIdentityTests.SeparateProcessesWithTheSameRoomNameStaySeparate",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19290,
+  "terminal": true
+}

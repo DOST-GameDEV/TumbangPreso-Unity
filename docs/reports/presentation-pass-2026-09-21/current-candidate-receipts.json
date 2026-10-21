@@ -1,0 +1,1031 @@
+{
+  "candidate": "v33",
+  "source": "db9761260600664f7f7482ecb5721a6265e2cb4b",
+  "finalSubtitleRevision": "bf27a660",
+  "finalSubtitleNativeStatus": "passed on v30 and v33; visible identity inspected, including unobstructed Cheska after actual round field cleanup",
+  "native": {
+    "result-natural-native-v29": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "busy-muted-native-v29": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "mixed-casters-native-v29": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "mixed-casters-low-native-v29": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "ordinary-skills-native-v29": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "ultimate-return-native-v29": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "ultimate-labels-native-v30": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "net-field-replay-v33-normal": {
+      "passed": true,
+      "errors": [],
+      "measured": {
+        "host": {
+          "rows": 528,
+          "epoch": [
+            639255924970898957
+          ],
+          "clip": [
+            1
+          ],
+          "halfSamples": 148,
+          "viewSamples": 83,
+          "duration": 9.943000000000001,
+          "clockDrift": 0.0,
+          "score1": 100,
+          "maxLiveFieldsBefore": 3,
+          "maxLiveFieldsAfter": 0
+        },
+        "scorer": {
+          "rows": 429,
+          "epoch": [
+            639255924970898957
+          ],
+          "clip": [
+            1
+          ],
+          "halfSamples": 150,
+          "viewSamples": 82,
+          "duration": 10.028000000000002,
+          "clockDrift": 0.0,
+          "score1": 100,
+          "maxLiveFieldsBefore": 3,
+          "maxLiveFieldsAfter": 0
+        },
+        "observer": {
+          "rows": 367,
+          "epoch": [
+            639255924970898957
+          ],
+          "clip": [
+            1
+          ],
+          "halfSamples": 150,
+          "viewSamples": 83,
+          "duration": 10.029000000000002,
+          "clockDrift": 0.0,
+          "score1": 100,
+          "maxLiveFieldsBefore": 3,
+          "maxLiveFieldsAfter": 0
+        }
+      },
+      "fault": "none",
+      "link": {
+        "delayMs": 0,
+        "jitterMs": 0,
+        "loss": 0,
+        "seed": 52009
+      },
+      "sharedInputUnchanged": true,
+      "scope": "Three real local Windows peers: physical contact retained in round1, bounded verified transport, canonical participant playback at round4, shared halftime clock and round5 return. Optional old44client refusal. Link settings and packet-count log specify simulated conditions; no WAN or freeform-play claim."
+    },
+    "net-field-replay-v33-impaired-v2": {
+      "passed": true,
+      "errors": [],
+      "measured": {
+        "host": {
+          "rows": 538,
+          "epoch": [
+            639255926913399682
+          ],
+          "clip": [
+            1
+          ],
+          "halfSamples": 149,
+          "viewSamples": 83,
+          "duration": 9.998999999999999,
+          "clockDrift": 0.0,
+          "score1": 100,
+          "maxLiveFieldsBefore": 3,
+          "maxLiveFieldsAfter": 0
+        },
+        "scorer": {
+          "rows": 440,
+          "epoch": [
+            639255926913399682
+          ],
+          "clip": [
+            1
+          ],
+          "halfSamples": 149,
+          "viewSamples": 82,
+          "duration": 9.992,
+          "clockDrift": 0.0,
+          "score1": 100,
+          "maxLiveFieldsBefore": 3,
+          "maxLiveFieldsAfter": 0
+        },
+        "observer": {
+          "rows": 372,
+          "epoch": [
+            639255926913399682
+          ],
+          "clip": [
+            1
+          ],
+          "halfSamples": 149,
+          "viewSamples": 79,
+          "duration": 9.975000000000001,
+          "clockDrift": 0.0,
+          "score1": 100,
+          "maxLiveFieldsBefore": 3,
+          "maxLiveFieldsAfter": 0
+        }
+      },
+      "fault": "none",
+      "link": {
+        "delayMs": 75.0,
+        "jitterMs": 20.0,
+        "loss": 0.02,
+        "seed": 52009
+      },
+      "sharedInputUnchanged": true,
+      "scope": "Three real local Windows peers: physical contact retained in round1, bounded verified transport, canonical participant playback at round4, shared halftime clock and round5 return. Optional old44client refusal. Link settings and packet-count log specify simulated conditions; no WAN or freeform-play claim.",
+      "packetReceipt": "[link] forwarded=2902 dropped=73 (2.5%) of which outage=0"
+    },
+    "net-phase-v33": {
+      "passed": true,
+      "errors": [],
+      "measured": {
+        "host": {
+          "rows": 152,
+          "holdSeconds": 2.7638999999999996,
+          "clockDrift": 0.0,
+          "frozenClock": 83.821,
+          "cohort": 2,
+          "initialWarning": 1.55,
+          "starts": [
+            1,
+            1,
+            0
+          ]
+        },
+        "scorer": {
+          "rows": 153,
+          "holdSeconds": 2.6972000000000023,
+          "clockDrift": 0.0,
+          "frozenClock": 83.821,
+          "cohort": 2,
+          "initialWarning": 1.55,
+          "starts": [
+            1,
+            1,
+            0
+          ]
+        },
+        "observer": {
+          "rows": 153,
+          "holdSeconds": 2.7302,
+          "clockDrift": 0.0,
+          "frozenClock": 83.821,
+          "cohort": 2,
+          "initialWarning": 1.55,
+          "starts": [
+            1,
+            1,
+            0
+          ]
+        }
+      },
+      "disconnectCaster": false,
+      "lateJoin": false,
+      "link": {
+        "delayMs": 75.0,
+        "jitterMs": 20.0,
+        "loss": 0.02,
+        "seed": 52009
+      },
+      "sharedInputUnchanged": true,
+      "scope": "Three original Windows peers with optional actual fourth join or accepted-caster departure; enabled fixture flags define coverage. Remote ultimate request, shared cohort/clock, costs, full warning, denied late cast and duplicate/stale phase. Link settings and packet-count log specify simulated conditions; no WAN claim.",
+      "packetReceipt": "[link] forwarded=2800 dropped=72 (2.5%) of which outage=0"
+    },
+    "round-clean-live-native-v33": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    }
+  },
+  "audio": {
+    "Logs\\result-natural-native-v29\\Classic-whole-opening": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1155072",
+      "seconds": "12.032000",
+      "dsp_start": "28.266667",
+      "first_callback_real": "19.461288",
+      "peak": "0.245078",
+      "rms": "0.032674"
+    },
+    "Logs\\result-natural-native-v29\\Classic-whole-result": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "270336",
+      "seconds": "2.816000",
+      "dsp_start": "58.645333",
+      "first_callback_real": "49.850442",
+      "peak": "0.214565",
+      "rms": "0.042578"
+    },
+    "Logs\\result-natural-native-v29\\HeroStrike-whole-opening": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1157120",
+      "seconds": "12.053333",
+      "dsp_start": "67.562667",
+      "first_callback_real": "58.779951",
+      "peak": "0.282959",
+      "rms": "0.026688"
+    },
+    "Logs\\result-natural-native-v29\\HeroStrike-whole-result": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "270336",
+      "seconds": "2.816000",
+      "dsp_start": "97.962667",
+      "first_callback_real": "89.180014",
+      "peak": "0.230793",
+      "rms": "0.043097"
+    },
+    "Logs\\busy-muted-native-v29\\Classic-owner-busy-native-muted": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1923072",
+      "seconds": "20.032000",
+      "dsp_start": "17.344000",
+      "first_callback_real": "16.599841",
+      "peak": "0.000000",
+      "rms": "0.000000"
+    },
+    "Logs\\busy-muted-native-v29\\Classic-spectator-busy-native-muted": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1923072",
+      "seconds": "20.032000",
+      "dsp_start": "43.221333",
+      "first_callback_real": "42.483165",
+      "peak": "0.000000",
+      "rms": "0.000000"
+    },
+    "Logs\\busy-muted-native-v29\\HeroStrike-owner-busy-native-muted": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1921024",
+      "seconds": "20.010667",
+      "dsp_start": "69.120000",
+      "first_callback_real": "68.378619",
+      "peak": "0.000000",
+      "rms": "0.000000"
+    },
+    "Logs\\busy-muted-native-v29\\HeroStrike-spectator-busy-native-muted": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1921024",
+      "seconds": "20.010667",
+      "dsp_start": "94.741333",
+      "first_callback_real": "94.001848",
+      "peak": "0.000000",
+      "rms": "0.000000"
+    },
+    "Logs\\mixed-casters-native-v29\\HeroStrike-owner-busy-native-mixed-casters-staged-meters": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "2881536",
+      "seconds": "30.016000",
+      "dsp_start": "25.770667",
+      "first_callback_real": "25.000217",
+      "peak": "0.341221",
+      "rms": "0.042698"
+    },
+    "Logs\\mixed-casters-native-v29\\HeroStrike-spectator-busy-native-mixed-casters-staged-meters": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "2883584",
+      "seconds": "30.037333",
+      "dsp_start": "62.421333",
+      "first_callback_real": "61.652927",
+      "peak": "0.294966",
+      "rms": "0.039722"
+    },
+    "Logs\\mixed-casters-low-native-v29\\HeroStrike-owner-busy-native-low-comfort-mixed-casters-staged-meters": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "2885632",
+      "seconds": "30.058667",
+      "dsp_start": "21.184000",
+      "first_callback_real": "20.366097",
+      "peak": "0.322228",
+      "rms": "0.037896"
+    },
+    "Logs\\mixed-casters-low-native-v29\\HeroStrike-spectator-busy-native-low-comfort-mixed-casters-staged-meters": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "2883584",
+      "seconds": "30.037333",
+      "dsp_start": "58.026667",
+      "first_callback_real": "57.206103",
+      "peak": "0.263694",
+      "rms": "0.034898"
+    },
+    "Logs\\ordinary-skills-native-v29\\cheska-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "485376",
+      "seconds": "5.056000",
+      "dsp_start": "94.762667",
+      "first_callback_real": "94.007049",
+      "peak": "0.275955",
+      "rms": "0.056084"
+    },
+    "Logs\\ordinary-skills-native-v29\\cheska-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "483328",
+      "seconds": "5.034667",
+      "dsp_start": "100.074667",
+      "first_callback_real": "99.304806",
+      "peak": "0.239099",
+      "rms": "0.050361"
+    },
+    "Logs\\ordinary-skills-native-v29\\dante-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "479232",
+      "seconds": "4.992000",
+      "dsp_start": "83.200000",
+      "first_callback_real": "82.445922",
+      "peak": "0.237969",
+      "rms": "0.054746"
+    },
+    "Logs\\ordinary-skills-native-v29\\dante-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "575488",
+      "seconds": "5.994667",
+      "dsp_start": "88.469333",
+      "first_callback_real": "87.714468",
+      "peak": "0.231403",
+      "rms": "0.052966"
+    },
+    "Logs\\ordinary-skills-native-v29\\nemu-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "483328",
+      "seconds": "5.034667",
+      "dsp_start": "69.568000",
+      "first_callback_real": "68.791830",
+      "peak": "0.228660",
+      "rms": "0.040575"
+    },
+    "Logs\\ordinary-skills-native-v29\\nemu-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "770048",
+      "seconds": "8.021333",
+      "dsp_start": "74.858667",
+      "first_callback_real": "74.095978",
+      "peak": "0.267207",
+      "rms": "0.051228"
+    },
+    "Logs\\ordinary-skills-native-v29\\phaister-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "770048",
+      "seconds": "8.021333",
+      "dsp_start": "40.320000",
+      "first_callback_real": "39.563407",
+      "peak": "0.283086",
+      "rms": "0.041529"
+    },
+    "Logs\\ordinary-skills-native-v29\\phaister-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "483328",
+      "seconds": "5.034667",
+      "dsp_start": "48.640000",
+      "first_callback_real": "47.884257",
+      "peak": "0.276356",
+      "rms": "0.042619"
+    },
+    "Logs\\ordinary-skills-native-v29\\sean-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "485376",
+      "seconds": "5.056000",
+      "dsp_start": "24.554667",
+      "first_callback_real": "23.796327",
+      "peak": "0.246320",
+      "rms": "0.030689"
+    },
+    "Logs\\ordinary-skills-native-v29\\sean-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "960512",
+      "seconds": "10.005333",
+      "dsp_start": "29.866667",
+      "first_callback_real": "29.095824",
+      "peak": "0.260735",
+      "rms": "0.030484"
+    },
+    "Logs\\ordinary-skills-native-v29\\zack-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "483328",
+      "seconds": "5.034667",
+      "dsp_start": "53.952000",
+      "first_callback_real": "53.185736",
+      "peak": "0.247976",
+      "rms": "0.039726"
+    },
+    "Logs\\ordinary-skills-native-v29\\zack-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "960512",
+      "seconds": "10.005333",
+      "dsp_start": "59.242667",
+      "first_callback_real": "58.468158",
+      "peak": "0.291895",
+      "rms": "0.040481"
+    },
+    "Logs\\ultimate-return-native-v29\\cheska-live-ultimate-motion": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "724992",
+      "seconds": "7.552000",
+      "dsp_start": "63.509333",
+      "first_callback_real": "62.733335",
+      "peak": "0.237858",
+      "rms": "0.042118"
+    },
+    "Logs\\ultimate-return-native-v29\\dante-live-ultimate-motion": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "720896",
+      "seconds": "7.509333",
+      "dsp_start": "55.680000",
+      "first_callback_real": "54.896409",
+      "peak": "0.253358",
+      "rms": "0.040909"
+    },
+    "Logs\\ultimate-return-native-v29\\nemu-live-ultimate-motion": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "722944",
+      "seconds": "7.530667",
+      "dsp_start": "47.850667",
+      "first_callback_real": "47.070747",
+      "peak": "0.253870",
+      "rms": "0.043818"
+    },
+    "Logs\\ultimate-return-native-v29\\phaister-live-ultimate-motion": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "720896",
+      "seconds": "7.509333",
+      "dsp_start": "32.170667",
+      "first_callback_real": "31.394404",
+      "peak": "0.226337",
+      "rms": "0.043296"
+    },
+    "Logs\\ultimate-return-native-v29\\sean-live-ultimate-motion": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "720896",
+      "seconds": "7.509333",
+      "dsp_start": "24.234667",
+      "first_callback_real": "23.437846",
+      "peak": "0.408808",
+      "rms": "0.049158"
+    },
+    "Logs\\ultimate-return-native-v29\\zack-live-ultimate-motion": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "720896",
+      "seconds": "7.509333",
+      "dsp_start": "40.000000",
+      "first_callback_real": "39.222522",
+      "peak": "0.343862",
+      "rms": "0.048576"
+    }
+  },
+  "movies": [
+    {
+      "path": "Logs\\whole-matches-native-v27\\Classic-whole-halftime\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 3147081
+    },
+    {
+      "path": "Logs\\whole-matches-native-v27\\Classic-whole-opening\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 6431126
+    },
+    {
+      "path": "Logs\\whole-matches-native-v27\\HeroStrike-whole-first-ultimate\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 7599437
+    },
+    {
+      "path": "Logs\\whole-matches-native-v27\\HeroStrike-whole-halftime\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 3043379
+    },
+    {
+      "path": "Logs\\whole-matches-native-v27\\HeroStrike-whole-opening\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 10650560
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\cheska-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 802126
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\cheska-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 874829
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\dante-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 654107
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\dante-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 737852
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\nemu-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 879248
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\nemu-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 3454448
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\phaister-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1208010
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\phaister-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 907003
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\sean-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2700825
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\sean-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1817978
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\zack-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2853610
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v27\\zack-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1643259
+    },
+    {
+      "path": "Logs\\result-natural-native-v29\\Classic-whole-opening\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 7626788
+    },
+    {
+      "path": "Logs\\result-natural-native-v29\\Classic-whole-result\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 328984
+    },
+    {
+      "path": "Logs\\result-natural-native-v29\\HeroStrike-whole-opening\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 9707922
+    },
+    {
+      "path": "Logs\\result-natural-native-v29\\HeroStrike-whole-result\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 408233
+    },
+    {
+      "path": "Logs\\busy-muted-native-v29\\Classic-owner-busy-native-muted\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 11997765
+    },
+    {
+      "path": "Logs\\busy-muted-native-v29\\Classic-spectator-busy-native-muted\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 13516840
+    },
+    {
+      "path": "Logs\\busy-muted-native-v29\\HeroStrike-owner-busy-native-muted\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 11439957
+    },
+    {
+      "path": "Logs\\busy-muted-native-v29\\HeroStrike-spectator-busy-native-muted\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 14854588
+    },
+    {
+      "path": "Logs\\mixed-casters-native-v29\\HeroStrike-owner-busy-native-mixed-casters-staged-meters\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 20825404
+    },
+    {
+      "path": "Logs\\mixed-casters-native-v29\\HeroStrike-spectator-busy-native-mixed-casters-staged-meters\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 21207674
+    },
+    {
+      "path": "Logs\\mixed-casters-low-native-v29\\HeroStrike-owner-busy-native-low-comfort-mixed-casters-staged-meters\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 23634337
+    },
+    {
+      "path": "Logs\\mixed-casters-low-native-v29\\HeroStrike-spectator-busy-native-low-comfort-mixed-casters-staged-meters\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 34466702
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\cheska-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 860592
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\cheska-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 910766
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\dante-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 715051
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\dante-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 707229
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\nemu-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 885726
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\nemu-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 3448630
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\phaister-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1259090
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\phaister-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 917259
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\sean-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2719269
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\sean-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1664932
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\zack-ordinary-1\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2855290
+    },
+    {
+      "path": "Logs\\ordinary-skills-native-v29\\zack-ordinary-2\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1631201
+    },
+    {
+      "path": "Logs\\ultimate-return-native-v29\\cheska-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1057072
+    },
+    {
+      "path": "Logs\\ultimate-return-native-v29\\dante-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2482504
+    },
+    {
+      "path": "Logs\\ultimate-return-native-v29\\nemu-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2853629
+    },
+    {
+      "path": "Logs\\ultimate-return-native-v29\\phaister-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2776108
+    },
+    {
+      "path": "Logs\\ultimate-return-native-v29\\sean-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 3750231
+    },
+    {
+      "path": "Logs\\ultimate-return-native-v29\\zack-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2793828
+    },
+    {
+      "path": "Logs\\ultimate-labels-native-v30\\cheska-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 1062165
+    },
+    {
+      "path": "Logs\\ultimate-labels-native-v30\\dante-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2476479
+    },
+    {
+      "path": "Logs\\ultimate-labels-native-v30\\nemu-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2810505
+    },
+    {
+      "path": "Logs\\ultimate-labels-native-v30\\phaister-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2719186
+    },
+    {
+      "path": "Logs\\ultimate-labels-native-v30\\sean-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 3551221
+    },
+    {
+      "path": "Logs\\ultimate-labels-native-v30\\zack-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2835413
+    },
+    {
+      "path": "Logs\\round-clean-live-native-v33\\cheska-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2438460
+    },
+    {
+      "path": "Logs\\round-clean-live-native-v33\\dante-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2536759
+    },
+    {
+      "path": "Logs\\round-clean-live-native-v33\\nemu-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2827632
+    },
+    {
+      "path": "Logs\\round-clean-live-native-v33\\phaister-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2654078
+    },
+    {
+      "path": "Logs\\round-clean-live-native-v33\\sean-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 3683785
+    },
+    {
+      "path": "Logs\\round-clean-live-native-v33\\zack-live-ultimate-motion\\observer-ordinary-speed-with-audio.mp4",
+      "bytes": 2782428
+    }
+  ],
+  "tests": {
+    "continuation-integrated-v6": {
+      "total": "7",
+      "passed": "7",
+      "failed": "0",
+      "seconds": "61.7258553",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.CarryTests.RemoteSmoothingLagsTheMeshAndThenCatchesUp",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ExchangePresenceTests.NearbyAcceptedImpactScattersExistingBirdOnceWithoutChangingTheMatch",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ExchangePresenceTests.RealStartBrakeTurnYieldsToThrowAndTeleportWithoutLosingTheGrip",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.FootSupportProbe.ContactSurvivesKerbJumpAndTeleportWithoutMovingTheCapsule",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.FootSupportProbe.PlantedFeetAgainstActualSupportAndControllerSkin",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.MatchFinishPresentationTests.WinnerUsesOriginalRigDrawRemovesItAndReducedMotionStaysStill",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuKitContractProbe.ModelRebindDoesNotBakeRemoteSmoothingIntoItsAlignment",
+          "result": "Passed"
+        }
+      ]
+    },
+    "finish-cohort-cleanup-v2": {
+      "total": "9",
+      "passed": "8",
+      "failed": "1",
+      "seconds": "59.3594653",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.FamiliarReadoutTests.PossessionNamesTheControlledFamiliarAndTheRealReturnAction",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.MatchFinishPresentationTests.ResultsRetireWorldMarkersEvenWhenHudTrackingStops",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.MatchFinishPresentationTests.WinnerUsesOriginalRigDrawRemovesItAndReducedMotionStaysStill",
+          "result": "Failed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ReplayRetentionTests.ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SharedUltimatePhaseTests.FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SlipperRecallShots.TheRecallMarkIsPhotographedInEveryState",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.TumpNativeResultTests.HeroResultsKeepStandingsPlayersMapChoiceAndRealRematch",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.TumpNativeResultTests.RematchActuallyLoadsTheChosenArena",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.TumpNativeResultTests.ResultsKeepStandingsPlayersMapChoiceAndRealRematch",
+          "result": "Passed"
+        }
+      ]
+    },
+    "finish-cohort-cleanup-v3": {
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "seconds": "5.4320746",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.MatchFinishPresentationTests.WinnerUsesOriginalRigDrawRemovesItAndReducedMotionStaysStill",
+          "result": "Passed"
+        }
+      ]
+    },
+    "palette-identity-return-v1": {
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "seconds": "23.7630538",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.ExchangePresentationTests.ClassicExchangeUsesTruthfulStateAndPersonalConfirmation",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ExchangePresentationTests.HeroExchangeUsesTruthfulStateAndPersonalConfirmation",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.FamiliarReadoutTests.PossessionNamesTheControlledFamiliarAndTheRealReturnAction",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.MatchFinishPresentationTests.WinnerUsesOriginalRigDrawRemovesItAndReducedMotionStaysStill",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SharedUltimatePhaseTests.FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState",
+          "result": "Passed"
+        }
+      ]
+    },
+    "caster-text-geometry-v1": {
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "seconds": "12.2570117",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.SharedUltimatePhaseTests.FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState",
+          "result": "Passed"
+        }
+      ]
+    },
+    "round-field-cleanup-v1": {
+      "total": "10",
+      "passed": "10",
+      "failed": "0",
+      "seconds": "45.9262629",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.IceWorldSnapshotProbe.InvalidSnapshotsLeaveTheWorldAndExpiredFieldsDoNotRevive",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.IceWorldSnapshotProbe.MixedPersistentFieldsRestoreTheirOriginalFormAndRemainingLife",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.IceWorldSnapshotProbe.RestoredIceKeepsItsRemainingLifeShapeAndCasterResources",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ReplayRetentionTests.AllPersistentFieldFamiliesUseRenderOnlyPlayback",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ReplayRetentionTests.RealExchangeRetainsDetachedBodiesAndPropsAcrossTheRoundBoundary",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ReplayRetentionTests.RetainedCatchPreservesVictimCoatHeldPropAndSeparateWorldAudio",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.ReplayRetentionTests.ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RoundFieldCleanupTests.AcceptedRoundInactiveSnapshotRetiresReplicaFields",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RoundFieldCleanupTests.RoundEndRemovesLiveFieldsImmediatelyButKeepsMapAndRecordedGeometry",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SharedUltimatePhaseTests.FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState",
+          "result": "Passed"
+        }
+      ]
+    },
+    "round-field-cleanup-v2": {
+      "total": "4",
+      "passed": "4",
+      "failed": "0",
+      "seconds": "7.7275216",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.IceWorldSnapshotProbe.MixedPersistentFieldsRestoreTheirOriginalFormAndRemainingLife",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RoundFieldCleanupTests.AcceptedRoundInactiveSnapshotRetiresReplicaFields",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RoundFieldCleanupTests.NewRoundSnapshotRetiresFieldsEvenIfTheInactivePacketWasMissed",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RoundFieldCleanupTests.RoundEndRemovesLiveFieldsImmediatelyButKeepsMapAndRecordedGeometry",
+          "result": "Passed"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Direct audio input is unsupported by this interface; no listening claim.",
+    "Native bot matches and staged cases are not human gameplay approval.",
+    "Physical input devices and separate-machine LAN/WAN operation were not exercised.",
+    "Intermediate failure images and receipts are retained."
+  ],
+  "build": {
+    "path": "Builds/presentation-v33/TumbangPreso.exe",
+    "reportedMB": 1156,
+    "seconds": 51,
+    "guard": "94885ac16b8e",
+    "nonWhitespaceInputDiff": false
+  },
+  "artifacts": {
+    "TumbangPreso.exe": {
+      "bytes": 667648,
+      "sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59"
+    },
+    "TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll": {
+      "bytes": 2355712,
+      "sha256": "d5f9f511930a7cdfe6557435e6410a070f0c013dc34e99482589a4cc9d15401c"
+    },
+    "TumbangPreso_Data/Managed/TumbangPreso.Core.dll": {
+      "bytes": 161280,
+      "sha256": "6fee16a70563c73052c057c01aca58128d33d3227ad334e0da18544d2bd2e551"
+    }
+  },
+  "validationReuse": "v27 supplies completed default matches; v29 supplies unchanged result/mute/Low/mixed/ordinary behavior; v33 adds its own field/replica/replay/clock and six-performance evidence. No blanket transfer of every earlier check.",
+  "protocol": 48,
+  "oldProtocol47RefusalWitnessed": "[NetApproval] peer=3 approved=False reason=Game version mismatch (network protocol 48) in net-field-replay-v33/host.log; that overall fixture failed before match start and remains failed."
+}

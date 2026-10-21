@@ -1,0 +1,13427 @@
+{
+ "atlas": "Assets/TumbangPreso/Art/Arena/Textures/arena_crowd_atlas.png",
+ "emission": "Assets/TumbangPreso/Art/Arena/Textures/arena_crowd_atlas_emit.png",
+ "atlas_px": 2048,
+ "cell_px": [
+  48,
+  72
+ ],
+ "cell_m": [
+  1.8,
+  2.7
+ ],
+ "ground_m": 0.2,
+ "columns": 42,
+ "rows": 28,
+ "view_pitch_degrees": 8.0,
+ "figure_m": 1.65,
+ "note": "A person is a COLUMN, a frame is a ROW. Rects are pixels, origin top left: x = person * 48, y = (loop.start + frame) * 72. The emission atlas has the same layout, one channel.",
+ "loops": [
+  {
+   "name": "idle",
+   "start": 0,
+   "frames": 2,
+   "fps_calm": 1.2,
+   "fps_excited": 2.0
+  },
+  {
+   "name": "clap",
+   "start": 2,
+   "frames": 2,
+   "fps_calm": 5.0,
+   "fps_excited": 8.0
+  },
+  {
+   "name": "cheer",
+   "start": 4,
+   "frames": 4,
+   "fps_calm": 7.0,
+   "fps_excited": 10.0
+  },
+  {
+   "name": "jump",
+   "start": 8,
+   "frames": 4,
+   "fps_calm": 7.0,
+   "fps_excited": 9.0
+  },
+  {
+   "name": "stick",
+   "start": 12,
+   "frames": 4,
+   "fps_calm": 4.0,
+   "fps_excited": 6.0
+  },
+  {
+   "name": "stick_up",
+   "start": 16,
+   "frames": 4,
+   "fps_calm": 7.0,
+   "fps_excited": 10.0
+  },
+  {
+   "name": "flag",
+   "start": 20,
+   "frames": 4,
+   "fps_calm": 5.0,
+   "fps_excited": 8.0
+  },
+  {
+   "name": "groan",
+   "start": 24,
+   "frames": 4,
+   "fps_calm": 3.0,
+   "fps_excited": 4.0
+  }
+ ],
+ "people": [
+  {
+   "rig": "character-male-f",
+   "palette": "person_a",
+   "dress": 0,
+   "top_slot": 1,
+   "bottom_slot": 15,
+   "column": 0,
+   "x": 0
+  },
+  {
+   "rig": "character-female-f",
+   "palette": "person_b",
+   "dress": 0,
+   "top_slot": 2,
+   "bottom_slot": 5,
+   "column": 1,
+   "x": 48
+  },
+  {
+   "rig": "character-male-a",
+   "palette": "person_totoy",
+   "dress": 0,
+   "top_slot": 1,
+   "bottom_slot": 5,
+   "column": 2,
+   "x": 96
+  },
+  {
+   "rig": "character-female-a",
+   "palette": "person_inday",
+   "dress": 0,
+   "top_slot": 13,
+   "bottom_slot": 5,
+   "column": 3,
+   "x": 144
+  },
+  {
+   "rig": "character-male-b",
+   "palette": "person_kuya-boy",
+   "dress": 0,
+   "top_slot": 4,
+   "bottom_slot": 5,
+   "column": 4,
+   "x": 192
+  },
+  {
+   "rig": "character-female-b",
+   "palette": "person_ate-girlie",
+   "dress": 0,
+   "top_slot": 2,
+   "bottom_slot": 7,
+   "column": 5,
+   "x": 240
+  },
+  {
+   "rig": "character-male-c",
+   "palette": "person_tikboy",
+   "dress": 0,
+   "top_slot": null,
+   "bottom_slot": null,
+   "column": 6,
+   "x": 288
+  },
+  {
+   "rig": "character-female-c",
+   "palette": "person_bebang",
+   "dress": 0,
+   "top_slot": 5,
+   "bottom_slot": null,
+   "column": 7,
+   "x": 336
+  },
+  {
+   "rig": "character-male-d",
+   "palette": "person_jun-jun",
+   "dress": 0,
+   "top_slot": 12,
+   "bottom_slot": null,
+   "column": 8,
+   "x": 384
+  },
+  {
+   "rig": "character-female-d",
+   "palette": "person_lola-pacing",
+   "dress": 0,
+   "top_slot": 9,
+   "bottom_slot": null,
+   "column": 9,
+   "x": 432
+  },
+  {
+   "rig": "character-male-e",
+   "palette": "person_mang-kanor",
+   "dress": 0,
+   "top_slot": 12,
+   "bottom_slot": 2,
+   "column": 10,
+   "x": 480
+  },
+  {
+   "rig": "character-female-e",
+   "palette": "person_aling-nena",
+   "dress": 0,
+   "top_slot": 12,
+   "bottom_slot": null,
+   "column": 11,
+   "x": 528
+  },
+  {
+   "rig": "character-male-f",
+   "palette": "person_a",
+   "dress": 1,
+   "top_slot": 1,
+   "bottom_slot": 15,
+   "column": 12,
+   "x": 576
+  },
+  {
+   "rig": "character-female-f",
+   "palette": "person_b",
+   "dress": 6,
+   "top_slot": 2,
+   "bottom_slot": 5,
+   "column": 13,
+   "x": 624
+  },
+  {
+   "rig": "character-male-a",
+   "palette": "person_totoy",
+   "dress": 11,
+   "top_slot": 1,
+   "bottom_slot": 5,
+   "column": 14,
+   "x": 672
+  },
+  {
+   "rig": "character-female-a",
+   "palette": "person_inday",
+   "dress": 4,
+   "top_slot": 13,
+   "bottom_slot": 5,
+   "column": 15,
+   "x": 720
+  },
+  {
+   "rig": "character-male-b",
+   "palette": "person_kuya-boy",
+   "dress": 9,
+   "top_slot": 4,
+   "bottom_slot": 5,
+   "column": 16,
+   "x": 768
+  },
+  {
+   "rig": "character-female-b",
+   "palette": "person_ate-girlie",
+   "dress": 2,
+   "top_slot": 2,
+   "bottom_slot": 7,
+   "column": 17,
+   "x": 816
+  },
+  {
+   "rig": "character-male-c",
+   "palette": "person_tikboy",
+   "dress": 7,
+   "top_slot": null,
+   "bottom_slot": null,
+   "column": 18,
+   "x": 864
+  },
+  {
+   "rig": "character-female-c",
+   "palette": "person_bebang",
+   "dress": 12,
+   "top_slot": 5,
+   "bottom_slot": null,
+   "column": 19,
+   "x": 912
+  },
+  {
+   "rig": "character-male-d",
+   "palette": "person_jun-jun",
+   "dress": 5,
+   "top_slot": 12,
+   "bottom_slot": null,
+   "column": 20,
+   "x": 960
+  },
+  {
+   "rig": "character-female-d",
+   "palette": "person_lola-pacing",
+   "dress": 10,
+   "top_slot": 9,
+   "bottom_slot": null,
+   "column": 21,
+   "x": 1008
+  },
+  {
+   "rig": "character-male-e",
+   "palette": "person_mang-kanor",
+   "dress": 3,
+   "top_slot": 12,
+   "bottom_slot": 2,
+   "column": 22,
+   "x": 1056
+  },
+  {
+   "rig": "character-female-e",
+   "palette": "person_aling-nena",
+   "dress": 8,
+   "top_slot": 12,
+   "bottom_slot": null,
+   "column": 23,
+   "x": 1104
+  },
+  {
+   "rig": "character-male-f",
+   "palette": "person_a",
+   "dress": 8,
+   "top_slot": 1,
+   "bottom_slot": 15,
+   "column": 24,
+   "x": 1152
+  },
+  {
+   "rig": "character-female-f",
+   "palette": "person_b",
+   "dress": 1,
+   "top_slot": 2,
+   "bottom_slot": 5,
+   "column": 25,
+   "x": 1200
+  },
+  {
+   "rig": "character-male-a",
+   "palette": "person_totoy",
+   "dress": 6,
+   "top_slot": 1,
+   "bottom_slot": 5,
+   "column": 26,
+   "x": 1248
+  },
+  {
+   "rig": "character-female-a",
+   "palette": "person_inday",
+   "dress": 11,
+   "top_slot": 13,
+   "bottom_slot": 5,
+   "column": 27,
+   "x": 1296
+  },
+  {
+   "rig": "character-male-b",
+   "palette": "person_kuya-boy",
+   "dress": 4,
+   "top_slot": 4,
+   "bottom_slot": 5,
+   "column": 28,
+   "x": 1344
+  },
+  {
+   "rig": "character-female-b",
+   "palette": "person_ate-girlie",
+   "dress": 9,
+   "top_slot": 2,
+   "bottom_slot": 7,
+   "column": 29,
+   "x": 1392
+  },
+  {
+   "rig": "character-male-c",
+   "palette": "person_tikboy",
+   "dress": 2,
+   "top_slot": null,
+   "bottom_slot": null,
+   "column": 30,
+   "x": 1440
+  },
+  {
+   "rig": "character-female-c",
+   "palette": "person_bebang",
+   "dress": 7,
+   "top_slot": 5,
+   "bottom_slot": null,
+   "column": 31,
+   "x": 1488
+  },
+  {
+   "rig": "character-male-d",
+   "palette": "person_jun-jun",
+   "dress": 12,
+   "top_slot": 12,
+   "bottom_slot": null,
+   "column": 32,
+   "x": 1536
+  },
+  {
+   "rig": "character-female-d",
+   "palette": "person_lola-pacing",
+   "dress": 5,
+   "top_slot": 9,
+   "bottom_slot": null,
+   "column": 33,
+   "x": 1584
+  },
+  {
+   "rig": "character-male-e",
+   "palette": "person_mang-kanor",
+   "dress": 10,
+   "top_slot": 12,
+   "bottom_slot": 2,
+   "column": 34,
+   "x": 1632
+  },
+  {
+   "rig": "character-female-e",
+   "palette": "person_aling-nena",
+   "dress": 3,
+   "top_slot": 12,
+   "bottom_slot": null,
+   "column": 35,
+   "x": 1680
+  },
+  {
+   "rig": "character-female-f",
+   "palette": "person_b",
+   "dress": 9,
+   "top_slot": 2,
+   "bottom_slot": 5,
+   "column": 36,
+   "x": 1728
+  },
+  {
+   "rig": "character-male-a",
+   "palette": "person_totoy",
+   "dress": 2,
+   "top_slot": 1,
+   "bottom_slot": 5,
+   "column": 37,
+   "x": 1776
+  },
+  {
+   "rig": "character-female-b",
+   "palette": "person_ate-girlie",
+   "dress": 5,
+   "top_slot": 2,
+   "bottom_slot": 7,
+   "column": 38,
+   "x": 1824
+  },
+  {
+   "rig": "character-male-c",
+   "palette": "person_tikboy",
+   "dress": 10,
+   "top_slot": null,
+   "bottom_slot": null,
+   "column": 39,
+   "x": 1872
+  },
+  {
+   "rig": "character-female-d",
+   "palette": "person_lola-pacing",
+   "dress": 1,
+   "top_slot": 9,
+   "bottom_slot": null,
+   "column": 40,
+   "x": 1920
+  },
+  {
+   "rig": "character-male-e",
+   "palette": "person_mang-kanor",
+   "dress": 6,
+   "top_slot": 12,
+   "bottom_slot": 2,
+   "column": 41,
+   "x": 1968
+  }
+ ],
+ "cells": [
+  {
+   "person": 0,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    0,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    0,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    0,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    0,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    0,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    0,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    0,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    0,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    0,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    0,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    0,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    0,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    0,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    0,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    0,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    0,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    0,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    0,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    0,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    0,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    0,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    0,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    0,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    0,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    0,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    0,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    0,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 0,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    0,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    48,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    48,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    48,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    48,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    48,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    48,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    48,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    48,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    48,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    48,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    48,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    48,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    48,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    48,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    48,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    48,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    48,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    48,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    48,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    48,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    48,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    48,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    48,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    48,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    48,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    48,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    48,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 1,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    48,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    96,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    96,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    96,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    96,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    96,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    96,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    96,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    96,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    96,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    96,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    96,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    96,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    96,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    96,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    96,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    96,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    96,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    96,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    96,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    96,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    96,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    96,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    96,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    96,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    96,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    96,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    96,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 2,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    96,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    144,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    144,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    144,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    144,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    144,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    144,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    144,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    144,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    144,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    144,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    144,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    144,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    144,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    144,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    144,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    144,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    144,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    144,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    144,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    144,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    144,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    144,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    144,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    144,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    144,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    144,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    144,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 3,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    144,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    192,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    192,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    192,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    192,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    192,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    192,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    192,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    192,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    192,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    192,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    192,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    192,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    192,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    192,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    192,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    192,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    192,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    192,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    192,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    192,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    192,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    192,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    192,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    192,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    192,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    192,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    192,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 4,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    192,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    240,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    240,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    240,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    240,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    240,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    240,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    240,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    240,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    240,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    240,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    240,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    240,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    240,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    240,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    240,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    240,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    240,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    240,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    240,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    240,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    240,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    240,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    240,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    240,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    240,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    240,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    240,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 5,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    240,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    288,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    288,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    288,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    288,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    288,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    288,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    288,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    288,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    288,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    288,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    288,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    288,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    288,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    288,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    288,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    288,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    288,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    288,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    288,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    288,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    288,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    288,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    288,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    288,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    288,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    288,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    288,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 6,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    288,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    336,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    336,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    336,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    336,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    336,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    336,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    336,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    336,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    336,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    336,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    336,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    336,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    336,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    336,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    336,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    336,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    336,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    336,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    336,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    336,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    336,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    336,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    336,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    336,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    336,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    336,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    336,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 7,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    336,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    384,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    384,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    384,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    384,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    384,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    384,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    384,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    384,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    384,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    384,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    384,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    384,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    384,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    384,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    384,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    384,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    384,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    384,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    384,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    384,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    384,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    384,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    384,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    384,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    384,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    384,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    384,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 8,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    384,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    432,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    432,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    432,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    432,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    432,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    432,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    432,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    432,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    432,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    432,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    432,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    432,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    432,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    432,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    432,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    432,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    432,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    432,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    432,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    432,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    432,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    432,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    432,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    432,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    432,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    432,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    432,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 9,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    432,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    480,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    480,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    480,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    480,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    480,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    480,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    480,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    480,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    480,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    480,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    480,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    480,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    480,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    480,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    480,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    480,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    480,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    480,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    480,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    480,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    480,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    480,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    480,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    480,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    480,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    480,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    480,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 10,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    480,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    528,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    528,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    528,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    528,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    528,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    528,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    528,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    528,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    528,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    528,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    528,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    528,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    528,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    528,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    528,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    528,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    528,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    528,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    528,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    528,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    528,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    528,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    528,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    528,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    528,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    528,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    528,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 11,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    528,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    576,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    576,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    576,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    576,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    576,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    576,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    576,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    576,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    576,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    576,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    576,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    576,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    576,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    576,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    576,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    576,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    576,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    576,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    576,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    576,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    576,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    576,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    576,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    576,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    576,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    576,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    576,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 12,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    576,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    624,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    624,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    624,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    624,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    624,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    624,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    624,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    624,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    624,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    624,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    624,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    624,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    624,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    624,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    624,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    624,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    624,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    624,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    624,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    624,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    624,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    624,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    624,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    624,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    624,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    624,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    624,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 13,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    624,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    672,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    672,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    672,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    672,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    672,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    672,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    672,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    672,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    672,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    672,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    672,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    672,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    672,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    672,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    672,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    672,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    672,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    672,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    672,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    672,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    672,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    672,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    672,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    672,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    672,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    672,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    672,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 14,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    672,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    720,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    720,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    720,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    720,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    720,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    720,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    720,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    720,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    720,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    720,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    720,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    720,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    720,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    720,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    720,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    720,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    720,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    720,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    720,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    720,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    720,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    720,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    720,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    720,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    720,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    720,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    720,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 15,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    720,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    768,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    768,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    768,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    768,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    768,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    768,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    768,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    768,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    768,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    768,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    768,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    768,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    768,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    768,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    768,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    768,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    768,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    768,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    768,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    768,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    768,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    768,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    768,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    768,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    768,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    768,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    768,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 16,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    768,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    816,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    816,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    816,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    816,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    816,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    816,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    816,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    816,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    816,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    816,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    816,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    816,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    816,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    816,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    816,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    816,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    816,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    816,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    816,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    816,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    816,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    816,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    816,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    816,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    816,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    816,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    816,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 17,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    816,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    864,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    864,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    864,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    864,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    864,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    864,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    864,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    864,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    864,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    864,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    864,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    864,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    864,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    864,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    864,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    864,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    864,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    864,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    864,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    864,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    864,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    864,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    864,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    864,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    864,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    864,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    864,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 18,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    864,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    912,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    912,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    912,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    912,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    912,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    912,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    912,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    912,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    912,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    912,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    912,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    912,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    912,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    912,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    912,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    912,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    912,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    912,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    912,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    912,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    912,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    912,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    912,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    912,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    912,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    912,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    912,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 19,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    912,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    960,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    960,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    960,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    960,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    960,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    960,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    960,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    960,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    960,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    960,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    960,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    960,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    960,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    960,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    960,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    960,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    960,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    960,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    960,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    960,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    960,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    960,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    960,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    960,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    960,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    960,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    960,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 20,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    960,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1008,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1008,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1008,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1008,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1008,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1008,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1008,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1008,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1008,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1008,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1008,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1008,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1008,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1008,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1008,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1008,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1008,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1008,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1008,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1008,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1008,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1008,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1008,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1008,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1008,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1008,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1008,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 21,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1008,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1056,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1056,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1056,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1056,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1056,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1056,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1056,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1056,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1056,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1056,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1056,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1056,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1056,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1056,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1056,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1056,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1056,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1056,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1056,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1056,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1056,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1056,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1056,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1056,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1056,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1056,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1056,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 22,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1056,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1104,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1104,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1104,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1104,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1104,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1104,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1104,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1104,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1104,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1104,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1104,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1104,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1104,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1104,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1104,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1104,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1104,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1104,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1104,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1104,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1104,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1104,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1104,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1104,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1104,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1104,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1104,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 23,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1104,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1152,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1152,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1152,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1152,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1152,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1152,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1152,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1152,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1152,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1152,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1152,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1152,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1152,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1152,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1152,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1152,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1152,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1152,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1152,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1152,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1152,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1152,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1152,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1152,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1152,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1152,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1152,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 24,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1152,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1200,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1200,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1200,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1200,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1200,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1200,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1200,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1200,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1200,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1200,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1200,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1200,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1200,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1200,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1200,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1200,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1200,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1200,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1200,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1200,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1200,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1200,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1200,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1200,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1200,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1200,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1200,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 25,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1200,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1248,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1248,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1248,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1248,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1248,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1248,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1248,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1248,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1248,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1248,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1248,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1248,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1248,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1248,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1248,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1248,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1248,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1248,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1248,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1248,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1248,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1248,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1248,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1248,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1248,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1248,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1248,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 26,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1248,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1296,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1296,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1296,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1296,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1296,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1296,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1296,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1296,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1296,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1296,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1296,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1296,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1296,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1296,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1296,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1296,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1296,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1296,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1296,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1296,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1296,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1296,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1296,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1296,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1296,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1296,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1296,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 27,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1296,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1344,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1344,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1344,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1344,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1344,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1344,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1344,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1344,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1344,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1344,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1344,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1344,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1344,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1344,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1344,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1344,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1344,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1344,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1344,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1344,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1344,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1344,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1344,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1344,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1344,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1344,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1344,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 28,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1344,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1392,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1392,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1392,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1392,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1392,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1392,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1392,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1392,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1392,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1392,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1392,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1392,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1392,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1392,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1392,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1392,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1392,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1392,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1392,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1392,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1392,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1392,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1392,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1392,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1392,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1392,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1392,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 29,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1392,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1440,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1440,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1440,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1440,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1440,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1440,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1440,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1440,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1440,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1440,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1440,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1440,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1440,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1440,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1440,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1440,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1440,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1440,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1440,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1440,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1440,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1440,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1440,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1440,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1440,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1440,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1440,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 30,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1440,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1488,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1488,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1488,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1488,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1488,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1488,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1488,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1488,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1488,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1488,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1488,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1488,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1488,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1488,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1488,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1488,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1488,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1488,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1488,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1488,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1488,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1488,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1488,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1488,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1488,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1488,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1488,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 31,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1488,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1536,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1536,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1536,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1536,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1536,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1536,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1536,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1536,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1536,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1536,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1536,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1536,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1536,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1536,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1536,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1536,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1536,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1536,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1536,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1536,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1536,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1536,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1536,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1536,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1536,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1536,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1536,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 32,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1536,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1584,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1584,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1584,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1584,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1584,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1584,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1584,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1584,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1584,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1584,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1584,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1584,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1584,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1584,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1584,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1584,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1584,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1584,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1584,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1584,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1584,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1584,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1584,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1584,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1584,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1584,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1584,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 33,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1584,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1632,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1632,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1632,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1632,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1632,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1632,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1632,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1632,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1632,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1632,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1632,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1632,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1632,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1632,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1632,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1632,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1632,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1632,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1632,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1632,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1632,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1632,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1632,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1632,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1632,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1632,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1632,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 34,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1632,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1680,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1680,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1680,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1680,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1680,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1680,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1680,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1680,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1680,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1680,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1680,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1680,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1680,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1680,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1680,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1680,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1680,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1680,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1680,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1680,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1680,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1680,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1680,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1680,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1680,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1680,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1680,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 35,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1680,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1728,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1728,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1728,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1728,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1728,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1728,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1728,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1728,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1728,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1728,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1728,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1728,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1728,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1728,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1728,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1728,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1728,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1728,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1728,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1728,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1728,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1728,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1728,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1728,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1728,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1728,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1728,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 36,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1728,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1776,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1776,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1776,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1776,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1776,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1776,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1776,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1776,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1776,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1776,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1776,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1776,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1776,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1776,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1776,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1776,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1776,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1776,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1776,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1776,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1776,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1776,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1776,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1776,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1776,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1776,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1776,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 37,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1776,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1824,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1824,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1824,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1824,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1824,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1824,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1824,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1824,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1824,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1824,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1824,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1824,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1824,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1824,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1824,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1824,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1824,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1824,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1824,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1824,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1824,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1824,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1824,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1824,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1824,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1824,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1824,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 38,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1824,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1872,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1872,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1872,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1872,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1872,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1872,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1872,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1872,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1872,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1872,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1872,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1872,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1872,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1872,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1872,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1872,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1872,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1872,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1872,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1872,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1872,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1872,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1872,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1872,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1872,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1872,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1872,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 39,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1872,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1920,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1920,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1920,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1920,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1920,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1920,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1920,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1920,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1920,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1920,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1920,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1920,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1920,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1920,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1920,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1920,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1920,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1920,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1920,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1920,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1920,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1920,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1920,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1920,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1920,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1920,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1920,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 40,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1920,
+    1944,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "idle",
+   "frame": 0,
+   "rect": [
+    1968,
+    0,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "idle",
+   "frame": 1,
+   "rect": [
+    1968,
+    72,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "clap",
+   "frame": 0,
+   "rect": [
+    1968,
+    144,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "clap",
+   "frame": 1,
+   "rect": [
+    1968,
+    216,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "cheer",
+   "frame": 0,
+   "rect": [
+    1968,
+    288,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "cheer",
+   "frame": 1,
+   "rect": [
+    1968,
+    360,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "cheer",
+   "frame": 2,
+   "rect": [
+    1968,
+    432,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "cheer",
+   "frame": 3,
+   "rect": [
+    1968,
+    504,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "jump",
+   "frame": 0,
+   "rect": [
+    1968,
+    576,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "jump",
+   "frame": 1,
+   "rect": [
+    1968,
+    648,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "jump",
+   "frame": 2,
+   "rect": [
+    1968,
+    720,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "jump",
+   "frame": 3,
+   "rect": [
+    1968,
+    792,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick",
+   "frame": 0,
+   "rect": [
+    1968,
+    864,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick",
+   "frame": 1,
+   "rect": [
+    1968,
+    936,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick",
+   "frame": 2,
+   "rect": [
+    1968,
+    1008,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick",
+   "frame": 3,
+   "rect": [
+    1968,
+    1080,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick_up",
+   "frame": 0,
+   "rect": [
+    1968,
+    1152,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick_up",
+   "frame": 1,
+   "rect": [
+    1968,
+    1224,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick_up",
+   "frame": 2,
+   "rect": [
+    1968,
+    1296,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "stick_up",
+   "frame": 3,
+   "rect": [
+    1968,
+    1368,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "flag",
+   "frame": 0,
+   "rect": [
+    1968,
+    1440,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "flag",
+   "frame": 1,
+   "rect": [
+    1968,
+    1512,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "flag",
+   "frame": 2,
+   "rect": [
+    1968,
+    1584,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "flag",
+   "frame": 3,
+   "rect": [
+    1968,
+    1656,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "groan",
+   "frame": 0,
+   "rect": [
+    1968,
+    1728,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "groan",
+   "frame": 1,
+   "rect": [
+    1968,
+    1800,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "groan",
+   "frame": 2,
+   "rect": [
+    1968,
+    1872,
+    48,
+    72
+   ]
+  },
+  {
+   "person": 41,
+   "loop": "groan",
+   "frame": 3,
+   "rect": [
+    1968,
+    1944,
+    48,
+    72
+   ]
+  }
+ ],
+ "screen_px_1080p_fov60": [
+  {
+   "where": "first row from the can",
+   "distance_m": 85.3,
+   "figure_px": 18.1,
+   "cell_px": 29.6
+  },
+  {
+   "where": "first row from the stage's edge (22 m out)",
+   "distance_m": 63.3,
+   "figure_px": 24.4,
+   "cell_px": 39.9
+  },
+  {
+   "where": "lower bowl, top row",
+   "distance_m": 131.2,
+   "figure_px": 11.8,
+   "cell_px": 19.3
+  },
+  {
+   "where": "upper stand, first row",
+   "distance_m": 144.8,
+   "figure_px": 10.7,
+   "cell_px": 17.4
+  },
+  {
+   "where": "upper stand, top row",
+   "distance_m": 183.4,
+   "figure_px": 8.4,
+   "cell_px": 13.8
+  }
+ ]
+}

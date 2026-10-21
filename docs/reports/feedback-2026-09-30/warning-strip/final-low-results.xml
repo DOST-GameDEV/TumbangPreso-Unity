@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 01:44:17Z" end-time="2026-10-02 01:44:26Z" duration="8.6150167">
+  <test-suite type="TestSuite" id="2495" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1222" result="Passed" start-time="2026-10-02 01:44:17Z" end-time="2026-10-02 01:44:26Z" duration="8.615017" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2489" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1222" result="Passed" start-time="2026-10-02 01:44:17Z" end-time="2026-10-02 01:44:26Z" duration="8.593067" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="46082" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2490" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1222" result="Passed" start-time="2026-10-02 01:44:17Z" end-time="2026-10-02 01:44:26Z" duration="8.579852" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2491" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1222" result="Passed" start-time="2026-10-02 01:44:17Z" end-time="2026-10-02 01:44:26Z" duration="8.564520" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2315" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="19" result="Passed" start-time="2026-10-02 01:44:17Z" end-time="2026-10-02 01:44:26Z" duration="8.538828" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2333" name="WarningStripIsThinSingleLineAndMatchesActionOpacity" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.WarningStripIsThinSingleLineAndMatchesActionOpacity" methodname="WarningStripIsThinSingleLineAndMatchesActionOpacity" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="289136544" result="Passed" start-time="2026-10-02 01:44:17Z" end-time="2026-10-02 01:44:26Z" duration="8.524729" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Warning-strip-1-960 cream source=252,211,159 pixel=249,205,155; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1-1600 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1.2-960 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1.2-1600 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

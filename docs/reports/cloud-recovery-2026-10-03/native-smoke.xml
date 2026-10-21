@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.411439">
+  <test-suite type="TestSuite" id="2654" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.411439" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2648" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.399107" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4811" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2649" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.392847" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2650" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.386458" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1618" name="KitRecallParityChecks" fullname="TumbangPreso.PlayTests.KitRecallParityChecks" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.355578" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1621" name="SameKitRoleChangeRefreshesItsRealNameAndDescription" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.349049" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1619" name="SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;cheska&quot;)" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;cheska&quot;)" methodname="SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="292959148" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.225679" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1620" name="SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;dante&quot;)" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;dante&quot;)" methodname="SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="13592945" result="Passed" start-time="2026-10-03 02:52:55Z" end-time="2026-10-03 02:52:55Z" duration="0.112131" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

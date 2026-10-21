@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="15" result="Failed(Child)" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-20 20:33:48Z" end-time="2026-09-20 20:34:18Z" duration="30.2044204">
+  <test-suite type="TestSuite" id="1600" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="453" result="Failed" site="Child" start-time="2026-09-20 20:33:48Z" end-time="2026-09-20 20:34:18Z" duration="30.204420" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1594" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="453" result="Failed" site="Child" start-time="2026-09-20 20:33:48Z" end-time="2026-09-20 20:34:18Z" duration="30.192558" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16548" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1595" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="453" result="Failed" site="Child" start-time="2026-09-20 20:33:48Z" end-time="2026-09-20 20:34:18Z" duration="30.190330" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1596" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="453" result="Failed" site="Child" start-time="2026-09-20 20:33:48Z" end-time="2026-09-20 20:34:18Z" duration="30.188083" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1056" name="CarryTests" fullname="TumbangPreso.PlayTests.CarryTests" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-20 20:33:48Z" end-time="2026-09-20 20:33:55Z" duration="6.954625" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1061" name="AHeldSlipperSitsOnTheHandNotFloatingAboveIt" fullname="TumbangPreso.PlayTests.CarryTests.AHeldSlipperSitsOnTheHandNotFloatingAboveIt" methodname="AHeldSlipperSitsOnTheHandNotFloatingAboveIt" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="2135732908" result="Passed" start-time="2026-09-20 20:33:48Z" end-time="2026-09-20 20:33:51Z" duration="2.545517" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1058" name="AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" fullname="TumbangPreso.PlayTests.CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" methodname="AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="81173113" result="Passed" start-time="2026-09-20 20:33:51Z" end-time="2026-09-20 20:33:52Z" duration="1.112323" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1060" name="RemoteSmoothingLagsTheMeshAndThenCatchesUp" fullname="TumbangPreso.PlayTests.CarryTests.RemoteSmoothingLagsTheMeshAndThenCatchesUp" methodname="RemoteSmoothingLagsTheMeshAndThenCatchesUp" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1232290638" result="Failed" start-time="2026-09-20 20:33:52Z" end-time="2026-09-20 20:33:53Z" duration="1.583392" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The mesh never caught up with the body, so a remote unit would render permanently beside itself.
+  Expected: less than 0.0500000007f
+  But was:  0.0749124885f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarryTests+<RemoteSmoothingLagsTheMeshAndThenCatchesUp>d__5.MoveNext () [0x00234] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\CarryTests.cs:399
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1057" name="TheHandAnchorLandsOnTheHandAndRidesIt" fullname="TumbangPreso.PlayTests.CarryTests.TheHandAnchorLandsOnTheHandAndRidesIt" methodname="TheHandAnchorLandsOnTheHandAndRidesIt" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1102427660" result="Passed" start-time="2026-09-20 20:33:53Z" end-time="2026-09-20 20:33:54Z" duration="0.888572" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1059" name="TheViewmodelCarriesItsOwnSlipperInFirstPerson" fullname="TumbangPreso.PlayTests.CarryTests.TheViewmodelCarriesItsOwnSlipperInFirstPerson" methodname="TheViewmodelCarriesItsOwnSlipperInFirstPerson" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="978032602" result="Passed" start-time="2026-09-20 20:33:54Z" end-time="2026-09-20 20:33:55Z" duration="0.805876" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1127" name="ExchangePresentationTests" fullname="TumbangPreso.PlayTests.ExchangePresentationTests" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-20 20:33:55Z" end-time="2026-09-20 20:34:02Z" duration="6.572760" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1128" name="ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" methodname="ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="529742091" result="Passed" start-time="2026-09-20 20:33:55Z" end-time="2026-09-20 20:33:58Z" duration="3.020888" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/exchange-presentation-v1/Classic-can-down.png
+[Play] wrote Logs/exchange-presentation-v1/Classic-restored-danger.png
+]]></output>
+            </test-case>
+            <test-case id="1130" name="ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" methodname="ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="179742987" result="Passed" start-time="2026-09-20 20:33:58Z" end-time="2026-09-20 20:33:59Z" duration="0.765142" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1129" name="HeroExchangeUsesTruthfulStateAndPersonalConfirmation" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.HeroExchangeUsesTruthfulStateAndPersonalConfirmation" methodname="HeroExchangeUsesTruthfulStateAndPersonalConfirmation" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="352842236" result="Passed" start-time="2026-09-20 20:33:59Z" end-time="2026-09-20 20:34:02Z" duration="2.783931" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/exchange-presentation-v1/HeroStrike-can-down.png
+[Play] wrote Logs/exchange-presentation-v1/HeroStrike-restored-danger.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1177" name="InputEdgeTests" fullname="TumbangPreso.PlayTests.InputEdgeTests" classname="TumbangPreso.PlayTests.InputEdgeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-20 20:34:02Z" end-time="2026-09-20 20:34:14Z" duration="12.806403" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1178" name="AJumpPressReachesThePhysicsStep" fullname="TumbangPreso.PlayTests.InputEdgeTests.AJumpPressReachesThePhysicsStep" methodname="AJumpPressReachesThePhysicsStep" classname="TumbangPreso.PlayTests.InputEdgeTests" runstate="Runnable" seed="464990453" result="Passed" start-time="2026-09-20 20:34:02Z" end-time="2026-09-20 20:34:04Z" duration="2.182984" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1179" name="AnAttackerTakesTheirOwnTsinelasAndNobodyElses" fullname="TumbangPreso.PlayTests.InputEdgeTests.AnAttackerTakesTheirOwnTsinelasAndNobodyElses" methodname="AnAttackerTakesTheirOwnTsinelasAndNobodyElses" classname="TumbangPreso.PlayTests.InputEdgeTests" runstate="Runnable" seed="639787657" result="Passed" start-time="2026-09-20 20:34:04Z" end-time="2026-09-20 20:34:05Z" duration="1.407082" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1180" name="EveryPersonBuildsAHandAnchor" fullname="TumbangPreso.PlayTests.InputEdgeTests.EveryPersonBuildsAHandAnchor" methodname="EveryPersonBuildsAHandAnchor" classname="TumbangPreso.PlayTests.InputEdgeTests" runstate="Runnable" seed="1262557832" result="Passed" start-time="2026-09-20 20:34:05Z" end-time="2026-09-20 20:34:06Z" duration="0.785066" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1181" name="EverySlipperAndTheLataWearTheToonOutline" fullname="TumbangPreso.PlayTests.InputEdgeTests.EverySlipperAndTheLataWearTheToonOutline" methodname="EverySlipperAndTheLataWearTheToonOutline" classname="TumbangPreso.PlayTests.InputEdgeTests" runstate="Runnable" seed="532892968" result="Passed" start-time="2026-09-20 20:34:06Z" end-time="2026-09-20 20:34:07Z" duration="0.767158" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1182" name="MashingShortensAFallByWhatBalanceSays" fullname="TumbangPreso.PlayTests.InputEdgeTests.MashingShortensAFallByWhatBalanceSays" methodname="MashingShortensAFallByWhatBalanceSays" classname="TumbangPreso.PlayTests.InputEdgeTests" runstate="Runnable" seed="2070667446" result="Passed" start-time="2026-09-20 20:34:07Z" end-time="2026-09-20 20:34:14Z" duration="7.660423" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1485" name="SlipperRecallShots" fullname="TumbangPreso.PlayTests.SlipperRecallShots" classname="TumbangPreso.PlayTests.SlipperRecallShots" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-20 20:34:14Z" end-time="2026-09-20 20:34:17Z" duration="2.594018" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1486" name="TheRecallMarkIsPhotographedInEveryState" fullname="TumbangPreso.PlayTests.SlipperRecallShots.TheRecallMarkIsPhotographedInEveryState" methodname="TheRecallMarkIsPhotographedInEveryState" classname="TumbangPreso.PlayTests.SlipperRecallShots" runstate="Runnable" seed="471097281" result="Passed" start-time="2026-09-20 20:34:14Z" end-time="2026-09-20 20:34:17Z" duration="2.591343" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/shots-recall/recall-1-inflight.png
+[Play] wrote Logs/shots-recall/recall-2-loose-at-range.png
+[Play] wrote Logs/shots-recall/beam-witness.png
+[Play] wrote Logs/shots-recall/recall-2-loose-at-range-shortwide.png
+[Play] wrote Logs/shots-recall/recall-3-in-reach-handover.png
+[Play] wrote Logs/shots-recall/recall-4-clamped.png
+[Play] wrote Logs/shots-recall/recall-4-clamped-shortwide.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1487" name="SoloPracticeTests" fullname="TumbangPreso.PlayTests.SoloPracticeTests" classname="TumbangPreso.PlayTests.SoloPracticeTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-20 20:34:17Z" end-time="2026-09-20 20:34:18Z" duration="1.236368" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1488" name="SoloPracticeSpawnsOneSeatAndStillLetsItRetrieve" fullname="TumbangPreso.PlayTests.SoloPracticeTests.SoloPracticeSpawnsOneSeatAndStillLetsItRetrieve" methodname="SoloPracticeSpawnsOneSeatAndStillLetsItRetrieve" classname="TumbangPreso.PlayTests.SoloPracticeTests" runstate="Runnable" seed="2019746223" result="Passed" start-time="2026-09-20 20:34:17Z" end-time="2026-09-20 20:34:18Z" duration="1.234128" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

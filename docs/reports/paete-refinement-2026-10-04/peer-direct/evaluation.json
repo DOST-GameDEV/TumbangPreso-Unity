@@ -1,0 +1,55 @@
+{
+  "scope": "Three actual Linux player processes over loopback; observer kit refresh, not process restart or WAN/hardware qualification",
+  "errors": [],
+  "peers": {
+    "host": {
+      "samples": 629,
+      "casterTravel": 4.176,
+      "targetTravel": 0.9799989999999998,
+      "finalGap": 0.844001,
+      "casterFinal": [
+        0.0,
+        -3.824
+      ],
+      "targetFinal": [
+        0.0,
+        -2.979999
+      ],
+      "activeSamples": 14,
+      "refreshed": false
+    },
+    "owner": {
+      "samples": 620,
+      "casterTravel": 4.176,
+      "targetTravel": 0.98,
+      "finalGap": 0.8439999999999999,
+      "casterFinal": [
+        0.0,
+        -3.824
+      ],
+      "targetFinal": [
+        0.0,
+        -2.98
+      ],
+      "activeSamples": 13,
+      "refreshed": false
+    },
+    "observer": {
+      "samples": 619,
+      "casterTravel": 4.176,
+      "targetTravel": 0.98,
+      "finalGap": 0.8439999999999999,
+      "casterFinal": [
+        0.0,
+        -3.824
+      ],
+      "targetFinal": [
+        0.0,
+        -2.98
+      ],
+      "activeSamples": 9,
+      "refreshed": true
+    }
+  },
+  "ok": true
+}

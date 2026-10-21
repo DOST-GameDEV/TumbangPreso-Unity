@@ -56,6 +56,9 @@ namespace TumbangPreso
         private RosterBook _book;
         private bool _spectating;
         private CharacterMotor[] _seats;
+        private bool _installed;
+        public bool IsPrepared => _installed && (!PracticeRange.Requested || PracticeRange.Active);
+        public string InstallationError { get; private set; }
 
         /// <summary>
         /// ⚠️⚠️ THE ARENA FOLLOWS THE SEAT FROM WHEREVER IT CHANGES, NOT FROM ONE MESSAGE.
@@ -167,6 +170,7 @@ namespace TumbangPreso
         /// </summary>
         private System.Action<int, int> _roundVoice;
         private System.Action<int> _wonVoice;
+        private System.Action<MatchMoment> _momentVoice;
 
         private void OnDestroy()
         {
@@ -174,10 +178,12 @@ namespace TumbangPreso
             {
                 if (_roundVoice != null) GameServices.Match.RoundStarted -= _roundVoice;
                 if (_wonVoice != null) GameServices.Match.MatchEnded -= _wonVoice;
+                if (_momentVoice != null) GameServices.Match.MomentPresented -= _momentVoice;
             }
 
             _roundVoice = null;
             _wonVoice = null;
+            _momentVoice = null;
         }
 
         /// <summary>
@@ -221,7 +227,7 @@ namespace TumbangPreso
         /// ⚠️⚠️ THE FACE, NOT THE CENTRE, AND READING THE CENTRE IS HALF OF WHY BODIES LEFT THE
         /// MAP. The old measurement took `col.transform.position + col.center`, which is the
         /// middle of the wall, so every limit was too generous by half that wall's thickness.
-        /// `AIController.PlayableHalfX`'s own note says in capitals that it is THE WALL FACES;
+        /// `AIController.PlayableMinX`'s own note says in capitals that it is THE WALL FACES;
         /// the code under it had been measuring centres, and a doc and a number that disagree is
         /// the shape of fault this repo's rules exist to stop.
         ///
@@ -267,8 +273,22 @@ namespace TumbangPreso
         public static float WallTop(Bounds box) => box.center.y + box.extents.y;
 
         public static float WallFace(Bounds box, out bool constrainsX)
+            => WallFace(box, out constrainsX, out _);
+
+        /// <summary>
+        /// <see cref="WallFace(Bounds, out bool)"/>, and which SIDE of the arena the wall stands
+        /// on: +1 when its centre is on the positive side of the axis it walls off, -1 when it is
+        /// on the negative side.
+        ///
+        /// ⚠️ THE SIDE IS THE SIGN OF THE CENTRE, which is the same centre the face is measured
+        /// from, so a wall can never be counted on one side and measured against the other. A
+        /// wall whose centre sits within 1.0 m of the middle is already refused as an obstacle
+        /// rather than an edge, so the sign is never read off a centre near zero.
+        /// </summary>
+        public static float WallFace(Bounds box, out bool constrainsX, out float side)
         {
             constrainsX = box.extents.x < box.extents.z;
+            side = 0.0f;
 
             // A kerb, a pavement and the ground plate are all thin across one axis. Only a wall
             // is also tall. See MinimumWallHalfHeight.
@@ -278,12 +298,94 @@ namespace TumbangPreso
             float extent = constrainsX ? box.extents.x : box.extents.z;
             float face = Mathf.Abs(centre) - extent;
 
-            return face > 1.0f ? face : -1.0f;
+            // Written as the old `face > 1.0f` test negated, so a NaN is refused as it was.
+            if (!(face > 1.0f)) return -1.0f;
+
+            side = centre > 0.0f ? 1.0f : -1.0f;
+            return face;
         }
 
         /// <summary>
-        /// Measures the arena the round is about to be played in, and writes the one pair of
-        /// numbers that clamps every body and every tsinelas in it.
+        /// The four wall faces and the ceiling, measured from a set of wall boxes. Pure, so a
+        /// test can hand it geometry it owns; <see cref="MeasurePlayableBounds"/> hands it the
+        /// scene's.
+        ///
+        /// ⚠️⚠️ THE TIGHTEST WALL ON EACH SIDE, NOT ON EACH AXIS (2026-09-27). The minimum used
+        /// to be taken over both sides of an axis at once, because the clamp was symmetric and
+        /// the tighter side was the only one safe on both. The clamp is per side now, so each
+        /// side keeps its own nearest wall: a far sea wall at z = +24 no longer shrinks to the
+        /// land wall's 13, and it still cannot leak past the land wall either. Within one side it
+        /// is still the minimum, for the reason below: two boxes on the same side mean the inner
+        /// one is the wall a body meets first.
+        ///
+        /// ⚠️ A SIDE WITH NO WALL MIRRORS THE OPPOSITE SIDE, AND AN AXIS WITH NEITHER KEEPS THE
+        /// DEFAULT. The mirror is exactly what the symmetric measurement did with a map that
+        /// walled one side only (the one face it found was applied to both), so such a map
+        /// measures the same as it always did rather than acquiring an open side. An infinity
+        /// would clamp nothing at all.
+        /// </summary>
+        public static void MeasureWalls(System.Collections.Generic.IEnumerable<Bounds> boxes,
+                                        out float minX, out float maxX,
+                                        out float minZ, out float maxZ,
+                                        out float ceiling)
+        {
+            // Each is the DISTANCE from the centre spot to the nearest wall on that side.
+            float negX = float.PositiveInfinity, posX = float.PositiveInfinity;
+            float negZ = float.PositiveInfinity, posZ = float.PositiveInfinity;
+            float top = float.PositiveInfinity;
+
+            if (boxes != null)
+            {
+                foreach (var box in boxes)
+                {
+                    float face = WallFace(box, out bool constrainsX, out float side);
+                    if (face < 0.0f) continue;
+
+                    if (constrainsX)
+                    {
+                        if (side > 0.0f) posX = Mathf.Min(posX, face);
+                        else negX = Mathf.Min(negX, face);
+                    }
+                    else
+                    {
+                        if (side > 0.0f) posZ = Mathf.Min(posZ, face);
+                        else negZ = Mathf.Min(negZ, face);
+                    }
+
+                    // ⚠️ THE LOWEST WALL TOP, because that is the one a tsinelas can be thrown
+                    // over. A ceiling set from the tallest would leave the shortest side open,
+                    // which is the only side anybody would find.
+                    top = Mathf.Min(top, WallTop(box));
+                }
+            }
+
+            ResolveAxis(negX, posX, DefaultHalfX, out minX, out maxX);
+            ResolveAxis(negZ, posZ, DefaultHalfZ, out minZ, out maxZ);
+
+            // ⚠️⚠️ THE ARENA HAS A LID NOW, AND IT DID NOT. 🧑 2026-08-29: *"make sure theres
+            // invisible bounds in the sky as well as those walls that return the slippers or make
+            // them bounce"*. `BounceOffBounds` walled X and Z and left Y open, so a tsinelas
+            // thrown hard and high went straight over the top of a 6 m wall and came down outside
+            // the arena, where the resting clamp then dragged it back to a wall it had never
+            // touched. A shoe that leaves the map is an attacker deleted from the round, which is
+            // the same cost the resting clamp's own note describes at length.
+            ceiling = float.IsInfinity(top) ? DefaultCeilingY : Mathf.Max(top, MinimumCeilingY);
+        }
+
+        /// <summary>One axis's two limits from its two measured distances. See MeasureWalls.</summary>
+        private static void ResolveAxis(float neg, float pos, float fallback, out float min, out float max)
+        {
+            if (float.IsInfinity(neg) && float.IsInfinity(pos)) { neg = fallback; pos = fallback; }
+            else if (float.IsInfinity(neg)) neg = pos;
+            else if (float.IsInfinity(pos)) pos = neg;
+
+            min = -neg;
+            max = pos;
+        }
+
+        /// <summary>
+        /// Measures the arena the round is about to be played in, and writes the four wall faces
+        /// that clamp every body and every tsinelas in it.
         ///
         /// ⚠️⚠️ THE TIGHTEST WALL, NOT THE FARTHEST, AND THE OLD `Mathf.Max` IS THE OTHER HALF OF
         /// 🧑 2026-08-29's *"out of bounds sa ilalim ng tulay map"*. Seeding with Eskinita's 8.6
@@ -296,73 +398,77 @@ namespace TumbangPreso
         /// ⚠️ AND THE MAXIMUM WAS WRONG ON ITS OWN TERMS EVEN WITHOUT THE SEED. Taking the
         /// farthest wall on an axis applies the far side's distance to BOTH sides, so any arena
         /// that is not symmetric lets a body through the near wall by the difference. The minimum
-        /// is the only answer that is safe on both sides of a symmetric clamp, and the clamp is
-        /// symmetric everywhere it is read: `CharacterMotor` twice, `AIController.ClampToPlayable`
-        /// and `Slipper.BounceOffBounds`.
+        /// was the only answer safe on both sides of a SYMMETRIC clamp.
         ///
-        /// ⚠️ ONE NUMBER FOR PEOPLE, BOTS AND TSINELAS, which is what makes 🧑's *"make sure it
-        /// doesnt go past the bounds humans are allowed to go"* true by construction rather than
-        /// by three clamps being kept in step. There is no second bound to forget.
+        /// ⚠️⚠️ SINCE 2026-09-27 THE CLAMP IS PER SIDE, so the minimum is taken per side and the
+        /// far side keeps its room (🧑, Lagoon Cove: *"are you able to fan out the bounds so
+        /// players can also somewhat reach the water at the shore"*). The arithmetic lives in
+        /// <see cref="MeasureWalls"/>; on a symmetric arena it writes exactly -half and +half,
+        /// which is the old pair to the bit.
+        ///
+        /// ⚠️ ONE SET OF NUMBERS FOR PEOPLE, BOTS AND TSINELAS, which is what makes 🧑's *"make
+        /// sure it doesnt go past the bounds humans are allowed to go"* true by construction
+        /// rather than by three clamps being kept in step. There is no second bound to forget.
         /// </summary>
         public static void MeasurePlayableBounds()
         {
-            var bounds = GameObject.Find("Bounds");
+            var node = GameObject.Find("Bounds");
+            var boxes = new System.Collections.Generic.List<Bounds>();
 
-            float halfX = float.PositiveInfinity;
-            float halfZ = float.PositiveInfinity;
-            float ceiling = float.PositiveInfinity;
+            if (node != null)
+                foreach (var col in node.GetComponentsInChildren<BoxCollider>())
+                    boxes.Add(col.bounds);
 
-            if (bounds != null)
-            {
-                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
-                {
-                    float face = WallFace(col.bounds, out bool constrainsX);
-                    if (face < 0.0f) continue;
+            MeasureWalls(boxes, out float minX, out float maxX, out float minZ, out float maxZ,
+                         out float ceiling);
 
-                    if (constrainsX) halfX = Mathf.Min(halfX, face);
-                    else halfZ = Mathf.Min(halfZ, face);
-
-                    // ⚠️ THE LOWEST WALL TOP, because that is the one a tsinelas can be thrown
-                    // over. A ceiling set from the tallest would leave the shortest side open,
-                    // which is the only side anybody would find.
-                    ceiling = Mathf.Min(ceiling, WallTop(col.bounds));
-                }
-            }
-
-            // ⚠️ A MAP THAT WALLS ONE AXIS AND NOT THE OTHER KEEPS THE DEFAULT ON THE OTHER,
-            // rather than inheriting an infinity that would clamp nothing at all. Each axis
-            // falls back on its own, because they are measured from different colliders.
-            AIController.PlayableHalfX = float.IsInfinity(halfX) ? DefaultHalfX : halfX;
-            AIController.PlayableHalfZ = float.IsInfinity(halfZ) ? DefaultHalfZ : halfZ;
-
-            // ⚠️⚠️ THE ARENA HAS A LID NOW, AND IT DID NOT. 🧑 2026-08-29: *"make sure theres
-            // invisible bounds in the sky as well as those walls that return the slippers or make
-            // them bounce"*. `BounceOffBounds` walled X and Z and left Y open, so a tsinelas
-            // thrown hard and high went straight over the top of a 6 m wall and came down outside
-            // the arena, where the resting clamp then dragged it back to a wall it had never
-            // touched. A shoe that leaves the map is an attacker deleted from the round, which is
-            // the same cost the resting clamp's own note describes at length.
-            AIController.PlayableCeilingY = float.IsInfinity(ceiling)
-                ? DefaultCeilingY
-                : Mathf.Max(ceiling, MinimumCeilingY);
+            AIController.PlayableMinX = minX;
+            AIController.PlayableMaxX = maxX;
+            AIController.PlayableMinZ = minZ;
+            AIController.PlayableMaxZ = maxZ;
+            AIController.PlayableCeilingY = ceiling;
         }
 
         private void Start()
         {
-            // The arena was loaded to be looked at, not played. See PreviewOnly.
+            if(CameraSystem.LocalReplayPlayback.Active)
+            {
+                CameraSystem.LocalReplayPlayback.PrepareCourt(transform);
+                _installed=true;
+                enabled=false;
+                return;
+            }
             if (PreviewOnly)
             {
                 enabled = false;
                 return;
             }
+            try
+            {
+                InstallMatch();
+                _installed = true;
+            }
+            catch (Exception error)
+            {
+                InstallationError = error.Message;
+                Debug.LogException(error, this);
+            }
+        }
 
+        private void InstallMatch()
+        {
             _book = RosterBook.Load();
             bool guided = GameLaunch.GuidedTutorial;
+            bool range = PracticeRange.Requested;
 
             // ⚠️ THE SAVED DIFFICULTY WAS BEING IGNORED. It is written by the settings panel
             // and was never read back, so every bot played at Normal no matter what the
             // player chose. Applied once here, before any seat is built.
-            AIController.ApplyDifficultyFromSettings();
+            var policySession = Net.NetSession.Instance;
+            bool customNetwork = policySession != null && policySession.IsNetworked
+                                 && !UI.Hub.HubQueueWatch.QueueRoom && !guided && !range;
+            if (customNetwork) AIController.ApplyCustomRoomPolicy(SceneFlow.SelectedRules);
+            else AIController.ApplyDifficultyFromSettings();
 
             MeasurePlayableBounds();
 
@@ -392,6 +498,7 @@ namespace TumbangPreso
             // the first lesson that needs a body in front of you.
             bool soloPractice = !AIController.BotsEnabled
                                 && !guided
+                                && !range
                                 && humanSeat >= 0
                                 && (liveNetwork == null || !liveNetwork.IsNetworked);
 
@@ -403,8 +510,19 @@ namespace TumbangPreso
                 // empty-handed. It skips a seat that is not there instead; the spare tsinelas
                 // lie on their marks, which is exactly what the taya's disowned one already
                 // does in a full match.
-                if (!soloPractice || slot == humanSeat) seats[slot] = BuildSeat(slot);
+                if ((!soloPractice || slot == humanSeat) && SeatHasABody(slot, humanSeat)) seats[slot] = BuildSeat(slot);
                 slippers[slot] = BuildSlipper(slot);
+            }
+
+            // ⚠️ THE HOST TELLS ITS LOBBY WHICH SEATS HAVE NO BODY, so nobody joining mid-match is
+            // put in one (`LobbySession.BenchSeats`). Every peer reached the same answer above
+            // from the same roster and rules; only the host decides who sits where.
+            if (CustomRoomBuildsOnlyFilledSeats() && NetAuthority.IsHost)
+            {
+                var benched = new System.Collections.Generic.List<int>();
+                for (int slot = 0; slot < seats.Length; slot++)
+                    if (seats[slot] == null) benched.Add(slot);
+                liveNetwork?.Lobby?.BenchSeats(benched);
             }
 
             // ⚠️⚠️ THE SEATS ARE REGISTERED AND GIVEN THEIR ROLES BEFORE THE HUD IS BUILT, AND
@@ -430,7 +548,18 @@ namespace TumbangPreso
             // ⚠️ THE CAMERA FOLLOWS THE SEAT THE PLAYER CHOSE, not seat 0. A spectator has no
             // seat at all, so it falls back to the first one and the spectator rig takes over.
             int human = Mathf.Max(0, HumanSeat);
+            // ⚠️ A WATCHER FALLS BACK TO THE FIRST SEAT THAT HAS A BODY, not to seat 0: a custom
+            // room's empty seat is not built any more (`SeatHasABody`), and seat 0 may be one.
+            for (int slot = 0; seats[human] == null && slot < seats.Length; slot++)
+                if (seats[slot] != null) human = slot;
             BuildCameraAndHud(seats[human], lata);
+            var court=Visual.CourtBoundaryPresentation.Install(transform,lata);
+            var worldLook=Visual.WorldLookPresentation.Install(transform,court.Floor);
+            Visual.CourtSurfacePresentation.Install(transform,worldLook);
+            if(worldLook!=null)Visual.WorldContactPresentation.Install(transform,lata);
+            Visual.LagoonDeckPresentation.Install(transform);
+            Visual.FiestaBunting.Install(transform);
+            Visual.LataClockPresentation.Install(transform,lata);
 
             var runner = gameObject.AddComponent<SliceRunner>();
             runner.Lata = lata;
@@ -441,7 +570,7 @@ namespace TumbangPreso
             // begins under the countdown and the free-roam window never happens. A headless
             // probe has nobody to press R, which is what UseReadyGate is for — leave it true
             // for anything a human will look at.
-            runner.AutoStart = !UseReadyGate && !guided;
+            runner.AutoStart = !UseReadyGate && !guided && !range;
 
             // ⚠️⚠️ THE BOARD IS WIPED HERE, NOT AT `StartMatch`, BECAUSE THE PLAYER LOOKS AT IT
             // FIRST. `GameServices` is `DontDestroyOnLoad`, so the match and round directors
@@ -490,9 +619,9 @@ namespace TumbangPreso
             // Placing them only in `OnRoundStarted` left all four stacked on the world origin
             // underneath the countdown, so the opening shot was an empty street — which is
             // exactly what the report's screenshot of the Unity build shows.
-            if (UseReadyGate || guided) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
+            if (UseReadyGate || guided || range) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
 
-            if (UseReadyGate && !guided) BuildReadyGate(seats[human], runner);
+            if (UseReadyGate && !guided && !range) BuildReadyGate(seats[human], runner);
 
             // ⚠️⚠️ THE HIGHLIGHT WATCHER IS INSTALLED WITH THE ARENA, ON EVERY PEER, AND IT IS THE
             // ONLY PIECE OF `docs/TODO.md` § 147 THAT NEEDS A FRAME. Every other marker rides an
@@ -524,8 +653,8 @@ namespace TumbangPreso
             // and it enters the actual game"*, and `audio_manager.gd::_poll_scene_state()`
             // already answers it on the "match" branch with `stop_music_now()` rather than a
             // fade, under 🧑's *"pls js abruptly cut it"*.
-            if (UseReadyGate && !guided) GameServices.Music?.StopNow();
-            else GameServices.Music?.Play("match", GameServices.MatchTrack);
+            if (UseReadyGate && !guided && !range) GameServices.Music?.StopNow();
+            else GameServices.Music?.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
 
             // Scene management is intentionally game-owned rather than Netcode-owned. Tell
             // the host only after every local seat, prop, camera and HUD target exists; this
@@ -540,6 +669,8 @@ namespace TumbangPreso
                 var training = gameObject.AddComponent<GuidedTraining>();
                 training.Configure(seats[human], lata, seats, slippers, runner);
             }
+            else if (range)
+                gameObject.AddComponent<PracticeRange>().Configure(seats[human], lata, seats, slippers, runner);
         }
 
         /// <summary>
@@ -743,6 +874,87 @@ namespace TumbangPreso
         private readonly bool[] _customChecked = new bool[Balance.PlayerCount];
 
         /// <summary>
+        /// Whether a custom room seat gets a character at all: a player sits in it, or the room
+        /// put a bot there.
+        ///
+        /// ⚠️⚠️ OWNER 2026-10-19, WITH A SCREENSHOT OF THREE CHARACTERS STANDING STILL IN A MATCH
+        /// THE HOST HAD REMOVED EVERY BOT FROM: *"there are still bots. however they are
+        /// stationary. make sure they're removed"*. Every networked seat used to be built so a
+        /// peer could always land in it; a seat left empty became a body with no input source.
+        /// This is the offline `soloPractice` path (NONE bots builds only the player's seat)
+        /// extended to a custom room, and the round code already copes with an absent seat
+        /// there: `SliceRunner` leaves its tsinelas on the street and the taya's turn reads
+        /// `PlayerAt(DefenderSlot) == null`.
+        ///
+        /// ⚠️ EVERY PEER MUST ANSWER THE SAME. It reads only what the room replicates: the roster
+        /// (`GetSeatInfo`) and the room's rules (`CustomRules.BotSeats`, synced before START).
+        ///
+        /// ⚠️ AND A ROOM WITH NOBODY AND NO BOTS STILL BUILDS ALL FOUR. A host watching with no
+        /// bots would otherwise open an arena with no character in it, which is the spectator and
+        /// headless-probe case `InstallMatch` already keeps its four for.
+        /// </summary>
+        private bool SeatHasABody(int slot, int humanSeat)
+        {
+            if (!CustomRoomBuildsOnlyFilledSeats()) return true;
+            if (!AnySeatFilled(humanSeat)) return true;
+            return SeatFilled(slot, humanSeat);
+        }
+
+        private static bool SeatFilled(int slot, int humanSeat)
+        {
+            var info = Net.MatchRpc.Instance?.GetSeatInfo(slot);
+            // ⚠️ ONLY THE HOST TRUSTS ITS OWN SEAT NUMBER HERE. A client can install the arena
+            // before its seat assignment lands, when `LocalSlot` is still the default 0 (see
+            // `RebindLocalSeat`), and building seat 0 on that guess would put a body on one screen
+            // that the host never made. The roster says the same thing without guessing, and a
+            // player who joins mid-match is only ever seated in a bot's seat, which the rules
+            // already mark.
+            if (slot == humanSeat && (NetAuthority.IsHost || info == null)) return true;
+            if (info != null && info.Occupied && !info.Spectator) return true;
+            return CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, slot);
+        }
+
+        private static bool AnySeatFilled(int humanSeat)
+        {
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                if (SeatFilled(slot, humanSeat)) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// A live custom room opened from the game: the one place seats are chosen one by one.
+        ///
+        /// ⚠️ A SESSION STARTED FROM THE COMMAND LINE KEEPS ITS FOUR BODIES. The `tools/net_*.py`
+        /// probes and a `-tp-dedicated` referee host through `NetBootstrap` without ever opening
+        /// a room, so their rules carry no seat choice, and several of them drive
+        /// `PlayerAt(n)` by number on the assumption every seat exists.
+        /// </summary>
+        private bool CustomRoomBuildsOnlyFilledSeats()
+        {
+            var session = Net.NetSession.Instance;
+            return session != null && session.IsNetworked && !UI.Hub.HubQueueWatch.QueueRoom
+                   && !GameLaunch.GuidedTutorial && !PracticeRange.Requested
+                   && !_allBots && !GameLaunch.AllBots && !Net.NetBootstrap.Requested;
+        }
+
+        /// <summary>
+        /// Whether this empty seat was given a bot in the player's room.
+        ///
+        /// ⚠️ ONLY A CUSTOM ROOM CHOOSES SEAT BY SEAT. The room's ADD BOT writes
+        /// `CustomRules.BotSeats`, and `CustomGameRules.SeatHasBot` reads it; a seat left OPEN
+        /// there stays an empty chair in the match rather than quietly becoming a bot the host
+        /// never asked for. Practice, the tutorial, the range and queued rooms keep their own
+        /// policy and answer true, so nothing about them changes.
+        /// </summary>
+        private static bool CustomRoomSeatTakesABot(int slot)
+        {
+            var session = Net.NetSession.Instance;
+            bool customRoom = session != null && session.IsNetworked && !UI.Hub.HubQueueWatch.QueueRoom
+                              && !GameLaunch.GuidedTutorial && !PracticeRange.Requested;
+            return !customRoom || CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, slot);
+        }
+
+        /// <summary>
         /// ⚠️ 1.6 CAPSULE, 1.25 EYE. Those belong to the Person ROLE, not to any model, and
         /// everything ever tuned against a Person assumes them. A default 2.0 capsule would
         /// quietly invalidate every distance in the game.
@@ -785,15 +997,21 @@ namespace TumbangPreso
             if (isLocalHuman)
             {
                 motor.PlayerName = GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName;
-                motor.CharacterIndex = Settings.SettingsStore.Current.CharacterPick >= 0
-                    ? Settings.SettingsStore.Current.CharacterPick
+                // ⚠️ A SAVED PICK OF A LOCKED HERO PLAYS THE FIRST UNLOCKED ONE, offline included
+                // (`EconomyRules.UnlockedHeroes`). Bots are not clamped; only people are.
+                int ownPick = EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), Settings.SettingsStore.Current.CharacterPick);
+                motor.CharacterIndex = ownPick >= 0
+                    ? ownPick
                     : AiCharacterIndex(slot);
             }
             else if (seatInfo != null && seatInfo.Occupied)
             {
                 motor.PlayerName = seatInfo.Name;
-                motor.CharacterIndex = seatInfo.CharacterPick >= 0
-                    ? seatInfo.CharacterPick
+                // Same clamp, deterministic on every peer, so a room whose mode changed after the
+                // picks were made still fields only unlocked heroes.
+                int seatPick = EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), seatInfo.CharacterPick);
+                motor.CharacterIndex = seatPick >= 0
+                    ? seatPick
                     : AiCharacterIndex(slot);
             }
             else
@@ -816,7 +1034,7 @@ namespace TumbangPreso
             if (SceneFlow.SelectedFormat == MatchFormat.Mirror)
             {
                 var mirrorPeople = Roster.GetPeople(SceneFlow.SelectedMode);
-                motor.CharacterIndex = CustomGameRules.MirrorIndex(mirrorPeople.Count, DateTime.UtcNow);
+                motor.CharacterIndex = EconomyRules.UnlockedMirrorPick(mirrorPeople, DateTime.UtcNow);
             }
 
             go.AddComponent<Carrier>();
@@ -846,6 +1064,7 @@ namespace TumbangPreso
                 // `CustomCharacterRules.Normalise` before publishing it, so this is resolving a
                 // decision rather than trusting a claim.
                 if (custom != null) heroId = CustomCharacterRules.KitFor(custom.HeroKitId);
+                abilities.SpeaksAsHero = custom == null;
 
                 HeroBuild heroBuild = isLocalHuman
                     ? Settings.SettingsStore.CheckedHeroBuildFor(heroId)
@@ -1002,8 +1221,8 @@ namespace TumbangPreso
                 // nameplate to a roster name for a player who is still connected.
                 go.AddComponent<AIController>();
             }
-            else if (AIController.BotsEnabled && !isHumanPlayer &&
-                     (!isNetworked || NetAuthority.IsHost))
+            else if ((AIController.BotsEnabled || PracticeRange.Requested) && !isHumanPlayer &&
+                     (!isNetworked || NetAuthority.IsHost) && CustomRoomSeatTakesABot(slot))
             {
                 // Unoccupied seats run AI on the host only
                 go.AddComponent<AIController>();
@@ -1065,12 +1284,14 @@ namespace TumbangPreso
                 var watchRig = UnityEngine.Object.FindFirstObjectByType<CameraSystem.CameraRig>();
                 if (watchRig != null) watchRig.SetActive(false);
 
-                if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>() == null)
+                var watcher = UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+                if (watcher == null)
                 {
                     var watchGo = new GameObject("SpectatorCamera");
                     watchGo.tag = "MainCamera";
                     watchGo.AddComponent<CameraSystem.SpectatorCamera>();
                 }
+                else watcher.enabled = true;
 
                 UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.EnterSpectatorMode();
 
@@ -1203,7 +1424,7 @@ namespace TumbangPreso
                 if (body == null) continue;
 
                 bool shouldDrive = !nobodyDrives && slot == seat;
-                var reader = body.GetComponent<PlayerInputReader>();
+                var readers = body.GetComponents<PlayerInputReader>();
 
                 if (shouldDrive)
                 {
@@ -1212,32 +1433,41 @@ namespace TumbangPreso
                     // write `InputIntent` every step, so the player and the bot fight over the
                     // same character and the result reads as unresponsive controls rather than as
                     // two drivers.
-                    var ai = body.GetComponent<AIController>();
-                    if (ai != null)
+                    foreach (var ai in body.GetComponents<AIController>())
                     {
                         ai.enabled = false;
                         Destroy(ai);
                         body.ForgetInputSource();
                     }
 
-                    if (reader != null) continue;
+                    bool hasReader = false;
+                    foreach (var reader in readers)
+                    {
+                        if (reader.enabled) hasReader = true;
+                        else Destroy(reader); // A disabled retired reader may still await Destroy.
+                    }
+                    if (hasReader) continue;
 
                     body.gameObject.AddComponent<PlayerInputReader>();
                     body.ForgetInputSource();
                     continue;
                 }
 
-                if (reader == null) continue;
+                if (readers.Length == 0) continue;
 
                 // ⚠️ DISABLED FIRST, THEN DESTROYED. `Destroy` is deferred to the end of the
                 // frame, so without this the seat being left and the seat being taken would both
                 // write `InputIntent` for the rest of the current frame and one keypress would
                 // drive two bodies. `MatchRpc.ApplyRebindLocalSeat` carries the same pair.
-                reader.enabled = false;
-                Destroy(reader);
+                foreach (var reader in readers)
+                {
+                    reader.enabled = false;
+                    Destroy(reader);
+                }
 
-                if (AIController.BotsEnabled && NetAuthority.IsHost &&
-                    body.GetComponent<AIController>() == null)
+                bool hasBrain = false;
+                foreach (var ai in body.GetComponents<AIController>()) if (ai.enabled) hasBrain = true;
+                if (AIController.BotsEnabled && NetAuthority.IsHost && !hasBrain)
                     body.gameObject.AddComponent<AIController>();
 
                 body.ForgetInputSource();
@@ -1439,7 +1669,7 @@ namespace TumbangPreso
             {
                 lata.UprightChanged += up =>
                 {
-                    hud.SetDownedFlash(!up);
+                    if (!hud.NativePresentation) hud.SetDownedFlash(!up);
 
                     // ⚠️⚠️ THE CAN-RESET RUMBLE IS HERE RATHER THAN IN THE HUD, BECAUSE THIS
                     // LAMBDA IS THE ONE OWNER OF THIS EDGE AND THE FILE SAYS SO. `Hud`'s
@@ -1456,7 +1686,7 @@ namespace TumbangPreso
                     if (up)
                     {
                         InputLayer.Rumble.CanReset();
-                        hud.ShowToast("LATA IS BACK UP", 1.2f);
+                        if (!hud.NativePresentation) hud.ShowToast("LATA IS BACK UP", 1.2f);
                         return;
                     }
 
@@ -1522,8 +1752,10 @@ namespace TumbangPreso
             // A spectator flies with the mouse too, so this covers both.
             UI.CursorMode.Capture();
 
-            _roundVoice = (round, _) => GameServices.Voice?.OnRoundStarted(round);
-                _wonVoice = slot => GameServices.Voice?.OnMatchWon(slot);
+            _roundVoice = (round, _) => { GameServices.Voice?.OnRoundStarted(round); GameServices.HeroVoice?.OnRoundStarted(round); };
+                _wonVoice = slot => { GameServices.Voice?.OnMatchWon(slot); GameServices.HeroVoice?.OnMatchWon(slot); };
+                _momentVoice = moment => GameServices.HeroVoice?.OnMoment(moment);
+                GameServices.Match.MomentPresented += _momentVoice;
 
                 GameServices.Match.RoundStarted += _roundVoice;
                 GameServices.Match.MatchEnded += _wonVoice;
@@ -1540,37 +1772,24 @@ namespace TumbangPreso
             // each is its own root object with no other caller, so there is no field left null
             // and nothing downstream to guard. `Hud.StripToTrainingChrome` explains why the ones
             // inside the HUD had to go the other way.
-            // ⚠️⚠️ AND NEITHER IS BUILT FOR A SPECTATOR, WHICH IS THE OTHER HALF OF THE SAME
-            // ARGUMENT. 🧑 2026-08-27, with a screenshot of a watcher's screen: *"fix all these
-            // spectator hud problems wtf some shit dont hide"*. `YouCard` names the unit you are
-            // DRIVING and draws its stamina; a watcher drives nobody, so it was naming and
-            // metering whichever seat `local` happened to resolve to and reporting that seat's
-            // stamina as the viewer's own.
-            //
-            // ⚠️⚠️ AND IT COULD NOT BE HIDDEN AFTERWARDS EITHER. `YouCard.Build` makes its OWN
-            // root Canvas, so it is not under `Hud.CleanFeedRoot`: `Hud.EnterSpectatorMode` could
-            // not reach it, and neither could `SetCleanFeed`, which is why pressing H left a card
-            // and a yellow bar sitting in the corner of a supposedly clean feed. `RoleSwapCard`
-            // parents itself under the HUD for exactly this reason and says so in its own
-            // `Build`. Skipping the object outright is better than teaching a third path to hide
-            // it, and it is what the emote wheel below already does for a watcher.
-            if (!GameLaunch.GuidedTutorial && !_spectating)
+            // Frozen round boundaries now need their shared next-taya/standings
+            // context for watchers too. Only the personal YouCard is player-only.
+            if (!GameLaunch.GuidedTutorial)
             {
-                // The intermission card, on the same terms: it listens for the round boundary.
                 var swapGo = new GameObject("RoleSwapCard");
                 swapGo.AddComponent<UI.RoleSwapCard>();
-
-                // Which unit you are driving, and what it can do right now.
-                var youGo = new GameObject("YouCard");
-                youGo.AddComponent<UI.YouCard>().Bind(local);
+                if (!_spectating)
+                {
+                    var youGo = new GameObject("YouCard");
+                    youGo.AddComponent<UI.YouCard>().Bind(local);
+                }
             }
 
             // ⚠️⚠️ THE EMOTE WHEEL FOLLOWS WHOEVER IS BEING DRIVEN, NOT THE SEAT THIS MATCH
             // OPENED ON. It captured `local` in a lambda, so after Tab handed the player a
             // different body the wheel still emoted on the seat they had LEFT: the emote played
             // correctly, on a character somewhere else on the street, and read as *"emotes dont
-            // work at all"*. `Driven()` answers the same question the switcher does, off the
-            // scene, so the two cannot disagree.
+            // work at all"*. `Driven()` follows the active local input producer.
             //
             // ⚠️ AND NOT AT ALL FOR A SPECTATOR. A watcher has no body (§ SpectatorCamera), so
             // wiring the wheel to a seat would let them puppet a bot's emotes from a camera
@@ -1605,20 +1824,22 @@ namespace TumbangPreso
         /// The unit the human is actually driving right now.
         ///
         /// ⚠️ DISCOVERED, NOT REMEMBERED. Tab moves the player between bodies mid-match, so any
-        /// reference captured at install time is stale the moment they use it. The human's unit
-        /// is exactly the one with no active AI on it, which is the same fact
-        /// <see cref="DebugPlayerSwitcher.DefaultSlot"/> reads and needs no cooperation from
-        /// gameplay to stay true.
+        /// reference captured at install time is stale the moment they use it. Remote humans
+        /// and retired solo bodies can also have no AI; the active local reader owns the wheel.
         /// </summary>
         private static CharacterMotor Driven(CharacterMotor fallback)
         {
+            // Training deliberately disables every practice actor's AI. Those actors
+            // must not steal the student's wheel request merely by appearing first.
+            if (GameLaunch.GuidedTutorial) return fallback;
             foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
             {
-                var ai = unit.GetComponent<AIController>();
-                if (ai == null || !ai.enabled) return unit;
+                if (unit.Intent.Parked || (NetAuthority.IsNetworked && unit.PlayerSlot != NetAuthority.LocalSlot)) continue;
+                foreach (var reader in unit.GetComponents<PlayerInputReader>())
+                    if (reader.isActiveAndEnabled) return unit;
             }
 
-            return fallback;
+            return null;
         }
 
         /// <summary>
@@ -1659,21 +1880,40 @@ namespace TumbangPreso
             int size = people.Count;
             if (size <= 0) return 0;
 
-            int rotation = humanPick >= 0 ? humanPick % AiPersonSpread.Length : 0;
+            int rotation = humanPick >= 0 ? humanPick % size : 0;
             int start = (AiPersonSpread[slot % AiPersonSpread.Length] + rotation) % size;
 
-            for (int step = 0; step < size; step++)
-            {
-                int candidate = (start + step) % size;
-                if (candidate != humanPick) return candidate;
-            }
-
-            return start;
+            // ⚠️ LOCKED HEROES ARE SKIPPED (`EconomyRules.UnlockedHeroes`): a bot never fields one.
+            return EconomyRules.NextUnlockedPick(people, start, humanPick);
         }
 
         private int AiCharacterIndex(int slot)
         {
-            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            // Empty network seats have no replicated character pick. Their kit
+            // must be identical on every peer, independent of local preferences.
+            if (NetAuthority.IsNetworked)
+                return ResolveAiCharacterIndex(slot, -1, SceneFlow.SelectedMode);
+            int humanSeat = HumanSeat;
+            int human = humanSeat >= 0 ? EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), Settings.SettingsStore.Current.CharacterPick) : -1;
+            if (GameLaunch.GuidedTutorial && humanSeat >= 0)
+            {
+                int size = Roster.GetPeople(SceneFlow.SelectedMode).Count;
+                if (size > 0)
+                {
+                    int chosen = human >= 0 ? human : ResolveAiCharacterIndex(humanSeat, -1, SceneFlow.SelectedMode);
+                    if (slot == humanSeat) return chosen;
+                    // Give each other seat its own offset after the student. The
+                    // normal 0/3/6/9 spread collides in the nine-hero roster.
+                    int ordinal = slot < humanSeat ? slot : slot - 1;
+                    // ⚠️ THE ordinal-TH UNLOCKED HERO AFTER THE STUDENT, so the partners stay
+                    // distinct and never locked. With nothing locked (Classic) this is exactly
+                    // the old `(chosen + 1 + ordinal) % size`.
+                    var tutorialPeople = Roster.GetPeople(SceneFlow.SelectedMode);
+                    int partner = chosen;
+                    for (int k = 0; k <= ordinal; k++) partner = EconomyRules.NextUnlockedPick(tutorialPeople, partner + 1, chosen);
+                    return partner;
+                }
+            }
             return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);
         }
 

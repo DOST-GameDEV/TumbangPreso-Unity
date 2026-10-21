@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.001	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.504	87.500	SlipperLanded	Objective	the can	2	0
+3.005	87.001	SlipperLanded	Objective	the can	2	0
+3.505	86.501	SlipperLanded	Objective	the can	2	0
+4.006	86.001	SlipperLanded	Objective	the can	2	0
+4.507	85.501	Retrieval	Chase	retrieval · ISAGANI	3	0
+5.344	84.661	Retrieval	Chase	retrieval · ISAGANI	3	0
+5.844	84.161	Quiet	QuietEstablish	the street	4	0
+6.345	83.661	Quiet	QuietEstablish	the street	4	0
+6.846	83.161	Quiet	QuietEstablish	the street	4	0
+7.347	82.721	Quiet	QuietEstablish	the street	4	0
+7.847	82.221	LataHit	Objective	the can · ISAGANI	5	0
+8.348	81.721	LataHit	Objective	the can · ISAGANI	5	0
+8.849	81.201	LataHit	Objective	the can · ISAGANI	5	0
+9.349	80.702	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	6	0
+9.850	80.202	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	6	0
+10.351	79.702	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	6	0
+10.852	79.202	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	6	0
+11.353	78.702	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	6	0
+11.854	78.202	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	6	0
+12.354	77.702	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	6	0
+12.856	77.262	Tag	Defender	tag · ISAGANI	6	0
+13.356	76.762	Tag	Defender	tag · ISAGANI	6	0
+13.856	76.262	Tag	Defender	tag · ISAGANI	6	0
+14.359	75.762	Tag	Defender	tag · ISAGANI	6	0
+14.860	75.262	Tag	Defender	tag · ISAGANI	6	0

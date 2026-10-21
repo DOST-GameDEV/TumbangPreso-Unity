@@ -111,6 +111,25 @@ namespace TumbangPreso.UI
 
         private void Awake() => ScreenTakeover.Register(this, () => IsOpen);
 
+        private void OnEnable()
+        {
+            Net.MatchRpc.OnRulesChanged += HandleRulesChanged;
+            RefreshRemoteRules();
+        }
+
+        private void OnDisable() => Net.MatchRpc.OnRulesChanged -= HandleRulesChanged;
+
+        private void HandleRulesChanged(string wire) => RefreshRemoteRules();
+
+        private void RefreshRemoteRules()
+        {
+            // The receive path adopts session rules before announcing them. Keep an open
+            // client view current without saving the host's choices or replacing a host draft.
+            if (!IsOpen || MayEdit) return;
+            _editing = SceneFlow.SelectedRules.Clone();
+            Refresh();
+        }
+
         private void OnDestroy() => ScreenTakeover.Unregister(this);
 
         /// <summary>
@@ -647,6 +666,10 @@ namespace TumbangPreso.UI
 
             _editing.Bots = none ? 0 : CustomGameRules.MaxBots;
             if (!none) _editing.BotDifficulty = clamped;
+            // ⚠️ NONE ALSO FORGETS WHICH SEATS THE ROOM CHOSE. Turning bots back on from here is
+            // the old all-or-nothing switch, so it fills every empty seat again
+            // (`CustomGameRules.SeatHasBot`) rather than reviving a stale seat-by-seat pick.
+            if (none) _editing.BotSeats = 0;
 
             var settings = Settings.SettingsStore.Current;
             if (settings != null)

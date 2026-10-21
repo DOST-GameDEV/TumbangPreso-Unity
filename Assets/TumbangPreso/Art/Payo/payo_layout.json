@@ -1,0 +1,1990 @@
+{
+ "gameCopy": "THE GAME COPY OF THE PAYO LAYOUT, read by Runtime/Map/PayoLayout.cs and Editor/MapKit/PayoSceneBuilder.cs. Copied whole from tools/payo_layouts_draft.json as it stood at 2026-10-12T05:04:21.724Z (34332 bytes; 5 layouts: liwasan, hagdan, pulo, lusong, baitang). The art reads THIS file for the block art: block ids and footprints are kept stable.",
+ "notes": "PAYO DRAFT, NOT READ BY THE GAME. WRITTEN BY tools/draw_payo_draft_plans.py: edit that, not this. Unity coordinates (x right, y up, z forward), metres, the can at the origin. Every piece is kind 'block': a monolith with a FIXED plan (centre x, z; size sx, sz) whose walking surface is at 'top' and whose shaft goes down to 'shaftTo'. A block keeps its id and its plan across layouts and only rises or sinks; an id missing from a layout waits with its top at 'sunkTop', under the mist. 'stairDown' (+x, -x, +z, -z) makes the top a flight that descends that way from 'top' to 'low'. Pads and pickups are placed by x, z (not bearing and radius: the stage is a grid); a speed pad's 'along' is its direction of travel. 'bonus' lists the blocks only a geyser (jump pad) or a lift reaches; 'reach' is the check's class for every block (walk, jump, sprint, bonus). 'movers' are small slabs that move DURING the round, kind 'mover': the centre of the slab's top travels the straight line 'from' to 'to' (x, y, z), out and back once every 'period' seconds, resting 'dwell' seconds at each end, offset by 'phase' (a fraction of the period), a closed form of the match clock. The reach classes ignore movers: each layout is passable with every mover at its worst position.",
+ "stageTop": 0,
+ "wallHalf": 22,
+ "pitHalf": 30,
+ "pitLipHalf": 33,
+ "pitFloor": -45,
+ "mistY": -26,
+ "catchY": -22,
+ "sunkTop": -30,
+ "spawns": {
+  "taya": [
+   0,
+   0,
+   -2.5
+  ],
+  "attackers": [
+   [
+    -1.8,
+    0,
+    9
+   ],
+   [
+    0,
+    0,
+    9
+   ],
+   [
+    1.8,
+    0,
+    9
+   ]
+  ]
+ },
+ "layouts": [
+  {
+   "name": "liwasan",
+   "blurb": "The plaza. Every court block level: a 22 m square, four causeways, a full outer ring. Two slabs ride up and across from the north and south blocks to the high towers.",
+   "canHeight": 0,
+   "bonus": [
+    "towerNW",
+    "towerSE"
+   ],
+   "pieces": [
+    {
+     "id": "core",
+     "kind": "block",
+     "x": 0,
+     "z": 0,
+     "sx": 10,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabN",
+     "kind": "block",
+     "x": 0,
+     "z": 8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabS",
+     "kind": "block",
+     "x": 0,
+     "z": -8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabE",
+     "kind": "block",
+     "x": 8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabW",
+     "kind": "block",
+     "x": -8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNE",
+     "kind": "block",
+     "x": 8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNE",
+     "kind": "block",
+     "x": 18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSE",
+     "kind": "block",
+     "x": 8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSE",
+     "kind": "block",
+     "x": 18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 4.5,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSW",
+     "kind": "block",
+     "x": -8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSW",
+     "kind": "block",
+     "x": -18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNW",
+     "kind": "block",
+     "x": -8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNW",
+     "kind": "block",
+     "x": -18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 4.5,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeN",
+     "kind": "block",
+     "x": 0,
+     "z": 12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeS",
+     "kind": "block",
+     "x": 0,
+     "z": -12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeE",
+     "kind": "block",
+     "x": 12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeW",
+     "kind": "block",
+     "x": -12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midN",
+     "kind": "block",
+     "x": 0,
+     "z": 18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midS",
+     "kind": "block",
+     "x": 0,
+     "z": -18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midE",
+     "kind": "block",
+     "x": 18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midW",
+     "kind": "block",
+     "x": -18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone1",
+     "kind": "block",
+     "x": 9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone2",
+     "kind": "block",
+     "x": 16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone3",
+     "kind": "block",
+     "x": 16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone5",
+     "kind": "block",
+     "x": -9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone6",
+     "kind": "block",
+     "x": -16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone7",
+     "kind": "block",
+     "x": -16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    }
+   ],
+   "jumpPads": [
+    {
+     "x": 8,
+     "z": 8,
+     "y": 0,
+     "speed": 15.5,
+     "serves": null,
+     "on": "cornerNE"
+    },
+    {
+     "x": -8,
+     "z": -8,
+     "y": 0,
+     "speed": 15.5,
+     "serves": null,
+     "on": "cornerSW"
+    }
+   ],
+   "speedPads": [
+    {
+     "x": 18,
+     "z": 0,
+     "y": 0,
+     "along": "+z",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "midE"
+    },
+    {
+     "x": -18,
+     "z": 0,
+     "y": 0,
+     "along": "-z",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "midW"
+    }
+   ],
+   "pickups": [
+    {
+     "x": -18,
+     "z": 18,
+     "y": 4.5,
+     "on": "towerNW"
+    },
+    {
+     "x": 18,
+     "z": -18,
+     "y": 4.5,
+     "on": "towerSE"
+    },
+    {
+     "x": 0,
+     "z": -18,
+     "y": 0,
+     "on": "midS"
+    }
+   ],
+   "movers": [
+    {
+     "id": "liftNW",
+     "sx": 3,
+     "sz": 3,
+     "from": [
+      -6.5,
+      0,
+      16
+     ],
+     "to": [
+      -12.5,
+      4.5,
+      16
+     ],
+     "period": 16,
+     "phase": 0,
+     "dwell": 3,
+     "serves": "towerNW",
+     "note": "rides from the north block up and over to the north west tower",
+     "kind": "mover"
+    },
+    {
+     "id": "liftSE",
+     "sx": 3,
+     "sz": 3,
+     "from": [
+      6.5,
+      0,
+      -16
+     ],
+     "to": [
+      12.5,
+      4.5,
+      -16
+     ],
+     "period": 16,
+     "phase": 0.5,
+     "dwell": 3,
+     "serves": "towerSE",
+     "note": "rides from the south block up and over to the south east tower",
+     "kind": "mover"
+    }
+   ],
+   "reach": {
+    "core": "walk",
+    "slabN": "walk",
+    "slabS": "walk",
+    "slabE": "walk",
+    "slabW": "walk",
+    "cornerNE": "walk",
+    "towerNE": "jump",
+    "cornerSE": "walk",
+    "towerSE": "bonus",
+    "cornerSW": "walk",
+    "towerSW": "jump",
+    "cornerNW": "walk",
+    "towerNW": "bonus",
+    "bridgeN": "walk",
+    "bridgeS": "walk",
+    "bridgeE": "walk",
+    "bridgeW": "walk",
+    "midN": "walk",
+    "midS": "walk",
+    "midE": "walk",
+    "midW": "walk",
+    "stone1": "jump",
+    "stone2": "jump",
+    "stone3": "jump",
+    "stone5": "jump",
+    "stone6": "jump",
+    "stone7": "jump"
+   }
+  },
+  {
+   "name": "hagdan",
+   "blurb": "The stairs. The core lifts the can 1.2 m; the east and west slabs become stairs; the north and south causeways sink, so the way out is east and west.",
+   "canHeight": 1.2,
+   "bonus": [
+    "midN",
+    "midS"
+   ],
+   "pieces": [
+    {
+     "id": "core",
+     "kind": "block",
+     "x": 0,
+     "z": 0,
+     "sx": 10,
+     "sz": 10,
+     "top": 1.2,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabN",
+     "kind": "block",
+     "x": 0,
+     "z": 8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabS",
+     "kind": "block",
+     "x": 0,
+     "z": -8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabE",
+     "kind": "block",
+     "x": 8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": 1.2,
+     "shaftTo": -45,
+     "stairDown": "+x",
+     "low": 0
+    },
+    {
+     "id": "slabW",
+     "kind": "block",
+     "x": -8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": 1.2,
+     "shaftTo": -45,
+     "stairDown": "-x",
+     "low": 0
+    },
+    {
+     "id": "cornerNE",
+     "kind": "block",
+     "x": 8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNE",
+     "kind": "block",
+     "x": 18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSE",
+     "kind": "block",
+     "x": 8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSW",
+     "kind": "block",
+     "x": -8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSW",
+     "kind": "block",
+     "x": -18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNW",
+     "kind": "block",
+     "x": -8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeE",
+     "kind": "block",
+     "x": 12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeW",
+     "kind": "block",
+     "x": -12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midN",
+     "kind": "block",
+     "x": 0,
+     "z": 18,
+     "sx": 10,
+     "sz": 8,
+     "top": 4.2,
+     "shaftTo": -45
+    },
+    {
+     "id": "midS",
+     "kind": "block",
+     "x": 0,
+     "z": -18,
+     "sx": 10,
+     "sz": 8,
+     "top": 4.2,
+     "shaftTo": -45
+    },
+    {
+     "id": "midE",
+     "kind": "block",
+     "x": 18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midW",
+     "kind": "block",
+     "x": -18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone1",
+     "kind": "block",
+     "x": 9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone2",
+     "kind": "block",
+     "x": 16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone5",
+     "kind": "block",
+     "x": -9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone6",
+     "kind": "block",
+     "x": -16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    }
+   ],
+   "jumpPads": [
+    {
+     "x": 9.5,
+     "z": 16,
+     "y": 0.3,
+     "speed": 15.5,
+     "serves": "midN",
+     "on": "stone1"
+    },
+    {
+     "x": -9.5,
+     "z": -16,
+     "y": 0.3,
+     "speed": 15.5,
+     "serves": "midS",
+     "on": "stone5"
+    }
+   ],
+   "speedPads": [
+    {
+     "x": -8,
+     "z": 8,
+     "y": 0,
+     "along": "+x",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "cornerNW"
+    },
+    {
+     "x": 8,
+     "z": -8,
+     "y": 0,
+     "along": "-x",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "cornerSE"
+    }
+   ],
+   "pickups": [
+    {
+     "x": 0,
+     "z": 18,
+     "y": 4.2,
+     "on": "midN"
+    },
+    {
+     "x": 0,
+     "z": -18,
+     "y": 4.2,
+     "on": "midS"
+    },
+    {
+     "x": 0,
+     "z": -8,
+     "y": 0.6,
+     "on": "slabS"
+    }
+   ],
+   "movers": [
+    {
+     "id": "ferryN",
+     "sx": 3,
+     "sz": 3,
+     "from": [
+      0,
+      0.15,
+      12.5
+     ],
+     "to": [
+      9.5,
+      0.15,
+      12.5
+     ],
+     "period": 17,
+     "phase": 0,
+     "dwell": 2.5,
+     "serves": null,
+     "note": "shuttles along the north slot: a moving causeway from the court to stone1",
+     "kind": "mover"
+    },
+    {
+     "id": "ferryS",
+     "sx": 3,
+     "sz": 3,
+     "from": [
+      0,
+      0.15,
+      -12.5
+     ],
+     "to": [
+      -9.5,
+      0.15,
+      -12.5
+     ],
+     "period": 17,
+     "phase": 0.5,
+     "dwell": 2.5,
+     "serves": null,
+     "note": "shuttles along the south slot: a moving causeway from the court to stone5",
+     "kind": "mover"
+    }
+   ],
+   "reach": {
+    "core": "walk",
+    "slabN": "walk",
+    "slabS": "jump",
+    "slabE": "walk",
+    "slabW": "walk",
+    "cornerNE": "walk",
+    "towerNE": "jump",
+    "cornerSE": "walk",
+    "cornerSW": "walk",
+    "towerSW": "jump",
+    "cornerNW": "walk",
+    "bridgeE": "walk",
+    "bridgeW": "walk",
+    "midN": "bonus",
+    "midS": "bonus",
+    "midE": "walk",
+    "midW": "walk",
+    "stone1": "jump",
+    "stone2": "jump",
+    "stone5": "jump",
+    "stone6": "jump"
+   }
+  },
+  {
+   "name": "pulo",
+   "blurb": "The islands. The east and west slabs and two corners sink: the court is a 10 m spine with open air on both sides, and the outer ring is a chain of hops.",
+   "canHeight": 0,
+   "bonus": [
+    "midE",
+    "midW"
+   ],
+   "pieces": [
+    {
+     "id": "core",
+     "kind": "block",
+     "x": 0,
+     "z": 0,
+     "sx": 10,
+     "sz": 10,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabN",
+     "kind": "block",
+     "x": 0,
+     "z": 8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabS",
+     "kind": "block",
+     "x": 0,
+     "z": -8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNE",
+     "kind": "block",
+     "x": 18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSE",
+     "kind": "block",
+     "x": 8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSE",
+     "kind": "block",
+     "x": 18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSW",
+     "kind": "block",
+     "x": -18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNW",
+     "kind": "block",
+     "x": -8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNW",
+     "kind": "block",
+     "x": -18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeN",
+     "kind": "block",
+     "x": 0,
+     "z": 12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeS",
+     "kind": "block",
+     "x": 0,
+     "z": -12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midN",
+     "kind": "block",
+     "x": 0,
+     "z": 18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midS",
+     "kind": "block",
+     "x": 0,
+     "z": -18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midE",
+     "kind": "block",
+     "x": 18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 4.2,
+     "shaftTo": -45
+    },
+    {
+     "id": "midW",
+     "kind": "block",
+     "x": -18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 4.2,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone1",
+     "kind": "block",
+     "x": 9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone2",
+     "kind": "block",
+     "x": 16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone4",
+     "kind": "block",
+     "x": 9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone5",
+     "kind": "block",
+     "x": -9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone6",
+     "kind": "block",
+     "x": -16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone8",
+     "kind": "block",
+     "x": -9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    }
+   ],
+   "jumpPads": [
+    {
+     "x": 16,
+     "z": 9.5,
+     "y": 0.3,
+     "speed": 15.5,
+     "serves": "midE",
+     "on": "stone2"
+    },
+    {
+     "x": -16,
+     "z": -9.5,
+     "y": 0.3,
+     "speed": 15.5,
+     "serves": "midW",
+     "on": "stone6"
+    }
+   ],
+   "speedPads": [
+    {
+     "x": 0,
+     "z": 18,
+     "y": 0,
+     "along": "+x",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "midN"
+    },
+    {
+     "x": 0,
+     "z": -18,
+     "y": 0,
+     "along": "-x",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "midS"
+    }
+   ],
+   "pickups": [
+    {
+     "x": 18,
+     "z": 0,
+     "y": 4.2,
+     "on": "midE"
+    },
+    {
+     "x": -18,
+     "z": 0,
+     "y": 4.2,
+     "on": "midW"
+    },
+    {
+     "x": 8,
+     "z": -8,
+     "y": 0.3,
+     "on": "cornerSE"
+    }
+   ],
+   "movers": [
+    {
+     "id": "pistonEa",
+     "sx": 4,
+     "sz": 4,
+     "from": [
+      7,
+      -0.6,
+      3
+     ],
+     "to": [
+      7,
+      0,
+      3
+     ],
+     "period": 12,
+     "phase": 0,
+     "dwell": 3,
+     "serves": null,
+     "note": "east wing, north half",
+     "kind": "mover"
+    },
+    {
+     "id": "pistonEb",
+     "sx": 4,
+     "sz": 4,
+     "from": [
+      7,
+      -0.6,
+      -3
+     ],
+     "to": [
+      7,
+      0,
+      -3
+     ],
+     "period": 12,
+     "phase": 0.5,
+     "dwell": 3,
+     "serves": null,
+     "note": "east wing, south half, in turn",
+     "kind": "mover"
+    },
+    {
+     "id": "pistonWa",
+     "sx": 4,
+     "sz": 4,
+     "from": [
+      -7,
+      -0.6,
+      -3
+     ],
+     "to": [
+      -7,
+      0,
+      -3
+     ],
+     "period": 12,
+     "phase": 0,
+     "dwell": 3,
+     "serves": null,
+     "note": "west wing, south half",
+     "kind": "mover"
+    },
+    {
+     "id": "pistonWb",
+     "sx": 4,
+     "sz": 4,
+     "from": [
+      -7,
+      -0.6,
+      3
+     ],
+     "to": [
+      -7,
+      0,
+      3
+     ],
+     "period": 12,
+     "phase": 0.5,
+     "dwell": 3,
+     "serves": null,
+     "note": "west wing, north half, in turn",
+     "kind": "mover"
+    }
+   ],
+   "reach": {
+    "core": "walk",
+    "slabN": "walk",
+    "slabS": "walk",
+    "towerNE": "jump",
+    "cornerSE": "walk",
+    "towerSE": "jump",
+    "towerSW": "jump",
+    "cornerNW": "walk",
+    "towerNW": "jump",
+    "bridgeN": "walk",
+    "bridgeS": "walk",
+    "midN": "walk",
+    "midS": "walk",
+    "midE": "bonus",
+    "midW": "bonus",
+    "stone1": "jump",
+    "stone2": "jump",
+    "stone4": "jump",
+    "stone5": "jump",
+    "stone6": "jump",
+    "stone8": "jump"
+   }
+  },
+  {
+   "name": "lusong",
+   "blurb": "The mortar. The court dips to the can in two 0.3 m steps (corners 0, slabs -0.3, core -0.6) and the outer ring climbs away from it. Everything on the court is still on foot.",
+   "canHeight": -0.6,
+   "bonus": [
+    "towerNE",
+    "towerSW"
+   ],
+   "pieces": [
+    {
+     "id": "core",
+     "kind": "block",
+     "x": 0,
+     "z": 0,
+     "sx": 10,
+     "sz": 10,
+     "top": -0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabN",
+     "kind": "block",
+     "x": 0,
+     "z": 8,
+     "sx": 10,
+     "sz": 6,
+     "top": -0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabS",
+     "kind": "block",
+     "x": 0,
+     "z": -8,
+     "sx": 10,
+     "sz": 6,
+     "top": -0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabE",
+     "kind": "block",
+     "x": 8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": -0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabW",
+     "kind": "block",
+     "x": -8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": -0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNE",
+     "kind": "block",
+     "x": 8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNE",
+     "kind": "block",
+     "x": 18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 4.5,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSE",
+     "kind": "block",
+     "x": 8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSE",
+     "kind": "block",
+     "x": 18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSW",
+     "kind": "block",
+     "x": -8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSW",
+     "kind": "block",
+     "x": -18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 4.5,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNW",
+     "kind": "block",
+     "x": -8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNW",
+     "kind": "block",
+     "x": -18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeN",
+     "kind": "block",
+     "x": 0,
+     "z": 12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeS",
+     "kind": "block",
+     "x": 0,
+     "z": -12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeE",
+     "kind": "block",
+     "x": 12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeW",
+     "kind": "block",
+     "x": -12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midN",
+     "kind": "block",
+     "x": 0,
+     "z": 18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "midS",
+     "kind": "block",
+     "x": 0,
+     "z": -18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "midE",
+     "kind": "block",
+     "x": 18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "midW",
+     "kind": "block",
+     "x": -18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone1",
+     "kind": "block",
+     "x": 9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone2",
+     "kind": "block",
+     "x": 16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone3",
+     "kind": "block",
+     "x": 16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone4",
+     "kind": "block",
+     "x": 9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone5",
+     "kind": "block",
+     "x": -9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone6",
+     "kind": "block",
+     "x": -16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone7",
+     "kind": "block",
+     "x": -16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone8",
+     "kind": "block",
+     "x": -9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.6,
+     "shaftTo": -45
+    }
+   ],
+   "jumpPads": [
+    {
+     "x": 9.5,
+     "z": 16,
+     "y": 0.6,
+     "speed": 15.5,
+     "serves": "towerNE",
+     "on": "stone1"
+    },
+    {
+     "x": -9.5,
+     "z": -16,
+     "y": 0.6,
+     "speed": 15.5,
+     "serves": "towerSW",
+     "on": "stone5"
+    }
+   ],
+   "speedPads": [
+    {
+     "x": 8,
+     "z": -8,
+     "y": 0,
+     "along": "-x",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "cornerSE"
+    },
+    {
+     "x": -8,
+     "z": 8,
+     "y": 0,
+     "along": "+x",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "cornerNW"
+    }
+   ],
+   "pickups": [
+    {
+     "x": 18,
+     "z": 18,
+     "y": 4.5,
+     "on": "towerNE"
+    },
+    {
+     "x": -18,
+     "z": -18,
+     "y": 4.5,
+     "on": "towerSW"
+    },
+    {
+     "x": 0,
+     "z": -8,
+     "y": -0.3,
+     "on": "slabS"
+    }
+   ],
+   "movers": [],
+   "reach": {
+    "core": "walk",
+    "slabN": "walk",
+    "slabS": "walk",
+    "slabE": "walk",
+    "slabW": "walk",
+    "cornerNE": "walk",
+    "towerNE": "bonus",
+    "cornerSE": "walk",
+    "towerSE": "jump",
+    "cornerSW": "walk",
+    "towerSW": "bonus",
+    "cornerNW": "walk",
+    "towerNW": "jump",
+    "bridgeN": "walk",
+    "bridgeS": "walk",
+    "bridgeE": "walk",
+    "bridgeW": "walk",
+    "midN": "walk",
+    "midS": "walk",
+    "midE": "walk",
+    "midW": "walk",
+    "stone1": "jump",
+    "stone2": "jump",
+    "stone3": "jump",
+    "stone4": "jump",
+    "stone5": "jump",
+    "stone6": "jump",
+    "stone7": "jump",
+    "stone8": "jump"
+   }
+  },
+  {
+   "name": "baitang",
+   "blurb": "The tiers. Rows of blocks step up 0.3 m at a time from the valley side to the gate side, as the paddies do: the attackers climb to the can, and the two north towers stand high either side of the view.",
+   "canHeight": 0.3,
+   "bonus": [
+    "towerNE",
+    "towerNW"
+   ],
+   "pieces": [
+    {
+     "id": "core",
+     "kind": "block",
+     "x": 0,
+     "z": 0,
+     "sx": 10,
+     "sz": 10,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabN",
+     "kind": "block",
+     "x": 0,
+     "z": 8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabS",
+     "kind": "block",
+     "x": 0,
+     "z": -8,
+     "sx": 10,
+     "sz": 6,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabE",
+     "kind": "block",
+     "x": 8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "slabW",
+     "kind": "block",
+     "x": -8,
+     "z": 0,
+     "sx": 6,
+     "sz": 10,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNE",
+     "kind": "block",
+     "x": 8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNE",
+     "kind": "block",
+     "x": 18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 4.5,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSE",
+     "kind": "block",
+     "x": 8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSE",
+     "kind": "block",
+     "x": 18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 1.2,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerSW",
+     "kind": "block",
+     "x": -8,
+     "z": -8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerSW",
+     "kind": "block",
+     "x": -18,
+     "z": -18,
+     "sx": 8,
+     "sz": 8,
+     "top": 1.2,
+     "shaftTo": -45
+    },
+    {
+     "id": "cornerNW",
+     "kind": "block",
+     "x": -8,
+     "z": 8,
+     "sx": 6,
+     "sz": 6,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "towerNW",
+     "kind": "block",
+     "x": -18,
+     "z": 18,
+     "sx": 8,
+     "sz": 8,
+     "top": 4.5,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeN",
+     "kind": "block",
+     "x": 0,
+     "z": 12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeS",
+     "kind": "block",
+     "x": 0,
+     "z": -12.5,
+     "sx": 4,
+     "sz": 3,
+     "top": 0.75,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeE",
+     "kind": "block",
+     "x": 12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "bridgeW",
+     "kind": "block",
+     "x": -12.5,
+     "z": 0,
+     "sx": 3,
+     "sz": 4,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "midN",
+     "kind": "block",
+     "x": 0,
+     "z": 18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "midS",
+     "kind": "block",
+     "x": 0,
+     "z": -18,
+     "sx": 10,
+     "sz": 8,
+     "top": 0.9,
+     "shaftTo": -45
+    },
+    {
+     "id": "midE",
+     "kind": "block",
+     "x": 18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "midW",
+     "kind": "block",
+     "x": -18,
+     "z": 0,
+     "sx": 8,
+     "sz": 10,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone1",
+     "kind": "block",
+     "x": 9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone2",
+     "kind": "block",
+     "x": 16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone3",
+     "kind": "block",
+     "x": 16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone4",
+     "kind": "block",
+     "x": 9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.9,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone5",
+     "kind": "block",
+     "x": -9.5,
+     "z": -16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0.9,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone6",
+     "kind": "block",
+     "x": -16,
+     "z": -9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.6,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone7",
+     "kind": "block",
+     "x": -16,
+     "z": 9.5,
+     "sx": 4,
+     "sz": 5,
+     "top": 0.3,
+     "shaftTo": -45
+    },
+    {
+     "id": "stone8",
+     "kind": "block",
+     "x": -9.5,
+     "z": 16,
+     "sx": 5,
+     "sz": 4,
+     "top": 0,
+     "shaftTo": -45
+    }
+   ],
+   "jumpPads": [
+    {
+     "x": 9.5,
+     "z": 16,
+     "y": 0,
+     "speed": 15.5,
+     "serves": "towerNE",
+     "on": "stone1"
+    },
+    {
+     "x": -9.5,
+     "z": 16,
+     "y": 0,
+     "speed": 15.5,
+     "serves": "towerNW",
+     "on": "stone8"
+    }
+   ],
+   "speedPads": [
+    {
+     "x": 18,
+     "z": 0,
+     "y": 0.3,
+     "along": "-z",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "midE"
+    },
+    {
+     "x": -18,
+     "z": 0,
+     "y": 0.3,
+     "along": "+z",
+     "halfSize": [
+      0.75,
+      1.5
+     ],
+     "on": "midW"
+    }
+   ],
+   "pickups": [
+    {
+     "x": 18,
+     "z": 18,
+     "y": 4.5,
+     "on": "towerNE"
+    },
+    {
+     "x": -18,
+     "z": 18,
+     "y": 4.5,
+     "on": "towerNW"
+    },
+    {
+     "x": 0,
+     "z": -18,
+     "y": 0.9,
+     "on": "midS"
+    }
+   ],
+   "movers": [],
+   "reach": {
+    "core": "walk",
+    "slabN": "walk",
+    "slabS": "walk",
+    "slabE": "walk",
+    "slabW": "walk",
+    "cornerNE": "walk",
+    "towerNE": "bonus",
+    "cornerSE": "walk",
+    "towerSE": "jump",
+    "cornerSW": "walk",
+    "towerSW": "jump",
+    "cornerNW": "walk",
+    "towerNW": "bonus",
+    "bridgeN": "walk",
+    "bridgeS": "walk",
+    "bridgeE": "walk",
+    "bridgeW": "walk",
+    "midN": "walk",
+    "midS": "walk",
+    "midE": "walk",
+    "midW": "walk",
+    "stone1": "jump",
+    "stone2": "jump",
+    "stone3": "jump",
+    "stone4": "jump",
+    "stone5": "jump",
+    "stone6": "jump",
+    "stone7": "jump",
+    "stone8": "jump"
+   }
+  }
+ ]
+}

@@ -1,0 +1,1537 @@
+{
+ "about": "Provenance and cut list for the Arena's crowd. tools/build_arena_crowd_from_recordings.py reads this.",
+ "cache": "~/.cache/tump-audio/crowd-src",
+ "sources": [
+  {
+   "n": 1,
+   "origin": "freesound",
+   "id": "829454",
+   "page": "https://freesound.org/s/829454/",
+   "url": "https://cdn.freesound.org/previews/829/829454_3625328-hq.mp3",
+   "file": "01_fs829454.mp3",
+   "title": "Stadium general ambience, 29,546 fans",
+   "author": "itmightgetloud (Philipp Feit, Sound Of Sankt Pauli)",
+   "place": "Millerntor Stadium, Hamburg, Germany",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "00728388fe04840db4f8fd98e76d9140336bba313b27b82314d7a4951d27829c",
+   "bytes": 8483040,
+   "seconds": 372.083,
+   "note": "St. Pauli home crowd: club chants and goal music possible",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 2,
+   "origin": "freesound",
+   "id": "829456",
+   "page": "https://freesound.org/s/829456/",
+   "url": "https://cdn.freesound.org/previews/829/829456_3625328-hq.mp3",
+   "file": "02_fs829456.mp3",
+   "title": "Mood waves, same crowd",
+   "author": "itmightgetloud (Philipp Feit, Sound Of Sankt Pauli)",
+   "place": "Millerntor Stadium, Hamburg, Germany",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "41b928d988ea51bfdc75376eae09ea5d98eeeead5b8fae82bf0beda2af870ca4",
+   "bytes": 5551824,
+   "seconds": 243.528,
+   "note": "St. Pauli home crowd: club chants possible",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 3,
+   "origin": "freesound",
+   "id": "829453",
+   "page": "https://freesound.org/s/829453/",
+   "url": "https://cdn.freesound.org/previews/829/829453_3625328-hq.mp3",
+   "file": "03_fs829453.mp3",
+   "title": "Crowd excited, swelling roar",
+   "author": "itmightgetloud (Philipp Feit, Sound Of Sankt Pauli)",
+   "place": "Millerntor Stadium, Hamburg, Germany",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "71acd26f6bccdacb1c30d4cb299ff400917dec2856adc3c9414a8609d04acfdc",
+   "bytes": 1334016,
+   "seconds": 63.07,
+   "note": "St. Pauli home crowd",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 4,
+   "origin": "freesound",
+   "id": "829455",
+   "page": "https://freesound.org/s/829455/",
+   "url": "https://cdn.freesound.org/previews/829/829455_3625328-hq.mp3",
+   "file": "04_fs829455.mp3",
+   "title": "Goal eruption",
+   "author": "itmightgetloud (Philipp Feit, Sound Of Sankt Pauli)",
+   "place": "Millerntor Stadium, Hamburg, Germany",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "0f5b0bf37d3c41b52fbfbba9400f3db904f94af50d68e385b2537db781fccdb2",
+   "bytes": 1508400,
+   "seconds": 68.49,
+   "note": "goal music or PA possible after the goal",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 5,
+   "origin": "freesound",
+   "id": "829452",
+   "page": "https://freesound.org/s/829452/",
+   "url": "https://cdn.freesound.org/previews/829/829452_3625328-hq.mp3",
+   "file": "05_fs829452.mp3",
+   "title": "Near miss, chance missed reactions",
+   "author": "itmightgetloud (Philipp Feit, Sound Of Sankt Pauli)",
+   "place": "Millerntor Stadium, Hamburg, Germany",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "8056be66a39680ed78193d93320fd4627be30a9288039b3f4d42731cec9f60e1",
+   "bytes": 1323768,
+   "seconds": 61.375,
+   "note": "St. Pauli home crowd",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 6,
+   "origin": "freesound",
+   "id": "612131",
+   "page": "https://freesound.org/s/612131/",
+   "url": "https://cdn.freesound.org/previews/612/612131_1661766-hq.mp3",
+   "file": "06_fs612131.mp3",
+   "title": "60,000 people yelling huuuuu",
+   "author": "Felix Blume",
+   "place": "Mineirao stadium, Belo Horizonte, Brazil",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "e3feaa9134f69db9ad01c13ba851e4f44d7ede0748bb3596e8ca82f58f1a51d6",
+   "bytes": 1235424,
+   "seconds": 53.931,
+   "note": "Atletico Mineiro crowd, Portuguese",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 7,
+   "origin": "freesound",
+   "id": "612046",
+   "page": "https://freesound.org/s/612046/",
+   "url": "https://cdn.freesound.org/previews/612/612046_1661766-hq.mp3",
+   "file": "07_fs612046.mp3",
+   "title": "60,000 crowd yelling",
+   "author": "Felix Blume",
+   "place": "Mineirao stadium, Belo Horizonte, Brazil",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "ee7f0aad3f3fb7203cc09fe7ce38f143274cb6ef94dd20fb97bc0860f81c8c9f",
+   "bytes": 2339520,
+   "seconds": 98.859,
+   "note": "Atletico Mineiro crowd, Portuguese",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 8,
+   "origin": "freesound",
+   "id": "611816",
+   "page": "https://freesound.org/s/611816/",
+   "url": "https://cdn.freesound.org/previews/611/611816_1661766-hq.mp3",
+   "file": "08_fs611816.mp3",
+   "title": "Goals and crowd shouting, same match",
+   "author": "Felix Blume",
+   "place": "Mineirao stadium, Belo Horizonte, Brazil",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "cf126f84e6807a9c8ef00ec72cfb52f73bcc2e4f1b95c6b4e21f031e5443b2c3",
+   "bytes": 12624480,
+   "seconds": 535.424,
+   "note": "Atletico Mineiro crowd, Portuguese: chants likely",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 9,
+   "origin": "freesound",
+   "id": "206003",
+   "page": "https://freesound.org/s/206003/",
+   "url": "https://cdn.freesound.org/previews/206/206003_878508-hq.mp3",
+   "file": "09_fs206003.mp3",
+   "title": "Football match general ambience, smaller ground",
+   "author": "habbis92",
+   "place": "Stavanger, Norway",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "4a8d6971b5ac59a14a59348fa8ce435f828337a434fed69aa5cf4bc5ad59d129",
+   "bytes": 4021104,
+   "seconds": 174.857,
+   "note": "",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 10,
+   "origin": "freesound",
+   "id": "528799",
+   "page": "https://freesound.org/s/528799/",
+   "url": "https://cdn.freesound.org/previews/528/528799_11431915-hq.mp3",
+   "file": "10_fs528799.mp3",
+   "title": "Fans' reaction to a goal",
+   "author": "D.jones",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "06b918aa8986ac38bd5f189f0038b08f4194760f36801f5e588093cd842a6235",
+   "bytes": 2120965,
+   "seconds": 93.173,
+   "note": "",
+   "format": "MP3, 44100 Hz, 2 ch"
+  },
+  {
+   "n": 11,
+   "origin": "freesound",
+   "id": "189821",
+   "page": "https://freesound.org/s/189821/",
+   "url": "https://cdn.freesound.org/previews/189/189821_623488-hq.mp3",
+   "file": "11_fs189821.mp3",
+   "title": "Rhythmic clapping and drumming, whistle, then goal cheer",
+   "author": "blaukreuz",
+   "place": "Leipzig, Germany",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "341515cd1e7c5347ea9654060437dea6597357bf67e133c7208e5e1d14c0febe",
+   "bytes": 1910880,
+   "seconds": 81.84,
+   "note": "drumming may carry a club chant",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 12,
+   "origin": "freesound",
+   "id": "500250",
+   "page": "https://freesound.org/s/500250/",
+   "url": "https://cdn.freesound.org/previews/500/500250_1661766-hq.mp3",
+   "file": "12_fs500250.mp3",
+   "title": "Supporters shouting and drums in a small stadium",
+   "author": "Felix Blume",
+   "place": "Valparaiso, Chile",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "07ecb2efbf67c69617531034916ec8278a458e14f99e450e860ac058df666c92",
+   "bytes": 5192352,
+   "seconds": 221.717,
+   "note": "Chilean club, Spanish: chants likely",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 13,
+   "origin": "freesound",
+   "id": "353418",
+   "page": "https://freesound.org/s/353418/",
+   "url": "https://cdn.freesound.org/previews/353/353418_185417-hq.mp3",
+   "file": "13_fs353418.mp3",
+   "title": "Big arena chanting and cheering",
+   "author": "ckater",
+   "place": "Hannover, Germany",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "8b91133f42770b8eae553d08a929bc7844d2d51ed27392aa49b422fb4f30a8c0",
+   "bytes": 1442578,
+   "seconds": 60.214,
+   "note": "German club chanting",
+   "format": "MP3, 44100 Hz, 2 ch"
+  },
+  {
+   "n": 14,
+   "origin": "freesound",
+   "id": "160493",
+   "page": "https://freesound.org/s/160493/",
+   "url": "https://cdn.freesound.org/previews/160/160493_341440-hq.mp3",
+   "file": "14_fs160493.mp3",
+   "title": "Large crowd cheering and applause",
+   "author": "Bansemer",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "0c5028d21ec5f4aced402795c40ac99ec003794c79ced3255d97157ec44ad18a",
+   "bytes": 1506576,
+   "seconds": 82.912,
+   "note": "",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 15,
+   "origin": "freesound",
+   "id": "763880",
+   "page": "https://freesound.org/s/763880/",
+   "url": "https://cdn.freesound.org/previews/763/763880_11744683-hq.mp3",
+   "file": "15_fs763880.mp3",
+   "title": "Crowd sigh of disappointment, awww",
+   "author": "ShangusBurger (Shane Vincent, GameSoundCon 2024 walla session)",
+   "place": "GameSoundCon 2024, Los Angeles, USA",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "784e89178caf37d8171f0749a09f76e50fadf6a12fe66ccbede397617f1dba96",
+   "bytes": 261888,
+   "seconds": 11.152,
+   "note": "studio group take, dry",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 16,
+   "origin": "freesound",
+   "id": "763808",
+   "page": "https://freesound.org/s/763808/",
+   "url": "https://cdn.freesound.org/previews/763/763808_11744683-hq.mp3",
+   "file": "16_fs763808.mp3",
+   "title": "Crowd groan",
+   "author": "ShangusBurger (Shane Vincent, GameSoundCon 2024 walla session)",
+   "place": "GameSoundCon 2024, Los Angeles, USA",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "4e347e304abe29e3206a4e5771d6086b5271aab035fbb0e5a67fa3cd3f37cf68",
+   "bytes": 349488,
+   "seconds": 15.031,
+   "note": "studio group take, dry",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 17,
+   "origin": "freesound",
+   "id": "763882",
+   "page": "https://freesound.org/s/763882/",
+   "url": "https://cdn.freesound.org/previews/763/763882_11744683-hq.mp3",
+   "file": "17_fs763882.mp3",
+   "title": "Excitement builds, let down, recovers into cheers",
+   "author": "ShangusBurger (Shane Vincent, GameSoundCon 2024 walla session)",
+   "place": "GameSoundCon 2024, Los Angeles, USA",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "bb3792257a4c981cae4d96486dbd0f5bac2882522747cb929d42fb57fe4dec98",
+   "bytes": 379728,
+   "seconds": 16.328,
+   "note": "studio group take, dry",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 18,
+   "origin": "freesound",
+   "id": "763827",
+   "page": "https://freesound.org/s/763827/",
+   "url": "https://cdn.freesound.org/previews/763/763827_11744683-hq.mp3",
+   "file": "18_fs763827.mp3",
+   "title": "Unison surprise shout",
+   "author": "ShangusBurger (Shane Vincent, GameSoundCon 2024 walla session)",
+   "place": "GameSoundCon 2024, Los Angeles, USA",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "555d6d5b6e9e2fe8a937edcc7ee3e561f30a810543c5ea9da83b1f2332c71344",
+   "bytes": 89904,
+   "seconds": 3.782,
+   "note": "studio group take, dry",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 19,
+   "origin": "freesound",
+   "id": "264499",
+   "page": "https://freesound.org/s/264499/",
+   "url": "https://cdn.freesound.org/previews/264/264499_3890365-hq.mp3",
+   "file": "19_fs264499.mp3",
+   "title": "Four audience oooh and ahhh",
+   "author": "noah0189",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "2602cb507d42d79b0d62873bb58e330873a03b5c544922b5cf13850d118858e1",
+   "bytes": 486048,
+   "seconds": 25.794,
+   "note": "group take, dry",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 20,
+   "origin": "freesound",
+   "id": "557189",
+   "page": "https://freesound.org/s/557189/",
+   "url": "https://cdn.freesound.org/previews/557/557189_1535323-hq.mp3",
+   "file": "20_fs557189.mp3",
+   "title": "Booing at a sport event",
+   "author": "Julien_Matthey",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "69ab76b867bc676f569cafae66543d576f1b99ab6208749e15011681da1c2ac3",
+   "bytes": 378432,
+   "seconds": 16.42,
+   "note": "downloaded as approved; not used by any cue",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 21,
+   "origin": "freesound",
+   "id": "480769",
+   "page": "https://freesound.org/s/480769/",
+   "url": "https://cdn.freesound.org/previews/480/480769_2524442-hq.mp3",
+   "file": "21_fs480769.mp3",
+   "title": "Very large group laughing",
+   "author": "craigsmith (USC film library transfers)",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "4c7297ec0853dc6be869e60b9589d85c89598a1d3280c01a5c4af126e5d1b753",
+   "bytes": 244416,
+   "seconds": 11.272,
+   "note": "old film library transfer",
+   "format": "MP3, 48000 Hz, 1 ch"
+  },
+  {
+   "n": 22,
+   "origin": "freesound",
+   "id": "25296",
+   "page": "https://freesound.org/s/25296/",
+   "url": "https://cdn.freesound.org/previews/25/25296_173513-hq.mp3",
+   "file": "22_fs25296.mp3",
+   "title": "300-person conducted laugh",
+   "author": "freesound (La audiencia disponible)",
+   "place": "Barcelona, Spain, 2006",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "c65a0068c5fecae0f38829d580e75ef41a3b911242c0e15fc3ed9e42e3206626",
+   "bytes": 1265760,
+   "seconds": 54.61,
+   "note": "",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 23,
+   "origin": "freesound",
+   "id": "438396",
+   "page": "https://freesound.org/s/438396/",
+   "url": "https://cdn.freesound.org/previews/438/438396_2524442-hq.mp3",
+   "file": "23_fs438396.mp3",
+   "title": "Rhythmic crowd claps with cheers and whistles",
+   "author": "craigsmith (USC film library transfers)",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "b784c1333b85239e4ff16aa2da74054fdf32282d3e87a16586cef4c78bf55f78",
+   "bytes": 1807440,
+   "seconds": 81.39,
+   "note": "old film library transfer",
+   "format": "MP3, 48000 Hz, 1 ch"
+  },
+  {
+   "n": 24,
+   "origin": "freesound",
+   "id": "197435",
+   "page": "https://freesound.org/s/197435/",
+   "url": "https://cdn.freesound.org/previews/197/197435_770707-hq.mp3",
+   "file": "24_fs197435.mp3",
+   "title": "Small group clapping in unison, clean",
+   "author": "Yuval",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "00b3862bb602460a47e089fd12b5657b39bb0d71355326a701b100b1ef9ced5a",
+   "bytes": 1672464,
+   "seconds": 65.375,
+   "note": "dry",
+   "format": "MP3, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 25,
+   "origin": "freesound",
+   "id": "99496",
+   "page": "https://freesound.org/s/99496/",
+   "url": "https://cdn.freesound.org/previews/99/99496_1535323-hq.mp3",
+   "file": "25_fs99496.mp3",
+   "title": "Supporters with air horns, car horns and vuvuzelas",
+   "author": "Julien_Matthey",
+   "place": "not stated",
+   "licence": "Creative Commons 0 1.0 (as stated on the sound's page)",
+   "licence_confirmed": true,
+   "fetched": "2026-10-05",
+   "sha256": "bf65ee35308e6013e73d60e43126dbbce9fa7489d589bb9a3fdf872d7778cdc3",
+   "bytes": 4261017,
+   "seconds": 184.982,
+   "note": "car horns present",
+   "format": "MP3, 44100 Hz, 2 ch"
+  },
+  {
+   "n": 26,
+   "origin": "commons",
+   "id": "File:Match_amical_France-USA_-_58241_spectateurs_-_Action_ratée_sur_faute_21h38.ogg",
+   "page": "https://commons.wikimedia.org/wiki/File:Match_amical_France-USA_-_58241_spectateurs_-_Action_ratée_sur_faute_21h38.ogg",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Match_amical_France-USA_-_58241_spectateurs_-_Action_rat%C3%A9e_sur_faute_21h38.ogg",
+   "file": "26_commons_france_usa_action_ratee.ogg",
+   "title": "Missed chance, 58,241 spectators",
+   "author": "Romainbehar",
+   "place": "France v USA friendly (stadium not stated here)",
+   "licence": "CC0 1.0 (as stated in the approved list; Commons file page)",
+   "licence_confirmed": false,
+   "fetched": "2026-10-05",
+   "sha256": "7c3086e81943dacaf2f207f4588f570cfa94b8214b40b4c9f01125a2aad5dc9a",
+   "bytes": 442618,
+   "seconds": 49.783,
+   "note": "",
+   "format": "OGG, 48000 Hz, 1 ch"
+  },
+  {
+   "n": 27,
+   "origin": "commons",
+   "id": "File:360703_eguobyte_large-crowd-medium-distance-stereo.wav",
+   "page": "https://commons.wikimedia.org/wiki/File:360703_eguobyte_large-crowd-medium-distance-stereo.wav",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/360703_eguobyte_large-crowd-medium-distance-stereo.wav",
+   "file": "27_commons_eguobyte_large_crowd.wav",
+   "title": "A thousand people chatting, medium distance",
+   "author": "eguobyte",
+   "place": "not stated",
+   "licence": "CC0 1.0 (as stated in the approved list; Commons file page)",
+   "licence_confirmed": false,
+   "fetched": "2026-10-05",
+   "sha256": "9821f013c7a752c809a1805aa9fc7a0ac17fd813b40e7d81ba3c286e2e8fd81f",
+   "bytes": 10987470,
+   "seconds": 57.184,
+   "note": "",
+   "format": "WAV, 48000 Hz, 2 ch"
+  },
+  {
+   "n": 28,
+   "origin": "commons",
+   "id": "File:218318_splicesound_referee-whistle-blow-gymnasium.wav",
+   "page": "https://commons.wikimedia.org/wiki/File:218318_splicesound_referee-whistle-blow-gymnasium.wav",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/218318_splicesound_referee-whistle-blow-gymnasium.wav",
+   "file": "28_commons_splicesound_referee_whistle.wav",
+   "title": "Referee whistle in a gymnasium",
+   "author": "SpliceSound",
+   "place": "not stated",
+   "licence": "CC0 1.0 (as stated in the approved list; Commons file page)",
+   "licence_confirmed": false,
+   "fetched": "2026-10-05",
+   "sha256": "6659d56633874aba1b03a1639df8019eef0fe57569ea98159e16d1273041c509",
+   "bytes": 488858,
+   "seconds": 3.329,
+   "note": "downloaded as approved",
+   "format": "WAV, 48000 Hz, 1 ch"
+  }
+ ],
+ "cues": [
+  {
+   "name": "sfx_arena_crowd_bed_calm",
+   "build": "loop",
+   "seconds": 22.0,
+   "rms": 0.14,
+   "layers": [
+    {
+     "src": 27,
+     "from": 9.8,
+     "gain": 1.0
+    },
+    {
+     "src": 9,
+     "from": 40.0,
+     "gain": 0.45,
+     "highpass": 120
+    },
+    {
+     "src": 1,
+     "from": 55.1,
+     "gain": 0.5
+    }
+   ],
+   "what": "the murmur: a thousand people talking (27), a small ground's ambience (9), a quieter passage of a full stadium (1)",
+   "audition": "layer from source 9 (a small ground) may have single close voices (its speech measure is 0.12 to 0.17, the highest of the three); source 1 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "audition_first": true,
+   "_seconds": 22.0
+  },
+  {
+   "name": "sfx_arena_crowd_bed_lively",
+   "build": "loop",
+   "seconds": 18.0,
+   "rms": 0.15,
+   "layers": [
+    {
+     "src": 1,
+     "from": 290.7,
+     "gain": 1.0
+    },
+    {
+     "src": 2,
+     "from": 188.3,
+     "gain": 0.5
+    }
+   ],
+   "what": "the same crowd awake: a loud passage of the general ambience (1) over a mood wave (2)",
+   "audition": "source 1 and 2 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 18.0
+  },
+  {
+   "name": "sfx_arena_crowd_bed_roar",
+   "build": "loop",
+   "seconds": 11.5,
+   "rms": 0.17,
+   "layers": [
+    {
+     "src": 7,
+     "from": 2.2,
+     "xfade": 1.5,
+     "gain": 1.0
+    },
+    {
+     "src": 8,
+     "from": 88.5,
+     "xfade": 1.5,
+     "gain": 0.8
+    }
+   ],
+   "what": "everybody up: the first seconds of 60,000 yelling (7) with the roar after a goal (8)",
+   "audition": "source 7 and 8 is the Atletico Mineiro crowd (Portuguese): the span analyses as a diffuse roar, but shouted words inside a roar would not show",
+   "audition_first": true,
+   "_seconds": 11.5
+  },
+  {
+   "name": "sfx_arena_crowd_bed_tension",
+   "build": "loop",
+   "seconds": 16.0,
+   "rms": 0.13,
+   "layers": [
+    {
+     "src": 2,
+     "from": 220.4,
+     "gain": 1.0,
+     "lowpass": 1100,
+     "lowpass_order": 1
+    }
+   ],
+   "what": "a held murmur: the quietest steady passage of the mood waves (2), gently low-passed. It is a hush, not a sung 'oooo'",
+   "audition": "source 2 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 16.0
+  },
+  {
+   "name": "sfx_arena_crowd_bed_applause",
+   "build": "loop",
+   "seconds": 14.0,
+   "rms": 0.14,
+   "layers": [
+    {
+     "src": 14,
+     "from": 45.9,
+     "gain": 1.0
+    }
+   ],
+   "what": "applause and cheering of a large crowd (14); the tonal measure shows whistles from the crowd in it",
+   "_seconds": 14.0
+  },
+  {
+   "name": "sfx_arena_crowd_erupt",
+   "build": "layers",
+   "level": 0.27,
+   "layers": [
+    {
+     "src": 4,
+     "from": 15.17,
+     "to": 24.2,
+     "fade_in": 0.02,
+     "fade_out": 3.5
+    }
+   ],
+   "what": "a goal's eruption, second take of source 4 (at full size from its first sample)",
+   "audition": "source 4 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 9.03
+  },
+  {
+   "name": "sfx_arena_crowd_erupt_2",
+   "build": "layers",
+   "level": 0.27,
+   "layers": [
+    {
+     "src": 4,
+     "from": 0.1,
+     "to": 9.6,
+     "fade_in": 0.05,
+     "fade_out": 3.5
+    }
+   ],
+   "what": "a goal's eruption, first take of source 4 (comes up over about two seconds)",
+   "audition": "source 4 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 9.5
+  },
+  {
+   "name": "sfx_arena_crowd_erupt_3",
+   "build": "layers",
+   "level": 0.27,
+   "layers": [
+    {
+     "src": 8,
+     "from": 85.95,
+     "to": 95.0,
+     "fade_in": 0.03,
+     "fade_out": 3.5
+    }
+   ],
+   "what": "a goal at the Mineirao (8): from 25 dB down to full in half a second",
+   "audition": "source 8 is the Atletico Mineiro crowd (Portuguese): the span analyses as a diffuse roar, but shouted words inside a roar would not show",
+   "audition_first": true,
+   "_seconds": 9.05
+  },
+  {
+   "name": "sfx_arena_crowd_cheer",
+   "build": "layers",
+   "level": 0.24,
+   "layers": [
+    {
+     "src": 3,
+     "from": 0.32,
+     "to": 5.35,
+     "fade_out": 1.5
+    }
+   ],
+   "what": "a swelling cheer, first take of source 3",
+   "audition": "source 3 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 5.03
+  },
+  {
+   "name": "sfx_arena_crowd_cheer_2",
+   "build": "layers",
+   "level": 0.24,
+   "layers": [
+    {
+     "src": 3,
+     "from": 7.07,
+     "to": 12.6,
+     "fade_out": 1.5
+    }
+   ],
+   "what": "a swelling cheer, second take of source 3",
+   "audition": "source 3 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 5.53
+  },
+  {
+   "name": "sfx_arena_crowd_cheer_3",
+   "build": "layers",
+   "level": 0.24,
+   "layers": [
+    {
+     "src": 17,
+     "from": 9.0,
+     "to": 15.9,
+     "fade_in": 0.4,
+     "fade_out": 1.2,
+     "bowl": 0.5
+    },
+    {
+     "src": 3,
+     "from": 14.6,
+     "to": 20.2,
+     "gain": 0.6,
+     "fade_in": 0.5,
+     "fade_out": 1.5
+    }
+   ],
+   "what": "the studio group's recovery into cheers (17, with a little of the bowl) over a stadium cheer (3)",
+   "audition": "the studio take (17) is a few dozen close voices: single words or one voice may stand out of it",
+   "_seconds": 8.7
+  },
+  {
+   "name": "sfx_arena_crowd_save",
+   "build": "layers",
+   "level": 0.26,
+   "layers": [
+    {
+     "src": 3,
+     "from": 33.6,
+     "to": 43.5,
+     "fade_in": 0.05,
+     "fade_out": 3.0
+    }
+   ],
+   "what": "the long swelling roar of source 3 (fifth take): a player saves themselves from the fall",
+   "audition": "source 3 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 9.9
+  },
+  {
+   "name": "sfx_arena_crowd_ooh",
+   "build": "layers",
+   "level": 0.24,
+   "layers": [
+    {
+     "src": 5,
+     "from": 45.52,
+     "to": 49.2,
+     "fade_in": 0.03,
+     "fade_out": 0.8
+    }
+   ],
+   "what": "a chance missed, the short fifth take of source 5",
+   "audition": "source 5 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 3.68
+  },
+  {
+   "name": "sfx_arena_crowd_ooh_2",
+   "build": "layers",
+   "level": 0.24,
+   "layers": [
+    {
+     "src": 5,
+     "from": 39.3,
+     "to": 44.0,
+     "fade_in": 0.15,
+     "fade_out": 1.0
+    }
+   ],
+   "what": "a chance missed, fourth take of source 5",
+   "audition": "source 5 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_seconds": 4.7
+  },
+  {
+   "name": "sfx_arena_crowd_ooh_3",
+   "build": "layers",
+   "level": 0.24,
+   "layers": [
+    {
+     "src": 5,
+     "from": 0.1,
+     "to": 6.5,
+     "fade_in": 0.05,
+     "fade_out": 2.0
+    },
+    {
+     "src": 26,
+     "from": 31.7,
+     "to": 35.6,
+     "gain": 0.45,
+     "fade_in": 0.15,
+     "fade_out": 1.5
+    }
+   ],
+   "what": "a chance missed, first take of source 5, over the 58,241 of France v USA after a foul (26)",
+   "audition": "source 26 has referee whistles at 29.5 to 30.7 s and 31.5 s (cut round) and a fainter one near 33.75 s, which is inside this span at low level",
+   "audition_first": true,
+   "_seconds": 6.4
+  },
+  {
+   "name": "sfx_arena_crowd_aww",
+   "build": "layers",
+   "level": 0.22,
+   "layers": [
+    {
+     "src": 5,
+     "from": 50.9,
+     "to": 59.5,
+     "fade_in": 0.1,
+     "fade_out": 2.5
+    },
+    {
+     "src": 15,
+     "from": 0.72,
+     "to": 2.9,
+     "at": 0.35,
+     "gain": 0.55,
+     "bowl": 0.6,
+     "fade_out": 0.5,
+     "lowpass": 5000
+    },
+    {
+     "src": 15,
+     "from": 0.72,
+     "to": 2.9,
+     "at": 0.42,
+     "gain": 0.4,
+     "bowl": 0.6,
+     "fade_out": 0.5,
+     "pitch": 0.92,
+     "lowpass": 5000
+    }
+   ],
+   "what": "a near miss in the stadium (5, sixth take) with the studio group's 'awww' (15) in the near rows",
+   "audition": "the studio take (15) is recorded very quietly (about 24 dB over its own noise): listen for hiss, and for single voices",
+   "audition_first": true,
+   "_seconds": 8.6
+  },
+  {
+   "name": "sfx_arena_crowd_aww_2",
+   "build": "layers",
+   "level": 0.22,
+   "layers": [
+    {
+     "src": 5,
+     "from": 16.4,
+     "to": 22.2,
+     "fade_in": 0.2,
+     "fade_out": 1.8
+    },
+    {
+     "src": 16,
+     "from": 1.72,
+     "to": 5.6,
+     "at": 0.2,
+     "gain": 0.6,
+     "bowl": 0.6,
+     "fade_out": 1.2,
+     "lowpass": 5000
+    },
+    {
+     "src": 16,
+     "from": 1.72,
+     "to": 5.6,
+     "at": 0.28,
+     "gain": 0.4,
+     "bowl": 0.6,
+     "fade_out": 1.2,
+     "pitch": 1.07,
+     "lowpass": 5000
+    }
+   ],
+   "what": "a near miss in the stadium (5, second take, from its reaction) with the studio group's groan (16)",
+   "audition": "the studio take (16) is a few dozen close voices",
+   "_seconds": 5.88
+  },
+  {
+   "name": "sfx_arena_crowd_aww_3",
+   "build": "layers",
+   "level": 0.22,
+   "layers": [
+    {
+     "src": 5,
+     "from": 29.6,
+     "to": 36.5,
+     "fade_in": 0.3,
+     "fade_out": 2.0,
+     "gain": 0.9
+    },
+    {
+     "src": 19,
+     "from": 13.75,
+     "to": 16.95,
+     "at": 0.3,
+     "gain": 0.6,
+     "bowl": 0.7,
+     "lowpass": 5000
+    },
+    {
+     "src": 19,
+     "from": 22.05,
+     "to": 25.35,
+     "at": 0.4,
+     "gain": 0.5,
+     "bowl": 0.7,
+     "lowpass": 5000
+    },
+    {
+     "src": 19,
+     "from": 17.8,
+     "to": 20.65,
+     "at": 0.5,
+     "gain": 0.4,
+     "bowl": 0.7,
+     "pitch": 0.93,
+     "lowpass": 5000
+    }
+   ],
+   "what": "a near miss in the stadium (5, third take, from its peak) with three of the audience's 'oooh' and 'ahhh' takes (19)",
+   "audition": "the audience takes (19) are a small group; which are 'oooh' and which 'ahhh' is not known",
+   "_seconds": 6.9
+  },
+  {
+   "name": "sfx_arena_crowd_gasp",
+   "build": "layers",
+   "level": 0.2,
+   "layers": [
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.0,
+     "gain": 1.0,
+     "pitch": 1.0,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    },
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.04,
+     "gain": 0.8,
+     "pitch": 0.94,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    },
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.07,
+     "gain": 0.8,
+     "pitch": 1.06,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    },
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.11,
+     "gain": 0.6,
+     "pitch": 0.88,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    },
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.02,
+     "gain": 0.5,
+     "pitch": 1.12,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    }
+   ],
+   "what": "the studio group's unison surprise shout (18), five copies at five pitches a few hundredths apart, in the bowl",
+   "audition": "one 2.5 s take multiplied: it may sound like the same shout five times, or carry a word",
+   "audition_first": true,
+   "_seconds": 4.81
+  },
+  {
+   "name": "sfx_arena_crowd_gasp_2",
+   "build": "layers",
+   "level": 0.2,
+   "layers": [
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.0,
+     "gain": 1.0,
+     "pitch": 0.97,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    },
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.05,
+     "gain": 0.8,
+     "pitch": 1.03,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    },
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.09,
+     "gain": 0.7,
+     "pitch": 0.91,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    },
+    {
+     "src": 18,
+     "from": 0.55,
+     "to": 3.1,
+     "at": 0.03,
+     "gain": 0.6,
+     "pitch": 1.09,
+     "bowl": 0.7,
+     "fade_in": 0.01,
+     "fade_out": 0.4,
+     "lowpass": 6000
+    }
+   ],
+   "what": "the same shout (18), four copies at other pitches and offsets",
+   "audition": "as sfx_arena_crowd_gasp",
+   "audition_first": true,
+   "_seconds": 4.69
+  },
+  {
+   "name": "sfx_arena_crowd_laugh",
+   "build": "layers",
+   "level": 0.22,
+   "layers": [
+    {
+     "src": 21,
+     "from": 0.3,
+     "to": 6.5,
+     "fade_out": 1.5,
+     "bowl": 0.4
+    },
+    {
+     "src": 22,
+     "from": 21.2,
+     "to": 26.8,
+     "at": 0.1,
+     "gain": 0.8,
+     "fade_in": 0.15,
+     "fade_out": 1.5,
+     "bowl": 0.4
+    }
+   ],
+   "what": "a very large group laughing (21, an old film library transfer) over 300 people laughing on a conductor's cue (22)",
+   "audition": "source 21 is an old optical transfer and may sound dated; source 22 is a conducted audience",
+   "_seconds": 8.0
+  },
+  {
+   "name": "sfx_arena_crowd_laugh_2",
+   "build": "layers",
+   "level": 0.22,
+   "layers": [
+    {
+     "src": 22,
+     "from": 2.0,
+     "to": 8.0,
+     "fade_in": 0.1,
+     "fade_out": 1.5,
+     "bowl": 0.4
+    },
+    {
+     "src": 21,
+     "from": 0.3,
+     "to": 5.0,
+     "at": 0.15,
+     "gain": 0.7,
+     "pitch": 0.95,
+     "fade_out": 1.5,
+     "bowl": 0.4
+    }
+   ],
+   "what": "the conducted laugh's opening (22) over the large group (21, a little slower)",
+   "audition": "as sfx_arena_crowd_laugh",
+   "_seconds": 7.8
+  },
+  {
+   "name": "sfx_arena_chant_stomp",
+   "build": "claps",
+   "seed": 4301,
+   "claps": {
+    "src": 24,
+    "from": 0.1,
+    "to": 65.0
+   },
+   "people": 240,
+   "slop": 0.024,
+   "bowl": 0.5,
+   "level": 0.22,
+   "bar_seconds": 1.5,
+   "bars": 6,
+   "pattern": [
+    [
+     0.0,
+     "stomp",
+     1.0
+    ],
+    [
+     0.375,
+     "stomp",
+     1.0
+    ],
+    [
+     0.75,
+     "clap",
+     1.0
+    ]
+   ],
+   "what": "stomp-stomp-CLAP six times: single unison claps cut from source 24, played by 240 copies; a stomp is a clap slowed 2.5 times and low-passed",
+   "audition": "built, not recorded: the stomps are slowed claps and may not read as feet on a stand",
+   "audition_first": true,
+   "_claps_found": 101,
+   "_seconds": 11.7
+  },
+  {
+   "name": "sfx_arena_chant_claps",
+   "build": "claps",
+   "seed": 4302,
+   "claps": {
+    "src": 24,
+    "from": 0.1,
+    "to": 65.0
+   },
+   "people": 260,
+   "slop": 0.022,
+   "bowl": 0.5,
+   "level": 0.22,
+   "bar_seconds": 2.5,
+   "bars": 4,
+   "pattern": [
+    [
+     0.0,
+     "clap",
+     1.0
+    ],
+    [
+     0.5,
+     "clap",
+     1.0
+    ],
+    [
+     1.0,
+     "clap",
+     1.0
+    ],
+    [
+     1.25,
+     "clap",
+     0.9
+    ],
+    [
+     1.5,
+     "clap",
+     1.1
+    ]
+   ],
+   "layers": [
+    {
+     "src": 3,
+     "from": 14.5,
+     "to": 19.0,
+     "at": 10.2,
+     "gain": 0.5,
+     "fade_in": 0.4,
+     "fade_out": 2.0
+    }
+   ],
+   "what": "clap-clap, clap-clap-clap four times (source 24's claps, 260 copies), answered by a stadium cheer (3)",
+   "audition": "built, not recorded; source 3 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_claps_found": 101,
+   "_seconds": 16.5
+  },
+  {
+   "name": "sfx_arena_chant_claps_fast",
+   "build": "claps",
+   "seed": 4303,
+   "claps": {
+    "src": 24,
+    "from": 0.1,
+    "to": 65.0
+   },
+   "people": 260,
+   "slop": 0.02,
+   "bowl": 0.5,
+   "level": 0.22,
+   "bar_seconds": 8.2,
+   "bars": 1,
+   "join_bars": 0.15,
+   "leave_bars": 0.03,
+   "pattern": [
+    [
+     0.0,
+     "clap",
+     1.0
+    ],
+    [
+     0.344,
+     "clap",
+     1.05
+    ],
+    [
+     0.82,
+     "clap",
+     1.0
+    ],
+    [
+     1.13,
+     "clap",
+     1.05
+    ],
+    [
+     1.558,
+     "clap",
+     1.0
+    ],
+    [
+     1.837,
+     "clap",
+     1.05
+    ],
+    [
+     2.222,
+     "clap",
+     1.0
+    ],
+    [
+     2.473,
+     "clap",
+     1.05
+    ],
+    [
+     2.82,
+     "clap",
+     1.0
+    ],
+    [
+     3.046,
+     "clap",
+     1.05
+    ],
+    [
+     3.358,
+     "clap",
+     1.0
+    ],
+    [
+     3.561,
+     "clap",
+     1.05
+    ],
+    [
+     3.842,
+     "clap",
+     1.0
+    ],
+    [
+     4.025,
+     "clap",
+     1.05
+    ],
+    [
+     4.278,
+     "clap",
+     1.0
+    ],
+    [
+     4.443,
+     "clap",
+     1.05
+    ],
+    [
+     4.67,
+     "clap",
+     1.0
+    ],
+    [
+     4.818,
+     "clap",
+     1.05
+    ],
+    [
+     5.023,
+     "clap",
+     1.0
+    ],
+    [
+     5.157,
+     "clap",
+     1.05
+    ],
+    [
+     5.341,
+     "clap",
+     1.0
+    ],
+    [
+     5.467,
+     "clap",
+     1.05
+    ],
+    [
+     5.641,
+     "clap",
+     1.0
+    ],
+    [
+     5.767,
+     "clap",
+     1.05
+    ],
+    [
+     5.941,
+     "clap",
+     1.0
+    ],
+    [
+     6.067,
+     "clap",
+     1.05
+    ],
+    [
+     6.241,
+     "clap",
+     1.0
+    ],
+    [
+     6.367,
+     "clap",
+     1.05
+    ],
+    [
+     6.541,
+     "clap",
+     1.0
+    ],
+    [
+     6.667,
+     "clap",
+     1.05
+    ],
+    [
+     6.841,
+     "clap",
+     1.0
+    ],
+    [
+     6.967,
+     "clap",
+     1.05
+    ],
+    [
+     7.141,
+     "clap",
+     1.0
+    ],
+    [
+     7.267,
+     "clap",
+     1.05
+    ],
+    [
+     7.441,
+     "clap",
+     1.0
+    ],
+    [
+     7.567,
+     "clap",
+     1.05
+    ]
+   ],
+   "layers": [
+    {
+     "src": 3,
+     "from": 22.02,
+     "to": 27.5,
+     "at": 8.3,
+     "gain": 0.7,
+     "fade_in": 0.05,
+     "fade_out": 2.0
+    }
+   ],
+   "what": "clap-clap in pairs, speeding up over eight seconds (source 24's claps, 260 copies), ending in a stadium cheer (3)",
+   "audition": "built, not recorded; source 3 is the St. Pauli home crowd: the span analyses as diffuse (no steady beat, no tonal peaks, no speech-rate modulation), but a slow sung chant under a roar would not show",
+   "_claps_found": 101,
+   "_seconds": 15.58
+  },
+  {
+   "name": "sfx_arena_chant_drums",
+   "build": "layers",
+   "level": 0.22,
+   "layers": [
+    {
+     "src": 11,
+     "from": 1.0,
+     "to": 14.2,
+     "fade_in": 1.0,
+     "fade_out": 1.8,
+     "highpass": 50
+    }
+   ],
+   "what": "supporters' rhythmic clapping and drumming before the goal (11)",
+   "audition": "source 11 is a German club's supporters: the span is percussive with little energy in the voice band, but a chant sung quietly along with the drum would not show",
+   "audition_first": true,
+   "_seconds": 13.2
+  },
+  {
+   "name": "sfx_arena_chant_horns",
+   "build": "layers",
+   "level": 0.2,
+   "layers": [
+    {
+     "src": 25,
+     "from": 117.2,
+     "to": 129.0,
+     "fade_in": 0.6,
+     "fade_out": 1.5
+    }
+   ],
+   "what": "supporters with horns (25): two long blasts with the supporters between them",
+   "audition": "the analysis cannot tell an air horn from a car horn or a vuvuzela: these are the two strongest steady-pitched blasts (118 to 122 s, 126 to 128 s)",
+   "audition_first": true,
+   "_seconds": 11.8
+  },
+  {
+   "name": "sfx_arena_chant_ooh_hey",
+   "build": "layers",
+   "level": 0.24,
+   "layers": [
+    {
+     "src": 6,
+     "from": 28.6,
+     "to": 33.65,
+     "fade_in": 1.8,
+     "fade_out": 0.3,
+     "gain": 0.9
+    },
+    {
+     "src": 3,
+     "from": 22.02,
+     "to": 28.4,
+     "at": 4.75,
+     "gain": 1.2,
+     "fade_in": 0.02,
+     "fade_out": 2.0
+    }
+   ],
+   "what": "60,000 holding a yell (6, its held vowel only) cut into a stadium cheer (3, fourth take)",
+   "audition": "AUDITION FIRST. Source 6 is a Brazilian crowd's held yell before a kick, which is customarily ended with a shouted word; the cut stops at 33.65 s, before the level drops and the shouting after it, and the cheer covers the cut, but only a listener can say that no word is left",
+   "audition_first": true,
+   "_seconds": 11.13
+  }
+ ],
+ "to_be_recorded": [
+  {
+   "name": "sfx_arena_chant_tumbang_preso",
+   "say": "TUM-BANG! PRE-SO!",
+   "rhythm": "two beats on TUM-BANG, two on PRE-SO, at about 100 bpm, then clap clap, clap-clap-clap; three times, about 12 s",
+   "meanwhile": "sfx_arena_chant_claps"
+  },
+  {
+   "name": "sfx_arena_chant_taya",
+   "say": "TA-YA! TA-YA!",
+   "rhythm": "two even beats, a beat's rest, six calls at about 96 bpm over a bass drum, about 9 s",
+   "meanwhile": "sfx_arena_chant_drums"
+  },
+  {
+   "name": "sfx_arena_chant_tumba",
+   "say": "TUM-BA! TUM-BA!",
+   "rhythm": "two beats, seven calls speeding up from about 90 to 150 bpm, about 8 s",
+   "meanwhile": "sfx_arena_chant_claps_fast"
+  }
+ ]
+}

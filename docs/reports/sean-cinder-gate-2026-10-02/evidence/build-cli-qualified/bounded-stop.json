@@ -1,0 +1,7 @@
+{
+  "reason": "Memory guard SIGTERM did not release owned build after sustained8GiB pressure; force-stop exact child Editor, leave guard restoring profiles",
+  "guard": 68610,
+  "owned_editors": [
+    68611
+  ]
+}

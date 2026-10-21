@@ -1,0 +1,33 @@
+{
+  "source": "25fab6cab",
+  "rawEvaluatorPassed": false,
+  "rawEvaluatorFaults": [
+    "host did not use the expected HeroStrike session.",
+    "client did not use the expected HeroStrike session."
+  ],
+  "expectedMode": "Classic",
+  "structural": "BEB31538",
+  "observations": {
+    "host": {
+      "classic": true,
+      "kanto": true,
+      "protocol129": true,
+      "joined": true,
+      "round2Active": true,
+      "tournamentRulesetOk": true,
+      "noModifiers": true,
+      "frames": "live frame rate : frames=8680; seconds=145.579; avg=59.62; p50=59.70; p5=57.97; p1=57.97; max_ms=270.33"
+    },
+    "client": {
+      "classic": true,
+      "kanto": true,
+      "protocol129": true,
+      "joined": true,
+      "round2Active": true,
+      "tournamentRulesetOk": true,
+      "noModifiers": true,
+      "frames": "live frame rate : frames=7890; seconds=132.005; avg=59.77; p50=59.70; p5=57.97; p1=57.97; max_ms=28.86"
+    }
+  },
+  "scope": "Current tournament preset/round progression and frame observations; original HeroStrike evaluator verdict retained, not rewritten"
+}

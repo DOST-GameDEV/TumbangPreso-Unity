@@ -1,0 +1,50 @@
+[
+  {
+    "run": "rago-live-handoff",
+    "result": "Passed",
+    "duration": "28.6162138",
+    "start": "2026-10-04 10:58:24Z",
+    "end": "2026-10-04 10:58:53Z",
+    "exitCode": 0
+  },
+  {
+    "run": "basilio-live-handoff",
+    "result": "Passed",
+    "duration": "24.7200742",
+    "start": "2026-10-04 11:01:13Z",
+    "end": "2026-10-04 11:01:38Z",
+    "exitCode": 0
+  },
+  {
+    "run": "nemu-live-handoff",
+    "result": "Passed",
+    "duration": "24.9610376",
+    "start": "2026-10-04 11:03:11Z",
+    "end": "2026-10-04 11:03:36Z",
+    "exitCode": 0
+  },
+  {
+    "run": "yasmin-live-handoff",
+    "result": "Passed",
+    "duration": "26.1174286",
+    "start": "2026-10-04 11:05:16Z",
+    "end": "2026-10-04 11:05:42Z",
+    "exitCode": 0
+  },
+  {
+    "run": "ilyas-live-handoff",
+    "result": "Failed(Child)",
+    "duration": "20.3206764",
+    "start": "2026-10-04 11:07:47Z",
+    "end": "2026-10-04 11:08:07Z",
+    "exitCode": 2
+  },
+  {
+    "run": "ilyas-live-field-handoff",
+    "result": "Passed",
+    "duration": "23.6194508",
+    "start": "2026-10-04 11:12:13Z",
+    "end": "2026-10-04 11:12:37Z",
+    "exitCode": 0
+  }
+]

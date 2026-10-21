@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 02:39:51Z" end-time="2026-10-01 02:39:55Z" duration="3.7050154">
+  <test-suite type="TestSuite" id="2319" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1067" result="Passed" start-time="2026-10-01 02:39:51Z" end-time="2026-10-01 02:39:55Z" duration="3.705015" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2313" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1067" result="Passed" start-time="2026-10-01 02:39:51Z" end-time="2026-10-01 02:39:55Z" duration="3.689436" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30288" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2314" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1067" result="Passed" start-time="2026-10-01 02:39:51Z" end-time="2026-10-01 02:39:55Z" duration="3.686238" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2315" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1067" result="Passed" start-time="2026-10-01 02:39:51Z" end-time="2026-10-01 02:39:55Z" duration="3.681164" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1055" name="AmihanAirburstTests" fullname="TumbangPreso.PlayTests.AmihanAirburstTests" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-01 02:39:51Z" end-time="2026-10-01 02:39:55Z" duration="3.544607" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1058" name="AcceptedWindupDropsAndLiftsOnlyAtRelease" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.AcceptedWindupDropsAndLiftsOnlyAtRelease" methodname="AcceptedWindupDropsAndLiftsOnlyAtRelease" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="484998577" result="Passed" start-time="2026-10-01 02:39:51Z" end-time="2026-10-01 02:39:54Z" duration="2.983273" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1060" name="ReservedAirburstStartsItsSameDelayOnlyAfterIntroduction" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.ReservedAirburstStartsItsSameDelayOnlyAfterIntroduction" methodname="ReservedAirburstStartsItsSameDelayOnlyAfterIntroduction" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="96360638" result="Passed" start-time="2026-10-01 02:39:54Z" end-time="2026-10-01 02:39:54Z" duration="0.266376" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1059" name="SixtyDegreeBoundaryAppliesToBodiesAndSlippers" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.SixtyDegreeBoundaryAppliesToBodiesAndSlippers" methodname="SixtyDegreeBoundaryAppliesToBodiesAndSlippers" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="1540345449" result="Passed" start-time="2026-10-01 02:39:54Z" end-time="2026-10-01 02:39:55Z" duration="0.268998" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

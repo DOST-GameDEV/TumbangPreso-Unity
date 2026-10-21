@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 08:14:57Z" end-time="2026-10-04 08:15:48Z" duration="50.702085">
+  <test-suite type="TestSuite" id="3005" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1629" result="Passed" start-time="2026-10-04 08:14:57Z" end-time="2026-10-04 08:15:48Z" duration="50.702085" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2999" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1629" result="Passed" start-time="2026-10-04 08:14:57Z" end-time="2026-10-04 08:15:48Z" duration="50.682521" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49740" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3000" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1629" result="Passed" start-time="2026-10-04 08:14:57Z" end-time="2026-10-04 08:15:48Z" duration="50.669580" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3001" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1629" result="Passed" start-time="2026-10-04 08:14:57Z" end-time="2026-10-04 08:15:48Z" duration="50.656642" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2885" name="UltimateIntroductionProbe" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-04 08:14:57Z" end-time="2026-10-04 08:15:48Z" duration="50.634480" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2893" name="ZackDrawsOverclockIntoHimselfWithoutLosingHisShoe" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe.ZackDrawsOverclockIntoHimselfWithoutLosingHisShoe" methodname="ZackDrawsOverclockIntoHimselfWithoutLosingHisShoe" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" seed="2145882260" result="Passed" start-time="2026-10-04 08:14:57Z" end-time="2026-10-04 08:15:48Z" duration="50.622872" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'IntroductionArtWitness' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

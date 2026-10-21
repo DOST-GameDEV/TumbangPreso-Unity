@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 04:34:09Z" end-time="2026-10-03 04:34:28Z" duration="19.1085399">
+  <test-suite type="TestSuite" id="2711" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1392" result="Failed" site="Child" start-time="2026-10-03 04:34:09Z" end-time="2026-10-03 04:34:28Z" duration="19.108540" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2705" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1392" result="Failed" site="Child" start-time="2026-10-03 04:34:09Z" end-time="2026-10-03 04:34:28Z" duration="19.094064" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24640" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2706" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1392" result="Failed" site="Child" start-time="2026-10-03 04:34:09Z" end-time="2026-10-03 04:34:28Z" duration="19.085831" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2707" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1392" result="Failed" site="Child" start-time="2026-10-03 04:34:09Z" end-time="2026-10-03 04:34:28Z" duration="19.077851" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1856" name="NemuGuardMotionTests" fullname="TumbangPreso.PlayTests.NemuGuardMotionTests" classname="TumbangPreso.PlayTests.NemuGuardMotionTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-03 04:34:09Z" end-time="2026-10-03 04:34:28Z" duration="19.052642" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1857" name="CatchUsesItsOwnSmallCommandAndKeepsCanProtection" fullname="TumbangPreso.PlayTests.NemuGuardMotionTests.CatchUsesItsOwnSmallCommandAndKeepsCanProtection" methodname="CatchUsesItsOwnSmallCommandAndKeepsCanProtection" classname="TumbangPreso.PlayTests.NemuGuardMotionTests" runstate="Runnable" seed="530566547" result="Failed" start-time="2026-10-03 04:34:09Z" end-time="2026-10-03 04:34:28Z" duration="19.041648" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Catch still borrows Haunt's large seance.
+  Expected string length 15 but was 16. Strings differ at index 10.
+  Expected: "hero-nemu-guard"
+  But was:  "hero-nemu-seance"
+  ---------------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuGuardMotionTests+<CatchUsesItsOwnSmallCommandAndKeepsCanProtection>d__10.MoveNext () [0x00684] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/NemuGuardMotionTests.cs:78
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-000.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-000.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-001.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-001.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-002.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-002.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-003.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-003.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-004.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-004.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-005.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-005.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-006.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-006.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-007.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-007.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-008.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-008.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-009.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-009.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-010.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-010.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-011.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-011.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-012.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-012.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-013.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-013.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-014.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-014.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-015.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-015.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-016.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-016.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-017.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-017.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-018.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-018.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-019.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-019.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-020.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-020.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-021.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-021.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-022.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-022.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/owner-023.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-catch-1003/baseline/frames/observer-023.png
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

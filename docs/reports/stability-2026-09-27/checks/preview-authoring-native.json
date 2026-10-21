@@ -1,0 +1,29 @@
+{
+  "base": "f6bca621ffd0e81a6c1fa90f8e53f8837d183e92",
+  "protocol": 82,
+  "scope": "Retained creator fresh preview scale and dressing",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.5002313,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ModelPreview.cs",
+      "sha256": "896791314F77666E8674210E7FF72488414D16FD01CD62366D9045931EFB671B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/CustomCharacterScreen.cs",
+      "sha256": "560FF59C6A60FF08859F377BFBC59FE30DBC2C72C95D43F29161AEABFCF6ABCB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ModelPreviewTests.cs",
+      "sha256": "225EB279B2CC55F196DF6AA92747757CE4A3E20DE5E1A046C921A9B30E58E514"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6459879424,
+  "retryCount": 0,
+  "unverified": [
+    "Physical authoring controls",
+    "Player timing"
+  ]
+}

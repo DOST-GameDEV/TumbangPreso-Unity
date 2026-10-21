@@ -1,0 +1,7 @@
+{
+  "sourceFixtureMetaUnchanged": true,
+  "correctionCount": 1,
+  "reason": "First external preparation wait returned unavailable ExitCode",
+  "verifiedReplayExitCode": 0,
+  "firstBeforeSnapshotPreserved": true
+}

@@ -1,0 +1,27 @@
+{
+  "sourceRef": "89cc9f295a96d3f1647c740e1387206329315af8",
+  "pid": 7724,
+  "profile": "pc-tag-contact1005",
+  "filter": "TumbangPreso.PlayTests.WorldCourtCueTests.AcceptedTagUsesContactInkAndRetainsRecoveryAndPause;TumbangPreso.PlayTests.WorldCourtCueTests.ContactInkHonorsComfortAndRetiresWithRound",
+  "expectedCases": 2,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.WorldCourtCueTests.AcceptedTagUsesContactInkAndRetainsRecoveryAndPause",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.WorldCourtCueTests.ContactInkHonorsComfortAndRetiresWithRound",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "terminal": true,
+  "protectedCount": 19284
+}

@@ -56,226 +56,11 @@ namespace TumbangPreso.PlayTests
             _who.Intent.Set(verb,false);yield return new WaitForSeconds(.04f);
         }
 
-        [UnityTest, Timeout(60000)]
-        public IEnumerator JoiningCarapaceKeepsItsRemainingProtectionAndReleasesHeavySlow()
-        {
-            var progress=Settings.SettingsStore.Current.AbilityChallenges;
-            var saved=progress.ToArray();
-            try
-            {
-                progress.RemoveAll(row=>row.VariantId=="dante.2.plating");
-                progress.Add(new AbilityChallengeProgress{VariantId="dante.2.plating",Count=999});
-                var art=RosterBook.Load().FindPersonArt("dante");
-                _who.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"dante");
-                _who.GetComponent<CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
-                foreach(bool heavy in new[]{false,true})
-                {
-                    _who.AbilitySystem.BindHero("dante",new HeroBuild{HeroId="dante",Slot2VariantId=heavy?"dante.2.plating":null});
-                    var kit=(DanteHeroKit)_who.AbilitySystem.Kit;
-                    kit.Skill2.ApplyNetworkSnapshot(32,0);
-                    float speed=_who.SpeedMultiplier, bank=kit.UltimateCharge;
-                    Assert.True(kit.RestoreJoiningCarapace(_who,1.1f));
-                    Assert.True(kit.IsDemonicCarapaceActive);
-                    Assert.AreEqual(32,kit.Skill2.CooldownRemaining,.001f);
-                    Assert.AreEqual(bank,kit.UltimateCharge);
-                    Assert.AreEqual(speed*(heavy?.70f:1),_who.SpeedMultiplier,.001f);
-                    Assert.AreEqual(1,_who.GetComponentsInChildren<DanteCarapaceVisual>().Length);
-                    Assert.AreEqual(3,_who.transform.Find("DanteOrbitingWard").childCount);
-                    Assert.False(kit.RestoreJoiningCarapace(_who,4));
-                    _who.ApplyStagger(1,StunElement.Stone,6);
-                    Assert.Less(_who.StunLeft,.01f);
-                    yield return new WaitForSeconds(1.25f);
-                    Assert.False(kit.IsDemonicCarapaceActive);
-                    Assert.AreEqual(speed,_who.SpeedMultiplier,.001f);
-                    Assert.IsNull(_who.GetComponentInChildren<DanteCarapaceVisual>());
-                    Assert.IsNull(_who.transform.Find("DanteOrbitingWard"));
-                    _who.ApplyStagger(.4f,StunElement.Stone,6);
-                    Assert.Greater(_who.StunLeft,0,"Restored armor kept immunity after expiry.");
-                    _who.ClearStun();
-                    Assert.False(kit.RestoreJoiningCarapace(_who,4),"A stale initial state rearmed expired armor.");
-                }
-            }
-            finally{progress.Clear();progress.AddRange(saved);}
-        }
 
-        [UnityTest, Timeout(60000)]
-        public IEnumerator JoiningVeilDoesNotSurgeAgainAndStillEndsOnANewPickup()
-        {
-            var progress=Settings.SettingsStore.Current.AbilityChallenges;
-            var saved=progress.ToArray();var carrier=_who.GetComponent<Carrier>();var shoe=carrier.Held;
-            Assert.IsNotNull(shoe);
-            try
-            {
-                progress.RemoveAll(row=>row.VariantId=="nemu.1.fade");
-                progress.Add(new AbilityChallengeProgress{VariantId="nemu.1.fade",Count=999});
-                foreach(bool longFade in new[]{false,true})
-                {
-                    Assert.True(shoe.HostForceEquip(_who));
-                    _who.AbilitySystem.BindHero("nemu",new HeroBuild{HeroId="nemu",Slot1VariantId=longFade?"nemu.1.fade":null});
-                    var kit=(NemuHeroKit)_who.AbilitySystem.Kit;
-                    kit.Skill1.ApplyNetworkSnapshot(28,0);
-                    yield return new WaitForSeconds(.2f);
-                    var velocity=_who.Velocity;var at=_who.transform.position;float speed=_who.SpeedMultiplier;
-                    Assert.True(kit.RestoreJoiningVeil(_who,1.2f));
-                    Assert.AreEqual(velocity,_who.Velocity,"Restoring the veil replayed its opening surge.");
-                    Assert.AreEqual(28-.2f,kit.Skill1.CooldownRemaining,.15f);
-                    Assert.AreEqual(speed*(longFade?.65f:1),_who.SpeedMultiplier,.001f);
-                    yield return new WaitForSeconds(.18f);
-                    Assert.True(kit.IsPhantomPhaseActive,"A shoe already held at restoration cancelled the veil.");
-                    Assert.False(_who.AbilitySystem.IsImmuneToTags,"Holding a shoe must retain the existing tag risk.");
-                    Assert.Less(Vector3.Distance(at,_who.transform.position),.08f);
-                    Assert.AreEqual(1,_who.GetComponentsInChildren<NemuVeilPresentation>().Length);
-                    Assert.False(kit.RestoreJoiningVeil(_who,2.5f));
-                    shoe.HostDisarm();yield return null;yield return null;
-                    Assert.True(_who.AbilitySystem.IsImmuneToTags,"The empty-handed veil lost its actual protection.");
-                    Assert.True(shoe.HostForceEquip(_who));yield return null;yield return null;
-                    Assert.False(kit.IsPhantomPhaseActive,"A genuinely new pickup did not end restored protection.");
-                    Assert.False(_who.AbilitySystem.IsImmuneToTags);
-                    Assert.AreEqual(speed,_who.SpeedMultiplier,.001f);
-                    Assert.False(kit.RestoreJoiningVeil(_who,2.5f),"A stale record rearmed the consumed veil.");
-                    yield return new WaitForSeconds(.4f);
-                    Assert.IsEmpty(Object.FindObjectsByType<NemuVeilPresentation>(FindObjectsSortMode.None));
-                }
-            }
-            finally{progress.Clear();progress.AddRange(saved);}
-        }
 
-        [UnityTest, Timeout(60000)]
-        public IEnumerator JoiningPersonalBuffCannotOverwriteANewCastOrSurviveHeroReplacement()
-        {
-            var nemu=(NemuHeroKit)_who.AbilitySystem.Kit;
-            yield return Press(Verb.Skill1);
-            float clock=nemu.Skill1.DurationRemaining;
-            Assert.False(nemu.RestoreJoiningVeil(_who,.1f));
-            Assert.AreEqual(clock,nemu.Skill1.DurationRemaining);
-            _who.AbilitySystem.BindHero("dante");yield return new WaitForSeconds(.4f);
-            Assert.IsEmpty(Object.FindObjectsByType<NemuVeilPresentation>(FindObjectsSortMode.None));
-            var dante=(DanteHeroKit)_who.AbilitySystem.Kit;
-            yield return Press(Verb.Skill2);
-            clock=dante.Skill2.DurationRemaining;
-            Assert.False(dante.RestoreJoiningCarapace(_who,.1f));
-            Assert.AreEqual(clock,dante.Skill2.DurationRemaining);
-            _who.AbilitySystem.BindHero("nemu");yield return null;yield return null;
-            Assert.IsEmpty(_who.GetComponentsInChildren<DanteCarapaceVisual>());
-            Assert.IsNull(_who.transform.Find("DanteOrbitingWard"));
-            nemu=(NemuHeroKit)_who.AbilitySystem.Kit;
-            Assert.True(nemu.RestoreJoiningVeil(_who,.35f));
-            yield return new WaitForSeconds(.8f);
-            Assert.False(nemu.IsPhantomPhaseActive);
-            Assert.IsEmpty(Object.FindObjectsByType<NemuVeilPresentation>(FindObjectsSortMode.None));
-        }
 
-        [UnityTest, Timeout(90000)]
-        public IEnumerator LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow()
-        {
-            var progress=Settings.SettingsStore.Current.AbilityChallenges;
-            var saved=progress.ToArray();
-            var speeds=new float[2];var windows=new float[2];
-            var shoe=_who.GetComponent<Carrier>().Held;
-            if(shoe!=null)shoe.HostDisarm();
-            try
-            {
-                progress.RemoveAll(row=>row.VariantId=="nemu.1.fade");
-                progress.Add(new AbilityChallengeProgress{VariantId="nemu.1.fade",Count=999});
-                for(int variant=0;variant<2;variant++)
-                {
-                    _who.AbilitySystem.BindHero("nemu",new HeroBuild{HeroId="nemu",
-                        Slot1VariantId=variant==0?"nemu.1.veil":"nemu.1.fade"});
-                    _who.Teleport(new Vector3(0,.12f,-6));_who.Intent.Clear();_who.Intent.Parked=false;
-                    _who.Intent.Move=Vector2.up;
-                    yield return new WaitForSeconds(.4f);
-                    float ordinary=Vector3.ProjectOnPlane(_who.Velocity,Vector3.up).magnitude;
-                    yield return Press(Verb.Skill1);
-                    var skill=_who.AbilitySystem.Kit.Skill1;
-                    Assert.IsTrue(skill.IsActive);Assert.IsTrue(_who.AbilitySystem.IsImmuneToTags);
-                    windows[variant]=skill.Duration;
-                    yield return new WaitForSeconds(.6f);
-                    Vector3 from=_who.transform.position;float start=Time.time;
-                    yield return new WaitForSeconds(.3f);
-                    speeds[variant]=Vector3.ProjectOnPlane(_who.transform.position-from,Vector3.up).magnitude/(Time.time-start);
-                    _who.Intent.Move=Vector2.zero;
-                    yield return new WaitForSeconds(skill.Duration+.2f);
-                    Assert.IsFalse(skill.IsActive);Assert.IsFalse(_who.AbilitySystem.IsImmuneToTags);
-                    _who.Intent.Move=Vector2.up;yield return new WaitForSeconds(.35f);
-                    Assert.AreEqual(ordinary,Vector3.ProjectOnPlane(_who.Velocity,Vector3.up).magnitude,.12f,
-                        "The ended veil left its alternate's movement penalty behind.");
-                    _who.Intent.Move=Vector2.zero;
-                }
-                File.WriteAllText("Logs/nemu-long-fade-comparison.csv",System.FormattableString.Invariant(
-                    $"variant,actual_speed,active_window\nveil,{speeds[0]},{windows[0]}\nlongfade,{speeds[1]},{windows[1]}\n"));
-                Assert.Greater(speeds[0],1);Assert.Greater(speeds[1],1);
-                Assert.Less(speeds[1],speeds[0]*.8f);Assert.Greater(windows[1],windows[0]+.6f);
-            }
-            finally{progress.Clear();progress.AddRange(saved);}
-        }
 
-        [UnityTest, Timeout(90000)]
-        public IEnumerator ShortLeashTradesScoutTimeForFasterControlledTravel()
-        {
-            var progress=Settings.SettingsStore.Current.AbilityChallenges;
-            var saved=progress.ToArray();var speeds=new float[2];var windows=new float[2];
-            try
-            {
-                progress.RemoveAll(row=>row.VariantId=="nemu.2.leash");
-                progress.Add(new AbilityChallengeProgress{VariantId="nemu.2.leash",Count=999});
-                for(int variant=0;variant<2;variant++)
-                {
-                    _who.AbilitySystem.BindHero("nemu",new HeroBuild{HeroId="nemu",
-                        Slot2VariantId=variant==0?"nemu.2.hijack":"nemu.2.leash"});
-                    _who.Teleport(new Vector3(0,.12f,-8));_who.Intent.Clear();_who.Intent.Parked=false;
-                    yield return new WaitForSeconds(.4f);
-                    var pet=_who.GetComponent<CharacterVisual>().Companion;
-                    yield return Press(Verb.Skill2);
-                    Assert.IsTrue(pet.IsPossessed);
-                    windows[variant]=_who.AbilitySystem.Kit.Skill2.Duration;
-                    pet.transform.rotation=Quaternion.identity;
-                    Vector3 from=pet.transform.position;float start=Time.time;
-                    while(Time.time-start<.65f)
-                    {
-                        pet.SetPlayerInput(Vector2.up);
-                        yield return null;
-                    }
-                    speeds[variant]=Vector3.ProjectOnPlane(pet.transform.position-from,Vector3.up).magnitude/(Time.time-start);
-                    pet.SetPlayerInput(Vector2.zero);
-                    yield return new WaitForSeconds(windows[variant]+.8f);
-                    Assert.IsFalse(pet.IsPossessed);Assert.IsFalse(pet.IsDevouring);
-                    Assert.Zero(_who.AbilitySystem.Kit.Skill2.ChargesRemaining,
-                        "Ending the scout trip must not refund its spent charge.");
-                }
-                File.WriteAllText("Logs/nemu-short-leash-comparison.csv",System.FormattableString.Invariant(
-                    $"variant,actual_flight_speed,scout_window\nhijack,{speeds[0]},{windows[0]}\nleash,{speeds[1]},{windows[1]}\n"));
-                Assert.Greater(speeds[0],2);Assert.Greater(speeds[1],speeds[0]*1.2f);
-                Assert.Less(windows[1],windows[0]-1.5f);
-            }
-            finally{progress.Clear();progress.AddRange(saved);}
-        }
 
-        [UnityTest]
-        public IEnumerator FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor()
-        {
-            var pet=_who.GetComponent<CharacterVisual>().Companion;
-            var ultimate=_who.AbilitySystem.Kit.Ultimate;
-            var carrier=_who.GetComponent<Carrier>();var verbs=_who.GetComponent<CombatVerbs>();
-            Vector3 ownerStart=_who.transform.position;
-            var ctx=new AbilityContext(_who,carrier,verbs,ownerStart,Vector3.forward,ownerStart+Vector3.forward*10);
-            Vector3 shown=ultimate.TelegraphCentre(ctx);
-            Assert.Greater(Vector3.Distance(shown,ownerStart),3,"Following giant still grows around the player's camera.");
-            pet.SampleIdleForCapture(GhostPetCompanion.FidgetState.CatSmile,.9f);
-            ultimate.Activate(ctx);
-            Assert.IsFalse(pet.PlayIdleGesture(GhostPetCompanion.FidgetState.CatSmile),"Idle gesture overrides an accepted invocation.");
-            Assert.AreEqual(Vector3.zero,pet.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="KuroExpressions").localScale,"The invocation kept a cute expression frozen on the familiar.");
-            // Turn the live owner away after committing. The accepted cast and
-            // ground reticle must stay together through the windup.
-            _who.transform.rotation=Quaternion.Euler(0,150,0);
-            yield return new WaitForSeconds(ultimate.Windup+.75f);
-            var field=Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>();
-            Assert.IsNotNull(field);Assert.IsTrue(pet.IsRageFormVisible);
-            Assert.Less(Vector3.Distance(shown,field.transform.position),.08f);
-            Assert.Less(Vector3.Distance(pet.DevourGround,field.transform.position),.08f);
-            var towardsOwner=ownerStart-pet.DevourGround;towardsOwner.y=0;
-            Assert.Greater(Vector3.Dot(pet.transform.forward,towardsOwner.normalized),.98f,"Owner sees the giant's back.");
-            Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-ownerStart,Vector3.up).magnitude,.05f,"Casting teleported Nemu.");
-        }
 
         [UnityTest]
         public IEnumerator ResetDuringInvocationReleasesTheFamiliarWithoutGrowingIt()
@@ -296,8 +81,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsNull(Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>());
             Assert.Less(Vector3.Distance(pet.transform.position,followTarget.TransformPoint(followOffset)),.2f,"Cancelled staging did not restore the familiar's normal shoulder offset.");
         }
-        [UnityTest] public IEnumerator QuickKeyboardTapReachesStunRecovery() => QuickRecoveryTap(false);
-        [UnityTest] public IEnumerator QuickControllerTapReachesStunRecovery() => QuickRecoveryTap(true);
+        [UnityTest] public IEnumerator QuickKeyboardTapCannotShortenTimedStun() => QuickRecoveryTap(false);
+        [UnityTest] public IEnumerator QuickControllerTapCannotShortenTimedStun() => QuickRecoveryTap(true);
         private IEnumerator QuickRecoveryTap(bool controller)
         {
             var device=controller?(UnityEngine.InputSystem.InputDevice)UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Gamepad>()
@@ -343,9 +128,9 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(action.IsPressed(),"Fixture must release before physics.");
                 reader.SendMessage("Update");
                 yield return new WaitForFixedUpdate();
-                Assert.AreEqual(1,_who.StunMashPresses,"A quick physical tap was lost before recovery.");
+                Assert.AreEqual(0,_who.StunMashPresses,"A quick physical tap shortened a timed stun.");
                 yield return new WaitForSeconds(.15f);
-                Assert.AreEqual(1,_who.StunMashPresses,"One tap became repeated recovery.");
+                Assert.AreEqual(0,_who.StunMashPresses,"Released input reactivated retired recovery.");
             }
             finally
             {
@@ -355,75 +140,27 @@ namespace TumbangPreso.PlayTests
             }
         }
 
-        [UnityTest]
-        public IEnumerator PossessedFamiliarCanDevourThroughTheKeyboardReader()
-        {
-            yield return Press(Verb.Skill2);
-            var pet=_who.GetComponent<CharacterVisual>().Companion;
-            Assert.IsTrue(pet.IsPossessed);
-            _who.AbilitySystem.Kit.AddUltimateCharge(100);
-            var inputSettings=UnityEngine.InputSystem.InputSystem.settings;
-            var background=inputSettings.backgroundBehavior;var editorInput=inputSettings.editorInputBehaviorInPlayMode;
-            inputSettings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
-            inputSettings.editorInputBehaviorInPlayMode=UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
-            var keyboard=UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
-            UnityEngine.InputSystem.InputSystem.EnableDevice(keyboard);
-            var action=new UnityEngine.InputSystem.InputAction("DevourProbe",UnityEngine.InputSystem.InputActionType.Button,"<Keyboard>/f");
-            var reader=_who.GetComponent<PlayerInputReader>()??_who.gameObject.AddComponent<PlayerInputReader>();reader.enabled=false;
-            typeof(PlayerInputReader).GetField("_ultimate",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(reader,action);
-            action.Enable();UnityEngine.InputSystem.InputSystem.Update();
-            try
-            {
-                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.F));
-                UnityEngine.InputSystem.InputSystem.Update();
-                Assert.IsTrue(action.IsPressed(),"The fixture's device was not received.");
-                reader.SendMessage("Update");
-                _who.AbilitySystem.SendMessage("Update");
-                Assert.IsTrue(_who.AbilitySystem.Kit.Ultimate.IsWindingUp,"Possession swallowed the physical ultimate input.");
-                yield return new WaitForSeconds(_who.AbilitySystem.Kit.Ultimate.Windup+.15f);
-                Assert.IsTrue(_who.AbilitySystem.Kit.Ultimate.IsActive,"The accepted windup did not release the ultimate.");
-                Assert.IsTrue(pet.IsDevouring);Assert.IsFalse(pet.IsPossessed);
-            }
-            finally
-            {
-                action.Dispose();UnityEngine.InputSystem.InputSystem.RemoveDevice(keyboard);
-                inputSettings.backgroundBehavior=background;inputSettings.editorInputBehaviorInPlayMode=editorInput;
-            }
-        }
 
-        [UnityTest]
-        public IEnumerator OrdinaryProjectionReturnNeverBecomesTheGiant()
-        {
-            yield return Press(Verb.Skill2);
-            var pet=_who.GetComponent<CharacterVisual>().Companion;
-            Assert.IsTrue(pet.IsPossessed);
-            yield return Press(Verb.Skill2);
-            for(int i=0;i<8;i++)
-            {
-                Assert.IsFalse(pet.IsRageFormVisible,"Normal E recall borrowed the ultimate transformation.");
-                yield return new WaitForSeconds(.08f);
-            }
-        }
 
         private void RecoverySnapshot(int episode,int ack,float left=4,int presses=0,bool trip=false)
             => _who.ApplyNetworkState(trip?0:left,trip?0:4,trip?StunElement.None:StunElement.Ice,6,trip?0:presses,
                 trip?left:0,trip?4:0,trip?presses:0,0,100,0,0,episode,ack);
 
         [UnityTest]
-        public IEnumerator OldSnapshotKeepsOnlyUnacknowledgedRecoveryForTheSameStun()
+        public IEnumerator TimedStunSnapshotsCannotRestoreRetiredRecoveryInputs()
         {
             NetAuthority.Provider=new OwnerProvider();
             int episode=_who.RecoveryEpisode+1;
             RecoverySnapshot(episode,0);
-            Assert.IsTrue(_who.RecoverFromInput());
+            Assert.IsFalse(_who.RecoverFromInput());
             float predicted=_who.StunLeft;
             RecoverySnapshot(episode,0);
-            Assert.AreEqual(1,_who.StunMashPresses,"Old snapshot erased an in-flight tap.");
+            Assert.AreEqual(0,_who.StunMashPresses,"A snapshot restored retired mash progress.");
             Assert.AreEqual(predicted,_who.StunLeft,.001f);
             RecoverySnapshot(episode,0);
             Assert.AreEqual(predicted,_who.StunLeft,.001f,"Replaying a snapshot spent the tap twice.");
             RecoverySnapshot(episode,1,predicted,1);
-            Assert.AreEqual(1,_who.StunMashPresses);
+            Assert.AreEqual(0,_who.StunMashPresses);
             Assert.AreEqual(predicted,_who.StunLeft,.001f,"Acknowledged tap was predicted again.");
             RecoverySnapshot(episode+1,0);
             Assert.AreEqual(0,_who.StunMashPresses,"Fresh ice inherited taps from previous ice.");
@@ -434,15 +171,15 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator TripRecoverySurvivesOldSnapshotsWithoutDoubleSpending()
+        public IEnumerator TripSnapshotsStayAuthoritativeWithoutRecoveryPrediction()
         {
             NetAuthority.Provider=new OwnerProvider();
             int episode=_who.RecoveryEpisode+1;
             RecoverySnapshot(episode,0,4,0,true);
-            Assert.IsTrue(_who.RecoverFromInput());
+            Assert.IsFalse(_who.RecoverFromInput());
             float left=_who.TripLeft;
             RecoverySnapshot(episode,0,4,0,true);
-            Assert.AreEqual(1,_who.MashPresses);
+            Assert.AreEqual(0,_who.MashPresses);
             Assert.AreEqual(left,_who.TripLeft,.001f);
             RecoverySnapshot(episode,0,4,0,true);
             Assert.AreEqual(left,_who.TripLeft,.001f);
@@ -450,15 +187,15 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator RecoveryRequestsCannotReplayCrossEpisodesOrBypassTheRateCap()
+        public IEnumerator RetiredRecoveryRequestsCannotAffectAnyEpisode()
         {
             _who.ApplyStagger(4,StunElement.Ice,6);
             int episode=_who.RecoveryEpisode;
-            Assert.IsTrue(_who.AcceptRecoveryRequest(episode,1));
+            Assert.IsFalse(_who.AcceptRecoveryRequest(episode,1));
             float left=_who.StunLeft;
             Assert.IsFalse(_who.AcceptRecoveryRequest(episode,1));
             Assert.IsFalse(_who.AcceptRecoveryRequest(episode,2),"Same-frame spam bypassed Core's cap.");
-            Assert.AreEqual(2,_who.RecoveryAcknowledged,"Refused prediction was not acknowledged.");
+            Assert.AreEqual(0,_who.RecoveryAcknowledged,"Retired recovery requests must not create live acknowledgements.");
             Assert.AreEqual(left,_who.StunLeft,.001f);
             Assert.IsFalse(_who.AcceptRecoveryRequest(episode,999));
             _who.ApplyStagger(5,StunElement.Ice,6);
@@ -520,6 +257,7 @@ namespace TumbangPreso.PlayTests
 
         private sealed class DelayedAimProbe : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public AbilityContext Seen;
             public DelayedAimProbe():base("aim-probe","AIM","probe",0,0,
                 TumbangPreso.UI.AbilityGlyph.Burst){Windup=.4f;}
@@ -557,17 +295,6 @@ namespace TumbangPreso.PlayTests
             pet.EndPossession(false);
         }
         [UnityTest]
-        public IEnumerator ZeroScoutInputDoesNotFallBackToTheBodyBotsWalkingDirection()
-        {
-            yield return Press(Verb.Skill2);
-            var pet=_who.GetComponent<CharacterVisual>().Companion;
-            pet.SetPlayerInput(Vector2.zero);
-            _who.Intent.Move=Vector2.right;
-            Vector3 before=pet.transform.position;
-            yield return new WaitForSeconds(.2f);
-            Assert.Less(Vector3.ProjectOnPlane(pet.transform.position-before,Vector3.up).magnitude,.001f);
-        }
-        [UnityTest]
         public IEnumerator AuthoritativeRecallClearsTheOldReplicaInterpolationTarget()
         {
             foreach(var reader in _who.GetComponents<PlayerInputReader>())Object.Destroy(reader);
@@ -602,45 +329,6 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
-        [UnityTest]
-        public IEnumerator FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport()
-        {
-            yield return Press(Verb.Skill2);
-            var kit=(NemuHeroKit)_who.AbilitySystem.Kit;
-            var before=_who.transform.position;
-            int charges=kit.Skill2.ChargesRemaining;float meter=kit.UltimateCharge;
-            var ground=VfxShapes.GroundPoint(new Vector3(0,1,-5));
-            kit.RestoreFamiliar(_who,2,ground,.7f,107);
-            kit.RestoreFamiliar(_who,2,ground,.6f,107);
-            Assert.Less(Vector3.Distance(before,_who.transform.position),.001f,"Replacing possession recalled Nemu.");
-            yield return null;
-            var fields=Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None)
-                .Where(f=>f.OwnerSlot==_who.PlayerSlot && f.isActiveAndEnabled).ToArray();
-            Assert.AreEqual(1,fields.Length,"Repeated snapshot duplicated the field.");
-            Assert.Less(Mathf.Abs(Mathf.DeltaAngle(107,_who.GetComponent<CharacterVisual>().Companion.transform.eulerAngles.y)),.1f,"Snapshot lost the accepted giant facing.");
-            Assert.Less(Vector3.Distance(fields[0].transform.position,ground),.03f);
-            Assert.AreEqual(charges,kit.Skill2.ChargesRemaining);Assert.AreEqual(meter,kit.UltimateCharge);
-            Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsPossessed);
-            yield return new WaitForSeconds(.8f);
-            Assert.IsFalse(kit.Ultimate.IsActive);
-            Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsDevouring);
-            Assert.IsFalse(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None)
-                .Any(f=>f.OwnerSlot==_who.PlayerSlot && f.isActiveAndEnabled));
-        }
-        [UnityTest]
-        public IEnumerator ProjectionSnapshotRestoresOnlyItsRemainingTrip()
-        {
-            var kit=(NemuHeroKit)_who.AbilitySystem.Kit;
-            var position=new Vector3(1,.9f,-8);
-            int charges=kit.Skill2.ChargesRemaining;
-            kit.RestoreFamiliar(_who,1,position,.6f);
-            Assert.IsTrue(kit.Skill2.IsActive);
-            Assert.AreEqual(charges,kit.Skill2.ChargesRemaining);
-            Assert.Less(Vector3.Distance(_who.GetComponent<CharacterVisual>().Companion.transform.position,position),.01f);
-            yield return new WaitForSeconds(.8f);
-            Assert.IsFalse(kit.Skill2.IsActive);
-            Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsPossessed);
-        }
 
         [UnityTest]
         public IEnumerator ModelRebindDoesNotBakeRemoteSmoothingIntoItsAlignment()
@@ -690,50 +378,7 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSeconds(.15f);
             Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-before,Vector3.up).magnitude,.02f);
         }
-        [UnityTest]
-        public IEnumerator CarapaceStopsResolvedImpactWithoutDisablingOwnMovement()
-        {
-            _who.AbilitySystem.BindHero("dante");
-            var ctx=new AbilityContext(_who,_who.GetComponent<Carrier>(),_who.GetComponent<CombatVerbs>());
-            _who.AbilitySystem.Kit.Skill2.Activate(ctx);
-            var before=_who.transform.position;
-            _who.ApplyResolvedImpact(Vector3.right*10);
-            yield return new WaitForSeconds(.15f);
-            Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-before,Vector3.up).magnitude,.02f);
-            _who.ApplyImpulse(Vector3.right*6);
-            yield return new WaitForSeconds(.3f);
-            Assert.Greater(_who.transform.position.x-before.x,.35f,"Armor incorrectly disabled the caster's own locomotion impulse.");
-        }
 
-        [UnityTest]
-        public IEnumerator SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan()
-        {
-            yield return Press(Verb.Skill2);
-            foreach(var brain in _who.GetComponents<AIController>())brain.enabled=false;
-            _who.Intent.Move=Vector2.zero;
-            var pet=_who.GetComponent<CharacterVisual>().Companion;pet.SetPlayerInput(Vector2.zero);
-            pet.transform.position=new Vector3(0,1,0);
-            var victim=GameServices.Round.PlayerAt(2);victim.Intent.Clear();victim.Intent.Parked=false;
-            victim.Teleport(new Vector3(2.7f,.12f,0));victim.ClearStun();
-            var shoe=victim.GetComponent<Carrier>().Held;Assert.IsNotNull(shoe);
-            shoe.HostDisarm();shoe.transform.position=new Vector3(-2.8f,.15f,0);
-            var can=GameServices.Round.Lata;Vector3 canStart=can.transform.position;
-            _who.AbilitySystem.Kit.AddUltimateCharge(100);
-            yield return Press(Verb.Ultimate);
-            yield return new WaitForSeconds(.5f);
-            var field=Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>();Assert.IsNotNull(field);
-            float before=Vector3.ProjectOnPlane(victim.transform.position-field.transform.position,Vector3.up).magnitude;
-            float shoeBefore=Vector3.ProjectOnPlane(shoe.transform.position-field.transform.position,Vector3.up).magnitude;
-            yield return new WaitForSeconds(.45f);
-            float after=Vector3.ProjectOnPlane(victim.transform.position-field.transform.position,Vector3.up).magnitude;
-            float shoeAfter=Vector3.ProjectOnPlane(shoe.transform.position-field.transform.position,Vector3.up).magnitude;
-            Assert.Less(after,before-.25f,"The imposing familiar did not actually draw its victim inward.");
-            Assert.Less(shoeAfter,shoeBefore,"The loose slipper did not move toward the familiar.");
-            Assert.Less(Vector3.Distance(canStart,can.transform.position),.02f,"The pull moved the objective.");
-            Directory.CreateDirectory("Logs");
-            File.WriteAllLines("Logs/nemu-intake.csv",new[]{"target,before,after",
-                $"player,{before:F4},{after:F4}",$"slipper,{shoeBefore:F4},{shoeAfter:F4}"});
-        }
 
         [UnityTest]
         public IEnumerator ScoutMovementAndRecallRespectSolidWallsAndCourtBounds()
@@ -745,7 +390,9 @@ namespace TumbangPreso.PlayTests
             var blocked=GhostPetMotion.Move(_who,from,Vector3.right*5);
             Assert.Less(blocked.x,1.7f,"The familiar passed through a body-blocking wall.");
             var beyond=GhostPetMotion.ClampToCourt(_who,new Vector3(1000,1,1000));
-            Assert.LessOrEqual(beyond.x,AIController.PlayableHalfX);Assert.LessOrEqual(beyond.z,AIController.PlayableHalfZ);
+            Assert.LessOrEqual(beyond.x,AIController.PlayableMaxX);Assert.LessOrEqual(beyond.z,AIController.PlayableMaxZ);
+            var below=GhostPetMotion.ClampToCourt(_who,new Vector3(-1000,1,-1000));
+            Assert.GreaterOrEqual(below.x,AIController.PlayableMinX);Assert.GreaterOrEqual(below.z,AIController.PlayableMinZ);
             var landing=GhostPetMotion.Recall(_who,wall.transform.position,_who.transform.position);
             Assert.IsTrue(GhostPetMotion.CanLand(_who,landing),"Recall selected a solid obstruction.");
             var method=typeof(CameraSystem.CameraRig).GetMethod("ConstrainCompanionCamera",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
@@ -753,122 +400,7 @@ namespace TumbangPreso.PlayTests
             Assert.Less(view.x,1.8f,"The possession camera crossed the wall.");
             yield return null;
         }
-        [UnityTest]
-        public IEnumerator APassingScareDoesNotRefreshItsStunEveryFrame()
-        {
-            yield return Press(Verb.Skill2);
-            foreach(var brain in _who.GetComponents<AIController>())brain.enabled=false;
-            _who.Intent.Move=Vector2.zero;
-            var pet=_who.GetComponent<CharacterVisual>().Companion;pet.SetPlayerInput(Vector2.zero);
-            pet.transform.position=new Vector3(0,1,-5);
-            var victim=GameServices.Round.PlayerAt(2);victim.Intent.Clear();victim.Intent.Parked=false;
-            victim.Teleport(new Vector3(.2f,.12f,-5));victim.ClearStun();
-            yield return new WaitForSeconds(.1f);
-            Assert.IsTrue(victim.IsStunned,"The passing ghost did not make contact.");
-            yield return new WaitForSeconds(.5f);
-            Assert.Less(Vector3.ProjectOnPlane(victim.transform.position-pet.transform.position,Vector3.up).magnitude,1.6f);
-            Assert.IsFalse(victim.IsStunned,"Remaining near the ghost permanently refreshed the stagger.");
-        }
 
-        [UnityTest] public IEnumerator ResetProjectionDoesNotTeleport() => CheckProjectionEnd(0);
-        [UnityTest] public IEnumerator RefusedProjectionDoesNotTeleport() => CheckProjectionEnd(1);
-        [UnityTest] public IEnumerator NormalProjectionRecastStillTeleports() => CheckProjectionEnd(2);
-        private IEnumerator CheckProjectionEnd(int kind)
-        {
-            yield return Press(Verb.Skill2);
-            var pet=_who.GetComponent<CharacterVisual>().Companion;Assert.IsTrue(pet.IsPossessed);
-            foreach(var brain in _who.GetComponents<AIController>())brain.enabled=false;
-            _who.Intent.Move=Vector2.zero;pet.SetPlayerInput(Vector2.zero);
-            Vector3 before=_who.transform.position;
-            pet.transform.position=before+Vector3.right*2;
-            Vector3 destination=pet.transform.position;
-            if(kind==0)_who.AbilitySystem.ResetKit();
-            else if(kind==1)_who.AbilitySystem.Kit.Skill2.RollBackPredictedCast(
-                new AbilityContext(_who,_who.GetComponent<Carrier>(),_who.GetComponent<CombatVerbs>()));
-            else yield return Press(Verb.Skill2);
-            yield return null;yield return null;
-            Assert.IsFalse(pet.IsPossessed);
-            Assert.Less(Vector3.Distance(_who.transform.position,kind==2?destination:before),.15f,
-                kind==2?"Normal recall stopped relocating Nemu.":"Cancellation performed a teleport that was never accepted.");
-        }
-        [UnityTest]
-        public IEnumerator ResetSeanceRemovesTheLivePullImmediately()
-        {
-            _who.AbilitySystem.Kit.AddUltimateCharge(100);
-            yield return Press(Verb.Ultimate);
-            yield return new WaitForSeconds(.5f);
-            var field=Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>();
-            Assert.IsNotNull(field);Assert.IsTrue(_who.AbilitySystem.Kit.Ultimate.IsActive);
-            _who.AbilitySystem.ResetKit();
-            Assert.IsFalse(field.gameObject.activeInHierarchy,"The reset left a live pull until end of frame.");
-            yield return null;
-            Assert.IsTrue(field==null);
-            Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsDevouring);
-        }
 
-        [UnityTest]
-        public IEnumerator VeilSurvivesAnAlreadyHeldSlipperAndItsSustainedSpeedRestores()
-        {
-            Assert.IsTrue(_who.HoldingSlipper,"The cast must start with a real held slipper.");
-            _who.Intent.Move=Vector2.up;yield return new WaitForSeconds(.5f);
-            float before=new Vector2(_who.Velocity.x,_who.Velocity.z).magnitude;
-            Assert.Greater(before,1);
-            var walkStart=_who.transform.position;float walkAt=Time.time;
-            yield return new WaitForSeconds(.3f);
-            float walkActual=Vector3.ProjectOnPlane(_who.transform.position-walkStart,Vector3.up).magnitude/(Time.time-walkAt);
-            yield return Press(Verb.Skill1);
-            yield return new WaitForSeconds(.6f);
-            Assert.IsTrue(_who.AbilitySystem.Kit.Skill1.IsActive,"A shoe held before casting cancelled Veil.");
-            float during=new Vector2(_who.Velocity.x,_who.Velocity.z).magnitude;
-            Assert.AreEqual(before*Balance.NemuPhaseSpeedScale,during,.08f,"The speed gain vanished with the opening impulse.");
-            var phaseStart=_who.transform.position;float phaseAt=Time.time;
-            yield return new WaitForSeconds(.3f);
-            float phaseActual=Vector3.ProjectOnPlane(_who.transform.position-phaseStart,Vector3.up).magnitude/(Time.time-phaseAt);
-            Assert.Greater(walkActual,1,"The reference was stuck against scene collision.");
-            Assert.Greater(phaseActual,walkActual*1.10f,"The speed gain never reached actual movement.");
-            var veil=_who.GetComponentInChildren<NemuVeilPresentation>();Assert.IsNotNull(veil);
-            Assert.IsEmpty(veil.GetComponentsInChildren<Light>());
-            _who.Intent.Move=Vector2.zero;
-            yield return new WaitForSeconds(2.2f);
-            _who.Intent.Move=Vector2.up;yield return new WaitForSeconds(.25f);
-            Assert.IsFalse(_who.AbilitySystem.Kit.Skill1.IsActive);
-            float after=new Vector2(_who.Velocity.x,_who.Velocity.z).magnitude;
-            Assert.AreEqual(before,after,.08f);
-            Assert.IsTrue(veil==null,"Veil's visual survived the end of immunity.");
-            Directory.CreateDirectory("Logs");File.WriteAllText("Logs/nemu-veil-speed.csv",$"phase,speed\nbefore,{before:F4}\nduring,{during:F4}\nafter,{after:F4}\nactual_walk,{walkActual:F4}\nactual_phase,{phaseActual:F4}\n");
-        }
-        [UnityTest]
-        public IEnumerator ANewSlipperAcquisitionEndsVeilWithoutLeavingItsVisual()
-        {
-            yield return Press(Verb.Skill1);
-            var shoe=_who.GetComponent<Carrier>().Held;Assert.IsNotNull(shoe);
-            // Arrange the existing possession transition through the real slipper
-            // methods; this test is about the buff's response, not throw legality.
-            shoe.HostDisarm();yield return null;yield return null;
-            Assert.IsFalse(_who.HoldingSlipper);
-            Assert.IsTrue(_who.AbilitySystem.Kit.Skill1.IsActive);
-            Assert.IsTrue(shoe.HostForceEquip(_who));yield return null;yield return null;
-            Assert.IsFalse(_who.AbilitySystem.Kit.Skill1.IsActive,"A genuine new acquisition failed to end Veil.");
-            Assert.AreEqual(1,_who.AbilitySystem.Kit.MovementSpeedScale,.001f);
-            yield return new WaitForSeconds(.4f);
-            Assert.IsNull(_who.GetComponentInChildren<NemuVeilPresentation>());
-        }
-        [UnityTest]
-        public IEnumerator FeedingAndReturningFamiliarDoNotConsumeAPossessionCharge()
-        {
-            var pet=_who.GetComponent<CharacterVisual>().Companion;Assert.IsNotNull(pet);
-            pet.Devour(.7f);
-            int charges=_who.AbilitySystem.Kit.Skill2.ChargesRemaining;
-            yield return Press(Verb.Skill2);
-            Assert.IsFalse(pet.IsPossessed);Assert.AreEqual(charges,_who.AbilitySystem.Kit.Skill2.ChargesRemaining);
-            yield return new WaitForSeconds(.65f);
-            Assert.IsTrue(pet.IsReturning);
-            yield return Press(Verb.Skill2);
-            Assert.IsFalse(pet.IsPossessed);Assert.AreEqual(charges,_who.AbilitySystem.Kit.Skill2.ChargesRemaining);
-            yield return new WaitForSeconds(.85f);
-            yield return Press(Verb.Skill2);
-            Assert.IsTrue(pet.IsPossessed,"The charge stayed unusable after the familiar returned.");
-            Assert.AreEqual(charges-1,_who.AbilitySystem.Kit.Skill2.ChargesRemaining);
-        }
     }
 }

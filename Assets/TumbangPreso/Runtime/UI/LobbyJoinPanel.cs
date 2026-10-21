@@ -669,7 +669,7 @@ namespace TumbangPreso.UI
                 string address = $"{entry.Address}:{entry.Port}";
                 _lanAddresses.Add(address);
 
-                string state = entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
+                string state = entry.DifferentVersion ? "DIFFERENT VERSION" : entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
                 Draw(_lanRows[i], _lanRowLabels[i],
                      $"{entry.HostName}   ·   {entry.Players}/{entry.MaxPlayers}   ·   {state}   ·   {address}");
             }
@@ -884,9 +884,11 @@ namespace TumbangPreso.UI
 
                 bool connected = await _net.StartClientAsync(typed, cancellationToken: cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
-                if (connected) return true;
+                if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
+                cancellationToken.ThrowIfCancellationRequested();
 
-                Report(Reason($"Could not reach {typed}."));
+                // No answer, another version, a full room or the host's own sentence: `JoinFailureRules`.
+                Report(Core.JoinFailureRules.FailureLine(typed, _net.Status, NetSession.ProtocolVersion));
                 return false;
             }
 
@@ -919,13 +921,22 @@ namespace TumbangPreso.UI
 
             if (match.IsLan)
             {
+                // ⚠️ A beacon v3 host already said its protocol: refuse here with approval's own sentence
+                // instead of connecting only to be refused after the wait (LAN-VPN-JOIN-1020).
+                if (Core.JoinFailureRules.ProtocolDiffers(match.Protocol, NetSession.ProtocolVersion))
+                {
+                    Report(Core.JoinFailureRules.VersionLine(match.Protocol, NetSession.ProtocolVersion));
+                    return false;
+                }
                 Report($"Joining {match.HostName} at {match.Address}:{match.Port}...");
 
                 bool connected = await _net.StartClientAsync(match.Address, match.Port, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
-                if (connected) return true;
+                if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
+                cancellationToken.ThrowIfCancellationRequested();
 
-                Report(Reason($"Could not reach {match.HostName} at {match.Address}:{match.Port}."));
+                Report(Core.JoinFailureRules.FailureLine($"{match.HostName} at {match.Address}:{match.Port}",
+                                                         _net.Status, NetSession.ProtocolVersion));
                 return false;
             }
 
@@ -933,13 +944,12 @@ namespace TumbangPreso.UI
 
             bool relayConnected = await _net.StartRelayClient(match.RelayCode, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
-            if (relayConnected) return true;
+            if (relayConnected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
+            cancellationToken.ThrowIfCancellationRequested();
 
-            // ⚠️ `docs/TODO.md` § 65.4 IS OPEN AND THIS IS WHERE IT SURFACES: the online browser
-            // can offer a lobby whose Relay allocation is already gone. Moving the browser onto
-            // the lobby does not fix that and must not hide it, so the reason reaches the player
-            // rather than being swallowed into a generic failure.
-            Report(Reason("Could not join that online game. Its session may have ended."));
+            // A request timeout does not establish that the host's session expired.
+            // Preserve the specific connection reason without guessing the room's state.
+            Report(Reason("Could not connect to that online game. Please try again."));
             return false;
         }
     }

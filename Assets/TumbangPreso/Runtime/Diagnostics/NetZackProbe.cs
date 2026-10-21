@@ -21,6 +21,7 @@ namespace TumbangPreso.Diagnostics
         private bool _holdCharge, _observeExisting;
         private double _next;
         private Slipper _shoe;
+        private int _circuitRound;
         private static string Argument(string key)
         {
             var args = Environment.GetCommandLineArgs(); int at = Array.IndexOf(args, key);
@@ -31,7 +32,9 @@ namespace TumbangPreso.Diagnostics
         {
             _enabled = Argument("-tp-zacktrace") != null && !Environment.GetCommandLineArgs().Contains("-tp-tournament");
             if (!_enabled) return;
-            UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            var rules = CustomGameRules.Defaults(GameMode.HeroStrike);
+            if (Argument("-tp-zackcase") == "circuit") { rules.RoundSeconds = 30; rules.Rounds = 4; }
+            UI.SceneFlow.PinSelectedRules(rules);
             Settings.SettingsStore.Current.CharacterPick = Roster.IndexIn(Roster.HeroPeople, "zack");
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -44,7 +47,9 @@ namespace TumbangPreso.Diagnostics
             probe._observeExisting = Environment.GetCommandLineArgs().Contains("-tp-zack-observe-existing");
             string path = Path.GetFullPath(Argument("-tp-zacktrace")); Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,zack,pick,charged,held,s2charges,ultcharge,grounded,casterY,ultRemaining,bolts,boltX,boltZ,chargeVisuals,chargedFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,frontX,frontY,frontZ,magnetRemaining,wallTime");
+            probe._writer.WriteLine(probe._scenario == "circuit"
+                ? "time,elapsed,local,host,round,defender,overclock,phase,target,episode,remaining,cooldown,frontZap,secondZap,tells,score,wallTime"
+                : "time,elapsed,local,host,zack,pick,charged,held,s2charges,ultcharge,grounded,casterY,ultRemaining,bolts,boltX,boltZ,chargeVisuals,chargedFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,frontX,frontY,frontZ,magnetRemaining,wallTime");
         }
         private void Update()
         {
@@ -71,6 +76,7 @@ namespace TumbangPreso.Diagnostics
             foreach (var player in round.Players)
                 if (player != null) { player.Intent.Clear(); player.Intent.Parked = player != caster; }
             float elapsed = UI.SceneFlow.SelectedRoundSeconds - round.TimeLeft;
+            if (_scenario == "circuit") { UpdateCircuit(caster, front, kit, elapsed); return; }
             if (elapsed > 24) { _writer.Flush(); Application.Quit(); return; }
             if (!_prepared && _observeExisting)
             {
@@ -127,6 +133,58 @@ namespace TumbangPreso.Diagnostics
                 _shoe != null ? (int)_shoe.State : -1, shoePosition.x, shoePosition.y, shoePosition.z, front.StunLeft, front.transform.position.x, front.transform.position.y, front.transform.position.z,
                 kit.Skill2.DurationRemaining, DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond };
             _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
+        }
+        private void UpdateCircuit(CharacterMotor caster, CharacterMotor front, ZackHeroKit kit, float elapsed)
+        {
+            var round = GameServices.Round;
+            int number = GameServices.Match.RoundNumber;
+            if (_circuitRound != number)
+            {
+                _circuitRound = number;
+                if (NetAuthority.IsHost || NetAuthority.LocalSlot == 1)
+                {
+                    caster.Teleport(new Vector3(0, .12f, -8));
+                    caster.transform.rotation = Quaternion.identity;
+                    caster.ClearStun(); caster.ClearTrip();
+                    if (number == 1) kit.AddUltimateCharge(100);
+                }
+                if (NetAuthority.IsHost || NetAuthority.LocalSlot == 2)
+                    front.Teleport(new Vector3(1, .12f, -4));
+                if (NetAuthority.IsHost)
+                {
+                    round.PlayerAt(0).Teleport(new Vector3(-1, .12f, -4));
+                    round.PlayerAt(3).Teleport(new Vector3(8, .12f, 7));
+                }
+            }
+            if (NetAuthority.LocalSlot == 1)
+            {
+                caster.Intent.Parked = false;
+                Vector3 point = front.transform.position + Vector3.up * .8f;
+                if (number == 2 && elapsed >= 2.12f && elapsed < 4)
+                    point = caster.transform.position + Vector3.left * 5;
+                if (number == 2 && elapsed >= 5.75f)
+                    point = round.PlayerAt(0).transform.position + Vector3.up * .8f;
+                caster.Intent.AimPoint = point; caster.Intent.FaceAimPoint = true;
+                caster.Intent.Set(Verb.Ultimate, number == 1 && elapsed >= 12 && elapsed < 12.2f);
+                caster.Intent.Set(Verb.Skill2, number == 2 &&
+                    ((elapsed >= 2 && elapsed < 2.08f) ||
+                     (elapsed >= 5 && elapsed < 5.15f) ||
+                     (elapsed >= 5.8f && elapsed < 5.95f) ||
+                     (elapsed >= 7.5f && elapsed < 7.65f)));
+            }
+            double now = NetworkManager.Singleton.ServerTime.Time;
+            if (now < _next) return;
+            _next = now + .025;
+            object[] row = { now, elapsed, NetAuthority.LocalSlot, NetAuthority.IsHost ? 1 : 0,
+                number, caster.IsDefender ? 1 : 0, kit.IsOverclocked ? 1 : 0,
+                (int)kit.CircuitStage, kit.CircuitTarget, kit.CircuitEpisode,
+                kit.CircuitRemaining, kit.DefendingSkill.CooldownRemaining,
+                front.ZappedLeft, round.PlayerAt(0).ZappedLeft,
+                FindObjectsByType<ZackCircuitTell>(FindObjectsSortMode.None)
+                    .Count(tell => tell.GetComponent<LineRenderer>().enabled),
+                GameServices.Match.ScoreFor(1), DateTime.UtcNow.Ticks / (double)TimeSpan.TicksPerSecond };
+            _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
+            if (number >= 2 && elapsed > 11) { _writer.Flush(); Application.Quit(); }
         }
         private void OnDestroy() => _writer?.Dispose();
     }

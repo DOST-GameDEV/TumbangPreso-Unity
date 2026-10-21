@@ -1,0 +1,50 @@
+{
+  "0": {
+    "onset": {
+      "host": 22.1547,
+      "client": 22.0991
+    },
+    "lastPositive": {
+      "host": 29.5617,
+      "client": 29.5522
+    },
+    "steadySamples": 123,
+    "maxSteadyClockDelta": 0.06759999999999966
+  },
+  "1": {
+    "onset": {
+      "host": 21.7184,
+      "client": 21.6623
+    },
+    "lastPositive": {
+      "host": 29.1594,
+      "client": 29.0884
+    },
+    "steadySamples": 123,
+    "maxSteadyClockDelta": 0.06770000000000032
+  },
+  "2": {
+    "onset": {
+      "host": 22.524,
+      "client": 22.4534
+    },
+    "lastPositive": {
+      "host": 29.9633,
+      "client": 29.922
+    },
+    "steadySamples": 122,
+    "maxSteadyClockDelta": 0.06769999999999943
+  },
+  "3": {
+    "onset": {
+      "host": 22.8262,
+      "client": 22.7586
+    },
+    "lastPositive": {
+      "host": 30.2823,
+      "client": 30.2214
+    },
+    "steadySamples": 122,
+    "maxSteadyClockDelta": 0.0678
+  }
+}

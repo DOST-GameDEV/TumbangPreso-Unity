@@ -1,0 +1,26 @@
+{
+  "sourceRef": "5de4675d3c83a04750cfab3539026e6073fd6562",
+  "profile": "pc-auto-net1501005",
+  "filter": "TumbangPreso.PlayTests.AutomaticPlantShotPacketTests",
+  "expectedCases": 4,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-auto-net1501005",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AutomaticPlantShotPacketTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\paete-auto-net1501005\\native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\paete-auto-net1501005\\native\\editor.log"
+  ],
+  "pid": 23124
+}

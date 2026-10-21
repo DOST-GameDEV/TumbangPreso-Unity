@@ -1,0 +1,8 @@
+showing=IlalimNgTulay
+total=2470
+enabled=2433
+visible=1127
+badShaders=0
+escaped=0
+cameraEnabled=True
+lookScoped=True

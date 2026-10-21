@@ -1,0 +1,1 @@
+{"pid": 164234, "signal": "SIGTERM", "reason": "Bounded trace complete; owner remained after returning from match. Verified exact owned process args before retiring."}

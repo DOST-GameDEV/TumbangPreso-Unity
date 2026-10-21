@@ -142,22 +142,32 @@ namespace TumbangPreso.Core.Tests
             const int DescriptionBudget = 67;
             const int TradeBudget = 48;
 
+            // ⚠️ EVERY ROW IS MEASURED BEFORE ANY OF THEM FAILS. The first version stopped at
+            // the first offender, so a table with two long rows in it cost two full runs to
+            // see, and the second one only appeared once the first was rewritten. A budget
+            // check is a sweep over a table and its useful output is the whole list.
+            var over = new List<string>();
+
             foreach (var variant in HeroLoadoutRules.AllVariants)
             {
-                Assert.True(variant.Description.Length <= DescriptionBudget,
-                    $"'{variant.Id}' has a {variant.Description.Length} character description "
-                    + $"against a budget of {DescriptionBudget}. Two boxes have to hold it and "
-                    + "the tighter one decides: the picker's ability row wraps past 67 and its "
-                    + "second line draws THROUGH the row underneath, and the loadout tile's body "
-                    + "box truncates past two lines and NOTHING SAYS SO.");
+                if (variant.Description.Length > DescriptionBudget)
+                    over.Add($"'{variant.Id}' has a {variant.Description.Length} character "
+                             + $"description against a budget of {DescriptionBudget}.");
 
                 int trade = variant.GainLabel.Length + 7 + variant.CostLabel.Length;
 
-                Assert.True(trade <= TradeBudget,
-                    $"'{variant.Id}' draws a {trade} character trade line against a budget of "
-                    + $"{TradeBudget}. It is one 13 pt MenuKit.Label with no wrapping in a 311 "
-                    + "unit band, so it does not shrink or wrap, it draws over its neighbour.");
+                if (trade > TradeBudget)
+                    over.Add($"'{variant.Id}' draws a {trade} character trade line against a "
+                             + $"budget of {TradeBudget}.");
             }
+
+            Assert.True(over.Count == 0,
+                string.Join("\n", over)
+                + "\nTwo boxes have to hold the description and the tighter one decides: the "
+                + "picker's ability row wraps past 67 and its second line draws THROUGH the row "
+                + "underneath, and the loadout tile's body box truncates past two lines and "
+                + "NOTHING SAYS SO. The trade line is one 13 pt MenuKit.Label with no wrapping "
+                + "in a 311 unit band, so it does not shrink or wrap either.");
         }
 
         /// <summary>
@@ -310,10 +320,10 @@ namespace TumbangPreso.Core.Tests
 
             foreach (var variant in HeroLoadoutRules.AllVariants)
                 if (variant.IsDefault)
-                    Assert.True(HeroBuildRules.IsUnlocked(fresh, variant),
+                    Assert.True(HeroBuildRules.IsUnlocked(fresh, variant, enforced: true),
                         $"The default '{variant.Id}' is locked on a fresh account.");
                 else
-                    Assert.False(HeroBuildRules.IsUnlocked(fresh, variant),
+                    Assert.False(HeroBuildRules.IsUnlocked(fresh, variant, enforced: true),
                         $"The alternate '{variant.Id}' is unlocked on a fresh account, so its "
                         + "challenge string promises the player something they already have.");
         }
@@ -343,7 +353,7 @@ namespace TumbangPreso.Core.Tests
                             $"'{variant.Id}' is locked behind a challenge with no target, so no "
                             + "number of casts can ever open it.");
 
-                        Assert.Equal(mine, HeroBuildRules.IsUnlocked(counters, variant)
+                        Assert.Equal(mine, HeroBuildRules.IsUnlocked(counters, variant, enforced: true)
                                            && !variant.IsDefault);
                     }
                 }
@@ -353,17 +363,44 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void PracticeCastsUnlockTheAlternateAndStopAtItsTarget()
         {
-            Assert.True(HeroLoadoutRules.ChallengesEnforced);
             var counters = new List<AbilityChallengeProgress>();
             var alternate = HeroLoadoutRules.VariantById("dante.1.tremor");
 
-            Assert.False(HeroBuildRules.IsUnlocked(counters, alternate));
+            Assert.False(HeroBuildRules.IsUnlocked(counters, alternate, enforced: true));
             for (int i = 0; i < alternate.ChallengeTarget + 3; i++)
                 HeroBuildRules.NoteSuccessfulCast(counters, "dante", 1);
 
-            Assert.True(HeroBuildRules.IsUnlocked(counters, alternate));
+            Assert.True(HeroBuildRules.IsUnlocked(counters, alternate, enforced: true));
             Assert.Equal(alternate.ChallengeTarget,
                          HeroBuildRules.ChallengeCount(counters, alternate.Id));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE TESTING SWITCH, OWNER 2026-09-24: *"for now keep it all unlocked and make it easy
+        /// to lock again"*. With `LockSkillTree` false every branch of every hero is open on a fresh
+        /// account; the live flag follows the switch (so flipping the one line relocks the tree), and
+        /// the locked path it would restore is still the one the tests above assert. The counters keep
+        /// counting while the tree is open, so a tester's casts are not lost when it is locked again.
+        /// </summary>
+        [Fact]
+        public void TheSkillTreeSwitchOpensEveryBranchAndTheLockedPathStaysIntact()
+        {
+            Assert.Equal(HeroLoadoutRules.LockSkillTree, HeroLoadoutRules.ChallengesEnforced);
+
+            var fresh = new List<AbilityChallengeProgress>();
+            foreach (var variant in HeroLoadoutRules.AllVariants)
+            {
+                Assert.True(HeroBuildRules.IsUnlocked(fresh, variant, enforced: false),
+                    $"'{variant.Id}' stays locked with the tree open.");
+                Assert.Equal(variant.IsDefault, HeroBuildRules.IsUnlocked(fresh, variant, enforced: true));
+                if (!HeroLoadoutRules.LockSkillTree)
+                    Assert.True(HeroBuildRules.IsUnlocked(fresh, variant),
+                        $"'{variant.Id}' is locked although this build ships the tree open for testing.");
+            }
+
+            var counters = new List<AbilityChallengeProgress>();
+            HeroBuildRules.NoteSuccessfulCast(counters, "dante", 1);
+            Assert.Equal(1, HeroBuildRules.ChallengeCount(counters, "dante.1.tremor"));
         }
 
         [Fact]

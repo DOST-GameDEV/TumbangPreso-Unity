@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.0563439">
+  <test-suite type="TestSuite" id="2244" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1003" result="Failed" site="Child" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.056344" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2238" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1003" result="Failed" site="Child" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.048657" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="193514" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2239" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1003" result="Failed" site="Child" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.047429" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2240" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1003" result="Failed" site="Child" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.046466" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1073" name="AmihanWikiTests" fullname="TumbangPreso.PlayTests.AmihanWikiTests" classname="TumbangPreso.PlayTests.AmihanWikiTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.026061" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1075" name="AcceptedCastsRefreshSecondWindWithoutStacking" fullname="TumbangPreso.PlayTests.AmihanWikiTests.AcceptedCastsRefreshSecondWindWithoutStacking" methodname="AcceptedCastsRefreshSecondWindWithoutStacking" classname="TumbangPreso.PlayTests.AmihanWikiTests" runstate="Runnable" seed="1349264558" result="Failed" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.013856" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Each accepted ability grants Second Wind.
+  Expected: 1.25f
+  But was:  1.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmihanWikiTests.AcceptedCastsRefreshSecondWindWithoutStacking () [0x00047] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/AmihanWikiTests.cs:24
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1074" name="DriftUsesCurrentNameAndCooldown" fullname="TumbangPreso.PlayTests.AmihanWikiTests.DriftUsesCurrentNameAndCooldown" methodname="DriftUsesCurrentNameAndCooldown" classname="TumbangPreso.PlayTests.AmihanWikiTests" runstate="Runnable" seed="93307197" result="Failed" start-time="2026-09-30 22:36:34Z" end-time="2026-09-30 22:36:34Z" duration="0.001469" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 5 but was 10. Strings differ at index 0.
+  Expected: "DRIFT"
+  But was:  "QUICK DASH"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmihanWikiTests.DriftUsesCurrentNameAndCooldown () [0x00006] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/AmihanWikiTests.cs:11
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

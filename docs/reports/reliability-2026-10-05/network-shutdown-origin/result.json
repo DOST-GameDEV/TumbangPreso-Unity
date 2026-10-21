@@ -1,0 +1,42 @@
+{
+  "sourceRef": "7502ff3d60bba20cb970906af82b39d51bd12dc1",
+  "profile": "pc-shutdown-classification1005",
+  "filter": "TumbangPreso.PlayTests.NetShutdownOriginTests",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-shutdown-classification1005",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.NetShutdownOriginTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-shutdown-classification\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-shutdown-classification\\editor.log"
+  ],
+  "pid": 20576,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.NetShutdownOriginTests.RequestedStopIsDistinguishedFromUnexpectedManagerShutdown",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19308,
+  "terminal": true
+}

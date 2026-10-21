@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 05:55:07Z" end-time="2026-09-24 05:57:27Z" duration="140.1167205">
+  <test-suite type="TestSuite" id="1790" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="613" result="Passed" start-time="2026-09-24 05:55:07Z" end-time="2026-09-24 05:57:27Z" duration="140.116721" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1784" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="613" result="Passed" start-time="2026-09-24 05:55:07Z" end-time="2026-09-24 05:57:27Z" duration="140.102145" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17288" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1785" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="613" result="Passed" start-time="2026-09-24 05:55:07Z" end-time="2026-09-24 05:57:27Z" duration="140.096585" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1786" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="613" result="Passed" start-time="2026-09-24 05:55:07Z" end-time="2026-09-24 05:57:27Z" duration="140.091346" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1290" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-09-24 05:55:07Z" end-time="2026-09-24 05:55:12Z" duration="4.467109" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1313" name="IlalimUkayReview" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.IlalimUkayReview" methodname="IlalimUkayReview" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="649961048" result="Passed" start-time="2026-09-24 05:55:07Z" end-time="2026-09-24 05:55:12Z" duration="4.441089" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 325 of 2813 renderers, 0 with a roof variant.
+[NearFade] 3307 occluder nodes matched, 1616 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ilalim-ukay-v3/Ilalim-ukay-front-before.png
+[Play] wrote Logs/ilalim-ukay-v3/Ilalim-ukay-front-after.png
+[Play] wrote Logs/ilalim-ukay-v3/Ilalim-ukay-street-before.png
+[Play] wrote Logs/ilalim-ukay-v3/Ilalim-ukay-street-after.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1344" name="MapRouteProbe" fullname="TumbangPreso.PlayTests.MapRouteProbe" classname="TumbangPreso.PlayTests.MapRouteProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-24 05:55:12Z" end-time="2026-09-24 05:57:27Z" duration="135.583567" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1345" name="GroundGridAndRepresentativeObstacleRoutesRemainRetrievable" fullname="TumbangPreso.PlayTests.MapRouteProbe.GroundGridAndRepresentativeObstacleRoutesRemainRetrievable" methodname="GroundGridAndRepresentativeObstacleRoutesRemainRetrievable" classname="TumbangPreso.PlayTests.MapRouteProbe" runstate="Runnable" seed="1361768709" result="Passed" start-time="2026-09-24 05:55:12Z" end-time="2026-09-24 05:57:27Z" duration="135.579967" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 325 of 2813 renderers, 0 with a roof variant.
+[NearFade] 3307 occluder nodes matched, 1616 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 325 of 2813 renderers, 0 with a roof variant.
+[NearFade] 3307 occluder nodes matched, 1616 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

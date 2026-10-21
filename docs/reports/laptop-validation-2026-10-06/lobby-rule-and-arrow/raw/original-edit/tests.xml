@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:48Z" duration="0.2776875">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:48Z" duration="0.277688" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2763" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:48Z" duration="0.265686" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="38556" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2764" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:48Z" duration="0.260993" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2765" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:48Z" duration="0.256571" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1551" name="HubLobbySeatControlsTests" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:48Z" duration="0.238169" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1557" name="ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" methodname="ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1217050989" result="Passed" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:47Z" duration="0.125206" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1554" name="FillingVacanciesWithBotsKeepsStartAvailable" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.FillingVacanciesWithBotsKeepsStartAvailable" methodname="FillingVacanciesWithBotsKeepsStartAvailable" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1556973961" result="Passed" start-time="2026-10-06 09:48:47Z" end-time="2026-10-06 09:48:48Z" duration="0.015899" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1555" name="FourHumansKeepStartAvailableWithoutBots" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.FourHumansKeepStartAvailableWithoutBots" methodname="FourHumansKeepStartAvailableWithoutBots" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1877839006" result="Passed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.013992" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1553" name="HumanOnlyVacanciesExplainWhyStartIsDisabled" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.HumanOnlyVacanciesExplainWhyStartIsDisabled" methodname="HumanOnlyVacanciesExplainWhyStartIsDisabled" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="890615576" result="Failed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.019000" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HubLobbySeatControlsTests.HumanOnlyVacanciesExplainWhyStartIsDisabled () [0x00055] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\HubLobbySeatControlsTests.cs:98
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1561" name="HumanSlotOffersSwitchAndOwnSlotHasNoAction" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.HumanSlotOffersSwitchAndOwnSlotHasNoAction" methodname="HumanSlotOffersSwitchAndOwnSlotHasNoAction" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1400612290" result="Passed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.008407" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1552" name="OpenAndBotSlotsExposeRealSeatActions" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.OpenAndBotSlotsExposeRealSeatActions" methodname="OpenAndBotSlotsExposeRealSeatActions" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="266396387" result="Passed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.008788" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1560" name="RecipientPopupSendsTheChosenAnswerExactlyOnce" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.027228" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1558" name="RecipientPopupSendsTheChosenAnswerExactlyOnce(True)" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce(True)" methodname="RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="2078457679" result="Passed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.014408" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1559" name="RecipientPopupSendsTheChosenAnswerExactlyOnce(False)" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce(False)" methodname="RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1741895957" result="Passed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.008089" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1556" name="StaleRoomStateIsRecheckedBeforeSendingASeatRequest" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.StaleRoomStateIsRecheckedBeforeSendingASeatRequest" methodname="StaleRoomStateIsRecheckedBeforeSendingASeatRequest" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="533880321" result="Passed" start-time="2026-10-06 09:48:48Z" end-time="2026-10-06 09:48:48Z" duration="0.007134" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

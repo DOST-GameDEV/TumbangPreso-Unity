@@ -1,0 +1,1 @@
+Rafi HERO source only; idle pose; native ToonSkin and fixed2.38 scale. Same camera magnification across all four angles. Isolated bones: head; meshes=1; framingSpan=1.522893m.

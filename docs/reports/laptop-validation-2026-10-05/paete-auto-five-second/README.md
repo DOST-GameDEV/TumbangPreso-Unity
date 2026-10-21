@@ -1,0 +1,21 @@
+# Mature Paete plant automatic five-second lobs
+
+The owner explicitly changed Bakya Bloom to automatically lob a wooden slipper every five seconds. The plant now chooses its existing attacking objective, the upright lata, without needing a second skill press. First maturity remains3seconds; subsequent successful lobs wait5seconds. If no upright can is available, the grown slipper remains ready until the target returns. Presentation holds, paused simulation and retirement suppress new automatic shots. Existing40second life,15second rooted window, authored visuals and13m/s launch are preserved. The original manual command remains available.
+
+The host/solo resolves autonomous firing. `AutomaticShotFired` exposes an accepted shot to the transport without replaying a player cast, animation, voice or mastery award. A client does not invent autonomous shots: `ApplyAutomaticShot` requires its current live owner/instance identity before reproducing a host-approved shot. Reliable packet registration/delivery is a separate PC integration requirement; these gameplay changes alone do not qualify remote automatic firing.
+
+## Evidence
+
+- Original immutablee7587c72e nativeUnity8208: five exact behavioral cases, four unsupported-new-feature failures and one pause/retirement control pass. These failures establish the requested feature was absent; they are not four pre-existing bug claims.
+- CandidateUnity11564: the same five cases pass, zero skips. Actual InputIntent planting fires a moving slipper without a second press; maturity and5second cadence hold; missing upright target keeps the grown slipper; pause/retirement suppress firing; a replica waits for its matching accepted shot and rejects the wrong instance.
+- Original and candidate each freeze19258 inputs, with only PaeteHazards, PaeteHeroKit and CorePaeteRules differing. Each has210 generated metadata/Auditor deltas, preserved before/after then restored to the exact frozen source;9 existing EditorPrefs values and QualitySettings are restored. Candidate reuses the original only after verifying every input hash.
+- Concurrent907139157 player-vine/thorn timing changes were preserved through ordinary additive merge, not overwritten with an older candidate. Latest immutable66c65c8646bf7a97425e69aef651d1cbae570116 nativeUnity7152 passes four additional meaningful cases: retained manual flight, plant rooted/uprootal lifetime, nearest visible player/wall/range query and Thorn contact-before-snatch timing.19274 inputs frozen;210 generated deltas preserved/restored; preferences/quality restored. No extra rerun of unchanged passing auto cases was used.
+- Latest Core Paete contract tests pass20/20, zero skips. Assertions now reflect the owner's5second cadence and eight possible mature shots within the unchanged40second life. The retained manual command probes keep the can down while waiting, so an automatic shot cannot consume the payload before the explicit manual control under test.
+
+Raw native XML, launch/exit/restoration receipts, Core TRX, source/fixture snapshots and input-map digest receipts have exact hashes in raw-hashes.json. The complete frozen maps, full logs and generated before/after bytes remain at the paths in the input-map receipts. This report deliberately avoids duplicating every unrelated asset hash or GUI metadata file into Git.
+
+## Integration and limits
+
+Local feature checkpoint4310a1a and additive merge66c65 preserve the new player-vine implementation and protocol149. Protocol149 was already occupied by that contributor; the PC's movement-ack correction advances the combined release to150. The laptop does not change NetSession or overwrite that version. Matching rebuilt peers and the PC's reliable automatic-shot binding are required before replicated-feature acceptance. Current passed real online/public/code/UI evidence used artifact3947/protocol148 and excludes these new changes.
+
+The deterministic replica API test is not a real transport, slow-peer, late-join, loss or replay-hold test. Paete's locked fresh-Guest selection was an expected ownership restriction; it was not bypassed for this feature. Physical gameplay, the carried-slipper emote-position defect, operator practice-bot qualification and tournament-wide readiness remain open.

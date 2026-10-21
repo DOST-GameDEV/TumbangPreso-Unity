@@ -1,0 +1,43 @@
+{
+  "sourceCommit": "066bb51eeb4e08ba3182955388c9e2b8715fa509",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/ReadyGate.cs",
+      "variant": "baseline",
+      "sha256": "3158ad98b0008020b90148119da4f739aad311048dea600f9c5b1e86e338954a",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyGate.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/ReadyGate.cs",
+      "variant": "final",
+      "sha256": "6765af158ddd40a7a1962dd51636c083eff879685cfb4bf4acbb053f78f315a1",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyGate.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs",
+      "variant": "baseline",
+      "sha256": "6d6ff747103ef72b58dc83a056ff40398b8761e743491fc4d112c2adfbaf7539",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyChatFocusTests.cs.baseline.repair1.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs",
+      "variant": "final",
+      "sha256": "6d6ff747103ef72b58dc83a056ff40398b8761e743491fc4d112c2adfbaf7539",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyChatFocusTests.cs.final.repair1.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs.meta",
+      "variant": "baseline",
+      "sha256": "345e5d0cee58633ed7216c68b7d915d423d10664f9e86e264d048da152f66cc5",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyChatFocusTests.cs.meta.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs.meta",
+      "variant": "final",
+      "sha256": "345e5d0cee58633ed7216c68b7d915d423d10664f9e86e264d048da152f66cc5",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyChatFocusTests.cs.meta.final.txt"
+    }
+  ],
+  "qualificationInstalled": false,
+  "fixtureInputContext": "Transient cloned InputSettings uses dynamic player updates in EditMode; original settings restored, unchanged."
+}

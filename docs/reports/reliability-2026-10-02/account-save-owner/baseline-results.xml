@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.1266782">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.126678" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2100" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.115962" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8820" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2101" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.115069" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2102" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.114554" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1014" name="AccountSaveOwnershipTests" fullname="TumbangPreso.Tests.AccountSaveOwnershipTests" classname="TumbangPreso.Tests.AccountSaveOwnershipTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.094226" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1019" name="CurrentOwnerCanonicalSaveStillApplies" fullname="TumbangPreso.Tests.AccountSaveOwnershipTests.CurrentOwnerCanonicalSaveStillApplies" methodname="CurrentOwnerCanonicalSaveStillApplies" classname="TumbangPreso.Tests.AccountSaveOwnershipTests" runstate="Runnable" seed="1647191038" result="Passed" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.050924" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1017" name="DelayedSaveCannotOverwriteANewerLocalEdit" fullname="TumbangPreso.Tests.AccountSaveOwnershipTests.DelayedSaveCannotOverwriteANewerLocalEdit" methodname="DelayedSaveCannotOverwriteANewerLocalEdit" classname="TumbangPreso.Tests.AccountSaveOwnershipTests" runstate="Runnable" seed="1408114033" result="Failed" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.013459" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 8 but was 13. Strings differ at index 0.
+  Expected: "New edit"
+  But was:  "Old canonical"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountSaveOwnershipTests.DelayedSaveCannotOverwriteANewerLocalEdit () [0x0009f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountSaveOwnershipTests.cs:71
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1016" name="DelayedSaveCannotReplaceAGuest" fullname="TumbangPreso.Tests.AccountSaveOwnershipTests.DelayedSaveCannotReplaceAGuest" methodname="DelayedSaveCannotReplaceAGuest" classname="TumbangPreso.Tests.AccountSaveOwnershipTests" runstate="Runnable" seed="208876135" result="Failed" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.003261" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: same as <TumbangPreso.Core.AccountProfile>
+  But was:  <TumbangPreso.Core.AccountProfile>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountSaveOwnershipTests.DelayedSaveCannotReplaceAGuest () [0x000c9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountSaveOwnershipTests.cs:64
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1015" name="DelayedSaveCannotReplaceAnotherAccount" fullname="TumbangPreso.Tests.AccountSaveOwnershipTests.DelayedSaveCannotReplaceAnotherAccount" methodname="DelayedSaveCannotReplaceAnotherAccount" classname="TumbangPreso.Tests.AccountSaveOwnershipTests" runstate="Runnable" seed="363681999" result="Failed" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.004449" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: same as <TumbangPreso.Core.AccountProfile>
+  But was:  <TumbangPreso.Core.AccountProfile>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountSaveOwnershipTests.DelayedSaveCannotReplaceAnotherAccount () [0x000e9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountSaveOwnershipTests.cs:56
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1018" name="ForeignCanonicalOwnerIsRejected" fullname="TumbangPreso.Tests.AccountSaveOwnershipTests.ForeignCanonicalOwnerIsRejected" methodname="ForeignCanonicalOwnerIsRejected" classname="TumbangPreso.Tests.AccountSaveOwnershipTests" runstate="Runnable" seed="1218824629" result="Failed" start-time="2026-10-02 04:54:44Z" end-time="2026-10-02 04:54:44Z" duration="0.004340" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: same as <TumbangPreso.Core.AccountProfile>
+  But was:  <TumbangPreso.Core.AccountProfile>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountSaveOwnershipTests.ForeignCanonicalOwnerIsRejected () [0x0009e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountSaveOwnershipTests.cs:77
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

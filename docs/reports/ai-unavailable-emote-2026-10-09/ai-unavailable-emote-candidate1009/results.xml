@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 23:18:50Z" end-time="2026-10-08 23:18:52Z" duration="1.8308592">
+  <test-suite type="TestSuite" id="3675" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2163" result="Passed" start-time="2026-10-08 23:18:50Z" end-time="2026-10-08 23:18:52Z" duration="1.830859" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3667" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2163" result="Passed" start-time="2026-10-08 23:18:50Z" end-time="2026-10-08 23:18:52Z" duration="1.816709" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="66348" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3668" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2163" result="Passed" start-time="2026-10-08 23:18:50Z" end-time="2026-10-08 23:18:52Z" duration="1.813358" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3671" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2161" result="Passed" start-time="2026-10-08 23:18:50Z" end-time="2026-10-08 23:18:52Z" duration="1.810151" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1144" name="AiUnavailableEmoteTests" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-08 23:18:50Z" end-time="2026-10-08 23:18:52Z" duration="1.554629" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1146" name="PendingPlayableMotionRetainsItsBoundedDeliveryGrace" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests.PendingPlayableMotionRetainsItsBoundedDeliveryGrace" methodname="PendingPlayableMotionRetainsItsBoundedDeliveryGrace" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" seed="1921100448" result="Passed" start-time="2026-10-08 23:18:50Z" end-time="2026-10-08 23:18:52Z" duration="1.392645" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1145" name="PlayableMotionStillStartsAndHoldsItsVisibleEmote" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests.PlayableMotionStillStartsAndHoldsItsVisibleEmote" methodname="PlayableMotionStillStartsAndHoldsItsVisibleEmote" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" seed="996760905" result="Passed" start-time="2026-10-08 23:18:52Z" end-time="2026-10-08 23:18:52Z" duration="0.089431" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1147" name="UnavailableMotionDoesNotConsumeTheBotsSocialFrame" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests.UnavailableMotionDoesNotConsumeTheBotsSocialFrame" methodname="UnavailableMotionDoesNotConsumeTheBotsSocialFrame" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" seed="1054852245" result="Passed" start-time="2026-10-08 23:18:52Z" end-time="2026-10-08 23:18:52Z" duration="0.052228" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3404" name="TrainingEmoteEligibilityTests" fullname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests" classname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-08 23:18:52Z" end-time="2026-10-08 23:18:52Z" duration="0.139365" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3407" name="LessonUnlockingTheEmoteVerbPermitsEmoteEligibility" fullname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests.LessonUnlockingTheEmoteVerbPermitsEmoteEligibility" methodname="LessonUnlockingTheEmoteVerbPermitsEmoteEligibility" classname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests" runstate="Runnable" seed="444493091" result="Passed" start-time="2026-10-08 23:18:52Z" end-time="2026-10-08 23:18:52Z" duration="0.053442" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3405" name="LessonWithholdingTheEmoteVerbRefusesEmoteEligibility" fullname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests.LessonWithholdingTheEmoteVerbRefusesEmoteEligibility" methodname="LessonWithholdingTheEmoteVerbRefusesEmoteEligibility" classname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests" runstate="Runnable" seed="891759328" result="Passed" start-time="2026-10-08 23:18:52Z" end-time="2026-10-08 23:18:52Z" duration="0.043933" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3406" name="OrdinaryUnrestrictedActorKeepsItsEmoteEligibility" fullname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests.OrdinaryUnrestrictedActorKeepsItsEmoteEligibility" methodname="OrdinaryUnrestrictedActorKeepsItsEmoteEligibility" classname="TumbangPreso.PlayTests.TrainingEmoteEligibilityTests" runstate="Runnable" seed="1050603720" result="Passed" start-time="2026-10-08 23:18:52Z" end-time="2026-10-08 23:18:52Z" duration="0.039288" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

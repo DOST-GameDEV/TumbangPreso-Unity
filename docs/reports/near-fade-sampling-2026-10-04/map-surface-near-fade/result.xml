@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 14:02:00Z" end-time="2026-10-04 14:02:08Z" duration="8.1540063">
+  <test-suite type="TestSuite" id="3056" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 14:02:00Z" end-time="2026-10-04 14:02:08Z" duration="8.154006" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3050" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 14:02:00Z" end-time="2026-10-04 14:02:08Z" duration="8.139171" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="111610" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3051" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 14:02:00Z" end-time="2026-10-04 14:02:08Z" duration="8.131372" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3052" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 14:02:00Z" end-time="2026-10-04 14:02:08Z" duration="8.122954" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1991" name="NearFadeProbe" fullname="TumbangPreso.PlayTests.NearFadeProbe" classname="TumbangPreso.PlayTests.NearFadeProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-04 14:02:00Z" end-time="2026-10-04 14:02:08Z" duration="8.098823" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1992" name="PhotographTheApproachToAPost" fullname="TumbangPreso.PlayTests.NearFadeProbe.PhotographTheApproachToAPost" methodname="PhotographTheApproachToAPost" classname="TumbangPreso.PlayTests.NearFadeProbe" runstate="Runnable" seed="1240967506" result="Passed" start-time="2026-10-04 14:02:00Z" end-time="2026-10-04 14:02:08Z" duration="8.084529" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Category" value="WallClock" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[]]></message>
+              </reason>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+=== NEAR FADE PROBE ===
+post=PosteRework_Poste_0 at (-7.75, 0.10, 15.00)
+renderers under it: 1
+  PosteRework_Poste_0: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+  PosteRework_Poste_0: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+  PosteRework_Poste_0: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+  PosteRework_Poste_0: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+near-fade mask draws at 2.50m: 9
+wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/map-surface-near-fade/frames/post_2.50m.png
+near-fade mask draws at 1.10m: 13
+wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/map-surface-near-fade/frames/post_1.10m.png
+near-fade mask draws at 0.20m: 13
+wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/map-surface-near-fade/frames/post_0.20m.png
+
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

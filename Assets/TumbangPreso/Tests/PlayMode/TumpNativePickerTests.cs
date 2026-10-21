@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -14,167 +15,303 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class TumpNativePickerTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private string _settings;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _settings = JsonUtility.ToJson(Settings.SettingsStore.Current);
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            JsonUtility.FromJsonOverwrite(_settings, Settings.SettingsStore.Current);
+            yield return PlayModeWorld.Reset();
+        }
+
+        [UnityTest]
+        public IEnumerator CinderGateHasItsOwnIllustrationAtHudAndSmallSizes()
+        {
+            var skill=new Abilities.SeanHeroKit().DefendingSkill;
+            Assert.AreEqual(AbilityGlyph.SeanCinderGate,skill.Glyph);
+            var root=new GameObject("CinderIconReview",typeof(RectTransform),typeof(Canvas));
+            var canvas=root.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;
+            try
+            {
+                var symbols=new List<TumpAbilitySymbol>();int index=0;
+                foreach(float size in new[]{128f,72f,44f})
+                {
+                    var rect=TumpUiFactory.Rect(root.transform,"CinderSize"+size);
+                    rect.anchorMin=rect.anchorMax=new Vector2(.5f,.5f);rect.sizeDelta=Vector2.one*size;
+                    rect.anchoredPosition=new Vector2((index++-1)*180,0);
+                    var symbol=rect.gameObject.AddComponent<TumpAbilitySymbol>();
+                    symbol.Glyph=skill.Glyph;symbol.HudStyle=true;symbols.Add(symbol);
+                }
+                Canvas.ForceUpdateCanvases();yield return null;
+                yield return TumpUiCapture.Capture("CinderGate-icon-sizes",canvas,960,540,false);
+                var illustration=AbilityIcons.Illustration(skill.Glyph);
+                Assert.IsNotNull(illustration,"Cinder Gate still falls back to the plain procedural icon.");
+                Assert.AreSame(illustration,AbilityIcons.For(skill.Glyph));
+                foreach(var symbol in symbols)
+                {
+                    Assert.AreSame(illustration.texture,symbol.mainTexture);
+                    Assert.AreEqual(4,symbol.canvasRenderer.GetMesh().vertexCount);
+                }
+                Assert.AreNotSame(illustration,AbilityIcons.Illustration(AbilityGlyph.SeanIgnite));
+            }
+            finally {Object.Destroy(root);}
+        }
+
+        [UnityTest]
+        public IEnumerator AbilityIconPreparationYieldsAndRetainsIllustrationsFallbacksAndCooldown()
+        {
+            var progress = new List<float>();
+            var warmup = AbilityIcons.Warmup(progress.Add);
+            int slices = 0;
+            while (warmup.MoveNext()) { slices++; yield return warmup.Current; }
+            Assert.Greater(slices, 1, "Cold icon preparation should not run as one synchronous sweep.");
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            var cache = (Dictionary<AbilityGlyph, Sprite>)typeof(AbilityIcons).GetField("Cache", flags).GetValue(null);
+            var drawn = (Dictionary<AbilityGlyph, Sprite>)typeof(AbilityIcons).GetField("Drawn", flags).GetValue(null);
+            foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
+            {
+                Assert.IsTrue(drawn.ContainsKey(glyph), glyph.ToString());
+                Assert.IsTrue(cache.TryGetValue(glyph, out var prepared), glyph.ToString());
+                Assert.IsNotNull(prepared); Assert.AreSame(prepared, AbilityIcons.For(glyph));
+                if (drawn[glyph] != null) Assert.AreSame(drawn[glyph], prepared);
+            }
+            var cooldown = (Sprite)typeof(AbilityIcons).GetField("_cooldownDisc", flags).GetValue(null);
+            Assert.IsNotNull(cooldown); Assert.AreSame(cooldown, AbilityIcons.CooldownDisc());
+            Assert.AreEqual(1, progress[progress.Count - 1]);
+            for (int i = 1; i < progress.Count; i++) Assert.GreaterOrEqual(progress[i], progress[i - 1]);
+            Assert.IsFalse(AbilityIcons.Warmup().MoveNext(), "Prepared icons should not schedule more asset work.");
+        }
+
+        [Test]
+        public void DefaultAvatarHandlesMinimumHashWithoutChangingOtherNames()
+        {
+            int Hash(string name)
+            {
+                unchecked { int hash = 17; foreach (char c in name) hash = hash * 31 + c; return hash; }
+            }
+            const string edge = "aPoew65";
+            Assert.AreEqual(int.MinValue, Hash(edge));
+            Assert.AreEqual(Avatars.Ids[(int)(2147483648L % Avatars.FaceCount)], Avatars.DefaultFor(edge));
+            foreach (string name in new[] { "Matthew", "Player#8226", "dante", "cheska", "Player#1" })
+                Assert.AreEqual(Avatars.Ids[Mathf.Abs(Hash(name)) % Avatars.FaceCount], Avatars.DefaultFor(name));
+            Assert.AreEqual(Avatars.Ids[0], Avatars.DefaultFor(null));
+            Assert.AreEqual(Avatars.Ids[0], Avatars.DefaultFor(""));
+        }
+
+        [Test]
+        public void EveryOfferedAvatarLoadsAsItsOwnSprite()
+        {
+            Assert.AreEqual(Avatars.Ids.Length, Avatars.Ids.Distinct().Count());
+            foreach (string id in Avatars.Ids)
+            {
+                var sprite = Resources.Load<Sprite>("UI/avatars/" + id);
+                Assert.IsNotNull(sprite, id + " cannot rely on Dante's fallback picture");
+                Assert.AreSame(sprite, Avatars.Get(id), id + " resolved to another avatar");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator MenuAndAvatarPreparationAwaitsAsyncReadsAndRetainsScreenAssets()
+        {
+            int requests = 0, menuSteps = 0, avatarSteps = 0;
+            var menu = OwnerMenuArt.Warmup();
+            while (menu.MoveNext())
+            {
+                menuSteps++;
+                if (menu.Current is ResourceRequest) requests++;
+                yield return menu.Current;
+                if (menu.Current is ResourceRequest request) Assert.IsTrue(request.isDone);
+            }
+            var avatars = Avatars.Warmup();
+            while (avatars.MoveNext())
+            {
+                avatarSteps++;
+                if (avatars.Current is ResourceRequest) requests++;
+                yield return avatars.Current;
+                if (avatars.Current is ResourceRequest request) Assert.IsTrue(request.isDone);
+            }
+            Assert.Greater(requests, 0, "Cold art preparation should schedule asynchronous reads.");
+            Assert.AreEqual(27, menuSteps); Assert.AreEqual(Avatars.Ids.Length, avatarSteps);
+            var background = OwnerMenuArt.Texture("main2-background");
+            var logo = OwnerMenuArt.Piece("login3-logo");
+            var face = Avatars.Get(Avatars.Ids[0]);
+            Assert.IsNotNull(background); Assert.IsNotNull(logo); Assert.IsNotNull(face);
+            yield return OwnerMenuArt.Warmup(); yield return Avatars.Warmup();
+            Assert.AreSame(background, OwnerMenuArt.Texture("main2-background"));
+            Assert.AreSame(logo, OwnerMenuArt.Piece("login3-logo"));
+            Assert.AreSame(face, Avatars.Get(Avatars.Ids[0]));
+            Assert.AreSame(face, Avatars.Get("not-an-offered-avatar"));
+        }
+
+        [UnityTest]
+        public IEnumerator ChangingAnAbilityGlyphRebuildsItsRenderedMeshAndTexture()
+        {
+            var root = new GameObject("GlyphProbeCanvas", typeof(RectTransform), typeof(Canvas));
+            root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            var go = new GameObject("GlyphProbe", typeof(RectTransform), typeof(CanvasRenderer));
+            go.transform.SetParent(root.transform, false);
+            ((RectTransform)go.transform).sizeDelta = new Vector2(96, 96);
+            var symbol = go.AddComponent<TumpAbilitySymbol>();
+            try
+            {
+                symbol.Glyph = AbilityGlyph.DanteShield;
+                Canvas.ForceUpdateCanvases();
+                yield return null;
+                var dante = AbilityIcons.Illustration(AbilityGlyph.DanteShield);
+                Assert.IsNotNull(dante);
+                Assert.AreSame(dante.texture, symbol.mainTexture);
+                Assert.AreEqual(4, symbol.canvasRenderer.GetMesh().vertexCount);
+
+                symbol.Glyph = AbilityGlyph.ComingSoon;
+                Canvas.ForceUpdateCanvases();
+                yield return null;
+                Assert.AreNotSame(dante.texture, symbol.mainTexture);
+                Assert.Greater(symbol.canvasRenderer.GetMesh().vertexCount, 4,
+                    "The neutral unavailable symbol must replace the old rendered quad");
+
+                symbol.Glyph = AbilityGlyph.SeanRush;
+                Canvas.ForceUpdateCanvases();
+                yield return null;
+                var sean = AbilityIcons.Illustration(AbilityGlyph.SeanRush);
+                Assert.IsNotNull(sean);
+                Assert.AreSame(sean.texture, symbol.mainTexture);
+                Assert.AreEqual(4, symbol.canvasRenderer.GetMesh().vertexCount);
+            }
+            finally { Object.Destroy(root); }
+        }
         [UnityTest]
         public IEnumerator RealPortraitsDriveSelectionAndPreviewDoesNotSave()
         {
-            yield return Open(GameMode.Classic);
-            var canvas = GameObject.Find("OwnerLoadoutCanvas").GetComponent<Canvas>();
-            var choices = canvas.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Portrait_")).ToArray();
-            Assert.AreEqual(12, choices.Length);
-            foreach (var choice in choices) Assert.IsNotNull(choice.transform.Find("PortraitCard/Portrait").GetComponent<Image>().sprite, choice.name);
-            foreach(var choice in choices)Assert.IsEmpty(choice.GetComponentsInChildren<Text>(true),"The roster must stay icon-only.");
-            Assert.IsFalse(canvas.GetComponentsInChildren<Text>(true).Any(t=>t.name.StartsWith("TraitValue")),
-                "Stat bars must not repeat numeric fractions.");
-            Assert.IsEmpty(canvas.GetComponentsInChildren<GodotButton>(true));
-            Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
-            Canvas.ForceUpdateCanvases();
-            var spotlight=canvas.GetComponentInChildren<LoadoutCourtSpot>();
-            Assert.IsNotNull(spotlight.GetComponent<CanvasRenderer>(),"The collection stage needs its own UI renderer.");
-            Assert.Greater(spotlight.canvasRenderer.GetMesh()?.vertexCount??0,40,"The collection stage is visually absent.");
-            int saved = Settings.SettingsStore.Current.CharacterPick;
-            var candidate = Roster.ClassicPeople[(Mathf.Max(0, saved) + 1) % 12];
-            Press(Find("Portrait_" + candidate.Id));
-            Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick);
-            foreach (var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("Collection-people-" + size.x + "x" + size.y,
-                    canvas, size.x, size.y, false, checkActionBounds: true,inspectViewport:()=>
-                    {
-                        var description=canvas.GetComponentsInChildren<Text>().First(t=>t.name=="Description").rectTransform;
-                        Assert.IsFalse(canvas.GetComponentsInChildren<Text>().Any(t=>t.name=="Traits" || t.name.StartsWith("TraitLabel")),
-                            "Classic people must not advertise retired character stats.");
-                        var confirm=(RectTransform)Find("TumpUseLoadout").transform;
-                        float gap=description.anchoredPosition.y-description.rect.height-confirm.anchoredPosition.y;
-                        Assert.That(gap,Is.InRange(12,24),"Confirmation must follow the actual description without a blank former-stat block.");
-                    });
-            foreach (var person in Roster.ClassicPeople)
+            HubHome.Choice = 1;
+            var settings = Settings.SettingsStore.Current;
+            settings.CharacterPick = 0;
+            yield return HubFlowTests.OpenHome();
+            yield return HubFlowTests.Press("ModeCard");
+            yield return HubFlowTests.Press("CustomCard");
+            yield return HubFlowTests.Press("HostDoor");
+            yield return HubFlowTests.Press("CreateLobby");
+            float until = Time.realtimeSinceStartup + 15;
+            while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
+            yield return HubFlowTests.Press("CharacterDoor");
+            var choices = TumpHub.Current.Top.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Portrait")).ToArray();
+            Assert.AreEqual(Roster.ClassicPeople.Count, choices.Length);
+            foreach (var button in choices)
             {
-                Press(Find("Portrait_" + person.Id)); yield return null;
-                yield return TumpUiCapture.Capture("Collection-person-" + person.Id, canvas, 960, 540, false, checkActionBounds: true);
-                Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick, "Inspecting the collection must not save a pick.");
+                Assert.IsNotNull(button.GetComponentsInChildren<Image>().First(i => i.name == "Face").sprite);
+                Assert.IsEmpty(button.GetComponentsInChildren<Text>(), "The cast grid is icon-only.");
             }
-            Press(Find("TumpBack")); yield return null;
-            Assert.IsFalse(canvas.gameObject.activeSelf);
-            Press(Find("LoadoutButton")); yield return null;
-            Press(Find("Portrait_" + candidate.Id));
-            Press(Find("TumpUseLoadout")); yield return null;
-            Assert.AreEqual(Roster.ClassicPeople.ToList().FindIndex(e => e.Id == candidate.Id), Settings.SettingsStore.Current.CharacterPick);
-            Press(Find("LoadoutButton")); yield return null;
-            for (int i = 1; i <= 2; i++)
+            // UX-1 deliberately publishes the highlighted lobby pick immediately; SELECT confirms it.
+            for (int i = 0; i < Roster.ClassicPeople.Count; i++)
             {
-                Press(Find("TumpCategory" + i)); yield return null;
-                Assert.AreEqual(3,canvas.GetComponentsInChildren<Text>().Count(t=>t.name.StartsWith("TraitLabel")),
-                    "Equipment must retain its actual handling comparison.");
-                foreach (var choice in canvas.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Portrait_")))
-                    Assert.IsNotNull(choice.transform.Find("PortraitCard/Portrait").GetComponent<Image>().sprite, choice.name);
-                foreach (var size in TumpUiCapture.PcViewports)
-                    yield return TumpUiCapture.Capture("Collection-category" + i + "-" + size.x + "x" + size.y,
-                        canvas, size.x, size.y, false, checkActionBounds: true);
-                var entries = i == 1 ? Roster.Cans : Roster.Slippers;
-                foreach (var item in entries)
+                Press(Find("Portrait" + i)); yield return null;
+                Assert.AreEqual(i, settings.CharacterPick);
+                Assert.IsNotNull(TumpHub.Current.Top.GetComponentInChildren<ModelPreview>().Subject);
+            }
+            Press(Find("SelectButton")); yield return null;
+            Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
+            TumpHub.Current.Back(); yield return null;
+            yield return HubFlowTests.Press("LoadoutButton");
+            foreach (bool can in new[] { false, true })
+            {
+                Press(Find(can ? "LataTab" : "TsinelasTab")); yield return null;
+                var entries = can ? Roster.Cans : Roster.Slippers;
+                var seen = new HashSet<string>();
+                foreach (string tab in new[] { "OwnedTab", "UnownedTab" })
                 {
-                    Press(Find("Portrait_" + item.Id)); yield return null;
-                    yield return TumpUiCapture.Capture("Collection-item-" + item.Id, canvas, 960, 540, false, checkActionBounds: true);
+                    Press(Find(tab)); yield return null;
+                    foreach (var tile in TumpHub.Current.Top.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Item_")))
+                    {
+                        seen.Add(tile.name.Substring(5));
+                        Assert.IsNotNull(tile.GetComponentsInChildren<Image>().First(i => i.name == "Face").sprite);
+                    }
                 }
+                CollectionAssert.AreEquivalent(entries.Select(e => e.Id), seen, "Owned and unowned tabs must retain the complete equipment roster.");
+                Press(Find("OwnedTab")); yield return null;
+                int old = can ? settings.CanPick : settings.SlipperPick;
+                int next = (old + 1) % 4; // The documented free starter equipment.
+                Press(Find("Item_" + entries[next].Id)); yield return null;
+                Assert.IsNotNull(TumpHub.Current.Top.GetComponentInChildren<ModelPreview>().Subject);
+                Assert.AreEqual(old, can ? settings.CanPick : settings.SlipperPick, "Inspection must not equip.");
+                TumpHub.Current.Back(); yield return null;
+                Assert.AreEqual(old, can ? settings.CanPick : settings.SlipperPick, "Cancel must retain the equipped item.");
+                Press(Find("Item_" + entries[next].Id)); yield return null;
+                Press(Find("ItemEquip")); yield return null;
+                Assert.AreEqual(next, can ? settings.CanPick : settings.SlipperPick);
+                TumpHub.Current.Back(); yield return null;
             }
         }
         [UnityTest]
         public IEnumerator NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath()
         {
-            yield return Open(GameMode.HeroStrike);
-            var picker = GameObject.Find("OwnerLoadoutCanvas").GetComponent<Canvas>();
-            foreach(var person in Roster.HeroPeople)
+            HubHome.Choice = 2; Settings.SettingsStore.Current.CharacterPick = 0;
+            yield return HubFlowTests.OpenHome();
+            yield return HubFlowTests.Press("HeroButton");
+            for (int i = 0; i < Roster.HeroPeople.Count; i++)
             {
-                var story=OwnerCharacterStories.For(person.Id);Assert.IsNotNull(story,person.Id);
-                Assert.IsNotEmpty(story.origin);Assert.IsNotEmpty(story.introduction);
-            }
-            foreach (var person in Roster.HeroPeople)
-            {
-                Press(Find("Portrait_" + person.Id)); yield return null;
-                yield return TumpUiCapture.Capture("Collection-hero-" + person.Id, picker, 960, 540, false, checkActionBounds: true);
-                Press(Find("MeetCharacter")); yield return null;
+                var hero = Roster.HeroPeople[i];
+                var story = OwnerCharacterStories.For(hero.Id);
+                Assert.IsNotNull(story, hero.Id); Assert.IsNotEmpty(story.origin); Assert.IsNotEmpty(story.introduction);
+                var kit = TumbangPreso.Abilities.HeroAbilitySystem.CreateKitFor(hero.Id);
+                var abilities = new[] { kit.Skill1, kit.Skill2, kit.Ultimate };
+                for (int slot = 0; slot < 3; slot++)
+                {
+                    var button = Find("Ability" + slot);
+                    Assert.AreEqual(abilities[slot].Glyph, button.GetComponentInChildren<TumpAbilitySymbol>().Glyph);
+                    Press(button); yield return null;
+                    Assert.IsInstanceOf<HubAbilityPopup>(TumpHub.Current.Top);
+                    Assert.IsTrue(TumpHub.Current.Top.GetComponentsInChildren<Text>().Any(t => t.text == abilities[slot].Name.ToUpperInvariant()));
+                    TumpHub.Current.Back(); yield return null;
+                }
+                Press(Find("StoryButton")); yield return null; yield return null;
                 var biography = GameObject.Find("OwnerCharacterStoryCanvas").GetComponent<Canvas>();
-                Assert.AreEqual(OwnerCharacterStories.For(person.Id).origin,
-                    biography.GetComponentsInChildren<Text>().First(t => t.name == "StoryOrigin").text);
-                yield return TumpUiCapture.Capture("Biography-" + person.Id, biography, 960, 540, false, checkActionBounds: true);
-                Press(Find("CloseCharacterStory")); yield return null;
+                Assert.IsFalse(TumpHub.Current.Canvas.enabled, "The biography must own the screen.");
+                Assert.AreEqual(story.origin, biography.GetComponentsInChildren<Text>().First(t => t.name == "StoryOrigin").text);
+                yield return TumpUiCapture.Capture("Hub-biography-" + hero.Id, biography, 960, 540, false, checkActionBounds: true);
+                Press(Find("CloseCharacterStory")); yield return null; yield return null;
+                Assert.IsInstanceOf<HubHero>(TumpHub.Current.Top);
+                Assert.AreEqual(0, Settings.SettingsStore.Current.CharacterPick, "Stories and skill inspection must not save a hero pick.");
+                Press(Find("NextHero")); yield return null; yield return null;
             }
-            Press(Find("Portrait_" + Roster.HeroPeople[Settings.SettingsStore.Current.CharacterPick].Id)); yield return null;
-            foreach (var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("Collection-heroes-" + size.x + "x" + size.y,
-                    picker, size.x, size.y, false, checkActionBounds: true);
-            int originalPick=Settings.SettingsStore.Current.CharacterPick;
-            Press(Find("MeetCharacter"));yield return null;
-            var storyCanvas=GameObject.Find("OwnerCharacterStoryCanvas").GetComponent<Canvas>();
-            Assert.IsFalse(picker.gameObject.activeSelf);
-            var selectedStory=OwnerCharacterStories.For(Roster.HeroPeople[originalPick].Id);
-            Assert.AreEqual(selectedStory.origin,storyCanvas.GetComponentsInChildren<Text>().First(t=>t.name=="StoryOrigin").text);
-            foreach (var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("Biography-" + size.x + "x" + size.y,
-                    storyCanvas, size.x, size.y, false, checkActionBounds: true);
-            Press(Find("CloseCharacterStory"));yield return null;
-            Assert.IsTrue(picker.gameObject.activeSelf);Assert.AreEqual(originalPick,Settings.SettingsStore.Current.CharacterPick);
-            Press(Find("TumpSkills")); yield return null;
-            var skills = GameObject.Find("OwnerSkillsCanvas").GetComponent<Canvas>();
-            Assert.Greater(skills.GetComponentsInChildren<TumpAbilitySymbol>().Length, 3);
-            Assert.IsEmpty(skills.GetComponentsInChildren<PaperSkin>(true));
-            Assert.IsEmpty(skills.GetComponentsInChildren<TumpSurface>(true));
-            foreach (var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("SkillGuide-slot1-" + size.x + "x" + size.y,
-                    skills, size.x, size.y, false, checkActionBounds: true);
-            var hero=Roster.HeroPeople[Settings.SettingsStore.Current.CharacterPick].Id;
-            var options=HeroLoadoutRules.VariantsFor(hero,1);
-            var alternative=options[options.Count-1];
-            var build=HeroBuildRules.RowFor(Settings.SettingsStore.Current.HeroBuilds,hero);
-            string savedVariant=build.Slot1VariantId;
-            Press(Find("TumpVariant_"+alternative.Id));yield return null;
-            Assert.AreEqual(savedVariant,build.Slot1VariantId,"Viewing a skill does not equip it.");
-            Assert.AreEqual(alternative.Name,skills.GetComponentsInChildren<Text>().First(t=>t.name=="AbilityName").text);
-            bool unlocked=HeroBuildRules.IsUnlocked(Settings.SettingsStore.Current.AbilityChallenges,alternative);
-            var equip=Find("TumpEquipSkill");
-            Assert.AreEqual(unlocked && HeroBuildRules.Equipped(build,hero,1,Settings.SettingsStore.Current.AbilityChallenges)?.Id!=alternative.Id,
-                equip.interactable);
-            if(!unlocked)
-                StringAssert.Contains(alternative.Challenge,skills.GetComponentsInChildren<Text>().First(t=>t.name=="UnlockState").text);
-            yield return TumpUiCapture.Capture("SkillGuide-variant", skills, 960, 540, false, checkActionBounds: true);
-            Press(Find("TumpSkillSlot2")); yield return null;
-            yield return TumpUiCapture.Capture("SkillGuide-slot2", skills, 960, 540, false, checkActionBounds: true);
-            Press(Find("TumpSkillSlot0")); yield return null;
-            foreach (var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("SkillGuide-ultimate-" + size.x + "x" + size.y,
-                    skills, size.x, size.y, false, checkActionBounds: true);
-            Press(Find("TumpSkillBack")); yield return null;
-            Assert.IsTrue(picker.gameObject.activeSelf);
-            Press(Find("TumpBack")); yield return null;
-            Assert.IsFalse(picker.gameObject.activeSelf);
+            TumpHub.Current.Back(); yield return null;
+            Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
         }
         [UnityTest]
         public IEnumerator EveryHeroSkillGuideFitsItsActualVariationText()
         {
-            yield return Open(GameMode.HeroStrike);
+            yield return HubFlowTests.OpenHome();
             int saved = Settings.SettingsStore.Current.CharacterPick;
-            foreach (var person in Roster.HeroPeople)
+            yield return HubFlowTests.Press("SkillTreeButton");
+            foreach (var hero in Roster.HeroPeople)
             {
-                Press(Find("Portrait_" + person.Id)); yield return null;
-                Press(Find("TumpSkills")); yield return null;
-                var canvas = GameObject.Find("OwnerSkillsCanvas").GetComponent<Canvas>();
-                foreach (int slot in new[] { 1, 2, 0 })
+                Press(Find("Hero_" + hero.Id)); yield return null; yield return null;
+                var settings = Settings.SettingsStore.Current;
+                var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
+                string before = JsonUtility.ToJson(build);
+                foreach (int slot in new[] { 1, 2 })
+                foreach (var variant in HeroLoadoutRules.VariantsFor(hero.Id, slot))
                 {
-                    Press(Find("TumpSkillSlot" + slot)); yield return null;
-                    if (slot == 0)
-                        yield return TumpUiCapture.Capture("SkillGuide-" + person.Id + "-ultimate", canvas, 960, 540, false, checkActionBounds: true);
-                    else foreach (var variant in HeroLoadoutRules.VariantsFor(person.Id, slot))
-                    {
-                        Press(Find("TumpVariant_" + variant.Id)); yield return null;
-                        Assert.AreEqual(variant.Name, canvas.GetComponentsInChildren<Text>().First(t => t.name == "AbilityName").text);
-                        yield return TumpUiCapture.Capture("SkillGuide-" + person.Id + "-" + variant.Id,
-                            canvas, 960, 540, false, checkActionBounds: true);
-                    }
+                    Press(Find("Node_" + variant.Id)); yield return null;
+                    Assert.AreEqual(before, JsonUtility.ToJson(build), "Inspection must not equip a variant.");
+                    var text = TumpHub.Current.Top.GetComponentsInChildren<Text>();
+                    Assert.AreEqual(variant.Name.ToUpperInvariant(), text.First(t => t.name == "VariantName").text);
+                    bool unlocked = HeroBuildRules.IsUnlocked(settings.AbilityChallenges, variant);
+                    Assert.AreEqual(unlocked && HeroBuildRules.Equipped(build, hero.Id, slot, settings.AbilityChallenges)?.Id != variant.Id,
+                        Find("EquipVariant").interactable);
+                    if (!unlocked) StringAssert.Contains(variant.Challenge, text.First(t => t.name == "VariantState").text);
+                    Canvas.ForceUpdateCanvases();
+                    foreach (var label in text.Where(t => t.name == "VariantText" || t.name == "VariantTrade" || t.name == "VariantState"))
+                        Assert.LessOrEqual(label.preferredHeight, label.rectTransform.rect.height + 2, hero.Id + "/" + variant.Id + "/" + label.name);
+                    yield return TumpUiCapture.Capture("Hub-variant-" + hero.Id + "-" + variant.Id,
+                        TumpHub.Current.Canvas, 960, 540, false, checkActionBounds: true);
                 }
-                Press(Find("TumpSkillBack")); yield return null;
             }
-            Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick, "Skill inspection must not change the saved character.");
+            Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick);
+            TumpHub.Current.Back(); yield return null;
+            Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
         }
         private static IEnumerator Open(GameMode mode)
         {

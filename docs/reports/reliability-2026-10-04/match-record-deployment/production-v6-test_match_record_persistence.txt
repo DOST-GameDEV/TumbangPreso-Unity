@@ -1,0 +1,10 @@
+PASS rafi receives mastery from an active match
+PASS amihan receives mastery from an active match
+PASS paete receives mastery from an active match
+PASS dante receives mastery from an active match
+PASS history write failure is recovered by resubmission
+PASS profile write failure retries without duplicate history or reward
+PASS ordinary duplicate keeps rewards and history once
+PASS new history preserves an existing different match
+PASS offline record remains uncounted and unwritten
+{"passed":9,"failed":0,"scope":"actual endpoint; local Cloud Save stand-in"}

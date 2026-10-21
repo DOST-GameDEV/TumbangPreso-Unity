@@ -20,8 +20,10 @@ namespace TumbangPreso.UI
                     break;
                 case Verb.Grab:P(vh,-.27f,-.28f,-.31f,.02f,-.21f,.12f,-.13f,-.04f,-.13f,.31f,-.04f,.32f,-.01f,.02f,.05f,.38f,.14f,.36f,.14f,.04f,.23f,.29f,.30f,.25f,.25f,-.18f,.10f,-.36f,-.10f,-.36f,-.27f,-.28f);break;
                 case Verb.Jump:Person(vh);P(vh,-.36f,.30f,-.25f,.40f,-.14f,.30f);P(vh,-.25f,.40f,-.25f,.15f);break;
+                case Verb.Crouch:Person(vh);P(vh,-.36f,.27f,-.25f,.17f,-.14f,.27f);P(vh,-.25f,.17f,-.25f,.42f);break;
                 case Verb.Sprint:Person(vh);P(vh,-.40f,.10f,-.19f,.10f);P(vh,-.42f,-.05f,-.24f,-.05f);break;
                 case Verb.Lunge:Person(vh);P(vh,.17f,.06f,.42f,.06f,.30f,.19f);P(vh,.42f,.06f,.30f,-.09f);break;
+                case Verb.Interact:Ring(vh,0,-.06f,.16f);P(vh,-.36f,-.32f,.36f,-.32f);P(vh,0,.10f,0,.40f);P(vh,-.13f,.27f,0,.40f,.13f,.27f);break;
                 case Verb.EmoteWheel:Ring(vh,0,0,.36f);P(vh,-.15f,-.09f,0,-.20f,.17f,-.08f);P(vh,-.14f,.14f,-.10f,.14f);P(vh,.11f,.14f,.15f,.14f);break;
                 default:P(vh,0,.42f,.12f,.12f,.42f,.02f,.16f,-.15f,.22f,-.40f,0,-.25f,-.25f,-.40f,-.16f,-.12f,-.42f,.04f,-.12f,.13f,0,.42f);break;
             }

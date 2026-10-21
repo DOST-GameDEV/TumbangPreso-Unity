@@ -1,0 +1,22 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+    "sha256": "B486B33EE42C6D3CC6FB32582323AFD5F4541AF662253DC24C420A99C0047A1A"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+    "sha256": "E56838AB85B1D88E916F5F8DFAF1208F23F3FDD5A36DA88BB1ADED562137923F"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/LobbyJoinPanel.cs",
+    "sha256": "65040D6E5F427E7D340E1923BA0594BF9BF85591CEA4B9C90B4AC016DA105F10"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Net/SocialStore.cs",
+    "sha256": "B32FF538FA76DCEA7CF86E0227B560954696F04F398CAC051E8ED3922320A266"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/MatchResult.cs",
+    "sha256": "640EB354BD3003B7453BEF1B5C9D3B51A1E63E41832F72B900E624EFAE04E325"
+  }
+]

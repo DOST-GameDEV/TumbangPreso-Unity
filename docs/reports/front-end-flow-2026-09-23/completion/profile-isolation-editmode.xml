@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Passed" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:55Z" duration="0.1868778">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="601" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:55Z" duration="0.186878" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1702" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="601" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:55Z" duration="0.164435" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30476" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1703" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="601" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:55Z" duration="0.154749" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1704" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="601" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:55Z" duration="0.145002" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1496" name="NetworkMultiProcessProbes" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:55Z" duration="0.124389" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1503" name="ALiveSessionIsNeverReAttempted" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.ALiveSessionIsNeverReAttempted" methodname="ALiveSessionIsNeverReAttempted" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="472400066" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:54Z" duration="0.034378" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetIdentity] signed in
+]]></output>
+            </test-case>
+            <test-case id="1502" name="AnUnlinkedBuildIsNotRetriedBecauseAskingAgainCannotHelp" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.AnUnlinkedBuildIsNotRetriedBecauseAskingAgainCannotHelp" methodname="AnUnlinkedBuildIsNotRetriedBecauseAskingAgainCannotHelp" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="1569790315" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:54Z" duration="0.002063" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetIdentity] no cloud project id in this build
+]]></output>
+            </test-case>
+            <test-case id="1501" name="AnUnreachableServiceIsRetriedBecauseTheNextMomentMayHaveNetwork" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.AnUnreachableServiceIsRetriedBecauseTheNextMomentMayHaveNetwork" methodname="AnUnreachableServiceIsRetriedBecauseTheNextMomentMayHaveNetwork" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="1310943804" result="Passed" start-time="2026-09-23 06:58:54Z" end-time="2026-09-23 06:58:55Z" duration="0.005192" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetIdentity] the wifi was not up yet
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+]]></output>
+            </test-case>
+            <test-case id="1504" name="ARetryIsRateLimitedSoAPollingScreenCannotFloodTheService" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.ARetryIsRateLimitedSoAPollingScreenCannotFloodTheService" methodname="ARetryIsRateLimitedSoAPollingScreenCannotFloodTheService" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="610543799" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.002282" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetIdentity] service refused
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+]]></output>
+            </test-case>
+            <test-case id="1509" name="AuthoritativeRosterPreservesPeerNamesAndPicksWithoutClobbering" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.AuthoritativeRosterPreservesPeerNamesAndPicksWithoutClobbering" methodname="AuthoritativeRosterPreservesPeerNamesAndPicksWithoutClobbering" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="435556323" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.011382" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1505" name="DedicatedServerTopologyPreservesRefereeInvariants" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.DedicatedServerTopologyPreservesRefereeInvariants" methodname="DedicatedServerTopologyPreservesRefereeInvariants" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="41633133" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.002270" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1507" name="MidMatchDisconnectRetainsSeatAndEnforcesRulingPriority" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.MidMatchDisconnectRetainsSeatAndEnforcesRulingPriority" methodname="MidMatchDisconnectRetainsSeatAndEnforcesRulingPriority" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="591540218" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.004259" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1497" name="ProfileIsolationPreventsTokenCollisionsAcrossConcurrentInstances" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.ProfileIsolationPreventsTokenCollisionsAcrossConcurrentInstances" methodname="ProfileIsolationPreventsTokenCollisionsAcrossConcurrentInstances" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="1308435819" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.021107" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1506" name="ReadyQuorumEvaluatesPlayingPeersAndIgnoresBotsAndSpectators" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.ReadyQuorumEvaluatesPlayingPeersAndIgnoresBotsAndSpectators" methodname="ReadyQuorumEvaluatesPlayingPeersAndIgnoresBotsAndSpectators" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="969709376" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.006681" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1500" name="SettledOnlineStateAlwaysCarriesItsOwnSentence" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.SettledOnlineStateAlwaysCarriesItsOwnSentence" methodname="SettledOnlineStateAlwaysCarriesItsOwnSentence" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="1556075344" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.002695" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+]]></output>
+            </test-case>
+            <test-case id="1498" name="SignInIsAttemptedOncePerSessionRatherThanOncePerCaller" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.SignInIsAttemptedOncePerSessionRatherThanOncePerCaller" methodname="SignInIsAttemptedOncePerSessionRatherThanOncePerCaller" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="241394997" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.001897" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+]]></output>
+            </test-case>
+            <test-case id="1499" name="SwitchingProfileDiscardsThePreviousProfilesAttempt" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.SwitchingProfileDiscardsThePreviousProfilesAttempt" methodname="SwitchingProfileDiscardsThePreviousProfilesAttempt" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="779002924" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.002175" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+]]></output>
+            </test-case>
+            <test-case id="1508" name="WorldSnapshotReplicationPreservesMatchIntegrity" fullname="TumbangPreso.Tests.NetworkMultiProcessProbes.WorldSnapshotReplicationPreservesMatchIntegrity" methodname="WorldSnapshotReplicationPreservesMatchIntegrity" classname="TumbangPreso.Tests.NetworkMultiProcessProbes" runstate="Runnable" seed="416684149" result="Passed" start-time="2026-09-23 06:58:55Z" end-time="2026-09-23 06:58:55Z" duration="0.001280" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

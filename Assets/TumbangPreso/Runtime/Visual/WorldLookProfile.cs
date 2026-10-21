@@ -1,0 +1,549 @@
+using System;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// The per-map world look: lighting rig, sky, air, character shading and edges.
+    ///
+    /// ⚠️⚠️ § THE BRIGHT LOOK, 2026-09-23, AND WHY IT REVERSES VISUAL-1.8. The owner asked for
+    /// the lighting to be bright "instead of our current lighting's gloomy and dark lighting",
+    /// studied against PEAK (Aggro Crab and Landfall, 2025), and explicitly "not the route
+    /// towards realism". VISUAL-1.8 had pushed the other way: ambient cut to roughly a third
+    /// (sky 0.25, ground 0.08), fog pulled in to 20 m in a grey-beige, a 0.44 shadow band, so
+    /// Eskinita and Ilalim read as black asphalt under black shadows. It measured a contrast
+    /// gain and it bought it with gloom.
+    ///
+    /// What PEAK's store frames actually show, and what each field below transcribes:
+    ///  * HIGH KEY. Nothing on screen is black. The darkest values are coloured (plum, brown,
+    ///    teal), so <see cref="MapLook.Lift"/> puts a coloured floor under every map.
+    ///  * SHADOWS CARRY HUE, NOT JUST LESS LIGHT. Warm sun, sky-coloured shade. In the built-in
+    ///    pipeline a shadowed pixel keeps only the ambient term, so the ambient trilight IS the
+    ///    shadow colour: <see cref="MapLook.Sky"/> is a saturated sky tint, and
+    ///    <see cref="MapLook.Ground"/> is the warm bounce off the court.
+    ///  * AIR. Distance dissolves into a bright, coloured haze matching the horizon, which is
+    ///    what layers PEAK's silhouettes. <see cref="MapLook.Fog"/> is that haze and it starts
+    ///    past the court, so it never softens a player you need to read.
+    ///  * SOFT, PLUSH BODIES with no ink. Bodies use a wide, wrapped terminator
+    ///    (<see cref="Softness"/>, <see cref="Wrap"/>) with a faint warm band where light turns
+    ///    to shade (<see cref="Terminator"/>), in place of a hard two-band step.
+    ///  * EDGES ARE LIGHT AND COLOUR, NOT BLACK LINES. Sun-catching convex edges lift
+    ///    (<see cref="EdgeHighlight"/>), inside corners take a soft coloured shade
+    ///    (<see cref="CreaseShade"/>), silhouettes darken the local colour instead of drawing
+    ///    ink (<see cref="SilhouetteShade"/>), and the cast's hull becomes a thin line in a deeper
+    ///    shade of whatever it outlines (<see cref="CastInkSelf"/>).
+    ///
+    /// ⚠️ THE OFF VALUE STILL EXISTS. <see cref="WorldCueProfile.WorldLighting"/> at 0 restores
+    /// each scene's own lighting exactly as authored, the VISUAL-1 rule for every look lever.
+    /// </summary>
+    [CreateAssetMenu(menuName="Tumbang Preso/World look profile")]
+    public sealed class WorldLookProfile : ScriptableObject
+    {
+        [Serializable] public sealed class MapLook
+        {
+            public string Map;
+            // Ambient trilight. In this pipeline it is the colour of every shadow.
+            public Color Sky,Equator,Ground;
+            // The cast's shade colour, multiplied by ShadowLevel.
+            public Color ShadowTint,Chalk,ChalkEdge;
+            public float FogStart,FogEnd;
+            public int WearKind;
+            // Key light. Elevation 0 keeps the scene's own angle.
+            public Color Sun;
+            public float SunIntensity,SunElevation,ShadowStrength;
+            // Air and sky.
+            public Color Fog,Zenith,Horizon,CloudLight,CloudShade;
+            // The coloured black floor added after the tonemap, in linear.
+            public Color Lift;
+            // ⚠️⚠️ THE COURT'S OWN GROUND, BRIGHTENED, AND ONLY WHERE IT IS DARK ASPHALT. The rig
+            // lifts every shadow, but a sunlit surface can only be as bright as its albedo, and
+            // Eskinita's and Ilalim's road texture is near black: after the whole bright look it
+            // still measured (90,85,71) and (74,81,73) in full sun, the largest area in every
+            // court view. PEAK has no dark ground anywhere. This multiplies the court floor's
+            // colour through a property block, the same code-chosen road colour
+            // `EnvColourPass.RoadTint` already sets, so no material asset or texture is touched.
+            // 1 (or an unset 0) leaves the floor alone; the plaza, deck and rooftop keep theirs.
+            public float GroundLift=1;
+            // ⚠️ NO VOXEL CLOUDS ON THIS MAP. `BlockyClouds` stands its ring 100 to 150 m out and
+            // 40 to 64 m up, which is open sky over a street and INSIDE the Arena's bowl (its
+            // canopies are 150 to 190 m out and 64 to 71 m up). False, the default and every other
+            // row's value, is today's clouds.
+            public bool NoBlockyClouds;
+            // ⚠️ A MAP'S OWN CLOUD PLACEMENT (owner, 2026-10-05, of the Arena: "use the clouds we
+            // have in the other maps too"). The same voxel clouds, built by the same code, stood
+            // where THIS map has open sky: each band is so many clouds between two radii from the
+            // map's centre and two belly heights over its floor (negative is under it), of a
+            // width and a block size. Empty, the default and every other row's value, is the
+            // profile's one ring exactly as before. The three colours replace `CloudLight`,
+            // `CloudShade` and the horizon for the voxel clouds only when their alpha is above 0
+            // (the row's own cloud colours also tint a painted sky); `CloudsFromBelow` 1 lights
+            // them from under, for a night city (see `BlockyCloud.shader`).
+            [Serializable] public struct CloudBand
+            {
+                public int Count;
+                public Vector2 Radius,Height,Size;
+                public float Voxel;
+                public CloudBand(int count,float radiusFrom,float radiusTo,float heightFrom,float heightTo,float sizeFrom,float sizeTo,float voxel)
+                {Count=count;Radius=new Vector2(radiusFrom,radiusTo);Height=new Vector2(heightFrom,heightTo);Size=new Vector2(sizeFrom,sizeTo);Voxel=voxel;}
+            }
+            public CloudBand[] CloudBands;
+            public Color BlockyLit,BlockyShade,BlockyAir;
+            public float CloudsFromBelow;
+            // ⚠️ A MAP'S OWN GLOW (owner, 2026-10-05, of the Arena: "you'll also need to look into
+            // emmissives for the arena so things are glowy"). The profile's bloom is tuned for
+            // daylight, where only the sun disc and effect cores may pass (0.05 above 2.2, see
+            // `Bloom` below), so a night map's LED rows, signs and rim lights never glowed. A row
+            // that sets these takes its own strength and threshold; 0, the default and every
+            // other row's value, is the profile's.
+            public float Bloom,BloomThreshold;
+            public MapLook(string map,Color sky,Color equator,Color ground,Color tint,float fogStart,float fogEnd,int wear,bool dark)
+            {
+                Map=map;Sky=sky;Equator=equator;Ground=ground;ShadowTint=tint;FogStart=fogStart;FogEnd=fogEnd;WearKind=wear;
+                Chalk=dark?new Color(.18f,.16f,.14f):new Color(.96f,.92f,.81f);
+                ChalkEdge=dark?new Color(.79f,.75f,.65f):new Color(.14f,.11f,.075f);
+                Sun=new Color(1,.93f,.8f);SunIntensity=1.3f;ShadowStrength=.78f;
+                Fog=new Color(.9f,.88f,.84f);Zenith=new Color(.38f,.63f,.9f);Horizon=new Color(.93f,.9f,.84f);
+                CloudLight=new Color(1,.98f,.94f);CloudShade=new Color(.7f,.74f,.88f);Lift=new Color(.014f,.011f,.022f);
+            }
+            public MapLook Air(Color fog,Color zenith,Color horizon,Color cloudLight,Color cloudShade)
+            {Fog=fog;Zenith=zenith;Horizon=horizon;CloudLight=cloudLight;CloudShade=cloudShade;return this;}
+            public MapLook Key(Color sun,float intensity,float elevation,float shadowStrength,Color lift)
+            {Sun=sun;SunIntensity=intensity;SunElevation=elevation;ShadowStrength=shadowStrength;Lift=lift;return this;}
+            public MapLook Floor(float lift){GroundLift=lift;return this;}
+            public MapLook Roofed(){NoBlockyClouds=true;return this;}
+            public MapLook CloudLayers(Color lit,Color shade,Color air,float fromBelow,params CloudBand[] bands)
+            {NoBlockyClouds=false;CloudBands=bands;BlockyLit=lit;BlockyShade=shade;BlockyAir=air;CloudsFromBelow=fromBelow;return this;}
+            public MapLook Glow(float bloom,float threshold){Bloom=bloom;BloomThreshold=threshold;return this;}
+        }
+
+        [Header("Cast and hero props")]
+        // ⚠️ 0.58, UP FROM 0.44. The shade side of a body keeps 58 per cent of the key light
+        // before the (now bright) ambient is added, which lands a lit/shade ratio near 1.6:1.
+        [Range(.2f,.8f)] public float ShadowLevel=.58f;
+        [Range(.03f,.15f)] public float BandEdge=.065f;
+        // Width of the terminator in N.L. 0.5 reads as a plush, clay-soft turn.
+        [Range(.05f,1f)] public float Softness=.52f;
+        // How far the light wraps past the geometric terminator, in N.L.
+        [Range(0,.6f)] public float Wrap=.22f;
+        // A warm band where lit turns to shade: the "fuzzy orange" the owner named (2026-09-25),
+        // the colour a painter puts on a turning form under a warm key.
+        // ⚠️⚠️ IT SHIFTS HUE AND KEEPS LUMINANCE. The first band multiplied red by 1.25 and so
+        // brightened as it warmed, which pushed orange skin and yellow cloth into the clip; it
+        // was cut to 0.06 for that. `WorldLookPresentation.Build` now rotates the ramp toward
+        // orange at constant luminance, so the band can be strong (0.22) and add no light.
+        [Range(0,.4f)] public float Terminator=.22f;
+        // ⚠️⚠️ UPPER RIM AND METAL HIGHLIGHT ARE 0, AND THAT IS THE OWNER'S CALL, NOT A TUNE.
+        // 2026-09-25: "the character glows", "remove the bright finish on all characters". The
+        // rim painted a cream edge round every head and shoulder turned away from the sun, and
+        // the metal term a stepped glint on caps and buckles: both a finish laid over the body,
+        // neither in PEAK, whose cast is matte felt and plastic with no rim at all. The shader
+        // terms stay so a later look can use them; this look does not.
+        [Range(0,.25f)] public float UpperRim=0;
+        [Range(0,.2f)] public float FeetShade=.10f;
+        [Range(0,.2f)] public float EnvironmentContact=.08f;
+        [Range(0,.3f)] public float MetalHighlight=0;
+
+        [Header("Edges")]
+        // How much a silhouette darkens its own colour (0 no line, 1 the old black ink).
+        [Range(0,1)] public float SilhouetteShade=.34f;
+        // Sun-side convex edges brighten toward the key light.
+        [Range(0,1)] public float EdgeHighlight=.42f;
+        // Inside corners take a coloured shade, in `CavityHue`.
+        // ⚠️ 0.45, UP FROM 0.30 (2026-09-25): "the current lighting looks flat". A blocky world
+        // gets its depth from where faces meet, and a violet inside corner is a painter's cavity.
+        [Range(0,1)] public float CreaseShade=.45f;
+        // ⚠️⚠️ THE CAVITY AND THE GROUND OCCLUSION ARE VIOLET, NOT GREY. The owner (2026-09-25):
+        // shade should lean "towards a slight purple instead of a plain dark shadow". Under a
+        // warm key, a painter shifts shade away from the light's hue, and against peach that is
+        // violet. Multiplied into the colour, so a corner deepens its own hue toward violet.
+        public Color CavityHue=new Color(.62f,.52f,.80f);
+        // Walls darken toward `CavityHue` as they near the ground, the soft occlusion that
+        // seats a building in the court instead of pasting it on. Strength, and the height in
+        // metres it fades out by. Drawn in `WorldOutline`'s pass from the depth it already reads.
+        [Range(0,.6f)] public float GroundOcclusion=.28f;
+        [Range(.5f,6)] public float GroundOcclusionHeight=2.8f;
+        // ⚠️ § AMBIENT OCCLUSION (owner 2026-09-25: "can we try adding ambient occlusion").
+        // Screen-space, full resolution, drawn in `WorldOutline`'s pass from the depth and
+        // normals it already reads, and leaning toward `CavityHue` like the crease and the
+        // ground occlusion. Strength of the darkening, and the sample radius in metres: about a
+        // bench or a doorstep, so it gathers in corners and under things and never haloes a
+        // whole building. Off on the Low tier and under Classic, with the rest of the look.
+        [Range(0,1)] public float AmbientOcclusion=.8f;
+        [Range(.2f,3)] public float AmbientOcclusionRadius=1f;
+        // How much occlusion shades the CAST is the player's setting, not the look's
+        // (`GameSettings.CharacterShading`, Full by default; owner, 2026-10-05).
+        // The cast's kernel radius, metres: a body's scale (a fringe of hair, an arm against a chest),
+        // where the world's `AmbientOcclusionRadius` is a doorway's.
+        // ⚠️ 0.14 SINCE 2026-10-05 (owner: ".14m seems like the best ao setting"). It was a third of a
+        // metre, which spread the shade past creases that are centimetres deep.
+        [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.14f;
+        // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
+        [Range(0,1)] public float CastInkSelf=.88f;
+        // The cast's hull width against its authored width.
+        [Range(.3f,1)] public float CastInkWidth=.72f;
+        // ⚠️ 0 IS TODAY'S HULL AND THE SHIPPED VALUE, BECAUSE THIS IS AN OWNER TASTE CALL
+        // (docs/TODO.md LIGHT-1.6). Above 0 the hull keeps at least that share of the luminance
+        // of the colour it frames, so dark skin gets a deep brown line instead of near ink.
+        // Every hull darker than the floor moves, not only skin: the first render lifted tan
+        // skin, greys and greens at 0.25 and orange at 0.35, and a blue strap takes a deep blue
+        // line. True black keeps its ink at any floor, because a share of nothing is nothing.
+        // `WorldCourtCueTests.BrightLookDarkHullChoiceCaptures` renders the choice.
+        [Range(0,.6f)] public float CastInkFloor=0;
+
+        [Header("Grade")]
+        // Colour-protecting saturation lift after the tonemap.
+        // ⚠️ 0.14, DOWN FROM 0.24 (2026-09-25; 0.08 read dull once the shade turned violet). The cast palette is already near full chroma,
+        // so on top of the old exposure it drove channels to their floor: the before frame read
+        // Eskinita's yellow jacket at (255,225,5) and orange skin at (244,121,5), neon rather
+        // than painted. PEAK's lit khaki shirt is (239,194,97): saturated, with the third
+        // channel still alive.
+        [Range(0,.6f)] public float Vibrance=.14f;
+        // ⚠️⚠️ § SPLIT TONE, THE COLOUR-THEORY HALF OF THE GRADE (owner 2026-09-25: "the lighting
+        // itself leans towards adjusting the shadows and brightness instead of adjusting the
+        // ambient hues"). After the tonemap, dark values lean toward `ShadowHue` and light ones
+        // toward `HighlightHue`, each at constant luminance, so it changes hue and never value.
+        // This is what reaches the world's imported materials, which keep Unity's Standard
+        // lighting and so cannot take the cast's ramp.
+        [Range(0,.5f)] public float SplitTone=.18f;
+        public Color ShadowHue=new Color(.66f,.56f,.92f);
+        public Color HighlightHue=new Color(1,.88f,.70f);
+        // HDR glow on true highlights: the sun, VFX cores and glints.
+        // ⚠️ 1.7 AND 0.12, DOWN FROM 1.2 AND 0.22, BECAUSE THE FIRST RENDER HALOED THE CAST.
+        // A lit toon body is albedo times a 1.3 sun plus the bright ambient, so a yellow shirt
+        // sits near 1.5 to 1.8 in HDR and cleared a 1.2 threshold on every frame: Sean and the
+        // Mini Bruja wore a glowing rim in all five maps. The sky is under 1.0 and never bloomed
+        // at all. Above 1.7 only real highlights reach the chain, and the up-walk sums five
+        // levels, so 0.12 already lands a visible glow on them.
+        // ⚠️⚠️ AND IT WAS STILL HALOING THE CAST AT 1.7, BECAUSE OF THE KNEE (2026-09-25). The
+        // prefilter's soft knee was a hard-coded 0.6 of the threshold, 1.02, so the knee opened
+        // at 1.7 - 1.02 = 0.68: every sunlit body fed the chain, which is the glow the owner
+        // named. The knee is now 0.2 of a 2.2 threshold, so nothing under 1.76 contributes,
+        // and with the lower key a lit body tops out near 1.4. Only the sun disc, VFX cores and
+        // glints bloom, at 0.05.
+        [Range(0,1)] public float Bloom=.05f;
+        [Range(.5f,3)] public float BloomThreshold=2.2f;
+        // The soft knee as a share of the threshold. See above for why it is not 0.6.
+        [Range(0,1)] public float BloomKnee=.2f;
+
+        [Header("Sky")]
+        // ⚠️ PAINTED CLOUDS (owner 2026-09-25: "do not make the cloud realistic"). 1 reads the
+        // cloud panorama three mips down and re-edges it into two flat tones, PEAK's brushed
+        // shapes; 0 keeps the photographic silhouettes. See `NeighbourhoodSky.shader`.
+        [Range(0,1)] public float CloudPaint=1;
+        // ⚠️⚠️ § BLOCKY CLOUDS (owner 2026-09-25: the sky "should be either 2d hand painted
+        // designs, or maybe try a more blocky style of clouds where they are real 3d assets").
+        // Voxel cumulus on a ring past the skyline, lit by the look's own rule: a warm cream crown,
+        // a lavender belly, darker crevices. See `BlockyClouds` for why they are domed voxel
+        // masses and not the stacked slabs of the first cut ("too small", "less volume-y", "too
+        // sharp"). The painted panorama stays behind them at `PaintedCloudOpacity`, a far layer.
+        [Range(0,40)] public int BlockyCloudCount=10;
+        // Ring radius, belly height, and a cloud's width, metres. ⚠️ The play camera's far plane
+        // is 240 m (`CameraRig`): the farthest block of the widest, highest cloud is about 150 +
+        // 42 m out and 64 + 47 m up, 220 m from a standing eye, so it stays inside.
+        public Vector2 BlockyCloudRadius=new Vector2(100,150);
+        public Vector2 BlockyCloudHeight=new Vector2(40,64);
+        public Vector2 BlockyCloudSize=new Vector2(50,85);
+        // The block size, metres. About a fourteenth of a cloud: blocky at a glance, but enough
+        // blocks for the dome to read round.
+        [Range(2,12)] public float BlockyCloudVoxel=5.5f;
+        // Degrees per second the whole ring turns, off the shared sky clock, so pause and replay
+        // sample it for free.
+        [Range(0,1)] public float BlockyCloudDrift=.06f;
+        // How far a cloud's colour leans into the horizon, the air between it and the court.
+        [Range(0,1)] public float BlockyCloudAir=.14f;
+        [Range(0,1)] public float PaintedCloudOpacity=.18f;
+
+        // ⚠️⚠️ A WARM HORIZON NEEDS A CYAN ZENITH OR THE SKY BETWEEN THEM TURNS LAVENDER. The
+        // sky shader blends horizon to zenith in linear light, and the first render paired a
+        // peach horizon (red well above green) with a violet-leaning blue: every sky pixel in
+        // between kept the red and the blue and lost the green, and Eskinita and SaBubong
+        // measured (195,196,239) where PEAK is a clean blue. The warm maps now pair a cream or
+        // gold horizon (green close to red) with a zenith whose green sits near 0.62, so the
+        // blend passes through pale neutral. Warmth comes from the sun, the haze and the clouds'
+        // lit faces instead. The shade tints (Sky ambient, CloudShade) moved the same way,
+        // because a lavender shadow is the same fault on the ground.
+        // SaBubong's high preview still washed middle-distance facades at 60-300m.
+        // The fixed-camera 60/90/120m study selected 90-380m: nearby occupied
+        // buildings keep their colours, while the far skyline remains softer.
+        // Lighting and haze hue stay warm; this does not darken the court.
+        // ⚠️⚠️ § THE TONE-DOWN, 2026-09-25. The owner: "tone down the brightness", "the
+        // character glows", against a PEAK frame of three climbers on sand. Measured on that
+        // frame: the lit green body is (48,160,77), luma 130, and the khaki shirt (239,194,97);
+        // the darkest 1 per cent sits at luma 64; shadow on sand is a deeper, MORE saturated
+        // sand (165,92,51), not a grey or blue one; the sky is a pale mint (210,230,222) and the
+        // far mountain dissolves into teal air. Nothing on a character is near white. Our
+        // bright frame had the cast at albedo x (1.34 sun + ~0.65 ambient), about 1.9 before
+        // the curve, so every saturated colour clipped. So, per map:
+        //  * SUN ABOUT 1.08, DOWN FROM ~1.33, and the AMBIENT TRILIGHT about 0.8 of its old
+        //    strength. A lit body lands near albedo x 1.5, under Classic's authored ~1.7, which is
+        //    what "toned down" means; the look stays brighter than Classic in its SHADOWS (lifted
+        //    sun, 0.74 shadow strength), which is where PEAK is bright.
+        //  * ⚠️⚠️ AND THE SHADE IS A HUE, NOT A DARKNESS (owner, same day: "peak's lighting
+        //    typically uses artistic color theory for shadow and light colors (leaning more
+        //    towards a slight purple instead of a plain dark shadow for cooler areas, and a more
+        //    fuzzy orange for warmer settings)"). The first tone-down took the blue OUT of the
+        //    shade and left it a plain dimmer version of the lit colour, which is exactly the
+        //    flatness he named. The painter's rule instead, per map:
+        //      - the KEY is warm (peach on the plaza, orange on the alley and the rooftop, cream
+        //        under the bridge and on the lagoon);
+        //      - the SKY term of the ambient, which in this pipeline is the colour of every shadow
+        //        facing up or out, is a soft VIOLET, shifted away from the key's hue;
+        //      - the EQUATOR is a mauve between the two, and the GROUND term a warm orange bounce
+        //        off the court;
+        //      - the cast's `ShadowTint` leans violet the same way, and the terminator band turns
+        //        the form through orange at constant luminance (`Terminator`);
+        //      - the coloured black floor (`Lift`) is violet, so even the darkest value is a hue.
+        //    The warm maps (Eskinita, SaBubong) push both ends furthest; the cool ones (Ilalim,
+        //    the Lagoon) keep a cream key and a bluer violet.
+        //  * A LESS SATURATED, SLIGHTLY GREENER ZENITH (green about 0.70) so the sky reads as
+        //    PEAK's soft teal-blue rather than a poster blue. The lavender rule above is about the
+        //    SKY GRADIENT and still holds: violet belongs in the shade, never between horizon and
+        //    zenith.
+        //  * A DEEPER COLOURED BLACK FLOOR. PEAK's darkest 1 per cent sits at luma 64 and is
+        //    coloured. ⚠️ `Lift` IS NOW WRITTEN AS A VECTOR, SO IT REALLY IS LINEAR: it went
+        //    through `Material.SetColor`, which converts from sRGB in a linear project, so the
+        //    0.012 to 0.02 authored here was reaching the shader as about 0.001, a floor nobody
+        //    could see. 0.03 to 0.06 linear lands about luma 48 to 68.
+        public MapLook[] Maps={
+            // ⚠️ KANTO, the city park sample map (owner, 2026-09-27, on Play vs the editor: "its so
+            // much more bright, and the kanto map doesnt use the AO shader ... just make kanto less
+            // eye sore-y"). With no entry here WorldLookPresentation installed nothing on Kanto, so
+            // in Play it had no ambient occlusion, no soft-light ramp and no coloured shade, and its
+            // saturated teal and cream facades met a poster-blue sky at full strength
+            // (Logs/kanto-look-v1). This look is deliberately CALMER than the shipped city looks:
+            // a greyer teal zenith and a soft grey-blue haze pulled in to 40..230 m so the far towers
+            // recede instead of competing with the court, a gentler sun, deeper cool-violet shade.
+            // Elevation 0 keeps the scene's own sun angle (Euler 44), so the approved building
+            // shadows do not move. ⚠️ LIGHT CHALK (owner, same day: "the play area in game is blacked.. its
+            // supposed to be white"): the first pass copied Bayan Plaza's dark chalk and drew Kanto's
+            // court lines black.
+            // ⚠️ COOLED (owner, same day: "i like this, but now its a bit too sunset-y / orange.
+            // make it cooler"): a near-white sun instead of a golden one, the warm ground bounce
+            // and equator taken to neutral-cool, a bluer haze and horizon, neutral cloud light and
+            // a cooler black floor. The sky, fog distances and shade depth are as approved.
+            new MapLook("Kanto",new Color(.46f,.48f,.62f),new Color(.5f,.52f,.56f),new Color(.46f,.44f,.41f),new Color(.82f,.84f,1.1f),40,230,0,false)
+                .Air(new Color(.78f,.84f,.9f),new Color(.46f,.64f,.8f),new Color(.82f,.87f,.9f),new Color(.95f,.96f,.97f),new Color(.68f,.72f,.84f))
+                .Key(new Color(1,.97f,.93f),1f,0,.8f,new Color(.035f,.038f,.058f)),
+            new MapLook("BayanPlaza",new Color(.5f,.47f,.64f),new Color(.6f,.5f,.5f),new Color(.58f,.42f,.3f),new Color(.86f,.8f,1.1f),38,210,0,true)
+                .Air(new Color(.74f,.85f,.94f),new Color(.44f,.7f,.88f),new Color(.76f,.87f,.95f),new Color(1,.96f,.9f),new Color(.72f,.7f,.86f))
+                .Key(new Color(1,.9f,.76f),1.08f,52,.76f,new Color(.045f,.03f,.065f)),
+            // The OLD Eskinita's look, kept under another name since the stepped alley took the map's (2026-10-09).
+            new MapLook("EskinitaClassic",new Color(.52f,.46f,.62f),new Color(.64f,.5f,.46f),new Color(.62f,.42f,.28f),new Color(.9f,.78f,1.06f),34,190,1,false)
+                .Air(new Color(.95f,.9f,.8f),new Color(.42f,.69f,.88f),new Color(.97f,.93f,.82f),new Color(1,.93f,.84f),new Color(.76f,.7f,.84f))
+                .Key(new Color(1,.86f,.68f),1.1f,50,.74f,new Color(.055f,.03f,.06f)).Floor(1.6f),
+            // ⚠️ ILALIM NG TULAY: THE BLENDER REBUILD, LATE AFTERNOON ON TAFT (owner, 2026-09-30, on the sample
+            // wearing the shipped Ilalim row: "change the lighting setting so its less like the lagoon
+            // map"). It was the "IlalimRebuild" row until the rebuild was swapped in as the shipped scene
+            // (ILALIM-1.6, 2026-10-01); the first Ilalim's row is kept as "IlalimNgTulayOld" below. The
+            // Blender art direction (tools/author_ilalim_city.py): the sun 27 degrees up from the
+            // west-south-west in Blender's own colour (1, .86, .68 linear, which is 1, .93, .84 here:
+            // a Light colour is sRGB), and a pale haze from 45 m over 360 m. What moves it away from
+            // the Lagoon's clean tropical blue and teal: a SMOGGY sky, a pale grey-blue zenith down to
+            // a grey-cream horizon (the sky rule above: green close to red at the horizon), the same
+            // neutral grey in the fog, and shade that is a greyed lavender rather than a clean
+            // violet. ⚠️ The first cut (a 1, .88, .72 key over a .54, .44, .35 bounce) turned the
+            // grey concrete tan and the whole frame sepia (Logs/ilalim-unity/v4). The shade keeps the other rows' level, so the deep shade under the
+            // guideway stays readable. Elevation 27 keeps the Blender sun instead of lifting it to 52.
+            new MapLook("IlalimNgTulay",new Color(.53f,.54f,.6f),new Color(.56f,.55f,.56f),new Color(.52f,.47f,.42f),new Color(.86f,.86f,1.06f),45,405,2,false)
+                .Air(new Color(.82f,.82f,.81f),new Color(.58f,.67f,.76f),new Color(.85f,.84f,.8f),new Color(1,.97f,.93f),new Color(.72f,.72f,.8f))
+                .Key(new Color(1,.93f,.84f),1.1f,27,.72f,new Color(.04f,.038f,.05f)),
+            new MapLook("SaBubong",new Color(.54f,.46f,.64f),new Color(.66f,.5f,.48f),new Color(.62f,.42f,.3f),new Color(.92f,.78f,1.06f),90,380,3,true)
+                .Air(new Color(.98f,.88f,.74f),new Color(.42f,.68f,.88f),new Color(1,.91f,.74f),new Color(1,.9f,.78f),new Color(.8f,.68f,.82f))
+                .Key(new Color(1,.84f,.64f),1.08f,42,.74f,new Color(.06f,.03f,.065f)),
+            new MapLook("Lagoon",new Color(.46f,.52f,.68f),new Color(.52f,.56f,.62f),new Color(.58f,.5f,.38f),new Color(.82f,.86f,1.1f),55,290,4,false)
+                .Air(new Color(.7f,.87f,.94f),new Color(.38f,.7f,.86f),new Color(.74f,.89f,.95f),new Color(.98f,.98f,.95f),new Color(.68f,.74f,.88f))
+                .Key(new Color(1,.94f,.84f),1.1f,52,.72f,new Color(.03f,.035f,.065f)),
+            // ⚠️ THE LAGOON REWORK AT SUNSET (owner, 2026-09-27, on the rebuilt cove wearing the
+            // Lagoon's afternoon: "i think the lighting is too afternoon-y... i want a more sunset
+            // style of vibes"). Its own entry so the shipped Lagoon keeps its afternoon. A LOW
+            // golden key (6 degrees, just over the horizon, owner: "can you also make the sun lower": long shadows, warm rims on every boulder), a golden hue at
+            // about 35 degrees rather than an orange, kept clear of offence orange's 24; SHADE
+            // (the ambient trilight, which in this pipeline IS every shadow's colour) goes violet
+            // and dusky, the bounce off the sand warm; the air a warm peach haze; the sky a dusky
+            // blue zenith down to a peach horizon with the violet kept in the cloud shade, never in
+            // the gradient (the sky rule above). High key still: nothing black, a coloured floor.
+            new MapLook("LagoonCove",new Color(.44f,.42f,.64f),new Color(.66f,.52f,.54f),new Color(.62f,.46f,.34f),new Color(.9f,.8f,1.1f),70,340,4,false)
+                .Air(new Color(.98f,.78f,.64f),new Color(.3f,.46f,.72f),new Color(1,.74f,.54f),new Color(1,.8f,.64f),new Color(.62f,.54f,.74f))
+                .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f)),
+            // ⚠️ ESKINITA ALLEY: THE BLENDER REBUILD OF ESKINITA, A WARM LATE AFTERNOON (the owner's
+            // standing ask for this map: warm late afternoon, terracotta and tin roofs, cream and
+            // painted walls). Its own row, so the shipped Eskinita keeps its look; the scene is an
+            // unregistered sample (Editor/MapKit/EskinitaAlleySceneBuilder.cs) and wears this in Play
+            // by its scene name. A GOLDEN, LOW-ISH KEY (32 degrees: long shadows across a narrow,
+            // stepped alley; the builder turns it to rake along and a little across the alley, and
+            // only the elevation is taken from here). ⚠️ THE SHADE IS BRIGHTER THAN THE OTHER ROWS',
+            // ON PURPOSE: between walls a few metres apart most of the frame is in shade, and in
+            // this pipeline the trilight IS the shade, so the sky term is a light lilac-blue and
+            // the equator a rose mauve, with a terracotta bounce off the floor. The air is a gentle
+            // warm haze that starts past the play area (60 m). Cream horizon under a cyan-leaning
+            // zenith (the sky rule above); the violet stays in the cloud shade. Light chalk.
+            new MapLook("Eskinita",new Color(.58f,.56f,.78f),new Color(.7f,.58f,.58f),new Color(.66f,.48f,.34f),new Color(.9f,.8f,1.08f),60,320,1,false)
+                .Air(new Color(.98f,.88f,.74f),new Color(.4f,.66f,.86f),new Color(.99f,.91f,.76f),new Color(1,.9f,.76f),new Color(.74f,.68f,.84f))
+                .Key(new Color(1,.82f,.58f),1.2f,32,.68f,new Color(.055f,.032f,.065f)),
+            // ⚠️ PAETE'S RUN: A GOLDEN HOUR IN A DESERT BOWL (owner, 2026-10-10, after playing the hidden
+            // race map: "theres no WorldLook"). With no row the scene (Scenes/Maps/PaeteRun.unity, an
+            // unregistered sample built by Editor/MapKit/PaeteRunSceneBuilder.cs) wore nothing in Play: a
+            // plain sun and a flat blue sky. A WARM, LOW-ISH KEY (34 degrees), so every tier, column and
+            // chute lip throws a long shadow down the stepped face; the builder turns it (only the
+            // elevation is taken from here). ⚠️ THE SHADE IS THE BRIGHTEST OF ANY ROW, ON PURPOSE: the
+            // rock and sand are pale and bounce a great deal, so the sky term is a clear lilac-blue, the
+            // equator a rose sand and the ground a strong warm bounce; nothing on this map may read dark.
+            // THE AIR is a warm sand haze that starts PAST THE COURSE (150 m; the site is about 300 m
+            // across) and is whole by 900 m, so the far rock stacks sit pale in it. A deep blue zenith
+            // down to a peach horizon. ⚠️ THE FIRST CUT (zenith .26,.54,.84 over a horizon 1,.84,.64)
+            // rendered the lower sky LAVENDER (Logs/paete-run/unity/v4, `look_face`): the sky rule above.
+            // The zenith's green went up and the horizon's with it, so the blend passes through a pale
+            // blue; the haze is the horizon a little paler, not a deeper orange. The violet stays in the
+            // cloud shade. Light chalk (the race draws no chalk box; this is only what a cue would wear).
+            // No floor lift (pale ground) and the profile's own bloom (a lit pale rock tops out near 1.5,
+            // under the knee, so only the sun and the lanterns' shells glow).
+            // ⚠️ ITS OWN CLOUDS, SPARSE AND HIGH. The course is NOT round the origin (it runs from the start
+            // line at the origin to 245 m west and 237 m north of it, and its summit is 56 m up), so the
+            // profile's ring (100 to 150 m out, 40 to 64 m up) would stand among the tiers. Two bands
+            // instead, both far over everything: six clouds 380 to 520 m out with bellies 130 to 190 m
+            // up, and three nearer ones 210 to 260 m up. The ring turns about the origin, so each band
+            // is clear all the way round (nothing on the map is higher than about 75 m). The colours are
+            // the row's own (`CloudLight`, `CloudShade`, the horizon): the three colours here are left unset.
+            new MapLook("PaeteRun",new Color(.6f,.62f,.86f),new Color(.74f,.64f,.62f),new Color(.7f,.54f,.36f),new Color(.88f,.82f,1.1f),150,900,0,false)
+                .Air(new Color(.98f,.88f,.72f),new Color(.2f,.58f,.88f),new Color(1,.88f,.68f),new Color(1,.88f,.7f),new Color(.7f,.64f,.82f))
+                .Key(new Color(1,.84f,.6f),1.2f,34,.7f,new Color(.055f,.034f,.06f))
+                .CloudLayers(default,default,default,0,
+                    new MapLook.CloudBand(6,380,520,130,190,80,130,9),
+                    new MapLook.CloudBand(3,140,260,210,260,60,90,8)),
+            // ⚠️ PAYO: A HIGHLAND TEMPLE ON A MOUNTAINSIDE, BY DAY AND BY NIGHT (docs/PAYO_MAP_BRIEF.md; owner,
+            // 2026-10-12: "the stones will be more grey than sandy", "i dont think the whole map should be in an
+            // enclosed basin space", "the map changes to night at half time"). TWO ROWS for one scene
+            // (Scenes/Maps/Payo.unity, an unregistered sample built by Editor/MapKit/PayoSceneBuilder.cs). The scene
+            // wears "Payo" by its name, as every map does; `Map.PayoNight` blends the scene's light, air and sky to
+            // "PayoNight" through the half-time break and holds it for the second half (nothing is sent: every
+            // peer works it out from the round number and the break's clock).
+            // THE DAY: clear mountain air. A NEAR-WHITE KEY (a warm one turned the grey stone sandy in the Blender
+            // draft, which the owner ruled out) from 46 degrees; the shade is a clean lilac-blue, the bounce a cool
+            // grey-green off stone and paddy, never the orange of the city rows. THE AIR IS OPEN: the haze starts
+            // past the stage (120 m, the art's own number) and is whole only at 3600 m, because the art's five
+            // ranges stand 0.6, 1.0, 1.4, 2.0 and 2.7 km out and the fog must take them one after another (linear fog
+            // is WHOLE at its end: at 1500 the last three were one flat colour). The sun is 31 degrees up (the art's
+            // morning; it was 46 before the art came). Nothing closes the place in. A clean blue zenith over a pale horizon whose
+            // green stays near its red (the sky rule above). Clouds of its own, few, far and high (the mountain
+            // behind the temple climbs to about 45 m at 145 m out, and the ring turns about the can). Dark chalk
+            // (the court is pale stone). A little glow of its own, for the night's fires: a lit pale stone tops out
+            // near 1.5, under the knee.
+            // ⚠️ COOL BLUE LIGHT ON GREY STONE (owner, 2026-10-12, with a reference picture: "follow that cool teal tropical
+            // tone"; and then, of a first try that leaned everything blue-green: "the texture all reads as too green and
+            // teal. the reference i gave only had cool blue LIGHTING. the stones were the old grey"). So nothing here tints
+            // a surface: the tone is light and air only. A WARM-WHITE SUN, so a lit face of grey stone stays grey and ochre
+            // and red stay warm. THE SHADE IS COOL BLUE (the sky and equator terms of the trilight, which in this pipeline
+            // are every shadow's colour, and the cast's shadow tint), the bounce off the ground a neutral grey, never
+            // green. THE AIR IS AN AQUA-BLUE haze from 80 m that is whole only at 3000 m, so the art's ranges (0.6 to
+            // 2.7 km) fade into it one behind another. The sky runs from a pale aqua horizon to a clear blue zenith (green
+            // above red at both ends, so nothing between can turn lavender). The coloured black floor is a deep blue.
+            // ⚠️⚠️ RETUNED TO A SUNSET, 2026-10-18 (owner: "yes retune the day row to the sunset"). The noon values above
+            // describe the old draft. The rebuilt court faces NORTH down the valley to the horizon, and the approved Blender
+            // look (Logs/payo/terrain/dressed_d53_over_the_court.png) puts a low warm sun over the valley's open end. So: a
+            // warm key 14 degrees up from about 30 degrees west of north (`PayoSceneBuilder.SunYaw` 150), strong enough
+            // (1.36) that the court floor still reads at that grazing angle; long shadows across the stage. The key is only
+            // gently warm (1, .87, .72): at (1, .84, .66) lit grey stone read peach, and the old rule holds (grey stone
+            // stays grey). The shade stays cool blue-lilac (sky .48,.58,.84; equator .6,.62,.7) and the bounce a near
+            // neutral grey. A peach-gold horizon under a blue-violet zenith (green kept well above red in the zenith, or
+            // the whole upper sky turns lavender), pink-gold lit clouds over lilac bodies, and a warm peach haze.
+            // Sheet: Logs/payo/unity/look/compare.png (before, after, Blender).
+            new MapLook("Payo",new Color(.48f,.58f,.84f),new Color(.6f,.62f,.7f),new Color(.5f,.48f,.46f),new Color(.84f,.86f,1.1f),80,3000,0,true)
+                .Air(new Color(.94f,.82f,.72f),new Color(.46f,.6f,.82f),new Color(1,.8f,.6f),new Color(1,.74f,.64f),new Color(.66f,.62f,.8f))
+                .Key(new Color(1,.87f,.72f),1.36f,14,.7f,new Color(.03f,.032f,.06f)).Glow(.14f,1.9f)
+                .CloudLayers(default,default,default,0,
+                    new MapLook.CloudBand(7,340,520,150,220,80,130,9),
+                    new MapLook.CloudBand(3,220,300,230,280,60,90,8)),
+            // THE NIGHT: Mayari's. The key is the MOON, a cool blue-white at about half the sun's strength, from
+            // over the valley (the builder turns it; `Map.PayoNight` swaps the angle at the middle of the dusk).
+            // The shade is a deep blue and still a colour, never black (the high-key rule holds at night: the
+            // Arena's row is the precedent), so a body in a monolith's shadow is still read. The air is a dark
+            // blue that leaves the far ridges as silhouettes; the sky a near-black zenith over a blue horizon.
+            // Its clouds are the day's, in these colours. Never looked up by a scene name: no scene is called this.
+            // A DEEP BLUE-INDIGO (the day's cool light, carried into the night; not teal).
+            // 2026-10-19 (owner: "it looks too sharply dark and high contrast", "i dont notice the haze and fog much
+            // anymore"): the ambient, the shadow floor and the fog lifted, shadows softer (0.7 to 0.55).
+            new MapLook("PayoNight",new Color(.24f,.32f,.58f),new Color(.2f,.26f,.46f),new Color(.14f,.17f,.28f),new Color(.76f,.84f,1.12f),60,3000,0,true)
+                .Air(new Color(.09f,.13f,.27f),new Color(.02f,.035f,.11f),new Color(.08f,.14f,.32f),new Color(.32f,.4f,.58f),new Color(.07f,.09f,.18f))
+                .Key(new Color(.7f,.84f,1),.62f,30,.55f,new Color(.035f,.045f,.085f)).Glow(.14f,1.9f)
+                .CloudLayers(default,default,default,0,
+                    new MapLook.CloudBand(7,340,520,150,220,80,130,9),
+                    new MapLook.CloudBand(3,220,300,230,280,60,90,8)),
+            // ⚠️ ARENA: A NIGHT MATCH (docs/ARENA_ART_BRIEF.md: a stadium floating in the night sky, owner:
+            // "bluelock/rocketleague stadium in aesthetic ... night time"). The one row that is NOT daylight, so
+            // it reads the rules above for a night: the key is the floodlights, a cool white from high up
+            // (elevation 0 keeps the scene light's own angle), and the shade is still COLOURED, a deep navy,
+            // never black, with the coloured floor under it. The air is a dark indigo. ⚠️ IT RUNS FROM
+            // 180 m TO 3400 m (it was 140 to 620, 2026-10-05): linear fog is WHOLE at its end, and the
+            // landmark towers stand 440 to 900 m out, so at 620 every one of them was the fog's flat
+            // colour. Now the bowl is clear (the upper stands, 183 m, take nothing), a tower at 440 m
+            // keeps 92 per cent of itself and one at 900 m 78, and the far ring at 2000 m 43: distance
+            // reads and nothing is hidden. Sky: the city kit's painted panorama (TumbangPreso/ArenaSky);
+            // the zenith and horizon here are only what glass reflects.
+            // ⚠️ ITS OWN VOXEL CLOUDS (owner, 2026-10-05: "use the clouds we have in the other maps too").
+            // The profile's ring (100 to 150 m out, 40 to 64 m up) is INSIDE this bowl, so the row
+            // places two bands of its own (`CloudLayers`), each clear of everything that is there:
+            //   * A CLOUD DECK UNDER THE STADIUM: 16 clouds 70 to 240 m out, bellies 345 to 300 m under
+            //     the stage, 90 to 130 m wide (tops no higher than y -228). Over them the hull's
+            //     underside (y -76) and the car lane (y -190); under them the viaduct's masts
+            //     (y -380) and the train's loop (y -500); outside them every tower (the nearest
+            //     face is about 320 m out, and the widest cloud reaches 303). The stadium floats
+            //     over them: they are what is seen down the shaft and past the hull from the air.
+            //   * A FEW HIGH ONES: 5 clouds 250 to 272 m out, bellies 340 to 400 m up, 55 to 80 m
+            //     wide: 52 to 57 degrees up from the stage, over the canopies (71 m) and the sky
+            //     traffic (to y 204, out to r 366), inside the nearest towers' faces, in open sky.
+            //   The ring turns about the can (the profile's drift), so a band must be clear all
+            //   the way round, which is why none stands among the towers themselves. The farthest
+            //   block is under 500 m from the stage: inside the play camera's 1300 m.
+            //   Night colours, lit from below by the city: the city kit's (#7c5690, #1c2254, #2f2c74).
+            // Light chalk, like Kanto. Nothing here is near #f87020 or #0080e8.
+            new MapLook("Arena",new Color(.3f,.34f,.52f),new Color(.26f,.28f,.4f),new Color(.16f,.17f,.24f),new Color(.78f,.82f,1.1f),180,3400,0,false)
+                .Air(new Color(.1f,.12f,.22f),new Color(.03f,.04f,.1f),new Color(.16f,.14f,.3f),new Color(.3f,.3f,.44f),new Color(.08f,.09f,.16f))
+                // Glow: bloom 0.2 above 1.8. Under this key (1.15) and ambient a lit body or the pale
+                // deck tops out near 1.4, below the knee (1.44), so only emissives glow: the kit's
+                // glowing materials are given 2.5 and more in `ArenaArtPlacer.Rules`.
+                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)).Glow(.16f,1.9f)
+                .CloudLayers(new Color(.486f,.337f,.565f,1),new Color(.11f,.133f,.329f,1),new Color(.184f,.173f,.455f,1),1,
+                    new MapLook.CloudBand(16,70,240,-345,-300,90,130,9),
+                    new MapLook.CloudBand(5,250,272,340,400,55,80,6)),
+            // ⚠️ THE FIRST ILALIM NG TULAY, VAULTED 2026-10-01 (ILALIM-1.6) at Scenes/Vault/IlalimNgTulayOld.unity:
+            // its look, kept so the vaulted scene still opens in it. This was the "IlalimNgTulay" row.
+            new MapLook("IlalimNgTulayOld",new Color(.46f,.47f,.64f),new Color(.5f,.5f,.58f),new Color(.5f,.42f,.36f),new Color(.82f,.82f,1.12f),36,180,2,false)
+                .Air(new Color(.82f,.91f,.92f),new Color(.44f,.72f,.84f),new Color(.88f,.93f,.9f),new Color(.98f,.97f,.94f),new Color(.68f,.7f,.86f))
+                .Key(new Color(1,.93f,.82f),1.06f,52,.72f,new Color(.035f,.03f,.065f)).Floor(1.6f)
+        };
+        public MapLook Find(string map)
+        {
+            foreach(var entry in Maps)if(entry.Map==map)return entry;
+            // The rebuilt Lagoon (its own unregistered scene until it replaces Lagoon.unity,
+            // docs/LAGOON_REWORK_GUIDE.md § 7) has its own sunset entry; a profile asset authored
+            // before that entry existed falls back to the Lagoon's look rather than to none.
+            if(map=="LagoonCove")return Find("Lagoon");
+            // "IlalimRebuild" is the rebuild's name from before the ILALIM-1.6 swap. The scene is
+            // IlalimNgTulay now, but IlalimSceneBuilder still keys its sky material
+            // (Art/MapAtmosphere/IlalimRebuildSky.mat) on it, and MapAtmosphereAuthor.Apply looks the
+            // name up here: it gets the IlalimNgTulay row, which is the rebuild's look.
+            if(map=="IlalimRebuild")return Find("IlalimNgTulay");
+            // The character reworks' test scene (`Editor/CharacterPrototypeMap.cs`, editor only, in no build and in no
+            // map list) wears Ilalim's look, so the cast is drawn there with the outline and the ambient occlusion it
+            // has in a match. Without a row a scene gets no look at all.
+            if(map=="CharacterPrototype")return Find("IlalimNgTulay");
+            return null;
+        }
+        private static WorldLookProfile _current;
+        public static WorldLookProfile Current
+        {
+            get
+            {
+                if(_current!=null && _current.hideFlags!=HideFlags.HideAndDontSave)return _current;
+                var authored=Resources.Load<WorldLookProfile>("WorldLookProfile");
+                if(authored!=null)
+                {
+                    if(_current!=null){if(Application.isPlaying)Destroy(_current);else DestroyImmediate(_current);}
+                    return _current=authored;
+                }
+                if(_current==null){_current=CreateInstance<WorldLookProfile>();_current.hideFlags=HideFlags.HideAndDontSave;}
+                return _current;
+            }
+        }
+    }
+}

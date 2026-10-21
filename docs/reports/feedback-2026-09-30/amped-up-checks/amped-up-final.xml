@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.6642269">
+  <test-suite type="TestSuite" id="2411" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1151" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.664227" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2405" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1151" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.638498" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3668" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2406" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1151" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.621053" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2407" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1151" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.603698" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2127" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="45" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.350523" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2138" name="AmpedUpBadScopesAmountsAndBindingsCannotPoisonTheCurrentGrant" fullname="TumbangPreso.PlayTests.SkillReceiptTests.AmpedUpBadScopesAmountsAndBindingsCannotPoisonTheCurrentGrant" methodname="AmpedUpBadScopesAmountsAndBindingsCannotPoisonTheCurrentGrant" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="2038294103" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.125051" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2137" name="AmpedUpDoesNotDiscountANewerPredictedOrSettledCast" fullname="TumbangPreso.PlayTests.SkillReceiptTests.AmpedUpDoesNotDiscountANewerPredictedOrSettledCast" methodname="AmpedUpDoesNotDiscountANewerPredictedOrSettledCast" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1047079686" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.041813" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2139" name="AmpedUpNamedPacketHonorsEnvelopeFramingAndHostAuthority" fullname="TumbangPreso.PlayTests.SkillReceiptTests.AmpedUpNamedPacketHonorsEnvelopeFramingAndHostAuthority" methodname="AmpedUpNamedPacketHonorsEnvelopeFramingAndHostAuthority" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="459685949" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.039857" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2140" name="AmpedUpNeverBanksCooldownOrChangesChargesUltimateAndOtherKits" fullname="TumbangPreso.PlayTests.SkillReceiptTests.AmpedUpNeverBanksCooldownOrChangesChargesUltimateAndOtherKits" methodname="AmpedUpNeverBanksCooldownOrChangesChargesUltimateAndOtherKits" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="909087735" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.035526" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2136" name="AmpedUpOwnerGrantIsScopedAndIdempotent" fullname="TumbangPreso.PlayTests.SkillReceiptTests.AmpedUpOwnerGrantIsScopedAndIdempotent" methodname="AmpedUpOwnerGrantIsScopedAndIdempotent" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1763996054" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.034133" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2135" name="AmpedUpUsesTheRealObjectiveAwardWithoutDiscountingPracticeRefills" fullname="TumbangPreso.PlayTests.SkillReceiptTests.AmpedUpUsesTheRealObjectiveAwardWithoutDiscountingPracticeRefills" methodname="AmpedUpUsesTheRealObjectiveAwardWithoutDiscountingPracticeRefills" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1663964300" result="Passed" start-time="2026-10-01 10:08:43Z" end-time="2026-10-01 10:08:43Z" duration="0.036781" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

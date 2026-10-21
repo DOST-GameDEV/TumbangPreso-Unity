@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 10:09:41Z" end-time="2026-09-22 10:09:47Z" duration="6.2120006">
+  <test-suite type="TestSuite" id="1695" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="525" result="Passed" start-time="2026-09-22 10:09:41Z" end-time="2026-09-22 10:09:47Z" duration="6.212001" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1689" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="525" result="Passed" start-time="2026-09-22 10:09:41Z" end-time="2026-09-22 10:09:47Z" duration="6.201180" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27604" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1690" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="525" result="Passed" start-time="2026-09-22 10:09:41Z" end-time="2026-09-22 10:09:47Z" duration="6.199825" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1691" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="525" result="Passed" start-time="2026-09-22 10:09:41Z" end-time="2026-09-22 10:09:47Z" duration="6.199148" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1008" name="AccessibilityControlTests" fullname="TumbangPreso.PlayTests.AccessibilityControlTests" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-22 10:09:41Z" end-time="2026-09-22 10:09:47Z" duration="6.150921" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1016" name="CurrentRoleMarkersShareTheSameEightMetreView" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.CurrentRoleMarkersShareTheSameEightMetreView" methodname="CurrentRoleMarkersShareTheSameEightMetreView" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="1208654545" result="Passed" start-time="2026-09-22 10:09:41Z" end-time="2026-09-22 10:09:45Z" duration="3.718256" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/accessibility-roles/accessibility-current-role-markers.png
+]]></output>
+            </test-case>
+            <test-case id="1014" name="MutedAnnouncerStillCaptionsDeliveredCalloutsAndDisablingHidesThem" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.MutedAnnouncerStillCaptionsDeliveredCalloutsAndDisablingHidesThem" methodname="MutedAnnouncerStillCaptionsDeliveredCalloutsAndDisablingHidesThem" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="940379317" result="Passed" start-time="2026-09-22 10:09:45Z" end-time="2026-09-22 10:09:47Z" duration="2.412765" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] accessibility-contrast-caption-wide/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/Power0: vertices=321, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/PowerIcon: vertices=44, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/Power1: vertices=321, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/PowerIcon: vertices=56, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/Power2: vertices=321, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] accessibility-contrast-caption-wide/PowerIcon: vertices=64, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] accessibility-contrast-caption-wide cream source=252,211,159 pixel=223,215,196; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

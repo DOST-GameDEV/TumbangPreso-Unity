@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="28" result="Failed(Child)" total="28" passed="23" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 17:33:16Z" end-time="2026-10-19 17:37:32Z" duration="255.319458">
+  <test-suite type="TestSuite" id="3709" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2186" result="Failed" site="Child" start-time="2026-10-19 17:33:16Z" end-time="2026-10-19 17:37:32Z" duration="255.319458" total="28" passed="23" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3701" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/ingame-ui-overhaul-80852f/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2186" result="Failed" site="Child" start-time="2026-10-19 17:33:16Z" end-time="2026-10-19 17:37:32Z" duration="255.269942" total="28" passed="23" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19732" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3702" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2186" result="Failed" site="Child" start-time="2026-10-19 17:33:16Z" end-time="2026-10-19 17:37:32Z" duration="255.233080" total="28" passed="23" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3705" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2184" result="Failed" site="Child" start-time="2026-10-19 17:33:16Z" end-time="2026-10-19 17:37:32Z" duration="255.184233" total="28" passed="23" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2597" name="OwnerSkillHudReferenceTests" fullname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests" classname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-19 17:33:17Z" end-time="2026-10-19 17:33:37Z" duration="20.736214" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2598" name="CircularSkillDeckKeepsFontsBindingsAndCurrentMatchHud" fullname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests.CircularSkillDeckKeepsFontsBindingsAndCurrentMatchHud" methodname="CircularSkillDeckKeepsFontsBindingsAndCurrentMatchHud" classname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests" runstate="Runnable" seed="197985460" result="Passed" start-time="2026-10-19 17:33:17Z" end-time="2026-10-19 17:33:37Z" duration="20.704632" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled before it was shown
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] SkillHudReference1007-1920/Power0: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] SkillHudReference1007-1920/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] SkillHudReference1007-1920/Power1: vertices=18, cull=False, alpha=1, depth=137, material=1
+[TumpGeometry] SkillHudReference1007-1920/PowerIcon: vertices=4, cull=False, alpha=1, depth=138, material=1
+[TumpGeometry] SkillHudReference1007-1920/Power2: vertices=1922, cull=False, alpha=1, depth=146, material=1
+[TumpGeometry] SkillHudReference1007-1920/PowerIcon: vertices=4, cull=False, alpha=1, depth=147, material=1
+[TumpUiCapture] SkillHudReference1007-1920 cream source=252,211,159 pixel=57,74,111; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillHudReference1007-1280/Power0: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] SkillHudReference1007-1280/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] SkillHudReference1007-1280/Power1: vertices=18, cull=False, alpha=1, depth=137, material=1
+[TumpGeometry] SkillHudReference1007-1280/PowerIcon: vertices=4, cull=False, alpha=1, depth=138, material=1
+[TumpGeometry] SkillHudReference1007-1280/Power2: vertices=1922, cull=False, alpha=1, depth=146, material=1
+[TumpGeometry] SkillHudReference1007-1280/PowerIcon: vertices=4, cull=False, alpha=1, depth=147, material=1
+[TumpUiCapture] SkillHudReference1007-1280 cream source=252,211,159 pixel=56,74,112; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3408" name="TimedPowerUiTests" fullname="TumbangPreso.PlayTests.TimedPowerUiTests" classname="TumbangPreso.PlayTests.TimedPowerUiTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-19 17:33:37Z" end-time="2026-10-19 17:33:38Z" duration="0.538010" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3409" name="ActiveTimersDrainForBasicRecastAndUltimateThenDisappear" fullname="TumbangPreso.PlayTests.TimedPowerUiTests.ActiveTimersDrainForBasicRecastAndUltimateThenDisappear" methodname="ActiveTimersDrainForBasicRecastAndUltimateThenDisappear" classname="TumbangPreso.PlayTests.TimedPowerUiTests" runstate="Runnable" seed="155879218" result="Passed" start-time="2026-10-19 17:33:37Z" end-time="2026-10-19 17:33:38Z" duration="0.448855" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] Timed-powers-960x540/Power0: vertices=28, cull=False, alpha=1, depth=0, material=1
+[TumpGeometry] Timed-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] Timed-powers-960x540/Power1: vertices=28, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] Timed-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=6, material=1
+[TumpGeometry] Timed-powers-960x540/Power2: vertices=2978, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] Timed-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=12, material=1
+[TumpUiCapture] Timed-powers-960x540 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] Timed-powers-1600x680/Power0: vertices=28, cull=False, alpha=1, depth=0, material=1
+[TumpGeometry] Timed-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] Timed-powers-1600x680/Power1: vertices=28, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] Timed-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=6, material=1
+[TumpGeometry] Timed-powers-1600x680/Power2: vertices=2978, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] Timed-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=12, material=1
+[TumpUiCapture] Timed-powers-1600x680 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3410" name="PermanentOverclockShowsActiveAndZappedCrossesExistingLogos" fullname="TumbangPreso.PlayTests.TimedPowerUiTests.PermanentOverclockShowsActiveAndZappedCrossesExistingLogos" methodname="PermanentOverclockShowsActiveAndZappedCrossesExistingLogos" classname="TumbangPreso.PlayTests.TimedPowerUiTests" runstate="Runnable" seed="934066103" result="Passed" start-time="2026-10-19 17:33:38Z" end-time="2026-10-19 17:33:38Z" duration="0.082692" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3456" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="25" result="Failed" site="Child" start-time="2026-10-19 17:33:38Z" end-time="2026-10-19 17:37:32Z" duration="233.622829" total="25" passed="20" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3464" name="ArmedAttackerInsideTheBoxSeesTheDefenseFrame" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ArmedAttackerInsideTheBoxSeesTheDefenseFrame" methodname="ArmedAttackerInsideTheBoxSeesTheDefenseFrame" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="631834195" result="Passed" start-time="2026-10-19 17:33:38Z" end-time="2026-10-19 17:33:49Z" duration="10.772914" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled before it was shown
+[Slice] round 1 begins, taya is seat 0
+[CanMarker] attacker: present=True visible=True state=CAN PROTECTED
+[TumpUiCapture] CourtHud-attacker-danger-1280x720 cream source=252,211,159 pixel=224,176,141; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3463" name="CanResetTouchCueUsesTheActualReachAndRestoreSetting" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.CanResetTouchCueUsesTheActualReachAndRestoreSetting" methodname="CanResetTouchCueUsesTheActualReachAndRestoreSetting" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="876314385" result="Failed" start-time="2026-10-19 17:33:49Z" end-time="2026-10-19 17:33:56Z" duration="7.097228" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  CourtHud-can-reset-touch/OwnerMatchCanvas/EarnedMoment/MomentTitle must use the owner's Darumadrop heading face.
+  Expected: <DarumadropOne-Regular (UnityEngine.Font)>
+  But was:  <DINNextLTArabic-Bold (UnityEngine.Font)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x008f2] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\ingame-ui-overhaul-80852f\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:218
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.0 s on screen
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] CourtHud-can-reset-touch/Power0: vertices=18, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-can-reset-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] CourtHud-can-reset-touch/Power1: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] CourtHud-can-reset-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] CourtHud-can-reset-touch/Power2: vertices=1922, cull=False, alpha=1, depth=141, material=1
+[TumpGeometry] CourtHud-can-reset-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=142, material=1
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3460" name="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ClassicHudReflectsTheRealRoundRoleAndRecoveryState" methodname="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="2028094448" result="Passed" start-time="2026-10-19 17:33:56Z" end-time="2026-10-19 17:34:17Z" duration="21.070970" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled before it was shown
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] CourtHud-Classic-960x540 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1366x768 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1920x1080 cream source=252,211,159 pixel=212,220,227; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1920x1200 cream source=252,211,159 pixel=210,219,227; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1280x960 cream source=252,211,159 pixel=204,217,228; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-2560x1440 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-3440x1440 cream source=252,211,159 pixel=206,194,233; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-3840x1080 cream source=252,211,159 pixel=198,152,140; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-3840x2160 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1600x680 cream source=252,211,159 pixel=206,192,233; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-area-1920x1080 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[HudArea] Classic ordinary play: 5.24% of 1920x1080; MatchScores/ScoreRow0=0.81%, MatchScores/ScoreRow1=0.81%, MatchScores/ScoreRow2=0.81%, MatchScores/ScoreRow3=0.81%, RoundClock/ClockFace=0.81%, OwnerMatchCanvas/Reticle=0.69%, RoundClock/RoundTrack=0.35%, ScoreRow1/LocalMark=0.11%, ScoreRow0/LeaderCrown=0.04%
+[TumpUiCapture] CourtHud-moments-1920x1080 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-1600x680 cream source=252,211,159 pixel=206,192,233; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-960x540 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-hud120-contrast-1920x1080 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-hud120-contrast-1600x680 cream source=252,211,159 pixel=206,192,233; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-hud120-contrast-960x540 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-cooldown-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-charge-left-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-charge-full-right-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-refused-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-taya-reach-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-danger-1920x1080 cream source=252,211,159 pixel=211,215,221; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-danger-1600x680 cream source=252,211,159 pixel=204,212,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-recovery cream source=252,211,159 pixel=71,115,75; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-960x540 cream source=252,211,159 pixel=211,220,227; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x720 cream source=252,211,159 pixel=213,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1366x768 cream source=252,211,159 pixel=213,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1080 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1200 cream source=252,211,159 pixel=210,219,227; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x960 cream source=252,211,159 pixel=204,217,228; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-2560x1440 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3440x1440 cream source=252,211,159 pixel=205,213,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x1080 cream source=252,211,159 pixel=198,152,140; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x2160 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1600x680 cream source=252,211,159 pixel=204,212,229; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3457" name="CurrentMatchBarGeometryFitsTheNativeScreen" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.CurrentMatchBarGeometryFitsTheNativeScreen" methodname="CurrentMatchBarGeometryFitsTheNativeScreen" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="990608527" result="Passed" start-time="2026-10-19 17:34:17Z" end-time="2026-10-19 17:34:23Z" duration="5.569775" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3474" name="DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" methodname="DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1013709022" result="Passed" start-time="2026-10-19 17:34:23Z" end-time="2026-10-19 17:34:30Z" duration="7.096179" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled before it was shown
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power0: vertices=18, cull=False, alpha=1, depth=227, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=228, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power1: vertices=18, cull=False, alpha=1, depth=232, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=233, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power2: vertices=1922, cull=False, alpha=1, depth=241, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=242, material=1
+[TumpUiCapture] HarryHud-dense-status-1-960x540 cream source=252,211,159 pixel=129,151,127; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power0: vertices=18, cull=False, alpha=1, depth=227, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=228, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power1: vertices=18, cull=False, alpha=1, depth=232, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=233, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power2: vertices=1922, cull=False, alpha=1, depth=241, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=242, material=1
+[TumpUiCapture] HarryHud-dense-status-1-1600x680 cream source=252,211,159 pixel=144,49,50; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power0: vertices=18, cull=False, alpha=1, depth=227, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=228, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power1: vertices=18, cull=False, alpha=1, depth=232, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=233, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power2: vertices=1922, cull=False, alpha=1, depth=241, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=242, material=1
+[TumpUiCapture] HarryHud-dense-status-1.2-960x540 cream source=252,211,159 pixel=129,151,127; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power0: vertices=18, cull=False, alpha=1, depth=227, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=228, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power1: vertices=18, cull=False, alpha=1, depth=232, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=233, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power2: vertices=1922, cull=False, alpha=1, depth=241, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=242, material=1
+[TumpUiCapture] HarryHud-dense-status-1.2-1600x680 cream source=252,211,159 pixel=144,49,50; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3469" name="DeviceChangesThenHudScalingKeepTheAuthoredPowerMargins" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.DeviceChangesThenHudScalingKeepTheAuthoredPowerMargins" methodname="DeviceChangesThenHudScalingKeepTheAuthoredPowerMargins" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1274244981" result="Passed" start-time="2026-10-19 17:34:30Z" end-time="2026-10-19 17:34:44Z" duration="14.310990" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 8.6 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3461" name="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" methodname="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1525945853" result="Failed" start-time="2026-10-19 17:34:44Z" end-time="2026-10-19 17:34:52Z" duration="7.888353" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  CourtHud-held-skills-1280x720/OwnerMatchCanvas/HeldPowerReference/PowerDescription1 lost rendered characters despite its preferred height.
+  Expected: greater than or equal to 219
+  But was:  175
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x00b11] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\ingame-ui-overhaul-80852f\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:237
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.0 s on screen
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] OwnerHud-Hero-v1/Power0: vertices=18, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=4, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power1: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power2: vertices=1922, cull=False, alpha=1, depth=141, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=4, cull=False, alpha=1, depth=142, material=1
+[TumpUiCapture] OwnerHud-Hero-v1 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[HudArea] Hero Strike ordinary play: 7.77% of 1920x1080; UltimateSeal/Power2=0.88%, PowerSeals/Power0=0.82%, PowerSeals/Power1=0.82%, MatchScores/ScoreRow0=0.81%, MatchScores/ScoreRow1=0.81%, MatchScores/ScoreRow2=0.81%, MatchScores/ScoreRow3=0.81%, RoundClock/ClockFace=0.81%, OwnerMatchCanvas/Reticle=0.69%, RoundClock/RoundTrack=0.35%, ScoreRow1/LocalMark=0.11%, PowerSeals/RoleChip=0.06%
+[TumpGeometry] CourtHud-held-skills-960x540/Power0: vertices=18, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power1: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power2: vertices=1922, cull=False, alpha=1, depth=141, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=142, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon0: vertices=4, cull=False, alpha=1, depth=149, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon1: vertices=4, cull=False, alpha=1, depth=155, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon2: vertices=4, cull=False, alpha=1, depth=161, material=1
+[TumpUiCapture] CourtHud-held-skills-960x540 cream source=252,211,159 pixel=213,220,226; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1280x720/Power0: vertices=18, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=4, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power1: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power2: vertices=1922, cull=False, alpha=1, depth=141, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=4, cull=False, alpha=1, depth=142, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon0: vertices=4, cull=False, alpha=1, depth=149, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon1: vertices=4, cull=False, alpha=1, depth=155, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon2: vertices=4, cull=False, alpha=1, depth=161, material=1
+[TextCacheDiagnostic] CourtHud-held-skills-1280x720/OwnerMatchCanvas/HeldPowerReference/PowerDescription1 charsBefore=175 charsAfter=175 vertices=704 text=Load your held slipper for eight seconds. Its next throw retains 85% speed on the first wall bank. Overclock permits two credited banks.
+
+Defending: CLOSED CIRCUIT. Maintain a visible lock; Zapped blocks abilities only.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3478" name="InitialNormalClockDoesNotAnnounceAResume" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.InitialNormalClockDoesNotAnnounceAResume" methodname="InitialNormalClockDoesNotAnnounceAResume" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="544423232" result="Passed" start-time="2026-10-19 17:34:52Z" end-time="2026-10-19 17:34:57Z" duration="5.334893" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.0 s on screen
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3468" name="LargerPowerControlsPreserveMarginsBindingsAndFinalizedKitText" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.LargerPowerControlsPreserveMarginsBindingsAndFinalizedKitText" methodname="LargerPowerControlsPreserveMarginsBindingsAndFinalizedKitText" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1217207356" result="Passed" start-time="2026-10-19 17:34:57Z" end-time="2026-10-19 17:35:14Z" duration="16.390978" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 8.6 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] Feedback-larger-powers-960x540/Power0: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] Feedback-larger-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] Feedback-larger-powers-960x540/Power1: vertices=18, cull=False, alpha=1, depth=137, material=1
+[TumpGeometry] Feedback-larger-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=138, material=1
+[TumpGeometry] Feedback-larger-powers-960x540/Power2: vertices=1922, cull=False, alpha=1, depth=146, material=1
+[TumpGeometry] Feedback-larger-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=147, material=1
+[TumpUiCapture] Feedback-larger-powers-960x540 cream source=252,211,159 pixel=210,219,227; isolated UI camera, no ColourGrade.
+[TumpGeometry] Feedback-larger-powers-1600x680/Power0: vertices=18, cull=False, alpha=1, depth=132, material=1
+[TumpGeometry] Feedback-larger-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] Feedback-larger-powers-1600x680/Power1: vertices=18, cull=False, alpha=1, depth=137, material=1
+[TumpGeometry] Feedback-larger-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=138, material=1
+[TumpGeometry] Feedback-larger-powers-1600x680/Power2: vertices=1922, cull=False, alpha=1, depth=146, material=1
+[TumpGeometry] Feedback-larger-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=147, material=1
+[TumpUiCapture] Feedback-larger-powers-1600x680 cream source=252,211,159 pixel=215,228,219; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3459" name="LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes" methodname="LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="349417378" result="Passed" start-time="2026-10-19 17:35:14Z" end-time="2026-10-19 17:35:20Z" duration="6.577681" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] CourtHud-score-five-digit-960x540 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-negative-six-digit-1920x1080 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-negative-widest-1280x720 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-six-digit-phone-2340x1080 cream source=252,211,159 pixel=205,190,234; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-minimum-int-accessible-1600x680 cream source=252,211,159 pixel=206,190,234; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3481" name="OrdinaryNativeToastStillExpiresWhilePaused" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.OrdinaryNativeToastStillExpiresWhilePaused" methodname="OrdinaryNativeToastStillExpiresWhilePaused" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1962050446" result="Passed" start-time="2026-10-19 17:35:20Z" end-time="2026-10-19 17:35:25Z" duration="5.319266" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3458" name="OrdinaryRoundStandingsAreCenteredAndReplaceTheLiveHud" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.OrdinaryRoundStandingsAreCenteredAndReplaceTheLiveHud" methodname="OrdinaryRoundStandingsAreCenteredAndReplaceTheLiveHud" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="720143235" result="Passed" start-time="2026-10-19 17:35:25Z" end-time="2026-10-19 17:35:31Z" duration="6.009083" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled before it was shown
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Feedback0930-round-break-960x540 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Feedback0930-round-break-1600x680 cream source=252,211,159 pixel=206,190,234; isolated UI camera, no ColourGrade.
+[Slice] round 2 begins, taya is seat 1
+]]></output>
+            </test-case>
+            <test-case id="3466" name="PlantPromptRequiresAnEligibleOpponentPlantAndTracksThePull" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.PlantPromptRequiresAnEligibleOpponentPlantAndTracksThePull" methodname="PlantPromptRequiresAnEligibleOpponentPlantAndTracksThePull" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="758751568" result="Passed" start-time="2026-10-19 17:35:31Z" end-time="2026-10-19 17:35:39Z" duration="7.263673" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] CourtHud-pull-available/Power0: vertices=18, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] CourtHud-pull-available/PowerIcon: vertices=4, cull=False, alpha=1, depth=130, material=1
+[TumpGeometry] CourtHud-pull-available/Power1: vertices=18, cull=False, alpha=1, depth=134, material=1
+[TumpGeometry] CourtHud-pull-available/PowerIcon: vertices=4, cull=False, alpha=1, depth=135, material=1
+[TumpGeometry] CourtHud-pull-available/Power2: vertices=1922, cull=False, alpha=1, depth=143, material=1
+[TumpGeometry] CourtHud-pull-available/PowerIcon: vertices=4, cull=False, alpha=1, depth=144, material=1
+[TumpUiCapture] CourtHud-pull-available cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3467" name="ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow" methodname="ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1457415018" result="Failed" start-time="2026-10-19 17:35:39Z" end-time="2026-10-19 17:35:53Z" duration="14.124062" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 64
+  But was:  100.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeHudTests+<ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow>d__14.MoveNext () [0x00288] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\ingame-ui-overhaul-80852f\Assets\TumbangPreso\Tests\PlayMode\TumpNativeHudTests.cs:609
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 8.6 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3480" name="RealPauseSlowAndResumeChangesStillAnnounce" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RealPauseSlowAndResumeChangesStillAnnounce" methodname="RealPauseSlowAndResumeChangesStillAnnounce" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="128798140" result="Passed" start-time="2026-10-19 17:35:53Z" end-time="2026-10-19 17:35:58Z" duration="5.088682" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3479" name="RepeatedResumeSnapshotsDoNotRenewTheToast" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RepeatedResumeSnapshotsDoNotRenewTheToast" methodname="RepeatedResumeSnapshotsDoNotRenewTheToast" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="590984515" result="Passed" start-time="2026-10-19 17:35:58Z" end-time="2026-10-19 17:36:07Z" duration="8.997650" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled before it was shown
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3472" name="RequirementRefusalReachesWarningWithoutCastingAndFeedStaysSeparate" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RequirementRefusalReachesWarningWithoutCastingAndFeedStaysSeparate" methodname="RequirementRefusalReachesWarningWithoutCastingAndFeedStaysSeparate" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1174958276" result="Passed" start-time="2026-10-19 17:36:07Z" end-time="2026-10-19 17:36:21Z" duration="14.042816" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled before it was shown
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] HarryHud-refusal-feed-960x540/Power0: vertices=18, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] HarryHud-refusal-feed-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] HarryHud-refusal-feed-960x540/Power1: vertices=18, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] HarryHud-refusal-feed-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=134, material=1
+[TumpGeometry] HarryHud-refusal-feed-960x540/Power2: vertices=1922, cull=False, alpha=1, depth=142, material=1
+[TumpGeometry] HarryHud-refusal-feed-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=143, material=1
+[TumpUiCapture] HarryHud-refusal-feed-960x540 cream source=252,211,159 pixel=212,220,226; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-refusal-feed-1600x680/Power0: vertices=18, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] HarryHud-refusal-feed-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] HarryHud-refusal-feed-1600x680/Power1: vertices=18, cull=False, alpha=1, depth=133, material=1
+[TumpGeometry] HarryHud-refusal-feed-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=134, material=1
+[TumpGeometry] HarryHud-refusal-feed-1600x680/Power2: vertices=1922, cull=False, alpha=1, depth=142, material=1
+[TumpGeometry] HarryHud-refusal-feed-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=143, material=1
+[TumpUiCapture] HarryHud-refusal-feed-1600x680 cream source=252,211,159 pixel=206,190,234; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3470" name="RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions" methodname="RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="442464632" result="Passed" start-time="2026-10-19 17:36:21Z" end-time="2026-10-19 17:36:38Z" duration="17.437115" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 8.6 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Feedback-retrieve-xelu cream source=252,211,159 pixel=211,220,227; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Feedback-reset-xelu cream source=252,211,159 pixel=206,186,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Feedback-resetting-can-caption cream source=252,211,159 pixel=212,220,227; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3471" name="RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds" methodname="RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1003441598" result="Passed" start-time="2026-10-19 17:36:38Z" end-time="2026-10-19 17:36:45Z" duration="6.842328" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.0 s on screen
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] HarryHud-states-1-960x540/Power0: vertices=18, cull=False, alpha=1, depth=159, material=1
+[TumpGeometry] HarryHud-states-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=160, material=1
+[TumpGeometry] HarryHud-states-1-960x540/Power1: vertices=18, cull=False, alpha=1, depth=164, material=1
+[TumpGeometry] HarryHud-states-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=165, material=1
+[TumpGeometry] HarryHud-states-1-960x540/Power2: vertices=1922, cull=False, alpha=1, depth=173, material=1
+[TumpGeometry] HarryHud-states-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=174, material=1
+[TumpUiCapture] HarryHud-states-1-960x540 cream source=252,211,159 pixel=180,202,134; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-states-1-1600x680/Power0: vertices=18, cull=False, alpha=1, depth=159, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=160, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/Power1: vertices=18, cull=False, alpha=1, depth=164, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=165, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/Power2: vertices=1922, cull=False, alpha=1, depth=173, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=174, material=1
+[TumpUiCapture] HarryHud-states-1-1600x680 cream source=252,211,159 pixel=149,50,51; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-states-1.2-960x540/Power0: vertices=18, cull=False, alpha=1, depth=159, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=160, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/Power1: vertices=18, cull=False, alpha=1, depth=164, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=165, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/Power2: vertices=1922, cull=False, alpha=1, depth=173, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=174, material=1
+[TumpUiCapture] HarryHud-states-1.2-960x540 cream source=252,211,159 pixel=129,151,127; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-states-1.2-1600x680/Power0: vertices=18, cull=False, alpha=1, depth=159, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=160, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/Power1: vertices=18, cull=False, alpha=1, depth=164, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=165, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/Power2: vertices=1922, cull=False, alpha=1, depth=173, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=174, material=1
+[TumpUiCapture] HarryHud-states-1.2-1600x680 cream source=252,211,159 pixel=144,49,50; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3476" name="RevisedWarningsFollowRefusedInputsAndHideForSpectators" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RevisedWarningsFollowRefusedInputsAndHideForSpectators" methodname="RevisedWarningsFollowRefusedInputsAndHideForSpectators" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1727066531" result="Failed" start-time="2026-10-19 17:36:45Z" end-time="2026-10-19 17:36:54Z" duration="8.380442" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 40 but was 0. Strings differ at index 0.
+  Expected: "CANNOT THROW - CAN MUST BE UPRIGHT FIRST"
+  But was:  <string.Empty>
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeHudTests+<RevisedWarningsFollowRefusedInputsAndHideForSpectators>d__24.MoveNext () [0x001fe] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\ingame-ui-overhaul-80852f\Assets\TumbangPreso\Tests\PlayMode\TumpNativeHudTests.cs:1111
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3462" name="RootedPromptTracksLiveBindingsDevicesAndHeldProgress" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RootedPromptTracksLiveBindingsDevicesAndHeldProgress" methodname="RootedPromptTracksLiveBindingsDevicesAndHeldProgress" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1731645677" result="Passed" start-time="2026-10-19 17:36:54Z" end-time="2026-10-19 17:37:07Z" duration="13.184835" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[RootedInput] device=True key=True action=True/True reader=True intent=True parked=False locked=False held=False local=True rooted=True progress=0.061
+[TumpGeometry] CourtHud-rooted-keyboard/Power0: vertices=18, cull=False, alpha=1, depth=143, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/PowerIcon: vertices=4, cull=False, alpha=1, depth=144, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/Power1: vertices=18, cull=False, alpha=1, depth=148, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/PowerIcon: vertices=4, cull=False, alpha=1, depth=149, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/Power2: vertices=1922, cull=False, alpha=1, depth=157, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/PowerIcon: vertices=4, cull=False, alpha=1, depth=158, material=1
+[TumpUiCapture] CourtHud-rooted-keyboard cream source=252,211,159 pixel=129,151,127; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-rooted-pad/Power0: vertices=18, cull=False, alpha=1, depth=143, material=1
+[TumpGeometry] CourtHud-rooted-pad/PowerIcon: vertices=4, cull=False, alpha=1, depth=144, material=1
+[TumpGeometry] CourtHud-rooted-pad/Power1: vertices=18, cull=False, alpha=1, depth=148, material=1
+[TumpGeometry] CourtHud-rooted-pad/PowerIcon: vertices=4, cull=False, alpha=1, depth=149, material=1
+[TumpGeometry] CourtHud-rooted-pad/Power2: vertices=1922, cull=False, alpha=1, depth=157, material=1
+[TumpGeometry] CourtHud-rooted-pad/PowerIcon: vertices=4, cull=False, alpha=1, depth=158, material=1
+[TumpUiCapture] CourtHud-rooted-pad cream source=252,211,159 pixel=129,151,127; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-rooted-touch/Power0: vertices=18, cull=False, alpha=1, depth=138, material=1
+[TumpGeometry] CourtHud-rooted-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=139, material=1
+[TumpGeometry] CourtHud-rooted-touch/Power1: vertices=18, cull=False, alpha=1, depth=143, material=1
+[TumpGeometry] CourtHud-rooted-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=144, material=1
+[TumpGeometry] CourtHud-rooted-touch/Power2: vertices=1922, cull=False, alpha=1, depth=152, material=1
+[TumpGeometry] CourtHud-rooted-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=153, material=1
+[TumpUiCapture] CourtHud-rooted-touch cream source=252,211,159 pixel=129,151,127; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3473" name="ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion" methodname="ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1126597553" result="Passed" start-time="2026-10-19 17:37:07Z" end-time="2026-10-19 17:37:13Z" duration="5.785711" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] HarryHud-feed-stack-960x540 cream source=252,211,159 pixel=213,221,226; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3465" name="TayaWhoseCanIsDownSeesTheOffenseFrameUntilTheReset" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.TayaWhoseCanIsDownSeesTheOffenseFrameUntilTheReset" methodname="TayaWhoseCanIsDownSeesTheOffenseFrameUntilTheReset" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1986829" result="Passed" start-time="2026-10-19 17:37:13Z" end-time="2026-10-19 17:37:19Z" duration="6.859653" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 0
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.0 s on screen
+[Slice] round 1 begins, taya is seat 0
+[CanMarker] taya: present=True visible=True state=DOWN
+[TumpUiCapture] CourtHud-taya-can-down-1280x720 cream source=252,211,159 pixel=203,190,234; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3477" name="TimedRecoveryShowsStateWithoutMashPromptsOrPressCounts" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.TimedRecoveryShowsStateWithoutMashPromptsOrPressCounts" methodname="TimedRecoveryShowsStateWithoutMashPromptsOrPressCounts" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="248337364" result="Failed" start-time="2026-10-19 17:37:19Z" end-time="2026-10-19 17:37:24Z" duration="5.040348" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeHudTests+<TimedRecoveryShowsStateWithoutMashPromptsOrPressCounts>d__25.MoveNext () [0x00118] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\ingame-ui-overhaul-80852f\Assets\TumbangPreso\Tests\PlayMode\TumpNativeHudTests.cs:1132
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="3475" name="WarningStripIsThinSingleLineAndMatchesActionOpacity" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.WarningStripIsThinSingleLineAndMatchesActionOpacity" methodname="WarningStripIsThinSingleLineAndMatchesActionOpacity" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1808963712" result="Passed" start-time="2026-10-19 17:37:24Z" end-time="2026-10-19 17:37:32Z" duration="7.120257" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: the host's countdown arrived during the opening and cut it
+[Arrival] offline: cancelled after 0.1 s on screen
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Warning-strip-1-960 cream source=252,211,159 pixel=249,205,155; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1-1600 cream source=252,211,159 pixel=252,210,158; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1.2-960 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1.2-1600 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

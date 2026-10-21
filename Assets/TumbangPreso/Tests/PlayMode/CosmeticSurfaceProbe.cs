@@ -309,69 +309,11 @@ namespace TumbangPreso.PlayTests
 
         private IEnumerator OpenThePicker(StringBuilder report)
         {
-            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            yield return new WaitForSecondsRealtime(1.0f);
-
-            // ⚠️ CLASSIC, because it is the shorter of the two columns and therefore the one the
-            // COLOURS row is most likely to push off the bottom of. Hero Strike's column is
-            // already sized from measured ability rows.
-            SceneFlow.SelectedMode = GameMode.Classic;
-
-            // ⚠️⚠️ OPENED THROUGH `CharacterButton`, NOT BY ACTIVATING THE NODE, AND THE
-            // DIFFERENCE IS A WHOLE SCREEN. `ConvertedMatchSetup.OpenCharacterSelect` also calls
-            // `SetAsLastSibling` on the panel, and its own note says why: the lobby's runtime
-            // chrome is built after the authored panel, so hierarchy order alone draws the rail
-            // and the tabs over the picker's backdrop. **A probe that activates the node skips
-            // that and photographs a screen with somebody else's furniture on top of it** —
-            // which is `CLAUDE.md` § 6.2b's whole complaint, committed by the probe rather than
-            // by the game. The first run of this file did exactly that and produced a shot with
-            // MATCH SETTINGS drawn through the CHOOSE button.
-            var opener = FindButton("CharacterButton");
-            Assert.IsNotNull(opener, "MatchSetup has no CharacterButton to open the picker with");
-            opener.onClick.Invoke();
-
-            var panel = Find("CharacterSelectPanel");
-            Assert.IsNotNull(panel, "pressing CharacterButton opened no CharacterSelectPanel");
-            Assert.IsTrue(panel.activeInHierarchy, "the picker did not open");
-
-            for (int i = 0; i < 8; i++) yield return null;
-            yield return new WaitForSecondsRealtime(0.5f);
-
-            _camera = Camera.main;
-
-            if (_camera == null)
-                foreach (var cam in Object.FindObjectsByType<Camera>(FindObjectsInactive.Exclude,
-                                                                     FindObjectsSortMode.None))
-                {
-                    if (cam == null || cam.targetTexture != null) continue;
-                    _camera = cam;
-                    break;
-                }
-
-            Assert.IsNotNull(_camera, "no camera in MatchSetup to render through");
-
-            // ⚠️ THE SAME TRICK EVERY UI PROBE IN THIS PROJECT USES, and the only one that works
-            // in batch mode: `Screen.SetResolution` does nothing offscreen, so the canvas renders
-            // through a camera whose target texture is the resolution.
-            foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,
-                                                               FindObjectsSortMode.None))
-            {
-                if (c.renderMode != RenderMode.ScreenSpaceOverlay) continue;
-
-                c.renderMode = RenderMode.ScreenSpaceCamera;
-                c.worldCamera = _camera;
-                c.planeDistance = _camera.nearClipPlane + 0.01f;
-                _canvases.Add(c);
-            }
-
-            _target = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
-            _camera.targetTexture = _target;
-
-            for (int i = 0; i < 4; i++) yield return null;
-
-            report.AppendLine($"picker open, camera {_camera.name}, {_canvases.Count} canvases");
+            yield return HubFlowTests.OpenHome();
+            yield return HubFlowTests.Press("HeroButton");
+            Assert.IsInstanceOf<TumbangPreso.UI.Hub.HubHero>(TumbangPreso.UI.Hub.TumpHub.Current.Top);
+            Assert.IsNotNull(TumbangPreso.UI.Hub.TumpHub.Current.Top.GetComponentInChildren<ModelPreview>());
+            report.AppendLine("HERO opened through its HOME door; preset colour controls stay absent.");
         }
 
         /// <summary>⚠️ NO `WaitForEndOfFrame`. It never resumes in batch mode and hangs the whole

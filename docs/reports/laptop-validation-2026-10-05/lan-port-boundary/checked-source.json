@@ -1,0 +1,8 @@
+{
+  "normalizedLFSourceSHA256": {
+    "LanBeacon-original.cs": "dade218b3003b643ba3f41604ee0b5f6415f81ae34c30a60b1805daf78fe0c2d",
+    "LanBeacon-candidate.cs": "204876dd92b89f703cf206837268857a81fdaec0d825937491c9c7be3705ec43",
+    "LobbyAndSettingsTests.cs": "0664186898a4a3995ba07eaf11d97eebc68a92a1f3f32553e51e2a38661cdcc0"
+  },
+  "productionPublicationOwner": "Desktop; main production/test files unchanged by laptop"
+}

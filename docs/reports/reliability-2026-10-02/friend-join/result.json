@@ -1,0 +1,34 @@
+{
+  "unity": "6000.5.8f1",
+  "checkout": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "profile": "friend-join-admission1002",
+  "baselineSource": "ece6ee930",
+  "baseline": {
+    "total": 3,
+    "passed": 0,
+    "behaviorFailures": 1,
+    "fixtureFailures": 2,
+    "durationSeconds": 17.506879
+  },
+  "final": {
+    "filter": "TumbangPreso.PlayTests.PlayerHubFriendJoinTests.HubEntersClientRoomOnlyAfterConnectionAndSeatAdmission",
+    "total": 1,
+    "passed": 1,
+    "durationSeconds": 5.3105253
+  },
+  "fixtureRepairs": 1,
+  "protectedInputs": {
+    "Assets/TumbangPreso/Runtime/UI/LobbyJoinPanel.cs": "65040D6E5F427E7D340E1923BA0594BF9BF85591CEA4B9C90B4AC016DA105F10",
+    "Assets/TumbangPreso/Runtime/Net/SocialStore.cs": "B32FF538FA76DCEA7CF86E0227B560954696F04F398CAC051E8ED3922320A266"
+  },
+  "terminalGuardSessions": [
+    90938,
+    21838,
+    61254
+  ],
+  "guardSnapshots": [
+    "profile-preservation-a30b2bc4e24e",
+    "profile-preservation-c7bcd584fa58",
+    "profile-preservation-9d0d70565fd5"
+  ]
+}

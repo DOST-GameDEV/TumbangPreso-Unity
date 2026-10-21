@@ -46,7 +46,16 @@ namespace TumbangPreso.Net
     {
         public const string DefaultProfile = "default";
 
-        private static string _customProfile;
+        // BootSting creates PlayerAccount at BeforeSplashScreen, before NetBootstrap's
+        // BeforeSceneLoad hook. Select the same launch profile as local stores before
+        // that first account sign-in can touch the default authentication cache.
+        private static string _customProfile = ReadLaunchProfile();
+
+        private static string ReadLaunchProfile()
+        {
+            string profile = ProfilePaths.LaunchProfile();
+            return string.IsNullOrWhiteSpace(profile) ? null : profile.Trim();
+        }
         private static string _overrideTokenForTesting;
 
         // ⚠ ONE ATTEMPT AT A TIME, AND THE TASK ITSELF IS THE CACHE. Sign-in used to re-run
@@ -184,10 +193,9 @@ namespace TumbangPreso.Net
 
             _customProfile = next;
 
-            // ⚠ THE CACHED ATTEMPT BELONGED TO THE OLD PROFILE. -tp-profile is read at
-            // BeforeSceneLoad and the boot attempt fires at AfterSceneLoad, so in practice this
-            // never triggers. It exists so that a switch made later cannot report the previous
-            // profile's session as this one's.
+            // A deliberate profile change invalidates the old answer. Normal startup has
+            // already selected the launch profile, so NetBootstrap repeats it harmlessly
+            // without dropping PlayerAccount's earlier in-flight sign-in.
             _attempt = null;
             State = OnlineState.Unknown;
             StateReason = "";
@@ -198,11 +206,16 @@ namespace TumbangPreso.Net
         /// Runs the one sign-in attempt this session gets, at boot, before any menu can ask for
         /// it. Every later caller awaits the same attempt.
         /// </summary>
-        /// ⚠ AfterSceneLoad, NOT BeforeSceneLoad. NetBootstrap reads -tp-profile at
-        /// BeforeSceneLoad, and two hooks of the same load type run in an undefined order, so
-        /// signing in at BeforeSceneLoad would race the profile that decides which UGS session
-        /// this instance gets. That race is exactly what §12's two-instances-collide warning is
-        /// about.
+        /// PlayerAccount may already be signing in from the boot sting's earlier service
+        /// creation. The launch profile is selected at first access and this joins its task.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void BeginPlaySession()
+        {
+            // With domain reload disabled the cached successful task survives, while
+            // Unity Services starts a new lifetime. Retain the selected launch profile.
+            ForgetCurrentSession();
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void SignInAtBoot()
         {
@@ -264,7 +277,8 @@ namespace TumbangPreso.Net
             // run without a display or interactive session and operate on offline tokens.
             var launchArguments=Environment.GetCommandLineArgs();
             bool localUiReview=Array.IndexOf(launchArguments,"-tp-uireview")>=0 && Array.IndexOf(launchArguments,"-tp-tournament")<0;
-            if (Application.isBatchMode || localUiReview)
+            bool localGraphicsReview=Array.IndexOf(launchArguments,"-tp-graphicsreport")>=0 && Array.IndexOf(launchArguments,"-tp-tournament")<0;
+            if (Application.isBatchMode || localUiReview || localGraphicsReview)
             {
                 // ⚠️ RECORDED RATHER THAN RE-ASKED. This is a property of the build, so it joins
                 // `NotLinked` on the permanent side of the retry split above: retrying a headless
@@ -273,6 +287,7 @@ namespace TumbangPreso.Net
                 _buildCannotSignIn = true;
                 Settle(OnlineState.Unreachable,
                     localUiReview ? "Online sign-in is disabled for this local UI review." :
+                    localGraphicsReview ? "Online sign-in is disabled for this local graphics review." :
                     "UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.");
                 return false;
             }
@@ -318,7 +333,7 @@ namespace TumbangPreso.Net
 
                 Settle(OnlineState.SignedIn,
                     $"Signed in to UGS as {AuthenticationService.Instance.PlayerId} on profile " +
-                    $"{Profile}. Relay and Lobby are available.");
+                    $"{AuthenticationService.Instance.Profile}. Relay and Lobby are available.");
                 return true;
             }
             catch (ServicesInitializationException e)

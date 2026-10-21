@@ -1,0 +1,29 @@
+wrote /workspace/scratch/0ed9da4aed7f/tump-qa/dante-boulder-motion/candidate.glb  (1048332 bytes)
+{
+  "file": "candidate.glb",
+  "clip": "hero-dante-boulder",
+  "duration": 0.88,
+  "samples": 57,
+  "authored_height": 0.785,
+  "original_clips_preserved": 36,
+  "original_binary_preserved": true,
+  "punch": 0.32,
+  "deepest_dip": 0.0,
+  "deepest_dip_at": 0.0,
+  "grounded_beats": [
+    0,
+    0.14,
+    0.32,
+    0.43,
+    0.6,
+    0.88
+  ],
+  "root_y_range": [
+    0.0,
+    0.0
+  ],
+  "largest_plant": 0.0
+}
+Blender 4.3.2
+
+Blender quit

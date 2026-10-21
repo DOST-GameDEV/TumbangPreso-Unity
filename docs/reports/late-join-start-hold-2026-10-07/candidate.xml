@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:03Z" duration="0.8329641">
+  <test-suite type="TestSuite" id="3611" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2113" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:03Z" duration="0.832964" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3603" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2113" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:03Z" duration="0.816168" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17097" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3604" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2113" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:03Z" duration="0.806125" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3607" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2111" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:03Z" duration="0.796760" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2038" name="LateJoinReadyGateTests" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:03Z" duration="0.759506" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2044" name="AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" methodname="AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="128190039" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:02Z" duration="0.263220" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2045" name="AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" methodname="AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="372128097" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:02Z" duration="0.054266" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2046" name="HostRetainsItsNormalStartBarrier" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.HostRetainsItsNormalStartBarrier" methodname="HostRetainsItsNormalStartBarrier" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1307975222" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:02Z" duration="0.051174" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2043" name="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" methodname="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1608410959" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:02Z" duration="0.058461" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2042" name="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.PrestartSnapshotDoesNotReleaseTheRealStartBarrier" methodname="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1803534109" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:02Z" duration="0.073149" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2041" name="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RebindingDuringAnExistingRoundDoesNotReplayTheOpening" methodname="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1150363357" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:02Z" duration="0.093617" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2040" name="RunningSnapshotCancelsAnIntroductionStillInFlight" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotCancelsAnIntroductionStillInFlight" methodname="RunningSnapshotCancelsAnIntroductionStillInFlight" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="168356670" result="Passed" start-time="2026-10-07 12:38:02Z" end-time="2026-10-07 12:38:03Z" duration="0.108592" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2039" name="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" methodname="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1356810154" result="Passed" start-time="2026-10-07 12:38:03Z" end-time="2026-10-07 12:38:03Z" duration="0.043176" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

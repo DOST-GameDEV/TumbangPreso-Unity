@@ -1,0 +1,78 @@
+Mono path[0] = 'C:/Users/Matthew/dev/tump-integration1003/Builds/integration-f4890bdd4-1004/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/Matthew/dev/tump-integration1003/Builds/integration-f4890bdd4-1004/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/Matthew/dev/tump-integration1003/Builds/integration-f4890bdd4-1004/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4050 Laptop GPU (ID=0x28a1)
+    Vendor:   NVIDIA
+    VRAM:     5936 MB
+    Driver:   31.0.15.4618
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.031 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Audio] loaded 65 of 65 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 0.655000 ms
+[Build] TUMBANG PRESO 1.0.0 | f4890bdd43ae+dirty | protocol 146 | StandaloneWindows64
+[Net] connecting to 192.168.1.7:49163
+[NetBoot] join requested to 192.168.1.7:49163: connecting
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/Matthew/dev/tump-integration1003/Builds/integration-f4890bdd4-1004/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/integration-f4890bdd4-1004/TumbangPreso_Data/sharedassets0.resource
+[Net] connected
+[Net] connected as seat 2
+[NetBoot] join admission: seat assigned
+[Link] Poor at 408 ms round trip (client).
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.351500 ms
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 63 unused Assets to reduce memory usage. Loaded Objects now: 14983.
+Total: 3.088400 ms (FindLiveObjects: 0.653100 ms CreateObjectMapping: 0.903700 ms MarkObjects: 1.407200 ms  DeleteObjects: 0.124300 ms)
+
+[Link] Bad at 888 ms round trip (client).
+[ArenaPrewarm] drew 20 views in 0.36 s.
+[HubLoading] Eskinita ready after 2.39 s.
+[Link] Poor at 203 ms round trip (client).
+[Slice] round 1 begins, taya is seat 0
+[Link] Good at 50 ms round trip (client).
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] disconnected: [Disconnect Event][Client-1][TransportClientId-4294967296][ClosedByRemote] Connection was closed by remote endpoint.
+[Abandon] HostLost: ABANDONED at round 5 of 8; this peer may no longer resolve anything
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 8.321500 ms
+Unloading 739 unused Assets to reduce memory usage. Loaded Objects now: 6868.
+Total: 3.662400 ms (FindLiveObjects: 0.213000 ms CreateObjectMapping: 0.782600 ms MarkObjects: 1.697200 ms  DeleteObjects: 0.969300 ms)
+
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/dev/tump-integration1003/Builds/integration-f4890bdd4-1004/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/integration-f4890bdd4-1004/TumbangPreso_Data/resources.resource
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code P63M
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

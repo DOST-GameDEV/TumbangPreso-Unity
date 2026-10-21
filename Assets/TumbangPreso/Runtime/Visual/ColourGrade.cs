@@ -22,7 +22,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     [RequireComponent(typeof(Camera))]
     [DisallowMultipleComponent]
-    public sealed class ColourGrade : MonoBehaviour
+    public sealed partial class ColourGrade : MonoBehaviour
     {
         [SerializeField] private float _brightness = 1.0f;
         [SerializeField] private float _contrast = 1.0f;
@@ -107,6 +107,8 @@ namespace TumbangPreso.Visual
         // second opinion about how far through it is would show up as the frame and the world
         // disagreeing for a frame or two at each end.
 
+        public float RecordedBrightness=>_eventBrightness;
+        public float RecordedSaturation=>_eventSaturation;
         private float _eventBrightness = 1.0f;
         private float _eventSaturation = 1.0f;
 
@@ -202,13 +204,22 @@ namespace TumbangPreso.Visual
         }
 
         private Camera _camera;
+        public bool HauntedSight => HauntedPerception.Applies(_camera);
+        /// <summary>Nemu's PRUSISYON: the possessed player's own world drains toward grey (`PossessedPerception`).</summary>
+        public float PossessedSight => PossessedPerception.Weight(_camera);
+        private float PossessedSaturation => Mathf.Lerp(1.0f, PossessedPerception.Saturation, PossessedSight);
+        private float PossessedBrightness => Mathf.Lerp(1.0f, PossessedPerception.Brightness, PossessedSight);
 
         private bool IsIdentity =>
             Mathf.Approximately(_brightness * _eventBrightness, 1.0f)
             && Mathf.Approximately(_contrast, 1.0f)
             && Mathf.Approximately(_saturation * _eventSaturation, 1.0f)
             && _exposure <= 0.0f
-            && EffectiveChromatic <= 0.0f;
+            && EffectiveChromatic <= 0.0f
+            && BrightLookWeight <= 0.0f
+            && !HauntedSight
+            && PossessedSight <= 0.0f
+            && ConcussedPerception.Weight(_camera) <= 0.0f;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
@@ -226,9 +237,13 @@ namespace TumbangPreso.Visual
         {
             PostAntiAlias.ReportOnce(_camera, source);
 
-            if (IsIdentity)
+            // Nemu's LET THEM IN: while anyone is possessed every match view takes her dusk (`NemuWorld`).
+            float dusk = NemuWorld.WeightFor(_camera);
+
+            if (IsIdentity && !HasExperiments)
             {
-                Graphics.Blit(source, destination);
+                if (dusk > 0.0f) NemuWorld.Blit(source, destination, dusk);
+                else Graphics.Blit(source, destination);
                 return;
             }
 
@@ -249,12 +264,26 @@ namespace TumbangPreso.Visual
                 _material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
             }
 
-            _material.SetFloat(BrightnessId, _brightness * _eventBrightness);
+            _material.SetFloat(BrightnessId, _brightness * _eventBrightness * PossessedBrightness);
             _material.SetFloat(ContrastId, _contrast);
-            _material.SetFloat(SaturationId, _saturation * _eventSaturation);
+            _material.SetFloat(SaturationId, _saturation * _eventSaturation * PossessedSaturation);
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
             _material.SetFloat(ChromaticId, EffectiveChromatic);
+            bool haunted = HauntedSight;
+            _material.SetFloat("_HauntedSight", haunted ? 1f : 0f);
+            // Dante's CONCUSSED: the victim's double image (`ConcussedPerception`).
+            float concussed = ConcussedPerception.Weight(_camera);
+            Vector2 ghost = concussed > 0f ? ConcussedPerception.GhostOffset(_camera, source.width, source.height) : Vector2.zero;
+            _material.SetVector("_ConcussGhost", new Vector4(ghost.x, ghost.y, concussed * ConcussedPerception.GhostWeight, 0f));
+            if (haunted)
+            {
+                // Use this camera's projection, including its current aspect/FOV and lens
+                // shift. A full-screen Blit must not inherit another camera's view globals.
+                var projection = _camera.projectionMatrix;
+                _material.SetVector("_HauntedViewScale", _camera.orthographic ? Vector4.zero :
+                    new Vector4(1f / projection.m00, 1f / projection.m11, projection.m02, projection.m12));
+            }
 
             // ⚠️ THE SHAPE OF THE SPLIT IS THE STYLE'S, NOT THE PULSE'S, so a hit taken in
             // Chromatic mode fringes radially like everything else in that frame: they are the
@@ -263,11 +292,25 @@ namespace TumbangPreso.Visual
             _material.SetFloat(ChromaticRadialId,
                                Settings.RenderStyles.RadialSplit ? 1.0f : 0.0f);
 
-            Graphics.Blit(source, destination, _material);
+            var protectedMask=PrepareExperimentMaterial(source);
+            var bloom=PrepareBrightLook(source);
+            var graded = dusk > 0.0f ? RenderTexture.GetTemporary(source.descriptor) : null;
+            try
+            {
+                Graphics.Blit(source, graded != null ? graded : destination, _material, 0);
+                if (graded != null) NemuWorld.Blit(graded, destination, dusk);
+            }
+            finally
+            {
+                if(protectedMask!=null)RenderTexture.ReleaseTemporary(protectedMask);
+                if(bloom!=null)RenderTexture.ReleaseTemporary(bloom);
+                if(graded!=null)RenderTexture.ReleaseTemporary(graded);
+            }
         }
 
         private void OnDestroy()
         {
+            DisposeExperiments();
             if (_material != null) DestroyImmediate(_material);
         }
     }

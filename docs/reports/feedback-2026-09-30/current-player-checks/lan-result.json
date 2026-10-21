@@ -1,0 +1,121 @@
+{
+  "passed": false,
+  "faults": [
+    "host: the host never reached round 1 (round 0). Two peers agreeing that nothing happened is not evidence about a link",
+    "client: the client fell back to hosting its own lobby: it lost the connection and this row expected it to stay joined for the whole run",
+    "host did not cross a real round boundary.",
+    "client did not cross a real round boundary."
+  ],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\feedback-current-player-1001\\lan\\demo-clean-direct\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 0,
+        "travelled": 47.6
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 49.7
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 39.9
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 38.0
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "114",
+    "sampled": "163.0",
+    "round": "0",
+    "active": "False",
+    "defender": "0",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "7F16D457",
+    "hash": "5D1D0E62"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\feedback-current-player-1001\\lan\\demo-clean-direct\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 0,
+        "travelled": 49.1
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 0.2
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 0.2
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 0.2
+      }
+    ],
+    "role": "HOST",
+    "networked": "False",
+    "slot": "0",
+    "protocol": "114",
+    "sampled": "150.0",
+    "round": "0",
+    "active": "False",
+    "defender": "0",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "56E3D5DA",
+    "hash": "ECE7CADA"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-current-player-1001\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-current-player-1001\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "36cdbf3c41afbb287e4f4890046a26373b5a4e082a478705fdd7a3a61182da21",
+  "clientRuntimeSha256": "36cdbf3c41afbb287e4f4890046a26373b5a4e082a478705fdd7a3a61182da21",
+  "sharedInputUnchanged": true
+}

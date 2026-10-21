@@ -1,0 +1,46 @@
+{
+  "base": "88b4c536d89ac4c743c553a33de550956093375e",
+  "protocol": 81,
+  "scope": "Bounded ultimate identity codec, matching-kit guards and changed duration wire",
+  "result": "Passed",
+  "total": 3,
+  "duration": 0.2267563,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "F167967A848627DEAA8948E63B173611951C6A624EC516C684995785D9E0AA17"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SharedUltimate.cs",
+      "sha256": "356986D9CB5DC1A6FAB6BBAF2AB48FD60AA889915B712900482A9E0ADEE279E2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/AbilityNetworking.cs",
+      "sha256": "5C84C5BDD5559F1FE5C6AF28A6242A843ECA552756C119BFEECE6D30651545CD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.UltimatePhase.cs",
+      "sha256": "720B30D4F1F12AD2139131786F14F6C5F24136199712EBDF1BA911826CE42100"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "69A847355248381AD0735434DDFA0060A3F86F0471791786E04532DF27C18CD7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "D69AC584D510DB0DE8C68F47E2829271ECD3F325D149C6758CCE14D12A6E9518"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "52131E7C11D31CF6CB4FF7EF4B79BDD9C93754BD05D1FCA0FBA2465B11959E22"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6202015744,
+  "retryCount": 0,
+  "unverified": [
+    "Live host request admission",
+    "Actual peers/ranked/reworks",
+    "Full visual playback"
+  ]
+}

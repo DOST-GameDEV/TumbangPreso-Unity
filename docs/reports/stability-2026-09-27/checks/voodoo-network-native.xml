@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.239473">
+  <test-suite type="TestSuite" id="1927" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.239473" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1921" name="TumbangPreso.PlayTests.dll" fullname="Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.228321" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61220" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1922" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.221855" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1923" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="736" result="Passed" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.215717" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1729" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.190806" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1730" name="VoodooBodyPrefixIsBoundedAndLeavesTheExistingAimTailIntact" fullname="TumbangPreso.PlayTests.SkillReceiptTests.VoodooBodyPrefixIsBoundedAndLeavesTheExistingAimTailIntact" methodname="VoodooBodyPrefixIsBoundedAndLeavesTheExistingAimTailIntact" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1156100823" result="Passed" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.042843" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1733" name="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" fullname="TumbangPreso.PlayTests.SkillReceiptTests.VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" methodname="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1964504832" result="Passed" start-time="2026-09-27 11:39:04Z" end-time="2026-09-27 11:39:04Z" duration="0.135823" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output>Saving results to: isolated test output</output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

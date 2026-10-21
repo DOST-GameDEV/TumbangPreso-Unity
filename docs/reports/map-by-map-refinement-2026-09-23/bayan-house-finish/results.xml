@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 19:46:36Z" end-time="2026-09-23 19:46:44Z" duration="7.4122766">
+  <test-suite type="TestSuite" id="1758" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="582" result="Passed" start-time="2026-09-23 19:46:36Z" end-time="2026-09-23 19:46:44Z" duration="7.412277" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1752" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="582" result="Passed" start-time="2026-09-23 19:46:36Z" end-time="2026-09-23 19:46:44Z" duration="7.397919" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10288" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1753" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="582" result="Passed" start-time="2026-09-23 19:46:36Z" end-time="2026-09-23 19:46:44Z" duration="7.392766" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1754" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="582" result="Passed" start-time="2026-09-23 19:46:36Z" end-time="2026-09-23 19:46:44Z" duration="7.387737" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1285" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-09-23 19:46:36Z" end-time="2026-09-23 19:46:44Z" duration="7.347694" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1288" name="BayanFinalArtReview" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.BayanFinalArtReview" methodname="BayanFinalArtReview" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="811975988" result="Passed" start-time="2026-09-23 19:46:36Z" end-time="2026-09-23 19:46:41Z" duration="4.797841" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-final-preview.png
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-house-0.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-house-1.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-house-2.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-house-3.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-final-church.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-final-hall.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-final-service-rear.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-final-south.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-final-south-low.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-sky-20.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-sky-180.png
+]]></output>
+            </test-case>
+            <test-case id="1287" name="BayanHouseFinishReview" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.BayanHouseFinishReview" methodname="BayanHouseFinishReview" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="1505009309" result="Passed" start-time="2026-09-23 19:46:41Z" end-time="2026-09-23 19:46:44Z" duration="2.530000" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-4-before.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-4-after.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-6-before.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-6-after.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-1-before.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-1-after.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-3-before.png
+[Play] wrote Logs/refine2-bayan-house-v1/Bayan-finish-3-after.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

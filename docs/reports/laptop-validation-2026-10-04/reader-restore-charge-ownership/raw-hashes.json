@@ -1,0 +1,21 @@
+{
+  "original-tests.xml": "9aa10d0023f39e0a0aee58f5170281b8469bde4cebd87171df7e9ee7bf271eb0",
+  "original-direct-result.json": "de06bc4008fdb90728bf2701d7df3a0575f85bf14f316a499a6c10fb7b4be90a",
+  "original-qualified-source.json": "0a51e5819b86eba40bcccae92ab6dd29e5a0b088d650a98b4790a3a208f743c6",
+  "original-launch.json": "42f0c9ddff851d8a316b2ab01d9ccbc33e1094569a1b90d6a7dddfba3ca417a7",
+  "original-pre-editor-prefs.json": "01f3ecd25629bbc08ed000561e8124cd84e5884ee3da8c8c780a20d44f5e74e0",
+  "original-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "original-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-tests.xml": "7daceb4f485963b4e16c4f1cd5958eff87b12a7892d17904e98774a6f655a158",
+  "candidate-direct-result.json": "4b1e5da3ebf29d5e655b9ee158df701769b983bc1ee88ee30c87e893e9eac05f",
+  "candidate-qualified-source.json": "ab32f26a8758f9dcec9f1312e6a4ebdd91be396801bc4a8e6e2d3dd4d1b74dd4",
+  "candidate-launch.json": "4805e6ada664ce6f96e79d90b4a2ca093aa1320437ec8f32e924f3d4925e7c1f",
+  "candidate-pre-editor-prefs.json": "01f3ecd25629bbc08ed000561e8124cd84e5884ee3da8c8c780a20d44f5e74e0",
+  "candidate-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "Carrier.original.cs": "ea6100d17ba7ad00ea60261f80f4f6247c3104297c3151c1626c47fabce73aa9",
+  "Carrier.candidate.cs": "2f95965b1bb1287cb7b7067eb9431ddb85df52f2c95a9f90204ffa9662e54716",
+  "ReaderRestoreChargeOwnershipTests.cs": "f73dc3f4e81728d70d737901c96a4c55f773f86e757a9e57a249dbad6ae51757",
+  "ReaderRestoreChargeOwnershipTests.cs.meta": "27d505319effbdfba0a35f0c47e3b7447a673c62633b552ade4e8db399fc72d3",
+  "packet.json": "23b564fadf14d146e00aa54bb40014fac7806eb7d22ba1fdcfd9c9cea8d73e8d"
+}

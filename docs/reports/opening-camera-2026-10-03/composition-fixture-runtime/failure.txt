@@ -1,0 +1,2 @@
+System.NullReferenceException: Object reference not set to an instance of an object
+  at TumbangPreso.Tests.OpeningCameraCompositionTests.PhotographActualArenaAndCharactersUsingProductionCameraSamples () [0x003f9] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/OpeningCameraCompositionTests.cs:61 

@@ -1,0 +1,11 @@
+{
+  "sourceCommit": "c526bcc5da2943cb2c897197a6364a193ddf40b3",
+  "protocol": 151,
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-c526bcc5d-1005\\TumbangPreso.exe",
+  "exeSha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+  "runtimeSha256": "8235fe728c80fa4eeaf51cab6bc714bbe4fa50f3f68568065c75ba1b7a5f282a",
+  "coreSha256": "9260af5117f375cd466802bb070998624eb6ab6d6923d42910cb62fbea1dce62",
+  "fileCount": 258,
+  "totalBytes": 2691127835,
+  "manifestSha256": "002fdc9fb839b867b7a39589f31cb0adf67a99e26f2ea4c63485aa203f2ecc96"
+}

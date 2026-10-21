@@ -29,26 +29,27 @@ namespace TumbangPreso.Settings
     /// was not on left click even though it was bound there, and a hero's first skill fired out
     /// of the pickup key. Rebinding anything onto E or Q was refused by our own asset.
     ///
-    /// Every action now holds exactly ONE control and no control appears twice. The hero deck
-    /// uses Q, E and F as a compact combat cluster; contextual pickup / shove / reset uses X.
-    /// `SettingsPanelTests` asserts it, so the collisions cannot come back quietly.
+    /// The owner's latest 2026-09-30 defaults: WASD, Run Left Shift, jump Space.
+    /// Throw / Tag left click; Retrieve / Reset right click; Interact / Ready F;
+    /// Shove / Lunge middle click; curve left wheel up, right wheel down.
+    /// ABILITIES: Signature E (`Skill1`), Role Ability Q (`Skill2`),
+    /// Ultimate X. INTERFACE: Ability Descriptions Tab. COMMUNICATIONS: Emote
+    /// Wheel T. `Groups` below is laid out under the same five headings. It replaced Q/E/F for
+    /// the deck, X for a contextual pickup/shove/reset, G for interact, B for emotes and Z/C
+    /// for the curve (Z and C were themselves the fix for the arrow keys, 2026-08-27).
     ///
-    /// ⚠️⚠️ THE PEKTUS CURVE IS Z AND C, NOT THE ARROW KEYS, SINCE 2026-08-27. 🧑: *"rebind pektus
-    /// to keyboard keys that are close to wasd bcz its so hard to touch the arrow keys and some
-    /// keyboards dont have it"*. Both halves of that are real. The curve is held WHILE the throw
-    /// charges on the left mouse button and WHILE the player is moving on WASD, so it is the one
-    /// input that must overlap the movement hand, and the arrow cluster is the furthest point on
-    /// the board from it. Sixty per cent boards do not carry the arrows at all.
+    /// Interact/Ready share a control in separate phases; older saved Lunge/Ready
+    /// pairs remain supported. PlayerInputReader requires release after Ready use.
+    /// `SettingsPanelTests` asserts the rest, so the collisions cannot come back quietly.
     ///
-    /// ⚠️ Z AND C, WITH X BETWEEN THEM, AND THE SHAPE IS THE REASON. `Grab` already holds X, so
-    /// the bottom row reads curve-left, contextual, curve-right under a hand that never leaves
-    /// WASD, and left and right map to left and right on the keyboard.
+    /// ⚠️ THE CURVE IS A WHEEL NOTCH NOW: `PlayerInputReader.CurveInput` steps on each press edge
+    /// and still turns continuously for a held key, so a player who rebinds it to keys keeps the
+    /// old feel. Both curve rows stay rebindable, and every screen that teaches them reads the
+    /// live binding through `Hud.KeyLabel` (which prints WHEEL UP / WHEEL DOWN).
     ///
-    /// ⚠️ C IS ALSO `SpectatorControls`, WHICH IS LEGAL RATHER THAN AN OVERSIGHT. See
-    /// `SpectatorContext`: a spectator has no body, so no throw can be curving while that key
-    /// means "show the overlay". `FindDuplicateBindings` checks per context and passes. Both
-    /// curve rows stay in the panel under PLAYING THE GAME and stay rebindable, and every screen
-    /// that teaches them reads the live binding through `Hud.KeyLabel`.
+    /// ⚠️ C IS `SpectatorControls` AND F IS `SpectatorFreeFly`, WHICH IS LEGAL RATHER THAN AN
+    /// OVERSIGHT. See `SpectatorContext`: a spectator has no body. `FindDuplicateBindings`
+    /// checks per context and passes.
     ///
     /// ⚠️⚠️ AND R IS THE ONE OVERLAP THAT WAS NOT LEGAL, WHICH IS WHY IT WAS THE ONE REPORTED.
     /// 🧑 2026-08-29: *"theres a conflict, R for spectator map to replay and ready can u pls fix
@@ -67,13 +68,15 @@ namespace TumbangPreso.Settings
     /// </summary>
     public static class Rebinding
     {
+        // Latest owner layout restores the Interact/Ready row on F; the previous
+        // separate Hold Interact label remains retired.
         /// <summary>Action names as they appear in the Input System asset or composite parts.</summary>
         public static readonly string[] RebindableActions =
         {
             "MoveForward", "MoveBackward", "MoveLeft", "MoveRight",
-            "Sprint", "Jump",
+            "Sprint", "Jump", "Crouch",
             "SpecialAbility", "Grab", "Lunge", "CurveLeft", "CurveRight",
-            "Skill1", "Skill2", "Ultimate",
+            "Skill1", "Skill2", "Ultimate", "Interact",
             "ReadyUp", "CleanFeed", "AbilityInfo",
             "EmoteWheel",
             "Pause",
@@ -124,15 +127,39 @@ namespace TumbangPreso.Settings
             => IsSpectatorAction(a) == IsSpectatorAction(b);
 
         /// <summary>
+        /// Contextual playing actions that share a key on purpose: Grab and Interact,
+        /// plus Interact/ReadyUp and older saved Lunge/ReadyUp pairs in separate phases.
+        /// `Grab` AND `Interact`
+        /// ARE THE OWNER'S ONE "INTERACT / USE" KEY. His default layout, 2026-09-27: *"Interact / Use
+        /// - F"*. `Grab` is the tap and the reset hold (pick up the tsinelas, raise the can) and
+        /// `Interact` is the free hold (break out of roots, pull out a plant); they were split on
+        /// 2026-09-25 only because `Grab` also shoved, and the shove has left for Shove / Lunge. Both
+        /// firing on one press is the point, not a clash: each only acts on its own thing in
+        /// front of you. They stay two rows so either can be moved alone, and a pad keeps its two
+        /// buttons.
+        /// </summary>
+        public static bool IsOneUseKey(string a, string b)
+            => (a == "Grab" && b == "Interact") || (a == "Interact" && b == "Grab")
+               || (a == "Lunge" && b == "ReadyUp") || (a == "ReadyUp" && b == "Lunge")
+               || (a == "Interact" && b == "ReadyUp") || (a == "ReadyUp" && b == "Interact")
+               // Crouch and the ready share B on a pad (2026-10-09): the ready is only live before a round, and the
+               // reader gives the press to it alone then (`InputCatalogue`, the Crouch row).
+               || (a == "Crouch" && b == "ReadyUp") || (a == "ReadyUp" && b == "Crouch");
+
+        /// <summary>True when binding one control to both actions would be two things on one press.</summary>
+        public static bool WouldClash(string a, string b) => ShareAContext(a, b) && !IsOneUseKey(a, b);
+
+        /// <summary>
         /// Human-readable labels. Several are named for the JOB rather than the verb, because
         /// one key genuinely does several jobs and the player cannot guess which from a name:
-        /// - THROW / PUNCH is one key doing two things by ROLE. An attacker charges and throws;
-        ///   the taya, who `can_throw()` refuses outright, punches (`Design.md` §4, §5.1).
-        /// - PICK UP / SHOVE / RESET is the contextual key. Tap with a tsinelas in reach picks
-        ///   it up, tap with nothing grabbable shoves, hold as the taya in the lata's ring runs
-        ///   the reset channel (§4, §5.2, §5.3).
-        /// - LUNGE TAG is the taya's dash tag: the way to stop an attacker retrieving a slipper
-        ///   inside the box (§5.2, §6).
+        /// The owner's words since 2026-09-27 (his default layout's headings and names):
+        /// - THROW / TAG is one key doing two things by ROLE. An attacker charges and throws;
+        ///   the taya, who `can_throw()` refuses outright, jabs a tag (`Design.md` §4, §5.1).
+        /// - SHOVE / LUNGE is the other mouse button, also by role: the taya's dash tag, and an
+        ///   attacker's shove (or the retrieval slide when a loose tsinelas lies in reach ahead).
+        /// - INTERACT / USE is the pickup key: a tap picks the tsinelas up, a hold as the taya in
+        ///   the lata's ring runs the reset. INTERACT / USE: HOLD is its partner on the same key
+        ///   (break out of roots, pull out a plant); see `IsOneUseKey`.
         /// </summary>
         public static readonly Dictionary<string, string> ActionLabels = new Dictionary<string, string>
         {
@@ -141,19 +168,21 @@ namespace TumbangPreso.Settings
             { "MoveLeft", "Move Left" },
             { "MoveRight", "Move Right" },
             { "Move", "Move" },
-            { "SpecialAbility", "Throw / Punch" },
-            { "Grab", "Pick Up / Shove / Reset" },
-            { "Lunge", "Lunge Tag" },
-            { "CurveLeft", "Curve Left (Pektus)" },
-            { "CurveRight", "Curve Right (Pektus)" },
+            { "SpecialAbility", "Throw / Tag" },
+            { "Grab", "Retrieve Slipper / Reset Can" },
+            { "Lunge", "Shove / Lunge" },
+            { "CurveLeft", "Curve Throw Left" },
+            { "CurveRight", "Curve Throw Right" },
             { "Jump", "Jump" },
-            { "Sprint", "Sprint" },
-            { "Skill1", "Skill 1" },
-            { "Skill2", "Skill 2" },
-            { "Ultimate", "Ultimate" },
+            { "Sprint", "Run" },
+            { "Crouch", "Crouch / Slide" },
+            { "Skill1", "Signature Ability" },
+            { "Skill2", "Role Ability" },
+            { "Ultimate", "Ultimate Ability" },
             { "ReadyUp", "Ready Up" },
+            { "Interact", "Interact / Ready" },
             { "CleanFeed", "Hide HUD" },
-            { "AbilityInfo", "Hold: Ability Info" },
+            { "AbilityInfo", "Ability Descriptions" },
             { "EmoteWheel", "Emote Wheel" },
             { "Pause", "Pause / Match Menu" },
             { "SpectatorDown", "Fly Down" },
@@ -172,6 +201,10 @@ namespace TumbangPreso.Settings
         public static string LabelFor(string action)
             => ActionLabels.TryGetValue(action, out string label) ? label : action;
 
+        /// <summary>Ready uses the shared Interact row; its action/legacy overrides remain valid.</summary>
+        public static string SettingsRowFor(string action)
+            => action == "ReadyUp" ? "Interact" : action;
+
         /// <summary>
         /// The controls list, cut into named groups in the order they should be shown.
         ///
@@ -181,24 +214,24 @@ namespace TumbangPreso.Settings
         /// grouping is not decoration, it is what lets somebody scan for the one line they came
         /// to change instead of reading all of them.
         ///
-        /// ⚠️ THE GROUPS ARE BY WHEN YOU USE THEM, NOT BY DEVICE OR BY SUBSYSTEM. "Movement" is
-        /// what you press constantly, "Playing the game" is the tumbang preso verbs, "Hero
-        /// powers" only exists in Hero Strike, and "Interface" is everything you press between
-        /// rounds. A player looking for the throw key does not think "mouse buttons".
+        /// ⚠️ THE GROUPS ARE BY WHEN YOU USE THEM, NOT BY DEVICE OR BY SUBSYSTEM, and since
+        /// 2026-09-27 they are the owner's own headings, in his order: MOVEMENT, ACTIONS, ABILITIES,
+        /// INTERFACE, COMMUNICATIONS. A player looking for the throw key does not think "mouse
+        /// buttons". Ready shares Interact; hide HUD, pause and fullscreen sit under INTERFACE.
         ///
-        /// ⚠️ EVERY ACTION IN `RebindableActions` MUST APPEAR IN EXACTLY ONE GROUP. A row that
+        /// Every action's SettingsRowFor must appear in exactly one group. A row that
         /// belongs to no group would vanish from the panel with no error, which is the same
         /// silent failure the class note at the top warns about. `SettingsGroupsCoverEveryAction`
         /// asserts it.
         /// </summary>
         public static readonly (string Title, string[] Actions)[] Groups =
         {
-            ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
-            ("PLAYING THE GAME", new[] { "SpecialAbility", "Grab", "Lunge",
-                                         "CurveLeft", "CurveRight" }),
-            ("HERO POWERS", new[] { "Skill1", "Skill2", "Ultimate", "AbilityInfo" }),
-            ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed", "Pause",
-                                         "ToggleFullscreen" }),
+            ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump", "Crouch" }),
+            ("ACTIONS", new[] { "SpecialAbility", "Lunge", "Grab", "CurveLeft", "CurveRight", "Interact" }),
+            ("ABILITIES", new[] { "Skill1", "Skill2", "Ultimate" }),
+            ("INTERFACE", new[] { "AbilityInfo", "CleanFeed", "Pause",
+                                  "ToggleFullscreen" }),
+            ("COMMUNICATIONS", new[] { "EmoteWheel" }),
             ("SPECTATOR CAMERA", new[] { "SpectatorAutopilot", "SpectatorCycleTarget",
                                          "SpectatorFreeFly", "SpectatorPov", "SpectatorDown",
                                          "SpectatorMark", "SpectatorRecall" }),
@@ -214,13 +247,13 @@ namespace TumbangPreso.Settings
         {
             switch (title)
             {
-                case "PLAYING THE GAME":
+                case "ACTIONS":
                     // ⚠️ ONE LINE. The blurb draws in a 20 px row under the heading and does not
                     // wrap; a second sentence was added here on 2026-08-26 and the screenshot in
                     // `Logs/shots-runtime/SettingsPanel.png` cut it off mid-word. What the curve
                     // rows do is in their own labels.
-                    return "One key can do several jobs, chosen by what is in front of you.";
-                case "HERO POWERS":
+                    return "Some keys change job with your role and what is in front of you.";
+                case "ABILITIES":
                     return "Hero Strike only. Classic has no powers.";
                 case "SPECTATOR CAMERA":
                     // ⚠️ IT SAYS THE SHARING IS DELIBERATE, because a player who reads the panel
@@ -382,7 +415,7 @@ namespace TumbangPreso.Settings
 
                 foreach (string owner in pair.Value)
                     foreach (string other in pair.Value)
-                        if (owner != other && ShareAContext(owner, other)
+                        if (owner != other && WouldClash(owner, other)
                             && !conflicting.Contains(owner))
                             conflicting.Add(owner);
 
@@ -689,8 +722,15 @@ namespace TumbangPreso.Settings
 
         public static string TryRebind(InputActionAsset asset, string action, InputControl control)
         {
-            string path = control.path;
-            string device = DeviceOf(path);
+            if(control==null)return LabelFor(action);
+            // Captured controls use /Keyboard1/f10, while persistent bindings use
+            // layout paths. An instance name neither matches DeviceOf nor survives
+            // reconnecting a device. Keep generic gamepad mappings across pad models.
+            string layout=control.device is Gamepad?GamepadDevice:
+                control.device is Keyboard?"<Keyboard>":control.device is Mouse?"<Mouse>":null;
+            if(layout==null)return LabelFor(action);
+            string path=layout+control.path.Substring(control.device.path.Length);
+            var kind=control.device is Gamepad?InputDeviceKind.Gamepad:InputDeviceKind.KeyboardMouse;
 
             foreach (string other in RebindableActions)
             {
@@ -699,7 +739,7 @@ namespace TumbangPreso.Settings
                 // ⚠️ THE PANEL REFUSES A KEY ANOTHER action IN THE SAME CONTEXT HOLDS, and only
                 // that. Refusing across contexts would make half the spectator rows unbindable to
                 // the obvious key for no reason a player could ever work out from the screen.
-                if (!ShareAContext(action, other)) continue;
+                if (!WouldClash(action, other)) continue;
 
                 // ⚠️ EVERY BINDING OF THE OTHER ACTION, NOT ITS FIRST. This compared one binding
                 // when an action only had one; with a pad binding beside each keyboard one, the
@@ -709,7 +749,7 @@ namespace TumbangPreso.Settings
                 if (otherAction == null) continue;
 
                 foreach (int otherIndex in otherIndices)
-                    if (otherAction.bindings[otherIndex].effectivePath == path)
+                    if (string.Equals(otherAction.bindings[otherIndex].effectivePath,path,System.StringComparison.OrdinalIgnoreCase))
                         return LabelFor(other);
             }
 
@@ -725,7 +765,9 @@ namespace TumbangPreso.Settings
 
             foreach (int candidate in indices)
             {
-                if (DeviceOf(target.bindings[candidate].effectivePath) != device) continue;
+                // Keyboard and mouse are one settings page/control family; a
+                // mouse-bound action can be moved to a key without touching its pad.
+                if (!PathIsFor(target.bindings[candidate].effectivePath,kind)) continue;
 
                 index = candidate;
                 break;
@@ -741,7 +783,16 @@ namespace TumbangPreso.Settings
             // should make first so the player never gets this far.
             if (index < 0) return LabelFor(action);
 
+            // Move Ready with its shared keyboard/mouse control. A separate saved
+            // Ready override and the controller's separate Ready button stay intact.
+            InputAction ready = null;
+            int readyIndex = -1;
+            bool sharedReady = action == "Interact" && kind == InputDeviceKind.KeyboardMouse
+                && ResolveBindingIndexFor(asset, "ReadyUp", kind, out ready, out readyIndex)
+                && string.Equals(ready.bindings[readyIndex].effectivePath,
+                    target.bindings[index].effectivePath, System.StringComparison.OrdinalIgnoreCase);
             target.ApplyBindingOverride(index, path);
+            if (sharedReady) ready.ApplyBindingOverride(readyIndex, path);
             Invalidate();
             Save(asset);
             return null;

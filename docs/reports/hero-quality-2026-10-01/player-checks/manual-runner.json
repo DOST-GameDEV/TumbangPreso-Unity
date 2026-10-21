@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "seconds": 852.4062652587891,
+  "stopped": null,
+  "review": {
+    "botmatch": null,
+    "traceExists": false
+  },
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "6185510",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "6190405",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "runtimeSha256": "67e444f5f668430913d517fc9eaadd2186f27c7ad426d29b58f39501ac988ff5"
+}

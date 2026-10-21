@@ -1,0 +1,133 @@
+TUMP: front-end UI/UX overhaul from the owner's flow sketches
+
+Read first, in this order, and do not skip them because this prompt summarises the task:
+AGENTS.md, docs/VISION.md, docs/TODO.md, docs/ACTIVE_REWORK_LEDGER.md, then CLAUDE.md
+sections 4a (three devices), 6.2 to 6.5 (screen brief, journey rules, no blue in UI, palette,
+WoodCraft/PaperCraft) and docs/Front_End_Design.md. Repo DOST-GameDEV/TumbangPreso-Unity,
+branch ASTRAReworks, worktree C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks.
+Fetch first and confirm HEAD; never commit the two composition-redesign .png.meta files.
+The in-match HUD (VISUAL-1) is a separate lane: do not restyle the match HUD, halftime popup
+or match-end board here.
+
+THE REFERENCE. The owner attached flow sketches: a flow sheet (home, hero screen, loadout,
+item popup, gamemode select, host/join popup), a "Custom Game Mode" sheet (host, join,
+lobby, loading screen), the final home screen, and TUMP.zip (home variants, hero screen,
+loadout grid, item popup, gamemode select idle and hover). THE UX IS FINAL: every screen,
+door, order and popup-versus-screen decision below is the owner's and must be followed.
+THE VISUAL DESIGN IS YOURS: the sketches are grey wireframes, not a style. Design every
+screen properly (composition, hierarchy, type, motion, states) in TUMP's own identity: the
+logo palette, Darumadrop for display type plus the supporting face, black in-game outlines,
+no blue or navy anywhere in UI chrome (UiTheme.Defense only means the taya), no white or pale
+default palettes, and a distinct playful street-game personality. Supplied owner and
+girlfriend art (painted title, login, pennants, key art) is never repainted or cropped
+badly; project-generated icons are replaceable. Where the sketch says "placeholder img",
+use real in-engine renders of the cast and maps.
+
+FLOW (final):
+1. Boot and login stay as they are. After login the player lands on HOME, which replaces
+   the current main menu and lobby as the hub.
+2. HOME (final home picture):
+   - Top left: a square avatar. Clicking it opens a profile-picture view (view and change
+     the picture). Beside it, a name plate with the level badge, name, #tag and XP bar.
+     Clicking it opens PROFILE SETTINGS: change name, achievements, friends, and similar.
+   - Under the plate: "THE SKILL TREE" card with a notification dot.
+   - Left column: HERO, LOADOUT, and a larger SHOP, with TASK beside SHOP.
+   - Top centre: the queue plate (elapsed time plus an X to cancel), shown only while
+     queued.
+   - Top right: currency with a + button, and the hamburger menu (settings, party, career
+     hub).
+   - Bottom right: the mode card (map name, e.g. PLAZA, and the selected mode, e.g.
+     RANKED / HERO STRIKE) above a big PLAY. Clicking the mode card opens GAMEMODE SELECT.
+   - Background: reserved for a simple animated scene like Valorant's home screens. Do not
+     build it now; leave a clean full-bleed background layer ready for it. A still or the
+     existing live court is a fine placeholder.
+3. SHOP: the button opens a popup that reveals the Hero and Loadout options, i.e. the shop
+   for heroes and the shop for items. HERO and LOADOUT on home open their screens directly.
+4. HERO screen: a large hero illustration or model panel on the left with previous and next
+   arrows and a back arrow; on the right, //ROLE, the big NAME, a row of clickable ability
+   icons that open each ability's details, //BIOGRAPHY, and UNLOCK for heroes the player does
+   not own. Map the ability row to each hero's REAL kit; never invent abilities.
+5. LOADOUT screen: back, OWNED / UNOWNED tabs, currency and menu top right, and a grid of
+   items. An equipped item carries an EQUIPPED tag, a favourite shows a star, the selected
+   item has corner brackets and unowned items are dimmed silhouettes. Category tabs on the
+   right are TSINELAS and LATA only (SKILLS is removed from here), with EQUIP bottom right.
+   Clicking an item opens the ITEM POPUP over the dimmed grid: back, NAME, favourite star,
+   a large inspectable 3D view (the corner brackets are a fullscreen/inspect toggle) and
+   EQUIP. The old STATS button is deleted.
+6. SKILL TREE: the home card opens it. Each hero's swappable skill alternatives live here
+   (they moved out of Loadout).
+7. GAMEMODE SELECT: back, title, textured background, and four cards: Practice and Custom
+   (small, stacked left), Classic and Ranked (tall). Hovering or focusing a card reveals a
+   short description on it (the darkened Classic card in the zip). Currency and menu stay
+   top right.
+   - Practice drops the player straight into practice mode.
+   - Custom opens a HOST / JOIN popup, not its own screen, leading to the custom flow (8).
+   - Ranked is always Hero Strike. Picking it returns to home with the mode card showing
+     RANKED / HERO STRIKE.
+   - Classic opens a popup asking Classic or Hero Strike (casual), then returns to home
+     with that shown on the mode card.
+   - From home, PLAY puts the player in the queue (the top-centre plate), then a MATCH FOUND
+     screen, then CHARACTER SELECT for everyone (big NAME and model, a 3x4 portrait grid,
+     SELECT, Valorant agent-select style, keeping the current pick rules), then loading.
+8. CUSTOM (Custom Game Mode sheet):
+   - HOST creation: lobby name; map, game mode and visibility dropdowns with a default map
+     set; visibility is public, private or friends only; LAN or Online; CREATE LOBBY.
+     The background shows the selected map's art subtly and changes with the choice.
+   - JOIN: a source list (Dedicated Internet, Dedicated LAN, Code). Server lists share one
+     look with name, map, players and a join action; the header changes between Servers
+     (Online) and Servers (LAN). Code shows a code field and JOIN.
+   - GAME LOBBY: back, the lobby name, the map as background, the player list (n/4 with
+     portraits, host marked), START GAME, and character/loadout and settings icons bottom
+     right.
+   - LOADING SCREEN: map art background, map name, a percentage, tips at the bottom, and
+     the optional BH Studios mark.
+   Every existing networking path must keep working: UGS Lobby and Relay, 4-character join
+   codes, LAN discovery, quick and ranked matchmaking, reconnect and rematch.
+
+NEW SYSTEMS (the owner chose real systems, not placeholders): a soft currency, the shop
+(heroes and items), tasks, the skill tree, and hero unlocks. Design them to fit the existing
+progression (XP, levels, hero mastery, HeroBuildRules / AbilityChallenges for skill
+alternatives, Cloud Save and Cloud Code on UGS project dcf0831e..., never relinked). Rules:
+- Balances and unlocks are authoritative on the server (Cloud Code); a client never grants
+  itself currency or items. Offline play degrades gracefully.
+- Existing profiles, saves and IDs are preserved and migrated, never reset.
+- No real-money purchasing and no paid services. The + by the currency leads to how to earn
+  it (tasks).
+- Cosmetics never change gameplay; Classic stays neutral (VISION section 1).
+- Remember that a Cloud Code script only receives the params it declares, and verify with
+  `ugs cloud-code scripts get` and the Ugs PlayMode category reading "refused":0.
+
+EVERY SCREEN MUST (CLAUDE.md 4a and 6.2 to 6.3): work with mouse and keyboard, controller
+(a focus path, and B backs out through MenuNav) and touch (thumb-sized targets); show key
+prompts from live bindings; back out with one press; have a visible door (never a second
+door for the same place); fit 960x540, 1280x720, 1920x1080, 4:3 and the owner's 1600x680
+window; keep every label at 28 canvas units or more; survive High contrast and larger text.
+Build through MenuKit or ConvertedScreen (InputSurfaceCheck refuses bare canvases). Answer
+CLAUDE.md 6.2's four questions for each screen before building it.
+
+HOW TO WORK: order the job as (1) home and gamemode select with the new play/queue/match-found
+flow on top of existing matchmaking, (2) hero, loadout, item popup and character select,
+(3) custom host/join/lobby/loading, (4) currency, shop, tasks, skill tree and unlocks,
+(5) the hamburger and profile doors, re-homing every feature the old menus reached.
+Write the plan into docs/TODO.md as a new UX-1 section and keep the ledger current before
+coding. For each screen: same-resolution captures of the new state and every state it has
+(hover, focused, locked, empty, error), LOOK at them and fix what they show, then the
+smallest test that covers the new behaviour.
+
+Validation discipline: before each Unity run, state the one question it answers and what
+ends it; batch finished changes into one run; run Unity in the background through
+python tools/run_unity_guarded.py -tp-profile presentation-validation-20260921 (never pass
+it --help) and keep working while it runs; never edit .cs during a run. Fix failures you
+caused. A pre-existing, flaky or unrelated failure gets at most one retry, then is recorded
+in the ledger and left. Never weaken an assertion; update a test only when behaviour changed
+by design, and say so. Probes that address old screens by name must be moved to the new
+screens, not left green on screens nobody reaches (CLAUDE.md 4a table). Restore generated
+churn after every run (the two Inday FppDetails assets, QualitySettings.asset,
+TimeManager.asset). Full regression and a native build happen once at the end, into an
+internal Builds/ folder, never the Desktop target.
+
+Commits: sole author M4tyu633, no trailers, no AI mentions, no em dashes; stage by path;
+fetch before each push and verify the remote HEAD. Work only in this conversation, with no
+paid services, resets, delegation or main edits. Keep going until every screen, flow and
+system above is implemented and checked, or a remaining item has a documented genuine
+external dependency.

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 05:06:04Z" end-time="2026-10-04 05:06:05Z" duration="0.6596854">
+  <test-suite type="TestSuite" id="1035" name="TUMP Bank Runtime1004" fullname="TUMP Bank Runtime1004" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-04 05:06:04Z" end-time="2026-10-04 05:06:05Z" duration="0.659685" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1029" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-04 05:06:04Z" end-time="2026-10-04 05:06:05Z" duration="0.652832" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18855" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1030" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-04 05:06:04Z" end-time="2026-10-04 05:06:05Z" duration="0.652114" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1031" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-04 05:06:04Z" end-time="2026-10-04 05:06:05Z" duration="0.651648" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1003" name="ZackBankShotTests" fullname="TumbangPreso.PlayTests.ZackBankShotTests" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-10-04 05:06:04Z" end-time="2026-10-04 05:06:05Z" duration="0.649845" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1020" name="ContactLifetimeReleasesItsOwnedMaterial" fullname="TumbangPreso.PlayTests.ZackBankShotTests.ContactLifetimeReleasesItsOwnedMaterial" methodname="ContactLifetimeReleasesItsOwnedMaterial" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="413611644" result="Passed" start-time="2026-10-04 05:06:04Z" end-time="2026-10-04 05:06:05Z" duration="0.363274" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1018" name="OrdinarySpunBankKeepsUnpoweredFlair" fullname="TumbangPreso.PlayTests.ZackBankShotTests.OrdinarySpunBankKeepsUnpoweredFlair" methodname="OrdinarySpunBankKeepsUnpoweredFlair" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1958077162" result="Passed" start-time="2026-10-04 05:06:05Z" end-time="2026-10-04 05:06:05Z" duration="0.224441" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+[UI] Darumadrop is missing from Resources/UI/fonts/DarumadropOne-Regular; the menus will draw in the wrong face.
+[Audio] no cue registered for 'slipper_land'.
+]]></output>
+            </test-case>
+            <test-case id="1019" name="PoweredObstacleContactUsesResolvedPosition" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredObstacleContactUsesResolvedPosition" methodname="PoweredObstacleContactUsesResolvedPosition" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="267789978" result="Passed" start-time="2026-10-04 05:06:05Z" end-time="2026-10-04 05:06:05Z" duration="0.047510" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Bank Runtime1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

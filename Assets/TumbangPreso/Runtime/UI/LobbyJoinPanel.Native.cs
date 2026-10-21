@@ -89,8 +89,9 @@ namespace TumbangPreso.UI
             {
                 if (i >= lan.Count) { NativeRoom(_lanRows[i], i == 0, false, "No nearby rooms found yet", "You can still enter a code or address to join."); continue; }
                 var entry = lan[i]; string address = entry.Address + ":" + entry.Port; _lanAddresses.Add(address);
-                NativeRoom(_lanRows[i], true, !_busy, entry.HostName + " · " + entry.Players + "/" + entry.MaxPlayers,
-                    (entry.InProgress ? "In a match" : "In the lobby") + " · " + address);
+                // A beacon v3 host on another protocol is listed but not pressable (LAN-VPN-JOIN-1020).
+                NativeRoom(_lanRows[i], true, !_busy && !entry.DifferentVersion, entry.HostName + " · " + entry.Players + "/" + entry.MaxPlayers,
+                    (entry.DifferentVersion ? "Different version" : entry.InProgress ? "In a match" : "In the lobby") + " · " + address);
             }
             string own = _net != null && _net.IsNetworked && _net.IsHost ? _net.Lobby?.JoinCode ?? "" : "";
             var online = (_net?.Query?.Servers ?? Enumerable.Empty<ServerQuery.Entry>())

@@ -1,0 +1,48 @@
+test_failed_scenario_still_restores_owned_files_and_input (test_net_matrix_preservation.MatrixPreservationTests.test_failed_scenario_still_restores_owned_files_and_input) ... FAIL
+test_success_restores_changed_bindings_and_absent_layout (test_net_matrix_preservation.MatrixPreservationTests.test_success_restores_changed_bindings_and_absent_layout) ... ERROR
+
+======================================================================
+ERROR: test_success_restores_changed_bindings_and_absent_layout (test_net_matrix_preservation.MatrixPreservationTests.test_success_restores_changed_bindings_and_absent_layout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_preservation.py", line 61, in test_success_restores_changed_bindings_and_absent_layout
+    self.run_case(False)
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_preservation.py", line 52, in run_case
+    exercise()
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_preservation.py", line 41, in exercise
+    with net_matrix.preserve_matrix_profiles(out):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\matth\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\net_matrix.py", line 764, in preserve_matrix_profiles
+    restore_input(before)
+RuntimeError: Matrix run changed shared input preferences.
+
+======================================================================
+FAIL: test_failed_scenario_still_restores_owned_files_and_input (test_net_matrix_preservation.MatrixPreservationTests.test_failed_scenario_still_restores_owned_files_and_input)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\net_matrix.py", line 752, in preserve_matrix_profiles
+    yield
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_preservation.py", line 46, in exercise
+    raise RuntimeError('owned scenario failed')
+RuntimeError: owned scenario failed
+
+During handling of the above exception, another exception occurred:
+
+RuntimeError: Matrix run changed shared input preferences.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_preservation.py", line 64, in test_failed_scenario_still_restores_owned_files_and_input
+    self.run_case(True)
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_preservation.py", line 49, in run_case
+    with self.assertRaisesRegex(RuntimeError, 'owned scenario failed'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "owned scenario failed" does not match "Matrix run changed shared input preferences."
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.035s
+
+FAILED (failures=1, errors=1)

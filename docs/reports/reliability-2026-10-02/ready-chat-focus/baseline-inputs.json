@@ -1,0 +1,57 @@
+{
+  "phase": "baseline",
+  "preparedUtc": "2026-10-02T05:00:20.1389972Z",
+  "expectedCases": 18,
+  "testFilter": "TumbangPreso.Tests.RebindActionStateTests;TumbangPreso.Tests.ReadyChatFocusTests;TumbangPreso.Tests.BufferChatFocusTests",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Settings/RebindSession.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\rebind-action-state1002\\frozen\\RebindSession.baseline.cs",
+      "sha256": "D108277A64D8404258DFBDB57D46A3D49EC9A9436CE261B12B117D153DE25FB2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/RebindActionStateTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\rebind-action-state1002\\frozen\\RebindActionStateTests.cs",
+      "sha256": "A48D8079D0922B0D8AE663B2230701CBED85BC74903E6463F087A2BFDD8048A3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/RebindActionStateTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\rebind-action-state1002\\frozen\\RebindActionStateTests.cs.meta",
+      "sha256": "849BEF1EDC5A401DCBFBC81D3D35FD28D90D84319123BB2A7C814FBA2EF90DB4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/ReadyGate.cs",
+      "variant": "baseline",
+      "sha256": "3158ad98b0008020b90148119da4f739aad311048dea600f9c5b1e86e338954a",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyGate.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs",
+      "variant": "baseline",
+      "sha256": "0d8ec543bd0bc1098aa811b72345d86fa7560007eb580e4b67a9fe993383c5fb",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyChatFocusTests.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs.meta",
+      "variant": "baseline",
+      "sha256": "345e5d0cee58633ed7216c68b7d915d423d10664f9e86e264d048da152f66cc5",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\ReadyChatFocusTests.cs.meta.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/BufferSkipVote.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\buffer-chat1002-inputs\\BufferSkipVote-baseline.cs",
+      "sha256": "211C5BF187399256CE737BC8E20A47ECB4F05FC3965038A46F11F0CE7C95DDFB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/BufferChatFocusTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\buffer-chat1002-inputs\\BufferChatFocusTests.cs",
+      "sha256": "4203E1FAD9BED77A8FE80D74DE1EE8FE42EBB85196FEC2E9FA769AF7875898DB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/BufferChatFocusTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\buffer-chat1002-inputs\\BufferChatFocusTests.cs.meta",
+      "sha256": "493330D83721EA3916A2D24D24FF01EA5BD8CD158207EBC3CBD701E67FB532DB"
+    }
+  ],
+  "protectedCount": 1284
+}

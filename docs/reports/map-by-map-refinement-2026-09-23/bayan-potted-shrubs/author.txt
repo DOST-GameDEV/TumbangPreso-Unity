@@ -1,0 +1,4 @@
+MonHedge_1: exact concrete/coping submeshes retained;3supported crowns,558 foliage vertices.
+RimHedge_0: exact concrete/coping submeshes retained;3supported crowns,558 foliage vertices.
+RimHedge_1: exact concrete/coping submeshes retained;3supported crowns,558 foliage vertices.
+RimHedge_2: exact concrete/coping submeshes retained;3supported crowns,558 foliage vertices.

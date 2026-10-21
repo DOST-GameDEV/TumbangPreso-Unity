@@ -20,6 +20,31 @@ namespace TumbangPreso.Audio
     /// </summary>
     public sealed class VoiceDirector : MonoBehaviour
     {
+        public static event System.Action<string, float> Captioned;
+        // English meanings in docs/HUMAN.md Table A. Only delivered recordings
+        // are captioned; absent takes never produce an invented spoken line.
+        public static string CaptionFor(string id) => id switch
+        {
+            "count_3" => "Three!", "count_2" => "Two!", "count_1" => "One!",
+            "count_go" => "Begin!", "clock_30" => "Thirty seconds left!",
+            "clock_10" => "Ten seconds left!", "match_win" => "Winner!",
+            "match_draw" => "It's a draw!",
+            // The Arena's own lines (`Map.ArenaCrowdAudio.Lines`). Nobody has recorded them: their takes
+            // are AI-cloned (below). An absent take is never captioned: `Play` returns before a caption.
+            "arena_welcome" => "Welcome to the Arena!", "arena_next_stage" => "Next stage!",
+            "arena_plaza" => "Plaza!", "arena_tore" => "Tower!", "arena_krus" => "Cross!",
+            "arena_hukay" => "The Pit!", "arena_entablado" => "Main Stage!",
+            "arena_balloon" => "The balloon popped!", "arena_rescue" => "Caught! Back in the game!",
+            // AI-CLONED TAKES of the announcer's voice, made with their consent (2026-10-05): every
+            // file is listed in Resources/Vo/AI_CLONED_LINES.md, the script is
+            // tools/arena_announcer_lines.json. The nine Arena lines above are cloned takes too.
+            "tumbang" => "Lata is down!", "taya" => "Taya!", "lata_restored" => "Lata is back up!",
+            "bilis" => "Hurry up!", "ayos" => "Nice one!", "title" => "Tumbang Preso!",
+            "arena_near_miss" => "So close!", "arena_great_throw" => "What a throw!",
+            "arena_block" => "Blocked!", "arena_fall" => "Over the edge!",
+            "arena_balloon_hit" => "The balloon's hit!",
+            _ => null
+        };
         /// <summary>How far the music drops under a line, and the floor on how long that
         /// duck is held — a duck that recovers before the line ends pumps audibly.</summary>
         public const float DuckDb = -14.0f;
@@ -35,7 +60,7 @@ namespace TumbangPreso.Audio
         public const int DefaultCooldownMs = 4000;
 
         /// <summary>
-        /// Per-line cooldowns, so two different lines never silence each other.
+        /// Per-line repetition limits, applied after the shared priority gate.
         ///
         /// ⚠️⚠️ THE COUNTDOWN LINES MUST BE 0 AND THE DEFAULT WOULD BREAK THEM. They are
         /// separate ids so the 4 s default never applies BETWEEN them — but anything that
@@ -50,6 +75,10 @@ namespace TumbangPreso.Audio
             { "match_win", 0 }, { "match_draw", 0 }, { "title", 0 },
             { "count_3", 0 }, { "count_2", 0 }, { "count_1", 0 }, { "count_go", 0 },
             { "count_5", 0 }, { "count_4", 0 },
+            // Commentary on things that happen often: said now and then, not every time.
+            { "bilis", 0 },   // once per round, like the clock lines
+            { "arena_near_miss", 14000 }, { "arena_great_throw", 12000 }, { "arena_block", 14000 },
+            { "arena_fall", 8000 }, { "arena_balloon_hit", 12000 },
         };
 
         private readonly Dictionary<string, List<AudioClip>> _takes =
@@ -59,11 +88,14 @@ namespace TumbangPreso.Audio
 
         private AudioSource[] _voices;
         private int _next;
+        private float _busyUntil;
+        private int _priority;
 
         /// <summary>Round-scoped, so the clock warnings fire once each rather than on every
         /// frame the timer sits at or below the threshold.</summary>
         private bool _clock30Said;
         private bool _clock10Said;
+        private bool _clock15Said;
 
         private void Awake()
         {
@@ -110,8 +142,8 @@ namespace TumbangPreso.Audio
         }
 
         /// <summary>
-        /// Two voices, so a line landing on top of another steals the older one rather than
-        /// allocating. Nothing in gameplay may allocate an AudioSource on a hot path.
+        /// Retain the small preallocated source pool. Priority replacement stops the
+        /// current voice before starting the next; nothing allocates on a cue path.
         /// </summary>
         private void BuildVoices()
         {
@@ -130,10 +162,20 @@ namespace TumbangPreso.Audio
             }
         }
 
+        /// <summary>Whether the announcer is mid-line; `HeroVoice` waits for it.</summary>
+        public bool Speaking => Time.unscaledTime < _busyUntil;
+
         public void Play(string lineId)
         {
             if (!_takes.TryGetValue(lineId, out var takes) || takes.Count == 0) return;
+            bool audible = VoiceVolume() > .0001f;
+            if (!audible && !Settings.SettingsStore.Current.CalloutCaptions) return;
 
+            int priority = lineId.StartsWith("count_") || lineId.StartsWith("match_") ? 3 :
+                lineId.StartsWith("clock_") ? 2 : 1;
+            // Never queue stale commentary. Timing/result calls can interrupt chatter;
+            // ordinary events wait for a quiet opening and are otherwise left to world SFX.
+            if (Time.unscaledTime < _busyUntil && priority < 3 && priority <= _priority) return;
             if (_cooldownUntil.TryGetValue(lineId, out float until) && Time.unscaledTime < until)
                 return;
 
@@ -148,22 +190,25 @@ namespace TumbangPreso.Audio
             var voice = _voices[_next];
             _next = (_next + 1) % _voices.Length;
 
+            foreach (var source in _voices) source.Stop();
+            _priority = priority;
+            _busyUntil = Time.unscaledTime + takes[index].length + (priority == 1 ? 1.2f : 0);
             voice.clip = takes[index];
             voice.volume = VoiceVolume();
-            voice.Play();
-
-            GameServices.Music?.Duck(DuckDb, Mathf.Max(DuckMinHold, takes[index].length));
+            if (audible)
+            {
+                voice.Play();
+                GameServices.Music?.Duck(DuckDb, Mathf.Max(DuckMinHold, takes[index].length));
+            }
+            string caption = CaptionFor(lineId);
+            if (caption != null) Captioned?.Invoke(caption, Mathf.Clamp(takes[index].length, 1.2f, 5f));
         }
 
-        /// <summary>
-        /// ⚠️ THE ANNOUNCER RIDES THE SFX SLIDER, NOT ITS OWN. There are three sliders —
-        /// master, SFX and music — and adding a fourth for voice would mean a player who
-        /// turned SFX down still gets shouted at. The trim keeps it above the scenery.
-        /// </summary>
+        /// <summary>Independent announcer fader under master, separate from world SFX.</summary>
         private static float VoiceVolume()
         {
             var s = Settings.SettingsStore.Current;
-            return Mathf.Pow(10.0f, TrimDb / 20.0f) * s.SfxGain;
+            return Mathf.Pow(10.0f, TrimDb / 20.0f) * s.AnnouncerGain;
         }
 
         private void Update()
@@ -180,7 +225,7 @@ namespace TumbangPreso.Audio
         /// <summary>Drives the 3 · 2 · 1 · GO! from the ready gate's own ticks.</summary>
         public void PlayCountdown(string tickText)
         {
-            if (tickText == "GO!") { Play("count_go"); return; }
+            if (tickText == "GO!" || tickText == "START!") { Play("count_go"); return; }
 
             if (int.TryParse(tickText, out int n)) Play($"count_{n}");
         }
@@ -189,6 +234,7 @@ namespace TumbangPreso.Audio
         {
             _clock30Said = false;
             _clock10Said = false;
+            _clock15Said = false;
 
             if (roundNumber == 1) Play("taya");
         }
@@ -197,6 +243,9 @@ namespace TumbangPreso.Audio
         public void TickClock(float timeLeft)
         {
             if (!_clock30Said && timeLeft <= 30.0f) { _clock30Said = true; Play("clock_30"); }
+            // "Bilis!" at 15 s (docs/HUMAN.md Table B). Not when the clock is first seen under 10 s:
+            // the ten-second call below is the one that matters then.
+            if (!_clock15Said && timeLeft <= 15.0f) { _clock15Said = true; if (timeLeft > 10.0f) Play("bilis"); }
             if (!_clock10Said && timeLeft <= 10.0f) { _clock10Said = true; Play("clock_10"); }
         }
 
@@ -207,11 +256,7 @@ namespace TumbangPreso.Audio
 
         public void OnLataRestored() => Play("lata_restored");
 
-        /// <summary>Both lines, deliberately: the tag is the taya's moment.</summary>
-        public void OnAttackerTagged()
-        {
-            Play("taya");
-            Play("ayos");
-        }
+        /// <summary>One short call leaves the physical contact audible.</summary>
+        public void OnAttackerTagged() => Play("taya");
     }
 }

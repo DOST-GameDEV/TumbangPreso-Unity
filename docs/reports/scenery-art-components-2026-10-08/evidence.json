@@ -1,0 +1,50 @@
+{
+  "runs": {
+    "scenery-art-components1008": {
+      "pid": 25528,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "sourceSha256": "538f30a0e1e125f0160e35cf33613aaf2109778f87e4831f0d7620e689d901a4",
+      "protectedCount": 21415,
+      "rawSha256": {
+        "result.json": "740f488c6b6d68380719faffaf0709d473ee7b12d19600aa7dd7811abe4cbf79",
+        "source-restoration.json": "5d56f4422f6ce04c5f813baae3b55ae17a0c0fc2f5fe5f23f0f430122e880bfd",
+        "results.xml": "f4229aea206f252a122693fcd208c5b57eafa6bc6161a2fcac95b32c487dbc91"
+      },
+      "rawEditorLogSha256": "90c9d4f62ad61f7f9e4dac284e409d74aec7676c2919d13323ed4c6430b9a7df"
+    },
+    "scenery-art-process2-1008": {
+      "pid": 62240,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "sourceSha256": "538f30a0e1e125f0160e35cf33613aaf2109778f87e4831f0d7620e689d901a4",
+      "protectedCount": 21415,
+      "rawSha256": {
+        "result.json": "3c45c40c4f3224ceca1825f03be6b9ad40faf1194694fa1281063252a3455a0f",
+        "source-restoration.json": "feff3e5fdcf5520be25f03acf29d4e169999d9ca79b07614892bc2fdafaa0ad1",
+        "results.xml": "2a3d6f5fa199761300d7abfdf2c756d32019b3290d49b62f5605d2160a06ce3c"
+      },
+      "rawEditorLogSha256": "297d92d2c7b3d89390d8f4943b94bb5d24c425bb68968265007d49c04ac2a474"
+    }
+  },
+  "sourcePath": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneryState.cs",
+  "testedSourceSha256": "538f30a0e1e125f0160e35cf33613aaf2109778f87e4831f0d7620e689d901a4",
+  "serializedFingerprintChanged": false,
+  "windowsPlayerCompared": false,
+  "newBuildDirectories": 0
+}

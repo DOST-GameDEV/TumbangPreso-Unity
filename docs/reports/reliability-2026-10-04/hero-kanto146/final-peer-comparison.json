@@ -1,0 +1,66 @@
+{
+  "scope": "Actual source23168/protocol146 normal two-peer HeroStrike Kanto default8*90",
+  "clientRawHashesVerified": 10,
+  "clientFinalState": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\hero8-casual146-pc-direct1004\\client-final-state.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 50,
+        "travelled": 42.4
+      },
+      {
+        "seat": 1,
+        "char": 2,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 490,
+        "travelled": 50.4
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 3225,
+        "travelled": 926.7
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 3130,
+        "travelled": 948.1
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "146",
+    "sampled": "1500.0",
+    "round": "8",
+    "active": "False",
+    "defender": "3",
+    "mode": "HeroStrike",
+    "map": "Kanto",
+    "structural": "BDA052C6",
+    "hash": "C18BE35B"
+  },
+  "fullHistoryEqual": true,
+  "fullQueueEqual": true,
+  "witnessEqual": [
+    "87d324400ea61b25"
+  ],
+  "markersClearBoth": true,
+  "clientNormalExitRestoredArtifactChecked": true,
+  "ownQuitCallbackAfterReport": true,
+  "latestPresentationAcceptance": false
+}

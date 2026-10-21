@@ -1,0 +1,48 @@
+{
+  "base": "ce0edc7aace9e62497e4626979040d26b138fd17",
+  "result": "PASS",
+  "method": "Direct managed invocation of one new compiled NUnit case; no Unity native process",
+  "cases": [
+    "OrdinaryActionsCannotCrossMatchRoundOrBodyEpochBoundaries"
+  ],
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0",
+  "runtimeAssemblySha256": "79AA2BBC1D5836CDB5782DDB253ED1527F21342F3A9C68D12C90D643E2915A30",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/GameplayActionScope.cs",
+      "sha256": "91C89CC87FE62959EB4E0A19879F03C2AE47487BA48BA645AAD096D7C71F0689"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/GameplayActionScope.cs.meta",
+      "sha256": "12BB1BB99400D3312E62CB0F834009FAC0D569C8B972C1D2F25DDECF3CA3A144"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.ActionScope.cs",
+      "sha256": "86955EB976A78176B9A970F21CFE0A5A01EF2BB783992B072E8DFEB0F873FFD1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.ActionScope.cs.meta",
+      "sha256": "12FE2306235AE3B2698E8C5BE0C76874C13ADEF52B68B3415A80ACB8B5BF6782"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "33657BA6987C805D3113E5673FBAB72094B0063FC9FB8E90E8241A43BBB8A579"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "29733C84A23D9019C903D945A82B215679E96C03147DABC4494BC04EFDECFD73"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "82B8AB9D14BD64A84E1F9EC1EA16FC15063E32938EEE5F639C95F574B61B41B7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/IceSnapshotBatchTests.cs",
+      "sha256": "92A0D81DF118BF76D4644545CF7F9F8F8D5700C7AD45BE7D369A6B30CC5BEF91"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ThrowChargeRelayTests.cs",
+      "sha256": "5272488DFB330DCDB9DE925C9C09ECBF9F290D993BAA516D6C63D2EF0961E6AC"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "errors": [],
+  "measured": {
+    "host": {
+      "rows": 447,
+      "eventIds": [
+        1,
+        2,
+        3
+      ],
+      "starts": 1,
+      "snapshots": 6,
+      "largestExpiryOffset": 0.03389739990234375
+    },
+    "owner": {
+      "rows": 441,
+      "eventIds": [
+        1,
+        2,
+        3
+      ],
+      "starts": 1,
+      "snapshots": 0,
+      "largestExpiryOffset": 0.20255279541015625
+    },
+    "observer": {
+      "rows": 439,
+      "eventIds": [
+        1,
+        2,
+        3
+      ],
+      "starts": 1,
+      "snapshots": 0,
+      "largestExpiryOffset": 0.2353057861328125
+    }
+  },
+  "runtimeSha256": "7f6bfb71a449bbb6c57ac17322b2adb80000f5ac6b6dd98359348474ce0a526a",
+  "link": {
+    "delayMs": 150.0,
+    "jitterMs": 0,
+    "loss": 0,
+    "seed": 20260922
+  },
+  "scope": "Three actual Windows peers on Lagoon; owner Q/E/shared ultimate, authoritative field IDs/paths/lifetime, repeated world snapshots and cleanup. Staged inputs; no WAN or balance claim."
+}

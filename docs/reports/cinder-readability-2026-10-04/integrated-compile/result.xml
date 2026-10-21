@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:10:40Z" end-time="2026-10-04 15:10:41Z" duration="1.1421717">
+  <test-suite type="TestSuite" id="3057" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 15:10:40Z" end-time="2026-10-04 15:10:41Z" duration="1.142172" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3051" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 15:10:40Z" end-time="2026-10-04 15:10:41Z" duration="1.125433" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="123556" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3052" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 15:10:40Z" end-time="2026-10-04 15:10:41Z" duration="1.115425" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3053" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 15:10:40Z" end-time="2026-10-04 15:10:41Z" duration="1.105459" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2529" name="SeanCinderGateProbe" fullname="TumbangPreso.PlayTests.SeanCinderGateProbe" classname="TumbangPreso.PlayTests.SeanCinderGateProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 15:10:40Z" end-time="2026-10-04 15:10:41Z" duration="1.084072" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2533" name="CinderVisualKeepsBoundaryAndDeterministicRetirement" fullname="TumbangPreso.PlayTests.SeanCinderGateProbe.CinderVisualKeepsBoundaryAndDeterministicRetirement" methodname="CinderVisualKeepsBoundaryAndDeterministicRetirement" classname="TumbangPreso.PlayTests.SeanCinderGateProbe" runstate="Runnable" seed="410932767" result="Passed" start-time="2026-10-04 15:10:40Z" end-time="2026-10-04 15:10:41Z" duration="1.072674" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.1287548">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="901" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.128755" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2082" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="901" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.115976" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22832" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2083" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="901" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.112529" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2084" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="901" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.109442" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1615" name="CompletedMatchArrivalTests" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.090765" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1624" name="APlainLobbySnapshotCannotOpenCompletedStandings" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.APlainLobbySnapshotCannotOpenCompletedStandings" methodname="APlainLobbySnapshotCannotOpenCompletedStandings" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1517554835" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.045000" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1618" name="ColdArrivalReceivesCompletedStandingsWithoutALivePacket" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.010925" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1616" name="ColdArrivalReceivesCompletedStandingsWithoutALivePacket(False)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket(False)" methodname="ColdArrivalReceivesCompletedStandingsWithoutALivePacket" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1685681427" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.003464" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1617" name="ColdArrivalReceivesCompletedStandingsWithoutALivePacket(True)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.ColdArrivalReceivesCompletedStandingsWithoutALivePacket(True)" methodname="ColdArrivalReceivesCompletedStandingsWithoutALivePacket" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1057337258" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.004736" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1623" name="InvalidTerminalStateCannotBypassThePreStartGuard" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.005412" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1620" name="InvalidTerminalStateCannotBypassThePreStartGuard(&quot;negative-round&quot;)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard(&quot;negative-round&quot;)" methodname="InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1649052541" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.002547" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1621" name="InvalidTerminalStateCannotBypassThePreStartGuard(&quot;beyond-final&quot;)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard(&quot;beyond-final&quot;)" methodname="InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1772718014" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.001002" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1622" name="InvalidTerminalStateCannotBypassThePreStartGuard(&quot;nonfinite-clock&quot;)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.InvalidTerminalStateCannotBypassThePreStartGuard(&quot;nonfinite-clock&quot;)" methodname="InvalidTerminalStateCannotBypassThePreStartGuard" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="643262724" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.000920" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1619" name="PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder" methodname="PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="1403386886" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.003155" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1630" name="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.RetainedRecordRecoveryRequiresTheCurrentFinishedMatch" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.010274" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1625" name="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;matching&quot;,True)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;matching&quot;,True)" methodname="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="463840038" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.005306" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1626" name="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;wrong-winner&quot;,False)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;wrong-winner&quot;,False)" methodname="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="468264331" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.000957" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1627" name="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;live&quot;,False)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;live&quot;,False)" methodname="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="232579413" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.000877" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1628" name="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;loading&quot;,False)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;loading&quot;,False)" methodname="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="314121428" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.000872" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1629" name="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;prior-match&quot;,False)" fullname="TumbangPreso.Tests.CompletedMatchArrivalTests.RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(&quot;prior-match&quot;,False)" methodname="RetainedRecordRecoveryRequiresTheCurrentFinishedMatch" classname="TumbangPreso.Tests.CompletedMatchArrivalTests" runstate="Runnable" seed="204184830" result="Passed" start-time="2026-10-02 04:26:43Z" end-time="2026-10-02 04:26:43Z" duration="0.001013" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

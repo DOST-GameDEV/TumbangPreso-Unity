@@ -1,0 +1,56 @@
+{
+  "sourceCommit": "367ab14d5a742c3686f962f0a5839ba80be4e45a",
+  "protocol": 153,
+  "profile": "pc-combined-replay-startup-367ab14d5-render-copy-player-study1008",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-replay-startup-367ab14d5-render-copy-player-study1008",
+    "-tp-uireview",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-player-study1008",
+    "-tp-introduction-bodies-only",
+    "-tp-copy-rooted-sampling",
+    "-tp-introduction-scenes",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-player-study1008\\player.log"
+  ],
+  "execution": "hidden nonbatch graphics; synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 46664,
+  "exitCode": 1,
+  "scope": "Actual Windows opt-in copied-rooted bone motion and existing9 native introduction scene study; no physical/human/peer/tournament approval",
+  "replayProbe": {
+    "notApplicable": true
+  },
+  "probe": {
+    "passed": false,
+    "error": "System.InvalidOperationException: Expected UI state did not arrive. Scene=MatchSetup; controls=HeroButton,ShopButton,CloseChatButton,ChatInput,EarnButton,ModeCard,LoadoutButton,MenuButton,PlayButton,AvatarButton,TaskButton,NamePlate,ChatHistoryButton; preview=False; roundActive=False\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__111.MoveNext () [0x0012a] in <13ac7a2979024670b56e73f6449b5146>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__104.MoveNext () [0x00054] in <13ac7a2979024670b56e73f6449b5146>:0 ",
+    "measurementMode": "",
+    "scriptingBackend": "",
+    "buildFlagsEvidence": "",
+    "allocationScope": "",
+    "allocationCounterStatus": "",
+    "developmentBuild": false,
+    "editor": false,
+    "binaryProfilerRequested": false,
+    "profilerSupported": false,
+    "allocationCounterAvailable": false,
+    "allocationCalibrationBytes": 0,
+    "stages": [
+      "native render-only introduction scene study, not a live cinematic phase"
+    ],
+    "frameWindows": []
+  },
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "taskOwnedReplayPreferenceCreated": false,
+  "profileRestored": true,
+  "terminal": true
+}

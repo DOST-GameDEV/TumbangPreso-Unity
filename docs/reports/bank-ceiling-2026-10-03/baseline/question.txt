@@ -1,0 +1,1 @@
+Baseline at 08dae15fd: does a ceiling preserve both affinity and can-scoring credit for the remaining powered side-wall banks? Two focused cases, normal/Overclock. No production change. One bounded compilation/cache repair at most. No full-match or peer claim. Stop at fresh XML or guard termination.

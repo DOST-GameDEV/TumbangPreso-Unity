@@ -1,0 +1,4 @@
+state,global_weight,top,side,linear_ratio
+0,0,0.157815,0.076009,2.0763
+1,1,0.158658,0.088681,1.7891
+body_shader=TumbangPreso/Toon,flash=0,probe=BlendProbes

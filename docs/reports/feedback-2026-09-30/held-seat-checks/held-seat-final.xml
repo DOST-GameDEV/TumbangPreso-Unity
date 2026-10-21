@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.1785142">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.178514" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1866" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.162233" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30912" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1867" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.155444" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1868" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.148839" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1333" name="LobbyAndSettingsTests" fullname="TumbangPreso.Tests.LobbyAndSettingsTests" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" testcasecount="88" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.083266" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1407" name="AForeignTokenCannotBorrowHeldPicksOrTakeoverRating" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.AForeignTokenCannotBorrowHeldPicksOrTakeoverRating" methodname="AForeignTokenCannotBorrowHeldPicksOrTakeoverRating" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="1388793921" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.031381" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1406" name="HeldPicksAreSnapshotsAndAccountProofIsNotInherited" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.HeldPicksAreSnapshotsAndAccountProofIsNotInherited" methodname="HeldPicksAreSnapshotsAndAccountProofIsNotInherited" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="804344537" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.002218" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1408" name="MatchAndSessionBoundariesDiscardHeldPicks" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.MatchAndSessionBoundariesDiscardHeldPicks" methodname="MatchAndSessionBoundariesDiscardHeldPicks" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="981780118" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.000823" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1405" name="ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter" methodname="ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="129548121" result="Passed" start-time="2026-10-01 06:14:26Z" end-time="2026-10-01 06:14:26Z" duration="0.002044" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

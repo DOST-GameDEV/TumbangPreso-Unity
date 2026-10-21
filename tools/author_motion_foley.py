@@ -17,6 +17,11 @@ def read(name):
 def write(name,x,peak):
     x=x-x.mean();x*=peak/max(1e-8,np.abs(x).max())
     fade=min(441,len(x)//4);x[:fade]*=np.linspace(0,1,fade);x[-fade:]*=np.linspace(1,0,fade)
+    if name=="step_rubber":
+        # The asymmetric contact regained DC when its ends were faded. Remove
+        # that residual through the same envelope so both endpoints stay zero.
+        window=np.ones(len(x));window[:fade]=np.linspace(0,1,fade);window[-fade:]=np.linspace(1,0,fade)
+        x-=window*(x.sum()/max(1e-8,window.sum()))
     x*=peak/max(1e-8,np.abs(x).max())
     with wave.open(str(folder/(name+".wav")),"wb") as w:
         w.setnchannels(1);w.setsampwidth(2);w.setframerate(rate)

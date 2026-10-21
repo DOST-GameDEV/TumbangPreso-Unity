@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="18" result="Passed" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.0692108">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1284" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.069211" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2577" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1284" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.061068" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14228" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2578" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1284" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.057849" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2579" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1284" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.054949" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1316" name="ClientMovementEffectPacketBoundsTests" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.040445" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1331" name="CompleteUnreadPayloadDecodesBeforeSeatRejection" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.029744" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1328" name="CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnImpactMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnImpactMsg&quot;)" methodname="CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="711486417" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.020369" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1329" name="CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnCarryMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnCarryMsg&quot;)" methodname="CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1318759008" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000910" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1330" name="CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnSyncFamiliarMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnSyncFamiliarMsg&quot;)" methodname="CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="682606" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000758" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1338" name="ForeignSenderAndHostLoopbackNeverDecode" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.003089" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1332" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,False)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,False)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="208601819" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000810" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1333" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,False)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,False)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="512743140" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000357" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1334" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,False)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,False)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1458612726" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000207" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1335" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,True)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,True)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1736405638" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000198" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1336" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,True)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,True)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="992077115" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000224" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1337" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,True)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,True)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1198360102" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000172" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1327" name="TrailingBytesAreRejectedBeforeDecode" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.001742" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1324" name="TrailingBytesAreRejectedBeforeDecode(&quot;OnImpactMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode(&quot;OnImpactMsg&quot;)" methodname="TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1061560572" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000617" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1325" name="TrailingBytesAreRejectedBeforeDecode(&quot;OnCarryMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode(&quot;OnCarryMsg&quot;)" methodname="TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="191443681" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000209" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1326" name="TrailingBytesAreRejectedBeforeDecode(&quot;OnSyncFamiliarMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode(&quot;OnSyncFamiliarMsg&quot;)" methodname="TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1119774559" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1323" name="TruncatedPayloadIsRejectedBeforePartialDecode" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.002481" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1317" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,8)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,8)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="680715047" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000696" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1318" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,27)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,27)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1191802267" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000214" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1319" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,8)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,8)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="2042080372" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000196" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1320" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,31)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,31)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1352948602" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000177" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1321" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,8)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,8)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1001919201" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000172" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1322" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,32)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,32)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1665724024" result="Passed" start-time="2026-10-03 20:20:53Z" end-time="2026-10-03 20:20:53Z" duration="0.000179" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

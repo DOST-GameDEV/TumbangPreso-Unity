@@ -148,7 +148,8 @@ namespace TumbangPreso
         private void OnIntermission(int nextRound, int nextDefenderSlot)
         {
             // ⚠️ SCORES PERSIST. Only the role rotates, and there is no per-round winner.
-            Invoke(nameof(AdvanceAfterIntermission), Balance.IntermissionDuration);
+            CancelInvoke(nameof(AdvanceAfterIntermission));
+            // HalftimePresentation owns both normal and halftime deadlines.
         }
 
         private void AdvanceAfterIntermission() => GameServices.Match.AdvanceRound();

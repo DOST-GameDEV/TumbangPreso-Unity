@@ -72,7 +72,7 @@ namespace TumbangPreso
         /// is still standing in a networked match with its bodies and ability systems live.
         /// `MatchAbandon.AuthorityRevoked` is the latch that already knows about that window.
         /// </summary>
-        public static bool Allowed => !NetAuthority.IsNetworked && !MatchAbandon.AuthorityRevoked;
+        public static bool Allowed => !NetAuthority.IsNetworked && !UI.SceneFlow.Networked && !MatchAbandon.AuthorityRevoked;
 
         /// <summary>The one property gameplay may ask.</summary>
         public static bool Active => Wanted && Allowed;

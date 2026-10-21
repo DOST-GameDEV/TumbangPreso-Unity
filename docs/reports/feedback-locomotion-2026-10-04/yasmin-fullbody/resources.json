@@ -1,0 +1,1 @@
+{"pid": 183618, "elapsedSeconds": 65.0, "memoryEventsBefore": "low 0\nhigh 0\nmax 6413369\noom 8\noom_kill 7\noom_group_kill 0\n", "memoryEventsNow": "low 0\nhigh 0\nmax 6430584\noom 8\noom_kill 7\noom_group_kill 0\n", "currentCgroupBytes": 3656495104, "exitCode": 0}

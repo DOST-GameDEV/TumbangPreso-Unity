@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.2165424">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1340" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.216542" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2650" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1340" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.191752" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22388" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2651" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1340" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.177138" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2652" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1340" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.163540" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1678" name="LanBrowserIdentityTests" fullname="TumbangPreso.Tests.LanBrowserIdentityTests" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.058783" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1682" name="HostHintPrefersUsableIpv4OverLinkLocalAdapters" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.HostHintPrefersUsableIpv4OverLinkLocalAdapters" methodname="HostHintPrefersUsableIpv4OverLinkLocalAdapters" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="2127173431" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.028875" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1681" name="OlderBeaconsWithoutIdentityKeepDistinctEndpoints" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.OlderBeaconsWithoutIdentityKeepDistinctEndpoints" methodname="OlderBeaconsWithoutIdentityKeepDistinctEndpoints" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="1261287839" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.011014" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1679" name="OneHostAcrossAdaptersHasOneUsableCurrentRow" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.OneHostAcrossAdaptersHasOneUsableCurrentRow" methodname="OneHostAcrossAdaptersHasOneUsableCurrentRow" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="1263507067" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.001122" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1680" name="SeparateProcessesWithTheSameRoomNameStaySeparate" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.SeparateProcessesWithTheSameRoomNameStaySeparate" methodname="SeparateProcessesWithTheSameRoomNameStaySeparate" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="467929632" result="Passed" start-time="2026-10-04 23:40:36Z" end-time="2026-10-04 23:40:36Z" duration="0.000600" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

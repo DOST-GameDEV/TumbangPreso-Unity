@@ -1,0 +1,13 @@
+{
+  "ok": false,
+  "started": "2026-09-22T14:10:03",
+  "reason": "3 failed of 604.",
+  "total": 604,
+  "passed": 601,
+  "failed": 3,
+  "skipped": 0,
+  "exit": 1,
+  "stage": "core",
+  "sha": "2e90f54bc7d1d9e7c58436dce7292606b31d199a",
+  "finished": "2026-09-22T14:10:03"
+}

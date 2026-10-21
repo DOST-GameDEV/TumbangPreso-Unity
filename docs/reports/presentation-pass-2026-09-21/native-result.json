@@ -1,0 +1,33 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "direct gameplay startup",
+        "Classic direct controls in BayanPlaza",
+        "Classic direct walk sprint jump",
+        "Classic direct get-up presses",
+        "Classic direct left-mouse wind-up and release",
+        "Classic direct walk to slipper and X pickup",
+        "Classic direct X shove",
+        "Classic direct right-mouse retrieval slide",
+        "Classic switch fixture to the defender role",
+        "Classic direct held-X can restore",
+        "Classic direct left-mouse punch tag",
+        "Classic participant HUD and alternate local camera tag feedback verified",
+        "Classic direct held-right-mouse lunge tag",
+        "HeroStrike direct controls in BayanPlaza",
+        "HeroStrike direct walk sprint jump",
+        "HeroStrike direct get-up presses",
+        "HeroStrike direct left-mouse wind-up and release",
+        "HeroStrike direct walk to slipper and X pickup",
+        "HeroStrike direct X shove",
+        "HeroStrike direct right-mouse retrieval slide",
+        "HeroStrike switch fixture to the defender role",
+        "HeroStrike direct held-X can restore",
+        "HeroStrike direct left-mouse punch tag",
+        "HeroStrike participant HUD and alternate local camera tag feedback verified",
+        "HeroStrike direct held-right-mouse lunge tag",
+        "both modes completed direct movement throw retrieval shove slide recovery reset punch and lunge"
+    ],
+    "frameWindows": []
+}

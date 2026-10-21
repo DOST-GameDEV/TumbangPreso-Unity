@@ -1,0 +1,37 @@
+CLIP MOTION STRIP
+rig:  zack
+clip: hero-zack-circuit
+
+model: Assets/TumbangPreso/Art/characters/persons/team-zack.glb
+serialised clips on the roster entry: 37
+chain: hero-zack-circuit
+resolved: 'hero-zack-circuit' (slot 0, the action's OWN clip, not a fallback)
+length: 0.640 s, looping: True
+
+-- samples
+times: 0.000, 0.080, 0.180, 0.360, 0.480, 0.640
+
+[side] bake space: already scaled (renderer box 1.880 m, baked spans 1.880 and 4.475; rest pose sits at 0.000 m against a floor at 0)
+[side] SUCCESS: 6 poses, 3360x539
+
+-- per pose, metres against the floor at y = 0 (negative is through the street)
+     time    lowest vertex    reaching hand
+    0.000          0.000 m          0.228 m
+    0.080          0.000 m          0.221 m
+    0.180          0.000 m          0.230 m
+    0.360          0.000 m          0.228 m
+    0.480          0.000 m          0.226 m
+    0.640          0.000 m          0.228 m
+[quarter] bake space: already scaled (renderer box 1.880 m, baked spans 1.880 and 4.475; rest pose sits at 0.000 m against a floor at 0)
+[quarter] SUCCESS: 6 poses, 3360x539
+
+-- motion trace (finer than the strip, so a snap between two photographs still shows)
+steps: 241 across 0.640 s (2.7 ms apart)
+peak bone speed: 2.48 m/s on 'arm-left' at 0.176 s
+deepest point of the whole clip: 0.000 m at 0.000 s
+last frame against idle frame 0: 0.000 m, every bone identical. The clip ENDS at the rig's rest pose, so there is nothing to snap back from.
+
+wrote: Logs/motion/zack_hero-zack-circuit_side_v1.png
+wrote: Logs/motion/zack_hero-zack-circuit_quarter_v1.png
+
+RESULT: PASS

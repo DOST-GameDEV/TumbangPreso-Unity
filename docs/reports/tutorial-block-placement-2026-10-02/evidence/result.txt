@@ -1,0 +1,5 @@
+spawn=(0.00, 0.18, 10.00)
+flights=3
+nearest_can=1.08124
+can_hit_window=0.5788372
+blocks=1

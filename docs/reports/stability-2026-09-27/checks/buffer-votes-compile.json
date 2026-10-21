@@ -1,0 +1,56 @@
+{
+  "base": "f997250d709802d535f7d8c987e8ff1c7245400e",
+  "protocol": 88,
+  "scope": "Full merged managed source plus intermission vote changes",
+  "result": "CompileOnlyPassed",
+  "assemblies": [
+    {
+      "assembly": "TumbangPreso.Core",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Runtime",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Editor",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Tests",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.PlayTests",
+      "exitCode": 0
+    }
+  ],
+  "frozenFileCount": 1233,
+  "sourceBytes": 20250075,
+  "manifestSha256": "75DF11DA1C42AE596C6725D564492B42361FD3840BA55D8241634C1C8F895351",
+  "ownedInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/BufferSkipVote.cs",
+      "sha256": "617AF9CBAF83EDC73E239054A7F5B9213B403B2386135DF0B23CA370B7BF92E5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "53D2686642FE31DA08B026F91C80DBA11BFED37220B6676D14765140FC71FAFC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "6BBA23D1ADC4A2C9BF0928F929FEE543877D27BD474523B8147892C9555A20C9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs",
+      "sha256": "D0544F4468697E2B7B142764C20F227878D11A453822B9E41BF7D5E657B3F8F3"
+    }
+  ],
+  "drift": 0,
+  "nativeTestsRun": 0,
+  "actualCompilerAttempts": 1,
+  "notes": [
+    "Two new native handler/state cases authored, not executed",
+    "No Unity import, IL postprocessing, real peers or player build claim"
+  ]
+}

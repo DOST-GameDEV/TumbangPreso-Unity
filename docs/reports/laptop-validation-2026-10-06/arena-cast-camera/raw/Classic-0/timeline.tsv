@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.002	88.980	Quiet	QuietEstablish	the street	1	0
+1.502	88.480	Quiet	QuietEstablish	the street	1	0
+2.003	87.980	Quiet	QuietEstablish	the street	1	0
+2.504	87.480	LataHit	Objective	the can · LOLA PACING	2	0
+3.005	86.981	LataHit	Objective	the can · LOLA PACING	2	0
+3.505	86.481	LataHit	Objective	the can · LOLA PACING	2	0
+4.006	85.981	LataHit	Objective	the can · LOLA PACING	2	0
+4.506	85.481	Retrieval	RetrievalTwoShot	retrieval · LOLA PACING	3	0
+5.175	84.821	Retrieval	RetrievalTwoShot	retrieval · LOLA PACING	3	0
+5.675	84.321	Retrieval	RetrievalTwoShot	retrieval · LOLA PACING	3	0
+6.176	83.821	Retrieval	RetrievalTwoShot	retrieval · LOLA PACING	3	0
+6.678	83.301	Retrieval	RetrievalTwoShot	retrieval · LOLA PACING	3	0
+7.179	82.861	Tag	Defender	tag · MARING	3	0
+7.679	82.361	Tag	Defender	tag · MARING	3	0
+8.179	81.861	Tag	Defender	tag · MARING	3	0
+8.680	81.361	Tag	Defender	tag · MARING	3	0
+9.180	80.862	Tag	Defender	tag · MARING	3	0
+9.681	80.362	Tag	Defender	tag · MARING	3	0
+10.209	79.842	Downed	Recovery	down · OWNER UPDATED	3	0
+10.710	79.342	Downed	Recovery	down · OWNER UPDATED	3	0
+11.210	78.842	Downed	Recovery	down · OWNER UPDATED	3	0
+11.711	78.342	Downed	Recovery	down · OWNER UPDATED	3	0
+12.212	77.842	Downed	Recovery	down · OWNER UPDATED	3	0
+12.716	77.322	Downed	Recovery	down · OWNER UPDATED	3	0
+13.216	76.822	Downed	Recovery	down · OWNER UPDATED	3	0
+13.716	76.322	Downed	Recovery	down · OWNER UPDATED	3	0
+14.216	75.822	Retrieval	Chase	retrieval · LOLA PACING	4	0
+14.716	75.322	Retrieval	Chase	retrieval · LOLA PACING	4	0

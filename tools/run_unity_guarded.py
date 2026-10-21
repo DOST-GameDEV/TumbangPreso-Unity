@@ -1,4 +1,4 @@
-"""Run this checkout's Unity while preserving the Windows player's persistent files.
+"""Run this checkout's Unity while preserving the player's persistent files (Windows, macOS, Linux).
 
 Editor tests use the real product/company persistentDataPath. UI tests can save
 preferences even when their in-memory teardown succeeds. Copy bytes before a run,
@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -17,8 +18,84 @@ import uuid
 import playerprefs_guard
 
 ROOT=Path(__file__).resolve().parents[1]
-UNITY=Path(r"C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe")
-PROFILE=Path(os.environ["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Preso"
+PROJECT_IDENTITY_GUARD_VERSION=1
+
+def project_identity(root):
+    """Validation workers own their actual company's/product's prefs and save roots."""
+    settings=Path(root)/'ProjectSettings/ProjectSettings.asset'
+    if not settings.exists():return ('BH Studios','Tumbang Preso')
+    source=settings.read_text(encoding='utf-8-sig')
+    values=[]
+    for name in ('companyName','productName'):
+        match=re.search(r'^\s{2}'+name+r':\s*([^\r\n]*)$',source,re.MULTILINE)
+        if match is None:raise ValueError('Missing project '+name+'; cannot identify save/prefs scope')
+        value=match.group(1).strip()
+        if value.startswith('"'):value=json.loads(value)
+        elif value.startswith("'") and value.endswith("'"):value=value[1:-1].replace("''", "'")
+        values.append(playerprefs_guard.identity_component(value))
+    return tuple(values)
+
+
+def unity_executable(environment=None,platform=None):
+    """This checkout's editor on each machine the project is worked on.
+
+    ⚠️ The Linux row is the cloud container (2026-09-26): the editor is unpacked to
+    /opt/tump/unity by `tools/cloud_unity_setup.sh`, which also exports UNITY_EDITOR_PATH.
+    An explicit UNITY_EDITOR_PATH wins everywhere, so a machine with the editor elsewhere
+    needs no edit here.
+    """
+    environment=os.environ if environment is None else environment
+    platform=sys.platform if platform is None else platform
+    if environment.get("UNITY_EDITOR_PATH"):return Path(environment["UNITY_EDITOR_PATH"])
+    if platform.startswith("win"):return Path(r"C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe")
+    if platform=="darwin":return Path("/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity")
+    return Path("/opt/tump/unity/Editor/Unity")
+
+
+def player_profile(environment=None,platform=None,company='BH Studios',product='Tumbang Preso'):
+    """Unity's persistentDataPath for company BH Studios, product Tumbang Preso, per OS.
+
+    Windows `%USERPROFILE%/AppData/LocalLow`, macOS `~/Library/Application Support`,
+    Linux `$XDG_CONFIG_HOME/unity3d` (default `~/.config/unity3d`), as Unity documents
+    `Application.persistentDataPath`. `tools/cold_start.py` resolves the same folders.
+    """
+    environment=os.environ if environment is None else environment
+    platform=sys.platform if platform is None else platform
+    company=playerprefs_guard.identity_component(company)
+    product=playerprefs_guard.identity_component(product)
+    if platform.startswith("win"):return Path(environment["USERPROFILE"])/'AppData/LocalLow'/company/product
+    if platform=="darwin":return Path.home()/'Library/Application Support'/company/product
+    config=environment.get("XDG_CONFIG_HOME") or str(Path.home()/".config")
+    return Path(config)/'unity3d'/company/product
+
+
+def launch_command(unity,args,environment=None,platform=None,has_xvfb=None):
+    """The command line, wrapped for a headless Linux box.
+
+    ⚠️⚠️ A cloud container has no display, and PlayMode, films and renders need a real
+    graphics device (PlayMode never takes -nographics, CLAUDE.md section 7). Without a
+    DISPLAY the editor runs under xvfb-run on Mesa's software OpenGL (llvmpipe); a run
+    that passes -nographics needs no display and is left alone. The project's active
+    target is Windows and a Linux editor has no Windows module, so a Linux launch that
+    names no -buildTarget gets Linux64 (the same standalone code paths, bar the few
+    `UNITY_STANDALONE_WIN` blocks).
+    """
+    environment=os.environ if environment is None else environment
+    platform=sys.platform if platform is None else platform
+    command=[str(unity),"-projectPath",str(ROOT),*args]
+    if not platform.startswith("linux"):return command
+    lowered=[a.lower() for a in args]
+    if "-buildtarget" not in lowered:command+=["-buildTarget","Linux64"]
+    if has_xvfb is None:has_xvfb=shutil.which("xvfb-run") is not None
+    if not environment.get("DISPLAY") and "-nographics" not in lowered and has_xvfb:
+        command=["xvfb-run","-a","-s","-screen 0 1920x1080x24",*command]
+    return command
+
+
+UNITY=unity_executable()
+COMPANY,PRODUCT=project_identity(ROOT)
+PROFILE=player_profile(company=COMPANY,product=PRODUCT)
+EDITOR_PREFS_KEY=playerprefs_guard.editor_key(COMPANY,PRODUCT)
 
 
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -68,11 +145,12 @@ def run(args):
             manifest[str(relative)]=digest(source)
     (backup/"manifest.json").write_text(json.dumps(manifest,indent=2))
     (backup/"scope.json").write_text(json.dumps({"profileRoot":str(profile)},indent=2))
-    editor_prefs=playerprefs_guard.read_editor()
+    editor_prefs=playerprefs_guard.read_editor(EDITOR_PREFS_KEY)
     (backup/"editor-input-prefs.json").write_text(json.dumps(editor_prefs,indent=2))
+    (backup/'identity.json').write_text(json.dumps({'company':COMPANY,'product':PRODUCT,'editorPrefsKey':EDITOR_PREFS_KEY},indent=2))
     result=1
     try:
-        result=subprocess.run([str(UNITY),"-projectPath",str(ROOT),*args],cwd=ROOT,
+        result=subprocess.run(launch_command(UNITY,args),cwd=ROOT,
                               env=unity_environment()).returncode
     finally:
         restored=0
@@ -84,7 +162,7 @@ def run(args):
             shutil.copy2(backup/relative,destination)
             if digest(destination)!=expected:raise RuntimeError("Profile restore did not verify")
             restored+=1
-        playerprefs_guard.restore_editor(editor_prefs)
+        playerprefs_guard.restore_editor(editor_prefs,EDITOR_PREFS_KEY)
         print(f"Preserved {restored} existing profile files in {profile} and {len(editor_prefs)} shared Editor input preferences; snapshot {backup.name}",flush=True)
     return result
 

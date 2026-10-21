@@ -1,0 +1,17 @@
+{
+  "host": {
+    "furthest_forward_z": -1.946087,
+    "final_z": -2.653565,
+    "return_distance_from_peak": 0.707478
+  },
+  "owner": {
+    "furthest_forward_z": -1.974957,
+    "final_z": -2.653565,
+    "return_distance_from_peak": 0.6786079999999999
+  },
+  "observer": {
+    "furthest_forward_z": -1.9669,
+    "final_z": -2.653565,
+    "return_distance_from_peak": 0.6866649999999999
+  }
+}

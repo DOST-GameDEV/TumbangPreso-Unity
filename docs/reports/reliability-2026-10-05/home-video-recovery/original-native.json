@@ -1,0 +1,32 @@
+{
+  "sourceRef": "dcaa39abfd7cdadc07e2245f8c0f6dd82d245562",
+  "pid": 16720,
+  "profile": "pc-homevideo-orig1005",
+  "filter": "TumbangPreso.PlayTests.HubSceneVideoTests.FailedBootWarmupGetsFreshPlaybackWhenHomeOpens;TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome;TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder",
+  "expectedCases": 3,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HubSceneVideoTests.FailedBootWarmupGetsFreshPlaybackWhenHomeOpens",
+      "result": "Failed",
+      "message": "  Home adopted a failed preload and cannot restart its animation.\n  Expected: not same as <HomeSceneVideo (TumbangPreso.UI.Hub.HubSceneVideo)>\n  But was:  <HomeSceneVideo (TumbangPreso.UI.Hub.HubSceneVideo)>\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "terminal": true,
+  "protectedCount": 19280
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.0972085">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="803" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.097209" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1952" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="803" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.085250" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10968" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1953" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="803" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.083320" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1954" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="803" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.081791" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="41" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.062396" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1093" name="RemainingCareerResponsesRespectAccountOwnership" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.054981" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1089" name="RemainingCareerResponsesRespectAccountOwnership(False,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(False,False)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="745272968" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.036413" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Career] reported a match left early
+]]></output>
+              </test-case>
+              <test-case id="1090" name="RemainingCareerResponsesRespectAccountOwnership(False,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(False,True)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1872458317" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.000434" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1091" name="RemainingCareerResponsesRespectAccountOwnership(True,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(True,False)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="649806831" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.001696" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1092" name="RemainingCareerResponsesRespectAccountOwnership(True,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(True,True)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2020721226" result="Passed" start-time="2026-10-02 00:16:02Z" end-time="2026-10-02 00:16:02Z" duration="0.003327" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

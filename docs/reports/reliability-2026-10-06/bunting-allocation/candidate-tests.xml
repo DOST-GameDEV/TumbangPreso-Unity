@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.2366255">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.236626" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2723" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.217139" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20740" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2724" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.207918" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2725" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.199075" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1566" name="HubShapeAllocationTests" fullname="TumbangPreso.Tests.HubShapeAllocationTests" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.162722" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1570" name="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.071925" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1568" name="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(True)" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(True)" methodname="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" seed="2032926001" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.060149" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UIContourAllocation] pressable=True rebuilds=500 allocationEvents=0
+]]></output>
+              </test-case>
+              <test-case id="1569" name="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(False)" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(False)" methodname="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" seed="602926793" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.003324" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UIContourAllocation] pressable=False rebuilds=500 allocationEvents=0
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1567" name="RepeatedBuntingDrawsAllocateNoRandomOrClosureState" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedBuntingDrawsAllocateNoRandomOrClosureState" methodname="RepeatedBuntingDrawsAllocateNoRandomOrClosureState" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" seed="1112142950" result="Passed" start-time="2026-10-05 21:30:20Z" end-time="2026-10-05 21:30:20Z" duration="0.080165" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[100 warm bunting draws: 0 GC.Alloc events
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

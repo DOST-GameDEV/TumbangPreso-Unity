@@ -1,0 +1,6 @@
+{
+  "result": "Compile failed; no player produced",
+  "guard": "7d73ce8b529f",
+  "cause": "Unity6000.5 SceneHandle no longer implicitly converts to int. Rehost reload comparison now keeps the Scene value itself. Recall spectator request also waits for actual client connection.",
+  "log": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\network-final-v44-build\\editor.log"
+}

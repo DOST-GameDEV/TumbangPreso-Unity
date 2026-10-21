@@ -2253,11 +2253,28 @@ namespace TumbangPreso.Visual
         {
             if (mesh == null) return null;
 
+            // ⚠️⚠️ THE BACK FACE GETS ITS OWN COPY OF EVERY VERTEX, WITH THE NORMAL REVERSED.
+            // This used to wind the back triangles over the SAME vertices and recalculate, on
+            // the argument that these are emissive shapes whose shading does not matter. It
+            // does matter: a vertex shared by a front and a back face averages to a ZERO
+            // normal, the lit term goes NaN, and emission cannot add light to NaN. Every
+            // upright effect built through here came out as a black silhouette in the first
+            // native stills of 2026-09-24 (`ability_coven_eclipse_eye_v56.png`: twenty black
+            // glyphs; `ability_blink_rift_v56.png`: a black sliver; `ability_circuit_arcs`:
+            // black lines), and the glyph note in `HeroHazards.AddFloatingGlyphs` records the
+            // same "came back black" twice before, blamed on emission strength.
             var verts = new System.Collections.Generic.List<Vector3>();
             mesh.GetVertices(verts);
+            var uvs = new System.Collections.Generic.List<Vector2>();
+            mesh.GetUVs(0, uvs);
+            var colours = new System.Collections.Generic.List<Color>();
+            mesh.GetColors(colours);
+            mesh.RecalculateNormals();
+            var normals = new System.Collections.Generic.List<Vector3>();
+            mesh.GetNormals(normals);
 
             var tris = mesh.triangles;
-            int count = tris.Length;
+            int count = tris.Length, n = verts.Count;
 
             var doubled = new int[count * 2];
             for (int i = 0; i < count; i += 3)
@@ -2266,21 +2283,22 @@ namespace TumbangPreso.Visual
                 doubled[i + 1] = tris[i + 1];
                 doubled[i + 2] = tris[i + 2];
 
-                // The back face is the same triangle with two indices swapped, which is the one
-                // operation that reverses winding without moving a vertex.
-                doubled[count + i] = tris[i];
-                doubled[count + i + 1] = tris[i + 2];
-                doubled[count + i + 2] = tris[i + 1];
+                // The back face: the same triangle, reversed winding, on the copied vertices.
+                doubled[count + i] = tris[i] + n;
+                doubled[count + i + 1] = tris[i + 2] + n;
+                doubled[count + i + 2] = tris[i + 1] + n;
             }
 
-            mesh.SetTriangles(doubled, 0);
+            for (int i = 0; i < n; i++) { verts.Add(verts[i]); normals.Add(-normals[i]); }
+            if (uvs.Count == n) for (int i = 0; i < n; i++) uvs.Add(uvs[i]);
+            if (colours.Count == n) for (int i = 0; i < n; i++) colours.Add(colours[i]);
 
-            // ⚠️ NORMALS ARE RECALCULATED RATHER THAN KEPT. A vertex shared by a front and a back
-            // triangle averages to something facing neither way, so this deliberately lets Unity
-            // produce the average: these are ghosted, emissive shapes whose look comes from
-            // `VfxMaterial.Ghost` rather than from being shaded, and a flat unlit read is the
-            // house style for them anyway.
-            mesh.RecalculateNormals();
+            if (verts.Count > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            mesh.SetVertices(verts);
+            mesh.SetNormals(normals);
+            if (uvs.Count == verts.Count) mesh.SetUVs(0, uvs);
+            if (colours.Count == verts.Count) mesh.SetColors(colours);
+            mesh.SetTriangles(doubled, 0);
             mesh.RecalculateBounds();
             return mesh;
         }

@@ -1,0 +1,1590 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="75" result="Failed(Child)" total="75" passed="66" failed="9" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 15:29:55Z" end-time="2026-10-19 15:36:05Z" duration="369.5791741">
+  <test-suite type="TestSuite" id="3709" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2186" result="Failed" site="Child" start-time="2026-10-19 15:29:55Z" end-time="2026-10-19 15:36:05Z" duration="369.579174" total="75" passed="66" failed="9" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3701" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/game-networking-lan-relay-d56db9/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2186" result="Failed" site="Child" start-time="2026-10-19 15:29:55Z" end-time="2026-10-19 15:36:05Z" duration="369.554335" total="75" passed="66" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3702" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2186" result="Failed" site="Child" start-time="2026-10-19 15:29:55Z" end-time="2026-10-19 15:36:05Z" duration="369.538765" total="75" passed="66" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3705" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2184" result="Failed" site="Child" start-time="2026-10-19 15:29:55Z" end-time="2026-10-19 15:36:05Z" duration="369.522860" total="75" passed="66" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1609" name="CustomBotPolicyStartTests" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-19 15:29:55Z" end-time="2026-10-19 15:29:56Z" duration="0.727573" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1615" name="AlreadyDisabledNoneStartsWithVacantSeats" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests.AlreadyDisabledNoneStartsWithVacantSeats" methodname="AlreadyDisabledNoneStartsWithVacantSeats" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" seed="396725978" result="Passed" start-time="2026-10-19 15:29:55Z" end-time="2026-10-19 15:29:56Z" duration="0.418475" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code 6CYM
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.CustomBotPolicyStartTests+<After>d__12.MoveNext () [0x00029] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="1613" name="EnabledRoomRulesStartDespiteDisabledSavedPolicy" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests.EnabledRoomRulesStartDespiteDisabledSavedPolicy" methodname="EnabledRoomRulesStartDespiteDisabledSavedPolicy" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" seed="882898213" result="Passed" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:29:56Z" duration="0.044310" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code 3D4N
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.CustomBotPolicyStartTests+<After>d__12.MoveNext () [0x00029] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="1611" name="EnabledRulesShowBotSeatsBeforeStartDespiteDisabledSavedPolicy" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests.EnabledRulesShowBotSeatsBeforeStartDespiteDisabledSavedPolicy" methodname="EnabledRulesShowBotSeatsBeforeStartDespiteDisabledSavedPolicy" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" seed="803494310" result="Passed" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:29:56Z" duration="0.049025" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code M6XP
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.CustomBotPolicyStartTests+<After>d__12.MoveNext () [0x00029] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="1614" name="FourHumanSeatsCanStartWithNone" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests.FourHumanSeatsCanStartWithNone" methodname="FourHumanSeatsCanStartWithNone" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" seed="1076252057" result="Passed" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:29:56Z" duration="0.049045" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code 6YSQ
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.CustomBotPolicyStartTests+<After>d__12.MoveNext () [0x00029] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="1610" name="NoneRulesShowOpenSeatsBeforeStartDespiteEnabledSavedPolicy" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests.NoneRulesShowOpenSeatsBeforeStartDespiteEnabledSavedPolicy" methodname="NoneRulesShowOpenSeatsBeforeStartDespiteEnabledSavedPolicy" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" seed="731223466" result="Passed" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:29:56Z" duration="0.045551" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code 4FU6
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.CustomBotPolicyStartTests+<After>d__12.MoveNext () [0x00029] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="1612" name="NoneRulesStartWithVacantSeatsAndRetireEnabledSavedPolicy" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests.NoneRulesStartWithVacantSeatsAndRetireEnabledSavedPolicy" methodname="NoneRulesStartWithVacantSeatsAndRetireEnabledSavedPolicy" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" seed="1468300565" result="Passed" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:29:56Z" duration="0.042805" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code AJGS
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.CustomBotPolicyStartTests+<After>d__12.MoveNext () [0x00029] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="1616" name="QueueKeepsItsExplicitAcceptedBotPath" fullname="TumbangPreso.PlayTests.CustomBotPolicyStartTests.QueueKeepsItsExplicitAcceptedBotPath" methodname="QueueKeepsItsExplicitAcceptedBotPath" classname="TumbangPreso.PlayTests.CustomBotPolicyStartTests" runstate="Runnable" seed="82008134" result="Passed" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:29:56Z" duration="0.044973" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code UBCT
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.CustomBotPolicyStartTests+<After>d__12.MoveNext () [0x00029] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1748" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="20" result="Failed" site="Child" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:32:36Z" duration="159.598980" total="20" passed="18" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1764" name="BridgeAttackerClosesOnThemselves" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeAttackerClosesOnThemselves" methodname="BridgeAttackerClosesOnThemselves" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="960764458" result="Passed" start-time="2026-10-19 15:29:56Z" end-time="2026-10-19 15:30:05Z" duration="8.787518" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1755" name="BridgeCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeCameraMotionOff" methodname="BridgeCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1535037099" result="Passed" start-time="2026-10-19 15:30:05Z" end-time="2026-10-19 15:30:08Z" duration="3.419478" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1749" name="BridgeLowArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival" methodname="BridgeLowArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="951121175" result="Failed" start-time="2026-10-19 15:30:08Z" end-time="2026-10-19 15:30:14Z" duration="5.775205" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  IlalimNgTulay seat0 rendered sole support at2.85
+  Expected: in range (-0.02,0.04)
+  But was:  0.0429514386f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__36.MoveNext () [0x00fa0] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:432
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1758" name="BridgeNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeNaturalHeroCountdown" methodname="BridgeNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1361462442" result="Passed" start-time="2026-10-19 15:30:14Z" end-time="2026-10-19 15:30:33Z" duration="19.252430" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.7 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.7 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1761" name="BridgeNaturalHeroWalkCadence" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeNaturalHeroWalkCadence" methodname="BridgeNaturalHeroWalkCadence" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="58692658" result="Passed" start-time="2026-10-19 15:30:33Z" end-time="2026-10-19 15:30:52Z" duration="18.895241" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.7 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.7 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1752" name="BridgeReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeReducedMotionArrival" methodname="BridgeReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="277580763" result="Passed" start-time="2026-10-19 15:30:52Z" end-time="2026-10-19 15:30:56Z" duration="3.647894" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1765" name="CoveAttackerClosesOnThemselves" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveAttackerClosesOnThemselves" methodname="CoveAttackerClosesOnThemselves" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="683594764" result="Passed" start-time="2026-10-19 15:30:56Z" end-time="2026-10-19 15:30:59Z" duration="3.320394" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1756" name="CoveCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCameraMotionOff" methodname="CoveCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2024099957" result="Passed" start-time="2026-10-19 15:30:59Z" end-time="2026-10-19 15:31:01Z" duration="2.323439" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1750" name="CoveCurvedArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCurvedArrival" methodname="CoveCurvedArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1824103040" result="Passed" start-time="2026-10-19 15:31:01Z" end-time="2026-10-19 15:31:06Z" duration="4.786487" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1759" name="CoveNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveNaturalHeroCountdown" methodname="CoveNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1234969004" result="Passed" start-time="2026-10-19 15:31:06Z" end-time="2026-10-19 15:31:26Z" duration="19.231875" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (14.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 14.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1762" name="CoveNaturalHeroWalkCadence" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveNaturalHeroWalkCadence" methodname="CoveNaturalHeroWalkCadence" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="393173984" result="Passed" start-time="2026-10-19 15:31:26Z" end-time="2026-10-19 15:31:45Z" duration="19.255724" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (14.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 14.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1753" name="CoveReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveReducedMotionArrival" methodname="CoveReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1373126890" result="Passed" start-time="2026-10-19 15:31:45Z" end-time="2026-10-19 15:31:47Z" duration="2.575194" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1766" name="KantoAttackerClosesOnThemselves" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoAttackerClosesOnThemselves" methodname="KantoAttackerClosesOnThemselves" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="370966246" result="Passed" start-time="2026-10-19 15:31:47Z" end-time="2026-10-19 15:31:50Z" duration="2.544739" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1757" name="KantoCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCameraMotionOff" methodname="KantoCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1790091865" result="Passed" start-time="2026-10-19 15:31:50Z" end-time="2026-10-19 15:31:52Z" duration="1.894021" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1751" name="KantoCrossingArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival" methodname="KantoCrossingArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="479238277" result="Failed" start-time="2026-10-19 15:31:52Z" end-time="2026-10-19 15:31:56Z" duration="4.209669" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Kanto seat0 rendered sole support at2.55
+  Expected: in range (-0.02,0.04)
+  But was:  0.0425910205f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__36.MoveNext () [0x00fa0] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:432
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1760" name="KantoNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoNaturalHeroCountdown" methodname="KantoNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1667910549" result="Passed" start-time="2026-10-19 15:31:56Z" end-time="2026-10-19 15:32:13Z" duration="16.779826" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1763" name="KantoNaturalHeroWalkCadence" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoNaturalHeroWalkCadence" methodname="KantoNaturalHeroWalkCadence" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="670670914" result="Passed" start-time="2026-10-19 15:32:13Z" end-time="2026-10-19 15:32:30Z" duration="16.793791" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1754" name="KantoReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoReducedMotionArrival" methodname="KantoReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1501803770" result="Passed" start-time="2026-10-19 15:32:30Z" end-time="2026-10-19 15:32:32Z" duration="2.526201" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1767" name="KantoTayaKeepsTheSpotlight" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoTayaKeepsTheSpotlight" methodname="KantoTayaKeepsTheSpotlight" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1581603442" result="Passed" start-time="2026-10-19 15:32:32Z" end-time="2026-10-19 15:32:34Z" duration="1.790980" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1768" name="KantoWatcherKeepsTheSpotlight" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoWatcherKeepsTheSpotlight" methodname="KantoWatcherKeepsTheSpotlight" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="906683419" result="Passed" start-time="2026-10-19 15:32:34Z" end-time="2026-10-19 15:32:36Z" duration="1.783145" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1967" name="HubFlowTests" fullname="TumbangPreso.PlayTests.HubFlowTests" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-19 15:32:36Z" end-time="2026-10-19 15:33:20Z" duration="44.550143" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1971" name="HomeAndEveryDoorOpensItsScreenAndBackReturns" fullname="TumbangPreso.PlayTests.HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns" methodname="HomeAndEveryDoorOpensItsScreenAndBackReturns" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="278693823" result="Passed" start-time="2026-10-19 15:32:36Z" end-time="2026-10-19 15:33:01Z" duration="25.121058" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[TumpUiCapture] Hub-Home-960x540 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1280x720 cream source=252,211,159 pixel=54,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1920x1080 cream source=252,211,159 pixel=52,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1280x960 cream source=252,211,159 pixel=52,21,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1600x680 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-960x540 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1280x720 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1920x1080 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1280x960 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1600x680 cream source=252,211,159 pixel=47,22,13; isolated UI camera, no ColourGrade.
+[HeroReveal] revealed 0.00 s beyond Press's own wait
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-960x540 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1280x720 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1920x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1280x960 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-960x540 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1280x720 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1920x1080 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1280x960 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1600x680 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-960x540 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1280x720 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1920x1080 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1280x960 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1600x680 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-960x540 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1280x720 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1920x1080 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1280x960 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1600x680 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-960x540 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1280x720 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1920x1080 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1280x960 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1600x680 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-960x540 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1280x720 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1920x1080 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1280x960 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1600x680 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-960x540 cream source=252,211,159 pixel=48,26,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1280x720 cream source=252,211,159 pixel=49,26,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1920x1080 cream source=252,211,159 pixel=48,26,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1280x960 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1600x680 cream source=252,211,159 pixel=47,22,12; isolated UI camera, no ColourGrade.
+[HeroReveal] revealed 0.00 s beyond Press's own wait
+[TumpUiCapture] Hub-Tasks-960x540 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1280x720 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1920x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1280x960 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-960x540 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1920x1080 cream source=252,211,159 pixel=69,51,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1280x960 cream source=252,211,159 pixel=48,23,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1600x680 cream source=252,211,159 pixel=50,25,12; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1969" name="PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect" fullname="TumbangPreso.PlayTests.HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect" methodname="PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="482241160" result="Passed" start-time="2026-10-19 15:33:01Z" end-time="2026-10-19 15:33:20Z" duration="19.424948" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[HeroReveal] revealed 0.00 s beyond Press's own wait
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-sean-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-sean-2340x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-cheska-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-cheska-2340x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-2340x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-defending-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-defending-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-defending-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-defending-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-defending-focus-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-tilted-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-tilted-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-tilted-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-tilted-focus-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-tilted-focus-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-larger-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-larger-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-larger-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-larger-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-larger-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-larger-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-larger-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-larger-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-larger-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-larger-2340x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 3RMD
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-sean-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-sean-2340x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-cheska-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-cheska-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-cheska-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-cheska-2340x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-paete-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-paete-2340x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[HeroSize] 1600x680: shop Sean=0.670, Cheska=0.646, Paete=0.737; selector Sean=0.799, Cheska=0.711, Paete=0.834
+[HeroSize] 2340x1080: shop Sean=0.656, Cheska=0.643, Paete=0.739; selector Sean=0.794, Cheska=0.706, Paete=0.834
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.HubFlowTests+<PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect>d__13.<>m__Finally1 () [0x0001e] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at TumbangPreso.PlayTests.HubFlowTests+<PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect>d__13.MoveNext () [0x01107] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.HubFlowTests+<After>d__3.MoveNext () [0x0003f] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2090" name="LateJoinReadyGateTests" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-19 15:33:20Z" end-time="2026-10-19 15:33:21Z" duration="0.453973" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2096" name="AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" methodname="AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="644661158" result="Passed" start-time="2026-10-19 15:33:20Z" end-time="2026-10-19 15:33:20Z" duration="0.055403" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2097" name="AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" methodname="AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="781292670" result="Passed" start-time="2026-10-19 15:33:20Z" end-time="2026-10-19 15:33:20Z" duration="0.043240" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2099" name="ArrivingUltimateKeepsItsOwnClockHoldAfterOpeningRetires" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.ArrivingUltimateKeepsItsOwnClockHoldAfterOpeningRetires" methodname="ArrivingUltimateKeepsItsOwnClockHoldAfterOpeningRetires" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1563821826" result="Passed" start-time="2026-10-19 15:33:20Z" end-time="2026-10-19 15:33:20Z" duration="0.053133" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2098" name="HostRetainsItsNormalStartBarrier" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.HostRetainsItsNormalStartBarrier" methodname="HostRetainsItsNormalStartBarrier" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="154969125" result="Passed" start-time="2026-10-19 15:33:20Z" end-time="2026-10-19 15:33:20Z" duration="0.047876" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] host: gate opened for seat 1
+[Arrival] host: no main camera, so no opening
+[Arrival] host: finished before it was shown
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: countdown sent with 0/0 ready
+]]></output>
+            </test-case>
+            <test-case id="2095" name="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" methodname="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1719631799" result="Passed" start-time="2026-10-19 15:33:20Z" end-time="2026-10-19 15:33:20Z" duration="0.048007" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2094" name="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.PrestartSnapshotDoesNotReleaseTheRealStartBarrier" methodname="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="2129151775" result="Passed" start-time="2026-10-19 15:33:20Z" end-time="2026-10-19 15:33:21Z" duration="0.046563" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+]]></output>
+            </test-case>
+            <test-case id="2093" name="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RebindingDuringAnExistingRoundDoesNotReplayTheOpening" methodname="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="64281851" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.043580" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2092" name="RunningSnapshotCancelsAnIntroductionStillInFlight" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotCancelsAnIntroductionStillInFlight" methodname="RunningSnapshotCancelsAnIntroductionStillInFlight" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="489376853" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.047045" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: adopting the host's running match; the opening is retired
+[Arrival] client: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="2091" name="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" methodname="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1788387938" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.061244" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2289" name="MapVotePacketTests" fullname="TumbangPreso.PlayTests.MapVotePacketTests" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:22Z" duration="1.075242" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2304" name="CustomStartSelectsCharactersBeforeOpeningTheBallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.CustomStartSelectsCharactersBeforeOpeningTheBallot" methodname="CustomStartSelectsCharactersBeforeOpeningTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1165821957" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.065816" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2296" name="ExactGuestVoteUsesItsAuthenticatedSeat" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ExactGuestVoteUsesItsAuthenticatedSeat" methodname="ExactGuestVoteUsesItsAuthenticatedSeat" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1792817240" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.058781" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2303" name="ExactHostTallyStillReplacesTheBallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ExactHostTallyStillReplacesTheBallot" methodname="ExactHostTallyStillReplacesTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1568227731" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.057847" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2309" name="HostCancellationClearsTheObserversPreparationPhase" fullname="TumbangPreso.PlayTests.MapVotePacketTests.HostCancellationClearsTheObserversPreparationPhase" methodname="HostCancellationClearsTheObserversPreparationPhase" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="2005441508" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.059189" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2302" name="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.118870" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2300" name="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(False)" methodname="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="2145929437" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.060537" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2301" name="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(True)" methodname="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1922363042" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.056662" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2305" name="MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom" fullname="TumbangPreso.PlayTests.MapVotePacketTests.MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom" methodname="MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="660758429" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.059390" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2308" name="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.118291" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2306" name="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(0,True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(0,True)" methodname="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="434251407" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.059267" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2307" name="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(1,False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(1,False)" methodname="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="397867950" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.057884" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2295" name="OversizedSenderCannotWrapIntoAnExistingGuest" fullname="TumbangPreso.PlayTests.MapVotePacketTests.OversizedSenderCannotWrapIntoAnExistingGuest" methodname="OversizedSenderCannotWrapIntoAnExistingGuest" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1461766323" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.054818" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2312" name="QueueStateRequiresExactlyItsPublishedWireLength" fullname="TumbangPreso.PlayTests.MapVotePacketTests.QueueStateRequiresExactlyItsPublishedWireLength" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.118643" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2310" name="QueueStateRequiresExactlyItsPublishedWireLength(False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.QueueStateRequiresExactlyItsPublishedWireLength(False)" methodname="QueueStateRequiresExactlyItsPublishedWireLength" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="707082468" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.060477" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2311" name="QueueStateRequiresExactlyItsPublishedWireLength(True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.QueueStateRequiresExactlyItsPublishedWireLength(True)" methodname="QueueStateRequiresExactlyItsPublishedWireLength" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="67190001" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.056715" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2294" name="TrailingGuestDataCannotCastABallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TrailingGuestDataCannotCastABallot" methodname="TrailingGuestDataCannotCastABallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="140202269" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.057332" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2293" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:22Z" duration="0.179681" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2290" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException(0)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException(0)" methodname="TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1214030351" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:21Z" duration="0.060663" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2291" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException(1)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException(1)" methodname="TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="136908070" result="Passed" start-time="2026-10-19 15:33:21Z" end-time="2026-10-19 15:33:22Z" duration="0.058587" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2292" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException(3)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException(3)" methodname="TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="701965075" result="Passed" start-time="2026-10-19 15:33:22Z" end-time="2026-10-19 15:33:22Z" duration="0.059090" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2299" name="TruncatedHostTallyCannotThrow" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedHostTallyCannotThrow" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-19 15:33:22Z" end-time="2026-10-19 15:33:22Z" duration="0.122446" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2297" name="TruncatedHostTallyCannotThrow(False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedHostTallyCannotThrow(False)" methodname="TruncatedHostTallyCannotThrow" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1047820721" result="Passed" start-time="2026-10-19 15:33:22Z" end-time="2026-10-19 15:33:22Z" duration="0.059076" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2298" name="TruncatedHostTallyCannotThrow(True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedHostTallyCannotThrow(True)" methodname="TruncatedHostTallyCannotThrow" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1999281691" result="Passed" start-time="2026-10-19 15:33:22Z" end-time="2026-10-19 15:33:22Z" duration="0.061494" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2316" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-19 15:33:22Z" end-time="2026-10-19 15:35:56Z" duration="154.652498" total="10" passed="8" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2317" name="CharacterSelectionExplainsItsKitWithoutPausingTheClock" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionExplainsItsKitWithoutPausingTheClock" methodname="CharacterSelectionExplainsItsKitWithoutPausingTheClock" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1600522572" result="Passed" start-time="2026-10-19 15:33:22Z" end-time="2026-10-19 15:34:09Z" duration="47.559826" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2318" name="CharacterSelectionReviewCaptures" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionReviewCaptures" methodname="CharacterSelectionReviewCaptures" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="801694953" result="Passed" start-time="2026-10-19 15:34:09Z" end-time="2026-10-19 15:34:21Z" duration="11.276740" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[CharacterSelectFloor] nemu/1600x680: feet=0.088 ring=0.099 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1920x1080: feet=0.088 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1280x720: feet=0.089 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/960x540: feet=0.090 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1280x960: feet=0.090 ring=0.099 stage=(712.00, 1030.00)
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/2560x1080: feet=0.094 ring=0.101 stage=(1352.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-2560x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/877x482: feet=0.097 ring=0.100 stage=(757.06, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-877x482 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] dante/1600x680: feet=0.059 ring=0.099 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-dante-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[NetReady] refused peer 0: not in the lobby table
+[CharacterSelectFloor] locked/1600x680: feet=0.059 ring=0.108 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-locked-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] larger/1280x720: feet=0.056 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-larger-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] classic/1600x680: feet=0.073 ring=0.126 stage=(1333.18, 670.00)
+[TumpUiCapture] CharSelect-v8-classic-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] classic/1280x960: feet=0.070 ring=0.125 stage=(712.00, 1030.00)
+[TumpUiCapture] CharSelect-v8-classic-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2319" name="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" methodname="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1188248429" result="Passed" start-time="2026-10-19 15:34:21Z" end-time="2026-10-19 15:34:23Z" duration="1.959570" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2323" name="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" methodname="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="365469580" result="Passed" start-time="2026-10-19 15:34:23Z" end-time="2026-10-19 15:34:41Z" duration="18.298127" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code FUX4
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+Cannot Pause a disabled VideoPlayer
+[Arrival] host: gate opened for seat 0
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[ArenaPrewarm] drew 20 views in 0.41 s.
+[HeroFxPrewarm] warmed 5 hero effects in 0.45 s.
+[HubLoading] Eskinita ready after 4.25 s.
+[Arrival] host: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 8.6 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/1)
+[Arrival] host: countdown sent with 1/1 ready
+[Slice] round 1 begins, taya is seat 0
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.MatchArrivalFlowTests+<After>d__11.MoveNext () [0x0001e] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="2325" name="CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt" methodname="CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1775524095" result="Passed" start-time="2026-10-19 15:34:41Z" end-time="2026-10-19 15:34:46Z" duration="5.123327" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: cancelled after 1.7 s on screen
+[Net] offline
+[Arrival] offline: opening done, waiting for the countdown
+]]></output>
+            </test-case>
+            <test-case id="2324" name="CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch" methodname="CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="169192577" result="Passed" start-time="2026-10-19 15:34:46Z" end-time="2026-10-19 15:35:03Z" duration="17.132038" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 93GD
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+Cannot Pause a disabled VideoPlayer
+[Arrival] host: gate opened for seat 0
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:MISSING | s2:MISSING | s3:MISSING
+[ArenaPrewarm] drew 20 views in 0.26 s.
+[HeroFxPrewarm] warmed 5 hero effects in 0.10 s.
+[HubLoading] Eskinita ready after 1.14 s.
+[Arrival] host: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 8.6 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/1)
+[Arrival] host: countdown sent with 1/1 ready
+[Slice] round 1 begins, taya is seat 0
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.MatchArrivalFlowTests+<After>d__11.MoveNext () [0x0001e] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="2322" name="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" methodname="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1670689980" result="Failed" start-time="2026-10-19 15:35:03Z" end-time="2026-10-19 15:35:26Z" duration="23.009639" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 10 but was 13. Strings differ at index 0.
+  Expected: "BayanPlaza"
+  But was:  "IlalimNgTulay"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MatchArrivalFlowTests+<StartFlow>d__15.MoveNext () [0x003e8] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\MatchArrivalFlowTests.cs:439
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 83TK
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+Cannot Pause a disabled VideoPlayer
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] host: gate opened for seat 0
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[ArenaPrewarm] drew 20 views in 0.61 s.
+[HeroFxPrewarm] warmed 5 hero effects in 0.17 s.
+[HubLoading] IlalimNgTulay ready after 6.77 s.
+[Arrival] host: arrival prepared (12.7 s, directed=True, rig=True, closes on the taya)
+[Arrival] host: arrival playing
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.MatchArrivalFlowTests+<After>d__11.MoveNext () [0x0001e] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Arrival] host: cancelled after 10.3 s on screen
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Arrival] offline: opening done, waiting for the countdown
+]]></output>
+            </test-case>
+            <test-case id="2326" name="LeavingDuringIntroductionReleasesCameraAndClock" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.LeavingDuringIntroductionReleasesCameraAndClock" methodname="LeavingDuringIntroductionReleasesCameraAndClock" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1255730572" result="Passed" start-time="2026-10-19 15:35:26Z" end-time="2026-10-19 15:35:28Z" duration="1.936188" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: cancelled after 0.6 s on screen
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2320" name="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" methodname="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="547470279" result="Passed" start-time="2026-10-19 15:35:28Z" end-time="2026-10-19 15:35:32Z" duration="3.768790" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code Y3G7
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] qa11-owned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] qa11-owned-hero cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] qa11-unowned-hero/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] qa11-unowned-hero cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.MatchArrivalFlowTests+<After>d__11.MoveNext () [0x0001e] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="2321" name="QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" methodname="QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1261479665" result="Failed" start-time="2026-10-19 15:35:32Z" end-time="2026-10-19 15:35:56Z" duration="24.583933" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 10 but was 13. Strings differ at index 0.
+  Expected: "BayanPlaza"
+  But was:  "IlalimNgTulay"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MatchArrivalFlowTests+<StartFlow>d__15.MoveNext () [0x003e8] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\MatchArrivalFlowTests.cs:439
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code SS2E
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+Cannot Pause a disabled VideoPlayer
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] host: gate opened for seat 0
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[ArenaPrewarm] drew 20 views in 0.61 s.
+[HeroFxPrewarm] warmed 5 hero effects in 0.16 s.
+[HubLoading] IlalimNgTulay ready after 3.95 s.
+[Arrival] host: arrival prepared (12.7 s, directed=True, rig=True, closes on the taya)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 12.7 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/1)
+[Arrival] host: countdown sent with 1/1 ready
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.MatchArrivalFlowTests+<After>d__11.MoveNext () [0x0001e] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2381" name="ModelPreviewTests" fullname="TumbangPreso.PlayTests.ModelPreviewTests" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-19 15:35:56Z" end-time="2026-10-19 15:36:05Z" duration="8.330789" total="9" passed="4" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2383" name="CharacterBindingReleasesGeneratedAvatarsButPreservesBorrowedAssets" fullname="TumbangPreso.PlayTests.ModelPreviewTests.CharacterBindingReleasesGeneratedAvatarsButPreservesBorrowedAssets" methodname="CharacterBindingReleasesGeneratedAvatarsButPreservesBorrowedAssets" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1174169608" result="Passed" start-time="2026-10-19 15:35:56Z" end-time="2026-10-19 15:35:56Z" duration="0.076634" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2388" name="ClassicCharacterSelectDrawsTheGodotCastAndBackdrop" fullname="TumbangPreso.PlayTests.ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop" methodname="ClassicCharacterSelectDrawsTheGodotCastAndBackdrop" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="190957199" result="Passed" start-time="2026-10-19 15:35:56Z" end-time="2026-10-19 15:36:01Z" duration="4.234318" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 3BAW
+[TumpUiCapture] Hub-character-classic cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <20c2a7b52853458bb6bfa882d5160288>:0 
+  at TumbangPreso.PlayTests.ModelPreviewTests+<ClassicCharacterSelectDrawsTheGodotCastAndBackdrop>d__11.<>m__Finally1 () [0x00007] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at TumbangPreso.PlayTests.ModelPreviewTests+<ClassicCharacterSelectDrawsTheGodotCastAndBackdrop>d__11.MoveNext () [0x002ad] in <8145f0452c934dd3891e0c4aebdc5b02>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="2390" name="ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" methodname="ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1300671173" result="Failed" start-time="2026-10-19 15:36:01Z" end-time="2026-10-19 15:36:01Z" duration="0.053347" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  BERTO is not using the Godot Classic rig.
+  Expected string length 16 but was 14. Strings differ at index 0.
+  Expected: "character-male-f"
+  But was:  "bayan-redesign"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests.ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes () [0x000e8] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:625
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2389" name="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" methodname="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1031620786" result="Failed" label="Error" start-time="2026-10-19 15:36:01Z" end-time="2026-10-19 15:36:02Z" duration="1.136685" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.IO.DirectoryNotFoundException : Could not find a part of the path "D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Logs\shots-preview\character-hero-abilities.png".]]></message>
+                <stack-trace><![CDATA[  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.Boolean anonymous, System.IO.FileOptions options) [0x00164] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream..ctor(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+  at System.IO.File.InternalWriteAllBytes (System.String path, System.Byte[] bytes) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.File.WriteAllBytes (System.String path, System.Byte[] bytes) [0x00039] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.PlayTests.ModelPreviewTests.Capture (System.String name) [0x000d7] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:736 
+  at TumbangPreso.PlayTests.ModelPreviewTests+<HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes>d__12.MoveNext () [0x005c4] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:600 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code KWZS
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] preparation-skills-defending-960x540/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] preparation-skills-defending-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="2384" name="RepeatedPreviewSelectionReusesSubjectAndRetiresChangedInputsImmediately" fullname="TumbangPreso.PlayTests.ModelPreviewTests.RepeatedPreviewSelectionReusesSubjectAndRetiresChangedInputsImmediately" methodname="RepeatedPreviewSelectionReusesSubjectAndRetiresChangedInputsImmediately" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="786585473" result="Passed" start-time="2026-10-19 15:36:02Z" end-time="2026-10-19 15:36:02Z" duration="0.057685" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2382" name="RetainedCharacterAuthoringDoesNotCompoundBodyScaleOnRefresh" fullname="TumbangPreso.PlayTests.ModelPreviewTests.RetainedCharacterAuthoringDoesNotCompoundBodyScaleOnRefresh" methodname="RetainedCharacterAuthoringDoesNotCompoundBodyScaleOnRefresh" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1870837982" result="Passed" start-time="2026-10-19 15:36:02Z" end-time="2026-10-19 15:36:02Z" duration="0.128974" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2386" name="TheCastAnimatesInAMatch" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheCastAnimatesInAMatch" methodname="TheCastAnimatesInAMatch" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="828478071" result="Failed" start-time="2026-10-19 15:36:02Z" end-time="2026-10-19 15:36:03Z" duration="1.216646" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  'forearm-left' has not moved in 40 frames of a live match.
+  Expected: greater than 0.00999999978f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests+<TheCastAnimatesInAMatch>d__8.MoveNext () [0x0014e] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:355
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] host: gate opened for seat 0
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:MISSING | s2:MISSING | s3:MISSING
+[Arrival] host: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] host: arrival playing
+[Arrival] host: cancelled after 0.1 s on screen
+]]></output>
+            </test-case>
+            <test-case id="2385" name="TheCharacterPreviewIsFramedPosedAndMovable" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheCharacterPreviewIsFramedPosedAndMovable" methodname="TheCharacterPreviewIsFramedPosedAndMovable" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="308610825" result="Failed" start-time="2026-10-19 15:36:03Z" end-time="2026-10-19 15:36:04Z" duration="0.760728" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  'forearm-left' has not moved in 30 frames, so no clip is playing and the preview is showing the rig's bind pose.
+  Expected: greater than 0.00999999978f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests+<TheCharacterPreviewIsFramedPosedAndMovable>d__7.MoveNext () [0x002a1] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:252
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Cannot Pause a disabled VideoPlayer
+]]></output>
+            </test-case>
+            <test-case id="2387" name="TheReplacedCharacterShowsOnTheSelectScreen" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheReplacedCharacterShowsOnTheSelectScreen" methodname="TheReplacedCharacterShowsOnTheSelectScreen" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="808662060" result="Failed" start-time="2026-10-19 15:36:04Z" end-time="2026-10-19 15:36:05Z" duration="0.656756" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The select screen would show the retired CC0 rig for dante.
+  Expected string length 10 but was 14. Strings differ at index 0.
+  Expected: "team-dante"
+  But was:  "dante-redesign"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests+<TheReplacedCharacterShowsOnTheSelectScreen>d__9.MoveNext () [0x001f5] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:408
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Cannot Pause a disabled VideoPlayer
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

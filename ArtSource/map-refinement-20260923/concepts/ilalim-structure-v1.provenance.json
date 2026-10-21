@@ -1,0 +1,8 @@
+{
+  "created": "2026-09-24",
+  "tool": "built-in image generation",
+  "purpose": "Material/context reference, not implementation proof",
+  "prompt": "ilalim-structure-v1.prompt.txt",
+  "reference": "QUAL/Logs/refine2-ilalim-baseline/Ilalim-preview.png",
+  "sha256": "501fa893dc97f623f7e9c4db61b8c759f1476418a2ffd04f5ced59e28ac7783d"
+}

@@ -1,0 +1,1 @@
+Six apartments: local metre-scaled plaster atlas, wrapped concrete corners, fitted window jambs/sills, restrained two-storey reveals. 76992total derived vertices/12renderers/two materials, original bodies/roof use/collision retained. Outer district unchanged.

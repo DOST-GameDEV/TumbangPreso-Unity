@@ -1,0 +1,12 @@
+{
+  "worker": "670d9c851d43d29054c846e56e7de6cf36c232bc",
+  "criticalFiles": {
+    "Assets/TumbangPreso/Tests/PerformanceTimingCaptureTests.cs.meta": "ad750d51a900403792283b5d0a43c73b3a9e5c5ed232f7fbb950aa48c2bb2445",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "41dd164e5a22ac1b99256e9526883a78109da2b2d1d53aa1cb9c9d98bac983c4",
+    "Assets/TumbangPreso/Tests/PerformanceTimingCaptureTests.cs": "1bc89b7eeaf6de8c13b52fe01ff9f3f673997c7eac98a16189b5d448f82dfe2d"
+  },
+  "productionBase": "a8b05b103b3361d27fd0814de5f3fffe4efdc1c0",
+  "question": "Native default CSV without binary trace",
+  "claims": "EditMode native component only, not rebuilt player or full timing route",
+  "captureImplementation": "2e4e0615e89d4093e586e1a1c1b3dd819c6e61cd"
+}

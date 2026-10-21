@@ -234,6 +234,9 @@ namespace TumbangPreso.Settings
         public float MasterVolume = DefaultVolume;
         public float SfxVolume = DefaultVolume;
         public float MusicVolume = DefaultVolume;
+        public float AnnouncerVolume = DefaultVolume;
+        /// <summary>Slider position for ambient beds (street, lagoon, sidewalk life, trains).</summary>
+        public float AmbienceVolume = DefaultVolume;
 
         public const float DefaultVolume = 0.8f;
 
@@ -283,6 +286,10 @@ namespace TumbangPreso.Settings
 
         /// <summary>The music bed's amplitude, on the same rule as <see cref="SfxGain"/>.</summary>
         public float MusicGain => Gain(MusicVolume) * Gain(MasterVolume);
+        public float AnnouncerGain => Gain(AnnouncerVolume) * Gain(MasterVolume);
+        /// <summary>Voice over is the announcer and hero voice bus; this is its readable name.</summary>
+        public float VoiceOverGain => AnnouncerGain;
+        public float AmbienceGain => Gain(AmbienceVolume) * Gain(MasterVolume);
 
         // -------------------------------------------------------------------
         // CAMERA
@@ -290,9 +297,37 @@ namespace TumbangPreso.Settings
 
         public float MouseSensitivity = 1.0f;
         public bool InvertY = false;
+        public float FirstPersonFov = 95f;
+        public float HudScale = 1f;
+        public bool LargerText = false;
+        public bool CalloutCaptions = false;
+        /// <summary>⚠️ OFF BY DEFAULT, LIKE THE ANNOUNCER'S, BECAUSE `docs/VISION.md` § 3 SAYS *"the
+        /// in-match HUD carries no sentences"*. It shows the words of a recorded hero line for whoever
+        /// wants them; a line the team has not recorded yet is never captioned (`HeroVoice.Play`).</summary>
+        public bool HeroLineCaptions = false;
+        public bool ReducedEffects = false;
+        public bool HighContrastHud = false;
+        public static float ValidHudScale(float value) =>
+            float.IsNaN(value) || float.IsInfinity(value) ? 1f : Mathf.Clamp(value, 1f, 1.2f);
+        public bool ToggleSprint = false;
+        public bool ToggleRestore = false;
+
+        public static float ValidFirstPersonFov(float value) =>
+            float.IsNaN(value) || float.IsInfinity(value) ? 95f : Mathf.Clamp(value, 75f, 110f);
 
         /// <summary>Stops decorative interface movement without changing gameplay animation.</summary>
         public bool ReducedUiMotion = false;
+        public float CameraShake = 1f;
+        public bool CinematicCameraMotion = true;
+        public float FlashIntensity = 1f;
+        public float EffectiveFlashIntensity =>
+            (float.IsNaN(FlashIntensity) || float.IsInfinity(FlashIntensity) ? 1f : Mathf.Clamp01(FlashIntensity)) *
+            (ReducedEffects ? .25f : 1f);
+        // Reduced effects lowers optional camera motion by the same factor as flashes, on
+        // top of the player's own shake slider. Aim and gameplay never read this value.
+        public float EffectiveCameraShake =>
+            (float.IsNaN(CameraShake) || float.IsInfinity(CameraShake) ? 1f : Mathf.Clamp01(CameraShake)) *
+            (ReducedEffects ? .25f : 1f);
 
         // -------------------------------------------------------------------
         // DISPLAY
@@ -372,6 +407,26 @@ namespace TumbangPreso.Settings
         public int RenderStyle = RenderStyles.Default;
 
         /// <summary>
+        /// Which lighting the world is drawn in, as an index into <see cref="LightingStyles.All"/>:
+        /// Standard (LIGHT-1, the default), Nostalgic (each map's authored lighting, as on `main`),
+        /// or the placeholder slot, which <see cref="Validate"/> refuses. Stored as an int with a
+        /// clamp, like every mode index here.
+        ///
+        /// ⚠️ A NEW NAME BECAUSE THE ORDER CHANGED ON 2026-09-26. See <see cref="LightingStyle"/>.
+        /// </summary>
+        public int LightingLook = LightingStyles.Default;
+
+        /// <summary>
+        /// ⚠️ LEGACY, READ ONCE AND CLEARED. The lighting pick in the order the row had until
+        /// 2026-09-26 (0 Classic, 1 Bright). The owner then renamed Bright to Standard and put it
+        /// first, which moved both indices; reading an old file's 1 as the new order would have
+        /// turned every Bright player's picture into Nostalgic. <see cref="Validate"/> carries the
+        /// pick into <see cref="LightingLook"/> through `LightingStyles.FromLegacy` and writes -1
+        /// here, so a file only migrates once. -1 is "nothing stored".
+        /// </summary>
+        public int LightingStyle = -1;
+
+        /// <summary>
         /// Which colour § THE LANDED HIGHLIGHT lights a rested tsinelas in, as an index into
         /// <see cref="SlipperHighlights.All"/>. 0 is Off.
         ///
@@ -386,6 +441,25 @@ namespace TumbangPreso.Settings
         /// clamp survives that.
         /// </summary>
         public int SlipperHighlight = SlipperHighlights.Default;
+
+        /// <summary>
+        /// How strongly the cast is shaded by its own ambient occlusion (a fringe over a forehead,
+        /// an arm against a chest), as an index into <see cref="CharacterShadingLabels"/>: Off,
+        /// Soft, Full. Owner, 2026-10-05, after the F8 test: "we're also pushing through with the
+        /// character AO as an actual in game setting, full by default".
+        ///
+        /// ⚠️ THE DEFAULT IS FULL, AWAY FROM ROW 0, for the reason <see cref="RenderStyle"/>
+        /// records: an older `settings.json` inherits this initialiser, so everybody upgrading
+        /// gets the shading without opening the screen. It is local to one player's picture and
+        /// never replicated. It only draws where the world's ambient occlusion does (not on the
+        /// Low graphics tier, not under Nostalgic lighting); `Visual.WorldOutline` reads it.
+        /// </summary>
+        public int CharacterShading = CharacterShadingFull;
+        public const int CharacterShadingFull = 2;
+        public static readonly string[] CharacterShadingLabels = { "Off", "Soft", "Full" };
+        /// <summary>The cast's share of the occlusion for a stored index: 0, a half, all of it.</summary>
+        public static float CharacterShadingShare(int index)
+            => Mathf.Clamp(index, 0, CharacterShadingFull) * 0.3f;   // was 0.5 (Full = 1): on the redesigns' smooth faces full strength drew stripes (owner, 2026-10-05)
 
         // -------------------------------------------------------------------
         // MATCH
@@ -452,6 +526,27 @@ namespace TumbangPreso.Settings
         public int CanPick = -1;
         public int SlipperPick = -1;
 
+        // -------------------------------------------------------------------
+        // THE HUB (UX-1). Presentation choices only: nothing here is an entitlement.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// What HOME's mode card queues for: 0 RANKED (always Hero Strike), 1 CLASSIC casual,
+        /// 2 HERO STRIKE casual. ⚠️ -1 means never chosen and reads as HERO STRIKE casual, the
+        /// one choice a guest can always queue for.
+        /// </summary>
+        public int HubQueueChoice = -1;
+
+        /// <summary>The profile picture, one of `Avatars.Ids`. Empty means the name's default.</summary>
+        public string AvatarId = "";
+
+        /// <summary>Starred items in LOADOUT, as wallet ids. A preference, never ownership.</summary>
+        public List<string> FavouriteItems = new List<string>();
+
+        /// <summary>Skill variants the SKILL TREE has already shown unlocked. HOME's dot is the
+        /// difference between this and what is unlocked now.</summary>
+        public List<string> SeenVariants = new List<string>();
+
         /// <summary>
         /// Stable identity for reconnection, minted once and kept.
         ///
@@ -482,6 +577,22 @@ namespace TumbangPreso.Settings
             if (clean.Length > Balance.PlayerNameMax)
                 clean = clean.Substring(0, Balance.PlayerNameMax);
 
+            return clean;
+        }
+
+        public const int RoomTitleMax = 24;
+
+        /// <summary>A room title is one line, but it is not a 14-character player name.</summary>
+        public static string SanitiseRoomTitle(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "";
+
+            var sb = new System.Text.StringBuilder(raw.Length);
+            foreach (char c in raw.Trim())
+                if (!char.IsControl(c) && c != '\u2028' && c != '\u2029') sb.Append(c);
+
+            string clean = sb.ToString().Trim();
+            if (clean.Length > RoomTitleMax) clean = clean.Substring(0, RoomTitleMax).TrimEnd();
             return clean;
         }
 
@@ -517,6 +628,7 @@ namespace TumbangPreso.Settings
             VSyncModes.Apply(VSyncMode);
             FrameRateOptions.Apply(FrameRateLimit);
             RenderStyles.Apply(RenderStyle);
+            LightingStyles.Apply(LightingLook);
             AIController.ApplyDifficulty(AiDifficulty);
 
             // ⚠️ PUSHED RATHER THAN POLLED, exactly as `AntiAliasModes.FxaaActive` is. The rumble
@@ -572,15 +684,26 @@ namespace TumbangPreso.Settings
             MasterVolume = Mathf.Clamp01(MasterVolume);
             SfxVolume = Mathf.Clamp01(SfxVolume);
             MusicVolume = Mathf.Clamp01(MusicVolume);
+            AnnouncerVolume = Mathf.Clamp01(AnnouncerVolume);
+            AmbienceVolume = Mathf.Clamp01(AmbienceVolume);
+            CameraShake = Mathf.Clamp01(CameraShake);
+            FlashIntensity = Mathf.Clamp01(FlashIntensity);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
+            FirstPersonFov = ValidFirstPersonFov(FirstPersonFov);
+            HudScale = ValidHudScale(HudScale);
             FrameRateLimit = FrameRateOptions.Normalize(FrameRateLimit);
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             MatchFormat = Mathf.Clamp(MatchFormat, 0, (int)Core.MatchFormat.Mirror);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
+            CharacterShading = Mathf.Clamp(CharacterShading, 0, CharacterShadingFull);
             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
             GraphicsQuality = Mathf.Clamp(GraphicsQuality, 0, GraphicsProfiles.All.Length - 1);
             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
             RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
+            int migrated = LightingStyles.FromLegacy(LightingStyle);
+            if (migrated >= 0) LightingLook = migrated;
+            LightingStyle = -1;
+            LightingLook = LightingStyles.Normalize(LightingLook);
 
             // ⚠️ A NULL WIRE STRING IS A FILE WRITTEN BEFORE THIS FIELD EXISTED, which is every
             // `settings.json` on every machine today. `CustomGameRules.Parse` answers `Defaults`
@@ -603,6 +726,10 @@ namespace TumbangPreso.Settings
             CharacterLoadouts ??= new List<CharacterLoadout>();
             HeroBuilds ??= new List<HeroBuild>();
             AbilityChallenges ??= new List<AbilityChallengeProgress>();
+            FavouriteItems ??= new List<string>();
+            SeenVariants ??= new List<string>();
+            if (HubQueueChoice < -1 || HubQueueChoice > 2) HubQueueChoice = -1;
+            AvatarId ??= "";
 
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();
         }
@@ -888,7 +1015,9 @@ namespace TumbangPreso.Settings
             // onto the live file truncates it first, so a crash mid-save left a fragment that
             // `Load` correctly rejected and the player lost every rebind they had ever set. The
             // fallback below was always right; what was missing was a second copy to fall back TO.
-            SafeStore.Write(Path, JsonUtility.ToJson(_current, prettyPrint: true));
+            string path = Path;
+            SafeStore.Write(path, JsonUtility.ToJson(_current, prettyPrint: true),
+                text => JsonUtility.FromJson<GameSettings>(text) != null);
         }
 
         /// <summary>Test seam, so a suite does not read or write the real user file.</summary>

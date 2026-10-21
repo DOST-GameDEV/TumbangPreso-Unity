@@ -1,0 +1,15 @@
+{
+  "base": "6c792aa240d9804976b84620dd9f3b516e9efe99",
+  "sceneSha256": "5c0634cef4ad75670608a6f770eef6fe206b57091c2aada5f8bf68145c248618",
+  "camera": "Actual MapPreviewSurface, frozen pose between before/after",
+  "newSceneBlocks": 218,
+  "removedSceneBlocks": 0,
+  "changedExistingSceneBlocks": 1,
+  "existingChange": "Dressing transform child list appends the owned context root",
+  "bodies": 26,
+  "roadSegments": 4,
+  "newColliders": 0,
+  "visualVariants": 2,
+  "fixtureRepairs": 0,
+  "wholeMapComplete": false
+}

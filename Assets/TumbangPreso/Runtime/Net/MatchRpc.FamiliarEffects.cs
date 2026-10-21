@@ -1,0 +1,56 @@
+using TumbangPreso.Abilities;
+using Unity.Collections;
+using Unity.Netcode;
+using UnityEngine;
+
+namespace TumbangPreso.Net
+{
+    public sealed partial class MatchRpc
+    {
+        public void BroadcastFamiliarEffect(int slot, ulong? targetPeer = null)
+        {
+            if (!NetAuthority.ShouldResolve() || !ValidSlot(slot) || GameServices.Round?.RoundActive != true ||
+                _nm?.CustomMessagingManager == null) return;
+            var unit = Unit(slot); var pet = Familiar(slot); var kit = unit?.AbilitySystem?.Kit;
+            // Haunt uses the scoped familiar carrier for movement and completion.
+            if (pet == null || !(kit is NemuHeroKit) || kit.Ultimate == null) return;
+            var state = new FamiliarEffectState
+            {
+                Seat = slot, Scope = CaptureActionScope(slot), Phase = kit.Ultimate.AcceptedUltimatePhase,
+                HeroId = new FixedString64Bytes(kit.HeroId), AbilityId = new FixedString64Bytes(kit.Ultimate.Id),
+                Position = pet.DevourGround, RoundClock = GameServices.Round.TimeLeft, Remaining = kit.Ultimate.DurationRemaining,
+                Yaw = pet.transform.eulerAngles.y,
+            };
+            if (!state.IsValid) return;
+            using var writer = new FastBufferWriter(FamiliarEffectState.MaxWireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(state);
+            foreach (ulong peer in _nm.ConnectedClientsIds)
+            {
+                if (peer == _nm.LocalClientId || (targetPeer.HasValue && peer != targetPeer.Value)) continue;
+                _nm.CustomMessagingManager.SendNamedMessage("FamiliarEffect", peer, writer, NetworkDelivery.ReliableSequenced);
+            }
+        }
+
+        private void OnFamiliarEffectMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId) ||
+                !FamiliarEffectState.TryRead(ref reader, out var state)) return;
+            ApplyFamiliarEffect(state, GameServices.Round?.TimeLeft ?? -1);
+        }
+
+        private bool ApplyFamiliarEffect(FamiliarEffectState state, float now)
+        {
+            if (!state.IsValid || GameServices.Round?.RoundActive != true) return false;
+            var unit = Unit(state.Seat);
+            if (unit == null || !state.Scope.Matches(PresentationMatchId,
+                GameServices.Match?.RoundNumber ?? -1, unit.MovementEpoch) ||
+                !(unit.AbilitySystem?.Kit is NemuHeroKit kit) || !state.MatchesKit(kit)) return false;
+            var ability = kit.Ultimate;
+            var pet = Familiar(state.Seat);
+            if (pet == null || ability.ReservedForIntroduction || state.Phase < ability.AcceptedUltimatePhase) return false;
+            if (!state.TryAge(now, ability.Duration, out float remaining)) return false;
+            using (NetCue.SuppressRelay())
+                return kit.ReceiveHaunt(unit, state.Phase, state.RoundClock, state.Position, remaining, state.Yaw);
+        }
+    }
+}

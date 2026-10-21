@@ -1,0 +1,23 @@
+{
+  "identity": {
+    "sha": "c55574cd634b7c9745bd66a2a0f7702af39118c8",
+    "branch": "",
+    "protocol": 97,
+    "target": "StandaloneWindows64",
+    "appVersion": "1.0.0",
+    "ugsProject": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+    "ugsEnvironment": "production",
+    "builtAt": "2026-09-30 16:47:11",
+    "dirty": true,
+    "treeState": "dirty"
+  },
+  "frozenFiles": 15330,
+  "profile": "feedback-0930-network-build",
+  "validationRoot": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-net-0930",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-net-0930\\Builds\\feedback-0930-network\\TumbangPreso.exe",
+  "scenes": 12,
+  "megabytes": 2141,
+  "buildSeconds": 206,
+  "runtimeSha256": "39746f3cfc3c12cb96d3d11e8efda82947d944958cd34c64d0a445122d492718",
+  "exeSha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59"
+}

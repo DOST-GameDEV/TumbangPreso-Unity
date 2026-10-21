@@ -49,8 +49,7 @@ namespace TumbangPreso.Diagnostics
         {
             _matchStart = Time.unscaledTime;
             Log.Clear();
-            _closeCallCount = 0;
-            _closeCallWindowFrom = 0.0f;
+            ResetEvasions();
         }
 
         /// <summary>
@@ -85,8 +84,15 @@ namespace TumbangPreso.Diagnostics
         // cannot see.
         // -------------------------------------------------------------------
 
-        private static int _closeCallCount;
-        private static float _closeCallWindowFrom;
+        private static readonly int[] _closeCallCount = new int[Balance.PlayerCount];
+        private static readonly float[] _closeCallWindowFrom = new float[Balance.PlayerCount];
+        public static void ResetEvasion(int slot)
+        {
+            if (slot < 0 || slot >= Balance.PlayerCount) return;
+            _closeCallCount[slot] = 0; _closeCallWindowFrom[slot] = 0;
+        }
+        public static void ResetEvasions()
+        { for (int i = 0; i < Balance.PlayerCount; i++) ResetEvasion(i); }
 
         /// <summary>
         /// An attacker who was inside the taya's reach and got out of it.
@@ -98,18 +104,18 @@ namespace TumbangPreso.Diagnostics
         /// </summary>
         public static void NoteCloseCall(int attacker, int taya, float metres)
         {
-            if (!Note(HighlightKind.CloseCall, attacker, taya, metres)) return;
-
-            float now = Now;
-            if (now - _closeCallWindowFrom > HighlightRules.EvasionWindowSeconds)
+            if (attacker < 0 || attacker >= Balance.PlayerCount ||
+                !Note(HighlightKind.CloseCall, attacker, taya, metres)) return;
+            float now = Time.time;
+            if (_closeCallCount[attacker] == 0 || now - _closeCallWindowFrom[attacker] > HighlightRules.EvasionWindowSeconds)
             {
-                _closeCallWindowFrom = now;
-                _closeCallCount = 0;
+                _closeCallWindowFrom[attacker] = now;
+                _closeCallCount[attacker] = 0;
             }
-
-            _closeCallCount++;
-            if (_closeCallCount >= HighlightRules.EvasionRunCount)
-                Note(HighlightKind.EvasionRun, attacker, taya, _closeCallCount);
+            _closeCallCount[attacker]++;
+            // One recognition per run, not another announcement on every later escape.
+            if (_closeCallCount[attacker] == HighlightRules.EvasionRunCount)
+                Note(HighlightKind.EvasionRun, attacker, taya, _closeCallCount[attacker]);
         }
 
         /// <summary>
@@ -125,7 +131,12 @@ namespace TumbangPreso.Diagnostics
             if (secondsLeft >= 0.0f && secondsLeft <= HighlightRules.LastSecondSeconds)
                 Note(HighlightKind.LastSecondRetrieval, attacker, -1, secondsLeft);
 
-            if (metresFromTaya >= 0.0f && metresFromTaya <= HighlightRules.CloseCallMetres)
+            var round = GameServices.Round;
+            var player = round != null ? round.PlayerAt(attacker) : null;
+            var taya = round != null && GameServices.Match != null ? round.PlayerAt(GameServices.Match.DefenderSlot) : null;
+            if (round != null && round.Lata != null && round.Lata.IsUpright &&
+                player != null && player.IsTaggable() && taya != null && taya.CanAct() &&
+                metresFromTaya >= 0.0f && metresFromTaya <= HighlightRules.CloseCallMetres)
                 Note(HighlightKind.ClutchRetrieval, attacker, -1, metresFromTaya);
         }
 
@@ -164,8 +175,7 @@ namespace TumbangPreso.Diagnostics
         private static void ResetStatics()
         {
             _matchStart = -1.0f;
-            _closeCallCount = 0;
-            _closeCallWindowFrom = 0.0f;
+            ResetEvasions();
             Log.Clear();
         }
     }

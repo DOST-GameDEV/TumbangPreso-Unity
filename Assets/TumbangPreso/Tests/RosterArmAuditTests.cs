@@ -11,6 +11,26 @@ namespace TumbangPreso.Tests
 {
     public sealed class RosterArmAuditTests
     {
+        [TestCase("character-female-a")]
+        [TestCase("team-inday")]
+        public void IndayModelsHaveOnlyPlainBrownArms(string modelName)
+        {
+            var model=UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/persons/"+modelName+".glb");
+            Assert.IsNotNull(model);
+            foreach(string side in new[]{"left","right"})
+            {
+                var mesh=IndayFppArmAuthor.Extract(model,side);
+                try
+                {
+                    Assert.Greater(mesh.vertexCount,24);
+                    foreach(var uv in mesh.uv)
+                        Assert.AreEqual(14,Mathf.FloorToInt(uv.x*16)/2+(Mathf.FloorToInt(uv.y*16)<=3?8:0),"An arm attachment survived in "+modelName);
+                    Assert.That(mesh.bounds.size.y,Is.EqualTo(TumbangPreso.CameraSystem.ViewmodelArms.ArmLength).Within(.00001f));
+                }
+                finally{Object.DestroyImmediate(mesh);}
+            }
+        }
+
         [Test]
         public void EveryArmHasARealForearmAxisAndCurrentCharacterGeometry()
         {
@@ -61,7 +81,11 @@ namespace TumbangPreso.Tests
                     var rendered=view.transform.Find((side=="right"?"RightPivot":"LeftPivot")+"/Arm").GetComponent<MeshRenderer>();
                     var material=rendered.sharedMaterial;var palette=material.GetVectorArray("_Palette");
                     var visibleSize=Vector3.Scale(rendered.GetComponent<MeshFilter>().sharedMesh.bounds.size,rendered.transform.localScale);
-                    if(entry.Id!="inday" && Mathf.Max(visibleSize.x,visibleSize.z)>.36f)
+                    // ⚠️ Paete is the one owner-authorised exception (2026-09-26, "make his fpp arms loook
+                    // BULKIER"): his cap is the reference times the bulk ViewmodelArms applies, plus the
+                    // 0.005 m his bark bake already sits over the reference (0.364 m measured), and no more.
+                    float cap=entry.Id=="paete"?.365f*TumbangPreso.CameraSystem.ViewmodelArms.PaeteArmBulk:.36f;
+                    if(entry.Id!="inday" && Mathf.Max(visibleSize.x,visibleSize.z)>cap)
                         errors.Add(entry.Id+"/"+side+" exceeds the clean reference hand's close-camera cross-section");
                     if(entry.Id=="inday" && rendered.transform.localScale!=Vector3.one)
                         errors.Add("Inday's copied arm proportions were changed after authoring.");

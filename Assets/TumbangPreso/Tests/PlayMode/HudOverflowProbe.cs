@@ -113,6 +113,35 @@ namespace TumbangPreso.PlayTests
             "State", "Key", "HypeTitle", "HypeEvent",
         };
 
+        [Test]
+        public void ScoreChipKeepsOrdinaryTotalsExactAndCompactsOnlyTheExtremes()
+        {
+            Assert.AreEqual("1000", TumpMatchReadout.ScoreTextForChip(1000));
+            Assert.AreEqual("10000", TumpMatchReadout.ScoreTextForChip(10000));
+            Assert.AreEqual("-100000", TumpMatchReadout.ScoreTextForChip(-100000));
+            Assert.AreEqual("888888", TumpMatchReadout.ScoreTextForChip(888888));
+            Assert.AreEqual("-888888", TumpMatchReadout.ScoreTextForChip(-888888));
+            Assert.AreEqual("999999", TumpMatchReadout.ScoreTextForChip(999999));
+            Assert.AreEqual("-999999", TumpMatchReadout.ScoreTextForChip(-999999));
+            Assert.AreEqual("1M", TumpMatchReadout.ScoreTextForChip(1000000));
+            Assert.AreEqual("1.23M", TumpMatchReadout.ScoreTextForChip(1234567));
+            Assert.AreEqual("9.99M", TumpMatchReadout.ScoreTextForChip(9999999));
+            Assert.AreEqual("-9.99M", TumpMatchReadout.ScoreTextForChip(-9999999));
+            Assert.AreEqual("10M", TumpMatchReadout.ScoreTextForChip(10000000));
+            Assert.AreEqual("10M", TumpMatchReadout.ScoreTextForChip(10000001));
+            Assert.AreEqual("-10M", TumpMatchReadout.ScoreTextForChip(-10000000));
+            Assert.AreEqual("99.9M", TumpMatchReadout.ScoreTextForChip(99999999));
+            Assert.AreEqual("100M", TumpMatchReadout.ScoreTextForChip(100000000));
+            Assert.AreEqual("100M", TumpMatchReadout.ScoreTextForChip(100000001));
+            Assert.AreEqual("-100M", TumpMatchReadout.ScoreTextForChip(-100000000));
+            Assert.AreEqual("999M", TumpMatchReadout.ScoreTextForChip(999999999));
+            Assert.AreEqual("1B", TumpMatchReadout.ScoreTextForChip(1000000000));
+            Assert.AreEqual("1B", TumpMatchReadout.ScoreTextForChip(1000000001));
+            Assert.AreEqual("-1B", TumpMatchReadout.ScoreTextForChip(-1000000000));
+            Assert.AreEqual("2.14B", TumpMatchReadout.ScoreTextForChip(int.MaxValue));
+            Assert.AreEqual("-2.14B", TumpMatchReadout.ScoreTextForChip(int.MinValue));
+        }
+
         [UnityTest]
         public IEnumerator EveryHudStringFitsTheBoxItIsDrawnIn()
         {
@@ -130,7 +159,18 @@ namespace TumbangPreso.PlayTests
             var hud = Object.FindFirstObjectByType<Hud>();
             Assert.IsNotNull(hud, "no HUD in the arena, so there is nothing to measure.");
 
+            // ⚠️⚠️ SCENE-ROOT SIBLING, NOT A CHILD. `OwnerUiLayout.Canvas` builds
+            // `OwnerMatchCanvas` at the root and binds its lifetime to the Hud through
+            // `CanvasLifetime`, because § 111.2: a nested canvas ignores its own `CanvasScaler`.
+            // Asking the Hud for a child canvas answered null about a HUD that draws fine.
             var canvas = hud.GetComponentInChildren<Canvas>(true);
+
+            if (canvas == null)
+                foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,
+                                                                    FindObjectsSortMode.None))
+                    if (c != null && (c.name == "OwnerMatchCanvas" || c.name == "TumpMatchCanvas"
+                                      || c.name == "HudCanvas"))
+                    { canvas = c; break; }
             Assert.IsNotNull(canvas, "the HUD built no canvas.");
 
             var camera = Camera.main;
@@ -147,7 +187,15 @@ namespace TumbangPreso.PlayTests
             canvas.planeDistance = camera.nearClipPlane + 0.01f;
 
             var canvasRt = (RectTransform)canvas.transform;
-            var labels = new List<Text>(hud.GetComponentsInChildren<Text>(true));
+            // ⚠️ THE LABELS COME OFF THE CANVAS, NOT OFF THE HUD COMPONENT, FOR THE REASON THE
+            // canvas lookup above records: `OwnerMatchCanvas` is a scene-root sibling bound to
+            // the Hud by `CanvasLifetime`, so nothing the player reads is a descendant of the
+            // Hud's own GameObject any more.
+            var labels = new List<Text>(canvas.GetComponentsInChildren<Text>(true));
+
+            foreach (var label in hud.GetComponentsInChildren<Text>(true))
+                if (!labels.Contains(label)) labels.Add(label);
+
             Assert.IsNotEmpty(labels, "the HUD built no labels at all.");
 
             var report = new StringBuilder();
@@ -237,13 +285,20 @@ namespace TumbangPreso.PlayTests
                     ? Hud.RecastFontSize
                     : keepSize;
 
-                label.text = candidate;
+                if (label.name == "Score" && int.TryParse(candidate,
+                        System.Globalization.NumberStyles.Integer,
+                        System.Globalization.CultureInfo.InvariantCulture, out int score))
+                {
+                    label.text = ""; // Each candidate runs the production formatter and fit independently.
+                    TumpMatchReadout.PaintScoreValue(label, score);
+                }
+                else label.text = candidate;
                 float width = label.preferredWidth;
 
                 if (width > worstWidth)
                 {
                     worstWidth = width;
-                    worstString = candidate;
+                    worstString = label.text;
                 }
             }
 
@@ -449,7 +504,10 @@ namespace TumbangPreso.PlayTests
                     break;
 
                 case "Score":
-                    yield return "-999";
+                    foreach (int value in new[] { -999, 1000, 9999, -1000, 10000,
+                                                  888888, -888888, 999999, -100000,
+                                                  int.MaxValue, int.MinValue })
+                        yield return value.ToString(System.Globalization.CultureInfo.InvariantCulture);
                     break;
 
                 case "Role":
@@ -457,12 +515,15 @@ namespace TumbangPreso.PlayTests
                     break;
 
                 case "RoundLabel":
-                    // ⚠️⚠️ FROM `Hud.TopCentreLines()`, NOT FROM A STRING TYPED HERE. The first
-                    // version of this case guessed "ROUND 8 / 8" and the live label already held
-                    // something far longer: the real line is `ROUND n / N   ·   DEFENDER: name`,
-                    // and the warmup line is longer still. A probe fed a guess measures the
-                    // guess. The HUD now builds both through one method and this reads it.
-                    foreach (string line in Hud.TopCentreLines()) yield return line;
+                    // ⚠️⚠️ FROM THE READOUT THAT DRAWS IT, NOT FROM `Hud.TopCentreLines()`.
+                    // Both are "read the shipping formatter rather than guess", and the label
+                    // changed hands: the painted `TumpMatchReadout` writes `Round 8 / 8` and
+                    // names the defender on its own row, while the legacy `Hud` wrote
+                    // `ROUND n / N   ·   DEFENDER: <name>` on this one. Feeding the legacy set to
+                    // the painted box reported nine overflows across nine resolutions about a
+                    // string the HUD on screen cannot produce, which is exactly the failure the
+                    // old comment here warned about, one HUD later.
+                    foreach (string line in TumpMatchReadout.RoundLabelLines()) yield return line;
                     break;
 
                 case "TimerLabel":

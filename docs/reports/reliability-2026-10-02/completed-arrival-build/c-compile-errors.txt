@@ -1,0 +1,2 @@
+Assets\TumbangPreso\Runtime\Net\NetCompletedArrivalProbe.cs(134,40): error CS0619: 'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'
+Assets\TumbangPreso\Runtime\Net\NetCompletedArrivalProbe.cs(145,35): error CS0619: 'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'

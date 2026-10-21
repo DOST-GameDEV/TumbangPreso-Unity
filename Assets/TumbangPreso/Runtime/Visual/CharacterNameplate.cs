@@ -1,3 +1,6 @@
+// Owner map: identity | hollow circle/name | seat colour | feet/head; taya | open
+// octagon | seat colour | feet; catchable | four open brackets | Defense |
+// target feet, visible only to the taya camera. Shape carries the rule.
 using TumbangPreso.UI;
 using UnityEngine;
 
@@ -14,7 +17,7 @@ namespace TumbangPreso.Visual
     /// the tag: "P3" is who you have been chasing all match, "TAYA" is what they happen to be
     /// doing this round. Roles rotate every round, so the refresh cannot be a one-shot.
     /// </summary>
-    public sealed class CharacterNameplate : MonoBehaviour
+    public sealed partial class CharacterNameplate : MonoBehaviour
     {
         /// <summary>
         /// §4.5: "Fades out past ~15m." Without this every tag in the match renders at full
@@ -25,14 +28,17 @@ namespace TumbangPreso.Visual
         public const float FadeEnd = 18.0f;
 
         /// <summary>Ring radius as a multiple of the unit's own capsule radius.
-        /// 0.55 / 0.4 = 1.375 for the Person, kept as a RATIO rather than a flat number so a
+        /// 0.70 / 0.4 = 1.75 for the Person, kept as a RATIO rather than a flat number so a
         /// smaller unit's ring reads as a ring around that unit, not a person-sized ring
         /// around a small object.</summary>
-        public const float RingRadiusRatio = 1.375f;
+        public const float RingRadiusRatio = 1.75f;
+        // The small ring's hole was entirely covered by the hero's feet at eight
+        // metres. A wider angular annulus leaves the role shape visible beside them.
+        public const float TayaRingRadiusRatio = 1.95f;
 
         /// <summary>Small and absolute on purpose: it only has to clear the floor mesh, not
         /// scale with the unit.</summary>
-        public const float RingFloorMargin = 0.02f;
+        public const float RingFloorMargin = 0.006f;
 
         /// <summary>0.25 at Person scale is where this was tuned; a shorter unit wants a
         /// proportionally smaller gap, not the same 0.25 floating disconnected above it.</summary>
@@ -54,47 +60,15 @@ namespace TumbangPreso.Visual
         private GameObject _headModel;
         private Transform _head;
         private bool _placedOnWater;
+        private bool _placedForFlight;
         private TextMesh _label;
         private Transform _labelTransform;
         private Color _roleColor = UiTheme.Defense;
+        private bool _roleKnown,_previousDefense;
+        private float _roleChangedAt=-100;
+        private Vector3 _roleRingRest;
 
-        /// <summary>
-        /// How many of THIS mesh's own radii make one unit of `localScale`. See `ApplySizing`:
-        /// the cylinder primitive is built at radius 0.5 and the collar at radius 1.0.
-        /// </summary>
-        private float _ringUnitSpan = 2.0f;
-
-        /// <summary>
-        /// The taya's ring, generated once and shared by every unit that ever defends.
-        ///
-        /// ⚠️⚠️ `HideAndDontSave` AND A NULL RE-CHECK, WHICH IS THE SAME PAIR
-        /// `InputLayer.TouchSkin.Alive` RECORDS AND FOR THE SAME REASON: a runtime-generated
-        /// asset with no owner is destroyed by a scene load, and Unity reports a destroyed object
-        /// as null, so the flag stops it dying and the null check rebuilds it if it does anyway.
-        /// A mesh that has been destroyed under a live `MeshFilter` draws nothing at all, so the
-        /// taya would simply have no marker for the rest of the match.
-        ///
-        /// ⚠️ 32 SIDES, AND IT IS A MARKER RATHER THAN AN EFFECT. Every other caller of
-        /// `VfxShapes` picks a low count on purpose, because a faceted silhouette is this game's
-        /// look; this one has to read as a clean circle at a glance from across a 14 m box while
-        /// somebody is running at you, so it is the one place a high count is right.
-        ///
-        /// ⚠️ `innerRatio` 0.66 IS THE THICKNESS AND IT IS THE SIGNAL. Too thin and it disappears
-        /// against the road at distance; too thick and it is a disc with a dot missing, which is
-        /// the shape it has to be distinguishable FROM.
-        /// </summary>
-        private static Mesh _tayaRing;
-
-        private static Mesh TayaRingMesh()
-        {
-            if (_tayaRing != null) return _tayaRing;
-
-            _tayaRing = VfxShapes.Collar(sides: 32, height: 0.10f, innerRatio: 0.66f);
-            _tayaRing.name = "TayaRing";
-            _tayaRing.hideFlags = HideFlags.HideAndDontSave;
-
-            return _tayaRing;
-        }
+        private Material _groundMaterial;
 
         private void Awake()
         {
@@ -114,35 +88,18 @@ namespace TumbangPreso.Visual
 
         private void Build()
         {
-            // The ring: a flat disc under the unit. Unlit so it reads as a marker painted on
-            // the street rather than as geometry catching the scene light.
-            var ringGo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            ringGo.name = "NameplateRing";
-
-            // ⚠️⚠️ DISABLED BEFORE IT IS DESTROYED, NOT JUST DESTROYED. `Destroy()` on a
-            // component is deferred to the end of the frame, so an UNSCALED marker (the
-            // primitive's default 2 m tall cylinder, before ApplySizing shrinks it to a floor
-            // disc in Start) is still solid physics geometry for every raycast that runs
-            // between here and then. `Lata.SnapHomeToGround` is one of them: on the very first
-            // frame all four seats are still at their pre-teleport default position, stacked
-            // with the lata at the origin, and its downward ray picked the tallest of these
-            // still-live rings at y=1 over the actual road at y=0.1. Reported as *"cans are
-            // floating"*. Disabling first removes it from physics immediately; `Destroy` still
-            // runs after to clean up the component.
-            var ringCollider = ringGo.GetComponent<Collider>();
-            ringCollider.enabled = false;
-            Destroy(ringCollider);
-
+            // Hollow shader glow, with no primitive collider or raised side walls.
+            var ringGo = new GameObject("NameplateRing");
             _ring = ringGo.transform;
             _ring.SetParent(transform, false);
-            _ringRenderer = ringGo.GetComponent<Renderer>();
-
-            // ⚠️ THE PRIMITIVE'S OWN CYLINDER IS KEPT AS THE ATTACKER'S DISC rather than
-            // generated, because it is already here, it is already the shape three of the four
-            // bodies want, and a shared built-in mesh costs nothing. `Refresh` swaps between this
-            // and the taya's ring.
-            _ringFilter = ringGo.GetComponent<MeshFilter>();
-            _discMesh = _ringFilter.sharedMesh;
+            _ringFilter = ringGo.AddComponent<MeshFilter>();
+            _discMesh = GroundMarkerMesh("Player identity glow");
+            _ringFilter.sharedMesh = _discMesh;
+            _ringRenderer = ringGo.AddComponent<MeshRenderer>();
+            _groundMaterial = new Material(Shader.Find("TumbangPreso/PlayerGroundMarker"));
+            _ringRenderer.sharedMaterial = _groundMaterial;
+            _ringRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            _ringRenderer.receiveShadows = false;
 
             _ringBlock = new MaterialPropertyBlock();
 
@@ -211,17 +168,10 @@ namespace TumbangPreso.Visual
             float feetY = centreY - height / 2.0f;
             float headY = centreY + height / 2.0f;
 
-            float ringRadius = radius * RingRadiusRatio;
+            float ringRadius = radius * (_character.IsDefender ? TayaRingRadiusRatio : RingRadiusRatio);
 
-            // ⚠️⚠️ THE SCALE DEPENDS ON WHICH MESH IS ON, AND GETTING THIS WRONG DRAWS A MARKER
-            // TWICE THE RIGHT SIZE. A Unity cylinder primitive is 1 unit ACROSS (radius 0.5), so
-            // it wants `ringRadius * 2`; `VfxShapes.Collar` is built at unit RADIUS, so it wants
-            // `ringRadius`. `_ringUnitSpan` carries whichever applies and `Refresh` sets it in the
-            // same breath as the mesh, because a role swap changes both.
-            //
-            // The flat Y is what makes either of them a disc rather than a column.
-            _ring.localScale = new Vector3(ringRadius * _ringUnitSpan, 0.005f,
-                                           ringRadius * _ringUnitSpan);
+            _ring.localScale = new Vector3(ringRadius, 1, ringRadius);
+            _roleRingRest=_ring.localScale;
             _ring.localPosition = new Vector3(0.0f, feetY + RingFloorMargin, 0.0f);
             _landRingPosition = _ring.localPosition;
 
@@ -233,6 +183,19 @@ namespace TumbangPreso.Visual
         private void PlaceForCurrentSurface()
         {
             if (_character == null || _ring == null || _labelTransform == null) return;
+            if (_character.IsFlying && _character.AbilitySystem?.Kit?.HeroId == "amihan")
+            {
+                var feet = _character.transform.position;
+                float floor = VfxShapes.GroundAt(feet, feet.y - 3, 5);
+                _ring.position = new Vector3(feet.x, floor + RingFloorMargin, feet.z);
+                _placedForFlight = true;
+                return;
+            }
+            if (_placedForFlight)
+            {
+                _ring.localPosition = _landRingPosition;
+                _placedForFlight = false;
+            }
             float surface = 0;
             bool swimming = _character.IsSwimming && RooftopPool.TrySurface(_character.transform.position, out surface);
             if (!swimming)
@@ -275,56 +238,17 @@ namespace TumbangPreso.Visual
             if (_character == null) return;
 
             bool isDefense = _character.IsDefender;
-            _roleColor = isDefense ? UiTheme.Defense : UiTheme.Offense;
+            if(_roleKnown && isDefense!=_previousDefense)_roleChangedAt=Time.unscaledTime;
+            _roleKnown=true;_previousDefense=isDefense;
+            // ⚠️ A COMPANION WEARS ITS OWNER'S COLOUR AND ITS OWN NAME (HERO-10 v3, plan 9.7: *"Nameplate PHAISTER'S DOLL in her
+            // colour"*): the colour says whose it is, the name says it is not a fifth player. Seats 4 to 7 have no colour of their own.
+            bool companion = Core.CompanionSeats.IsCompanion(_character.PlayerSlot);
+            _roleColor = PlayerIdentity.Colour(Core.CompanionSeats.OwnerOf(_character.PlayerSlot));
 
-            // ⚠️⚠️ THE TAYA'S MARKER IS A RING AND AN ATTACKER'S IS A DISC, AND THAT IS THE ONLY
-            // PLACE THE ROLE IS CARRIED BY SOMETHING OTHER THAN HUE ON THE FLOOR.
-            // `docs/FUTURE.md` § 16.1: *"the roles are currently distinguished by hue alone. A
-            // colourblind player, a bad projector at a tournament, or a cheap phone screen all
-            // produce the same failure: you cannot tell the taya from the attackers."*
-            //
-            // ⚠️ RE-VERIFIED BEFORE IT WAS BUILT, AND HALF OF THAT CLAIM WAS ALREADY STALE.
-            // The scoreboard spends the role colour on the WORD `DEFENDER` / `ATTACKER` and says
-            // so in its own note, and the tag below already writes `· TAYA` on the defender and
-            // nothing on the other three. **The floor ring was the one that was still hue-only**,
-            // and it is the one that matters most in play: it is where the retrieval happens, and
-            // the tag above the head fades out past `FadeStart`, twelve metres.
-            //
-            // ⚠️⚠️ A SHAPE, NOT A SECOND COLOUR, WHICH IS `CLAUDE.md` § 6.5'S RULE ONE SUBSYSTEM
-            // OVER: *"a chamfer means pressable and a round means furniture ... a shape difference
-            // survives a photograph and a colourblind player; a fill difference does not."*
-            //
-            // ⚠️ AND IT SPENDS LESS FLOOR RATHER THAN MORE, WHICH `VfxShapes.Collar` ALREADY
-            // ARGUES IN ITS OWN WORDS: *"a ring at 8 per cent thickness costs about a sixth of the
-            // painted floor its filled equivalent does, at the same radius, carrying the same
-            // information about where the edge is."* `docs/VISION.md` § 2 is a budget on AREA, so
-            // the accessible answer is also the cheaper one.
-            //
-            // ⚠️ IT REUSES `Collar` RATHER THAN GENERATING A NINTH RING. `VISION.md` § 2 rule 3:
-            // *"a slab with walls, a field of broken plates, a swept flame ... are five things.
-            // Five polygons handed to one builder are one thing."* `Wedges` was the other
-            // candidate and is wrong here: it jitters every plate on purpose, and a role marker
-            // has to be the SAME shape on every taya in every round or it is not a signal.
-            //
-            // ⚠️ ONLY THE TAYA CHANGES, WHICH MATCHES THE DECISION THE TAG BELOW ALREADY MADE.
-            // There is exactly one taya and everybody else is an attacker by definition, so the
-            // ring says the same thing the word does and neither of them is spent on the other
-            // three bodies.
-            if (isDefense)
-            {
-                _ringFilter.sharedMesh = TayaRingMesh();
-                _ringUnitSpan = 1.0f;
-            }
-            else
-            {
-                _ringFilter.sharedMesh = _discMesh;
-                _ringUnitSpan = 2.0f;
-            }
-
-            // ⚠️ THE SIZE IS RE-APPLIED BECAUSE THE SPAN JUST CHANGED. A role swap runs through
-            // here every round and the two meshes are built at different radii; without this the
-            // taya's ring would be drawn at the disc's scale for the rest of the round.
+            // The shader preserves the role silhouettes without raised geometry.
             ApplySizing();
+            _ringBlock.SetFloat("_Shape", isDefense ? 1 : 0);
+            _ringBlock.SetFloat("_Weight", 1);
 
             _ringBlock.SetColor("_Color", new Color(_roleColor.r, _roleColor.g, _roleColor.b, 0.8f));
             _ringBlock.SetColor("_BaseColor", new Color(_roleColor.r, _roleColor.g, _roleColor.b, 0.8f));
@@ -343,9 +267,11 @@ namespace TumbangPreso.Visual
             // ⚠️ THE TAYA KEEPS ITS WORD, DELIBERATELY. Which of the four is the taya is the one
             // fact worth naming in the world, it changes every round, and a player who has just
             // rotated needs to find them before the colour rule has re-registered.
-            _label.text = isDefense
-                ? $"{_character.DisplayName()} · TAYA"
-                : _character.DisplayName();
+            _label.text = companion
+                ? _character.PlayerName
+                : isDefense
+                    ? $"{PlayerIdentity.Label(_character.PlayerSlot)} · TAYA"
+                    : PlayerIdentity.Label(_character.PlayerSlot);
             _label.color = _roleColor;
         }
 
@@ -359,6 +285,12 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void LateUpdate()
         {
+            if(_ring!=null)
+            {
+                float u=Mathf.Clamp01((Time.unscaledTime-_roleChangedAt)/.32f);
+                float beat=Settings.SettingsStore.Current.ReducedUiMotion?0:Mathf.Sin(u*Mathf.PI)*(1-u)*.18f*WorldCueProfile.Current.RoundRhythm;
+                _ring.localScale=new Vector3(_roleRingRest.x*(1+beat),_roleRingRest.y,_roleRingRest.z*(1+beat));
+            }
             PlaceForCurrentSurface();
             var cam = UnityEngine.Camera.main;
             if (cam == null || _label == null) return;
@@ -378,10 +310,13 @@ namespace TumbangPreso.Visual
             var rig = cam.GetComponent<CameraSystem.CameraRig>();
             if (rig != null && rig.IsLocalFpp && rig.IsFollowing(_character)) mine = true;
 
-            if (_ring != null) _ring.gameObject.SetActive(!mine);
-            _label.gameObject.SetActive(!mine);
+            // ⚠️ AND NOBODY'S TAG WHILE DON'T LOOK HAS YOUR EYES: the dark round its face must not carry names through.
+            bool blind = UI.TumpHudEffects.EyesCoveredOnScreen;
+            if (_ring != null) _ring.gameObject.SetActive(!mine && !blind);
+            bool introducing = MatchArrivalPresentation.Active;
+            _label.gameObject.SetActive(!mine && !introducing && !blind);
 
-            if (mine) return;
+            if (mine || introducing || blind) return;
 
             float distance = Vector3.Distance(cam.transform.position, _labelTransform.position);
 

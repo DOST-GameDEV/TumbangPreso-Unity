@@ -1,0 +1,24 @@
+{
+  "pid": 23268,
+  "source": "c17101d03df7fe5a5c5a985723f7a2aea8899393",
+  "protocol": 151,
+  "recording": 14,
+  "profile": "lpt-ed151-1005b",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios Validation\\TumpWorker-qa-a-be075dcdfa07\\profiles\\c19882b45261a5f901d5e272efa96535fd071cb1c7bc1df9f743f8355bd4979c",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-force-d3d11",
+    "-tp-profile",
+    "lpt-ed151-1005b",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\editor151-peer-1005b\\editor.log",
+    "-job-worker-count",
+    "2",
+    "-gc-helper-count",
+    "1"
+  ],
+  "route": "Normal nonbatch Editor Play; visible UI admission",
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\editor151-peer-1005b"
+}

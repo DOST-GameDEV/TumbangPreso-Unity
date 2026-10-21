@@ -1,0 +1,1 @@
+Assets\TumbangPreso\Tests\PlayMode\PlayerHubFriendJoinTests.cs(112,25): error CS0619: 'SceneHandle.implicit operator int(SceneHandle)' is obsolete: 'Implicit conversion from SceneHandle to int is deprecated. Use SceneHandle.GetRawData() instead'

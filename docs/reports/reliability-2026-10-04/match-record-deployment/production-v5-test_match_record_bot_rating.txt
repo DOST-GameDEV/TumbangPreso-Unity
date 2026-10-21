@@ -1,0 +1,5 @@
+{"passed":0,"failed":4,"scope":"actual server rating functions; no live account data"}
+FAIL human seat weights: botWeight is not defined
+FAIL solo bot match changes neither rating nor confidence nor season credit: blendRank is not defined
+FAIL two human match scales gains and confidence together: blendRank is not defined
+FAIL two human loss is reduced and a full human match is unchanged: blendRank is not defined

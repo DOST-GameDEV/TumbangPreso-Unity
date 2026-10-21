@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 17:32:22Z" end-time="2026-10-01 17:32:48Z" duration="26.3213283">
+  <test-suite type="TestSuite" id="2495" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-10-01 17:32:22Z" end-time="2026-10-01 17:32:48Z" duration="26.321328" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2489" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-10-01 17:32:22Z" end-time="2026-10-01 17:32:48Z" duration="26.290064" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4804" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2490" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-10-01 17:32:22Z" end-time="2026-10-01 17:32:48Z" duration="26.267607" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2491" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-10-01 17:32:22Z" end-time="2026-10-01 17:32:48Z" duration="26.245502" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2474" name="ZackKitAcceptanceProbe" fullname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" classname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-01 17:32:22Z" end-time="2026-10-01 17:32:48Z" duration="26.208963" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2475" name="BotUsesMatchLongOverclockWithoutWaitingForNearbyVictims" fullname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe.BotUsesMatchLongOverclockWithoutWaitingForNearbyVictims" methodname="BotUsesMatchLongOverclockWithoutWaitingForNearbyVictims" classname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" runstate="Runnable" seed="2102519723" result="Failed" start-time="2026-10-01 17:32:22Z" end-time="2026-10-01 17:32:48Z" duration="26.192794" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The bot ignored a ready match-long self-upgrade when nobody was in its secondary zap radius.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackKitAcceptanceProbe+<BotUsesMatchLongOverclockWithoutWaitingForNearbyVictims>d__10.MoveNext () [0x002de] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ZackKitAcceptanceProbe.cs:87
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

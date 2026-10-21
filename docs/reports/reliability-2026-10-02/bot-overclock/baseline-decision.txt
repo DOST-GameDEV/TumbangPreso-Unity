@@ -1,0 +1,4 @@
+requested=False
+overclocked=False
+ready=True
+elapsed=13.0004

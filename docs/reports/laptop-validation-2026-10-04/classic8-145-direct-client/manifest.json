@@ -1,0 +1,37 @@
+{
+  "rawFiles": {
+    "raw/client/launch.json": "3b6e10fa0df8896ceecbef6829cc2693e18a51496a5c46199a057e416bef6e71",
+    "raw/client/direct-result.json": "f8da6a40c878740acee1fa9b5ceb6038d016f0d245abc83f3c20aa1244c84e8a",
+    "raw/client/state.txt": "f5e95b49e743f9c9b1f072024ce4bb5fd859b79371de82d3656d2d1ccf8daf00",
+    "raw/client/player.log": "d9bb27169a1e8b50d42c387d56a657cd2e3def5f37404e0900e10355491f64f2",
+    "raw/client/pre-input-prefs.json": "6612b97c2295faa90521bc25ba08f58c626bfca300cfbf1a86a72e4e6fd5a217",
+    "raw/client/career.json": "f5800668988c7719b0bffd4dec7c9d44d322cc49847c3d54696c14d4c252e5a2",
+    "raw/client/settings.json": "4db4f2d41bed74855dbf372df6653c26e33e7af5d5a27a3733a04eff68521116",
+    "raw/host/classic8-pc-career-owner-interruption.json": "e1ef067fb43c81855f759ec0fad38077c0c0274ebfd3a3f5fe43e7ade4d6c91a",
+    "raw/host/classic8-pc-player.log": "adc3ce7cafa9d5d464da21999326011fd085bd59f39a5cfb1e8b37cc2a07198d",
+    "raw/host/classic8-pc-owner-release.json": "7c16ef1e7c7c6e9a57c389d7beca5251fff3edbb83d55f5e3d067bfdcb1b024b",
+    "raw/host/classic8-pc-result.json": "db9cdbd693f47fb97c7c534d94b69bc664b81c216dd1ae68dcb87439dc8fedda",
+    "raw/peer-comparison.json": "e1c85795659dd2587ba4e1bfb1f05c068b9fd441ef3b61a4d8ebe0532e3b970f"
+  },
+  "comparison": {
+    "fullHistoryRecordEqual": true,
+    "queueEqual": true,
+    "witnessEqual": true,
+    "matchIdSha256": "38a43300f8b9933b6e3555c815b1509fe459d60e269056c3bca0fc15028f8a5b",
+    "scores": [
+      130,
+      150,
+      2880,
+      3350
+    ],
+    "rounds": 8,
+    "mode": "Classic",
+    "clientExitCode": 0,
+    "clientInputRestored": true,
+    "clientSeedRestored": true,
+    "clientFinalMap": "MatchSetup",
+    "clientFinalActive": "False",
+    "hostOwnerInterrupted": true,
+    "scope": "Actual default eight-round Classic completion and identical saved results; host stopped after completion for owner PC slot priority, final client snapshot is post-end offline"
+  }
+}

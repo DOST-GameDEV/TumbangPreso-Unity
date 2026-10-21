@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 19:25:56Z" end-time="2026-09-30 19:26:06Z" duration="9.556992">
+  <test-suite type="TestSuite" id="2196" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:25:56Z" end-time="2026-09-30 19:26:06Z" duration="9.556992" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2190" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:25:56Z" end-time="2026-09-30 19:26:06Z" duration="9.545412" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="163949" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2191" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:25:56Z" end-time="2026-09-30 19:26:06Z" duration="9.542813" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2192" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:25:56Z" end-time="2026-09-30 19:26:06Z" duration="9.540732" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1130" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-09-30 19:25:56Z" end-time="2026-09-30 19:26:06Z" duration="9.502446" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1141" name="DanteTaggingSmallNemuHasVisibleContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.DanteTaggingSmallNemuHasVisibleContact" methodname="DanteTaggingSmallNemuHasVisibleContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1879240948" result="Failed" start-time="2026-09-30 19:25:56Z" end-time="2026-09-30 19:26:01Z" duration="5.006606" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A bounding-box overlap is not visible contact with the actual skin.
+  Expected: less than 0.0799999982f
+  But was:  0.0851214677f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__16.MoveNext () [0x00b2d] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs:276
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TagGeometry] dante torso=(0.00, 0.37, -3.92) hand=(0.71, 0.48, -3.86) victimTorso=(0.00, 0.36, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.0008708686 frames=46 bodyShift=0.5904495 torsoLean=37.95316 armStretch=1.002832 skinSurfaceGap=0.08512147
+]]></output>
+            </test-case>
+            <test-case id="1140" name="SmallNemuTaggingDanteHasVisibleContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.SmallNemuTaggingDanteHasVisibleContact" methodname="SmallNemuTaggingDanteHasVisibleContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1320134294" result="Passed" start-time="2026-09-30 19:26:01Z" end-time="2026-09-30 19:26:06Z" duration="4.480633" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] nemu torso=(0.00, 0.35, -3.92) hand=(0.64, 0.29, -3.89) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.00511606 frames=47 bodyShift=0.6421925 torsoLean=37.99649 armStretch=1.003487 skinSurfaceGap=0.03020024
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

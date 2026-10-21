@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 11:36:35Z" end-time="2026-10-04 11:36:42Z" duration="6.430321">
+  <test-suite type="TestSuite" id="3041" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1663" result="Failed" site="Child" start-time="2026-10-04 11:36:35Z" end-time="2026-10-04 11:36:42Z" duration="6.430321" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3035" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1663" result="Failed" site="Child" start-time="2026-10-04 11:36:35Z" end-time="2026-10-04 11:36:42Z" duration="6.421496" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="84801" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3036" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1663" result="Failed" site="Child" start-time="2026-10-04 11:36:35Z" end-time="2026-10-04 11:36:42Z" duration="6.419272" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3037" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1663" result="Failed" site="Child" start-time="2026-10-04 11:36:35Z" end-time="2026-10-04 11:36:42Z" duration="6.417257" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1283" name="CheskaFrostbiteLoadTests" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-04 11:36:36Z" end-time="2026-10-04 11:36:42Z" duration="6.342968" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1293" name="ActualCryoShoveChillExpiresAfterFiveSeconds" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.ActualCryoShoveChillExpiresAfterFiveSeconds" methodname="ActualCryoShoveChillExpiresAfterFiveSeconds" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="7262185" result="Failed" start-time="2026-10-04 11:36:36Z" end-time="2026-10-04 11:36:36Z" duration="0.250109" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 5.0d +/- 0.0010000000474974513d
+  But was:  0.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaFrostbiteLoadTests+<ActualCryoShoveChillExpiresAfterFiveSeconds>d__26.MoveNext () [0x00078] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/CheskaFrostbiteLoadTests.cs:174
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1294" name="ColdFeetChillExpiresFiveSecondsAfterLeavingTheField" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.ColdFeetChillExpiresFiveSecondsAfterLeavingTheField" methodname="ColdFeetChillExpiresFiveSecondsAfterLeavingTheField" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="427154219" result="Passed" start-time="2026-10-04 11:36:36Z" end-time="2026-10-04 11:36:41Z" duration="5.624199" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1292" name="CryoPlacementUsesTheNewOwnerNumbers" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.CryoPlacementUsesTheNewOwnerNumbers" methodname="CryoPlacementUsesTheNewOwnerNumbers" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="891727547" result="Failed" start-time="2026-10-04 11:36:41Z" end-time="2026-10-04 11:36:42Z" duration="0.223283" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 2.5f
+  But was:  2.29999995f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaFrostbiteLoadTests+<CryoPlacementUsesTheNewOwnerNumbers>d__24.MoveNext () [0x00021] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/CheskaFrostbiteLoadTests.cs:154
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1291" name="FrostbiteWindowCoatsEveryThrowWithoutRefreshing" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.FrostbiteWindowCoatsEveryThrowWithoutRefreshing" methodname="FrostbiteWindowCoatsEveryThrowWithoutRefreshing" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1090829288" result="Failed" start-time="2026-10-04 11:36:42Z" end-time="2026-10-04 11:36:42Z" duration="0.230390" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Throwing must not consume the fifteen-second window.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaFrostbiteLoadTests+<FrostbiteWindowCoatsEveryThrowWithoutRefreshing>d__23.MoveNext () [0x000ab] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/CheskaFrostbiteLoadTests.cs:141
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

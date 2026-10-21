@@ -111,6 +111,10 @@ namespace TumbangPreso.CameraSystem
         public const float FallSpringLength = 2.80f;
         public const float FallPitchDeg = 26.0f;
 
+        /// <summary>Travel, m/s, over which a falling body counts as THROWN (a car, a train) rather
+        /// than tripped where it stood: a sprint is 6 to 7, a car's throw 7 to 14 plus its aside.</summary>
+        public const float ThrownSpeed = 7.5f;
+
         /// ⚠️ THE FALL KEEPS ITS OWN CLAMP because the emote band tops out at 20 degrees, which
         /// is BELOW the angle a fall opens at. Sharing it would have silently pulled the shot
         /// back up to the standing framing on the first frame.
@@ -126,7 +130,8 @@ namespace TumbangPreso.CameraSystem
         /// TppCamera is `fov = 70.0`; Godot's `keep_aspect` defaults to KEEP_HEIGHT, so both are
         /// VERTICAL angles and transcribe straight into Unity's `fieldOfView`.
         ///
-        /// This is not a taste setting. A first-person view at 75 where the game was framed at
+        /// These remain the original defaults. The optional accessibility FOV changes how much
+        /// street the player can see: a first-person view at 75 where the game was framed at
         /// 95 shows a third less of the street, which changes how much of the box a taya can
         /// watch at once and how early an attacker sees a lunge coming, and it is most of why
         /// the two builds' arena screenshots do not look like the same game even with identical
@@ -175,6 +180,10 @@ namespace TumbangPreso.CameraSystem
         private UnityEngine.Camera _camera;
 
         private float _pitchDeg;
+        private Vector3 _cosmeticOffset, _holdAimAnchor;
+        // Gameplay aims through the unshaken eye. Presentation intensity is not
+        // another way of changing an accepted throw's origin or target.
+        public Vector3 AimEye => _holding ? _holdAimAnchor : transform.position - _cosmeticOffset;
         private float _tppPitchDeg = TppBasePitchDeg;
         private float _tppSpringLength = TppBaseSpringLength;
 
@@ -190,6 +199,11 @@ namespace TumbangPreso.CameraSystem
         private Vector3 _vmKickOffset;
 
         private bool _emoteView;
+        private WhirledView _whirledView;
+        /// <summary>Struck by CONTINENTAL DRIFT's ground: the view thrown up and rolled with the flight (`Visual.DanteHitLens`).</summary>
+        public Visual.DanteHitLens HitLens;
+        // Amihan's Airburst v3.2: the swing-out while her wind has thrown this body (`WindTumble`).
+        private bool _blownView;
         private Social.EmotePlayer _emotes;
         private Visual.CharacterVisual _visual;
         private GameObject _hiddenModelInstance;
@@ -221,6 +235,8 @@ namespace TumbangPreso.CameraSystem
         /// <summary>True while the third-person swing is being held by a FALL rather than by an
         /// emote. See <see cref="StepFallView"/>.</summary>
         private bool _fallView;
+        private int _edgeViewEpisode=-1;
+        private readonly RaycastHit[] _edgeViewHits=new RaycastHit[16];
 
         private bool _wasPossessing;
         private float _possessBlend;
@@ -245,6 +261,57 @@ namespace TumbangPreso.CameraSystem
         /// <summary>The seat this rig is looking through, or null. Read-only: `Bind` is the one
         /// writer, and the mode is derived from the subject rather than set beside it.</summary>
         public CharacterMotor Following => _character;
+
+        /// <summary>
+        /// Where the main camera's sight line meets the court, for the body it follows (false for any other body: only the player
+        /// looking through this camera can aim with it). Looking at or above the horizon, a point far along the view, which the
+        /// aimed ability then clamps to its reach. Used by casts placed where the player looks (`HeroAbility.AimsWhereLooking`).
+        /// </summary>
+        /// <summary>If the main camera follows <paramref name="who"/> in a held (third-person) view, reopen it behind the body's facing.</summary>
+        public static void FaceHeldView(CharacterMotor who)
+        {
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return;
+            if (rig._emoteView) rig._emoteYawDeg = rig.BodyYawDeg();
+        }
+
+        /// <summary>
+        /// ⚠️ HERO-10: THE HEIGHT OF THE SIGHT LINE <paramref name="flatDistance"/> metres out, for a power placed in the air
+        /// (Phaister's OMEN: she looks up to hang the eye higher). False unless this camera follows <paramref name="who"/>.
+        /// </summary>
+        public static bool TryLookHeight(CharacterMotor who, float flatDistance, out float height)
+        {
+            height = 0.0f;
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return false;
+            Vector3 forward = cam.transform.forward;
+            float flat = new Vector2(forward.x, forward.z).magnitude;
+            if (flat < 1e-3f) { height = cam.transform.position.y + 100.0f; return true; }
+            height = cam.transform.position.y + forward.y / flat * flatDistance;
+            return true;
+        }
+
+        public static bool TryLookGround(CharacterMotor who, out Vector3 point)
+        {
+            point = Vector3.zero;
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return false;
+            Vector3 origin = cam.transform.position, forward = cam.transform.forward;
+            float ground = Slipper.GroundY(who.transform.position + Vector3.up * 0.3f);
+            if (forward.y < -0.02f && origin.y > ground)
+            {
+                point = origin + forward * ((origin.y - ground) / -forward.y);
+                return true;
+            }
+            var flat = new Vector3(forward.x, 0.0f, forward.z);
+            if (flat.sqrMagnitude < 1e-4f) flat = who.transform.forward;
+            point = who.transform.position + flat.normalized * 100.0f;
+            point.y = ground;
+            return true;
+        }
 
         /// <summary>
         /// § THE VERB, IN THE PLAYER'S OWN HANDS. `camera_rig.gd::play_viewmodel_action`.
@@ -283,6 +350,58 @@ namespace TumbangPreso.CameraSystem
             rig.ViewmodelKick(Vector3.forward);
         }
 
+        /// <summary>
+        /// The first-person hand tip of <paramref name="who"/>, when this screen is looking through
+        /// their eyes; false in third person, for anybody else, or with no viewmodel. Effects that
+        /// leave the hands (Paete's vines) start here so the owner sees them come out of their own arms.
+        /// </summary>
+        public static bool TryViewmodelHand(CharacterMotor who, bool left, out Vector3 world)
+        {
+            world = default;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryHandTip(left, out world);
+        }
+
+        /// <summary>
+        /// Where <paramref name="who"/>'s first-person arm is DRAWN (hand, back end, half-width), when this camera is in their eyes
+        /// (HERO-9: LIANA LEAP's vines leave the drawn forearm, `ViewmodelArms.TryDrawnArm`).
+        /// </summary>
+        public static bool TryDrawnViewmodelArm(CharacterMotor who, bool left, out Vector3 hand, out Vector3 back, out float halfWidth)
+        {
+            hand = back = default; halfWidth = 0f;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryDrawnArm(left, out hand, out back, out halfWidth);
+        }
+
+        /// <summary>Paete's first-person forearms lengthening with his vines (`ViewmodelArms.SetReachStretch`); 0 puts them back.</summary>
+        public static void SetViewmodelReachStretch(CharacterMotor who, float stretch)
+        {
+            if (who == null) return;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._arms == null) return;
+            rig._arms.SetReachStretch(stretch);
+        }
+
+        /// <summary>
+        /// The two first-person arm renderers of <paramref name="who"/>, when this camera is in their eyes (HERO-9: Paete's channel
+        /// lights his own hands on his screen, `Visual.PaeteChannelGlow`).
+        /// </summary>
+        public static bool TryViewmodelArmRenderers(CharacterMotor who, out MeshRenderer left, out MeshRenderer right)
+        {
+            left = right = null;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryArmRenderers(out left, out right);
+        }
+
         public static void SeekViewmodelAction(CharacterMotor who,string expected,float elapsed)
         {
             var rig=FindFirstObjectByType<CameraRig>();
@@ -302,6 +421,8 @@ namespace TumbangPreso.CameraSystem
         {
             _camera = GetComponent<UnityEngine.Camera>();
             if (_camera == null) _camera = gameObject.AddComponent<UnityEngine.Camera>();
+            // Whirled as the player it happened to sees it (owner, 2026-10-03): the wind round their own view.
+            _whirledView = WhirledView.Attach(this);
 
             _camera.fieldOfView = _fieldOfView;
             _camera.nearClipPlane = 0.05f;
@@ -365,6 +486,9 @@ namespace TumbangPreso.CameraSystem
         private void Start()
         {
             if (_grade != null) _grade.AdoptFromScene();
+            // A map larger than the 240 m above says so with a `MapCameraRange` (the Arena). No
+            // other map carries one, and then this changes nothing.
+            Visual.MapCameraRange.Adopt(_camera, false);
         }
 
         /// <summary>
@@ -377,7 +501,9 @@ namespace TumbangPreso.CameraSystem
         {
             if (_camera == null) return;
 
-            float want = _mode == CameraMode.Fpp && !_emoteView ? FppFieldOfView : TppFieldOfView;
+            float want = _mode == CameraMode.Fpp && !_emoteView
+                ? Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov)
+                : TppFieldOfView;
 
             // ------------------------------------------------------------------ § THE SPRINT KICK
             //
@@ -455,6 +581,7 @@ namespace TumbangPreso.CameraSystem
             // set here, `StepFallView` would believe it had already swung out and would refuse
             // to swing again for the next fall on this body.
             _fallView = false;
+            _edgeViewEpisode=-1;
 
             // ⚠️⚠️ THE HITSTOP BELONGS TO THE BODY THAT TOOK THE HIT, AND CLEARING IT HERE IS
             // REQUIRED RATHER THAN TIDY. `StepHold` anchors the camera to the pose it froze at,
@@ -470,6 +597,7 @@ namespace TumbangPreso.CameraSystem
             _groundRumbleAge=3;_groundRumbleStrength=0;GroundRumbleOffset=Vector3.zero;
 
             _character = character;
+            _cosmeticOffset = Vector3.zero;
             _mode = CameraMode.Fpp;
 
             if (_character == null) return;
@@ -607,14 +735,23 @@ namespace TumbangPreso.CameraSystem
             _viewmodel = go.transform;
         }
 
+        /// <summary>Resolve the gameplay eye under loading, even when world presentation is held.</summary>
+        public bool PrepareArrivalReturnView()
+        {
+            if (_character == null || !_active) return false;
+            ApplyLens();
+            if (_mode == CameraMode.Fpp) ApplyFpp(); else ApplyTpp();
+            return true;
+        }
+
         public void SetActive(bool active)
         {
             _active = active;
-            if (_camera != null) _camera.enabled = active;
+            if (_camera != null && !MatchArrivalPresentation.OwnsCamera) _camera.enabled = active;
 
-            if (_viewmodel != null) _viewmodel.gameObject.SetActive(active && _mode == CameraMode.Fpp);
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(active && _mode == CameraMode.Fpp && !MatchArrivalPresentation.OwnsCamera);
 
-            if (active) ApplyFppSelfHide();
+            if (active && !MatchArrivalPresentation.OwnsCamera) ApplyFppSelfHide();
             else RestoreSelfHide();
 
             ApplyCarriedSelfHide();
@@ -626,7 +763,7 @@ namespace TumbangPreso.CameraSystem
 
         private void LateUpdate()
         {
-            if (_character == null || !_active) return;
+            if (_character == null || !_active || PresentationClock.Held) return;
 
             ApplyLens();
             ApplyFppSelfHideIfNeeded();
@@ -709,6 +846,11 @@ namespace TumbangPreso.CameraSystem
 
             StepShake();
             StepViewmodelKick();
+            // Whirled's dizzy roll, about the line of sight, only on a frame this pass wrote and only in first person.
+            if (_mode == CameraMode.Fpp && _whirledView != null && _whirledView.Roll != 0f)
+                transform.rotation *= Quaternion.Euler(0f, 0f, _whirledView.Roll);
+            if (_mode == CameraMode.Fpp && HitLens != null && HitLens.isActiveAndEnabled)
+                transform.rotation *= HitLens.Tilt;
         }
 
         private void StepCompanionLook(Visual.GhostPetCompanion companion)
@@ -817,6 +959,19 @@ namespace TumbangPreso.CameraSystem
 
             LookThisFrame(out float dx, out float dy);
 
+            // The debug third person, free: the mouse swings the camera only while the right button is down, and
+            // never turns the body (`SetDebugCameraLock`).
+            if (DebugFreeCamera)
+            {
+                var mouse = UnityEngine.InputSystem.Mouse.current;
+                if (mouse != null && mouse.rightButton.isPressed)
+                {
+                    _debugOrbitYaw += dx * 10.0f;
+                    _debugOrbitPitch = Mathf.Clamp(_debugOrbitPitch - dy * 10.0f, -35f, 75f);
+                }
+                return;
+            }
+
             // ⚠️ YAW GOES ON THE BODY, PITCH STAYS ON THE RIG. The body turning is what makes
             // a throw leave along the sight line; a rig that yawed on its own would let the
             // player look one way and throw another.
@@ -840,15 +995,54 @@ namespace TumbangPreso.CameraSystem
             return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         }
 
+        private float _fppSquatBlend, _reworkEyeDrop;
+
+        /// <summary>0 to 1: how deep the local taya is in the raise's crouch, eased in and out.</summary>
+        private float FppRaiseSquat()
+        {
+            var carrier = _character != null ? _character.GetComponent<Carrier>() : null;
+            var motor = _character != null ? _character.GetComponent<CharacterMotor>() : null;
+            var lata = GameServices.Round?.Lata;
+            float ratio = carrier != null && motor != null && motor.IsDefender && lata != null && !lata.IsUpright ? carrier.ChannelRatio : 0f;
+            _fppSquatBlend = Mathf.MoveTowards(_fppSquatBlend, ratio > 0 ? 1f : 0f, Time.deltaTime / (ratio > 0 ? .12f : .18f));
+            return _fppSquatBlend * Visual.CanRaiseShape.Crouch(ratio > 0 ? ratio : 1f);
+        }
+
         private void ApplyFpp()
         {
             float yaw = BodyYawDeg();
             Vector3 eye = _character.transform.position + Vector3.up * (PersonCapsuleHeight * 0.5f + FppEyeHeight);
 
-            // Absolute, from yaw and pitch only. The body's roll cannot reach this.
-            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg, yaw, 0.0f));
+            // ⚠️ THE TAYA'S SQUAT OVER THE CAN, FELT FROM THE EYES (owner, 2026-09-26: *"they should
+            // crouch first and put it up"*). Same curve as the body (`Visual.CanRaiseShape`); it only
+            // offsets the view, never `_pitchDeg`, so the aim is untouched when the raise ends.
+            float squat = FppRaiseSquat();
+            eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
 
-            if (_viewmodel != null && !_viewmodel.gameObject.activeSelf)
+            // The movement rework's crouch and slide, from the eyes (`MovementRework`, a debug switch; zero with it off).
+            // An offset of the view like the two around it, eased so the drop is a motion and not a cut.
+            var reworkMotor = _character.GetComponent<CharacterMotor>();
+            _reworkEyeDrop = Mathf.MoveTowards(_reworkEyeDrop, reworkMotor != null ? reworkMotor.ReworkEyeDropTarget : 0f, Time.deltaTime * 4.5f);
+            eye -= Vector3.up * _reworkEyeDrop;
+
+            // ⚠️ PAETE DOWN ON HIS KNEE, FROM HIS OWN EYES (HERO-9 v5, direction.md 5.14: *"HE GOES TO THE GHHROUND AND HIS ROOTS
+            // CONNECT TO IT"*). While MAKILING'S EMBRACE holds him down after its cutscene his view is at kneel height and tipped a
+            // little toward his hands in the court, and it lifts on each of the tree's hauls. The squat's rule exactly: an offset
+            // of the view, never `_pitchDeg`, so the aim is where it was when he stands (and walking ends it at once).
+            float kneel = Visual.PaeteGroundCall.KneelWeight(_character);
+            eye -= Vector3.up * (Visual.PaeteGroundCall.FppEyeDrop * kneel - 0.06f * kneel * Visual.PaeteGroundCall.HeaveJolt(_character));
+
+            // How far all of that has brought the eye down from standing, for the map's near-camera dissolve: it spares the
+            // ground by its depth under a STANDING eye (`NearFade.shader`, `belowFeet`; owner 2026-10-08, crouched: "why is the
+            // distance fade happening").
+            Shader.SetGlobalFloat(Visual.NearFade.EyeDropId,
+                Mathf.Max(0f, _character.transform.position.y + PersonCapsuleHeight * 0.5f + FppEyeHeight - eye.y));
+
+            // Absolute, from yaw and pitch only. The body's roll cannot reach this.
+            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
+                                                                   + Visual.PaeteGroundCall.FppLookDown * kneel, yaw, 0.0f));
+
+            if (_viewmodel != null && !_viewmodel.gameObject.activeSelf && !MatchArrivalPresentation.OwnsCamera)
                 _viewmodel.gameObject.SetActive(true);
 
             // The hand shows what the unit is actually carrying.
@@ -862,7 +1056,9 @@ namespace TumbangPreso.CameraSystem
             var carrier = _character.GetComponent<Carrier>();
             var held = carrier != null ? carrier.Held : null;
 
-            _arms.SetHolding(held != null);
+            // HERO-10 v3: while a curse has her slipper at her belt the right hand is empty and reaching (`StowsCarriedSlipper`).
+            bool stowed = held != null && _character.StowsCarriedSlipper && (carrier == null || carrier.ObservedChargePower < 0.0f);
+            _arms.SetHolding(held != null && !stowed);
 
             // § THE WIND-UP, POLLED. `character_visual.gd` polls charge for the same reason it
             // polls carry scale and spin: *"charge is a continuously-varying value, not an event,
@@ -892,6 +1088,9 @@ namespace TumbangPreso.CameraSystem
                 if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill1)) aiming=hero.Kit.Skill1.ViewmodelAction;
                 else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill2)) aiming=hero.Kit.Skill2.ViewmodelAction;
                 else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Ultimate)) aiming=hero.Kit.Ultimate.ViewmodelAction;
+                // HERO-10 v3: Phaister's reach holds her hand out in view for as long as the body reaches (a tap, not a held key).
+                if (aiming == null && _character.IsVoodooReaching)
+                    aiming = _character.VoodooReachKind == VoodooMarkKind.Drain ? "reach-drain" : "reach-hex";
             }
             _arms.SetAimPreview(aiming);
 
@@ -901,12 +1100,92 @@ namespace TumbangPreso.CameraSystem
             if (held != null) _arms.MatchSkin(held);
         }
 
+        private bool _debugThirdPerson;
+        private const float DebugThirdPersonPitchOffset = 12f;
+        public bool DebugThirdPerson => _debugThirdPerson && _mode == CameraMode.Tpp;
+
+        /// <summary>
+        /// ⚠️ A DEBUG VIEW, FOR LOOKING AT A BODY MOVE (owner, 2026-10-07: "add a 3rd person mode to the prototype map").
+        /// The rig has had a third-person mode since the port and nothing in the game switches to it; this does, for
+        /// the prototype map's key. The body is drawn again and the first-person arms put away; the mouse still turns
+        /// the body and now tips this camera too. Refused during an emote's own swing, which owns the mode while it runs.
+        /// </summary>
+        public bool SetDebugThirdPerson(bool on)
+        {
+            if (_emoteView || _character == null) return false;
+            _debugThirdPerson = on;
+            _mode = on ? CameraMode.Tpp : CameraMode.Fpp;
+            if (on)
+            {
+                RestoreSelfHide();
+                if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
+                // It opens free, as that game's does, behind the body.
+                _debugCameraLocked = false;
+                _debugOrbitYaw = BodyYawDeg(); _debugOrbitPitch = 18f;
+                UI.CursorMode.Release();
+            }
+            else
+            {
+                if (_viewmodel != null) _viewmodel.gameObject.SetActive(_active && !MatchArrivalPresentation.OwnsCamera);
+                ApplyFppSelfHide();
+                UI.CursorMode.Capture();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ THE TWO THIRD PERSONS OF ROBLOX (owner, 2026-10-09: "can third person be like roblox. add a lock for a tpv
+        /// where the cam is off to the side, and toggling it disables the lock and you can use right click to look
+        /// around").
+        ///   * LOCKED: the camera sits over the right shoulder, the pointer is taken, and the mouse turns the BODY, as
+        ///     first person does. The body faces where the camera looks.
+        ///   * FREE (how it opens): the pointer is free. Holding the RIGHT mouse button swings the camera round the body
+        ///     and does not turn it; the movement keys walk relative to the CAMERA and the body turns to face the way
+        ///     it is walking (`CharacterMotor.Steer` asks `DebugFreeCamera` and `DebugOrbitYaw`).
+        /// </summary>
+        private bool _debugCameraLocked;
+        private float _debugOrbitYaw, _debugOrbitPitch = 18f;
+        private const float DebugShoulderOffset = 0.75f;
+        public bool DebugCameraLocked => DebugThirdPerson && _debugCameraLocked;
+        public bool DebugFreeCamera => DebugThirdPerson && !_debugCameraLocked;
+        public float DebugOrbitYaw => _debugOrbitYaw;
+
+        public bool SetDebugCameraLock(bool locked)
+        {
+            if (!DebugThirdPerson || _character == null) return false;
+            _debugCameraLocked = locked;
+            if (locked)
+            {
+                // The body turns to where the camera was looking, so locking does not swing the view.
+                _character.transform.rotation = Quaternion.Euler(0f, _debugOrbitYaw, 0f);
+                _pitchDeg = Mathf.Clamp(_debugOrbitPitch - DebugThirdPersonPitchOffset, PitchMinDeg, PitchMaxDeg);
+                UI.CursorMode.Capture();
+            }
+            else
+            {
+                _debugOrbitYaw = BodyYawDeg();
+                _debugOrbitPitch = Mathf.Clamp(_pitchDeg + DebugThirdPersonPitchOffset, -35f, 75f);
+                UI.CursorMode.Release();
+            }
+            return true;
+        }
+
         private void ApplyTpp()
         {
-            float yaw = BodyYawDeg();
+            // Third person has no lowered eye for the near dissolve's ground rule (`ApplyFpp`).
+            Shader.SetGlobalFloat(Visual.NearFade.EyeDropId, 0f);
+            // The debug third person, free: the camera's own yaw and pitch, not the body's (`SetDebugCameraLock`).
+            bool free = DebugFreeCamera;
+            float yaw = free ? _debugOrbitYaw : BodyYawDeg();
             Vector3 mount = _character.transform.position + Vector3.up * TppMountHeight;
+            // Locked: over the right shoulder.
+            if (DebugCameraLocked) mount += Quaternion.Euler(0f, yaw, 0f) * Vector3.right * DebugShoulderOffset;
 
-            var rot = Quaternion.Euler(Mathf.Max(_tppPitchDeg, TppMinPitchDeg), yaw, 0.0f);
+            // The debug third person (`SetDebugThirdPerson`) looks up and down with the mouse; the game's own keeps its fixed pitch.
+            float pitch = free ? _debugOrbitPitch
+                        : DebugThirdPerson ? Mathf.Clamp(_pitchDeg + DebugThirdPersonPitchOffset, -35f, 75f)
+                                            : Mathf.Max(_tppPitchDeg, TppMinPitchDeg);
+            var rot = Quaternion.Euler(pitch, yaw, 0.0f);
             Vector3 wanted = mount - (rot * Vector3.forward) * _tppSpringLength;
 
             // ⚠️ THE SPRING ARM EXCLUDES THE BODY IT IS WATCHING, or the cast hits the
@@ -983,7 +1262,7 @@ namespace TumbangPreso.CameraSystem
         {
             RestoreSelfHide();
 
-            if (_character == null || _mode != CameraMode.Fpp) return;
+            if (!_active || _character == null || _mode != CameraMode.Fpp || MatchArrivalPresentation.OwnsCamera) return;
 
             var visual = _visual != null ? _visual : _character.GetComponent<Visual.CharacterVisual>();
             _hiddenModelInstance = visual != null ? visual.Model : null;
@@ -997,6 +1276,19 @@ namespace TumbangPreso.CameraSystem
                 r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
                 _hiddenForFpp.Add(r);
             }
+        }
+
+        /// <summary>
+        /// Draw this rig's own body again, for a camera that is NOT this one. In first person the
+        /// local body is shadows-only so the player does not look out through their own head;
+        /// a cutaway through another camera (the Arena's break camera, which shows every player
+        /// lifted off the stage) would otherwise show three players and a shadow. Nothing has
+        /// to undo it: `ApplyFppSelfHideIfNeeded` hides the body again on the first frame this
+        /// rig draws, which is the frame the hold ends. A no-op when nothing is hidden.
+        /// </summary>
+        public void ShowBodyForCutaway()
+        {
+            if (_hiddenForFpp.Count > 0) RestoreSelfHide();
         }
 
         private void RestoreSelfHide()
@@ -1048,7 +1340,7 @@ namespace TumbangPreso.CameraSystem
         {
             Slipper held = null;
 
-            if (_active && _mode == CameraMode.Fpp && !_emoteView && _character != null)
+            if (_active && _mode == CameraMode.Fpp && !_emoteView && _character != null && !MatchArrivalPresentation.OwnsCamera)
             {
                 var carrier = _character.GetComponent<Carrier>();
                 held = carrier != null ? carrier.Held : null;
@@ -1057,7 +1349,7 @@ namespace TumbangPreso.CameraSystem
             // A released prop starts on the unchanged physical throw origin. Keep
             // its world mesh hidden from this FPP owner until it clears the eye;
             // moving the origin forward would let throws bypass nearby obstacles.
-            if (held == null && _active && _mode == CameraMode.Fpp && !_emoteView && _character != null
+            if (held == null && _active && _mode == CameraMode.Fpp && !_emoteView && _character != null && !MatchArrivalPresentation.OwnsCamera
                 && _hiddenCarriedSlipper != null && _hiddenCarriedSlipper.State == SlipperState.InFlight
                 && _hiddenCarriedSlipper.ThrowerSlot == _character.PlayerSlot)
             {
@@ -1154,7 +1446,7 @@ namespace TumbangPreso.CameraSystem
             GroundRumbleOffset=Vector3.zero;
             if(_groundRumbleAge>=2.4f){_groundRumbleStrength=0;return;}
             _groundRumbleAge+=Time.deltaTime;
-            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength;
+            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength*Settings.SettingsStore.Current.EffectiveCameraShake;
             // Small smooth translation, no aim rotation, time scaling or gameplay RNG.
             GroundRumbleOffset=transform.right*(Mathf.Sin(_groundRumbleAge*50.27f)*.010f*amount)
                 +Vector3.up*(Mathf.Sin(_groundRumbleAge*73.8f+.8f)*.004f*amount);
@@ -1234,6 +1526,7 @@ namespace TumbangPreso.CameraSystem
 
             if (!_holding)
             {
+                _holdAimAnchor = transform.position - _cosmeticOffset;
                 _holding = true;
                 _holdAnchor = transform.position;
             }
@@ -1249,25 +1542,25 @@ namespace TumbangPreso.CameraSystem
 
         private void StepShake()
         {
+            Vector3 eye = transform.position;
+            float level = Settings.SettingsStore.Current.EffectiveCameraShake;
             StepGroundRumble();
-            if (_impactPunchLeft > 0.0f)
+            if (_impactPunchLeft > 0)
             {
                 _impactPunchLeft -= Time.deltaTime;
-                float punchRatio = Mathf.Clamp01(_impactPunchLeft / ImpactPunchDuration);
-                transform.position += _impactPunchOffset * punchRatio;
+                transform.position += _impactPunchOffset * Mathf.Clamp01(_impactPunchLeft / ImpactPunchDuration) * level;
             }
-
-            if (_shakeLeft <= 0.0f) return;
-
-            _shakeLeft -= Time.deltaTime;
-            float k = Mathf.Clamp01(_shakeLeft) * _shakeStrength;
-
-            transform.position += new Vector3(
-                (Random.value - 0.5f) * 2.0f * k * 0.1f,
-                (Random.value - 0.5f) * 2.0f * k * 0.1f,
-                0.0f);
-
-            if (_shakeLeft <= 0.0f) _shakeStrength = 0.0f;
+            if (_shakeLeft > 0)
+            {
+                _shakeLeft -= Time.deltaTime;
+                float amount = Mathf.Clamp01(_shakeLeft) * _shakeStrength * level * .1f;
+                float clock = Time.unscaledTime;
+                // Deterministic cosmetic oscillation does not consume simulation
+                // random values or differ because a viewer disabled shake.
+                transform.position += new Vector3(Mathf.Sin(clock * 93.11f), Mathf.Sin(clock * 117.7f + .8f), 0) * amount;
+                if (_shakeLeft <= 0) _shakeStrength = 0;
+            }
+            _cosmeticOffset = transform.position - eye;
         }
 
         /// <summary>A punch of the arms toward the player on an action, so a verb is felt.</summary>
@@ -1336,6 +1629,12 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StepFallView()
         {
+            if (!Settings.SettingsStore.Current.CinematicCameraMotion)
+            {
+                if (_fallView) { _fallView = false; EndEmoteView(); }
+                return;
+            }
+
             // ⚠️⚠️ AN ELEMENT STUN EARNS THE CAMERA FOR THE SAME REASON A FALL DOES, and the
             // rule quoted above is what admits it rather than a second exception. `docs/
             // Hero_Strike_Balance.md` § 8.6: an event takes the camera when the body the player
@@ -1350,8 +1649,43 @@ namespace TumbangPreso.CameraSystem
             // every tag in a 90 s round would take the camera off the player four or five times
             // a match for no decision. Hero skills are refused by the same rule.
             bool held = _character != null && _character.StunElement != StunElement.None;
-            bool down = _character != null && (_character.IsTripped || held);
-            if (down == _fallView) return;
+            // ⚠️ ROOTED SWINGS OUT TOO (HERO-9, the owner's table for Paete's ultimate: *"they get stuck on it
+            // (switches to tpp view)"*; planned in docs/reports/paete-kit-2026-09-25/plan.md and never wired
+            // until the sentry film of 2026-09-26 showed a caught player still in first person). Unlike a tag
+            // there IS something to do: hold Interact to struggle free, and they can still throw and cast, so
+            // they see their own body held by the tree. It keeps the standing pitch, as a held body does.
+            bool rooted = _character != null && _character.IsRooted;
+            // ⚠️ BLOWN BACK SWINGS OUT TOO (owner, 2026-10-03, Amihan's Airburst v3.2: *"make the fpp view of all that got pushed back
+            // see that as well"*). Thrown by her wind they have lost their body to it (`WindTumble`), so they watch it tumble, like a
+            // trip; the view comes home once they are down and the carry is spent. Standing pitch: the body is in the air, not on the road.
+            bool blown = _character != null && _character.IsWhirled && (_character.IsCarried || !_character.IsGrounded);
+            // ⚠️ DROPPING THROUGH THE ARENA'S SHAFT SWINGS OUT TOO (owner, 2026-10-05: "falling off
+            // threshold is too high, you need to fall further"). The body has left the stage and
+            // nothing the player presses matters until the drone has it, so the view goes above
+            // and behind the body looking DOWN the shaft: its rings go by and the city is under
+            // their feet. `ArenaStage.IsShaftFall` is false on every other map (no stage), and
+            // the drone's own view (`ApplyEdgeRecoveryView`) takes over at the catch.
+            //
+            // ⚠️⚠️ ONLY ONCE THE BODY IS PAST SAVING (owner, 2026-10-05, playing: "paete's utility is
+            // like a grappling hook but it doesnt even have much of a time window to let me clutch
+            // back up"). This view is the emote orbit: the mouse turns the lens and not the body,
+            // the pitch is held between 6 and 48 degrees DOWN, and `AimPoint` is cast along it, so
+            // from the first metre of a fall a player could not look at the deck, let alone aim a
+            // skill at it. Down to `ArenaFallRecovery.LostDepth` the view and the aim stay the
+            // player's own; under it "nothing the player presses matters" is true and this opens.
+            bool shaft = Map.ArenaFallRecovery.IsLostFall(_character);
+            bool down = _character != null && (_character.IsTripped || held || rooted || blown || shaft);
+            if (down != _fallView) _blownView = down && blown;
+            if (shaft && !_shaftView) _shaftOpened = true;
+            _shaftView = shaft;
+            if (!down) { _thrownView = false; _thrownRenderers = null; _thrownCentreSet = false; }
+            if (down == _fallView)
+            {
+                // The throw can reach the owning peer a frame or two after the trip that opened the view.
+                if (down && !_thrownAimed && Time.time - _fallViewAt < 0.5f && !held && !rooted && !blown && AimAtThrow())
+                    _emotePitchDeg = ThrownPitchDeg;
+                return;
+            }
 
             // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
             // is reached by losing the right to act, and a trip does exactly that, so an emote
@@ -1373,9 +1707,67 @@ namespace TumbangPreso.CameraSystem
                 // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
                 // aim the camera at the road in front of a character who is upright, and the
                 // one thing the player needs to see is the element on their own body.
-                if (!held) _emotePitchDeg = FallPitchDeg;
+                //
+                // ⚠️ THROWN, NOT TRIPPED (owner, 2026-10-04, hit by a car on the rebuilt Ilalim:
+                // "ragdoll cam is weird"). The view opens behind the way the body FACES, and a
+                // player facing the car that hits them is thrown backwards, straight through the
+                // lens: the frame was their own arms. A body with real travel on it is going
+                // somewhere, so the view opens behind the way it is GOING and watches it fly away,
+                // at the standing pitch like the wind's blow (it is in the air, not on the road).
+                _fallViewAt = Time.time; _thrownAimed = false;
+                bool thrown = !held && !rooted && !blown && AimAtThrow();
+                if (!held && !rooted && !blown && !thrown) _emotePitchDeg = FallPitchDeg;
+                if (thrown) _emotePitchDeg = ThrownPitchDeg;
+                // The wind's hit is felt, not just seen.
+                if (blown) Shake(1.1f, .55f);
             }
             else EndEmoteView();
+        }
+
+        private float _fallViewAt;
+        private bool _thrownAimed;
+        // The Arena's shaft: the view over a falling body. 46 degrees is inside the fall band's
+        // 48, so the player's own look keeps it; 5 m back and up shows the whole tumbling body.
+        private const float ShaftPitchDeg = 46.0f, ShaftArm = 5.0f, ShaftMountHeight = 1.0f;
+        private bool _shaftView, _shaftOpened;
+
+        /// <summary>Turns the fall view to look along a thrown body's travel. False when the body
+        /// is not travelling fast enough to count as thrown.</summary>
+        private bool AimAtThrow()
+        {
+            Vector3 travel = _character.PresentationTravelVelocity; travel.y = 0.0f;
+            if (travel.sqrMagnitude < ThrownSpeed * ThrownSpeed) return false;
+            _emoteYawDeg = Mathf.Atan2(travel.x, travel.z) * Mathf.Rad2Deg;
+            _thrownAimed = true;
+            _thrownView = true;
+            _thrownRenderers = _character.GetComponentsInChildren<Renderer>();
+            Shake(0.9f, 0.45f);
+            return true;
+        }
+
+        // ⚠️ THE THROWN VIEW FRAMES THE BODY, NOT THE SPOT UNDER IT (owner, 2026-10-04, second look
+        // at a car hit: "can you put the cam back further and align it to the center of mass
+        // instead of the bottom"). The fall view mounts 0.x m over the motor's position, which is
+        // the FEET, on a short arm: right for a body lying on the road, and for a body the car has
+        // just put two metres in the air it left the lens on the tarmac looking up at it. So this
+        // view mounts on the middle of the body's own renderers, wherever the tumble has it, on a
+        // long arm looking a little down.
+        private const float ThrownArm = 6.0f, ThrownPitchDeg = 16.0f;
+        private bool _thrownView;
+        private Renderer[] _thrownRenderers;
+        private Vector3 _thrownCentre;
+        private bool _thrownCentreSet;
+
+        private Vector3 BodyCentre()
+        {
+            bool any = false; Bounds all = default;
+            if (_thrownRenderers != null)
+                foreach (var r in _thrownRenderers)
+                {
+                    if (r == null || !r.enabled || !r.gameObject.activeInHierarchy || r is ParticleSystemRenderer || r is TrailRenderer) continue;
+                    if (!any) { all = r.bounds; any = true; } else all.Encapsulate(r.bounds);
+                }
+            return any ? all.center : _character.transform.position + Vector3.up * 0.9f;
         }
 
         public void BeginEmoteView()
@@ -1401,13 +1793,14 @@ namespace TumbangPreso.CameraSystem
 
         public void EndEmoteView()
         {
+            _edgeViewEpisode=-1;
             if (!_emoteView) return;
 
             _emoteView = false;
             _mode = _modeBeforeEmote;
 
             if (_viewmodel != null)
-                _viewmodel.gameObject.SetActive(_active && _mode == CameraMode.Fpp);
+                _viewmodel.gameObject.SetActive(_active && _mode == CameraMode.Fpp && !MatchArrivalPresentation.OwnsCamera);
 
             // ⚠️ AND HIDE IT AGAIN ON THE WAY BACK, or the emote leaves the player looking at
             // their own shoulders and a second set of arms for the rest of the round. The guard
@@ -1461,6 +1854,8 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void ApplyEmoteView()
         {
+            if(_character!=null&&_character.IsEdgeRecovering){ApplyEdgeRecoveryView();return;}
+            if (_shaftView && _shaftOpened) { _shaftOpened = false; _emotePitchDeg = ShaftPitchDeg; }
             _emotePitchDeg = Mathf.Clamp(_emotePitchDeg,
                                          _fallView ? FallPitchMinDeg : EmotePitchMinDeg,
                                          _fallView ? FallPitchMaxDeg : EmotePitchMaxDeg);
@@ -1469,16 +1864,37 @@ namespace TumbangPreso.CameraSystem
             // because the subject is on the ground.
             float mountHeight = _fallView ? FallMountHeight : TppMountHeight;
             float arm = _fallView ? FallSpringLength : _tppSpringLength;
+            // Thrown by her wind (film v3.3: the fall arm put the tumbling body's head across the whole lens): back and up, so the
+            // whole body tumbling and the court it is thrown across are in frame, the lens rocking with the gusts.
+            float roll = 0.0f;
+            if (_blownView)
+            {
+                mountHeight = 1.1f; arm = Mathf.Max(arm, 4.4f);
+                if (Settings.SettingsStore.Current.EffectiveCameraShake > 0f) roll = 7.0f * Mathf.Sin(Time.unscaledTime * 5.3f);
+            }
+
+            if (_shaftView && _fallView) { mountHeight = ShaftMountHeight; arm = Mathf.Max(arm, ShaftArm); }
 
             Vector3 mount = _character.transform.position + Vector3.up * mountHeight;
-            var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, 0.0f);
+            if (_thrownView)
+            {
+                // Eased, so the tumble's own wobble does not shake the frame; the first frame snaps.
+                Vector3 centre = BodyCentre();
+                _thrownCentre = _thrownCentreSet ? Vector3.Lerp(_thrownCentre, centre, 1.0f - Mathf.Exp(-14.0f * Time.deltaTime)) : centre;
+                _thrownCentreSet = true;
+                mount = _thrownCentre; arm = Mathf.Max(arm, ThrownArm);
+            }
+            var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, roll);
             Vector3 wanted = mount - (rot * Vector3.forward) * arm;
 
             float length = arm;
             if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
                                    arm, ~0, QueryTriggerInteraction.Ignore))
             {
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                // The thrown view opens behind the body's travel, which is where the car that threw it
+                // is: a moving vehicle's box (kinematic) must not fold the arm back onto the body.
+                bool vehicle = _thrownView && hit.collider.attachedRigidbody != null && hit.collider.attachedRigidbody.isKinematic;
+                if (!vehicle && hit.collider.GetComponentInParent<CharacterMotor>() != _character)
                 {
                     // ⚠️ THE FALL FLOOR IS ITS OWN. `TppMinSpringLength` is 1.80 m, which is
                     // longer than the whole fall arm would ever need to shrink to, so a kerb or
@@ -1490,6 +1906,30 @@ namespace TumbangPreso.CameraSystem
             }
 
             transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);
+        }
+
+        private void ApplyEdgeRecoveryView()
+        {
+            var outward=_character.EdgeOutward;bool drone=_character.EdgeKind==EdgeRecoveryKind.Drone;
+            float inwardYaw=Mathf.Atan2(-outward.x,-outward.z)*Mathf.Rad2Deg;
+            if(_edgeViewEpisode!=_character.RecoveryEpisode)
+            {_edgeViewEpisode=_character.RecoveryEpisode;_emoteYawDeg=inwardYaw+(drone?0:30);_emotePitchDeg=drone?26:12;}
+            _emoteYawDeg=inwardYaw+Mathf.Clamp(Mathf.DeltaAngle(inwardYaw,_emoteYawDeg),-65,65);
+            _emotePitchDeg=Mathf.Clamp(_emotePitchDeg,-5,35);
+            var mount=_character.EdgeGrip+outward*.50f-Vector3.up*.35f;
+            if(_character.EdgePhase==2)mount=Vector3.Lerp(mount,_character.transform.position+Vector3.up*.85f,
+                Mathf.SmoothStep(0,1,Mathf.InverseLerp(.40f,1,_character.EdgePhaseRatio)));
+            // The Arena's drone carries the body across the stage: there is no lip to frame, so
+            // the mount is the body itself, followed from behind its travel and above.
+            if(drone)mount=_character.transform.position+Vector3.up*1.0f;
+            var rotation=Quaternion.Euler(_emotePitchDeg,_emoteYawDeg,0);var direction=-(rotation*Vector3.forward);
+            // The haul up the shaft is seen from further back: the body, the drone over it and the shaft going by.
+            float length=drone?(_character.EdgePhase==1&&_character.EdgePhaseRatio<CharacterMotor.DroneLiftShare?6.2f:4.8f):3.2f;
+            int hits=Physics.SphereCastNonAlloc(mount,.16f,direction,_edgeViewHits,length,~0,QueryTriggerInteraction.Ignore);
+            for(int i=0;i<hits;i++)
+                if(_edgeViewHits[i].collider.GetComponentInParent<CharacterMotor>()==null)
+                    length=Mathf.Min(length,Mathf.Max(.8f,_edgeViewHits[i].distance-TppArmMargin));
+            transform.SetPositionAndRotation(mount+direction*length,rotation);
         }
 
         // -------------------------------------------------------------------
@@ -1515,7 +1955,7 @@ namespace TumbangPreso.CameraSystem
                 // metres away throws AT the lata rather than at a point twenty metres past it.
                 // A fixed projection makes every close-range throw overshoot, and the aiming
                 // arc drawn from it lands somewhere the slipper never goes.
-                var sight = new Ray(transform.position, transform.forward);
+                var sight = new Ray(AimEye, transform.forward);
 
                 if (Physics.Raycast(sight, out var hit, AimRayLength, ~0,
                                     QueryTriggerInteraction.Ignore)
@@ -1524,11 +1964,11 @@ namespace TumbangPreso.CameraSystem
                     return hit.point;
                 }
 
-                return transform.position + transform.forward * AimRayLength;
+                return AimEye + transform.forward * AimRayLength;
             }
 
             var ground = new Plane(Vector3.up, _character.transform.position);
-            var ray = new Ray(transform.position, transform.forward);
+            var ray = new Ray(AimEye, transform.forward);
 
             return ground.Raycast(ray, out float enter)
                 ? ray.GetPoint(enter)

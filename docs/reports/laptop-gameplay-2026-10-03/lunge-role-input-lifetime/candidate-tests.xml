@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.2145354">
+  <test-suite type="TestSuite" id="2873" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1525" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.214535" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2867" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1525" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.203676" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24396" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2868" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1525" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.198370" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2869" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1525" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.193106" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1721" name="LungeRoleInputLifetimeTests" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.172683" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1726" name="BecomingAttackerPreservesAnAlreadyCommittedLungeAndItsCooldown" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.BecomingAttackerPreservesAnAlreadyCommittedLungeAndItsCooldown" methodname="BecomingAttackerPreservesAnAlreadyCommittedLungeAndItsCooldown" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="51712261" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.068174" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1722" name="BecomingAttackerRetiresTheDefenderLungeWindupAndTell" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.BecomingAttackerRetiresTheDefenderLungeWindupAndTell" methodname="BecomingAttackerRetiresTheDefenderLungeWindupAndTell" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="862981088" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.024107" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1725" name="OrdinaryDefenderReleaseStillOpensLungeContactAndCooldown" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.OrdinaryDefenderReleaseStillOpensLungeContactAndCooldown" methodname="OrdinaryDefenderReleaseStillOpensLungeContactAndCooldown" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="20394137" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.022572" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1723" name="ReturningToDefenderAfterAttackerReleaseDoesNotLaunchTheOldWindup" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.ReturningToDefenderAfterAttackerReleaseDoesNotLaunchTheOldWindup" methodname="ReturningToDefenderAfterAttackerReleaseDoesNotLaunchTheOldWindup" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="2020447630" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.023514" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1724" name="SameDefenderSnapshotPreservesTheHeldLungeWindup" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.SameDefenderSnapshotPreservesTheHeldLungeWindup" methodname="SameDefenderSnapshotPreservesTheHeldLungeWindup" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="1796757482" result="Passed" start-time="2026-10-03 10:59:52Z" end-time="2026-10-03 10:59:52Z" duration="0.023037" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

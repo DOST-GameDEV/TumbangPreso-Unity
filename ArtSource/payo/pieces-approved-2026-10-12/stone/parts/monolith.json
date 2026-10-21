@@ -1,0 +1,29 @@
+{
+ "size": "top 6.0 x 6.0 m exactly, 13.6 m modelled",
+ "pivot": "the centre of the top (y 0)",
+ "ground": -13.7,
+ "ink": 0.035,
+ "width": 6.4,
+ "eye_z": 1.7,
+ "look_z": -4.2,
+ "distance": 13.5,
+ "figure": [
+  1.6,
+  -1.2
+ ],
+ "figure_z": 0.0,
+ "fov": 62,
+ "close": [
+  [
+   0.0,
+   -3.9,
+   2.7
+  ],
+  [
+   4.2,
+   -2.4,
+   9.0
+  ]
+ ],
+ "parts": 89
+}

@@ -13,6 +13,43 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After()=>PlayModeWorld.Reset();
 
         [UnityTest]
+        public IEnumerator ContinuousResizeReusesTheTargetAndSettlesAtFullPanelResolution()
+        {
+            var owner = new GameObject("Resize ownership");
+            var canvas = OwnerUiLayout.Canvas(owner.transform, "ResizeCanvas", 100);
+            var panel = OwnerUiLayout.Rect(canvas.transform, "ResizePreview");
+            OwnerUiLayout.Place(panel, 50, 50, 600, 400);
+            var preview = panel.gameObject.AddComponent<ModelPreview>(); preview.Attach(panel);
+            Canvas.ForceUpdateCanvases(); preview.StepForCapture();
+            var original = preview.Target;
+            Assert.IsNotNull(original);
+            try
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    panel.sizeDelta = new Vector2(620 + 20 * i, 400);
+                    Canvas.ForceUpdateCanvases();
+                    yield return null;
+                    Assert.AreSame(original, preview.Target, "Every resize pixel allocated another target.");
+                    Assert.AreEqual(panel.rect.width / panel.rect.height, preview.PreviewCamera.aspect, .015f);
+                }
+                yield return new WaitForSecondsRealtime(.2f);
+                Assert.AreNotSame(original, preview.Target);
+                var settled = preview.Target;
+                var corners = new Vector3[4]; panel.GetWorldCorners(corners);
+                float pixels = Vector2.Distance(RectTransformUtility.WorldToScreenPoint(null, corners[0]),
+                    RectTransformUtility.WorldToScreenPoint(null, corners[3]));
+                Assert.AreEqual(pixels, settled.width, 2);
+                yield return null;
+                Assert.AreSame(settled, preview.Target, "An unchanged panel allocated again after settling.");
+                panel.sizeDelta = new Vector2(810, 450); Canvas.ForceUpdateCanvases();
+                preview.StepForCapture();
+                Assert.AreNotSame(settled, preview.Target, "An explicit capture did not settle its requested resolution.");
+            }
+            finally { Object.Destroy(owner); }
+        }
+
+        [UnityTest]
         public IEnumerator PreviewTargetTracksPhysicalCanvasPixelsWithoutChangingAspect()
         {
             var owner=new GameObject("PreviewPixelReview");

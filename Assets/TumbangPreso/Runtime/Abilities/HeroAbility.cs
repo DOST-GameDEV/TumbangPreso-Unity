@@ -46,9 +46,9 @@ namespace TumbangPreso.Abilities
         public float Cooldown { get; protected set; }
         public float Duration { get; protected set; }
 
-        // Instant world effects can opt out of local prediction without delaying
-        // their input, resource feedback or cast animation.
-        public virtual bool DefersPredictedEffect => false;
+        // Every new ability must choose its delivery path; no silent client-only default.
+        public abstract AbilityNetworkMode NetworkMode { get; }
+        public bool DefersPredictedEffect => NetworkMode == AbilityNetworkMode.HostConfirmed;
 
         public void ApplyConfirmedEffect(AbilityContext ctx, float heldSeconds)
         {
@@ -62,7 +62,8 @@ namespace TumbangPreso.Abilities
 
         public float CooldownRemaining { get; protected set; }
         public float DurationRemaining { get; protected set; }
-        public bool IsActive => DurationRemaining > 0.0f;
+        public virtual bool IsPersistentActive => false;
+        public bool IsActive => DurationRemaining > 0.0f || IsPersistentActive;
 
         // ------------------------------------------------------------------ wind-up
         //
@@ -118,6 +119,7 @@ namespace TumbangPreso.Abilities
         private AbilityContext _committedContext;
         private bool _joiningPreparationSettled;
         public bool SupportsPendingSnapshot { get; protected set; }
+        public bool SupportsPermanentSnapshot { get; protected set; }
 
         // ------------------------------------------------------------------ charges
         //
@@ -189,10 +191,44 @@ namespace TumbangPreso.Abilities
         /// ONE. A charge ability's cooldown is 0 forever, so before this every charge ability
         /// read as permanently ready and could be cast past empty.
         /// </summary>
-        public bool IsReady => UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f;
+        private bool _reservedForIntroduction;
+        public bool ReservedForIntroduction => _reservedForIntroduction;
+        protected bool HadSharedIntroduction { get; private set; }
+        /// <summary>
+        /// ⚠️ AN ULTIMATE WHOSE CUTSCENE ALREADY SHOWS IT LAND releases with no wind-up after that cutscene: the cutscene was
+        /// the warning. Cheska's shows every player frozen (owner 2026-10-08: "post-cutscene the players should be frozen";
+        /// asked whether the cutscene counts as her 1.5 s delay, "i pick 1"). False everywhere else, and a cast that did not
+        /// go through an introduction keeps its wind-up whatever this says.
+        /// </summary>
+        protected virtual bool IntroductionIsTheWindup => false;
+        /// <summary>
+        /// ⚠️ THE HERO'S OWN LINE ALREADY PLAYED INSIDE THE INTRODUCTION (REFINE-2.11: Phaister laughs
+        /// while she laughs). The live activation must not say it a second time. Set per peer by
+        /// `SharedUltimatePhase.Complete` from what that peer's view actually played, so a peer whose
+        /// view failed still hears the line from the live cast.
+        /// </summary>
+        internal bool IntroductionVoiced { get; set; }
+        public bool IsReady => !IsPersistentActive && !_reservedForIntroduction && (UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f);
+        internal void ReserveForIntroduction()
+        {
+            if (_reservedForIntroduction) return;
+            _reservedForIntroduction = true;
+            HadSharedIntroduction = false; IntroductionVoiced = false;
+            if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
+            else CooldownRemaining = Cooldown;
+        }
+        internal void BeginReservedActivation(AbilityContext context)
+        {
+            if (!_reservedForIntroduction) return;
+            HadSharedIntroduction = true;
+            // Invoke the real override only now. Phaister's override creates the
+            // ritual, so reserving through Activate would start her warning early.
+            Activate(context);
+        }
+        internal void CancelIntroductionReservation() => _reservedForIntroduction = false;
 
         public float CooldownRatio => Cooldown > 0.0f ? Mathf.Clamp01(CooldownRemaining / Cooldown) : 0.0f;
-        public float DurationRatio => Duration > 0.0f ? Mathf.Clamp01(DurationRemaining / Duration) : 0.0f;
+        public float DurationRatio => IsPersistentActive ? 1 : Duration > 0.0f ? Mathf.Clamp01(DurationRemaining / Duration) : 0.0f;
 
         /// <summary>
         /// How wide the ground telegraph is, in metres, or 0 for a power that puts nothing on
@@ -255,6 +291,37 @@ namespace TumbangPreso.Abilities
         public Visual.GroundReticle.Style TelegraphStyle { get; protected set; }
             = Visual.GroundReticle.Style.Ring;
 
+        // ------------------------------------------------------------------ the hero's own aim picture
+        //
+        // ⚠️⚠️ HERO-10 (Phaister, film v7, 2026-09-27): HOLDING HER SKILLS SHOWED NOTHING. On Bayan Plaza the shared ward never
+        // appeared under her 5 m aim, on her screen or the court's, and her body just stood there. Plan 4.1 and 4.5 ask for more
+        // than a ring anyway: her lunar sigil written where she will arrive with three moths circling it, and for OMEN the height
+        // the eye will hang at. These three hooks let a kit draw its own aim and act out its own tell, without a second reticle
+        // system: `HeroAbilitySystem` still decides WHEN something is being aimed and WHERE; the ability decides what it looks like.
+
+        /// <summary>True when this ability's own aim picture replaces the shared ground ring while it is held.</summary>
+        public virtual bool DrawsOwnAim => false;
+
+        /// <summary>
+        /// Called every frame this ability is being aimed on this peer, with where it would land now (a hold-to-aim power's
+        /// destination, its height included for `AimsInTheAir`) and how long it has been held. Private pictures must check that
+        /// the local camera follows <paramref name="caster"/>; a body's tell is for everyone who can see it.
+        /// </summary>
+        public virtual void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds) { }
+
+        /// <summary>Called once when the aim ends, cast or not (the release, a stun, the kit changing).</summary>
+        public virtual void EndAim() { }
+
+        /// <summary>Shared body props/tells while aiming; no private target point or gameplay mutation.</summary>
+        public virtual void PresentAimBody(CharacterMotor caster, float heldSeconds) { }
+        public virtual void EndAimBody() { }
+
+        /// <summary>
+        /// A clip the caster's body holds while this ability is aimed (her tells), or null for the shared stance. Only used when the
+        /// rig carries a clip of that name (`CharacterAnimator.AimPose`).
+        /// </summary>
+        public string AimPoseAction { get; protected set; }
+
         // ------------------------------------------------------------------ hold to aim
         //
         // ⚠️⚠️ 🧑 2026-08-26, ON THE BLINK: *"let her HOLD e to control where she will go and make
@@ -286,6 +353,31 @@ namespace TumbangPreso.Abilities
         /// it services the input buffer. Everything else in the game casts on `JustPressed`.
         /// </summary>
         public bool HoldToAim { get; protected set; }
+
+        /// <summary>
+        /// ⚠️ A HOLD-TO-AIM CAST PLACED WHERE THE PLAYER LOOKS, NOT BY HOW LONG THEY HOLD (Paete's MAKILING'S EMBRACE, owner,
+        /// 2026-09-27: *"make it so that paete can choose as well where his ult will be cast"*, then *"does the hhold to aim resemble
+        /// the groot reference"*). Groot's walls in Marvel Rivals are placed where the crosshair meets the ground, with the preview
+        /// on it before you commit; the shared hold slides the ring out along the facing by hold time instead. With this set the ring
+        /// sits where the camera's sight line meets the court (`CameraRig.TryLookGround`), kept between `AimMinRange` and
+        /// `AimMaxRange` from the caster, and the release sends that spot as the cast's aim, so every peer lands it in the same place.
+        /// </summary>
+        public bool AimsWhereLooking { get; protected set; }
+
+        /// <summary>
+        /// ⚠️ PLACED IN THE AIR AS WELL AS ON THE COURT (HERO-10, Phaister's OMEN): the aimed spot keeps a HEIGHT, taken from where
+        /// the caster's sight line is at the aimed distance (`CameraRig.TryLookHeight`), clamped to AimMinHeight .. AimMaxHeight
+        /// above the court; a received aim keeps the height it was sent with, so every peer agrees.
+        /// </summary>
+        public bool AimsInTheAir { get; protected set; }
+        public float AimMinHeight { get; protected set; }
+        public float AimMaxHeight { get; protected set; }
+
+        /// <summary>Lets the aim carry a height between <paramref name="min"/> and <paramref name="max"/> metres. Call from a kit.</summary>
+        protected void AimInTheAir(float min, float max)
+        {
+            AimsInTheAir = true; AimMinHeight = min; AimMaxHeight = max;
+        }
 
         /// <summary>
         /// How long a hold may last before the ability fires on its own. Seconds.
@@ -389,9 +481,10 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Turns this ability into a hold-to-aim cast. Call from a kit's constructor.</summary>
         protected void AimByHolding(float minRange, float maxRange,
-                                    float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f)
+                                    float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f, bool whereLooking = false)
         {
             HoldToAim = true;
+            AimsWhereLooking = whereLooking;
             AimMinRange = minRange;
             AimMaxRange = maxRange;
             AimRampSeconds = rampSeconds;
@@ -671,11 +764,15 @@ namespace TumbangPreso.Abilities
         /// method called `ClearCooldown` invites a gameplay caller; there is no legitimate one,
         /// because every cooldown in the game is a balance number.
         /// </summary>
-        public void RefillForSandbox()
+        public void RefillForSandbox(bool cooldown = true, bool charges = true)
         {
-            CooldownRemaining = 0.0f;
-            if (UsesCharges) ChargesRemaining = MaxCharges;
+            if (cooldown) CooldownRemaining = 0.0f;
+            if (charges && UsesCharges) ChargesRemaining = MaxCharges;
         }
+
+        public virtual AbilityContext CaptureLocalCastContext(AbilityContext ctx) => ctx;
+
+        public virtual bool AllowsImpairedCast(AbilityContext ctx) => false;
 
         public virtual bool CanActivate(AbilityContext ctx)
         {
@@ -687,19 +784,27 @@ namespace TumbangPreso.Abilities
             // exit it once, leaving one root behind for every extra press.
             if (IsWindingUp) return false;
 
-            if (!ctx.Motor.CanAct()) return false;
+            if (!ctx.Motor.CanAct() && !AllowsImpairedCast(ctx)) return false;
+            if (ctx.Motor.IsZapped && !AllowsImpairedCast(ctx)) return false;
             return true;
         }
 
         public virtual void Activate(AbilityContext ctx)
         {
+            AcceptedCastEvent = 0;
+            AcceptedUltimatePhase = 0;
             _joiningPreparationSettled=true;
             // ⚠️ A CHARGE ABILITY SPENDS A CHARGE AND NOTHING ELSE. Setting `CooldownRemaining`
             // as well would put it behind two gates, and the deck would then draw it as Cooling
             // while it still had charges in hand: `Cooldown` is 0 on every charge ability, so
             // this is written as a branch rather than relying on that to stay true.
-            if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
-            else CooldownRemaining = Cooldown;
+            if (!_reservedForIntroduction)
+            {
+                HadSharedIntroduction = false;
+                if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
+                else CooldownRemaining = Cooldown;
+            }
+            _reservedForIntroduction = false;
 
             // ⚠️ THE RESOURCE IS SPENT AT THE PRESS, BEFORE THE WIND-UP, and that is deliberate:
             // the cast is committed the moment it starts, which is what lets the wind-up be
@@ -708,13 +813,12 @@ namespace TumbangPreso.Abilities
             // ⚠️ NO MOTOR MEANS NO WIND-UP. The EditMode ability tests drive `Activate(null)` and
             // assert the effect synchronously, and a headless harness has nothing to root and no
             // `Tick` loop to finish the cast. Falling straight through keeps those honest.
-            if (Windup > 0.0f && ctx != null && ctx.Motor != null)
+            if (Windup > 0.0f && ctx != null && ctx.Motor != null && !(HadSharedIntroduction && IntroductionIsTheWindup))
             {
                 WindupRemaining = Windup;
                 // Hold the accepted release aim through the delay. A replica's live
                 // intent is not the sender's cast and can point somewhere else.
-                _committedContext=new AbilityContext(ctx.Motor,ctx.Carrier,ctx.Verbs,
-                    ctx.Position,ctx.Forward,ctx.AimPoint);
+                _committedContext = ctx.Capture();
 
                 _rooted = ctx.Motor;
                 _rooted.EnterSpeedZone(RootSpeed);
@@ -723,7 +827,8 @@ namespace TumbangPreso.Abilities
 
             DurationRemaining = Duration;
             if (DefersPredictedEffect && NetAuthority.IsNetworked && !NetAuthority.IsHost
-                && ctx?.Motor != null && ctx.Motor.PlayerSlot == NetAuthority.LocalSlot) return;
+                && ctx?.Motor != null && ctx.Motor.PlayerSlot == NetAuthority.LocalSlot
+                && !ctx.IsApprovedReplay) return;
             OnActivate(ctx);
         }
 
@@ -743,6 +848,30 @@ namespace TumbangPreso.Abilities
             _rooted.ExitSpeedZone(RootSpeed);
             _rooted = null;
         }
+
+        public long AcceptedCastEvent { get; private set; }
+
+        // A command belongs to its original effect lifetime, not a new spawn.
+        // The host and approved playback call this after accepting the initial cast.
+        public void AdoptAcceptedCastEvent(long eventId, bool reactivation)
+        {
+            if (reactivation || eventId <= 0) return;
+            AcceptedCastEvent = eventId;
+            OnAcceptedCastEvent(eventId);
+        }
+
+        protected virtual void OnAcceptedCastEvent(long eventId) { }
+
+        // Shared cohorts have their own identity space, separate from ordinary
+        // cast receipts. Deferred spawns retain this until their activation runs.
+        public long AcceptedUltimatePhase { get; private set; }
+        public void AdoptUltimatePhase(long phaseId)
+        {
+            if (phaseId <= 0 || phaseId == AcceptedUltimatePhase) return;
+            AcceptedUltimatePhase = phaseId;
+            OnAcceptedUltimatePhase(phaseId);
+        }
+        protected virtual void OnAcceptedUltimatePhase(long phaseId) { }
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
@@ -779,6 +908,10 @@ namespace TumbangPreso.Abilities
                 return;
             }
 
+            // A deferred effect has not been initialized yet. Its cooldown is spent,
+            // but ticking its live state now can destroy a grant before confirmation.
+            if (DefersPredictedEffect && ctx?.Motor?.AbilitySystem?.AwaitingSkillEffect(this) == true) return;
+
             if (DurationRemaining > 0.0f)
             {
                 DurationRemaining = Mathf.Max(0.0f, DurationRemaining - dt);
@@ -793,6 +926,17 @@ namespace TumbangPreso.Abilities
             => context.Position + context.Forward * TelegraphRange;
 
         public virtual bool CanReactivate => false;
+
+        /// <summary>
+        /// ⚠️ WHETHER A SECOND PRESS WOULD DO ANYTHING RIGHT NOW (owner, 2026-09-26, of Paete's BAKYA BLOOM: *"bug found unli
+        /// cast for e, supposed to have cooldown"*). A reactivating ability whose second press has nothing to act on (a pod with
+        /// no clog grown yet) answers false: the press is refused as NOT YET, so it plays no gesture and no sound and sends no
+        /// request, instead of looking like an endless cast. True by default, so every other ability is unchanged.
+        /// </summary>
+        public virtual bool ReactivateReady => true;
+
+        /// <summary>Seconds until <see cref="ReactivateReady"/> turns true, for the deck's label (0 when it is ready).</summary>
+        public virtual float ReactivateReadyIn => 0.0f;
 
         public virtual void Reactivate(AbilityContext ctx)
         {
@@ -833,7 +977,7 @@ namespace TumbangPreso.Abilities
         /// ⚠️ THE CAP IS REAL. `GrantCharge` clamps to `MaxCharges` and this goes through it, so a
         /// duplicated or replayed refusal cannot mint charges.
         /// </summary>
-        public void RollBackPredictedCast(AbilityContext ctx)
+        public void RollBackPredictedCast(AbilityContext ctx, bool refundResources = true)
         {
             ReleaseRoot();
             WindupRemaining = 0.0f;
@@ -841,8 +985,8 @@ namespace TumbangPreso.Abilities
 
             CancelActive(ctx);
 
-            if (UsesCharges) GrantCharge();
-            else CooldownRemaining = 0.0f;
+            if(refundResources) { if (UsesCharges) GrantCharge();
+            else CooldownRemaining = 0.0f; }
         }
 
         public void EndEarly(AbilityContext ctx)
@@ -854,8 +998,17 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        public void ReduceCooldown(float seconds)
+        {
+            if (!float.IsFinite(seconds) || seconds <= 0) return;
+            CooldownRemaining = Mathf.Max(0, CooldownRemaining - seconds);
+        }
+
         public virtual void Reset()
         {
+            AcceptedCastEvent = 0;
+            AcceptedUltimatePhase = 0;
+            _reservedForIntroduction = false;
             // ⚠️ THE ROOT COMES OFF FIRST. A round can end mid-wind-up, and `Reset` zeroing the
             // timer behind the wind-up's back would strand the speed zone with nothing left to
             // release it. See `ReleaseRoot`.
@@ -940,8 +1093,7 @@ namespace TumbangPreso.Abilities
             ReleaseRoot();
             DurationRemaining = 0;
             WindupRemaining = Mathf.Clamp(remaining, 0, Windup);
-            _committedContext = new AbilityContext(ctx.Motor, ctx.Carrier, ctx.Verbs,
-                ctx.Position, ctx.Forward, ctx.AimPoint);
+            _committedContext = ctx.Capture();
             if (WindupRemaining > 0 && ctx.Motor != null)
             {
                 _rooted = ctx.Motor;

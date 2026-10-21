@@ -1,0 +1,16 @@
+{
+  "module": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-1d4015803-1005\\UnityPlayer.dll",
+  "symbolDir": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Data\\PlaybackEngines\\windowsstandalonesupport\\Variations\\win64_player_nondevelopment_mono",
+  "rva": "0x16f9c36",
+  "moduleSha256": "5dcd2af9e14f6416d73c361369559666c31263e4863822e1241cbdbc00c2f667",
+  "base": 268435456,
+  "loadError": 487,
+  "resolved": true,
+  "resolveError": 0,
+  "displacement": 22,
+  "symbol": "remove_free_block",
+  "cleanup": true,
+  "sameEngineModuleAsEarlierSymbolizedCrash": true,
+  "loadLastErrorIsNotFailure": "SymLoadModuleExW returned nonzero module base; last-error after successful call is not an error result.",
+  "limit": "Fault address maps to remove_free_block +22. A symbolized address alone does not prove what corrupted or freed memory; no call stack or managed source cause yet."
+}

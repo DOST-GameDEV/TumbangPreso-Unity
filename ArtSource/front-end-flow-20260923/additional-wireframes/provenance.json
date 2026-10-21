@@ -1,0 +1,56 @@
+{
+  "source": "C:\\Users\\matth\\Downloads\\TUMP_wireframes_all.zip",
+  "sha256": "4eac1b2bdb8a1fc07b3582297efad7decfb987ca5fd9ce347e74085f63b60c28",
+  "files": [
+    {
+      "name": "20.png",
+      "sha256": "026cc5cb11a4b651f4f6f38aa3b956779b484dda5fc518bb44ef9b523e78b5b2",
+      "savedPath": "ArtSource/front-end-flow-20260923/zip-sketches/20.png"
+    },
+    {
+      "name": "22.png",
+      "sha256": "c55b33445597d1bbc3ecc5cfb455896fa9c40b920d9e0856a79cc596630d8f61",
+      "savedPath": "ArtSource/front-end-flow-20260923/zip-sketches/22.png"
+    },
+    {
+      "name": "23.png",
+      "sha256": "bb9bca9cefab15ed5dffe7528ad13542d5a9e2132563737dc9076cc13a64feed",
+      "savedPath": "ArtSource/front-end-flow-20260923/zip-sketches/23.png"
+    },
+    {
+      "name": "24.png",
+      "sha256": "68bf1c67fd220c028bf082b156ac75d1c784e88eef984beffdf3d9f35153e3b0",
+      "savedPath": "ArtSource/front-end-flow-20260923/zip-sketches/24.png"
+    },
+    {
+      "name": "27.png",
+      "sha256": "b47182d2ce4c250b186ba32f7ae7b273694ad01ee465fab01069bb3e742cb9e3",
+      "savedPath": "ArtSource/front-end-flow-20260923/zip-sketches/27.png"
+    },
+    {
+      "name": "28.png",
+      "sha256": "67597aaf7c2b33e9b32ce2193cff8daea554770278c0f13723937e1322a063bb",
+      "savedPath": "ArtSource/front-end-flow-20260923/zip-sketches/28.png"
+    },
+    {
+      "name": "42.png",
+      "sha256": "b35051b8286fb34ea896ff8f2bfc9e39eaf1e6e507f313bcbddc47709da0880e",
+      "savedPath": "ArtSource/front-end-flow-20260923/zip-sketches/42.png"
+    },
+    {
+      "name": "CustomFlow.webp",
+      "sha256": "00ec968b9d4565a4ad9fe06a68c008d80b8ab7bed8cbb6c8605cc0b480329fb7",
+      "savedPath": "ArtSource/front-end-flow-20260923/additional-wireframes/CustomFlow.webp"
+    },
+    {
+      "name": "CustomGameMode_HostJoin.png",
+      "sha256": "438d1e92f8865485c968f1840fa4e635f5b6c7633858679efab644d70ff1d0d3",
+      "savedPath": "ArtSource/front-end-flow-20260923/custom-game-flow.png"
+    },
+    {
+      "name": "MainMenu_Ranked.png",
+      "sha256": "8a9163c2a0733b02fb0fc96ea9afc489a0a9d046705d842824859d8be4900370",
+      "savedPath": "ArtSource/front-end-flow-20260923/home-final-wireframe.png"
+    }
+  ]
+}

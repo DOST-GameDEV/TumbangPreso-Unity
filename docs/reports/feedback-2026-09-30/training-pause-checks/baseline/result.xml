@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 21:23:56Z" end-time="2026-09-30 21:23:59Z" duration="3.2815033">
+  <test-suite type="TestSuite" id="2230" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="992" result="Failed" site="Child" start-time="2026-09-30 21:23:56Z" end-time="2026-09-30 21:23:59Z" duration="3.281503" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2224" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="992" result="Failed" site="Child" start-time="2026-09-30 21:23:56Z" end-time="2026-09-30 21:23:59Z" duration="3.266773" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="183086" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2225" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="992" result="Failed" site="Child" start-time="2026-09-30 21:23:56Z" end-time="2026-09-30 21:23:59Z" duration="3.258640" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2226" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="992" result="Failed" site="Child" start-time="2026-09-30 21:23:56Z" end-time="2026-09-30 21:23:59Z" duration="3.250805" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1791" name="PracticeRangeTests" fullname="TumbangPreso.PlayTests.PracticeRangeTests" classname="TumbangPreso.PlayTests.PracticeRangeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-30 21:23:56Z" end-time="2026-09-30 21:23:59Z" duration="3.227581" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1793" name="RangeControlsStayLocalAndReuseTheirPreparedMenuAndBodies" fullname="TumbangPreso.PlayTests.PracticeRangeTests.RangeControlsStayLocalAndReuseTheirPreparedMenuAndBodies" methodname="RangeControlsStayLocalAndReuseTheirPreparedMenuAndBodies" classname="TumbangPreso.PlayTests.PracticeRangeTests" runstate="Runnable" seed="444617160" result="Failed" start-time="2026-09-30 21:23:56Z" end-time="2026-09-30 21:23:59Z" duration="3.213172" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Pausing the world must not disable its training configuration menu.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeRangeTests+<RangeControlsStayLocalAndReuseTheirPreparedMenuAndBodies>d__4.MoveNext () [0x00321] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/PracticeRangeTests.cs:75
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] TrainingPauseControls cream source=252,211,159 pixel=218,182,137; isolated UI camera, no ColourGrade.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

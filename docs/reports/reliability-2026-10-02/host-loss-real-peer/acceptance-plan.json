@@ -1,0 +1,23 @@
+{
+  "status": "first-actual-run-passed",
+  "sourceCommit": "d28770a25504c8f6a069b429d8384af0ae4ff557",
+  "runtimeSha256": "d75db25d1c5e6a1eb18fee96cf03cd2b56e674e6a5912b8f38ada6522258e37e",
+  "artifact": "C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002j/TumbangPreso.exe",
+  "buildReceipt": "C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Logs/competition-candidate1002j/artifact-receipt.json",
+  "output": "C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Logs/host-loss-real-peer1002j-first",
+  "ports": [9090, 9091],
+  "scenarioSeconds": 90,
+  "clientReportSeconds": 60,
+  "hostReportSeconds": 90,
+  "gpuMemoryMb": 2048,
+  "reserveMb": 2048,
+  "ownedSources": ["tools/run_host_loss.py", "tools/test_run_host_loss.py"],
+  "runtimeEdits": [],
+  "qualificationEdits": [],
+  "allBots": false,
+  "actualRuns": 1,
+  "runnerSession": 20612,
+  "runnerExitCode": 0,
+  "resultReceipt": "first/result.json",
+  "preparationAcceptanceTests": {"total": 4, "passed": 4}
+}

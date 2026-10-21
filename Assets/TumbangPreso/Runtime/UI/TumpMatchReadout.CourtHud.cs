@@ -10,22 +10,49 @@ namespace TumbangPreso.UI
             Canvas = OwnerUiLayout.Canvas(owner, "OwnerMatchCanvas", 100);
             Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = (RectTransform)Canvas.transform;
             _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build(_root);
-            BuildCourtScores(); BuildCourtClock(); BuildCourtCan(); BuildCourtPersonal(); BuildCourtPrompts();
+            // VISUAL-1.4: the match bar replaces the corner score slabs and the clock box.
+            // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
+            // the record and no longer called.
+            BuildMatchBar(); BuildCourtCan(); BuildCourtPersonal(); BuildStaminaArc(); BuildCourtPrompts();
+            BuildStatusChips(); BuildWarnings();
+            MatchEventFeed.Create(_root);
+            _momentBanner = MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
-            _toast = Ink(_root, "MatchToast", "", 36, true);
-            Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -191), new Vector2(1080, 78)); _toast.enabled = false;
+            // ⚠️ 2026-10-20 OVERHAUL: an announcement is big italic ivory words on a strip of smoked
+            // glass, Overwatch's "OVERTIME" and "ROUND 2", landing with the same short pop. It was a
+            // cream toy tile with brown words (UI revamp 2026-10-06); the earned moment is still red.
+            _toastPlate = OwnerUiLayout.Rect(_root, "MatchToastPlate").gameObject.AddComponent<HudCard>();
+            _toastPlate.Glass(HudDraw.Glass).raycastTarget = false; _toastPlate.enabled = false;
+            Pin(_toastPlate.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(400, ToastHeight));
+            _toastPlate.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
+            _toast = OwnerUiLayout.Text(_root, "MatchToast", "", 36, OwnerUiLayout.TypeRole.Display); _toast.color = HudDraw.Ivory;
+            _toast.fontStyle = FontStyle.Italic;
+            var toastEdge = _toast.gameObject.AddComponent<Outline>(); toastEdge.effectColor = UiTheme.InGameOutline; toastEdge.effectDistance = new Vector2(2, -2);
+            _toast.alignment = TextAnchor.MiddleCenter; _toast.verticalOverflow = VerticalWrapMode.Overflow;
+            Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(1080, ToastHeight)); _toast.enabled = false;
+            _toast.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
+            BuildScorePops();
             _countdown = Ink(_root, "Countdown", "", 108, true);
             Pin(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180)); _countdown.enabled = false;
-            _crosshair = Ink(_root, "Reticle", "+", 34, false);
-            Pin(_crosshair.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(76, 76));
-            _hit = Ink(_root, "HitConfirmation", "\u00d7", 72, true);
-            Pin(_hit.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(120, 120)); _hit.enabled = false;
+            // VISUAL-1.6: a drawn reticle that carries charge, pektus, cooldown, refusal and
+            // (for the taya) reach, instead of a "+" in the display face.
+            _reticle = OwnerUiLayout.Rect(_root, "Reticle").gameObject.AddComponent<HudReticle>();
+            _reticle.color = CourtPresentationPalette.Paper; _reticle.raycastTarget = false; _crosshair = _reticle;
+            Pin(_reticle.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(96, 96));
+            // VISUAL-1.4: a drawn hit mark (four ticks on black keels) instead of a "x" in the
+            // display face. Same name, so the reading layout still scales it.
+            _hitMark = OwnerUiLayout.Rect(_root, "HitConfirmation").gameObject.AddComponent<HudBadge>();
+            Pin(_hitMark.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(64, 64));
+            _hitMark.Kind = HudBadge.Glyph.Hit; _hitMark.RimWidth = 2; _hitMark.raycastTarget = false; _hitMark.enabled = false;
             _spectator = Ink(_root, "SpectatorReadout", "", 28, false);
             Pin(_spectator.rectTransform, new Vector2(.5f, 0), new Vector2(0, 106), new Vector2(1460, 146));
             _sandbox = Ink(_root, "SandboxState", "", 28, false);
             Pin(_sandbox.rectTransform, new Vector2(1, 0), new Vector2(-286, 71), new Vector2(550, 54));
             var version = Ink(_root, "GameVersion", "", 28, false);
             Pin(version.rectTransform, new Vector2(1, 0), new Vector2(-230, 22), new Vector2(420, 40)); GameVersion.ApplyTo(version);
+            CalloutCaption.Create(_root);
+            HudReadingLayout.Install(_root);
+            HudContrast.Install(_root);
         }
         private void BuildCourtScores()
         {
@@ -34,7 +61,8 @@ namespace TumbangPreso.UI
             for (int i = 0; i < 4; i++)
             {
                 var row = OwnerUiLayout.Rect(_scoreRoot, "ScoreRow" + i); OwnerUiLayout.Place(row, 0, i * 80, 530, 78); _scoreRows[i] = row;
-                row.gameObject.AddComponent<OwnerScoreStrip>().raycastTarget = false;
+                _scoreAccents[i] = row.gameObject.AddComponent<OwnerScoreStrip>();
+                _scoreAccents[i].raycastTarget = false;
                 _portraits[i] = OwnerPortraitArt.Create(row, "PlayerPortrait", ""); OwnerUiLayout.Place(_portraits[i].rectTransform, 8, 5, 65, 65);
                 _names[i] = Ink(row, "PlayerName", "", 28, true); _names[i].alignment = TextAnchor.MiddleLeft;
                 OwnerUiLayout.Place(_names[i].rectTransform, 83, 1, 318, 43);
@@ -49,9 +77,9 @@ namespace TumbangPreso.UI
             _clockRoot = OwnerUiLayout.Rect(_root, "RoundClock");
             Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -82), new Vector2(620, 140));
             var face = OwnerUiLayout.Rect(_clockRoot, "ClockFace").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(face.rectTransform, 157, 0, 306, 92); face.color = new Color32(25, 40, 31, 218); face.raycastTarget = false;
+            OwnerUiLayout.Place(face.rectTransform, 157, 0, 306, 92); face.color = new Color32(35, 29, 33, 218); face.raycastTarget = false;
             _clock = Ink(_clockRoot, "TimeLeft", "", 60, true); OwnerUiLayout.Place(_clock.rectTransform, 170, 0, 280, 89);
-            _round = Ink(_clockRoot, "RoundLabel", "", 28, true); OwnerUiLayout.Place(_round.rectTransform, 0, 96, 620, 44);
+            _round = Ink(_clockRoot, "RoundLabel", "", 28, true); OwnerUiLayout.Place(_round.rectTransform, 70, 96, 480, 44);
         }
         private void BuildCourtCan()
         {
@@ -59,7 +87,7 @@ namespace TumbangPreso.UI
             Pin(_canRoot, new Vector2(1, 1), new Vector2(-253, -109), new Vector2(464, 170));
             var can = OwnerUiLayout.Rect(_canRoot, "CanStateIcon").gameObject.AddComponent<TumpSymbol>();
             can.Kind = TumpSymbol.Icon.Can; can.color = OwnerUiTheme.Current.Pale; can.raycastTarget = false;
-            var edge = can.gameObject.AddComponent<Outline>(); edge.effectColor = OwnerUiTheme.Current.DeepInk; edge.effectDistance = new Vector2(2, -2);
+            var edge = can.gameObject.AddComponent<Outline>(); edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(2, -2);
             OwnerUiLayout.Place(can.rectTransform, 12, 5, 68, 84);
             _canState = Ink(_canRoot, "CanState", "", 32, true); _canState.alignment = TextAnchor.MiddleLeft;
             OwnerUiLayout.Place(_canState.rectTransform, 101, 7, 352, 75);
@@ -68,33 +96,60 @@ namespace TumbangPreso.UI
         }
         private void BuildCourtPersonal()
         {
+            // ⚠️ 2026-10-20 OVERHAUL: THE BOTTOM-LEFT IS YOUR VITALS PLATE, Overwatch's portrait and
+            // health corner (see `HudVitalsBar` for why stamina takes the health bar's shape). The
+            // group keeps its name, its words and its show/hide rule; it now sits in the corner
+            // proper, 36 units from each edge, and its two sentences ride above the plate on the
+            // rare occasions they speak (piloting Kuro, a limited slipper stock).
+            // ⚠️ PIVOTED ON ITS OWN CORNER so its base scale and the reading scale both grow it away
+            // from the screen edges instead of off them.
             _personalRoot = OwnerUiLayout.Rect(_root, "LocalState");
-            Pin(_personalRoot, new Vector2(0, 0), new Vector2(285, 122), new Vector2(500, 184));
+            Pin(_personalRoot, new Vector2(0, 0), new Vector2(36, 28), new Vector2(500, 120));
+            _personalRoot.pivot = Vector2.zero; _personalRoot.localScale = Vector3.one * VitalsScale;
+            BuildVitals();
             _role = Ink(_personalRoot, "LocalRole", "", 34, true); _role.alignment = TextAnchor.MiddleLeft;
-            OwnerUiLayout.Place(_role.rectTransform, 0, 0, 500, 58);
+            OwnerUiLayout.Place(_role.rectTransform, 108, -86, 392, 46);
             _stock = Ink(_personalRoot, "SlipperState", "", 28, false); _stock.alignment = TextAnchor.MiddleLeft;
-            OwnerUiLayout.Place(_stock.rectTransform, 0, 62, 500, 54);
+            OwnerUiLayout.Place(_stock.rectTransform, 108, -42, 392, 40);
+            // The labelled bar is the piloting readout (whose stamina it is IS the information), so
+            // it rides above the plate with the two lines rather than under the portrait.
             var track = OwnerUiLayout.Rect(_personalRoot, "StaminaTrack").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 0, 136, 338, 12); track.color = new Color32(25, 40, 31, 230); track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 108, -116, 230, 12); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
             _stamina = OwnerUiLayout.Rect(track.transform, "StaminaFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(_stamina.rectTransform); _stamina.color = OwnerUiTheme.Current.Lime; _stamina.raycastTarget = false;
-            var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 353, 121, 142, 42);
+            OwnerUiLayout.Fill(_stamina.rectTransform); _stamina.color = CourtPresentationPalette.Gold; _stamina.raycastTarget = false;
+            var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 346, -131, 154, 42);
+            // VISUAL-1.4: a stun the player cannot time is a stun they cannot play around
+            // (`Design.md` § 11), so these stay; they sit under the reticle, where the eye
+            // already is, instead of floating in the left margin under a scoreboard that moved.
             for (int i = 0; i < 4; i++)
             {
-                _status[i] = Ink(_root, "TimedStatus" + i, "", 28, false); _status[i].alignment = TextAnchor.MiddleLeft;
-                OwnerUiLayout.Place(_status[i].rectTransform, 38, 369 + i * 47, 500, 45);
+                _status[i] = Ink(_root, "TimedStatus" + i, "", 28, false); _status[i].alignment = TextAnchor.MiddleCenter;
+                Pin(_status[i].rectTransform, new Vector2(.5f, .5f), new Vector2(0, -104 - i * 38), new Vector2(560, 38));
             }
         }
         private void BuildCourtPrompts()
         {
             _promptRoot = OwnerUiLayout.Rect(_root, "ContextualAction");
-            Pin(_promptRoot, new Vector2(.5f, .32f), Vector2.zero, new Vector2(1100, 174));
-            _prompt = Ink(_promptRoot, "ActionPrompt", "", 36, true); OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
+            Pin(_promptRoot, new Vector2(.5f, .28f), Vector2.zero, new Vector2(1100, 174));
+            // ⚠️ 2026-10-20 OVERHAUL: Overwatch's interaction prompt, the key glyph then the verb in
+            // ivory, on one strip of smoked glass sized to its words (`SizePromptPlate`). The strip
+            // is kept rather than letting the words float because the hold progress has to sit
+            // INSIDE something (`RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds`), and
+            // because the street behind the centre of the screen is bright chalk and sky.
+            _promptPlate = OwnerUiLayout.Rect(_promptRoot, "PromptPlate").gameObject.AddComponent<HudCard>();
+            _promptPlate.Glass(HudDraw.GlassDeep).raycastTarget = false;
+            _promptPlate.enabled = false;
+            _prompt = OwnerUiLayout.Text(_promptRoot, "ActionPrompt", "", 38, OwnerUiLayout.TypeRole.Reading);
+            OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
+            _prompt.alignment = TextAnchor.MiddleLeft; _prompt.verticalOverflow = VerticalWrapMode.Overflow; _prompt.color = PromptInk;
+            var promptEdge = _prompt.gameObject.AddComponent<Outline>(); promptEdge.effectColor = UiTheme.InGameOutline; promptEdge.effectDistance = new Vector2(1.5f, -1.5f);
+            _bindingGlyph = OwnerUiLayout.Rect(_promptRoot, "ActionBindingGlyph").gameObject.AddComponent<Image>();
+            _bindingGlyph.preserveAspect = true; _bindingGlyph.raycastTarget = false; _bindingGlyph.enabled = false;
             _context = Ink(_promptRoot, "ActionDetail", "", 28, false); OwnerUiLayout.Place(_context.rectTransform, 0, 77, 1100, 66);
             var track = OwnerUiLayout.Rect(_promptRoot, "RecoveryProgress").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color32(25, 40, 31, 230); track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color(0, 0, 0, .5f); track.raycastTarget = false;
             _progress = OwnerUiLayout.Rect(track.transform, "ProgressFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = OwnerUiTheme.Current.Lime; _progress.raycastTarget = false;
+            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = HudDraw.Honey; _progress.raycastTarget = false;
             track.gameObject.SetActive(false);
         }
     }

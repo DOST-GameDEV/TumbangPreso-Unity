@@ -1,0 +1,14 @@
+{
+  "prepared": true,
+  "expectedBaselineCases": 2,
+  "expectedFinalCases": 41,
+  "copiedPaths": 11,
+  "protectedPaths": 13,
+  "uiBaseline": "B749C40CE0A4D78563AD016CACFBC2AFE94BB4FFF4F342395861E541C3A77C1D",
+  "guardVersion": 1,
+  "profile": "recent-player-ack1002",
+  "foreignUnityPids": [
+    18024,
+    22080
+  ]
+}

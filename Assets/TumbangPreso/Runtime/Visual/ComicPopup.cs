@@ -1,3 +1,6 @@
+// V2 owner map: exceptional named event | inked type beat | rule/power colour |
+// event position. Ordinary can state stays on the can and existing HUD glyphs;
+// sentences and repeated LATA DOWN copies have no world popup owner.
 using System.Collections.Generic;
 using TumbangPreso.UI;
 using UnityEngine;

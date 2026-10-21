@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 namespace TumbangPreso
 {
@@ -44,34 +45,140 @@ namespace TumbangPreso
     {
         private readonly HashSet<Verb> _menuButtons=new HashSet<Verb>();
         private int _menuClosedFrame=-1;
+        private bool _loadingInputHeld, _chatInputHeld;
+        private bool _focused = true;
+        private double _focusReturnedAt = double.NegativeInfinity;
+        private readonly Dictionary<InputAction, Verb> _focusButtons = new();
+        private readonly Core.ToggleControl _sprintToggle = new();
+        private readonly Core.ToggleControl _restoreToggle = new();
+        private Carrier _carrier;
+        private Vector2 _pointerLast;
+        private bool _mouseLost;
+        private int _mouseTakenFrame = -10, _mouseRetakeFrame = -1;
+        /// <summary>How long after the game takes the mouse a moving pointer is not read as the mouse being lost.</summary>
+        private const float MouseSettleSeconds = 0.5f;
+        private float _mouseSettleUntil;
+        private bool _mouseWanted;
+        private int _toggleRound;
+        private bool _toggleDefender, _toggleRoundActive, _toggleContextKnown;
+
+        private void ResetToggleControls() { _sprintToggle.Reset(); _restoreToggle.Reset(); }
 
         public void DiscardMenuButtonsUntilRelease()
         {
+            ResetToggleControls();
             _menuClosedFrame=Time.frameCount;
             CaptureMenuButton(_jump,Verb.Jump);CaptureMenuButton(_special,Verb.SpecialAbility);
             CaptureMenuButton(_grab,Verb.Grab);CaptureMenuButton(_lunge,Verb.Lunge);
             CaptureMenuButton(_sprint,Verb.Sprint);CaptureMenuButton(_emote,Verb.EmoteWheel);
             CaptureMenuButton(_skill1,Verb.Skill1);CaptureMenuButton(_skill2,Verb.Skill2);CaptureMenuButton(_ultimate,Verb.Ultimate);
+            CaptureMenuButton(_interact,Verb.Interact);
+            CaptureMenuButton(_crouch,Verb.Crouch);
             InputLayer.TouchInput.ConsumeRecoveryPress();
+            InputLayer.TouchInput.LookDelta = Vector2.zero;
             _motor?.Intent.Clear();_motor?.Intent.CommitFrame();
         }
         private void CaptureMenuButton(InputAction action,Verb verb)
         {
             if(RawButton(action,verb))_menuButtons.Add(verb);
         }
-        private static bool RawButton(InputAction action,Verb verb)
-            =>(action!=null && action.IsPressed()) || InputLayer.TouchInput.Pressed(verb);
+        private bool RawButton(InputAction action,Verb verb)
+        {
+            bool down = action != null && action.IsPressed();
+            bool charge = verb == Verb.SpecialAbility || verb == Verb.Lunge;
+            if (charge && !down && action != null && action.enabled && action.activeValueType == typeof(float))
+            {
+                // Re-resolution retains the processed value of a surviving control
+                // but can lose IsPressed. Preserve its normal press/release hysteresis.
+                bool held = verb == Verb.SpecialAbility ? _throwHardwareHeld : _lungeHardwareHeld;
+                float point = action.activeControl is UnityEngine.InputSystem.Controls.ButtonControl button
+                    ? button.pressPointOrDefault : InputSystem.settings.defaultButtonPressPoint;
+                float value = action.ReadValue<float>();
+                down = held ? value > point * InputSystem.settings.buttonReleaseThreshold : value >= point;
+            }
+            if (verb == Verb.SpecialAbility) _throwHardwareHeld = down;
+            else if (verb == Verb.Lunge) _lungeHardwareHeld = down;
+            return down || InputLayer.TouchInput.Pressed(verb);
+        }
         private bool ReadButton(InputAction action,Verb verb)
         {
             bool down=RawButton(action,verb);
             if(!down)_menuButtons.Remove(verb);
             return Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(verb) && down;
         }
+
+        private void ReadHeroButton(InputIntent intent, InputAction action, Verb verb)
+        {
+            bool menuBlocked = Time.frameCount == _menuClosedFrame || _menuButtons.Contains(verb);
+            bool held = ReadButton(action, verb);
+            bool tap = !menuBlocked && action.WasPressedThisFrame();
+            // A down/up pair can precede this poll. The rendered hero consumer
+            // needs one pulse; retain its edge until physics consumes the intent.
+            intent.Set(verb, held || tap);
+            if (tap) intent.BufferPress(verb);
+        }
+        /// <summary>This frame's curve from one direction: a step on the press edge, a turn while held.</summary>
+        private static float CurveInput(InputAction action)
+        {
+            if (action == null) return 0.0f;
+            return (action.WasPressedThisFrame() ? CurveStep : 0.0f) + (action.IsPressed() ? Time.deltaTime * CurveRate : 0.0f);
+        }
         [SerializeField] private InputActionAsset _actions;
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
 
-        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate;
+        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate, _interact, _crouch;
+        private InputDevice _throwDevice, _lungeDevice;
+        private bool _throwDeviceLost, _lungeDeviceLost;
+        private bool _throwHardwareHeld, _lungeHardwareHeld;
+
+        private void OnEnable()
+        {
+            InputSystem.onDeviceChange += DeviceChanged;
+            foreach (var button in _focusButtons.Keys) button.performed += FocusButtonPerformed;
+            // Actions keep receiving device events while this producer is disabled.
+            // Retire presses from that interval before the resumed owner reads them.
+            DiscardMenuButtonsUntilRelease();
+        }
+
+        private void FocusButtonPerformed(InputAction.CallbackContext context)
+        {
+            // Callback time is the source event time, not when the queued event is processed.
+            // Keep background presses retired without discarding a new focused press.
+            if ((!_focused || context.time <= _focusReturnedAt) && context.ReadValueAsButton()
+                && _focusButtons.TryGetValue(context.action, out var verb))
+                _menuButtons.Add(verb);
+        }
+
+        private void TrackFocusButton(InputAction action, Verb verb)
+        {
+            if (action != null) _focusButtons[action] = verb;
+        }
+
+        private void DeviceChanged(InputDevice device, InputDeviceChange change)
+        {
+            if (change != InputDeviceChange.Removed && change != InputDeviceChange.Disconnected
+                && change != InputDeviceChange.Disabled && change != InputDeviceChange.SoftReset
+                && change != InputDeviceChange.HardReset) return;
+            if (_throwDevice == device) _throwDeviceLost = true;
+            if (_lungeDevice == device) _lungeDeviceLost = true;
+        }
+
+        private void ReconcileDeviceInput()
+        {
+            // Check aggregate input after the Input System update, when surviving
+            // bindings have been resolved. Never read a removed device's controls.
+            bool ownsSeat = !NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot;
+            bool throwing = RawButton(_special, Verb.SpecialAbility);
+            bool lunging = RawButton(_lunge, Verb.Lunge);
+            if (_throwDeviceLost && !throwing)
+                _motor.GetComponent<Carrier>()?.RetireThrowInput(ownsSeat);
+            if (_lungeDeviceLost && !lunging)
+                _motor.GetComponent<CombatVerbs>()?.RetireProducerInput(ownsSeat);
+            _throwDeviceLost = _lungeDeviceLost = false;
+            _throwDevice = _throwHardwareHeld ? _special.activeControl?.device : null;
+            _lungeDevice = _lungeHardwareHeld ? _lunge.activeControl?.device : null;
+        }
 
         /// <summary>
         /// The pektus curve, left and right.
@@ -84,16 +191,20 @@ namespace TumbangPreso
         /// other lesson drew the live binding. 🧑, 2026-08-26: *"im not sure as well if pektus
         /// controls are in settings"*. They were not.
         ///
-        /// ⚠️ THE MOUSE WHEEL IS STILL READ DIRECTLY AND THAT IS NOT THE SAME FAULT. A scroll
-        /// axis is not a button and there is nothing to rebind it to; it is the shortcut, and
-        /// these two are the binding the panel teaches.
-        ///
-        /// ⚠️ THE DEFAULTS ARE Z AND C SINCE 2026-08-27, NOT THE ARROWS. 🧑: *"its so hard to
-        /// touch the arrow keys and some keyboards dont have it"*, and the curve has to be held
-        /// while the left hand is on WASD and the throw is charging. `Settings.Rebinding`'s class
-        /// note carries the reasoning and the one legal cross-context collision.
+        /// The owner's 2026-09-30 defaults curve left on wheel up and right on wheel down.
+        /// A wheel notch is
+        /// a one-frame pulse, not a hold, so every press EDGE of either action steps the curve by
+        /// `CurveStep` and a held key or d-pad keeps turning it at `CurveRate`. The wheel used to be
+        /// read straight off `Mouse.current` as well; that read is gone, or a wheel binding would
+        /// count every notch twice and a player who rebound the curve to keys could never free
+        /// the wheel.
         /// </summary>
         private InputAction _curveLeft, _curveRight;
+        private InputAction _readyUp;
+        private bool _readyUseHeld, _readyInteractHeld, _readyCrouchHeld;
+
+        /// <summary>One wheel notch (or one tap) of curve, and the turn rate while a key is held.</summary>
+        private const float CurveStep = 0.35f, CurveRate = 2.5f;
 
         /// <summary>
         /// The pad's right stick. There is no keyboard binding on it: a mouse reports a DELTA and
@@ -161,10 +272,14 @@ namespace TumbangPreso
             _special = map.FindAction("SpecialAbility", true);
             _grab = map.FindAction("Grab", true);
             _lunge = map.FindAction("Lunge", true);
+            _readyUp = map.FindAction("ReadyUp", false);
             _emote = map.FindAction("EmoteWheel", true);
             _skill1 = map.FindAction("Skill1", false);
             _skill2 = map.FindAction("Skill2", false);
             _ultimate = map.FindAction("Ultimate", false);
+            _interact = map.FindAction("Interact", false);
+            // Optional like the others: an asset from before 2026-10-09 has no Crouch action, and then the two keys are read.
+            _crouch = map.FindAction("Crouch", false);
             _curveLeft = map.FindAction("CurveLeft", false);
             _curveRight = map.FindAction("CurveRight", false);
 
@@ -173,6 +288,17 @@ namespace TumbangPreso
             // rather than throwing on every seat in every match.
             _look = map.FindAction("Look", false);
 
+            TrackFocusButton(_jump, Verb.Jump); TrackFocusButton(_special, Verb.SpecialAbility);
+            TrackFocusButton(_grab, Verb.Grab); TrackFocusButton(_lunge, Verb.Lunge);
+            TrackFocusButton(_sprint, Verb.Sprint); TrackFocusButton(_emote, Verb.EmoteWheel);
+            TrackFocusButton(_skill1, Verb.Skill1); TrackFocusButton(_skill2, Verb.Skill2);
+            TrackFocusButton(_ultimate, Verb.Ultimate); TrackFocusButton(_interact, Verb.Interact);
+
+            // Button bindings otherwise lose their held phase during a device
+            // re-resolution until another hardware event arrives.
+            _special.wantsInitialStateCheck = true;
+            _lunge.wantsInitialStateCheck = true;
+
             map.Enable();
         }
 
@@ -180,6 +306,54 @@ namespace TumbangPreso
 
         private void Update()
         {
+            // A mouse the editor or the OS took away is taken back on the next click in the window (`UI.CursorMode.Recapture`).
+            // LOST is seen here, not read from `Cursor.lockState` (the editor goes on reporting a freed mouse as locked):
+            // a held mouse sits on one pixel, so a pointer that MOVES while the game wants it is not held; so is one
+            // after Escape. ⚠️ THE CLICK THAT TAKES IT BACK IS AN ORDINARY CLICK (owner, 2026-10-09: "it eats my first click..
+            // and now i havce to click twice to charge my slipper throw.. its annoying can you get rid of it"). It used to
+            // be swallowed, and since a pointer that so much as twitched counted as a lost mouse, ordinary throws were
+            // swallowed too. Nothing is discarded now: the click takes the mouse AND does what a click does.
+            if (Mouse.current != null)
+            {
+                Vector2 pointer = Mouse.current.position.ReadValue();
+                // ⚠️ IN THE EDITOR ONLY. A build loses the mouse by losing the window (`OnApplicationFocus`), and if some
+                // platform reported a held pointer as moving, this would swallow every click of a match.
+                // ⚠️ AND NOT WHILE THE LOCK IS STILL SETTLING (owner, 2026-10-07: "i cant throw the slipper for some reason").
+                // Taking the mouse moves the pointer to the middle of the window, and the editor does that a few frames
+                // late, not the next frame. That jump read as "the pointer moved, so the mouse is lost", the next click
+                // was spent taking it back, which moved the pointer again: every click was swallowed and none threw.
+                // So for `MouseSettleSeconds` after the game takes the mouse (here, or anywhere: the wish turning on is
+                // seen too) a moving pointer means nothing.
+                bool wants = UI.CursorMode.WantsCapture;
+                if (wants && !_mouseWanted) _mouseSettleUntil = Time.unscaledTime + MouseSettleSeconds;
+                _mouseWanted = wants;
+                bool settling = Time.unscaledTime < _mouseSettleUntil;
+                if (Application.isEditor && wants && !settling
+                    && (pointer != _pointerLast || (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)))
+                    _mouseLost = true;
+                if (settling) _mouseLost = false;
+                _pointerLast = pointer;
+                // The second half of taking the mouse back: the lock was dropped on the click, and is taken a frame later
+                // (`UI.CursorMode.Recapture`: dropped and taken in one frame, the editor never sees it change).
+                if (_mouseRetakeFrame >= 0 && Time.frameCount >= _mouseRetakeFrame)
+                {
+                    _mouseRetakeFrame = -1;
+                    if (UI.CursorMode.WantsCapture) UI.CursorMode.Capture();
+                    _mouseLost = false;
+                    _pointerLast = Mouse.current.position.ReadValue();
+                    _mouseTakenFrame = Time.frameCount;
+                    _mouseSettleUntil = Time.unscaledTime + MouseSettleSeconds;
+                }
+                else if (_mouseRetakeFrame < 0 && _mouseLost && _focused && Mouse.current.leftButton.wasPressedThisFrame && UI.CursorMode.Recapture())
+                {
+                    _mouseLost = false;
+                    _pointerLast = Mouse.current.position.ReadValue();
+                    _mouseTakenFrame = Time.frameCount;
+                    _mouseRetakeFrame = Time.frameCount + 1;
+                }
+                // The lock moves the pointer to the middle of the window a frame later: that jump is not the mouse being lost.
+                else if (Time.frameCount <= _mouseTakenFrame + 2) _mouseLost = false;
+            }
             // ⚠️ SAMPLED BEFORE EVERY EARLY RETURN BELOW, AND THAT IS DELIBERATE. A player typing
             // in chat or driving Kuro is still holding a device, and the prompts on screen still
             // have to name the right control for it. Putting this after the chat guard would
@@ -190,8 +364,28 @@ namespace TumbangPreso
             // sampling twice in a frame is harmless but it hides which one is the real one.
 
             if (_motor == null) return;
+            if (!_focused)
+            {
+                // Network players keep ticking in the background. The retired
+                // producer must not import another hardware frame until focus returns.
+                _motor.Intent.Clear();
+                _motor.Intent.CommitFrame();
+                return;
+            }
+            ReconcileDeviceInput();
+
+            bool loading = UI.Hub.HubLoading.Visible;
+            bool typing = UI.LobbyChat.AnyTyping;
+            if ((_loadingInputHeld && !loading) || (_chatInputHeld && !typing)) DiscardMenuButtonsUntilRelease();
+            _loadingInputHeld = loading;
+            _chatInputHeld = typing;
 
             var intent = _motor.Intent;
+            int roundNumber = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
+            if (_toggleContextKnown && (_toggleRound != roundNumber || _toggleDefender != _motor.IsDefender || _toggleRoundActive != _motor.RoundActive))
+                ResetToggleControls();
+            _toggleContextKnown = true; _toggleRound = roundNumber; _toggleDefender = _motor.IsDefender;
+            _toggleRoundActive = _motor.RoundActive;
 
             // ⚠️⚠️ A CHAT FIELD WITH THE KEYBOARD MUST NOT ALSO DRIVE THE BODY, AND "just stop
             // reading" IS THE WRONG FIX. `InputIntent.Parked`'s own note says why: a verb held
@@ -209,8 +403,10 @@ namespace TumbangPreso
             // ⚠️ AND CHAT IS THE THIRD INPUT CONTEXT, per `CLAUDE.md` § 4. A player who is typing
             // has no verbs and a player who has verbs is not typing, so the two sets can never
             // both fire, which is the same narrowing `Rebinding.SpectatorContext` records.
-            if (UI.LobbyChat.AnyTyping)
+            if (typing || loading)
             {
+                CancelPendingInput();
+                ResetToggleControls();
                 InputLayer.TouchInput.ConsumeRecoveryPress();
                 intent.Clear();
                 intent.CommitFrame();
@@ -219,24 +415,29 @@ namespace TumbangPreso
 
             // Recovery and hero controls still belong to the human while Kuro
             // owns movement. Preserve quick Jump taps until the physics consumer.
+            bool recoveryBlocked = Time.frameCount == _menuClosedFrame || _menuButtons.Contains(Verb.Jump);
             intent.Set(Verb.Jump, ReadButton(_jump,Verb.Jump));
             bool touchRecovery=InputLayer.TouchInput.ConsumeRecoveryPress();
-            if (Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(Verb.Jump) && (_jump.WasPressedThisFrame()||touchRecovery)) intent.BufferPress(Verb.Jump);
-            if (_skill1 != null) intent.Set(Verb.Skill1, ReadButton(_skill1,Verb.Skill1));
-            if (_skill2 != null) intent.Set(Verb.Skill2, ReadButton(_skill2,Verb.Skill2));
-            if (_ultimate != null) intent.Set(Verb.Ultimate, ReadButton(_ultimate,Verb.Ultimate));
+            if (!recoveryBlocked && (_jump.WasPressedThisFrame()||touchRecovery)) intent.BufferPress(Verb.Jump);
+            if (_skill1 != null) ReadHeroButton(intent, _skill1, Verb.Skill1);
+            if (_skill2 != null) ReadHeroButton(intent, _skill2, Verb.Skill2);
+            if (_ultimate != null) ReadHeroButton(intent, _ultimate, Verb.Ultimate);
+            if (_interact != null)
+                intent.Set(Verb.Interact, !ConsumeReadyControl(_interact, ref _readyInteractHeld) && ReadButton(_interact,Verb.Interact));
 
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
             {
+                ResetToggleControls();
+                intent.Set(Verb.Sprint, false); intent.Set(Verb.Grab, false); intent.Set(Verb.Crouch, false);
                 // Human controls Kuro the companion pet.
                 //
                 // ⚠️ THE THUMB STICK AND THE LOOK DELTA REACH KURO TOO. This branch returns
                 // before the ordinary read, so every device added below has to be added here as
                 // well or possession is the one place in the game that is keyboard-only.
                 // `StepCompanionLook` reads the same `Intent.LookAxis` the main rig does.
-                var petMove = _move.ReadValue<Vector2>();
-                if (InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > 0.0001f)
+                var petMove = intent.Parked ? Vector2.zero : _move.ReadValue<Vector2>();
+                if (!intent.Parked && InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > 0.0001f)
                     petMove = InputLayer.TouchInput.Move;
 
                 visual.Companion.SetPlayerInput(petMove);
@@ -261,31 +462,45 @@ namespace TumbangPreso
                 move = InputLayer.TouchInput.Move;
 
             intent.Move = move;
-            intent.Set(Verb.Sprint, ReadButton(_sprint,Verb.Sprint));
+            var settings = Settings.SettingsStore.Current;
+            bool controlsAllowed = !intent.Parked && !PresentationClock.BlocksInput && !_motor.IsStunned && !_motor.IsTripped;
+            bool sprintDown = ReadButton(_sprint, Verb.Sprint);
+            bool sprint = _sprintToggle.Read(sprintDown, settings.ToggleSprint, controlsAllowed);
+            intent.Set(Verb.Sprint, settings.ToggleSprint ? sprint : sprintDown);
+            // ⚠️ CROUCH, ON EVERY DEVICE (owner, 2026-10-09: "add controller and touch support for crouch"). It was a
+            // read of two keyboard keys. It is an action now (Left Ctrl, B on a pad, its own button on a phone) and a
+            // verb like the rest. On a pad it shares B with the ready: while the ready window or the skip vote is up
+            // that press is the ready's and never a crouch (`ConsumeReadyControl`, as F is for Interact).
+            bool crouchDown = _crouch != null
+                ? !ConsumeReadyControl(_crouch, ref _readyCrouchHeld) && ReadButton(_crouch, Verb.Crouch)
+                : ReadButton(null, Verb.Crouch) || (Keyboard.current != null
+                    && (Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.cKey.isPressed));
+            intent.Set(Verb.Crouch, MovementRework.Active && controlsAllowed && crouchDown);
             intent.Set(Verb.SpecialAbility, ReadButton(_special,Verb.SpecialAbility));
-            intent.Set(Verb.Grab, ReadButton(_grab,Verb.Grab));
-            intent.Set(Verb.Lunge, ReadButton(_lunge,Verb.Lunge));
+            bool grabDown = ReadButton(_grab, Verb.Grab);
+            if (_carrier == null) _carrier = GetComponent<Carrier>();
+            bool restoreTarget = _motor.IsDefender && _carrier != null && _carrier.HasResetTarget;
+            if (settings.ToggleRestore && restoreTarget)
+                intent.Set(Verb.Grab, _restoreToggle.Read(grabDown, true, controlsAllowed));
+            else
+            {
+                _restoreToggle.Read(grabDown, settings.ToggleRestore, false);
+                intent.Set(Verb.Grab, grabDown); // Pickup and shove retain their ordinary press edge.
+            }
+            // A saved lunge binding may still share Ready. Independent middle
+            // mouse remains usable while F serves Ready/Interact in its context.
+            intent.Set(Verb.Lunge, !ConsumeReadyControl(_lunge, ref _readyUseHeld) && ReadButton(_lunge,Verb.Lunge));
             intent.Set(Verb.EmoteWheel, ReadButton(_emote,Verb.EmoteWheel));
 
             intent.LookDelta = ReadLookDelta();
 
-            // Pektus (Curve Spin) control: Independent of WASD movement!
-            // Controlled via Mouse Wheel Up/Down (or Left/Right arrow keys) while charging throw.
+            // Pektus (curve spin), independent of WASD movement, only while the throw charges.
+            // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`: a press edge is
+            // one step (a wheel notch is nothing but an edge), a held key keeps turning.
             if (intent.Pressed(Verb.SpecialAbility))
             {
-                if (Mouse.current != null)
-                {
-                    float scrollY = Mouse.current.scroll.ReadValue().y;
-                    if (scrollY > 0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + 0.35f, -1.0f, 1.0f);
-                    else if (scrollY < -0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - 0.35f, -1.0f, 1.0f);
-                }
-
-                // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`.
-                if (_curveLeft != null && _curveLeft.IsPressed())
-                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - Time.deltaTime * 2.5f, -1.0f, 1.0f);
-
-                if (_curveRight != null && _curveRight.IsPressed())
-                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + Time.deltaTime * 2.5f, -1.0f, 1.0f);
+                _currentPektusSpin = Mathf.Clamp(_currentPektusSpin
+                    - CurveInput(_curveLeft) + CurveInput(_curveRight), -1.0f, 1.0f);
             }
             else
             {
@@ -338,6 +553,13 @@ namespace TumbangPreso
         /// </summary>
         private Vector2 ReadLookDelta()
         {
+            // Menu close and pointer relock can still carry the menu's last
+            // movement in this frame. Fresh gameplay look resumes next frame.
+            if (Time.frameCount == _menuClosedFrame)
+            {
+                InputLayer.TouchInput.LookDelta = Vector2.zero;
+                return Vector2.zero;
+            }
             // The mouse, in the raw units every sensitivity number in this game is written
             // against. Legacy axes are live because `activeInputHandler` is Both.
             var delta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
@@ -423,12 +645,58 @@ namespace TumbangPreso
             return transform.position + transform.forward * CameraSystem.CameraRig.AimRayLength;
         }
 
+        private bool ConsumeReadyControl(InputAction action, ref bool held)
+        {
+            bool shared = _readyUp != null && action != null && _readyUp.IsPressed() && action.IsPressed()
+                          && _readyUp.activeControl == action.activeControl;
+            if (!shared) held = false;
+            else if ((UI.Hud.Instance != null && UI.Hud.Instance.ReadyWindowOpen) || BufferSkipVote.Showing) held = true;
+            return held;
+        }
+
+        private void OnApplicationFocus(bool focused)
+        {
+            _focused = focused;
+            if (focused) _focusReturnedAt = InputState.currentTime;
+            if (!focused) _mouseLost = true;
+            if (!focused)
+            {
+                CancelPendingInput();
+            }
+            // Buttons pressed while away also need an observed release on return.
+            DiscardMenuButtonsUntilRelease();
+        }
+
+        private void CancelPendingInput()
+        {
+            // Losing a producer is cancellation, not a deliberate release.
+            bool ownsSeat = _motor != null && (!NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot);
+            _motor?.GetComponent<Carrier>()?.RetireProducerInput(ownsSeat);
+            _motor?.GetComponent<CombatVerbs>()?.RetireProducerInput(ownsSeat);
+            if (ownsSeat)
+            {
+                // An obsolete reader must not close another body's received aim tell.
+                _motor.AbilitySystem?.ClearPresentationInput();
+                var companion = _motor.GetComponent<Visual.CharacterVisual>()?.Companion;
+                // Retain an explicit zero so the body AI cannot become the pet's input fallback.
+                if (companion != null && companion.IsPossessed) companion.SetPlayerInput(Vector2.zero);
+                InputLayer.TouchInput.Move = Vector2.zero;
+            }
+        }
+
         private void OnDisable()
         {
+            InputSystem.onDeviceChange -= DeviceChanged;
+            foreach (var button in _focusButtons.Keys) button.performed -= FocusButtonPerformed;
+            _throwDevice = _lungeDevice = null;
+            _throwDeviceLost = _lungeDeviceLost = false;
+            CancelPendingInput();
+            _readyUseHeld = false;
+            _readyInteractHeld = false; _readyCrouchHeld = false;
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.
-            _motor?.Intent.Clear();
-            _motor?.Intent.CommitFrame();
+            DiscardMenuButtonsUntilRelease();
+            _throwHardwareHeld = _lungeHardwareHeld = false;
         }
     }
 }

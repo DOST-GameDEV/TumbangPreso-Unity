@@ -1,0 +1,22 @@
+[Net] offline
+[Net] signing in to online services...
+[Net] joining relay allocation KMNJRT...
+[Net] connecting to relay host...
+[Net] connected
+[Net] connected as seat 2
+[Link] Poor at 211 ms round trip (client).
+[NetLifecycle] requested-stop server=False relay=True origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <cc2768c035ac49cf8e9f8cbfad6ba15f>:0 
+[Net] offline
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] offline
+[Net] signing in to online services...
+[Net] joining relay allocation KMNJRT...
+[Net] connecting to relay host...
+[Net] connected
+[Net] connected as seat 2
+[Link] Good at 122 ms round trip (client).
+[NetDisconnect] peer=2 local=2 server=False connected=True
+[Net] disconnected: The host left the game.
+[Abandon] HostLost: ABANDONED at round 0 of 8; this peer may no longer resolve anything
+[NetLifecycle] requested-stop server=False relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <cc2768c035ac49cf8e9f8cbfad6ba15f>:0 
+[Net] offline

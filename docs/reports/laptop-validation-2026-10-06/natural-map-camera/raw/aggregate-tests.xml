@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 02:13:21Z" end-time="2026-10-06 02:16:21Z" duration="180.118507">
+  <test-suite type="TestSuite" id="3238" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1822" result="Failed" site="Child" start-time="2026-10-06 02:13:21Z" end-time="2026-10-06 02:16:21Z" duration="180.118507" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3230" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1822" result="Failed" site="Child" start-time="2026-10-06 02:13:21Z" end-time="2026-10-06 02:16:21Z" duration="180.099515" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="41664" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3231" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1822" result="Failed" site="Child" start-time="2026-10-06 02:13:21Z" end-time="2026-10-06 02:16:21Z" duration="180.086153" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3234" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1820" result="Failed" site="Child" start-time="2026-10-06 02:13:21Z" end-time="2026-10-06 02:16:21Z" duration="180.072668" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2871" name="SpectatorNaturalMapsProbe" fullname="TumbangPreso.PlayTests.SpectatorNaturalMapsProbe" classname="TumbangPreso.PlayTests.SpectatorNaturalMapsProbe" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-06 02:13:21Z" end-time="2026-10-06 02:16:21Z" duration="180.047381" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2872" name="ObserveRemainingPlayableMapsWithNaturalHeroStrikeBots" fullname="TumbangPreso.PlayTests.SpectatorNaturalMapsProbe.ObserveRemainingPlayableMapsWithNaturalHeroStrikeBots" methodname="ObserveRemainingPlayableMapsWithNaturalHeroStrikeBots" classname="TumbangPreso.PlayTests.SpectatorNaturalMapsProbe" runstate="Runnable" seed="1197942942" result="Failed" start-time="2026-10-06 02:13:21Z" end-time="2026-10-06 02:16:21Z" duration="180.037279" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Timeout value of 180000 ms was exceeded. If this is intended, increase the timeout value using a TimeoutAttribute.]]></message>
+                <stack-trace><![CDATA[]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/natural-spectator-maps-1006/Eskinita/map-natural-0.png
+[Play] wrote Logs/natural-spectator-maps-1006/Eskinita/map-natural-1.png
+[Play] wrote Logs/natural-spectator-maps-1006/Eskinita/map-natural-2.png
+Natural Eskinita capture completed: 3 actual rendered frames, 9 cuts, 0 fallbacks.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/natural-spectator-maps-1006/BayanPlaza/map-natural-0.png
+[Play] wrote Logs/natural-spectator-maps-1006/BayanPlaza/map-natural-1.png
+[Play] wrote Logs/natural-spectator-maps-1006/BayanPlaza/map-natural-2.png
+Natural BayanPlaza capture completed: 3 actual rendered frames, 5 cuts, 0 fallbacks.
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/natural-spectator-maps-1006/IlalimNgTulay/map-natural-0.png
+[Play] wrote Logs/natural-spectator-maps-1006/IlalimNgTulay/map-natural-1.png
+[Play] wrote Logs/natural-spectator-maps-1006/IlalimNgTulay/map-natural-2.png
+Natural IlalimNgTulay capture completed: 3 actual rendered frames, 5 cuts, 0 fallbacks.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/natural-spectator-maps-1006/SaBubong/map-natural-0.png
+[Play] wrote Logs/natural-spectator-maps-1006/SaBubong/map-natural-1.png
+[Play] wrote Logs/natural-spectator-maps-1006/SaBubong/map-natural-2.png
+Natural SaBubong capture completed: 3 actual rendered frames, 8 cuts, 0 fallbacks.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/natural-spectator-maps-1006/LagoonCove/map-natural-0.png
+[Play] wrote Logs/natural-spectator-maps-1006/LagoonCove/map-natural-1.png
+[Play] wrote Logs/natural-spectator-maps-1006/LagoonCove/map-natural-2.png
+Natural LagoonCove capture completed: 3 actual rendered frames, 6 cuts, 0 fallbacks.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

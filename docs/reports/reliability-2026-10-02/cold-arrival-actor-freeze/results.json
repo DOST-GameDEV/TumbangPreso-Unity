@@ -1,0 +1,206 @@
+{
+  "baselineSourceCommit": "cce112e9b19069094710116dfcea13bf5c571c92",
+  "fixtureRepairs": 1,
+  "productChangesAfterFreeze": 0,
+  "runs": [
+    {
+      "variant": "baseline",
+      "session": 86027,
+      "rawLog": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\cold-arrival-freeze1002\\baseline\\unity.log",
+      "rawLogSha256": "e08aba4d45f9c741766db8a78ba2af54b85c4e483b812e7b987dc19ce9fc52dd",
+      "job": {
+        "job": {
+          "id": "d5082b0fd4c54793aa0a01d5ef3d7e65",
+          "ownerPid": 18264,
+          "guardPid": null,
+          "unityPids": [],
+          "createdUtc": "2026-10-02T07:18:10Z",
+          "kind": "gpu",
+          "memoryMb": 1536,
+          "reserveMb": 2048,
+          "project": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930",
+          "library": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930\\library",
+          "profile": "cold-arrival-freeze1002",
+          "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+          "ports": [],
+          "worker": false,
+          "allowParallel": false,
+          "companyName": "BH Studios",
+          "productName": "Tumbang Preso"
+        },
+        "requestedUtc": "2026-10-02T07:18:10Z",
+        "status": "failed",
+        "exitCode": 1,
+        "admission": {
+          "availableMb": 7841,
+          "activeJobsBefore": 0,
+          "acquiredUtc": "2026-10-02T07:18:10Z"
+        },
+        "startedUtc": "2026-10-02T07:18:10Z",
+        "guardPid": 26368,
+        "endedUtc": "2026-10-02T07:18:36Z",
+        "guardTerminal": true,
+        "preservationCompleted": true,
+        "availableMbAtEnd": 5885,
+        "leaseHeld": false
+      },
+      "classification": "Fixture-only compile failure; no native test cases ran.",
+      "preservationSnapshot": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\profile-preservation-75e9942497e3"
+    },
+    {
+      "variant": "baseline-repair",
+      "session": 46557,
+      "rawLog": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\cold-arrival-freeze1002\\baseline-repair\\unity.log",
+      "rawLogSha256": "fd652469abe6be2ee8a6848fdb05d2461b086895381cd37898f0b01fa5b769a9",
+      "job": {
+        "job": {
+          "id": "6adeb07856e74e13b2f1c8995b90c8ce",
+          "ownerPid": 22720,
+          "guardPid": null,
+          "unityPids": [],
+          "createdUtc": "2026-10-02T07:19:32Z",
+          "kind": "gpu",
+          "memoryMb": 1536,
+          "reserveMb": 2048,
+          "project": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930",
+          "library": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930\\library",
+          "profile": "cold-arrival-freeze1002",
+          "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+          "ports": [],
+          "worker": false,
+          "allowParallel": false,
+          "companyName": "BH Studios",
+          "productName": "Tumbang Preso"
+        },
+        "requestedUtc": "2026-10-02T07:19:32Z",
+        "status": "failed",
+        "exitCode": 2,
+        "admission": {
+          "availableMb": 6271,
+          "activeJobsBefore": 0,
+          "acquiredUtc": "2026-10-02T07:19:32Z"
+        },
+        "startedUtc": "2026-10-02T07:19:32Z",
+        "guardPid": 22020,
+        "endedUtc": "2026-10-02T07:20:06Z",
+        "guardTerminal": true,
+        "preservationCompleted": true,
+        "availableMbAtEnd": 7847,
+        "leaseHeld": false
+      },
+      "testRun": {
+        "id": "2",
+        "testcasecount": "3",
+        "result": "Failed(Child)",
+        "total": "3",
+        "passed": "2",
+        "failed": "1",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-02 07:20:03Z",
+        "end-time": "2026-10-02 07:20:03Z",
+        "duration": "0.2364205"
+      },
+      "cases": [
+        {
+          "name": "CompletedSnapshotBeforeBeginFreezesAllFourActors",
+          "result": "Failed",
+          "failure": "  Actor 0 can still act.\nActor 0 was never parked.\nActor 0 movement was not released.\nActor 0 is still sprinting.\nActor 1 can still act.\nActor 1 was never parked.\nActor 1 movement was not released.\nActor 1 is still sprinting.\nActor 2 can still act.\nActor 2 was never parked.\nActor 2 movement was not released.\nActor 2 is still sprinting.\nActor 3 can still act.\nActor 3 was never parked.\nActor 3 movement was not released.\nActor 3 is still sprinting.\n  Expected: <empty>\n  But was:  < \"Actor 0 can still act.\", \"Actor 0 was never parked.\", \"Actor 0 movement was not released.\", \"Actor 0 is still sprinting.\", \"Actor 1 can still act.\", \"Actor 1 was never parked.\", \"Actor 1 movement was not released.\", \"Actor 1 is still sprinting.\", \"Actor 2 can still act.\", \"Actor 2 was never parked.\"... >\n"
+        },
+        {
+          "name": "DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot",
+          "result": "Passed",
+          "failure": ""
+        },
+        {
+          "name": "PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam",
+          "result": "Passed",
+          "failure": ""
+        }
+      ],
+      "preservationSnapshot": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\profile-preservation-a52e19d2fab1"
+    },
+    {
+      "variant": "final",
+      "session": 76318,
+      "rawLog": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\cold-arrival-freeze1002\\final\\unity.log",
+      "rawLogSha256": "546f91a3d6dc33c10ab0c951e1b949e6c642cae6f9c38b5ce320c9f1ed063e86",
+      "job": {
+        "job": {
+          "id": "e04cdb0416a54c6aa89df513834ae138",
+          "ownerPid": 6856,
+          "guardPid": null,
+          "unityPids": [],
+          "createdUtc": "2026-10-02T07:20:27Z",
+          "kind": "gpu",
+          "memoryMb": 1536,
+          "reserveMb": 2048,
+          "project": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930",
+          "library": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930\\library",
+          "profile": "cold-arrival-freeze1002",
+          "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+          "ports": [],
+          "worker": false,
+          "allowParallel": false,
+          "companyName": "BH Studios",
+          "productName": "Tumbang Preso"
+        },
+        "requestedUtc": "2026-10-02T07:20:27Z",
+        "status": "completed",
+        "exitCode": 0,
+        "admission": {
+          "availableMb": 7861,
+          "activeJobsBefore": 0,
+          "acquiredUtc": "2026-10-02T07:20:27Z"
+        },
+        "startedUtc": "2026-10-02T07:20:28Z",
+        "guardPid": 25224,
+        "endedUtc": "2026-10-02T07:21:09Z",
+        "guardTerminal": true,
+        "preservationCompleted": true,
+        "availableMbAtEnd": 7841,
+        "leaseHeld": false
+      },
+      "testRun": {
+        "id": "2",
+        "testcasecount": "3",
+        "result": "Passed",
+        "total": "3",
+        "passed": "3",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-02 07:21:05Z",
+        "end-time": "2026-10-02 07:21:06Z",
+        "duration": "0.2460616"
+      },
+      "cases": [
+        {
+          "name": "CompletedSnapshotBeforeBeginFreezesAllFourActors",
+          "result": "Passed",
+          "failure": ""
+        },
+        {
+          "name": "DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot",
+          "result": "Passed",
+          "failure": ""
+        },
+        {
+          "name": "PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam",
+          "result": "Passed",
+          "failure": ""
+        }
+      ],
+      "preservationSnapshot": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\profile-preservation-db82403d4df8"
+    }
+  ],
+  "nativeSlotsReleased": true,
+  "ownedUnityProcessesRemaining": 0,
+  "scope": "Controlled native PlayMode actor-state lifetime through public world snapshot; not a live peer, rendered board or physical movement proof."
+}

@@ -1,0 +1,57 @@
+{
+  "source": "16fdcdaef16cf6d6f52ad57892815d7017fd0ea4",
+  "scope": "Three actual Linux processes on loopback, not physical machines or WAN",
+  "mode": "loss",
+  "peers": {
+    "host": {
+      "samples": 629,
+      "casterTravel": 4.172708999999999,
+      "targetTravel": 1.044,
+      "finalGap": 0.7832910000000002,
+      "largestOwnerBackwardStep": 0.19858100000000078,
+      "casterFinal": [
+        0.0,
+        -3.827291
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "refreshed": false
+    },
+    "owner": {
+      "samples": 620,
+      "casterTravel": 4.172708999999999,
+      "targetTravel": 1.044,
+      "finalGap": 0.7832910000000002,
+      "largestOwnerBackwardStep": 0,
+      "casterFinal": [
+        0.0,
+        -3.827291
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "refreshed": false
+    },
+    "observer": {
+      "samples": 620,
+      "casterTravel": 4.172708999999999,
+      "targetTravel": 1.044,
+      "finalGap": 0.7832910000000002,
+      "largestOwnerBackwardStep": 0,
+      "casterFinal": [
+        0.0,
+        -3.827291
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "refreshed": true
+    }
+  },
+  "errors": [],
+  "ok": true
+}

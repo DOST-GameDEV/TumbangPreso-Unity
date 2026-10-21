@@ -1,0 +1,26 @@
+{
+  "source": "9226f4f78ca21d98a8083d6d6832a6a1250714bd",
+  "protocol": 150,
+  "profile": "lpt-q150-ui1005a",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\b8c0e30d67f8f91c14663a4bac98fa96dc1abc9253e77615c69247b8e9d33150",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-9226f4f78-1004\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-q150-ui1005a",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\qa-visible-150-client1005a\\player.log"
+  ],
+  "manifestSha256": "49c0fcfeb3d1d7c129d3829e23c8255d92d17aa95e32bd2a1392d5890310294f",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual visible guest/Home/room browser/code/lobby/readiness/gameplay through supported native UI; no skip/bootstrap/autostart flags",
+  "pid": 36344
+}

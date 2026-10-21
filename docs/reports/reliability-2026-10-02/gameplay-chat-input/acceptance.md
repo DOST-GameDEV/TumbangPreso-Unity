@@ -1,0 +1,26 @@
+# Gameplay input belongs to chat while typing
+
+ReadyGate and BufferSkipVote read their ready action directly, so a chat letter could also submit READY or stage a buffer-skip vote. EmoteWheel likewise opened while typing, or committed an already selected emote when released over chat. The preserved candidate guards now prevent those new actions while allowing pending consent retries and automatic readiness to continue. An open wheel cancels without an EmoteChosen event when chat takes focus. These are the existing three small MAIN candidate hunks; their behavior was not rewritten for this validation.
+
+The new bounded GameplayChatInputTests fixture runs in actual PlayMode. It clones qualification's existing Resources/TumbangPreso action asset and restricts it to a task-owned synthetic keyboard. QueueStateEvent/InputSystem.Update deliver real playing-state press/release edges, with strict WasPressedThisFrame/WasReleasedThisFrame assertions. A task-owned synthetic gamepad actually steers the wheel to a valid selection; normal release produces its real EmoteChosen event. Consumers' actual Update methods are driven once per observation while component automation is disabled to prevent duplicate ticks. EmoteWheel's real Awake builds its current canvas; no existing Editor fixture was revived.
+
+The original InputSettings object is never replaced or cloned. The fixture temporarily sets/restores only backgroundBehavior and editorInputBehaviorInPlayMode on that same object, matching the existing playing-input focus pattern. Same-reference assertions passed. No internal feature flag, update-mode override or asset save is used. Action enabled states, synthetic devices, service references, chat/spectator/tally state and the two focus settings are restored; the existing PlayModeWorld cleanup supplies settled scenes.
+
+## Causal native result
+
+- Original 10: six controls passed and four production-behavior assertions failed. While typing, a ready press submitted consent, a ready press staged a buffer vote, an emote press opened the wheel, and release after chat focus emitted the already selected emote. Input delivery and InputSettings identity assertions passed.
+- Candidate 10: all ten cases passed against byte-identical new fixture/meta. Ready 4 covers chat/ordinary presses, pending retry and automatic retry during chat. Buffer 3 covers chat/ordinary presses and pending retry. Emote 3 covers chat suppression, ordinary hold/steer/release and focus cancellation. No tooling or fixture repair was needed.
+
+Baseline session 97390 and final 41646 used Unity 6000.5.8f1 PlayMode through the exclusive serialized GPU pool, 2048MB budget/2048MB reserve, 450-second limit and named `gameplay-chat-input1002` profile. Graphics used D3D11 at 960x540; no nographics or quit flag. Both preparations completed exit0 before dependent launch and verified exactly five frozen source/fixture/meta inputs. All 1290 protected source/private hashes and five own input hashes matched after final. Both guards completed restoration without a held lease; no task-owned Unity/player process remained at release.
+
+The earlier failed EditMode receipts and quarantined Ready/Buffer/Emote fixtures remain preserved. Their synthetic-input and destroyed InputSettings failures are not relabeled as gameplay acceptance. This playing-context baseline/final addresses a different genuine runtime question and supplies its own fresh XML.
+
+## Scope and inputs
+
+Qualification's existing input asset SHA256 is `983306E8866AB93979720EAC4501F71DB618262A61240BE056F870055D9310EC`; MAIN's current asset SHA256 is `79C2E56461F0F9D49D871C2723ADFEEFA27B42F5C7864732EA44B1B5E1C91EC8`. Direct parsing after the run finds ReadyUp declared as keyboard F and EmoteWheel as T in both disk JSONs, despite their different hashes. An earlier R label was an unsupported inference and is corrected here. The fixture resolved the actual qualified action control instead of hardcoding a key, but its successful control name was not independently logged. The result is generic ReadyUp/Emote action-context proof with strict successful press/release assertions through qualification's resource. It is not a current MAIN-asset/default-mapping or physical-hardware acceptance. No input asset was copied, edited or repaired. The scope receipt was read after native execution and is not claimed as a newly captured prelaunch asset hash.
+
+This validates gameplay-input context and local consent staging/retry scheduling. A controlled client provider and null MatchRpc avoid live transport or SDK calls; retry scheduling is not remote vote delivery/acknowledgment. No full match, physical keyboard/gamepad feel, actual chat text-entry UI, rendered layout, live service or standalone artifact inclusion is claimed.
+
+Original and final source hashes for ReadyGate/BufferSkipVote/EmoteWheel, unchanged fixture/meta hashes and the source commit are recorded in frozen-inputs.json and the preparation manifests. The new fixture SHA256 is `77EDDA40098968EA3379521711544DFD6DE7990D89A0A20B88883FE3E2BE6EDB`; meta `0A7FB4904CBD7321A2E3AA5BA510362039AAD97D8B0C1F55AF17A24BE0B1807F`.
+
+Raw XML, logs, guard receipts, per-case results and protected/input manifests accompany this report. No additional broad or repeated validation ran, and these narrow results do not establish whole competition readiness.

@@ -1,0 +1,58 @@
+using System.Reflection;
+using NUnit.Framework;
+using TumbangPreso.InputLayer;
+using UnityEngine;
+
+namespace TumbangPreso.Tests
+{
+    public sealed class TouchLayoutNullListTests
+    {
+        private const string Key = "tumbangpreso.touchlayout";
+        private static readonly FieldInfo Cache = typeof(TouchLayoutStore).GetField("_file", BindingFlags.Static | BindingFlags.NonPublic);
+        private bool _hadKey;
+        private string _value;
+        private object _cache;
+        private int _revision;
+
+        [SetUp] public void Before()
+        {
+            _hadKey = PlayerPrefs.HasKey(Key); _value = PlayerPrefs.GetString(Key, "");
+            _cache = Cache.GetValue(null); _revision = TouchLayoutStore.Revision;
+            Cache.SetValue(null, null);
+        }
+        [TearDown] public void After()
+        {
+            if (_hadKey) PlayerPrefs.SetString(Key, _value); else PlayerPrefs.DeleteKey(Key);
+            PlayerPrefs.Save(); Cache.SetValue(null, _cache);
+            typeof(TouchLayoutStore).GetProperty("Revision").SetValue(null, _revision);
+        }
+        private static TouchTweak JumpTweak(float x) => new TouchTweak
+        { Verb = Verb.Jump.ToString(), OffsetX = x, OffsetY = -8, Scale = 1.1f, Hidden = false };
+
+        [Test] public void ParsedNullTweakListStillSupportsTheLiveHudLookupAndLayoutEdit()
+        {
+            PlayerPrefs.SetString(Key, "{\"Opacity\":0.55,\"Scale\":1,\"Tweaks\":null}");
+            var first = TouchLayoutStore.TweakFor(Verb.Jump);
+            Assert.AreEqual(1, first.Scale); Assert.IsFalse(first.Hidden);
+            TouchLayoutStore.SetTweak(JumpTweak(12));
+            Assert.AreEqual(12, TouchLayoutStore.TweakFor(Verb.Jump).OffsetX);
+        }
+
+        [Test] public void MissingPreferenceStillProvidesDefaultsAndAcceptsAnEdit()
+        {
+            PlayerPrefs.DeleteKey(Key);
+            Assert.AreEqual(1, TouchLayoutStore.TweakFor(Verb.Jump).Scale);
+            TouchLayoutStore.SetTweak(JumpTweak(7));
+            Assert.AreEqual(7, TouchLayoutStore.TweakFor(Verb.Jump).OffsetX);
+        }
+
+        [Test] public void OrdinarySavedListRetainsItsAuthoredTweakAndCanUpdateIt()
+        {
+            PlayerPrefs.SetString(Key, "{\"Opacity\":0.55,\"Scale\":1,\"Tweaks\":[{\"Verb\":\"Jump\",\"OffsetX\":12,\"OffsetY\":-8,\"Scale\":1.1,\"Hidden\":false}]}");
+            var first = TouchLayoutStore.TweakFor(Verb.Jump);
+            Assert.AreEqual(12, first.OffsetX); Assert.AreEqual(-8, first.OffsetY); Assert.AreEqual(1.1f, first.Scale);
+            TouchLayoutStore.SetTweak(JumpTweak(18));
+            Assert.AreEqual(18, TouchLayoutStore.TweakFor(Verb.Jump).OffsetX);
+        }
+    }
+}

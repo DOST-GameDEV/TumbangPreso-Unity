@@ -120,6 +120,7 @@ namespace TumbangPreso.Tests
             Diagnostics.NetFamiliarProbe.Active=true;
             Diagnostics.NetThrowProbe.Active=true;
             Diagnostics.NetRoofProbe.Active=true;
+            Diagnostics.WorldGraphicsProbe.Active=true;
             PracticeSandbox.Wanted = true;
             GameLaunch.AllBots = true;
             GameLaunch.Spectator = true;
@@ -139,7 +140,7 @@ namespace TumbangPreso.Tests
 
             // And the rules half went through the real setter.
             Assert.AreEqual(GameMode.Classic, UI.SceneFlow.SelectedMode);
-            Assert.AreEqual(4, UI.SceneFlow.SelectedRoundCount);
+            Assert.AreEqual(8, UI.SceneFlow.SelectedRoundCount);
         }
 
         [Test]
@@ -268,6 +269,7 @@ namespace TumbangPreso.Tests
             Diagnostics.NetFamiliarProbe.Active=false;
             Diagnostics.NetThrowProbe.Active=false;
             Diagnostics.NetRoofProbe.Active=false;
+            Diagnostics.WorldGraphicsProbe.Active=false;
             PracticeSandbox.Wanted = false;
             GameLaunch.AllBots = false;
             GameLaunch.Spectator = false;
@@ -285,6 +287,7 @@ namespace TumbangPreso.Tests
                 case "PracticeSandbox.Wanted": PracticeSandbox.Wanted = value; break;
                 case "NetThrowProbe.Active": Diagnostics.NetThrowProbe.Active=value; break;
                 case "NetRoofProbe.Active": Diagnostics.NetRoofProbe.Active=value; break;
+                case "WorldGraphicsProbe.Active": Diagnostics.WorldGraphicsProbe.Active=value; break;
                 case "NetFamiliarProbe.Active": Diagnostics.NetFamiliarProbe.Active=value; break;
                 case "GameLaunch.AllBots": GameLaunch.AllBots = value; break;
                 case "GameLaunch.Spectator": GameLaunch.Spectator = value; break;

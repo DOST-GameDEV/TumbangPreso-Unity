@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "stopped": null,
+  "seconds": 43.023478507995605,
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "6947554",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "6952767",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "runtime_sha256": "9813896320f1f3ff05e67b31054e99802382c7df32a8d151cf9bfd61848e2e61"
+}

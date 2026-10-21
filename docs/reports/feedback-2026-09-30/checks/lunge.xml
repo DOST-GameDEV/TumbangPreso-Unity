@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 06:27:32Z" end-time="2026-09-30 06:27:38Z" duration="6.3236919">
+  <test-suite type="TestSuite" id="2071" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="859" result="Failed" site="Child" start-time="2026-09-30 06:27:32Z" end-time="2026-09-30 06:27:38Z" duration="6.323692" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2065" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="859" result="Failed" site="Child" start-time="2026-09-30 06:27:32Z" end-time="2026-09-30 06:27:38Z" duration="6.311341" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3708" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2066" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="859" result="Failed" site="Child" start-time="2026-09-30 06:27:32Z" end-time="2026-09-30 06:27:38Z" duration="6.307760" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2067" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="859" result="Failed" site="Child" start-time="2026-09-30 06:27:32Z" end-time="2026-09-30 06:27:38Z" duration="6.304813" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1178" name="DefenderLungeTravelTests" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-30 06:27:32Z" end-time="2026-09-30 06:27:38Z" duration="6.277631" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1179" name="ClassicPressTravelsThreeMetres" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.ClassicPressTravelsThreeMetres" methodname="ClassicPressTravelsThreeMetres" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="266596093" result="Passed" start-time="2026-09-30 06:27:32Z" end-time="2026-09-30 06:27:33Z" duration="1.382401" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1183" name="DistantAttackerIsNotTagged" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.DistantAttackerIsNotTagged" methodname="DistantAttackerIsNotTagged" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="817298796" result="Passed" start-time="2026-09-30 06:27:33Z" end-time="2026-09-30 06:27:35Z" duration="1.359223" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1180" name="HeroStrikePressTravelsThreeMetres" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.HeroStrikePressTravelsThreeMetres" methodname="HeroStrikePressTravelsThreeMetres" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="370529956" result="Passed" start-time="2026-09-30 06:27:35Z" end-time="2026-09-30 06:27:36Z" duration="1.354076" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1181" name="HostRequestTravelsTheSameDistanceAndRejectsRepeat" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.HostRequestTravelsTheSameDistanceAndRejectsRepeat" methodname="HostRequestTravelsTheSameDistanceAndRejectsRepeat" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="1863702404" result="Passed" start-time="2026-09-30 06:27:36Z" end-time="2026-09-30 06:27:37Z" duration="0.804084" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1182" name="SweepTagsBeyondTheOldReachButNotBeyondActualTravel" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.SweepTagsBeyondTheOldReachButNotBeyondActualTravel" methodname="SweepTagsBeyondTheOldReachButNotBeyondActualTravel" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="1738288727" result="Failed" start-time="2026-09-30 06:27:37Z" end-time="2026-09-30 06:27:38Z" duration="1.361061" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The real travelled sweep reaches an attacker the 1m dash could not.
+  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DefenderLungeTravelTests+<SweepTagsBeyondTheOldReachButNotBeyondActualTravel>d__13.MoveNext () [0x0010d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\DefenderLungeTravelTests.cs:99
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

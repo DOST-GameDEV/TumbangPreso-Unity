@@ -184,8 +184,73 @@ namespace TumbangPreso.UI
         private RawImage _surface;
         private RenderTexture _target;
         private Camera _camera;
+        private MapPreviewVideo _recorded;
+        private Coroutine _swap;
+        private bool _renderingEnabled = true;
+        /// <summary>Offline recorder uses the exact live camera even when media already exists.</summary>
+        public bool PreferRecordedPreview { get; set; } = true;
+
+        public void SetRenderingEnabled(bool visible)
+        {
+            _renderingEnabled = visible;
+            if(_recorded!=null&&_recorded.Map!=null)_recorded.SetVisible(visible);
+            if (_camera != null) _camera.enabled = visible && !_busy && (_recorded==null||_recorded.Map==null);
+            if (_surface != null && _surface.enabled != visible) _surface.enabled = visible;
+        }
         private string _showing;
         private bool _busy;
+        private string _wantedMap;
+        private AsyncOperation _pendingLoad;
+        private bool _retiring,_ownsPreviewGate;
+        private string _transitionScene;
+        private static int _previewLoads;
+        private static bool _previousPreviewGate;
+        private static MapPreviewSurface _transitionOwner;
+
+        // A synchronous single-scene load can force an outstanding additive load
+        // to activate while its coroutine still owns PreviewOnly. Let that work
+        // finish and release its guard before destroying the setup that owns it.
+        public static bool DeferTransition(string scene)
+        {
+            if(_transitionOwner!=null){_transitionOwner._transitionScene=scene;return true;}
+            var previews=UnityEngine.Object.FindObjectsByType<MapPreviewSurface>();
+            MapPreviewSurface owner=null;
+            foreach(var preview in previews)
+            {
+                preview._retiring=true;
+                if((preview._busy || preview._pendingLoad != null)&&owner==null)owner=preview;
+            }
+            if(owner==null)return false;
+            _transitionOwner=owner;owner._transitionScene=scene;
+            owner.StartCoroutine(owner.CompleteTransition(previews));return true;
+        }
+
+        private IEnumerator CompleteTransition(MapPreviewSurface[] previews)
+        {
+            bool pending;
+            do
+            {
+                pending=false;foreach(var preview in previews)pending|=preview!=null &&
+                    (preview._busy || preview._pendingLoad != null);
+                if(pending)yield return null;
+            }while(pending);
+            string destination=_transitionScene;_transitionOwner=null;
+            SceneFlow.Go(destination);
+        }
+
+        private void BeginPreviewLoad()
+        {
+            if(_ownsPreviewGate)return;
+            if(_previewLoads++==0)_previousPreviewGate=MatchInstaller.PreviewOnly;
+            _ownsPreviewGate=true;MatchInstaller.PreviewOnly=true;
+        }
+        private void EndPreviewLoad()
+        {
+            if (_pendingLoad != null && !_pendingLoad.isDone) return;
+            if(!_ownsPreviewGate)return;
+            _ownsPreviewGate=false;
+            if(--_previewLoads==0)MatchInstaller.PreviewOnly=_previousPreviewGate;
+        }
 
         /// <summary>
         /// The camera that photographs the arena, for anything that has to project a world point
@@ -195,14 +260,14 @@ namespace TumbangPreso.UI
         /// `Swap`, after the scene load, so a caller that reads this from its own `Start` gets
         /// nothing. Wait for <see cref="MapShown"/>.
         /// </summary>
-        public Camera Camera => _camera;
+        public Camera Camera => _recorded!=null&&_recorded.Map!=null?null:_camera;
 
         /// <summary>Where the play area is, in world space: the average of the map's spawn
         /// markers. See <see cref="AimAt"/>.</summary>
         public Vector3 Pivot => _pivot;
 
         /// <summary>The map currently in the surface, or null before the first swap.</summary>
-        public string Showing => _showing;
+        public string Showing => _recorded!=null&&_recorded.Map!=null?_recorded.Map:_showing;
 
         /// <summary>The tuned angle, without the sway. A caller placing something in front of
         /// the camera wants the shot's yaw, not this frame's wobble.</summary>
@@ -235,6 +300,10 @@ namespace TumbangPreso.UI
                 if (_lobbyShot == value) return;
 
                 _lobbyShot = value;
+                if(value&&_recorded!=null&&_recorded.Map!=null)
+                {
+                    string map=_recorded.Map;_recorded.Stop();_showing=null;Show(map);
+                }
 
                 // ⚠️ THE PRACTICE SCREEN GETS THE WHOLE STREET BACK. See `ClearSightlines`: what
                 // it hides is hidden so a FACE can be seen, and the map shot has no faces in it,
@@ -268,6 +337,16 @@ namespace TumbangPreso.UI
         private readonly System.Collections.Generic.Dictionary<string, Scene> _cache =
             new System.Collections.Generic.Dictionary<string, Scene>();
 
+        private void OnDisable()
+        {
+            // ⚠️ Unity stops this object's coroutines on deactivation without running their
+            // `finally`, so a Swap cut off here would leave `_busy` set for ever and every later
+            // Show refused. Its scene is still claimed and parked by `Claim`.
+            // The preview gate stays up: the load still in flight must not build a live match, and
+            // `Claim` lowers it once that scene's match objects are stripped.
+            if (_busy) _busy = false;
+        }
+
         private void OnEnable()
         {
             _surface = GetComponent<RawImage>();
@@ -280,81 +359,149 @@ namespace TumbangPreso.UI
         private void Start()
         {
             if (!Application.isPlaying) return;
-            Show(SceneFlow.SelectedMap);
+            // A caller may already have selected this surface's map before
+            // Start. Do not queue the global default over that explicit request.
+            if (!_busy && Showing == null && _wantedMap == null)
+                Show(SceneFlow.SelectedMap);
         }
 
         public void Show(string map)
         {
-            if (_busy || map == _showing) return;
-            StartCoroutine(Swap(map));
+            if (_retiring || string.IsNullOrEmpty(map)) return;
+            if(PreferRecordedPreview&&!_lobbyShot&&MapPreviewVideo.PosterFor(map)!=null)
+            {
+                if(_swap!=null){StopCoroutine(_swap);_swap=null;_busy=false;EndPreviewLoad();}
+                _wantedMap=null;ReleasePreviewLook();Park(_showing);
+                if(_camera!=null)_camera.enabled=false;
+                if(_recorded==null)_recorded=gameObject.AddComponent<MapPreviewVideo>();
+                _recorded.SetVisible(_renderingEnabled);_recorded.Show(map);
+                return;
+            }
+            if(_recorded!=null)_recorded.Stop();
+            if (!(_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
+                && !Application.CanStreamedLevelBeLoaded(map))
+            {
+                Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
+                                 "the setup screen keeps its backdrop.");
+                return;
+            }
+            if (_busy) { _wantedMap = map; return; }
+            if (map == _showing) return;
+            _swap=StartCoroutine(Swap(map));
         }
+
+        // ⚠️⚠️ THERE IS NO `PrepareAll` ANY MORE, AND NO HUB LOADING SCREEN IN FRONT OF IT.
+        // 2026-09-27 to 2026-09-30 the hub loaded every arena as a preview scene behind its own
+        // "GETTING READY" curtain on EVERY entry to the hub (38.52 s in the editor on the first
+        // measurement), which put a second loading screen straight after the boot one.
+        // Request, 2026-09-30: that screen is redundant, and every asset and shader loads in the
+        // boot splash instead. `SplashScreen.WarmMapAssets` now retains every arena's meshes,
+        // textures and materials at boot, so the one map this surface shows is instanced from
+        // memory when it is asked for, and the rest are instanced only if the player picks them.
+        // The scene instances cannot be made at boot: a menu change is a single-scene load and
+        // unloads every additive scene, so they would be thrown away before the hub opened.
 
         private IEnumerator Swap(string map)
         {
             _busy = true;
-
-            // ⚠️ THE OUTGOING MAP IS PARKED, NOT UNLOADED, exactly as `map_preview.gd` parks
-            // its instance in `_cache`. Unloading and reloading a dressed street on every arrow
-            // press is a visible stall on the one screen a player cycles fastest.
-            Park(_showing);
-
-            if (_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
+            // Retain the last completed image while its scene is parked. Otherwise
+            // the camera clears the visible target to an empty grey frame each tick.
+            if (_camera != null) _camera.enabled = false;
+            try
             {
-                Unpark(map);
-            }
-            else
-            {
-                if (!Application.CanStreamedLevelBeLoaded(map))
+
+                // ⚠️ THE OUTGOING MAP IS PARKED, NOT UNLOADED, exactly as `map_preview.gd` parks
+                // its instance in `_cache`. Unloading and reloading a dressed street on every arrow
+                // press is a visible stall on the one screen a player cycles fastest.
+                ReleasePreviewLook();
+                Park(_showing);
+
+                if (_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
                 {
-                    Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
-                                     "the setup screen keeps its backdrop.");
-                    _busy = false;
-                    yield break;
+                    Unpark(map);
+                }
+                else
+                {
+                    // ⚠️⚠️ SET BEFORE THE LOAD, NOT AFTER. `MatchInstaller.Start` runs the instant
+                    // the additive scene finishes loading, and by the time this coroutine resumes it
+                    // has already spawned four characters, the can and the directors. Stripping them
+                    // afterwards left a frame of bots mid-spawn behind the menu and a round timer
+                    // that had started. The flag makes the installer stand down before it builds
+                    // anything.
+                    BeginPreviewLoad();
+
+                    // ⚠️⚠️ THE SCENE THIS LOAD MADE, NOT THE FIRST SCENE WITH THIS NAME. The hub
+                    // runs two surfaces, and both ask for the selected map on their first frame.
+                    // `GetSceneByName` returns the FIRST loaded scene of that name, so both
+                    // surfaces claimed the same copy and the second copy was nobody's: never
+                    // confined to the preview layer, never parked, its sun left on at full
+                    // strength with every layer in its mask. That orphaned Eskinita sun lit every
+                    // map shown afterwards on top of the map's own sun, which is the washed-out,
+                    // overexposed map select the owner photographed (2026-09-27). Remember which
+                    // scenes of this name already existed and take the one that is new.
+                    var existing = new System.Collections.Generic.HashSet<Scene>();
+                    for (int i = 0; i < SceneManager.sceneCount; i++)
+                    {
+                        var open = SceneManager.GetSceneAt(i);
+                        if (open.name == map) existing.Add(open);
+                    }
+
+                    // ⚠️⚠️ AND THE SCENE IS CLAIMED IN THE LOAD'S OWN CALLBACK, NOT AFTER THE YIELD.
+                    // The hub deactivates one of its two surfaces while that surface's first load
+                    // is still in flight, and Unity stops a coroutine whose object deactivates, so
+                    // everything below the yield never ran for that copy: the fix above alone still
+                    // left one Eskinita on layer 0 with its sun on. `completed` fires whether or not
+                    // this coroutine is still alive, so the new scene is confined and PARKED (lights
+                    // off, roots inactive) the frame it arrives; the coroutine unparks it only if it
+                    // is still here to show it. A surface that was destroyed meanwhile unloads it.
+                    var load = _pendingLoad = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+                    if (load != null) load.completed += _ =>
+                    {
+                        _pendingLoad = null;
+                        try { Claim(map, existing); }
+                        finally { EndPreviewLoad(); }
+                    };
+                    while (load != null && !load.isDone) yield return null;
+
+                    EndPreviewLoad();
+                    Unpark(map);
                 }
 
-                // ⚠️⚠️ SET BEFORE THE LOAD, NOT AFTER. `MatchInstaller.Start` runs the instant
-                // the additive scene finishes loading, and by the time this coroutine resumes it
-                // has already spawned four characters, the can and the directors. Stripping them
-                // afterwards left a frame of bots mid-spawn behind the menu and a round timer
-                // that had started. The flag makes the installer stand down before it builds
-                // anything.
-                MatchInstaller.PreviewOnly = true;
+                // Let activated environment components finish their first frame
+                // before replacing the completed preview image.
+                yield return null;
+                _showing = map;
 
-                var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
-                while (load != null && !load.isDone) yield return null;
+                AimAt(map);
+                EnsureCamera();
+                AdoptRange(map);
 
-                MatchInstaller.PreviewOnly = false;
+                // ⚠️ AFTER EnsureCamera, because it attaches the grade to that camera and the camera
+                // does not exist on the first swap until EnsureCamera has run.
+                ApplyMapEnvironment(map);
 
-                var loaded = SceneManager.GetSceneByName(map);
-                _cache[map] = loaded;
+                if (_camera != null && _renderingEnabled) _camera.Render();
 
-                StripMatchObjects(loaded);
-                Silence(loaded);
+                _surface.texture = _target;
+                _surface.color = Color.white;
 
-                // ⚠️ AFTER the strip, never before. `StripMatchObjects` destroys whole
-                // GameObjects, and re-layering a subtree that is about to be deleted is wasted
-                // work on the one screen that must not stall.
-                Confine(loaded);
+                _busy = false;
+                if (_camera != null) _camera.enabled = _renderingEnabled;
+
+                // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
+                // is to put something INTO this map, and the two things it needs (a camera to be
+                // framed by and a scene to be parented into) are both set up above.
+                MapShown?.Invoke(map);
             }
-
-            _showing = map;
-
-            AimAt(map);
-            EnsureCamera();
-
-            // ⚠️ AFTER EnsureCamera, because it attaches the grade to that camera and the camera
-            // does not exist on the first swap until EnsureCamera has run.
-            ApplyMapEnvironment(map);
-
-            _surface.texture = _target;
-            _surface.color = Color.white;
-
-            _busy = false;
-
-            // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
-            // is to put something INTO this map, and the two things it needs (a camera to be
-            // framed by and a scene to be parented into) are both set up above.
-            MapShown?.Invoke(map);
+            finally
+            {
+                EndPreviewLoad(); _busy = false;
+                if (!_retiring && isActiveAndEnabled && _wantedMap != null)
+                {
+                    string wanted = _wantedMap; _wantedMap = null;
+                    Show(wanted);
+                }
+            }
         }
 
         /// <summary>
@@ -585,6 +732,50 @@ namespace TumbangPreso.UI
         /// world and keeps fighting the other map's environment for it, which reads as the sky
         /// and fog changing while the geometry does not".
         /// </summary>
+        /// <summary>
+        /// Takes the scene a load of <paramref name="map"/> just made, strips and confines it to
+        /// the preview layer, and parks it. See the note at the call site in <see cref="Swap"/>.
+        /// </summary>
+        private void Claim(string map, System.Collections.Generic.HashSet<Scene> existing)
+        {
+            var loaded = default(Scene);
+            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var open = SceneManager.GetSceneAt(i);
+                if (open.name == map && open.isLoaded && !existing.Contains(open) && !Claimed(open))
+                {
+                    loaded = open;
+                    break;
+                }
+            }
+            if (!loaded.IsValid()) return;
+            if (this == null)
+            {
+                // The surface that asked for it is gone; nobody will ever show or park it.
+                StripMatchObjects(loaded);
+                foreach (var root in loaded.GetRootGameObjects()) if (root != null) root.SetActive(false);
+                SceneManager.UnloadSceneAsync(loaded);
+                return;
+            }
+            _cache[map] = loaded;
+            StripMatchObjects(loaded);
+            Silence(loaded);
+            // ⚠️ AFTER the strip, never before. `StripMatchObjects` destroys whole GameObjects,
+            // and re-layering a subtree that is about to be deleted is wasted work.
+            Confine(loaded);
+            Park(map);
+            EndPreviewLoad();
+        }
+
+        /// <summary>True when any live surface already owns <paramref name="scene"/>.</summary>
+        private static bool Claimed(Scene scene)
+        {
+            foreach (var surface in FindObjectsByType<MapPreviewSurface>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                foreach (var owned in surface._cache.Values)
+                    if (owned == scene) return true;
+            return false;
+        }
+
         private void Park(string map)
         {
             if (map == null || !_cache.TryGetValue(map, out var scene)) return;
@@ -653,6 +844,18 @@ namespace TumbangPreso.UI
             }
 
             if (count > 0) _pivot = sum / count;
+
+            // Selection footage should describe the court, rather than the
+            // near-side arrival line. Keep interactive lobby shots unchanged.
+            if (!_lobbyShot && map == SceneFlow.IlalimNgTulay)
+            {
+                _pivot.x = 0; _pivot.z = 0;
+                _distance = 16; _height = 6.4f;
+            }
+            if (!_lobbyShot && map == SceneFlow.LagoonCove)
+            {
+                _yaw = -35; _distance = 32; _height = 22;
+            }
         }
 
         private static Transform FindByName(Transform root, string name)
@@ -738,6 +941,7 @@ namespace TumbangPreso.UI
         private struct MapEnvironment
         {
             public Color Ambient;
+            public Color SkyAmbient,EquatorAmbient,GroundAmbient;
             public UnityEngine.Rendering.AmbientMode Mode;
             public float Intensity;
             public Material Skybox;
@@ -757,15 +961,22 @@ namespace TumbangPreso.UI
 
         private readonly System.Collections.Generic.Dictionary<string, MapEnvironment> _envs =
             new System.Collections.Generic.Dictionary<string, MapEnvironment>();
+        private Visual.WorldLookPresentation _previewLook;
+        private readonly System.Collections.Generic.Dictionary<string, Visual.WorldLookPresentation> _looks =
+            new System.Collections.Generic.Dictionary<string, Visual.WorldLookPresentation>();
 
         public void ReapplyEnvironment()
         {
+            if(_recorded!=null&&_recorded.Map!=null)return;
             if (!string.IsNullOrEmpty(_showing))
                 ApplyMapEnvironment(_showing);
         }
 
         private void ApplyMapEnvironment(string map)
         {
+            // Retire the previous look before writing the next authored settings;
+            // otherwise its deferred handback can overwrite the selected map.
+            if(_previewLook!=null && _previewLook.Look.Map!=map)ReleasePreviewLook();
             if (!_envs.TryGetValue(map, out var env))
             {
                 if (!_cache.TryGetValue(map, out var scene) || !scene.IsValid() || !scene.isLoaded)
@@ -778,6 +989,9 @@ namespace TumbangPreso.UI
                 env = new MapEnvironment
                 {
                     Ambient = RenderSettings.ambientLight,
+                    SkyAmbient = RenderSettings.ambientSkyColor,
+                    EquatorAmbient = RenderSettings.ambientEquatorColor,
+                    GroundAmbient = RenderSettings.ambientGroundColor,
                     Mode = RenderSettings.ambientMode,
                     Intensity = RenderSettings.ambientIntensity,
                     Skybox = RenderSettings.skybox,
@@ -817,6 +1031,9 @@ namespace TumbangPreso.UI
 
             RenderSettings.ambientMode = env.Mode;
             RenderSettings.ambientLight = env.Ambient;
+            RenderSettings.ambientSkyColor = env.SkyAmbient;
+            RenderSettings.ambientEquatorColor = env.EquatorAmbient;
+            RenderSettings.ambientGroundColor = env.GroundAmbient;
             RenderSettings.ambientIntensity = env.Intensity;
             RenderSettings.fog = env.Fog;
             RenderSettings.fogColor = env.FogColour;
@@ -839,6 +1056,47 @@ namespace TumbangPreso.UI
 
             cameraGrade.Set(env.Brightness, env.Contrast, env.Saturation,
                             env.Exposure, env.White);
+            ApplyPreviewLook(map);
+        }
+
+        private void ApplyPreviewLook(string map)
+        {
+            if(_previewLook!=null && _previewLook.Look.Map==map)
+            {_previewLook.ReapplyPreview();return;}
+            ReleasePreviewLook();
+            if(!_cache.TryGetValue(map,out var scene) || !scene.IsValid() || !scene.isLoaded)return;
+            if (_looks.TryGetValue(map, out var prepared) && prepared != null)
+            {
+                _previewLook = prepared;
+                prepared.gameObject.SetActive(true);
+                prepared.ResumePreview();
+                return;
+            }
+            Transform parent=null;Light sun=null;
+            foreach(var root in scene.GetRootGameObjects())
+            {
+                if(!root.activeInHierarchy || root.GetComponent<MatchInstaller>()!=null)continue;
+                if(parent==null)parent=root.transform;
+                foreach(var light in root.GetComponentsInChildren<Light>())
+                    if(sun==null && light.enabled && light.type==LightType.Directional && light.shadows!=LightShadows.None &&
+                        light.GetComponentInParent<MatchInstaller>(true)==null) sun=light;
+            }
+            if(parent==null)return;
+            if(_camera.GetComponent<Visual.WorldLookCamera>()==null)
+                _camera.gameObject.AddComponent<Visual.WorldLookCamera>();
+            Physics.SyncTransforms();
+            float floor=Visual.WorldGround.TryBelow(_pivot,2,15,out float ground)?ground:_pivot.y;
+            _previewLook=Visual.WorldLookPresentation.InstallPreview(parent,floor,sun);
+            if (_previewLook != null) _looks[map] = _previewLook;
+        }
+
+        private void ReleasePreviewLook()
+        {
+            if(_previewLook==null)return;
+            // Restore the previous globals now; retain its prepared resources for
+            // the next visit instead of rebuilding them on the selection path.
+            _previewLook.gameObject.SetActive(false);
+            _previewLook=null;
         }
 
         /// <summary>
@@ -908,12 +1166,18 @@ namespace TumbangPreso.UI
                 // reports precisely.
                 if (_camera != null) _camera.targetTexture = null;
                 _target.Release();
+                if (Application.isPlaying) Destroy(_target); else DestroyImmediate(_target);
                 _target = null;
             }
 
             if (_target == null)
             {
-                _target = new RenderTexture(width, height, 24)
+                // Keep highlights above one until the same grade used by the
+                // match rolls them off. An LDR target clips them before grading
+                // even if the camera allows HDR. Retain a supported fallback.
+                var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR)
+                    ?RenderTextureFormat.DefaultHDR:RenderTextureFormat.ARGB32;
+                _target = new RenderTexture(width, height, 24, format)
                 {
                     name = "MapPreview",
 
@@ -944,6 +1208,8 @@ namespace TumbangPreso.UI
 
             _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
+            _camera.enabled = _renderingEnabled && !_busy;
+            if (_surface != null) _surface.texture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;
 
@@ -1006,6 +1272,41 @@ namespace TumbangPreso.UI
         /// whatever the component order is. Its own header spends a paragraph on this precisely
         /// because the grade is added from three places at three different times.
         /// </summary>
+        /// <summary>The far plane Unity gives a new camera, which is this camera's on every map
+        /// that names no range.</summary>
+        private const float DefaultFar = 1000.0f;
+
+        /// <summary>
+        /// The shown map's own camera range, if it names one (`Visual.MapCameraRange`: the Arena).
+        ///
+        /// ⚠️ THIS CAMERA IS OUTSIDE THE PLAY AREA, SO IT TAKES `FreeFar`. `CameraRig` and
+        /// `SpectatorCamera` adopt the range in their `Start`; this camera lives in the menu
+        /// scene and outlives every map it shows, so it adopts on each swap and gives the range
+        /// back when the next map names none. Without it the Arena's preview stopped at 1000 m:
+        /// the landmark towers stand to 1090 m from the can and the far ring to 2130 m, and the
+        /// high shot looks down through the shaft at a city floor 760 m below.
+        /// </summary>
+        private void AdoptRange(string map)
+        {
+            if (_camera == null) return;
+
+            Visual.MapCameraRange range = null;
+            if (map != null && _cache.TryGetValue(map, out var scene) && scene.IsValid() && scene.isLoaded)
+                foreach (var root in scene.GetRootGameObjects())
+                {
+                    range = root.GetComponentInChildren<Visual.MapCameraRange>(true);
+                    if (range != null) break;
+                }
+
+            _camera.farClipPlane = range != null ? Mathf.Max(DefaultFar, range.FreeFar) : DefaultFar;
+
+            var outline = _camera.GetComponent<Visual.WorldOutline>();
+            if (outline == null) return;
+            if (range != null && range.InkFadeStart >= 0.0f && range.InkFadeEnd > range.InkFadeStart)
+                outline.SetFade(range.InkFadeStart, range.InkFadeEnd);
+            else outline.SetFade(-1.0f, -1.0f);
+        }
+
         private void EnsureWorldOutline()
         {
             if (_camera == null) return;
@@ -1022,6 +1323,7 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
+            if(_recorded!=null&&_recorded.Map!=null)return;
             if (!Application.isPlaying || _camera == null || _showing == null) return;
 
             _time += Time.unscaledDeltaTime;
@@ -1051,7 +1353,13 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
-            if (_camera != null) Destroy(_camera.gameObject);
+            ReleasePreviewLook();
+            foreach (var look in _looks.Values) if (look != null) Destroy(look.gameObject);
+            _looks.Clear();
+            EndPreviewLoad();_busy=false;
+            if(_transitionOwner==this)_transitionOwner=null;
+            if (_camera != null) { _camera.targetTexture = null; Destroy(_camera.gameObject); }
+            if (_surface != null) _surface.texture = null;
 
             if (_target == null) return;
 

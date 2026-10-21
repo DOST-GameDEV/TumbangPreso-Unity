@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.3945782">
+  <test-suite type="TestSuite" id="1890" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="704" result="Failed" site="Child" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.394578" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1884" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="704" result="Failed" site="Child" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.383280" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="56692" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1885" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="704" result="Failed" site="Child" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.377258" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1886" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="704" result="Failed" site="Child" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.371786" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1116" name="CheskaIceContractProbe" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.213315" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1120" name="ConfirmedBarricadeGetsPhysicalFacesWithoutAnotherCharge" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.ConfirmedBarricadeGetsPhysicalFacesWithoutAnotherCharge" methodname="ConfirmedBarricadeGetsPhysicalFacesWithoutAnotherCharge" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="917209596" result="Failed" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.117071" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaIceContractProbe+<ConfirmedBarricadeGetsPhysicalFacesWithoutAnotherCharge>d__7.MoveNext () [0x0018b] in C:\Users\Matthew\Documents\Codex\2026-09-27\read-agents-md-too-opus-5\work\stability-validation\Assets\TumbangPreso\Tests\PlayMode\CheskaIceContractProbe.cs:144
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1119" name="ConfirmedIceDoesNotSpendAgainOrDisappearWithALaterRefusal" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.ConfirmedIceDoesNotSpendAgainOrDisappearWithALaterRefusal" methodname="ConfirmedIceDoesNotSpendAgainOrDisappearWithALaterRefusal" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="1722980681" result="Passed" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.085338" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1708" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.112841" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1710" name="DeferredPlantWaitsForItsObjectAndCommandsCannotReplaceOrCancelIt" fullname="TumbangPreso.PlayTests.SkillReceiptTests.DeferredPlantWaitsForItsObjectAndCommandsCannotReplaceOrCancelIt" methodname="DeferredPlantWaitsForItsObjectAndCommandsCannotReplaceOrCancelIt" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1311134382" result="Passed" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.082711" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1709" name="EarlierConfirmedEffectsSurviveNewerRequestsWithoutDuplicateReplay" fullname="TumbangPreso.PlayTests.SkillReceiptTests.EarlierConfirmedEffectsSurviveNewerRequestsWithoutDuplicateReplay" methodname="EarlierConfirmedEffectsSurviveNewerRequestsWithoutDuplicateReplay" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1328233722" result="Passed" start-time="2026-09-27 02:29:41Z" end-time="2026-09-27 02:29:41Z" duration="0.028255" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

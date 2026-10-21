@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Linq;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
 using UnityEngine;
@@ -15,6 +16,128 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class MatchmakingWireTests
     {
+        [TestCase("refused")]
+        [TestCase("fault")]
+        [TestCase("accepted")]
+        [TestCase("cancelled")]
+        [TestCase("replaced")]
+        public async System.Threading.Tasks.Task QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(string outcome)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(NetIdentity.IsOnline, "This queue recovery check never initializes a service session.");
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(Matchmaker);
+            var originalAccount = GameServices.Account;
+            var accountRoot = new GameObject("Dormant queue recovery account"); accountRoot.SetActive(false);
+            var account = accountRoot.AddComponent<PlayerAccount>();
+            typeof(PlayerAccount).GetField("_profile", hidden).SetValue(account, new AccountProfile { PlayerId = "queue-retry-local" });
+            typeof(GameServices).GetProperty("Account").SetValue(null, account);
+            var owner = new GameObject("Dormant queue recovery session"); owner.SetActive(false);
+            var net = owner.AddComponent<NetSession>(); var queue = owner.AddComponent<Matchmaker>();
+            var pending = new System.Threading.Tasks.TaskCompletionSource<bool>();
+            System.Threading.Tasks.Task attempt = null;
+            try
+            {
+                type.GetField("_net", hidden).SetValue(queue, net);
+                type.GetProperty("Elapsed").SetValue(queue, MatchmakingRules.SecondsToWidest + 1);
+                var deadlineField = type.GetField("_reevaluateAt", hidden);
+                var busyField = type.GetField("_busy", hidden);
+                System.Func<System.Threading.Tasks.Task<bool>> start = () => outcome == "fault"
+                    ? System.Threading.Tasks.Task.FromException<bool>(new System.InvalidOperationException("simulated host startup failure"))
+                    : outcome == "accepted" || outcome == "refused"
+                        ? System.Threading.Tasks.Task.FromResult(outcome == "accepted") : pending.Task;
+                float before = Time.unscaledTime;
+                attempt = (System.Threading.Tasks.Task)type.GetMethod("HostAsync", hidden).Invoke(queue, new object[] { start });
+                float replacementDeadline = before + 123;
+                if (outcome == "cancelled")
+                {
+                    Assert.AreEqual(QueueState.Hosting, queue.State); queue.Cancel(); pending.SetResult(false);
+                }
+                else if (outcome == "replaced")
+                {
+                    Assert.AreEqual(QueueState.Hosting, queue.State);
+                    ((JoinAttemptGate)type.GetField("_queueAttempts", hidden).GetValue(queue)).Begin();
+                    type.GetProperty("State").SetValue(queue, QueueState.Searching);
+                    deadlineField.SetValue(queue, replacementDeadline); busyField.SetValue(queue, true);
+                    pending.SetResult(false);
+                }
+                await attempt;
+                float deadline = (float)deadlineField.GetValue(queue);
+                if (outcome == "refused" || outcome == "fault")
+                {
+                    Assert.AreEqual(QueueState.Searching, queue.State);
+                    Assert.IsFalse(float.IsInfinity(deadline), "A stable maximum-width queue has no event left to recover from this hosting failure.");
+                    Assert.GreaterOrEqual(deadline, before + (float)MatchmakingCandidateCache.RetrySeconds);
+                    Assert.LessOrEqual(deadline, Time.unscaledTime + (float)MatchmakingCandidateCache.RetrySeconds);
+                }
+                else if (outcome == "replaced")
+                    Assert.AreEqual(replacementDeadline, deadline, "An obsolete host completion changed the replacement ticket's deadline.");
+                else Assert.IsTrue(float.IsPositiveInfinity(deadline), "A successful/cancelled ticket acquired an unsolicited retry.");
+                Assert.AreEqual(outcome == "cancelled" ? QueueState.Cancelled : QueueState.Searching, queue.State);
+                Assert.AreEqual(outcome == "replaced", (bool)busyField.GetValue(queue), "An old request changed the current ticket's busy ownership.");
+            }
+            finally
+            {
+                if (!pending.Task.IsCompleted) pending.SetResult(false);
+                if (attempt != null) await attempt;
+                Object.DestroyImmediate(owner); Object.DestroyImmediate(accountRoot);
+                typeof(GameServices).GetProperty("Account").SetValue(null, originalAccount);
+            }
+        }
+
+        [TestCase(QueueStake.Casual)]
+        [TestCase(QueueStake.Ranked)]
+        public void QueueCandidatesNeedMatchingSkillDataWithoutChangingTheirPoolRules(QueueStake stake)
+        {
+            string contract = new string('A', 64);
+            string pool = MatchmakingRules.PoolKey(GameMode.HeroStrike, stake, InputDevice.KeyboardMouse,
+                PlatformFamily.Desktop, NetSession.ProtocolVersion);
+            var entry = new ServerQuery.Entry
+            {
+                Id = "room", RelayCode = "relay", SkillContract = contract, PoolKey = pool,
+                Seated = 1, Occupied = 1, Capacity = 4, BandLow = 1000, BandHigh = 2000,
+                SeatLow = 1500, SeatHigh = 1500, HostPlayerId = "other"
+            };
+            var candidates = new MatchmakingCandidateCache();
+            Assert.IsTrue(candidates.CanTry(entry, contract, 0));
+            Assert.AreEqual(JoinRefusal.None, MatchmakingRules.Evaluate(entry.AsAdvert(), "me", 1500, 0, pool, null));
+            entry.Occupied = 3;
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0, seatsNeeded: 2), "The party was offered reserved chairs.");
+            Assert.IsTrue(candidates.CanTry(entry, contract, 0, seatsNeeded: 1));
+            entry.Occupied = 1; entry.InProgress = true; entry.Backfill = true;
+            Assert.IsTrue(candidates.CanTry(entry, contract, 0), "Compatibility filtering must not disable allowed backfill.");
+            Assert.AreEqual(JoinRefusal.None, MatchmakingRules.Evaluate(entry.AsAdvert(), "me", 1500, 0, pool, null));
+            entry.InProgress = false; entry.Backfill = false;
+            entry.SkillContract = new string('B', 64);
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0));
+            entry.SkillContract = "";
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0), "Unknown compatibility must not enter automatic pairing.");
+            entry.SkillContract = contract; entry.RelayCode = "";
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0));
+            string padPool = MatchmakingRules.PoolKey(GameMode.HeroStrike, stake, InputDevice.Gamepad,
+                PlatformFamily.Desktop, NetSession.ProtocolVersion);
+            if (stake == QueueStake.Ranked) Assert.AreNotEqual(pool, padPool);
+            else Assert.AreEqual(pool, padPool);
+        }
+
+        [Test]
+        public void QueueFailureCooldownTracksTheAttemptedEndpointAndResetsPerTicket()
+        {
+            string contract = new string('A', 64);
+            var entry = new ServerQuery.Entry { Id = "room", RelayCode = "old", SkillContract = contract };
+            var candidates = new MatchmakingCandidateCache();
+            candidates.Failed(entry.Id, entry.RelayCode, 10);
+            Assert.IsFalse(candidates.CanTry(entry, contract, 11));
+            entry.RelayCode = "replacement";
+            Assert.IsTrue(candidates.CanTry(entry, contract, 11));
+            entry.RelayCode = "old";
+            Assert.IsFalse(candidates.CanTry(entry, contract, 11), "A stale advertisement resurrected its failed allocation.");
+            Assert.IsTrue(candidates.CanTry(entry, contract, 10 + MatchmakingCandidateCache.RetrySeconds));
+            candidates.Failed(entry.Id, entry.RelayCode, 50);
+            candidates.Clear();
+            Assert.IsTrue(candidates.CanTry(entry, contract, 51));
+        }
+
         // ------------------------------------------------------------------------------
         // The look frame
         // ------------------------------------------------------------------------------

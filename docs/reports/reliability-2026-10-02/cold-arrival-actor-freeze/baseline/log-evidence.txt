@@ -1,0 +1,5 @@
+TumbangPreso.PlayTests.ColdArrivalActorFreezeTests
+"Assets/TumbangPreso/Tests/PlayMode/ColdArrivalActorFreezeTests.cs"
+Assets\TumbangPreso\Tests\PlayMode\ColdArrivalActorFreezeTests.cs(122,20): error CS0117: 'Assert' does not contain a definition for 'Multiple'
+Assets\TumbangPreso\Tests\PlayMode\ColdArrivalActorFreezeTests.cs(122,20): error CS0117: 'Assert' does not contain a definition for 'Multiple'
+Assets\TumbangPreso\Tests\PlayMode\ColdArrivalActorFreezeTests.cs(122,20): error CS0117: 'Assert' does not contain a definition for 'Multiple'

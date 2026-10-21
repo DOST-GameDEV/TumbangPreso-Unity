@@ -1,0 +1,52 @@
+{
+  "baseRef": "015ed91640314b31bd9df963a2aa9767ff8e14a5",
+  "nativePid": 49756,
+  "nativePassed": 4,
+  "protectedInputsRestored": 21425,
+  "metadataPid": 61388,
+  "metadataReadCompletedExistingPlayerTrace": true,
+  "metadataSourceMatchesNativeEditorBytes": true,
+  "jitRows": 199,
+  "jitRowsWithMetadata": 0,
+  "source": [
+    {
+      "path": "Assets/TumbangPreso/Editor/PlayerCpuTraceExport.cs",
+      "sha256": "6abd2bb5b4989cef77dedc4e8508429969257b37b9e12c31b733c1d623805fa3",
+      "bytes": 6145
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubHero.cs",
+      "sha256": "ed54d8c9fd2218de3c7171a07e556eb97d7151d971442ed236bb6e04cf50d1e6",
+      "bytes": 20454
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubScreen.cs",
+      "sha256": "3427657f1fa34b9ad9636df1cedbf859916437538b08c7db2c213e2e3a32af74",
+      "bytes": 2246
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/TumpHub.cs",
+      "sha256": "c2d6645f87b207ad35a0f0bcc804ac1ad8a04579c34b4c6ca61dbc7fd393a3b4",
+      "bytes": 19705
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/DeferredHeroViewTests.cs",
+      "sha256": "d837a2947f3b0c06cd32d6fee6281a128b20f0741f40b138b5745bd133d8f4e8",
+      "bytes": 4955
+    }
+  ],
+  "newBuilds": 0,
+  "currentBuildStill": "cf9afad38/df1e584b Development in existing G",
+  "desktopUnchanged": "effe0/0898 qualified ordinary release",
+  "playerLatencyForCandidate4Measured": false,
+  "scope": "Transparent active CanvasGroup UI preparation; hidden preview component/camera disabled; inherited visual alpha and actual pointer raycast exclusion; completion/focus/entrance replay, cancel cleanup, repeated press and alternate route; existing hidden actual GPU/ambient lifecycle. No ordinary/player performance claim.",
+  "rawSha256": {
+    "cold-methods.csv": "1c2f3a84e990f4ecf7dd25455b7d74c9e8ad065cb77431490d6087bc72e2b318",
+    "complete.txt": "7e62abe3c2922baebfc542109f8f36897d2d98641fea5bfcea19f464ee0b3993",
+    "metadata-result.json": "c3ed0d152ec31fbc0b76a3c95e87d6d266c74a39a81e37850f8b57a37ee61aa2",
+    "metadata-source-restoration.json": "71e6fb4bc3cfe9801048d3fde76864e8ba65772c207a9e4b68d59d801955ebd9",
+    "result.json": "1dff76399bac315e47649f1f1a14b364b4738fc24c5ae24a11d467dd5da73982",
+    "results.xml": "5f018e775f48313c1b40a16f3de033e97734519d020df9b5e8be5ddf64098318",
+    "source-restoration.json": "edd89c5d99dbbc913d7a94238ad52f5bf3e892540fb9b0a2c80c63e0bb14a2fc"
+  }
+}

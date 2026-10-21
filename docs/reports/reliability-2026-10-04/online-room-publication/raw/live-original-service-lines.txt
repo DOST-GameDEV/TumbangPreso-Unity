@@ -1,0 +1,10 @@
+[NetIdentity] Signed in to UGS as I8nfRFOZ6r3613yn4YQoZAFFq8cn on profile pc-room-publication1004. Relay and Lobby are available.
+[Net] signing in to online services...
+[Net] allocating relay server...
+[Net] connected as seat 1
+[Net] relay hosting active, code 5VBN (relay KQFCBP)
+[RoomPublication] host=True status=relay hosting active, code 5VBN (relay KQFCBP)
+[Query] Created UGS Lobby LUSbnuDq3fFF8QAEZknz9F with JoinCode 5VBN
+[RoomPublication] code=5VBN id=LUSbnuDq3fFF8QAEZknz9F onlineLookup=1 public=True
+[Net] offline
+[Query] Deleted UGS Lobby LUSbnuDq3fFF8QAEZknz9F

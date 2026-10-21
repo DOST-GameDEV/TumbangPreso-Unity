@@ -1,0 +1,2077 @@
+{
+ "note": "One entry per material name the exported glbs use, AS NAMED IN THE GLBS. `kind` picks the shader: painted, glow, water, fall, foam, mist, foliage card, decal, cloud, unlit, and payo_land (2026-10-18: the land and river paint; `surface` says which, `textures` are under Art/Payo/Textures/land, `tile_m` metres per tile and `relief_m` as tools/payo_land_blend.py CALM_TEX). Written by tools/payo_export_unity.py.",
+ "materials": [
+  {
+   "name": "bridge_E",
+   "kind": "painted",
+   "texture": "bridge_E-atlas",
+   "models": [
+    "bridge_E"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "bridge_N",
+   "kind": "painted",
+   "texture": "bridge_N-atlas",
+   "models": [
+    "bridge_N"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "bridge_S",
+   "kind": "painted",
+   "texture": "bridge_S-atlas",
+   "models": [
+    "bridge_S"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "bridge_W",
+   "kind": "painted",
+   "texture": "bridge_W-atlas",
+   "models": [
+    "bridge_W"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "bulul_post",
+   "kind": "painted",
+   "texture": "bulul_post-atlas",
+   "models": [
+    "bulul_post"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "bulul_seated",
+   "kind": "painted",
+   "texture": "bulul_seated-atlas",
+   "models": [
+    "bulul_seated"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "bulul_spout",
+   "kind": "painted",
+   "texture": "bulul_spout-atlas",
+   "models": [
+    "bulul_spout"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "bulul_standing",
+   "kind": "painted",
+   "texture": "bulul_standing-atlas",
+   "models": [
+    "bulul_standing"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "core",
+   "kind": "painted",
+   "texture": "core-atlas",
+   "models": [
+    "core"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_10x10",
+   "kind": "painted",
+   "texture": "ext_10x10-atlas",
+   "models": [
+    "ext_10x10"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_10x6",
+   "kind": "painted",
+   "texture": "ext_10x6-atlas",
+   "models": [
+    "ext_10x6"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_10x8",
+   "kind": "painted",
+   "texture": "ext_10x8-atlas",
+   "models": [
+    "ext_10x8"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_3x4",
+   "kind": "painted",
+   "texture": "ext_3x4-atlas",
+   "models": [
+    "ext_3x4"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_4x3",
+   "kind": "painted",
+   "texture": "ext_4x3-atlas",
+   "models": [
+    "ext_4x3"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_4x5",
+   "kind": "painted",
+   "texture": "ext_4x5-atlas",
+   "models": [
+    "ext_4x5"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_5x4",
+   "kind": "painted",
+   "texture": "ext_5x4-atlas",
+   "models": [
+    "ext_5x4"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_6x10",
+   "kind": "painted",
+   "texture": "ext_6x10-atlas",
+   "models": [
+    "ext_6x10"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_6x6",
+   "kind": "painted",
+   "texture": "ext_6x6-atlas",
+   "models": [
+    "ext_6x6"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_8x10",
+   "kind": "painted",
+   "texture": "ext_8x10-atlas",
+   "models": [
+    "ext_8x10"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "ext_8x8",
+   "kind": "painted",
+   "texture": "ext_8x8-atlas",
+   "models": [
+    "ext_8x8"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "gate_guardians",
+   "kind": "painted",
+   "texture": "gate_guardians-atlas",
+   "models": [
+    "gate_guardians"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "gate_guardians_glow",
+   "kind": "glow",
+   "texture": "gate_guardians-atlas",
+   "models": [
+    "gate_guardians"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "its own small mesh: dim by day, emissive from half time"
+  },
+  {
+   "name": "gate_portal",
+   "kind": "painted",
+   "texture": "gate_portal-atlas",
+   "models": [
+    "gate_portal"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "gate_portal_glow",
+   "kind": "glow",
+   "texture": "gate_portal-atlas",
+   "models": [
+    "gate_portal"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "its own small mesh: dim by day, emissive from half time"
+  },
+  {
+   "name": "lagoon_flower_bougainvillea_red",
+   "kind": "foliage card",
+   "texture": "bougainvillea",
+   "tint": [
+    1.0,
+    0.42358,
+    0.56109
+   ],
+   "tint_linear": "[1.0, 0.15, 0.275]",
+   "models": [
+    "plant_bush_1",
+    "plant_bush_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_flower_gumamela_red",
+   "kind": "foliage card",
+   "texture": "gumamela",
+   "tint": [
+    1.0,
+    0.42358,
+    0.56109
+   ],
+   "tint_linear": "[1.0, 0.15, 0.275]",
+   "models": [
+    "plant_bush_0",
+    "plant_bush_2"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_blade_grass_dark",
+   "kind": "foliage card",
+   "texture": "blade",
+   "tint": [
+    0.5371,
+    0.76738,
+    0.42358
+   ],
+   "tint_linear": "[0.25, 0.55, 0.15]",
+   "models": [
+    "plant_tuft_0",
+    "plant_tuft_1",
+    "plant_tuft_2",
+    "plant_tuft_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_blade_grass_light",
+   "kind": "foliage card",
+   "texture": "blade",
+   "tint": [
+    0.81237,
+    0.9429,
+    0.51167
+   ],
+   "tint_linear": "[0.625, 0.875, 0.225]",
+   "models": [
+    "plant_groundcover_0",
+    "plant_groundcover_1",
+    "plant_groundcover_3",
+    "plant_tuft_0",
+    "plant_tuft_1",
+    "plant_tuft_2",
+    "plant_tuft_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_croton_croton_dark",
+   "kind": "foliage card",
+   "texture": "croton_leaf",
+   "tint": [
+    0.80947,
+    0.74838,
+    0.76111
+   ],
+   "tint_linear": "[0.62, 0.52, 0.54]",
+   "models": [
+    "plant_croton_0",
+    "plant_croton_1",
+    "plant_croton_2",
+    "plant_croton_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_croton_croton_light",
+   "kind": "foliage card",
+   "texture": "croton_leaf",
+   "tint": [
+    1.0,
+    0.99116,
+    0.99116
+   ],
+   "tint_linear": "[1.0, 0.98, 0.98]",
+   "models": [
+    "plant_croton_0",
+    "plant_croton_1",
+    "plant_croton_2",
+    "plant_croton_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_monstera_monstera_dark",
+   "kind": "foliage card",
+   "texture": "monstera_leaf",
+   "tint": [
+    0.36952,
+    0.63624,
+    0.34919
+   ],
+   "tint_linear": "[0.1125, 0.3625, 0.1]",
+   "models": [
+    "plant_monstera_0",
+    "plant_monstera_1",
+    "plant_monstera_2"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_monstera_monstera_light",
+   "kind": "foliage card",
+   "texture": "monstera_leaf",
+   "tint": [
+    0.64608,
+    0.85431,
+    0.40654
+   ],
+   "tint_linear": "[0.375, 0.7, 0.1375]",
+   "models": [
+    "plant_monstera_0",
+    "plant_monstera_1",
+    "plant_monstera_2"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_round_bush_dark",
+   "kind": "foliage card",
+   "texture": "leaf_round",
+   "tint": [
+    0.38857,
+    0.66519,
+    0.34919
+   ],
+   "tint_linear": "[0.125, 0.4, 0.1]",
+   "models": [
+    "plant_bush_0",
+    "plant_bush_1",
+    "plant_bush_2",
+    "plant_bush_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_round_bush_light",
+   "kind": "foliage card",
+   "texture": "leaf_round",
+   "tint": [
+    0.68361,
+    0.8937,
+    0.38857
+   ],
+   "tint_linear": "[0.425, 0.775, 0.125]",
+   "models": [
+    "plant_bush_0",
+    "plant_bush_1",
+    "plant_bush_2",
+    "plant_bush_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_round_groundcover_dark",
+   "kind": "foliage card",
+   "texture": "leaf_round",
+   "tint": [
+    0.42358,
+    0.70141,
+    0.30353
+   ],
+   "tint_linear": "[0.15, 0.45, 0.075]",
+   "models": [
+    "plant_groundcover_0",
+    "plant_groundcover_1",
+    "plant_groundcover_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_leaf_round_groundcover_light",
+   "kind": "foliage card",
+   "texture": "leaf_round",
+   "tint": [
+    0.73536,
+    0.90633,
+    0.36952
+   ],
+   "tint_linear": "[0.5, 0.8, 0.1125]",
+   "models": [
+    "plant_groundcover_0",
+    "plant_groundcover_1",
+    "plant_groundcover_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": true,
+   "cutout": true,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_stalk_croton",
+   "kind": "painted",
+   "texture": "stalk",
+   "tint": [
+    0.81237,
+    0.68361,
+    0.6055
+   ],
+   "tint_linear": "[0.625, 0.425, 0.325]",
+   "models": [
+    "plant_croton_0",
+    "plant_croton_1",
+    "plant_croton_2",
+    "plant_croton_3"
+   ],
+   "vertex_colour": false,
+   "two_sided": false,
+   "cutout": false,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "lagoon_stalk_monstera",
+   "kind": "painted",
+   "texture": "stalk",
+   "tint": [
+    0.62621,
+    0.82666,
+    0.48453
+   ],
+   "tint_linear": "[0.35, 0.65, 0.2]",
+   "models": [
+    "plant_monstera_0",
+    "plant_monstera_1",
+    "plant_monstera_2"
+   ],
+   "vertex_colour": false,
+   "two_sided": false,
+   "cutout": false,
+   "texture_from": "Textures/<texture>_albedo.png (copied from LagoonCove/Textures; spec from lagoon_cove_layout.json)"
+  },
+  {
+   "name": "leaf_dark",
+   "texture": "leaf",
+   "tint": [
+    0.3815,
+    0.6563,
+    0.2515
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "foliage card",
+   "models": [
+    "tree_round",
+    "tree_tall_deep"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "leaf_dark_lime",
+   "texture": "leaf",
+   "tint": [
+    0.5889,
+    0.7928,
+    0.2784
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "foliage card",
+   "models": [
+    "tree_broad_lime"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "leaf_dark_olive",
+   "texture": "leaf",
+   "tint": [
+    0.5679,
+    0.6472,
+    0.3024
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "foliage card",
+   "models": [
+    "tree_lean_olive"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "leaf_light",
+   "texture": "leaf",
+   "tint": [
+    0.6285,
+    0.8869,
+    0.2784
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "foliage card",
+   "models": [
+    "tree_round",
+    "tree_tall_deep"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "leaf_light_lime",
+   "texture": "leaf",
+   "tint": [
+    0.8279,
+    0.9816,
+    0.3815
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "foliage card",
+   "models": [
+    "tree_broad_lime"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "leaf_light_olive",
+   "texture": "leaf",
+   "tint": [
+    0.7928,
+    0.8613,
+    0.4144
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "foliage card",
+   "models": [
+    "tree_lean_olive"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "mid_E",
+   "kind": "painted",
+   "texture": "mid_E-atlas",
+   "models": [
+    "mid_E"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "mid_N",
+   "kind": "painted",
+   "texture": "mid_N-atlas",
+   "models": [
+    "mid_N"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "mid_S",
+   "kind": "painted",
+   "texture": "mid_S-atlas",
+   "models": [
+    "mid_S"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "mid_W",
+   "kind": "painted",
+   "texture": "mid_W-atlas",
+   "models": [
+    "mid_W"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "monolith",
+   "kind": "painted",
+   "texture": "monolith-atlas",
+   "models": [
+    "monolith"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "mover_ferry",
+   "kind": "painted",
+   "texture": "mover_ferry-atlas",
+   "models": [
+    "mover_ferry"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "mover_lift",
+   "kind": "painted",
+   "texture": "mover_lift-atlas",
+   "models": [
+    "mover_lift"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "mover_piston",
+   "kind": "painted",
+   "texture": "mover_piston-atlas",
+   "models": [
+    "mover_piston"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "pad_geyser",
+   "kind": "painted",
+   "texture": "pad_geyser-atlas",
+   "models": [
+    "pad_geyser"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "pad_speed",
+   "kind": "painted",
+   "texture": "pad_speed-atlas",
+   "models": [
+    "pad_speed"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_house_gong_glow",
+   "kind": "glow",
+   "texture": "house_gong",
+   "models": [
+    "house_gong"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "its own small mesh: dim by day, emissive from half time"
+  },
+  {
+   "name": "payo_house_gong_main",
+   "kind": "painted",
+   "texture": "house_gong",
+   "models": [
+    "house_gong"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_house_granary_main",
+   "kind": "painted",
+   "texture": "house_granary",
+   "models": [
+    "house_granary"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_house_long_glow",
+   "kind": "glow",
+   "texture": "house_long",
+   "models": [
+    "house_long"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "its own small mesh: dim by day, emissive from half time"
+  },
+  {
+   "name": "payo_house_long_main",
+   "kind": "painted",
+   "texture": "house_long",
+   "models": [
+    "house_long"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_house_tiered_glow",
+   "kind": "glow",
+   "texture": "house_tiered",
+   "models": [
+    "house_tiered"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "its own small mesh: dim by day, emissive from half time"
+  },
+  {
+   "name": "payo_house_tiered_main",
+   "kind": "painted",
+   "texture": "house_tiered",
+   "models": [
+    "house_tiered"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_house_tower_glow",
+   "kind": "glow",
+   "texture": "house_tower",
+   "models": [
+    "house_tower"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "its own small mesh: dim by day, emissive from half time"
+  },
+  {
+   "name": "payo_house_tower_main",
+   "kind": "painted",
+   "texture": "house_tower",
+   "models": [
+    "house_tower"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_props_a",
+   "kind": "painted",
+   "texture": "seta-atlas",
+   "models": [
+    "basket_stack",
+    "offering_table",
+    "tapuy_jar_large",
+    "tapuy_jar_open",
+    "tapuy_jar_small"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_props_b",
+   "kind": "painted",
+   "texture": "setb-atlas",
+   "models": [
+    "banner",
+    "gong_rack",
+    "hagabi_bench"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_props_c",
+   "kind": "painted",
+   "texture": "setc-atlas",
+   "models": [
+    "fire_bowl",
+    "lantern_pole",
+    "torch"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "payo_props_d",
+   "kind": "painted",
+   "texture": "setd-atlas",
+   "models": [
+    "drying_rack",
+    "scarecrow"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "pickup_plinth",
+   "kind": "painted",
+   "texture": "pickup_plinth-atlas",
+   "models": [
+    "pickup_plinth"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "pickup_orb",
+   "kind": "painted",
+   "texture": "pickup_orb-atlas",
+   "models": [
+    "pickup_orb"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "the stamina orb's gold, woven ring and jade leaves (tools/payo_pieces/orb_build.py). Added by hand 2026-10-19: tools/payo_export_unity.py does not write it, keep it on a re-export"
+  },
+  {
+   "name": "pickup_orb_glow",
+   "kind": "glow",
+   "day_glow": 1.5,
+   "texture": "pickup_orb-atlas",
+   "models": [
+    "pickup_orb"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "the stamina orb's crystal and gems: its picture is its emission, 1.5 by day (day_glow), 1.7 at night. Added by hand 2026-10-19, keep it on a re-export"
+  },
+  {
+   "name": "py_banana_stem",
+   "texture": "banana_stem",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "payo_plant_broadleaf_0"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_court_stone",
+   "kind": "painted",
+   "texture": "court_platform-atlas",
+   "models": [
+    "court_platform",
+    "pool_basin"
+   ],
+   "vertex_colour": true,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "the court platform, pit and gorge (court_platform) and the sacred pool's rim (pool_basin): its own atlas and normal map inside the glb, times vertex colour"
+  },
+  {
+   "name": "py_fall",
+   "kind": "fall",
+   "texture": "py_fall",
+   "models": [
+    "fall_medium",
+    "fall_small",
+    "head_fall"
+   ],
+   "vertex_colour": true,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": true,
+   "cutout": false,
+   "note": "UV v runs downstream: scroll it (Shaders/PayoFall) head_fall carries it (the great fall at the valley's head)."
+  },
+  {
+   "name": "py_flat",
+   "texture": "",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "shader_note": "white: ALL its colour is vertex colour (skin, hide, feathers, bronze, painted marks)",
+   "kind": "painted",
+   "models": [
+    "carabao_stand",
+    "carabao_wallow",
+    "catch_bird",
+    "chicken",
+    "chicken_white",
+    "child_wave",
+    "dog",
+    "egret",
+    "hawk",
+    "villager_carry",
+    "villager_plant",
+    "villager_sit",
+    "villager_stand",
+    "villager_watch"
+   ],
+   "vertex_colour": true,
+   "texture_from": "none"
+  },
+  {
+   "name": "py_foam",
+   "kind": "foam",
+   "texture": "py_foam",
+   "models": [
+    "fall_medium",
+    "fall_small",
+    "head_fall"
+   ],
+   "vertex_colour": true,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "head_fall carries it (the great fall at the valley's head)."
+  },
+  {
+   "name": "py_frond_dark",
+   "texture": "frond_broad",
+   "tint": [
+    0.52,
+    0.78,
+    0.7
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "payo_plant_palm_0"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_frond_light",
+   "texture": "frond_broad",
+   "tint": [
+    0.8,
+    1.0,
+    0.92
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "payo_plant_palm_0"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_frond_small",
+   "texture": "frond",
+   "tint": [
+    0.66,
+    0.92,
+    0.56
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "payo_plant_palm_0"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_head_rock",
+   "kind": "painted",
+   "texture": "head_fall",
+   "models": [
+    "head_fall"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false,
+   "note": "the head's cliff (head_fall): its own picture and normal map inside the glb, NO vertex colour"
+  },
+  {
+   "name": "py_mayari",
+   "texture": "mayari",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false,
+   "cutout": true,
+   "shader_note": "the sky piece: unlit, alpha blended, no fog, drawn behind the far ranges. Atlas of four 1024 tiles.",
+   "kind": "unlit",
+   "models": [
+    "payo_sky_mayari"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_mist",
+   "kind": "mist",
+   "texture": "py_foam",
+   "models": [
+    "fall_medium",
+    "fall_small",
+    "head_fall"
+   ],
+   "vertex_colour": true,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": true,
+   "cutout": false,
+   "note": "head_fall carries it (the great fall at the valley's head)."
+  },
+  {
+   "name": "py_paddle_dark",
+   "texture": "paddle",
+   "tint": [
+    0.36,
+    0.74,
+    0.52
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "payo_plant_broadleaf_0"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_paddle_light",
+   "texture": "paddle",
+   "tint": [
+    0.7,
+    0.98,
+    0.62
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "payo_plant_broadleaf_0"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_palm_trunk",
+   "texture": "palm_trunk",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "payo_plant_palm_0"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_rice",
+   "texture": "rice_payo",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 0.33,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "villager_carry"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_rock",
+   "kind": "painted",
+   "texture": "py_rock",
+   "models": [
+    "boulder_1",
+    "boulder_2",
+    "boulder_3",
+    "boulder_4",
+    "boulder_5",
+    "cliff_wall",
+    "fall_medium",
+    "fall_small"
+   ],
+   "vertex_colour": true,
+   "tiling_m": 4.0,
+   "note": "also the SECOND material of every payo_land_* mesh: its steep faces and the stream's bed (vertex colour is a light grey there)",
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "py_sawali",
+   "texture": "sawali",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "villager_carry",
+    "villager_plant",
+    "villager_watch"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_terrace_plant",
+   "kind": "foliage card",
+   "texture": "py_terrace_plant",
+   "models": [
+    "boulder_1",
+    "boulder_2",
+    "boulder_3",
+    "boulder_4",
+    "boulder_5",
+    "cliff_wall",
+    "cover_fern",
+    "cover_grass",
+    "cover_taro",
+    "head_fall"
+   ],
+   "vertex_colour": true,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": true,
+   "cutout": true
+  },
+  {
+   "name": "py_tree_core",
+   "texture": "",
+   "tint": [
+    0.12,
+    0.38,
+    0.2
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "tree_fig_a",
+    "tree_fig_b"
+   ],
+   "vertex_colour": true,
+   "texture_from": "none"
+  },
+  {
+   "name": "py_tree_leaf_dark",
+   "texture": "leaf",
+   "tint": [
+    0.28,
+    0.66,
+    0.42
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "tree_fig_a",
+    "tree_fig_b"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_tree_leaf_light",
+   "texture": "leaf",
+   "tint": [
+    0.56,
+    0.94,
+    0.5
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "tree_fig_a",
+    "tree_fig_b"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_tree_trunk",
+   "texture": "bark",
+   "tint": [
+    0.86,
+    0.9,
+    0.96
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "tree_fig_a",
+    "tree_fig_b"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_water",
+   "texture": "water",
+   "tint": [
+    0.8,
+    1.0,
+    0.98
+   ],
+   "tiling": 0.12,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true,
+   "cutout": false,
+   "shader_note": "flat paddy water; a water shader may be given to this name. Nothing else shares its plane.",
+   "kind": "water",
+   "models": [
+    "carabao_wallow",
+    "fall_medium",
+    "fall_small",
+    "head_fall",
+    "pool_basin"
+   ],
+   "vertex_colour": true,
+   "texture_from": "none: give it the game's paddy water",
+   "note": "paddies, pools, troughs: the game's water shader head_fall carries it (the great fall at the valley's head)."
+  },
+  {
+   "name": "py_weave",
+   "texture": "weave",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "child_wave",
+    "villager_carry",
+    "villager_plant",
+    "villager_sit",
+    "villager_stand",
+    "villager_watch"
+   ],
+   "vertex_colour": true,
+   "texture_from": "Textures/<texture>_albedo.png (kept from the rejected pass)"
+  },
+  {
+   "name": "py_wet",
+   "kind": "decal",
+   "texture": "py_wet",
+   "models": [
+    "fall_medium",
+    "fall_small"
+   ],
+   "vertex_colour": true,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": true,
+   "cutout": false
+  },
+  {
+   "name": "slab_E",
+   "kind": "painted",
+   "texture": "slab_E-atlas",
+   "models": [
+    "slab_E"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "slab_N",
+   "kind": "painted",
+   "texture": "slab_N-atlas",
+   "models": [
+    "slab_N"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "slab_S",
+   "kind": "painted",
+   "texture": "slab_S-atlas",
+   "models": [
+    "slab_S"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "slab_W",
+   "kind": "painted",
+   "texture": "slab_W-atlas",
+   "models": [
+    "slab_W"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stair_E",
+   "kind": "painted",
+   "texture": "stair_E-atlas",
+   "models": [
+    "stair_E"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stair_W",
+   "kind": "painted",
+   "texture": "stair_W-atlas",
+   "models": [
+    "stair_W"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_1",
+   "kind": "painted",
+   "texture": "stone_1-atlas",
+   "models": [
+    "stone_1"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_2",
+   "kind": "painted",
+   "texture": "stone_2-atlas",
+   "models": [
+    "stone_2"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_3",
+   "kind": "painted",
+   "texture": "stone_3-atlas",
+   "models": [
+    "stone_3"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_4",
+   "kind": "painted",
+   "texture": "stone_4-atlas",
+   "models": [
+    "stone_4"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_5",
+   "kind": "painted",
+   "texture": "stone_5-atlas",
+   "models": [
+    "stone_5"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_6",
+   "kind": "painted",
+   "texture": "stone_6-atlas",
+   "models": [
+    "stone_6"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_7",
+   "kind": "painted",
+   "texture": "stone_7-atlas",
+   "models": [
+    "stone_7"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "stone_8",
+   "kind": "painted",
+   "texture": "stone_8-atlas",
+   "models": [
+    "stone_8"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "tower_drum",
+   "kind": "painted",
+   "texture": "tower_drum-atlas",
+   "models": [
+    "tower_drum"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "tower_head",
+   "kind": "painted",
+   "texture": "tower_head-atlas",
+   "models": [
+    "tower_head"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "tower_owl",
+   "kind": "painted",
+   "texture": "tower_owl-atlas",
+   "models": [
+    "tower_owl"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "tower_shrine",
+   "kind": "painted",
+   "texture": "tower_shrine-atlas",
+   "models": [
+    "tower_shrine"
+   ],
+   "vertex_colour": false,
+   "texture_from": "embedded in each glb that uses it",
+   "two_sided": false,
+   "cutout": false
+  },
+  {
+   "name": "trunk",
+   "texture": "bark",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "tree_broad_lime",
+    "tree_round",
+    "tree_tall_deep"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "trunk_grey",
+   "texture": "bark",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "kind": "painted",
+   "models": [
+    "tree_lean_olive"
+   ],
+   "vertex_colour": false,
+   "texture_from": "Textures/<texture>_albedo.png (Payo already has it; spec from eskinita_alley_layout.json)"
+  },
+  {
+   "name": "py_land_slope",
+   "kind": "payo_land",
+   "surface": "slope",
+   "models": [
+    "payo_land_xm5_ym4",
+    "payo_land_xm5_ym3",
+    "payo_land_xm5_ym2",
+    "payo_land_xm5_ym1",
+    "payo_land_xm5_y0",
+    "payo_land_xm5_y1",
+    "payo_land_xm5_y2",
+    "payo_land_xm5_y3",
+    "payo_land_xm5_y4",
+    "payo_land_xm5_y5",
+    "payo_land_xm5_y6",
+    "payo_land_xm5_y7",
+    "payo_land_xm5_y8",
+    "payo_land_xm5_y9",
+    "payo_land_xm5_y10",
+    "payo_land_xm4_ym4",
+    "... 135 more"
+   ],
+   "vertex_colour": true,
+   "texture": null,
+   "texture_set": "grass",
+   "tile_m": 20.0,
+   "relief_m": 0.12,
+   "textures": [
+    "Textures/land/grass_value.png",
+    "Textures/land/grass_height.png",
+    "Textures/land/grass_normal.png",
+    "Textures/land/macro_value.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "COLOR_0 is the face's own colour, LINEAR float; the calm paint multiplies it (tools/payo_land_blend.py calm_paint)."
+  },
+  {
+   "name": "py_land_wall",
+   "kind": "payo_land",
+   "surface": "wall",
+   "models": [
+    "payo_land_xm5_y7",
+    "payo_land_xm5_y8",
+    "payo_land_xm5_y9",
+    "payo_land_xm4_y5",
+    "payo_land_xm4_y6",
+    "payo_land_xm4_y7",
+    "payo_land_xm4_y8",
+    "payo_land_xm4_y9",
+    "payo_land_xm3_y4",
+    "payo_land_xm3_y5",
+    "payo_land_xm3_y6",
+    "payo_land_xm3_y7",
+    "payo_land_xm3_y8",
+    "payo_land_xm2_y3",
+    "payo_land_xm2_y4",
+    "payo_land_xm2_y5",
+    "... 15 more"
+   ],
+   "vertex_colour": true,
+   "texture": null,
+   "texture_set": "earth",
+   "tile_m": 6.0,
+   "relief_m": 0.06,
+   "textures": [
+    "Textures/land/earth_color.png",
+    "Textures/land/earth_height.png",
+    "Textures/land/earth_normal.png",
+    "Textures/land/grass_value.png",
+    "Textures/land/grass_height.png",
+    "Textures/land/grass_normal.png",
+    "Textures/land/macro_value.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "COLOR_0 is the face's own colour, LINEAR float; the calm paint multiplies it (tools/payo_land_blend.py calm_paint)."
+  },
+  {
+   "name": "py_land_paddy",
+   "kind": "payo_land",
+   "surface": "paddy",
+   "models": [
+    "payo_land_xm5_y7",
+    "payo_land_xm5_y8",
+    "payo_land_xm5_y9",
+    "payo_land_xm4_y5",
+    "payo_land_xm4_y6",
+    "payo_land_xm4_y7",
+    "payo_land_xm4_y8",
+    "payo_land_xm4_y9",
+    "payo_land_xm3_y4",
+    "payo_land_xm3_y5",
+    "payo_land_xm3_y6",
+    "payo_land_xm3_y7",
+    "payo_land_xm3_y8",
+    "payo_land_xm2_y3",
+    "payo_land_xm2_y4",
+    "payo_land_xm2_y5",
+    "... 15 more"
+   ],
+   "vertex_colour": true,
+   "texture": null,
+   "texture_set": "paddy",
+   "tile_m": 12.0,
+   "relief_m": 0.02,
+   "textures": [
+    "Textures/land/paddy_value.png",
+    "Textures/land/paddy_height.png",
+    "Textures/land/paddy_normal.png",
+    "Textures/land/paddy_rows.png",
+    "Textures/land/paddy_rows.txt",
+    "Textures/land/rice_density.png",
+    "Textures/land/rice_density.txt",
+    "Textures/land/macro_value.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "COLOR_0 is the face's own colour, LINEAR float; the calm paint multiplies it (tools/payo_land_blend.py calm_paint)."
+  },
+  {
+   "name": "py_land_rock",
+   "kind": "payo_land",
+   "surface": "rock",
+   "models": [
+    "payo_land_xm5_y8",
+    "payo_land_xm4_y7",
+    "payo_land_xm4_y8",
+    "payo_land_xm3_y5",
+    "payo_land_xm3_y6",
+    "payo_land_xm3_y7",
+    "payo_land_xm2_y4",
+    "payo_land_xm2_y5",
+    "payo_land_xm1_y0",
+    "payo_land_xm1_y1",
+    "payo_land_xm1_y2",
+    "payo_land_xm1_y3",
+    "payo_land_xm1_y4",
+    "payo_land_x0_y0",
+    "payo_land_x0_y1",
+    "payo_land_x0_y2",
+    "... 1 more"
+   ],
+   "vertex_colour": true,
+   "texture": null,
+   "texture_set": "rock",
+   "tile_m": 16.0,
+   "relief_m": 0.22,
+   "textures": [
+    "Textures/land/rock_value.png",
+    "Textures/land/rock_height.png",
+    "Textures/land/rock_normal.png",
+    "Textures/land/macro_value.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "COLOR_0 is the face's own colour, LINEAR float; the calm paint multiplies it (tools/payo_land_blend.py calm_paint)."
+  },
+  {
+   "name": "py_land_paving",
+   "kind": "payo_land",
+   "surface": "paving",
+   "models": [
+    "payo_land_xm1_ym1",
+    "payo_land_xm1_y0",
+    "payo_land_x0_ym1",
+    "payo_land_x0_y0"
+   ],
+   "vertex_colour": true,
+   "texture": null,
+   "texture_set": "paving",
+   "tile_m": 10.0,
+   "relief_m": 0.05,
+   "textures": [
+    "Textures/land/paving_value.png",
+    "Textures/land/paving_height.png",
+    "Textures/land/paving_normal.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "COLOR_0 is the face's own colour, LINEAR float; the calm paint multiplies it (tools/payo_land_blend.py calm_paint)."
+  },
+  {
+   "name": "py_land_flooded",
+   "kind": "payo_land",
+   "surface": "flooded",
+   "models": [
+    "payo_land_xm5_y9",
+    "payo_land_xm4_y9",
+    "payo_land_xm3_y4",
+    "payo_land_xm3_y5",
+    "payo_land_xm3_y6",
+    "payo_land_xm2_y3",
+    "payo_land_xm2_y4",
+    "payo_land_xm2_y5",
+    "payo_land_xm2_y6",
+    "payo_land_xm1_ym1",
+    "payo_land_xm1_y0",
+    "payo_land_xm1_y1",
+    "payo_land_xm1_y2",
+    "payo_land_xm1_y3",
+    "payo_land_xm1_y4",
+    "payo_land_xm1_y5",
+    "... 6 more"
+   ],
+   "vertex_colour": true,
+   "texture": null,
+   "texture_set": "flooded",
+   "tile_m": 14.0,
+   "relief_m": 0.025,
+   "textures": [
+    "Textures/land/flooded_value.png",
+    "Textures/land/flooded_height.png",
+    "Textures/land/flooded_normal.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "COLOR_0 is the face's own colour, LINEAR float; the calm paint multiplies it (tools/payo_land_blend.py calm_paint)."
+  },
+  {
+   "name": "py_land_town_wall",
+   "kind": "payo_land",
+   "surface": "town_wall",
+   "models": [
+    "payo_land_xm1_ym1",
+    "payo_land_xm1_y0",
+    "payo_land_x0_ym1",
+    "payo_land_x0_y0"
+   ],
+   "vertex_colour": true,
+   "texture": null,
+   "texture_set": "bank",
+   "tile_m": [
+    12.0,
+    12.0,
+    5.0
+   ],
+   "relief_m": 0.097,
+   "textures": [
+    "Textures/land/bank_color.png",
+    "Textures/land/bank_value.png",
+    "Textures/land/bank_shade.png",
+    "Textures/land/bank_height.png",
+    "Textures/land/bank_normal.png",
+    "Textures/land/bank_mean.txt"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "COLOR_0 is the face's own colour, LINEAR float; the calm paint multiplies it (tools/payo_land_blend.py calm_paint)."
+  },
+  {
+   "name": "py_river",
+   "kind": "payo_land",
+   "surface": "water",
+   "models": [
+    "payo_river",
+    "payo_water_stair",
+    "payo_inlet_water"
+   ],
+   "vertex_colour": false,
+   "texture": null,
+   "texture_set": "water",
+   "tile_m": 24.0,
+   "relief_m": 0.1,
+   "textures": [
+    "Textures/land/water_value.png",
+    "Textures/land/water_height.png",
+    "Textures/land/water_normal.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "the river ribbon and its sheets; no vertex colour"
+  },
+  {
+   "name": "py_river_rapids",
+   "kind": "payo_land",
+   "surface": "foam",
+   "models": [
+    "payo_river",
+    "payo_weir_water"
+   ],
+   "vertex_colour": false,
+   "texture": null,
+   "texture_set": "foam",
+   "tile_m": 10.0,
+   "relief_m": 0.1,
+   "textures": [
+    "Textures/land/foam_value.png",
+    "Textures/land/foam_height.png",
+    "Textures/land/foam_normal.png"
+   ],
+   "world_uv": "UV0 is (x, z) in metres; the shader may project from world space instead",
+   "note": "the river ribbon and its sheets; no vertex colour"
+  }
+ ]
+}

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 05:40:13Z" end-time="2026-10-01 05:40:39Z" duration="25.9680208">
+  <test-suite type="TestSuite" id="2355" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1098" result="Passed" start-time="2026-10-01 05:40:13Z" end-time="2026-10-01 05:40:39Z" duration="25.968021" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2349" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1098" result="Passed" start-time="2026-10-01 05:40:13Z" end-time="2026-10-01 05:40:39Z" duration="25.952513" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="238892" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2350" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1098" result="Passed" start-time="2026-10-01 05:40:13Z" end-time="2026-10-01 05:40:39Z" duration="25.943633" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2351" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1098" result="Passed" start-time="2026-10-01 05:40:13Z" end-time="2026-10-01 05:40:39Z" duration="25.934940" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1812" name="OwnerTrainingUiTests" fullname="TumbangPreso.PlayTests.OwnerTrainingUiTests" classname="TumbangPreso.PlayTests.OwnerTrainingUiTests" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-10-01 05:40:13Z" end-time="2026-10-01 05:40:17Z" duration="4.433925" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1826" name="LatestTutorialNotesRemoveDummyMarkersAndEnlargeQuit" fullname="TumbangPreso.PlayTests.OwnerTrainingUiTests.LatestTutorialNotesRemoveDummyMarkersAndEnlargeQuit" methodname="LatestTutorialNotesRemoveDummyMarkersAndEnlargeQuit" classname="TumbangPreso.PlayTests.OwnerTrainingUiTests" runstate="Runnable" seed="982060154" result="Passed" start-time="2026-10-01 05:40:13Z" end-time="2026-10-01 05:40:17Z" duration="4.419180" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Tutorial-dummy-no-marker-960x540 cream source=252,211,159 pixel=194,187,222; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Tutorial-complete-readable-quit-960x540 cream source=252,211,159 pixel=202,219,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Tutorial-complete-readable-quit-1600x680 cream source=252,211,159 pixel=210,222,228; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1917" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-01 05:40:17Z" end-time="2026-10-01 05:40:39Z" duration="21.461929" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1927" name="WaterwallDropsOneCrossingOnItsApproachSide" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.WaterwallDropsOneCrossingOnItsApproachSide" methodname="WaterwallDropsOneCrossingOnItsApproachSide" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="710901753" result="Passed" start-time="2026-10-01 05:40:17Z" end-time="2026-10-01 05:40:23Z" duration="5.728223" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1929" name="WaterwallRecoveryIsRenderOnlyWithNativeCourtViews" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.WaterwallRecoveryIsRenderOnlyWithNativeCourtViews" methodname="WaterwallRecoveryIsRenderOnlyWithNativeCourtViews" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="18946029" result="Passed" start-time="2026-10-01 05:40:23Z" end-time="2026-10-01 05:40:30Z" duration="6.710223" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] Waterwall-active-960x540/Power0: vertices=659, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] Waterwall-active-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] Waterwall-active-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] Waterwall-active-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] Waterwall-active-960x540/Power2: vertices=418, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] Waterwall-active-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=117, material=1
+[TumpUiCapture] Waterwall-active-960x540 cream source=252,211,159 pixel=180,189,233; isolated UI camera, no ColourGrade.
+[TumpGeometry] Waterwall-broken-960x540/Power0: vertices=659, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] Waterwall-broken-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] Waterwall-broken-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] Waterwall-broken-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] Waterwall-broken-960x540/Power2: vertices=418, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] Waterwall-broken-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=117, material=1
+[TumpUiCapture] Waterwall-broken-960x540 cream source=252,211,159 pixel=180,189,233; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1928" name="WaterwallRefusesSolidCoverWithoutSpendingAndExpires" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.WaterwallRefusesSolidCoverWithoutSpendingAndExpires" methodname="WaterwallRefusesSolidCoverWithoutSpendingAndExpires" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1156827468" result="Passed" start-time="2026-10-01 05:40:30Z" end-time="2026-10-01 05:40:39Z" duration="9.019435" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

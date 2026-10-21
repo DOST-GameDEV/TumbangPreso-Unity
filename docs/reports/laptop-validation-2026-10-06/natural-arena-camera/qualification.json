@@ -1,0 +1,48 @@
+{
+  "source": "7bed9ddb4c9f5e23e40b502146189e12ccfbfc80",
+  "qualifiedManifestSha256": "16232a7a11f3b7a18b6755ded1b8a88b3112adb81c1acc7635c4e511d303f804",
+  "timeline": {
+    "rows": 29,
+    "firstElapsed": 0.0,
+    "lastElapsed": 14.833,
+    "firstClock": 90.0,
+    "lastClock": 75.802,
+    "lastCuts": 6,
+    "lastSafePoseFallbacks": 0,
+    "beats": [
+      "LataHit",
+      "Quiet",
+      "Retrieval",
+      "SlipperLanded",
+      "ThrowPrep"
+    ],
+    "shots": [
+      "Chase",
+      "Objective",
+      "QuietEstablish",
+      "RetrievalTwoShot"
+    ],
+    "castIds": [
+      "dante",
+      "rafi",
+      "zack"
+    ]
+  },
+  "receipt": {
+    "pid": 23316,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 1,
+    "failed": 0,
+    "inputCount": 21146,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  },
+  "generatedDeltaCount": 279,
+  "profile": {
+    "profile": "validation-qa-a-be075dcdfa07",
+    "originalFileCount": 4,
+    "generatedChangesPreserved": 0,
+    "originalFilesRestored": true
+  }
+}

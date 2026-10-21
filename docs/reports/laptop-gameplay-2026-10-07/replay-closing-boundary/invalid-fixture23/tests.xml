@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 10:35:38Z" end-time="2026-10-07 10:36:17Z" duration="38.5168732">
+  <test-suite type="TestSuite" id="3571" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2080" result="Failed" site="Child" start-time="2026-10-07 10:35:38Z" end-time="2026-10-07 10:36:17Z" duration="38.516873" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3563" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2080" result="Failed" site="Child" start-time="2026-10-07 10:35:38Z" end-time="2026-10-07 10:36:17Z" duration="38.509011" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="68416" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3564" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2080" result="Failed" site="Child" start-time="2026-10-07 10:35:38Z" end-time="2026-10-07 10:36:17Z" duration="38.506626" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3567" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2078" result="Failed" site="Child" start-time="2026-10-07 10:35:38Z" end-time="2026-10-07 10:36:17Z" duration="38.504471" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1209" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-07 10:35:38Z" end-time="2026-10-07 10:36:17Z" duration="38.472363" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1212" name="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1050330453" result="Failed" start-time="2026-10-07 10:35:38Z" end-time="2026-10-07 10:36:17Z" duration="38.461581" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final actual render frame must reach disk.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaFxRecordedTests+<ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint>d__6.MoveNext () [0x003f0] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaFxRecordedTests.cs:116
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.92, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.82, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

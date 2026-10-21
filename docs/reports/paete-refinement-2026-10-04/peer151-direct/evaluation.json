@@ -1,0 +1,58 @@
+{
+  "scope": "Three actual protocol151 Linux player processes on loopback; observer kit refresh, not process restart, separate physical machines or WAN.",
+  "errors": [],
+  "peers": {
+    "host": {
+      "samples": 628,
+      "casterTravel": 4.176,
+      "targetTravel": 1.044,
+      "finalGap": 0.7799999999999998,
+      "casterFinal": [
+        0.0,
+        -3.824
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "activeSamples": 14,
+      "refreshed": false,
+      "largestCasterBackwardStep": 0.30133199999999993
+    },
+    "owner": {
+      "samples": 620,
+      "casterTravel": 4.176,
+      "targetTravel": 1.044,
+      "finalGap": 0.7799999999999998,
+      "casterFinal": [
+        0.0,
+        -3.824
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "activeSamples": 14,
+      "refreshed": false,
+      "largestCasterBackwardStep": 0
+    },
+    "observer": {
+      "samples": 616,
+      "casterTravel": 4.176,
+      "targetTravel": 1.044,
+      "finalGap": 0.7799999999999998,
+      "casterFinal": [
+        0.0,
+        -3.824
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "activeSamples": 8,
+      "refreshed": true,
+      "largestCasterBackwardStep": 0.13897800000000027
+    }
+  },
+  "ok": true
+}

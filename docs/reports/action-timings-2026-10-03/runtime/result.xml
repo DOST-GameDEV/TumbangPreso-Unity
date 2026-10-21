@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="25" result="Passed" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="1.2400361">
+  <test-suite type="TestSuite" id="2784" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1450" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="1.240036" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2778" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1450" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="1.229739" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="134490" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2779" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1450" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="1.225897" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2780" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1450" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="1.222624" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1326" name="ContactTimingRevisionTests" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="0.988817" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1333" name="CanDownContactDoesNotEarnTheShortHitRecovery" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.CanDownContactDoesNotEarnTheShortHitRecovery" methodname="CanDownContactDoesNotEarnTheShortHitRecovery" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="30902099" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.095525" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1350" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.415341" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1339" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;hit&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;hit&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="656646519" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.045259" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1340" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;miss&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;miss&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="194789240" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.038036" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1341" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;sender&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;sender&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1783928490" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.035773" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1342" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;scope&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;scope&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="453530896" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.038582" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1343" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;truncated&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;truncated&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1700547277" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.035558" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1344" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;trailing&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;trailing&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1415546320" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.036449" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1345" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;stale&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;stale&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1208190692" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.033255" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1346" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;other-seat&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;other-seat&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1005929095" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.038764" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1347" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;unsupported&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;unsupported&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1032157947" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.037955" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1348" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;duplicate&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;duplicate&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="211319852" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.034608" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1349" name="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;shove-miss&quot;)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ContactRecoveryReceiptsRequireTheCurrentOwnedRequest(&quot;shove-miss&quot;)" methodname="ContactRecoveryReceiptsRequireTheCurrentOwnedRequest" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="900844775" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.036391" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1338" name="HitConfirmationKeepsElapsedTimeAndIsIdempotent" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.HitConfirmationKeepsElapsedTimeAndIsIdempotent" methodname="HitConfirmationKeepsElapsedTimeAndIsIdempotent" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1875402334" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:04Z" duration="0.040565" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1332" name="PunchRecoveryDependsOnAnActualTag" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.PunchRecoveryDependsOnAnActualTag" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="0.268307" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1328" name="PunchRecoveryDependsOnAnActualTag(True,True)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.PunchRecoveryDependsOnAnActualTag(True,True)" methodname="PunchRecoveryDependsOnAnActualTag" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="41824469" result="Passed" start-time="2026-10-03 17:22:04Z" end-time="2026-10-03 17:22:05Z" duration="0.156461" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1329" name="PunchRecoveryDependsOnAnActualTag(True,False)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.PunchRecoveryDependsOnAnActualTag(True,False)" methodname="PunchRecoveryDependsOnAnActualTag" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1482273112" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.035435" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1330" name="PunchRecoveryDependsOnAnActualTag(False,True)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.PunchRecoveryDependsOnAnActualTag(False,True)" methodname="PunchRecoveryDependsOnAnActualTag" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="142149051" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.037342" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1331" name="PunchRecoveryDependsOnAnActualTag(False,False)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.PunchRecoveryDependsOnAnActualTag(False,False)" methodname="PunchRecoveryDependsOnAnActualTag" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="607652936" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.037394" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1337" name="RemovedSlideCannotSpendStaminaMoveOrGrabFromAnyEntry" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.RemovedSlideCannotSpendStaminaMoveOrGrabFromAnyEntry" methodname="RemovedSlideCannotSpendStaminaMoveOrGrabFromAnyEntry" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="454455336" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.039316" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1336" name="ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.076771" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1334" name="ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss(True)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss(True)" methodname="ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="643864447" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.041546" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1335" name="ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss(False)" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss(False)" methodname="ShoveRecoveryUsesSevenAndAHalfOnHitAndHalfOnMiss" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="571193868" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.033822" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1327" name="ThrowChargeIsOneAndAHalfSecondsAndLungeRetainsItsRequestedRange" fullname="TumbangPreso.PlayTests.ContactTimingRevisionTests.ThrowChargeIsOneAndAHalfSecondsAndLungeRetainsItsRequestedRange" methodname="ThrowChargeIsOneAndAHalfSecondsAndLungeRetainsItsRequestedRange" classname="TumbangPreso.PlayTests.ContactTimingRevisionTests" runstate="Runnable" seed="1730381288" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.040251" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2408" name="ShoveSlidePressRecoveryTests" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.164246" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2412" name="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" methodname="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="1291331441" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.053296" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2411" name="OrdinaryShoveReleaseAndFreshPressStillWork" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.OrdinaryShoveReleaseAndFreshPressStillWork" methodname="OrdinaryShoveReleaseAndFreshPressStillWork" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="1922194970" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.036349" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2410" name="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="1874196640" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.040029" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2409" name="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringStunRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="222230438" result="Passed" start-time="2026-10-03 17:22:05Z" end-time="2026-10-03 17:22:05Z" duration="0.031910" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

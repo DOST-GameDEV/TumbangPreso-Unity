@@ -1,0 +1,62 @@
+{
+  "sourceCommit": "94600694068552668079b1b4b3c0ca044bbfb44a",
+  "qualification": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs",
+      "source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Runtime\\Abilities\\HeroHazards.cs",
+      "sha256": "5e7daba22c8c08cc52311ab57aa65da332402f7b7e0e8c141e0983afd0577f1e"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SupernovaOpacityPairProbe.cs",
+      "source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\supernova-alpha1002-inputs\\SupernovaOpacityPairProbe.cs",
+      "sha256": "e18a32a833e3c69f5249e8ba12e716784e1fefae1cc331882d09c89729c4734e"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SupernovaOpacityPairProbe.cs.meta",
+      "source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\supernova-alpha1002-inputs\\SupernovaOpacityPairProbe.cs.meta",
+      "sha256": "35c501d98aa60a4fa10e6812e8fb7ee62602f7640bbdeb820a10786d529a8dce"
+    }
+  ],
+  "originalQualificationHeroSha256": "1536af5d76a4fe5753c74ca92bca42fdf9f406937089c410ee07ba7ec501f14e",
+  "mainPrivateHeroSha256": "5e7daba22c8c08cc52311ab57aa65da332402f7b7e0e8c141e0983afd0577f1e",
+  "variant": "same-live-shell parameter A/B .85/.50; no separate builds",
+  "filter": "TumbangPreso.PlayTests.SupernovaOpacityPairProbe.AcceptedSupernovaHasFourPhaseMatchedOpacityWitnesses",
+  "captures": 4,
+  "phases": [
+    0.06,
+    0.18
+  ],
+  "expectedNullLayoutYields": 2,
+  "physicalWindowToleranceSeconds": 0.05,
+  "runtimeRenderingInputs": [
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SeanSkillTimingProbe.cs",
+      "sha256": "f68bd2ca87a154a988c1099bcb63caaf45c81043ea8ecc87fc089a5b419613e1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GameplayShots.cs",
+      "sha256": "604b57827d9920a7a610542f2178d6d21c08f3868a4eea5c142594eeac3b2719"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs",
+      "sha256": "e6a167a829b6fc2d31e74693f75bfc6fe3edb024bc0149539140bd44485261fe"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/VfxFlipbook.cs",
+      "sha256": "54e5439b88eb034e9fd810b40283571a23b18128c5e38f30f8ebae23832856a2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/VfxSheets.cs",
+      "sha256": "6265db3570221c20a1f8aa2dab797f1c0be1105d0c5b98f269205b7ab68e87f6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Shaders/VfxFlipbook.shader",
+      "sha256": "505cc653c2b1b350ef15ebedc4c7f24062520532f552ee9a51a7190ae04da51e"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/TumbangPreso.inputactions",
+      "sha256": "983306e8866ab93979720eac4501f71db618262a61240be056f870055d9310ec"
+    }
+  ]
+}

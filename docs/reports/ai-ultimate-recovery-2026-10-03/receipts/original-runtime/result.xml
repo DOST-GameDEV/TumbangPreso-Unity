@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.0675305">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1110" result="Failed" site="Child" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.067531" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2354" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1110" result="Failed" site="Child" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.060203" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="82854" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2355" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1110" result="Failed" site="Child" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.059103" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2356" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1110" result="Failed" site="Child" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.058225" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1054" name="AiUltimateInputRecoveryTests" fullname="TumbangPreso.Tests.AiUltimateInputRecoveryTests" classname="TumbangPreso.Tests.AiUltimateInputRecoveryTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.036621" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1055" name="DefenderResetGrabMustRearmAfterTheActualSharedHandoffClearsActions" fullname="TumbangPreso.Tests.AiUltimateInputRecoveryTests.DefenderResetGrabMustRearmAfterTheActualSharedHandoffClearsActions" methodname="DefenderResetGrabMustRearmAfterTheActualSharedHandoffClearsActions" classname="TumbangPreso.Tests.AiUltimateInputRecoveryTests" runstate="Runnable" seed="1148716058" result="Failed" label="Error" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.020341" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.Tests.AiUltimateInputRecoveryTests.HoldAndResume (System.Boolean stepBrain) [0x0001d] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs:34 
+  at TumbangPreso.Tests.AiUltimateInputRecoveryTests.DefenderResetGrabMustRearmAfterTheActualSharedHandoffClearsActions () [0x00012] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs:39 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <94b103fb80364239bfc0542bee09d001>:0 
+--NullReferenceException
+  at TumbangPreso.AIController.Update () [0x00000] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Runtime/AIController.cs:726 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <94b103fb80364239bfc0542bee09d001>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1057" name="HumanHeldActionsStillRequireARealReleaseAfterTheHandoff" fullname="TumbangPreso.Tests.AiUltimateInputRecoveryTests.HumanHeldActionsStillRequireARealReleaseAfterTheHandoff" methodname="HumanHeldActionsStillRequireARealReleaseAfterTheHandoff" classname="TumbangPreso.Tests.AiUltimateInputRecoveryTests" runstate="Runnable" seed="40820807" result="Passed" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.002844" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1056" name="SuppressedBodyAiRearmsItsResetButKeepsTheHumansHeroReleaseGate" fullname="TumbangPreso.Tests.AiUltimateInputRecoveryTests.SuppressedBodyAiRearmsItsResetButKeepsTheHumansHeroReleaseGate" methodname="SuppressedBodyAiRearmsItsResetButKeepsTheHumansHeroReleaseGate" classname="TumbangPreso.Tests.AiUltimateInputRecoveryTests" runstate="Runnable" seed="374960050" result="Failed" label="Error" start-time="2026-10-03 10:50:21Z" end-time="2026-10-03 10:50:21Z" duration="0.000957" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.Tests.AiUltimateInputRecoveryTests.HoldAndResume (System.Boolean stepBrain) [0x0001d] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs:34 
+  at TumbangPreso.Tests.AiUltimateInputRecoveryTests.SuppressedBodyAiRearmsItsResetButKeepsTheHumansHeroReleaseGate () [0x00030] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs:45 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <94b103fb80364239bfc0542bee09d001>:0 
+--NullReferenceException
+  at TumbangPreso.AIController.Update () [0x00000] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Runtime/AIController.cs:726 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <94b103fb80364239bfc0542bee09d001>:0 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

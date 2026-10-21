@@ -1,0 +1,22 @@
+{
+  "source": "917bca66c311fd2832cf571ede2f4b42336deb50",
+  "protocol": 152,
+  "room": "CHPJ",
+  "map": "Eskinita",
+  "pcHostPid": 5472,
+  "laptopClientPid": 45252,
+  "naturalLanFirstView": "empty",
+  "naturalLanUntoggledSeconds": 31.672,
+  "normalCode": "CHPJ",
+  "codeOutcome": "No game answered",
+  "normalDirectAddress": "192.168.1.7:8910",
+  "directOutcome": "seat2/2of4/Ready",
+  "hostApprovalAndReadyVerified": true,
+  "hostChangedDuringDiscovery": false,
+  "noGameplayStarted": true,
+  "pcNormalQuitExitCode": 0,
+  "pcPreferencesRestored": true,
+  "pcArtifactUnchanged": true,
+  "rootCause": "unresolved; current PC-host broadcast direction",
+  "reverseRoles": "same package lpthostnaturaldiscovery/codePASS"
+}

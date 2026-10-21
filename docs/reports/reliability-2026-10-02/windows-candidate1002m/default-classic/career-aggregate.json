@@ -1,0 +1,28 @@
+{
+  "host": {
+    "fileExists": true,
+    "historyCount": 1,
+    "queueCount": 1,
+    "records": [
+      {
+        "matchId": "037b31cd9a6c4524ac80ecb54a4a0dbe",
+        "mode": "HeroStrike",
+        "rounds": 8,
+        "online": true,
+        "winner": 2,
+        "scores": [
+          40,
+          240,
+          3530,
+          3300
+        ]
+      }
+    ]
+  },
+  "client": {
+    "fileExists": false,
+    "historyCount": 0,
+    "queueCount": 0,
+    "records": []
+  }
+}

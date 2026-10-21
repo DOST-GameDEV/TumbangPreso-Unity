@@ -1,0 +1,22 @@
+{
+  "scope": "Final map/sky/Inday/outline candidate, not final full-backlog delivery. Process frame measurements on one host; no isolated GPU/device guarantee.",
+  "views": 96,
+  "windows": 48,
+  "mapModePairs": 8,
+  "extraNearFadeMaskDrawRange": [
+    1,
+    8
+  ],
+  "medianProcessDeltaVsV38Ms": 0.15720343589782715,
+  "maxP95Ms": 14.106398582458496,
+  "gpu": "AMD Radeon RX 6600",
+  "cpu": "AMD Ryzen 5 2600 Six-Core Processor ",
+  "runner": {
+    "exitCode": 0,
+    "sharedInputUnchanged": true,
+    "profile": "presentation-native-environment-20260922",
+    "existingFilesRestored": 2,
+    "reviewPassed": true,
+    "error": ""
+  }
+}

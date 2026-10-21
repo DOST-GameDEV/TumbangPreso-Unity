@@ -1,0 +1,223 @@
+// The effects study's stone (`FxStudyDanteBoulder` in `Runtime/Visual/FxStudy`): solid rock, carved and baked.
+//
+// KEEP THIS LOOK. Of the films drawn with it (court c3, bench u4) the owner said on 2026-10-12: "looks good. just make
+// sure its optimized". The edge wear's widths and lifts as filmed are the ones `FxStudyDanteBoulder.Stone` sets.
+//
+// ⚠️ WHY EARTH HAS ITS OWN SHADER. Everything else on the bench is light or air: a see-through ribbon wearing a mask
+// (`FxStudyRibbon`). Stone is solid, it is a modelled thing, and what makes it read is its own form.
+//
+// ⚠️ THE EDGE WEAR IS THE LAGOON COVE ROCKS', READ FROM A BAKE (`_Baked` 1). The owner, of four builds whose pale edge
+// lines were painted by formula: "need you to read up on how the rock edge highlights on the lagooncove map are
+// done". They are done by `Shaders/LagoonRock.shader` from a mask baked off each stone's own geometry, and what he
+// approved there (docs/LAGOON_REWORK_GUIDE.md, "BRUSHED EDGES, FROM THE OWNER'S PAINT-OVER") is this, kept line for line:
+//   * each face stays the plain rock colour;
+//   * a NARROW light BAND just inside every plane break, its inner side frayed like dry brush, swelling and thinning
+//     along the edge: it only ever LIFTS the rock's own colour, it is never a paint of its own;
+//   * a thin crisp LINE exactly on the break, its own varying width, cut in places, a lighter rock colour with a hint
+//     of cream;
+//   * both at widths in METRES (the mask's red is the true distance to the nearest break, linear over `_Reach`);
+//   (Scaled to a stone a third of a metre across: the Lagoon band is 12 to 55 cm on stones of several metres; here
+//   it is 6 to 22 mm and the line 1.5 to 5.5 mm, the widths of the board the owner saw (t3) and said to film.)
+//   * crevices darkened by the baked occlusion, shoulders lifted a little by the broad mask.
+// The mask is `tools/build_dante_rocks.py`'s: R break distance, G shoulder, B occlusion, A the gaps between pressed
+// rocks. The noises that fray the band and cut the line are the bench's cloud map read across the rock's own body
+// (the Lagoon shader's are computed; a hand-sized stone on a phone reads a texture instead).
+//   * THE VALUES ARE THE OWNER'S PICTURES': a warm pale top, a cooler mid side, a dark foot, by which way the surface
+//     looks, under one soft fixed light that is the shader's own (`_Key`), so the bench and a court draw one stone.
+//   * HIS MOLTEN LIGHT IS ONLY IN THE GAPS (the mask's alpha): dark crevices when cold, lit by `_Heat` (set per piece).
+//     Nothing in the game blooms, so it is drawn bright by hand; only a blooming camera has it pushed over white.
+//   * NO INK LINE. The owner: "we've started straying away from the toon outline stuff". The form reads from its
+//     planes, its baked edges and its occlusion alone.
+//   * IT CRUMBLES BY BEING EATEN (`_Gone`, set per piece): the cloud map at a rising cut, a pale line along the bite,
+//     and dark stone (not black) seen through the holes, since both sides of it are drawn.
+// Two older dresses are kept for what still wears them: flat palette slots (the bench's stand-ins, `_Baked` 0 and
+// `_Painted` 0) and a painted atlas (`_Painted` 1: the stone of the board before, kept only to stand beside this one).
+// ⚠️ No `_Time`, no depth texture, no loops: the rules of `FxStudyRibbon`.
+Shader "TumbangPreso/FxStudyRock"
+{
+    Properties
+    {
+        _MaskTex ("Baked mask (R break, G shoulder, B occlusion, A gaps; linear)", 2D) = "black" {}
+        _Baked ("Wears the baked mask", Range(0,1)) = 0
+        _Top ("Rock, where it looks up", Color) = (0.79, 0.72, 0.55, 1)
+        _Side ("Rock, its sides", Color) = (0.47, 0.46, 0.43, 1)
+        _Foot ("Rock, underneath", Color) = (0.20, 0.20, 0.23, 1)
+        _EdgeWhite ("The edge line's hint of cream", Color) = (0.99, 0.94, 0.80, 1)
+        _Reach ("Metres the mask's red runs over (the builder's REACH)", Float) = 0.04
+        _Band ("Band: narrowest and widest (m), how much it lifts, the lift on the shoulders of what looks up", Vector) = (0.006, 0.022, 0.38, 0.06)
+        _Wear ("How much noise the wear has: grain and fray, swell along an edge, cuts in the line (each 0 to 1)", Vector) = (1, 1, 1, 0)
+        _Line ("Line: narrowest and widest (m), how much it lifts, how much cream", Vector) = (0.0015, 0.0055, 0.42, 0.22)
+        _Noise ("The wear's fine noise: how coarse the fray is, how coarse the grain is (1 as approved, below 1 broader), how strong the grain is", Vector) = (1, 1, 1, 0)
+        _MainTex ("Painted atlas (the stone before)", 2D) = "white" {}
+        _Painted ("Wears the painted atlas", Range(0,1)) = 0
+        _Key ("Where the light comes from (world)", Vector) = (0.35, 0.85, -0.40, 0)
+        _Tones ("Palette dress: the paint in shade, the paint lit, how strong the rim, where the rim starts", Vector) = (0.50, 1.20, 0.60, 0.50)
+        _RimColor ("Rim light", Color) = (1.0, 0.93, 0.74, 1)
+        _Heat ("How hot the molten parts are (set per piece)", Float) = 1
+        _Emit ("How far over white the molten parts go under a blooming camera", Range(0,8)) = 0.8
+        _Flash ("The whole piece toward the flash colour (set per piece)", Range(0,1)) = 0
+        _FlashColor ("Flash colour", Color) = (1.0, 0.86, 0.45, 1)
+        _Inside ("What shows through where it is eaten", Color) = (0.20, 0.18, 0.17, 1)
+        _ErodeTex ("Cloud map (the erosion, and the edge wear's noises)", 2D) = "white" {}
+        _Gone ("How far it has crumbled (0 whole, 1 gone; set per piece)", Range(0,1)) = 0
+        _ErodeScale ("How many times the map repeats in a metre of stone", Float) = 5
+        _Rise ("A wall of pieces rising (BASTION): seconds since it began, seconds between ranks, seconds one takes, on", Vector) = (0, 0, 1, 0)
+        _Sink ("The same wall going: seconds since it began, seconds between ranks, seconds one takes, the outermost rank", Vector) = (0, 0, 1, 0)
+    }
+    SubShader
+    {
+        Tags { "Queue"="Geometry" "RenderType"="Opaque" "IgnoreProjector"="True" }
+        Pass
+        {
+            Cull Off
+            ZWrite On
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 3.0
+            #include "UnityCG.cginc"
+            float4 _Palette[16];
+            float4 _Key, _Tones, _Band, _Line, _Wear, _Noise, _Rise, _Sink;
+            fixed4 _RimColor, _FlashColor, _Top, _Side, _Foot, _EdgeWhite, _Inside;
+            float _Heat, _Emit, _Flash, _Gone, _ErodeScale, _Painted, _Baked, _Reach;
+            sampler2D _ErodeTex, _MainTex, _MaskTex;
+            // Set by a camera that blooms (the bench's): 1 there, and 0 everywhere else, the game included.
+            float _FxStudyBloom;
+            struct appdata { float4 vertex:POSITION; float3 normal:NORMAL; float2 uv:TEXCOORD0; float2 piece:TEXCOORD1; };
+            struct v2f { float4 vertex:SV_POSITION; float2 uv:TEXCOORD0; float3 normal:TEXCOORD1; float3 view:TEXCOORD2; float3 local:TEXCOORD3; float gone:TEXCOORD4; };
+            v2f vert(appdata v)
+            {
+                v2f o;
+                // The noises and the erosion read the stone where it was carved, so nothing swims as it moves.
+                o.local=v.vertex.xyz;
+                o.gone=0.0;
+                // ⚠️ A WALL THAT RISES AND GOES IN THE SHADER, NOT ON THE CPU (`_Rise`, BASTION). One mesh holds every slab,
+                // each with its rank (centre 0, outward 1, 2, 3) and its height in its second uv; nothing moves a transform
+                // and nothing is uploaded per frame. Off (`_Rise.w` 0) this is the stone exactly as it was.
+                if(_Rise.w>0.5 && v.piece.x>=3.5)
+                {
+                    // A HELD STONE (BASTION b4): its piece is 4 and a share of its order, and how far it rises. Hidden unless
+                    // `_Rise.w` is 2. Up off the slab tops into its place once the slabs are home, one after another; it
+                    // bobs while it is held; at the end it drops to the court and is eaten.
+                    float order=v.piece.x-4.0, lift=v.piece.y;
+                    float t=saturate((_Rise.x-0.32-order*0.12)/0.40);
+                    float up=1.0-pow(1.0-t,3.0);
+                    v.vertex.y-=(1.0-up)*lift;
+                    v.vertex.y+=0.035*sin(_Rise.x*1.7+order*6.2832)*up;
+                    float s=saturate((_Sink.x-order*0.06)/0.55);
+                    v.vertex.y-=s*s*(lift+0.6);
+                    o.gone=max(s,1.0-step(0.001,t));
+                    if(_Rise.w<1.5) v.vertex.xyz=0.0;
+                }
+                else if(_Rise.w>0.5)
+                {
+                    float rank=v.piece.x, high=v.piece.y;
+                    // Up out of the court, centre first: fast, a little past its seat, and pressed home.
+                    float t=saturate((_Rise.x-rank*_Rise.y)/_Rise.z);
+                    float up=1.0-pow(1.0-t,3.0)+0.10*sin(t*3.14159)*(1.0-t*0.4);
+                    v.vertex.y-=(1.0-up)*(high+0.06);
+                    // Going: outside first, each eaten and sinking a sixth of its height into the court.
+                    float s=saturate((_Sink.x-(_Sink.w-rank)*_Sink.y)/_Sink.z);
+                    v.vertex.y-=s*s*high*0.18;
+                    o.gone=s;
+                }
+                o.vertex=UnityObjectToClipPos(v.vertex);
+                o.uv=v.uv;
+                o.normal=UnityObjectToWorldNormal(v.normal);
+                o.view=_WorldSpaceCameraPos-mul(unity_ObjectToWorld,v.vertex).xyz;
+                return o;
+            }
+            // The cloud map across the rock's own body, as the grey it was painted in (the project is linear).
+            float cloud(float3 p)
+            {
+                return pow(0.5*(tex2D(_ErodeTex,p.xy+p.z*0.37).r+tex2D(_ErodeTex,p.zy*1.3+p.x*0.21+0.5).r),0.4545);
+            }
+            float ramp(float x,float a,float b) { return saturate((x-a)/(b-a)); }
+            fixed4 frag(v2f i, fixed side:VFACE):SV_Target
+            {
+                float map=pow(tex2D(_ErodeTex,i.local.xy*_ErodeScale+i.local.z*_ErodeScale*0.63).r,0.4545);
+                float gone=max(_Gone,i.gone)*1.10-0.05;
+                clip(map-gone);
+                // Its far side, seen through a hole: dark stone.
+                if(side<0.0) return fixed4(_Inside.rgb,1);
+
+                float3 n=normalize(i.normal), eye=normalize(i.view);
+                float light=dot(n,normalize(_Key.xyz));
+                float facing=saturate(dot(n,eye));
+                float heat=saturate(_Heat);
+                float3 colour;
+                if(_Baked>0.5)
+                {
+                    float4 m=tex2D(_MaskTex,i.uv);
+                    // The plain rock: warm and pale where it looks up, cooler on its sides, dark underneath.
+                    colour=lerp(_Side.rgb,_Top.rgb,smoothstep(0.35,0.80,n.y));
+                    colour=lerp(_Foot.rgb,colour,smoothstep(-0.75,-0.05,n.y));
+                    // Crevices from the baked occlusion; shoulders from the broad mask, on what looks up.
+                    colour*=lerp(0.60,1.0,smoothstep(0.35,0.95,m.b));
+                    colour*=1.0+_Band.w*m.g*saturate(n.y+0.3);
+
+                    // ⚠️ THE FINE NOISE CAN BE TONED DOWN WITHOUT TOUCHING THE WEAR'S SHAPE (`_Noise`). The owner: "all i asked you was
+                    // to tone down the noise. the inner edge should NOT become a clean boundary, it should cut off in some
+                    // areas". So the band keeps its width, its lift, its swell and its broken, dry-brushed inner side;
+                    // what changes is the bristle: the fray and the grain are read coarser (broader strokes, fewer small
+                    // specks) and the grain bites less. At 1, 1, 1 it is the wear as first approved.
+                    float slow=cloud(i.local*5.0), fine=cloud(i.local*34.0*_Noise.x+0.3), grain=cloud(i.local*95.0*_Noise.y+0.7);
+                    float bite=_Wear.x*_Noise.z;
+                    // THE BAND: on every break, swelling and thinning along it, its inner side frayed, grained.
+                    // ⚠️ HOW NOISY IT IS IS A SETTING (`_Wear`), because the owner asked for less of it: "try to simplify it a bit
+                    // by reducing the noise edges on the edge highlights". At 1, 1, 1 this is the wear as it was first
+                    // approved. Toward 0 the grain and fray go (x: the band's inner side becomes one soft falloff), the
+                    // band and line stop swelling and thinning along an edge (y: they hold their middle width), and the
+                    // line is no longer cut into stretches (z).
+                    float width=lerp(_Band.x,_Band.y,lerp(0.5,smoothstep(0.36,0.64,slow),_Wear.y))*lerp(1.0,lerp(0.55,1.35,ramp(fine,0.3,0.7)),_Wear.x);
+                    // The band's inner edge: how far its fall to nothing runs, in the mask's own measure (0.1 is 4 mm).
+                    // ⚠️ IT IS NEVER A CLEAN BOUNDARY. A setting that drew it as one was tried on a board and taken out: "the inner
+                    // edge should NOT become a clean boundary, it should cut off in some areas".
+                    float inner=lerp(0.12,0.04,_Wear.x);
+                    float band=smoothstep(-0.015,inner,m.r-(1.0-width/_Reach))*lerp(1.0,lerp(0.55,1.0,ramp(grain,0.30,0.55)),bite);
+                    colour*=1.0+_Band.z*band;
+                    // THE LINE: exactly on the break, its own width, cut in places, a lighter rock colour.
+                    float quick=cloud(i.local*17.0+0.6), cuts=cloud(i.local*26.0+0.2);
+                    float wide=lerp(_Line.x,_Line.y,lerp(0.5,smoothstep(0.36,0.64,quick),_Wear.y))*lerp(1.0,lerp(0.6,1.3,ramp(fine,0.3,0.7)),_Wear.x);
+                    float cut=smoothstep(-0.006,0.012,m.r-(1.0-wide/_Reach));
+                    cut*=lerp(1.0,smoothstep(0.26,0.34,cuts),_Wear.z);
+                    cut=saturate(cut*lerp(1.0,ramp(grain,0.15,0.35),bite));
+                    colour*=1.0+_Line.z*cut;
+                    colour=lerp(colour,_EdgeWhite.rgb,cut*_Line.w);
+
+                    colour*=lerp(0.66,1.06,saturate(light*0.5+0.5));
+                    // The gaps: a dark crevice cold, his molten light hot, yellow where the rocks actually touch.
+                    colour*=1.0-0.45*smoothstep(0.15,0.8,m.a);
+                    float3 seam=lerp(_Palette[6].rgb,_Palette[7].rgb,smoothstep(0.72,0.98,m.a))*(1.0+max(_Heat-1.0,0.0))*(1.0+_FxStudyBloom*_Emit*heat);
+                    // (From a third of the way into the gap, not from its middle: at 0.30 to 0.62 a lit gap was a hairline in daylight.)
+                    colour=lerp(colour,seam,smoothstep(0.12,0.44,m.a)*heat);
+                }
+                else if(_Painted>0.5)
+                {
+                    fixed4 painted=tex2D(_MainTex,i.uv);
+                    colour=painted.rgb*lerp(0.70,1.04,saturate(light*0.5+0.5));
+                    float3 seam=lerp(_Palette[6].rgb,_Palette[7].rgb,smoothstep(0.70,0.98,painted.a))*(1.0+max(_Heat-1.0,0.0))*(1.0+_FxStudyBloom*_Emit*heat);
+                    colour=lerp(colour,seam,smoothstep(0.15,0.5,painted.a)*heat);
+                }
+                else
+                {
+                    // The slot, by `TumbangPreso/Toon`'s rule: sixteen columns, two to a colour; rows 4 to 7 are slots 0
+                    // to 7 and rows 0 to 3 are slots 8 to 15.
+                    float2 cell=floor(clamp(i.uv,0.0,0.9999)*16.0);
+                    float slot=floor(cell.x*0.5)+(cell.y<3.5?8.0:0.0);
+                    float3 paint=_Palette[(int)slot].rgb;
+                    colour=paint*lerp(_Tones.x,1.0,smoothstep(-0.06,0.04,light));
+                    colour=lerp(colour,paint*_Tones.y,smoothstep(0.56,0.64,light));
+                    float rim=smoothstep(_Tones.w,_Tones.w+0.14,1.0-facing)*smoothstep(0.05,0.45,n.y*0.6+light*0.6);
+                    colour=lerp(colour,_RimColor.rgb,rim*_Tones.z);
+                }
+                colour=lerp(colour,_FlashColor.rgb*(1.0+_FxStudyBloom*_Emit),_Flash);
+                // A pale line along the bite.
+                colour=lerp(colour,_RimColor.rgb,(1.0-smoothstep(0.0,0.05,map-gone))*step(0.01,max(_Gone,i.gone)));
+                return fixed4(colour,1);
+            }
+            ENDCG
+        }
+    }
+    Fallback Off
+}

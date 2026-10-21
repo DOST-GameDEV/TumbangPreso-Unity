@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.1725191">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.172519" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1955" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.117511" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19336" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1956" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.115102" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1957" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.106712" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.082396" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1096" name="RefusedQueuedRecordsKeepRemainingWitnessesAligned" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RefusedQueuedRecordsKeepRemainingWitnessesAligned" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.073905" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1094" name="RefusedQueuedRecordsKeepRemainingWitnessesAligned(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RefusedQueuedRecordsKeepRemainingWitnessesAligned(False)" methodname="RefusedQueuedRecordsKeepRemainingWitnessesAligned" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1432352706" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.055785" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Career] abandoning queued match 'wrong-player': no non-bot line in it carries this player's account id, so the endpoint will always answer 422. The usual cause is a record written before the account finished signing in.
+[Career] abandoning queued match '': it carries no match id, so the endpoint cannot deduplicate it
+]]></output>
+              </test-case>
+              <test-case id="1095" name="RefusedQueuedRecordsKeepRemainingWitnessesAligned(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RefusedQueuedRecordsKeepRemainingWitnessesAligned(True)" methodname="RefusedQueuedRecordsKeepRemainingWitnessesAligned" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="459396160" result="Passed" start-time="2026-10-02 00:19:17Z" end-time="2026-10-02 00:19:17Z" duration="0.003749" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Career] abandoning queued match 'wrong-player': no non-bot line in it carries this player's account id, so the endpoint will always answer 422. The usual cause is a record written before the account finished signing in.
+[Career] abandoning queued match '': it carries no match id, so the endpoint cannot deduplicate it
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

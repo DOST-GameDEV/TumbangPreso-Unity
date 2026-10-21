@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.3393124">
+  <test-suite type="TestSuite" id="1053" name="TUMP Bank Runtime1004" fullname="TUMP Bank Runtime1004" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.339312" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1047" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.332586" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27346" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1048" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.332047" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1049" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.331674" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1003" name="PowerReadoutRecastTests" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.330434" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1008" name="OwnerIconMatchesTheRealSecondCutWindow" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.327661" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1004" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;available&quot;,False)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;available&quot;,False)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="1283508629" result="Failed" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.206621" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The actionable second cut must agree with the visible readiness cue.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow (System.String state, System.Boolean muted) [0x002da] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/PowerReadoutRecastTests.cs:58
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1005" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;spent-but-cooled&quot;,True)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;spent-but-cooled&quot;,True)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="1426198941" result="Failed" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.038961" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The actionable second cut must agree with the visible readiness cue.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow (System.String state, System.Boolean muted) [0x002da] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/PowerReadoutRecastTests.cs:58
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1006" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;expired&quot;,True)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;expired&quot;,True)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="1758865085" result="Passed" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.036588" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;zapped&quot;,True)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;zapped&quot;,True)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="988566573" result="Passed" start-time="2026-10-04 06:06:20Z" end-time="2026-10-04 06:06:20Z" duration="0.036143" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Bank Runtime1004/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

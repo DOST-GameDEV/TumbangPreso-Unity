@@ -1,0 +1,16 @@
+{
+  "reportedExpectedCases": 7,
+  "actualCases": 8,
+  "reason": "Fixture has six existing cases plus two new cases; initial runner expected count was miscounted. No test rerun or assertion change.",
+  "actualCaseNames": [
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.ObsoleteFailureCannotOverwriteReplacementOwnerStatus",
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.ObsoleteSuccessCannotAcknowledgeReplacementOwnerData",
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(0)",
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(1)",
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.PermanentlyInvalidRetrievalHeadDoesNotBlockTheNextMatchOrEraseLocalHistory",
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.SameOwnerFailureRetainsItsRecordAndWitnessForRetry",
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.SameOwnerSuccessAcknowledgesOnlyItsQueuedRecord",
+    "TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.TransientFailureKeepsTheValidHeadAndItsFollowingMatchForRetry"
+  ],
+  "qualifiedOutcome": "1FAIL/7PASS/0SKIP"
+}

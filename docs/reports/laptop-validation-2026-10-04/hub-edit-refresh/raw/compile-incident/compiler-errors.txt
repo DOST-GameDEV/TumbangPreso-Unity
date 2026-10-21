@@ -1,0 +1,1 @@
+Assets\TumbangPreso\Tests\PlayMode\PlayerHubDeferredRefreshControlTests.cs(108,18): error CS1061: 'PlayerHub' does not contain a definition for 'Close' and no accessible extension method 'Close' accepting a first argument of type 'PlayerHub' could be found (are you missing a using directive or an assembly reference?)

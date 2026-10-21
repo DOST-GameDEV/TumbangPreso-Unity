@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "var h=(System.Action<UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice>)System.AppDomain.CurrentDomain.GetData(\"lpt151-key-observer\");UnityEngine.InputSystem.InputSystem.onEvent-=h;var rows=(System.Collections.Generic.List<string>)System.AppDomain.CurrentDomain.GetData(\"lpt151-key-rows\");System.AppDomain.CurrentDomain.SetData(\"lpt151-key-observer\",null);System.AppDomain.CurrentDomain.SetData(\"lpt151-key-rows\",null);return rows.ToArray();"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        "TEXT|E=0|Q=0|W=0"
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:30:33Z" end-time="2026-09-30 22:30:47Z" duration="14.8293132">
+  <test-suite type="TestSuite" id="2248" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-09-30 22:30:33Z" end-time="2026-09-30 22:30:47Z" duration="14.829313" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2242" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-09-30 22:30:33Z" end-time="2026-09-30 22:30:47Z" duration="14.816403" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28404" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2243" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-09-30 22:30:33Z" end-time="2026-09-30 22:30:47Z" duration="14.812729" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2244" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-09-30 22:30:33Z" end-time="2026-09-30 22:30:47Z" duration="14.809458" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1193" name="CheskaWikiRuleTests" fullname="TumbangPreso.PlayTests.CheskaWikiRuleTests" classname="TumbangPreso.PlayTests.CheskaWikiRuleTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-30 22:30:33Z" end-time="2026-09-30 22:30:47Z" duration="14.780232" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1195" name="AbsoluteZeroWaitsThenFreezesEveryPlayerAndLeavesTheFullThawChill" fullname="TumbangPreso.PlayTests.CheskaWikiRuleTests.AbsoluteZeroWaitsThenFreezesEveryPlayerAndLeavesTheFullThawChill" methodname="AbsoluteZeroWaitsThenFreezesEveryPlayerAndLeavesTheFullThawChill" classname="TumbangPreso.PlayTests.CheskaWikiRuleTests" runstate="Runnable" seed="802865916" result="Failed" start-time="2026-09-30 22:30:33Z" end-time="2026-09-30 22:30:40Z" duration="6.846553" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Absolute Zero fired before its prescribed1.5-second delay.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaWikiRuleTests+<AbsoluteZeroWaitsThenFreezesEveryPlayerAndLeavesTheFullThawChill>d__10.MoveNext () [0x000b3] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\CheskaWikiRuleTests.cs:69
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1198" name="AnotherHerosShoveDoesNotGainChillingTouch" fullname="TumbangPreso.PlayTests.CheskaWikiRuleTests.AnotherHerosShoveDoesNotGainChillingTouch" methodname="AnotherHerosShoveDoesNotGainChillingTouch" classname="TumbangPreso.PlayTests.CheskaWikiRuleTests" runstate="Runnable" seed="439237960" result="Passed" start-time="2026-09-30 22:30:40Z" end-time="2026-09-30 22:30:42Z" duration="2.068297" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1196" name="CheskasLandedHeroStrikeShoveAppliesChillingTouch" fullname="TumbangPreso.PlayTests.CheskaWikiRuleTests.CheskasLandedHeroStrikeShoveAppliesChillingTouch" methodname="CheskasLandedHeroStrikeShoveAppliesChillingTouch" classname="TumbangPreso.PlayTests.CheskaWikiRuleTests" runstate="Runnable" seed="1613634332" result="Failed" start-time="2026-09-30 22:30:42Z" end-time="2026-09-30 22:30:44Z" duration="2.036737" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaWikiRuleTests+<Shove>d__14.MoveNext () [0x0010f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\CheskaWikiRuleTests.cs:94
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1197" name="ClassicShovesDoNotGainAHeroPassive" fullname="TumbangPreso.PlayTests.CheskaWikiRuleTests.ClassicShovesDoNotGainAHeroPassive" methodname="ClassicShovesDoNotGainAHeroPassive" classname="TumbangPreso.PlayTests.CheskaWikiRuleTests" runstate="Runnable" seed="108977132" result="Failed" label="Error" start-time="2026-09-30 22:30:44Z" end-time="2026-09-30 22:30:46Z" duration="1.912128" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at TumbangPreso.PlayTests.CheskaWikiRuleTests+<Load>d__8.MoveNext () [0x0007f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\CheskaWikiRuleTests.cs:38 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1194" name="ColdFeetRetainsItsRealFieldBeyondFiveSecondsAndExpiresAtSevenPointFive" fullname="TumbangPreso.PlayTests.CheskaWikiRuleTests.ColdFeetRetainsItsRealFieldBeyondFiveSecondsAndExpiresAtSevenPointFive" methodname="ColdFeetRetainsItsRealFieldBeyondFiveSecondsAndExpiresAtSevenPointFive" classname="TumbangPreso.PlayTests.CheskaWikiRuleTests" runstate="Runnable" seed="865587205" result="Failed" start-time="2026-09-30 22:30:46Z" end-time="2026-09-30 22:30:47Z" duration="1.899723" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 7.5d +/- 0.0010000000474974513d
+  But was:  5.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaWikiRuleTests+<ColdFeetRetainsItsRealFieldBeyondFiveSecondsAndExpiresAtSevenPointFive>d__9.MoveNext () [0x000ff] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\CheskaWikiRuleTests.cs:51
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

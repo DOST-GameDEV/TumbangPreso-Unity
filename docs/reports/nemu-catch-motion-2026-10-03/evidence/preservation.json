@@ -1,0 +1,9 @@
+{
+  "before_sha256": "58b412d8f331b43435fd7d7ed68dbec25986925453031437c91f6bb4c5e3fff0",
+  "after_sha256": "7faf5e6eaef910479d7994c1481bfcb653afacd08f25130de523da3d907084fc",
+  "original_clips": 36,
+  "candidate_clips": 37,
+  "all_original_clips_preserved": true,
+  "binary_prefix_preserved": true,
+  "geometry_json_preserved": true
+}

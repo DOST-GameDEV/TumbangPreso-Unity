@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 366,
+      "active_samples": 25,
+      "regrab_samples": 10,
+      "flight_episodes": 2,
+      "final_passive": 0.0
+    },
+    "owner": {
+      "samples": 361,
+      "active_samples": 25,
+      "regrab_samples": 11,
+      "flight_episodes": 2,
+      "final_passive": 0.0,
+      "measured_charge_rate": 1.2541829523684305
+    },
+    "observer": {
+      "samples": 360,
+      "active_samples": 25,
+      "regrab_samples": 12,
+      "flight_episodes": 2,
+      "final_passive": 0.0
+    }
+  },
+  "observer_reconnected": false,
+  "owner_reconnected": false,
+  "rejoined_seat": null,
+  "delay_one_way_ms": 0,
+  "exe_sha256": "78fd4776b65e70e3e0ac9e2daf7af26b8c94372247ceaf0dd4edf8b1bb4d4096",
+  "runtime_sha256": "5d24c750809b67e5451c2c4eebb855c936da2e0023eb49fa1f7ab4702348d33f"
+}

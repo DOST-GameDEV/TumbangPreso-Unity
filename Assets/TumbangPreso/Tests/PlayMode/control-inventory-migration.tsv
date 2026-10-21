@@ -1,0 +1,123 @@
+# legacy kind	legacy name	required current kind:name targets	reason
+button	ApplyButton	button:TumpSaveSettings	Capability moved to the named painted-screen control; retain the original baseline row.
+button	BackButton	button:BackButton	Same control identity; current routed owner, not a hidden converted node.
+button	BrowserRow0	button:NearbyChip;button:OnlineChip;button:Room0	Capability moved to the named painted-screen control; retain the original baseline row.
+button	BrowserRow1	button:NearbyChip;button:OnlineChip;button:Room0	Capability moved to the named painted-screen control; retain the original baseline row.
+button	BrowserRow2	button:NearbyChip;button:OnlineChip;button:Room0	Capability moved to the named painted-screen control; retain the original baseline row.
+button	BrowserRow3	button:NearbyChip;button:OnlineChip;button:Room0	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_A	button:Binding_MoveLeftAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_ACCOUNT	button:HubTabAccount	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_B	button:Binding_EmoteWheelAction;button:Binding_SpectatorMarkAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_BACK	button:TumpBack	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_C	button:Binding_CurveRightAction;button:Binding_SpectatorControlsAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_CAREER	button:HubTabCareer	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_CLOSE	button:ClosePlayerHub	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_CONTINUE	button:ContinueAccount	Current owner constructs this conditional ready/queue/welcome control. Catalogued without matchmaking/authentication; behavioral evidence remains separate.
+button	Button_COPY	button:CopyRoomCode;button:CopyRoomAddress	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_CUSTOMISE	button:TouchLayoutAction	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_D	button:Binding_MoveRightAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_E	button:Binding_Skill2Action	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_F	button:Binding_SpectatorFreeFlyAction;button:Binding_UltimateAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_F11	button:Binding_ToggleFullscreenAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_FRIENDS	button:HubTabFriends	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_GAMEPAD	button:InputDeviceValue;button:ControllerMapAction	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_H	button:Binding_CleanFeedAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_HERO	button:TumpCategory0	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_K	button:Binding_SpectatorAutopilotAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_KEYBOARD	button:InputDeviceValue	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_LATA	button:TumpCategory1	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_Left Button	button:Binding_SpecialAbilityAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_Left Control	button:Binding_SpectatorDownAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_Left Shift	button:Binding_SprintAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_MATCHES	button:HubTabMatches	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_N	button:Binding_SpectatorRecallAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_ON	toggle:GenericControllerValue	The original ON button controlled GenericPadBridge, not Touch. Require the restored unrecognised-controller switch, exercised with a synthetic joystick and save/discard regression.
+button	Button_P	button:Binding_SpectatorPauseAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_PROFILE	button:HubTabProfile	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_Q	button:Binding_Skill1Action	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_R	button:Binding_ReadyUpAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_RESET	button:ResetTouchLayout	Legacy BuildTouchLayoutRows called TouchLayoutStore.ResetAll. The fixed touch-editor toolbar retains the reset; it is outside the movable controls and is exercised by the reset/cancel route.
+button	Button_Right Button	button:Binding_LungeAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_S	button:Binding_MoveBackwardAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_SAVE	button:HubPrimary	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_SIGN IN	button:SubmitAccount	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_Space	button:Binding_JumpAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_TSINELAS	button:TumpCategory2	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Button_Tab	button:Binding_AbilityInfoAction;button:Binding_SpectatorCycleTargetAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_V	button:Binding_SpectatorPovAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_W	button:Binding_MoveForwardAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_X	button:Binding_GrabAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_Y	button:Binding_SpectatorReplayAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	Button_Z	button:Binding_CurveLeftAction	Old keycap label was not a stable identity. These action-specific binding rows preserve its function when rebound.
+button	CancelQueueButton	button:CancelQueueButton	Current owner constructs this conditional ready/queue/welcome control. Catalogued without matchmaking/authentication; behavioral evidence remains separate.
+button	CharNextButton	button:Portrait_dante;button:Portrait_sean	Capability moved to the named painted-screen control; retain the original baseline row.
+button	CharPrevButton	button:Portrait_dante;button:Portrait_sean	Capability moved to the named painted-screen control; retain the original baseline row.
+button	CharacterButton	button:LoadoutButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	ChatChip	button:ChatButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	CloseJoinButton	button:CloseJoinButton	Same control identity; current routed owner, not a hidden converted node.
+button	ConfirmButton	button:TumpUseLoadout	Capability moved to the named painted-screen control; retain the original baseline row.
+button	CreateTab	button:CreateAccountTab	Capability moved to the named painted-screen control; retain the original baseline row.
+button	CreditsButton	button:SettingsCredits	Capability moved to the named painted-screen control; retain the original baseline row.
+button	CustomDoor	@owner-removed	Owner explicitly removed MAKE YOUR OWN from the collection. Existing exception and TODO133.5 are preserved; custom assets are not deleted.
+button	CustomTab	button:CustomGameButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	DifficultyNextButton	button:BotsNextButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	DifficultyPrevButton	button:BotsPrevButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	FormatNextButton	button:FormatNext	Capability moved to the named painted-screen control; retain the original baseline row.
+button	FormatPrevButton	button:FormatPrevious	Capability moved to the named painted-screen control; retain the original baseline row.
+button	GameSettingsButton	button:SettingsButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	GoOnlineButton	button:OnlineRoomButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	GuestButton	button:GuestAccount	Capability moved to the named painted-screen control; retain the original baseline row.
+button	HubClose	button:ClosePlayerHub	Capability moved to the named painted-screen control; retain the original baseline row.
+button	JoinButton	button:ConnectToRoom	Capability moved to the named painted-screen control; retain the original baseline row.
+button	JoinChip	button:JoinRoomButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	LeaveGameButton	button:LeaveGameButton	Same control identity; current routed owner, not a hidden converted node.
+button	LoadoutButton	button:LoadoutButton	Same control identity; current routed owner, not a hidden converted node.
+button	LoadoutDoor	button:TumpSkills	Capability moved to the named painted-screen control; retain the original baseline row.
+button	MapNextButton	button:MapNextButton	Same control identity; current routed owner, not a hidden converted node.
+button	MapPrevButton	button:MapPrevButton	Same control identity; current routed owner, not a hidden converted node.
+button	ModeNextButton	button:ModeNextButton	Same control identity; current routed owner, not a hidden converted node.
+button	ModePrevButton	button:ModePrevButton	Same control identity; current routed owner, not a hidden converted node.
+button	NearbyChip	button:NearbyChip	Same control identity; current routed owner, not a hidden converted node.
+button	OnlineChip	button:OnlineChip	Same control identity; current routed owner, not a hidden converted node.
+button	OpenJoinButton	button:JoinRoomButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	OtherAccountButton	button:OtherAccount	Current owner constructs this conditional ready/queue/welcome control. Catalogued without matchmaking/authentication; behavioral evidence remains separate.
+button	Plate0	button:SeatButton0	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Plate1	button:SeatButton1	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Plate2	button:SeatButton2	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Plate3	button:SeatButton3	Capability moved to the named painted-screen control; retain the original baseline row.
+button	PracticeTab	button:PracticeRoute	Capability moved to the named painted-screen control; retain the original baseline row.
+button	PrimaryButton	button:PrimaryButton	Current owner constructs this conditional ready/queue/welcome control. Catalogued without matchmaking/authentication; behavioral evidence remains separate.
+button	ProfileButton	button:ProfileButton	Same control identity; current routed owner, not a hidden converted node.
+button	QuitButton	@owner-removed	Owner removed title pennants in TODO153.4. ConvertedMainMenu.Cancel retains Escape/controller Cancel/Android Back to quit.
+button	RankedTab	button:RankedRoute	Capability moved to the named painted-screen control; retain the original baseline row.
+button	ResetAllButton	button:ResetControlsAction;button:Reset	Legacy settings ResetAll reset Rebinding, not all game settings. Require the staged settings reset and the retained controller-map reset.
+button	RoomCodeButton	button:CopyRoomCode	Capability moved to the named painted-screen control; retain the original baseline row.
+button	SeatButton0	button:SeatButton0	Same control identity; current routed owner, not a hidden converted node.
+button	SeatButton1	button:SeatButton1	Same control identity; current routed owner, not a hidden converted node.
+button	SeatButton2	button:SeatButton2	Same control identity; current routed owner, not a hidden converted node.
+button	SeatButton3	button:SeatButton3	Same control identity; current routed owner, not a hidden converted node.
+button	Section_Banner	button:Group_Banner/ToggleGroup	Capability moved to the named painted-screen control; retain the original baseline row.
+button	Section_Identity	field:PlayerNameEdit	Identity is directly editable on the profile page; it is no longer hidden under a fold.
+button	Section_Optional details	field:ProfileCountry;field:ProfilePronouns;field:ProfileBio	Require every optional identity field reached by expanding the current group.
+button	SettingsButton	button:SettingsButton	Same control identity; current routed owner, not a hidden converted node.
+button	SettingsDrawerToggle	button:CustomGameButton	Capability moved to the named painted-screen control; retain the original baseline row.
+button	SignInTab	button:SignInTab	Same control identity; current routed owner, not a hidden converted node.
+button	SpectateButton	button:SpectateButton	Same control identity; current routed owner, not a hidden converted node.
+button	StartButton	button:StartButton	Same control identity; current routed owner, not a hidden converted node.
+button	StartWithBotsButton	button:StartWithBotsButton	Current owner constructs this conditional ready/queue/welcome control. Catalogued without matchmaking/authentication; behavioral evidence remains separate.
+button	TutorialButton	button:TutorialButton	Same control identity; current routed owner, not a hidden converted node.
+dropdown	SwatchDropdown	button:GraphicsQualityValue;button:RenderStyleValue;button:AntiAliasingValue;button:VSyncValue;button:FrameRateValue	Legacy generic dropdown name combined several graphics settings; require every current named selector.
+field	ChatField	field:ChatInput	Field retains its function in the current screen.
+field	Field_PASSWORD	field:Password	Field retains its function in the current screen.
+field	Field_USERNAME	field:Username	Field retains its function in the current screen.
+field	JoinAddressEdit	field:JoinCode	Field retains its function in the current screen.
+field	PlayerNameEdit	field:PlayerNameEdit	Same control identity; current routed owner, not a hidden converted node.
+field	PlayerNameField	field:PlayerNameField	Same control identity; current routed owner, not a hidden converted node.
+scrollbar	VerticalScrollbar	scrollbar:Scrollbar	Current scroll columns own their scrollbar.
+slider	MasterVolumeSlider	slider:MasterVolumeValue	Settings slider moved to its current section and stable key.
+slider	MusicVolumeSlider	slider:MusicVolumeValue	Settings slider moved to its current section and stable key.
+slider	SensitivitySlider	slider:SensitivityValue	Settings slider moved to its current section and stable key.
+slider	SfxVolumeSlider	slider:SoundVolumeValue	Settings slider moved to its current section and stable key.
+toggle	FullscreenCheck	toggle:FullscreenValue	Current settings toggle.
+toggle	InvertYCheck	toggle:InvertYValue	Current settings toggle.
+toggle	Item	button:Option0;button:Option1	Legacy dropdown option now uses the current option-menu buttons.

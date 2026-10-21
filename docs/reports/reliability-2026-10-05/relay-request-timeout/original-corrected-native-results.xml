@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.1653307">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1349" result="Failed" site="Child" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.165331" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2663" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1349" result="Failed" site="Child" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.139052" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10952" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2664" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1349" result="Failed" site="Child" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.121736" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2665" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1349" result="Failed" site="Child" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.105262" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2275" name="RelayJoinTimeoutTests" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.074873" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2279" name="AlreadySuccessfulRequestDoesNotRepeat" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.AlreadySuccessfulRequestDoesNotRepeat" methodname="AlreadySuccessfulRequestDoesNotRepeat" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="398391446" result="Passed" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.034057" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2280" name="ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout" methodname="ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="1589322489" result="Passed" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.013610" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2278" name="TransientTimeoutThenSuccessKeepsTheCurrentAttempt" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.008894" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2276" name="TransientTimeoutThenSuccessKeepsTheCurrentAttempt(NetworkError)" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(NetworkError)" methodname="TransientTimeoutThenSuccessKeepsTheCurrentAttempt" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="1544982952" result="Failed" label="Error" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.004066" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unity.Services.Relay.RelayServiceException : Request timeout]]></message>
+                  <stack-trace><![CDATA[  at TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt (Unity.Services.Relay.RelayExceptionReason reason) [0x0007d] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\RelayJoinTimeoutTests.cs:46 
+  at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2277" name="TransientTimeoutThenSuccessKeepsTheCurrentAttempt(RequestTimeOut)" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(RequestTimeOut)" methodname="TransientTimeoutThenSuccessKeepsTheCurrentAttempt" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="593724203" result="Failed" label="Error" start-time="2026-10-05 01:37:51Z" end-time="2026-10-05 01:37:51Z" duration="0.001467" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unity.Services.Relay.RelayServiceException : Request timeout]]></message>
+                  <stack-trace><![CDATA[  at TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt (Unity.Services.Relay.RelayExceptionReason reason) [0x0007d] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\RelayJoinTimeoutTests.cs:46 
+  at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

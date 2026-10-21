@@ -1,0 +1,435 @@
+character	button	ApplyButton	APPLY CHANGES
+character	button	BackButton	BACK
+character	button	BackButton	Back
+character	button	BackButton	◀  BACK
+character	button	BindingGroupValue	MOVEMENT
+character	button	Binding_JumpAction	Space
+character	button	Binding_MoveBackwardAction	S
+character	button	Binding_MoveForwardAction	W
+character	button	Binding_MoveLeftAction	A
+character	button	Binding_MoveRightAction	D
+character	button	Binding_SprintAction	Left Shift
+character	button	BotsNextButton	
+character	button	BotsPrevButton	
+character	button	CancelQueueButton	CANCEL
+character	button	CharNextButton	
+character	button	CharPrevButton	
+character	button	CharacterButton	CHOOSE  ▸
+character	button	ChatButton	CHAT
+character	button	ChatHistoryBack	CLOSE
+character	button	ChatHistoryButton	HISTORY
+character	button	CloseChatButton	CLOSE
+character	button	CloseJoinButton	BACK
+character	button	ClosePlayerHub	BACK
+character	button	ConfirmButton	CHOOSE
+character	button	ConnectToRoom	JOIN
+character	button	ContinueAccount	CONTINUE
+character	button	ControllerMapAction	OPEN
+character	button	CopyRoomAddress	COPY ADDRESS
+character	button	CopyRoomCode	COPY CODE
+character	button	CreateAccountTab	SIGN UP
+character	button	CustomGameButton	CUSTOM SETTINGS
+character	button	DifficultyNextButton	
+character	button	DifficultyPrevButton	
+character	button	ForgotPassword	FORGOT PASSWORD?
+character	button	FriendsRoute	FRIENDS
+character	button	GoogleAccount	
+character	button	GuestAccount	GUEST
+character	button	HubPrimary	SAVE
+character	button	HubTabAccount	ACCOUNT
+character	button	HubTabCareer	CAREER
+character	button	HubTabFriends	FRIENDS
+character	button	HubTabMatches	HISTORY
+character	button	HubTabProfile	PROFILE
+character	button	InputDeviceValue	Keyboard & mouse
+character	button	JoinRoomButton	JOIN A ROOM
+character	button	LeaveGameButton	LEAVE CURRENT ROOM
+character	button	LoadoutButton	CHANGE LOADOUT
+character	button	MapNextButton	
+character	button	MapPrevButton	
+character	button	MeetCharacter	STORY
+character	button	ModeNextButton	
+character	button	ModePrevButton	
+character	button	NearbyChip	Nearby
+character	button	OnlineChip	Online
+character	button	OnlineRoomButton	GO ONLINE
+character	button	OtherAccount	USE ANOTHER ACCOUNT
+character	button	Portrait_cheska	
+character	button	Portrait_dante	
+character	button	Portrait_nemu	
+character	button	Portrait_phaister	
+character	button	Portrait_sean	
+character	button	Portrait_zack	
+character	button	PracticeRoute	OFFLINE
+character	button	PrimaryButton	CONNECTING...
+character	button	PrimaryButton	START MATCH
+character	button	ProfileButton	Player
+character	button	RankedRoute	RANKED
+character	button	ResetAllButton	RESET ALL
+character	button	ResetControlsAction	RESET CONTROLS
+character	button	RevealConfirmation	
+character	button	RevealPassword	
+character	button	Room0	No nearby rooms found yet
+character	button	Room0	No online rooms found yet
+character	button	SeatButton0	P1
+character	button	SeatButton0	YOU
+character	button	SeatButton1	BOT
+character	button	SeatButton1	P2
+character	button	SeatButton2	BOT
+character	button	SeatButton2	P3
+character	button	SeatButton3	BOT
+character	button	SeatButton3	P4
+character	button	SettingsButton	SETTINGS
+character	button	SettingsCredits	CREDITS
+character	button	SettingsSection0	Controls
+character	button	SettingsSection1	Audio
+character	button	SettingsSection2	Graphics
+character	button	SettingsSection3	Player
+character	button	SettingsSection4	Accessibility
+character	button	SignInTab	SIGN IN
+character	button	SpectateButton	WATCH INSTEAD
+character	button	StartButton	START MATCH
+character	button	StartWithBotsButton	
+character	button	SubmitAccount	CREATE
+character	button	TermsLink	TERMS & CONDITIONS
+character	button	TumpBack	
+character	button	TumpCategory0	
+character	button	TumpCategory1	
+character	button	TumpCategory2	
+character	button	TumpSaveSettings	SAVE CHANGES
+character	button	TumpSettingsBack	
+character	button	TumpSkills	SKILLS
+character	button	TumpUseLoadout	USE LOADOUT
+character	field	ChatInput	
+character	field	ConfirmPassword	
+character	field	JoinCode	
+character	field	Password	
+character	field	PlayerNameField	
+character	field	Username	
+character	scrollbar	Scrollbar	
+character	slider	MasterVolumeSlider	
+character	slider	MusicVolumeSlider	
+character	slider	SensitivitySlider	
+character	slider	SensitivityValue	1.0×
+character	slider	SfxVolumeSlider	
+character	toggle	FullscreenCheck	Fullscreen
+character	toggle	InvertYCheck	Invert Y (mouse look)
+character	toggle	InvertYValue	OFF
+character	toggle	TermsAcceptance	
+lobby	button	ApplyButton	APPLY CHANGES
+lobby	button	BackButton	BACK
+lobby	button	BackButton	Back
+lobby	button	BackButton	◀  BACK
+lobby	button	BindingGroupValue	MOVEMENT
+lobby	button	Binding_JumpAction	Space
+lobby	button	Binding_MoveBackwardAction	S
+lobby	button	Binding_MoveForwardAction	W
+lobby	button	Binding_MoveLeftAction	A
+lobby	button	Binding_MoveRightAction	D
+lobby	button	Binding_SprintAction	Left Shift
+lobby	button	BotsNextButton	
+lobby	button	BotsPrevButton	
+lobby	button	CancelQueueButton	CANCEL
+lobby	button	CharNextButton	
+lobby	button	CharPrevButton	
+lobby	button	CharacterButton	CHOOSE  ▸
+lobby	button	ChatButton	CHAT
+lobby	button	ChatHistoryBack	CLOSE
+lobby	button	ChatHistoryButton	HISTORY
+lobby	button	CloseChatButton	CLOSE
+lobby	button	CloseJoinButton	BACK
+lobby	button	ClosePlayerHub	BACK
+lobby	button	ConfirmButton	CHOOSE
+lobby	button	ConnectToRoom	JOIN
+lobby	button	ConnectToRoom	JOIN  >
+lobby	button	ContinueAccount	CONTINUE
+lobby	button	ControllerMapAction	OPEN
+lobby	button	CopyRoomAddress	COPY ADDRESS
+lobby	button	CopyRoomCode	COPY CODE
+lobby	button	CreateAccountTab	SIGN UP
+lobby	button	CustomGameButton	CUSTOM SETTINGS
+lobby	button	DifficultyNextButton	
+lobby	button	DifficultyPrevButton	
+lobby	button	ForgotPassword	FORGOT PASSWORD?
+lobby	button	FriendsRoute	FRIENDS
+lobby	button	GoogleAccount	
+lobby	button	GuestAccount	GUEST
+lobby	button	HubPrimary	SAVE
+lobby	button	HubTabAccount	ACCOUNT
+lobby	button	HubTabCareer	CAREER
+lobby	button	HubTabFriends	FRIENDS
+lobby	button	HubTabMatches	HISTORY
+lobby	button	HubTabProfile	PROFILE
+lobby	button	InputDeviceValue	Keyboard & mouse
+lobby	button	JoinRoomButton	JOIN A ROOM
+lobby	button	LeaveGameButton	LEAVE CURRENT ROOM
+lobby	button	LoadoutButton	CHANGE LOADOUT
+lobby	button	MapNextButton	
+lobby	button	MapPrevButton	
+lobby	button	ModeNextButton	
+lobby	button	ModePrevButton	
+lobby	button	NearbyChip	Nearby
+lobby	button	OnlineChip	Online
+lobby	button	OnlineRoomButton	GO ONLINE
+lobby	button	OtherAccount	USE ANOTHER ACCOUNT
+lobby	button	PracticeRoute	OFFLINE
+lobby	button	PrimaryButton	CONNECTING...
+lobby	button	PrimaryButton	START MATCH
+lobby	button	ProfileButton	Player
+lobby	button	RankedRoute	RANKED
+lobby	button	ResetAllButton	RESET ALL
+lobby	button	ResetControlsAction	RESET CONTROLS
+lobby	button	RevealConfirmation	
+lobby	button	RevealPassword	
+lobby	button	Room0	No nearby rooms found yet
+lobby	button	Room0	No online rooms found yet
+lobby	button	SeatButton0	P1
+lobby	button	SeatButton0	YOU
+lobby	button	SeatButton1	BOT
+lobby	button	SeatButton1	P2
+lobby	button	SeatButton2	BOT
+lobby	button	SeatButton2	P3
+lobby	button	SeatButton3	BOT
+lobby	button	SeatButton3	P4
+lobby	button	SettingsButton	SETTINGS
+lobby	button	SettingsCredits	CREDITS
+lobby	button	SettingsSection0	Controls
+lobby	button	SettingsSection1	Audio
+lobby	button	SettingsSection2	Graphics
+lobby	button	SettingsSection3	Player
+lobby	button	SettingsSection4	Accessibility
+lobby	button	SignInTab	SIGN IN
+lobby	button	SpectateButton	WATCH INSTEAD
+lobby	button	StartButton	START MATCH
+lobby	button	StartWithBotsButton	
+lobby	button	SubmitAccount	CREATE
+lobby	button	TermsLink	TERMS & CONDITIONS
+lobby	button	TumpSaveSettings	SAVE CHANGES
+lobby	button	TumpSettingsBack	
+lobby	field	ChatInput	
+lobby	field	ConfirmPassword	
+lobby	field	JoinCode	
+lobby	field	Password	
+lobby	field	PlayerNameField	
+lobby	field	Username	
+lobby	scrollbar	Scrollbar	
+lobby	slider	MasterVolumeSlider	
+lobby	slider	MusicVolumeSlider	
+lobby	slider	SensitivitySlider	
+lobby	slider	SensitivityValue	1.0×
+lobby	slider	SfxVolumeSlider	
+lobby	toggle	FullscreenCheck	Fullscreen
+lobby	toggle	InvertYCheck	Invert Y (mouse look)
+lobby	toggle	InvertYValue	OFF
+lobby	toggle	TermsAcceptance	
+login	button	ApplyButton	APPLY CHANGES
+login	button	BackButton	◀  BACK
+login	button	BindingGroupValue	MOVEMENT
+login	button	Binding_JumpAction	Space
+login	button	Binding_MoveBackwardAction	S
+login	button	Binding_MoveForwardAction	W
+login	button	Binding_MoveLeftAction	A
+login	button	Binding_MoveRightAction	D
+login	button	Binding_SprintAction	Left Shift
+login	button	ContinueAccount	CONTINUE
+login	button	ControllerMapAction	OPEN
+login	button	CreateAccountTab	SIGN UP
+login	button	CreditsButton	CREDITS
+login	button	ForgotPassword	FORGOT PASSWORD?
+login	button	GoogleAccount	
+login	button	GuestAccount	GUEST
+login	button	InputDeviceValue	Keyboard & mouse
+login	button	OtherAccount	USE ANOTHER ACCOUNT
+login	button	QuitButton	QUIT
+login	button	ResetAllButton	RESET ALL
+login	button	ResetControlsAction	RESET CONTROLS
+login	button	RevealConfirmation	
+login	button	RevealPassword	
+login	button	SettingsButton	SETTINGS
+login	button	SettingsCredits	CREDITS
+login	button	SettingsSection0	Controls
+login	button	SettingsSection1	Audio
+login	button	SettingsSection2	Graphics
+login	button	SettingsSection3	Player
+login	button	SettingsSection4	Accessibility
+login	button	SignInBack	BACK
+login	button	SignInTab	SIGN IN
+login	button	StartButton	
+login	button	StartButton	PLAY
+login	button	SubmitAccount	CREATE
+login	button	TermsLink	TERMS & CONDITIONS
+login	button	TumpSaveSettings	SAVE CHANGES
+login	button	TumpSettingsBack	
+login	button	TutorialButton	TUTORIAL
+login	field	ConfirmPassword	
+login	field	Password	
+login	field	PlayerNameField	
+login	field	Username	
+login	scrollbar	Scrollbar	
+login	slider	MasterVolumeSlider	
+login	slider	MusicVolumeSlider	
+login	slider	SensitivitySlider	
+login	slider	SensitivityValue	1.0×
+login	slider	SfxVolumeSlider	
+login	toggle	FullscreenCheck	Fullscreen
+login	toggle	InvertYCheck	Invert Y (mouse look)
+login	toggle	InvertYValue	OFF
+login	toggle	TermsAcceptance	
+profile	button	ApplyButton	APPLY CHANGES
+profile	button	BackButton	BACK
+profile	button	BackButton	Back
+profile	button	BackButton	◀  BACK
+profile	button	BindingGroupValue	MOVEMENT
+profile	button	Binding_JumpAction	Space
+profile	button	Binding_MoveBackwardAction	S
+profile	button	Binding_MoveForwardAction	W
+profile	button	Binding_MoveLeftAction	A
+profile	button	Binding_MoveRightAction	D
+profile	button	Binding_SprintAction	Left Shift
+profile	button	BotsNextButton	
+profile	button	BotsPrevButton	
+profile	button	CancelQueueButton	CANCEL
+profile	button	CharNextButton	
+profile	button	CharPrevButton	
+profile	button	CharacterButton	CHOOSE  ▸
+profile	button	ChatButton	CHAT
+profile	button	ChatHistoryBack	CLOSE
+profile	button	ChatHistoryButton	HISTORY
+profile	button	CloseChatButton	CLOSE
+profile	button	CloseJoinButton	BACK
+profile	button	ClosePlayerHub	BACK
+profile	button	ConfirmButton	CHOOSE
+profile	button	ConnectToRoom	JOIN
+profile	button	ContinueAccount	CONTINUE
+profile	button	ControllerMapAction	OPEN
+profile	button	CopyRoomAddress	COPY ADDRESS
+profile	button	CopyRoomCode	COPY CODE
+profile	button	CreateAccountTab	SIGN UP
+profile	button	CustomGameButton	CUSTOM SETTINGS
+profile	button	DifficultyNextButton	
+profile	button	DifficultyPrevButton	
+profile	button	ForgotPassword	FORGOT PASSWORD?
+profile	button	FriendsRoute	FRIENDS
+profile	button	GoogleAccount	
+profile	button	GuestAccount	GUEST
+profile	button	HubPrimary	SAVE
+profile	button	HubTabAccount	ACCOUNT
+profile	button	HubTabCareer	CAREER
+profile	button	HubTabFriends	FRIENDS
+profile	button	HubTabMatches	HISTORY
+profile	button	HubTabProfile	PROFILE
+profile	button	InputDeviceValue	Keyboard & mouse
+profile	button	JoinRoomButton	JOIN A ROOM
+profile	button	LeaveGameButton	LEAVE CURRENT ROOM
+profile	button	LoadoutButton	CHANGE LOADOUT
+profile	button	MapNextButton	
+profile	button	MapPrevButton	
+profile	button	MeetCharacter	STORY
+profile	button	ModeNextButton	
+profile	button	ModePrevButton	
+profile	button	NearbyChip	Nearby
+profile	button	OnlineChip	Online
+profile	button	OnlineRoomButton	GO ONLINE
+profile	button	OtherAccount	USE ANOTHER ACCOUNT
+profile	button	Portrait_cheska	
+profile	button	Portrait_dante	
+profile	button	Portrait_nemu	
+profile	button	Portrait_phaister	
+profile	button	Portrait_sean	
+profile	button	Portrait_zack	
+profile	button	PracticeRoute	OFFLINE
+profile	button	PrimaryButton	CONNECTING...
+profile	button	PrimaryButton	START MATCH
+profile	button	ProfileButton	Player
+profile	button	RankedRoute	RANKED
+profile	button	ResetAllButton	RESET ALL
+profile	button	ResetControlsAction	RESET CONTROLS
+profile	button	RevealConfirmation	
+profile	button	RevealPassword	
+profile	button	Room0	No nearby rooms found yet
+profile	button	Room0	No online rooms found yet
+profile	button	SeatButton0	P1
+profile	button	SeatButton0	YOU
+profile	button	SeatButton1	BOT
+profile	button	SeatButton1	P2
+profile	button	SeatButton2	BOT
+profile	button	SeatButton2	P3
+profile	button	SeatButton3	BOT
+profile	button	SeatButton3	P4
+profile	button	SettingsButton	SETTINGS
+profile	button	SettingsCredits	CREDITS
+profile	button	SettingsSection0	Controls
+profile	button	SettingsSection1	Audio
+profile	button	SettingsSection2	Graphics
+profile	button	SettingsSection3	Player
+profile	button	SettingsSection4	Accessibility
+profile	button	SignInTab	SIGN IN
+profile	button	SpectateButton	WATCH INSTEAD
+profile	button	StartButton	START MATCH
+profile	button	StartWithBotsButton	
+profile	button	SubmitAccount	CREATE
+profile	button	TermsLink	TERMS & CONDITIONS
+profile	button	ToggleGroup	+  Banner
+profile	button	ToggleGroup	+  Optional details
+profile	button	TumpBack	
+profile	button	TumpCategory0	
+profile	button	TumpCategory1	
+profile	button	TumpCategory2	
+profile	button	TumpSaveSettings	SAVE CHANGES
+profile	button	TumpSettingsBack	
+profile	button	TumpSkills	SKILLS
+profile	button	TumpUseLoadout	USE LOADOUT
+profile	field	ChatInput	
+profile	field	ConfirmPassword	
+profile	field	JoinCode	
+profile	field	Password	
+profile	field	PlayerNameEdit	
+profile	field	PlayerNameField	
+profile	field	Username	
+profile	scrollbar	Scrollbar	
+profile	slider	MasterVolumeSlider	
+profile	slider	MusicVolumeSlider	
+profile	slider	SensitivitySlider	
+profile	slider	SensitivityValue	1.0×
+profile	slider	SfxVolumeSlider	
+profile	toggle	FullscreenCheck	Fullscreen
+profile	toggle	InvertYCheck	Invert Y (mouse look)
+profile	toggle	InvertYValue	OFF
+profile	toggle	TermsAcceptance	
+settings	button	ApplyButton	APPLY CHANGES
+settings	button	BackButton	◀  BACK
+settings	button	BindingGroupValue	MOVEMENT
+settings	button	Binding_JumpAction	Space
+settings	button	Binding_MoveBackwardAction	S
+settings	button	Binding_MoveForwardAction	W
+settings	button	Binding_MoveLeftAction	A
+settings	button	Binding_MoveRightAction	D
+settings	button	Binding_SprintAction	Left Shift
+settings	button	ControllerMapAction	OPEN
+settings	button	CreditsButton	CREDITS
+settings	button	InputDeviceValue	Keyboard & mouse
+settings	button	QuitButton	QUIT
+settings	button	ResetAllButton	RESET ALL
+settings	button	ResetControlsAction	RESET CONTROLS
+settings	button	SettingsButton	SETTINGS
+settings	button	SettingsCredits	CREDITS
+settings	button	SettingsSection0	Controls
+settings	button	SettingsSection1	Audio
+settings	button	SettingsSection2	Graphics
+settings	button	SettingsSection3	Player
+settings	button	SettingsSection4	Accessibility
+settings	button	StartButton	
+settings	button	StartButton	PLAY
+settings	button	TumpSaveSettings	SAVE CHANGES
+settings	button	TumpSettingsBack	
+settings	button	TutorialButton	TUTORIAL
+settings	field	PlayerNameField	
+settings	scrollbar	Scrollbar	
+settings	slider	MasterVolumeSlider	
+settings	slider	MusicVolumeSlider	
+settings	slider	SensitivitySlider	
+settings	slider	SensitivityValue	1.0×
+settings	slider	SfxVolumeSlider	
+settings	toggle	FullscreenCheck	Fullscreen
+settings	toggle	InvertYCheck	Invert Y (mouse look)
+settings	toggle	InvertYValue	OFF

@@ -1,0 +1,17 @@
+{
+  "baseline": {
+    "total": 3,
+    "passed": 0,
+    "failed": 3
+  },
+  "baseline-repair": {
+    "total": 3,
+    "passed": 2,
+    "failed": 1
+  },
+  "final": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0
+  }
+}

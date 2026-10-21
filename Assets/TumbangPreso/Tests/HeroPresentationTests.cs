@@ -4,6 +4,7 @@ using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using UnityEngine;
+using System.Linq;
 
 namespace TumbangPreso.Tests
 {
@@ -23,7 +24,7 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class HeroPresentationTests
     {
-        private static readonly string[] Heroes = { "cheska", "dante", "nemu", "sean", "zack", "phaister" };
+        private static readonly string[] Heroes = Roster.HeroPeople.Select(person => person.Id).ToArray();
 
         // ------------------------------------------------------------------ the colour law
 
@@ -97,11 +98,34 @@ namespace TumbangPreso.Tests
                     float a = Hue(UiTheme.ColorForHero(Heroes[i]));
                     float b = Hue(UiTheme.ColorForHero(Heroes[j]));
 
-                    Assert.GreaterOrEqual(HueDistance(a, b), 30.0f,
+                    // ⚠️ AMENDED 2026-09-25 FOR PAETE (see `UiTheme.HeroGrove`): 30 degrees of hue OR
+                    // 0.15 of OKLab distance, so a dark moss can sit beside a mid jade. The role
+                    // colours keep their hue rule above.
+                    float seen = OkLabDistance(UiTheme.ColorForHero(Heroes[i]), UiTheme.ColorForHero(Heroes[j]));
+                    Assert.IsTrue(HueDistance(a, b) >= 30.0f || seen >= 0.15f,
                         $"{Heroes[i]} and {Heroes[j]} are only {HueDistance(a, b):0.#} degrees " +
-                        "apart, which is one colour on a deck tile");
+                        $"and {seen:0.000} OKLab apart, which is one colour on a deck tile");
                 }
             }
+        }
+
+        /// <summary>OKLab distance between two sRGB colours (Björn Ottosson's transform).</summary>
+        private static float OkLabDistance(Color x, Color y)
+        {
+            Vector3 a = OkLab(x), b = OkLab(y);
+            return Vector3.Distance(a, b);
+        }
+
+        private static Vector3 OkLab(Color c)
+        {
+            float Lin(float v) => v <= 0.04045f ? v / 12.92f : Mathf.Pow((v + 0.055f) / 1.055f, 2.4f);
+            float r = Lin(c.r), g = Lin(c.g), bl = Lin(c.b);
+            float l = Mathf.Pow(0.4122214708f * r + 0.5363325363f * g + 0.0514459929f * bl, 1f / 3f);
+            float m = Mathf.Pow(0.2119034982f * r + 0.6806995451f * g + 0.1073969566f * bl, 1f / 3f);
+            float s = Mathf.Pow(0.0883024619f * r + 0.2817188376f * g + 0.6299787005f * bl, 1f / 3f);
+            return new Vector3(0.2104542553f * l + 0.7936177850f * m - 0.0040720468f * s,
+                               1.9779984951f * l - 2.4285922050f * m + 0.4505937099f * s,
+                               0.0259040371f * l + 0.7827717662f * m - 0.8086757660f * s);
         }
 
         /// <summary>
@@ -176,7 +200,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotNull(ability, $"{hero} is missing an ability");
 
@@ -227,7 +251,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotEmpty(ability.Name, $"{hero}: an ability has no name");
                     Assert.LessOrEqual(ability.Name.Length, 18,
@@ -257,17 +281,22 @@ namespace TumbangPreso.Tests
         [Test]
         public void TelegraphsMatchWhatTheAbilityPlaces()
         {
-            AssertTelegraph("cheska", 1, 2.3f, 5.0f);   // SpawnIceSheet(aimed, max 5.0, radius 2.3)
-            AssertTelegraph("cheska", 2, 1.6f, 4.0f);   // barricade HazardVolume 1.6, aimed to 4.0
-            AssertTelegraph("cheska", 3, 4.6f, 0.0f);   // nova freeze check <= 4.6 at self
+            AssertTelegraph("cheska", 1, 2.3f, 5.0f);   // Cold Feet places an aimed 2.3 m ice sheet.
+            AssertTelegraph("cheska", 2, 0.0f, 0.0f);   // Frostbite loads her own slipper; no ground target.
+            AssertTelegraph("cheska", 3, 0.0f, 0.0f);   // Absolute Zero affects every other player, map-wide.
+            AssertRoleTelegraph("cheska", 2.1f, 4.0f); // Glacial Wall's 4.2 m arc, aimed up to 4 m.
+            Assert.IsFalse(HeroAbilitySystem.CreateKitFor("cheska").AttackingSkill.HasTelegraph,
+                "Frostbite must not draw the retired Ice Barricade ring over a self-buffed slipper");
 
-            AssertTelegraph("dante", 1, 2.2f, 0.0f);    // CreateExplosion(pos, 2.2)
-            AssertTelegraph("dante", 2, 0.0f, 0.0f);    // self-buff, nothing on the ground
-            AssertTelegraph("dante", 3, 4.5f, 2.2f);    // CreateExplosion(pos + fwd*2.2, 4.5)
+            AssertTelegraph("dante", 1, 0.0f, 0.0f);    // Shield is self armour.
+            AssertTelegraph("dante", 2, 0.7f, 9.0f);    // Boulder aims a 0.7 m hit body up to 9 m.
+            AssertTelegraph("dante", 3, 0.0f, 0.0f);    // Earthquake is map-wide.
+            AssertRoleTelegraph("dante", 0.0f, 0.0f);  // Barrier follows Dante; it is not ground-placed.
 
-            AssertTelegraph("nemu", 1, 0.0f, 0.0f);     // mobility
-            AssertTelegraph("nemu", 2, 0.0f, 0.0f);     // projectile decoy
+            AssertTelegraph("nemu", 1, 2.2f, 7.0f);     // Terrify leaves Kuro at an aimed haunt spot.
+            AssertTelegraph("nemu", 2, 0.0f, 0.0f);     // Kuro Fetch tracks a loose slipper.
             AssertTelegraph("nemu", 3, 4.0f, 3.5f);     // Live KuroUnbound radius; range is the petless fallback.
+            AssertRoleTelegraph("nemu", 0.0f, 0.0f);   // Kuro Guard moves with the can.
 
             AssertTelegraph("sean", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("sean", 2, 0.0f, 0.0f);     // throw empower
@@ -277,20 +306,11 @@ namespace TumbangPreso.Tests
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("zack", 3, 4.5f, 7.0f);     // CreateThunderstrike(aimed, max 7.0, 4.5)
 
-            AssertTelegraph("phaister", 1, 2.4f, 5.5f); // Hex ward, aimed to 5.5
+            AssertTelegraph("phaister", 1, 1.15f, 5.5f); // TELEPORT's arrival mark and max reach.
 
-            // ⚠️ THE BLINK HAS A TELEGRAPH NOW BECAUSE IT IS AIMED. It was 0/0 while it was an
-            // impulse fired on the press edge, which the reticle could never have drawn in time.
-            // 5.5 is its maximum reach at a full hold and 1.15 is the arrival mark it stamps
-            // there, so the ring a player holds E to move is the size and the place of the thing
-            // that actually happens. `HeroAbility`'s hold-to-aim section has the rest.
-            AssertTelegraph("phaister", 2, 1.15f, 5.5f); // SpawnShadowArrival at fwd*5.5 max
-
-            // ⚠️ AND THE ECLIPSE DECLARES ITS REACH, WHICH IT DID NOT WHEN IT HIT EVERYBODY. The
-            // old ultimate staggered `round.Players` with no distance test at all, so there was
-            // no radius to draw and nothing to position against. 5.0 is what `Curse` now tests
-            // and what `SpawnGrandCovenEclipse` draws on the ground. `docs/TODO.md` § 24.
-            AssertTelegraph("phaister", 3, 10.5f, 0.0f); // curse reach, centred on the caster
+            AssertTelegraph("phaister", 2, 0.0f, 0.0f);  // CURSE: DRAIN reaches a player; nothing on the ground.
+            AssertTelegraph("phaister", 3, 0.0f, 0.0f); // VOODOO DOLL wakes beside her; nothing is aimed or placed.
+            AssertRoleTelegraph("phaister", 0.0f, 0.0f); // CURSE: HEX reaches a player too.
         }
 
         /// <summary>
@@ -320,7 +340,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = Abilities.HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     if (ability == null || !ability.HasTelegraph) continue;
 
@@ -353,7 +373,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     if (ability.TelegraphRange <= 0.0f) continue;
 
@@ -460,6 +480,7 @@ namespace TumbangPreso.Tests
         /// </summary>
         private sealed class ProbeAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public ProbeAbility(float cooldown)
                 : base("probe", "PROBE", "A stand-in.", cooldown, 0.0f, AbilityGlyph.Burst)
             {
@@ -498,34 +519,57 @@ namespace TumbangPreso.Tests
 
         /// <summary>
         /// ⚠️ EVERY HERO ABILITY HAS A BESPOKE 3RD-PERSON BODY ACTION AND 1ST-PERSON VIEWMODEL ACTION.
-        /// Generic fallback clips ("dash"/"shove"/"jump") are forbidden on hero abilities.
+        /// Names alone are insufficient: each live action must be registered, serialized
+        /// on its own shipping roster, and bound to real model paths.
         /// </summary>
-        [Test]
-        public void EveryHeroAbilityHasBespokeCastAndViewModelActions()
+        [TestCaseSource(nameof(Heroes))]
+        public void EveryHeroAbilityHasBespokeCastAndViewModelActions(string hero)
         {
-            var vm = new GameObject("TestVM").AddComponent<CameraSystem.ViewmodelArms>();
-
-            foreach (string hero in Heroes)
+            var go = new GameObject("Hero action dispatcher probe");
+            go.SetActive(false); // Dispatch coverage needs no arm geometry or scene ownership.
+            try
             {
+                var vm = go.AddComponent<CameraSystem.ViewmodelArms>();
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
+                var art = Resources.Load<RosterEntryAsset>("Roster/person_" + hero);
+                Assert.IsNotNull(art, $"{hero}: missing shipping roster entry");
+                Assert.IsNotNull(art.Model, $"{hero}: missing shipping model");
+                Assert.IsNotNull(art.Clips, $"{hero}: missing serialized clip list");
+                var rigRoot = art.Model.GetComponentInChildren<Animator>(true)?.transform ?? art.Model.transform;
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotNull(ability, $"{hero} is missing an ability");
+                    // ⚠️ The COMING SOON defending slot (`PlaceholderRoleAbility`, ABILITY-2) casts and does nothing,
+                    // so it has no cast or first-person action on purpose; see `RosterArmGeometryTests`.
+                    if (ability is PlaceholderRoleAbility) continue;
                     Assert.IsFalse(string.IsNullOrEmpty(ability.CastAction),
                         $"{hero}: {ability.Name} is missing a CastAction");
                     Assert.IsFalse(string.IsNullOrEmpty(ability.ViewmodelAction),
                         $"{hero}: {ability.Name} is missing a ViewmodelAction");
 
-                    Assert.IsFalse(ability.CastAction == "dash" || ability.CastAction == "shove" || ability.CastAction == "jump",
-                        $"{hero}: {ability.Name} still uses generic fallback CastAction '{ability.CastAction}'");
+                    Assert.IsTrue(ability.CastAction.StartsWith("hero-"),
+                        $"{hero}: {ability.Name} still uses a generic body action '{ability.CastAction}'");
+                    Assert.IsTrue(Visual.CharacterAnimator.ActionChains.TryGetValue(ability.CastAction, out var chain),
+                        $"{hero}: {ability.Name} requests an unregistered body action '{ability.CastAction}'");
+                    Assert.AreEqual(ability.CastAction, chain[0],
+                        $"{hero}: {ability.Name} must try its own action before any fallback");
+                    var clip = art.Clips.FirstOrDefault(c => c != null && c.name == ability.CastAction);
+                    Assert.IsNotNull(clip,
+                        $"{hero}: {ability.Name} has no serialized own clip; Editor-generated or generic fallbacks can mask this");
+                    Assert.Greater(clip.length, 0, $"{hero}: {clip.name} has no duration");
+                    var bindings = UnityEditor.AnimationUtility.GetCurveBindings(clip);
+                    Assert.IsNotEmpty(bindings, $"{hero}: {clip.name} has no authored curves");
+                    foreach (var binding in bindings)
+                        if (!string.IsNullOrEmpty(binding.path))
+                            Assert.IsNotNull(rigRoot.Find(binding.path),
+                                $"{hero}: {clip.name} binds a missing model path '{binding.path}'");
 
                     Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
                         $"{hero}: {ability.Name} ViewmodelAction '{ability.ViewmodelAction}' is not supported by ViewmodelArms");
                 }
             }
-
-            Object.DestroyImmediate(vm.gameObject);
+            finally { Object.DestroyImmediate(go); }
         }
 
         /// <summary>
@@ -540,7 +584,7 @@ namespace TumbangPreso.Tests
             string[] allCharacters =
             {
                 // Heroes
-                "sean", "zack", "dante", "cheska", "nemu",
+                "sean", "zack", "dante", "cheska", "nemu", "phaister", "rafi",
                 // Classic Roster
                 "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie",
                 "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena",
@@ -566,12 +610,20 @@ namespace TumbangPreso.Tests
                     if (r.gameObject.name.StartsWith("~HeroAccessory_")) accessoryCount++;
                 }
 
-                var baked = Resources.Load<Mesh>("Models/RosterArms/" + norm + "_right");
-                if (baked != null)
+                var baked = Resources.Load<Mesh>(norm == "inday" ? "Models/FppDetails/inday_right_arm" : "Models/RosterArms/" + norm + "_right");
+                if (norm == "rafi" || norm == "inday")
+                {
+                    Assert.IsNotNull(baked, charId + " source arm was not baked");
                     Assert.AreSame(baked,vm.transform.Find("RightPivot/Arm").GetComponent<MeshFilter>().sharedMesh,
                         charId + " is not using its actual authored sleeve and hand");
+                }
                 else
-                    Assert.Greater(accessoryCount, 0, $"{charId} viewmodel fallback has no clothing");
+                {
+                    // Retained cast uses the approved solid hand frame plus authored sleeves.
+                    Assert.AreSame(Resources.Load<Mesh>("Models/viewmodel_arm"),
+                        vm.transform.Find("RightPivot/Arm").GetComponent<MeshFilter>().sharedMesh);
+                    Assert.Greater(accessoryCount, 0, $"{charId} viewmodel has no clothing");
+                }
             }
 
             Object.DestroyImmediate(vm.gameObject);
@@ -617,8 +669,10 @@ namespace TumbangPreso.Tests
                 if (System.Array.IndexOf(Heroes, charId) >= 0)
                 {
                     var kit = HeroAbilitySystem.CreateKitFor(charId);
-                    foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                    foreach (var ability in kit.AllAbilities)
                     {
+                        // The COMING SOON defending slot has no hands on purpose (`PlaceholderRoleAbility`).
+                        if (ability is PlaceholderRoleAbility) continue;
                         Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
                             $"{charId}: PlayAction failed for {ability.ViewmodelAction}");
                     }
@@ -651,20 +705,40 @@ namespace TumbangPreso.Tests
                 $"places the effect {range} m ahead");
         }
 
+        private static void AssertRoleTelegraph(string hero, float radius, float range)
+        {
+            var ability = HeroAbilitySystem.CreateKitFor(hero).DefendingSkill;
+            Assert.IsNotNull(ability, $"{hero} has no defending role power");
+            Assert.AreEqual(radius, ability.TelegraphRadius, 0.001f, $"{hero}: defending radius differs from its effect");
+            Assert.AreEqual(range, ability.TelegraphRange, 0.001f, $"{hero}: defending reach differs from its effect");
+        }
+
         [Test]
         public void EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph()
         {
             var seenGlyphs = new HashSet<AbilityGlyph>();
             int totalAbilities = 0;
+            var placeholderHeroes = new List<string>();
 
             foreach (string hero in Heroes)
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
-                var abilities = new[] { kit.Skill1, kit.Skill2, kit.Ultimate };
-
-                foreach (var ability in abilities)
+                foreach (var slot in kit.ScreenSlots)
                 {
+                    var ability = slot.Ability;
+                    if (ability is PlaceholderRoleAbility)
+                    {
+                        placeholderHeroes.Add(hero);
+                        Assert.AreEqual("DEFENDING", slot.Label, hero);
+                        Assert.AreEqual("COMING SOON", ability.EffectiveName, hero);
+                        Assert.That(ability.Summary, Does.Contain("Does nothing yet"), hero);
+                        Assert.AreEqual(AbilityGlyph.ComingSoon, ability.Glyph, hero);
+                        Assert.AreEqual("COMING SOON", AbilityIcons.LabelFor(ability.Glyph), hero);
+                        Assert.IsNotNull(AbilityIcons.For(ability.Glyph), hero);
+                        continue;
+                    }
                     totalAbilities++;
+                    Assert.AreNotEqual(AbilityGlyph.ComingSoon, ability.Glyph, hero + " has an implemented power with a placeholder icon");
                     Assert.IsTrue(System.Enum.IsDefined(typeof(AbilityGlyph), ability.Glyph),
                         $"{hero} {ability.Name} has an undefined glyph value: {ability.Glyph}");
 
@@ -682,8 +756,10 @@ namespace TumbangPreso.Tests
                 }
             }
 
-            Assert.AreEqual(18, totalAbilities, "Expected 18 total abilities across 6 heroes");
-            Assert.AreEqual(18, seenGlyphs.Count, "Expected 18 unique glyphs across 18 abilities");
+            CollectionAssert.AreEquivalent(new[] { "sean", "zack", "rafi" }, placeholderHeroes,
+                "Only the three explicitly unfinished defending powers share an unavailable symbol.");
+            Assert.AreEqual(33, totalAbilities, "Expected 33 implemented powers among the 36 displayed slots");
+            Assert.AreEqual(33, seenGlyphs.Count, "Every implemented power needs its own glyph");
         }
 
         private static void AssertSameRgb(Color actual, Color expected, string name)
@@ -729,11 +805,14 @@ namespace TumbangPreso.Tests
             Assert.IsNotNull(rightArm, "RightPivot/Arm missing");
             Assert.IsNotNull(leftArm, "LeftPivot/Arm missing");
 
-            // The whole sleeve, hem, stripe and hand now come from the actual roster mesh.
-            // RosterArmGeometryTests compares the baked vertices and UVs to that source.
             var mf = rightArm.GetComponent<MeshFilter>();
-            Assert.AreSame(Resources.Load<Mesh>("Models/RosterArms/nemu_right"), mf.sharedMesh);
-            Assert.AreSame(Resources.Load<Mesh>("Models/RosterArms/nemu_left"), leftArm.GetComponent<MeshFilter>().sharedMesh);
+            Assert.AreSame(Resources.Load<Mesh>("Models/viewmodel_arm"), mf.sharedMesh);
+            Assert.AreSame(mf.sharedMesh, leftArm.GetComponent<MeshFilter>().sharedMesh);
+            foreach (var arm in new[] { rightArm, leftArm })
+                foreach (string part in new[] { "HoodieSleeve", "HoodieCuff", "HoodieHem", "HoodieMouth", "LavenderCuffTrim", "SpiritHand" })
+                    Assert.IsNotNull(arm.Find("~HeroAccessory_" + part), part);
+            Assert.IsFalse(vm.GetComponentsInChildren<Component>(true)
+                .Any(component => component != null && component.GetType().Name == "ViewmodelClothPhysics"));
             Assert.IsFalse(mf.sharedMesh.name.Contains("Deformed"),
                 "The sleeve must remain the shared authored geometry, without a per-instance cloth solver.");
 
@@ -874,16 +953,23 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// ⚠️ EVERY CHAIN NEEDS A SECOND AND A THIRD NAME. The first is aspirational, so a chain
-        /// of length one is a cast that silently does nothing at all on every rig that ships.
+        /// A serialized own hero clip can be a single-entry chain. An aspirational
+        /// name with no shipping asset still needs the original fallback protection.
         /// </summary>
         [Test]
-        public void EveryActionChainHasAFallbackBehindTheAspirationalClip()
+        public void EveryActionChainHasAShippedOwnClipOrFallback()
         {
+            var shippedHeroClips = new HashSet<string>(Heroes
+                .Select(hero => Resources.Load<RosterEntryAsset>("Roster/person_" + hero))
+                .Where(art => art != null && art.Clips != null)
+                .SelectMany(art => art.Clips).Where(clip => clip != null && clip.length > 0)
+                .Select(clip => clip.name));
             foreach (var pair in Visual.CharacterAnimator.ActionChains)
             {
-                Assert.GreaterOrEqual(pair.Value.Length, 2,
-                    $"'{pair.Key}' has no fallback, so it animates nothing on a rig without it");
+                Assert.IsNotEmpty(pair.Value, $"'{pair.Key}' has no action candidates");
+                Assert.IsTrue(pair.Value.Length >= 2 ||
+                    (pair.Key.StartsWith("hero-") && shippedHeroClips.Contains(pair.Value[0])),
+                    $"'{pair.Key}' has neither a serialized own hero clip nor a fallback");
 
                 foreach (string clip in pair.Value)
                     Assert.IsFalse(string.IsNullOrWhiteSpace(clip), $"'{pair.Key}' has a blank entry");
@@ -892,4 +978,3 @@ namespace TumbangPreso.Tests
 
     }
 }
-

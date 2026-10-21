@@ -1,0 +1,3 @@
+SaBubong: 1 renderers receive explicit surface roles.
+  1 | family 2 Warmroofconcrete
+72blocks, 284homes, 4planted courts; 299800vertices/73renderers, one existing palette. Retained180m central scenery untouched, streets connected, ground3000m/no new collision or shadow casters.

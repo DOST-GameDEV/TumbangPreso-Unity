@@ -13,6 +13,9 @@ namespace TumbangPreso.Visual
         private float _distance;
         private bool _sampled;
         private bool _left;
+        private int _teleport;
+        private float _lastSkid=-100;
+        private CombatVerbs _verbs;
         private void Awake() { _motor=GetComponent<CharacterMotor>(); _animator=GetComponent<CharacterAnimator>(); }
         private void OnEnable() { _sampled=false; _distance=0; }
         private void LateUpdate()
@@ -20,22 +23,102 @@ namespace TumbangPreso.Visual
             if (_animator == null) _animator=GetComponent<CharacterAnimator>();
             Vector3 now=transform.position;
             float travel=_sampled ? new Vector2(now.x-_last.x,now.z-_last.z).magnitude : 0;
+            if(_verbs==null)_verbs=GetComponent<CombatVerbs>();
+            bool sliding=(_verbs!=null && _verbs.SlideActive) || (_animator!=null && _animator.IsPlayingAction && _animator.CurrentClipName=="slide");
+            if(_sampled && _teleport==_motor.PresentationTeleportSerial && travel>.005f && travel<.8f &&
+                _motor.IsGrounded && _motor.RoundActive && sliding && Time.time-_lastSkid>.3f && WorldCueProfile.Current.InkEffects>0 &&
+                TryChalkCrossing(_last,now,out var chalk))
+            {
+                _lastSkid=Time.time;
+                // Each peer already observes the motion. Do not relay a second
+                // sound or claim a pickup; the local cue supplies replay timing.
+                var skidRandom=Random.state;
+                try{GameServices.Audio?.PlayAtVaried("court_skid",chalk,1,1,.16f);}
+                finally{Random.state=skidRandom;}
+            }
+            _teleport=_motor.PresentationTeleportSerial;
             _last=now;_sampled=true;
             float speed=new Vector2(_motor.Velocity.x,_motor.Velocity.z).magnitude;
+            bool swimming=_motor.IsSwimming;
             bool powered=_motor.AbilitySystem?.Kit?.Skill1?.IsActive ?? false;
-            if (!_motor.IsGrounded || _motor.IsStunned || !_motor.IsPerson || powered
+            if ((!_motor.IsGrounded && !swimming) || _motor.IsStunned || !_motor.IsPerson || powered
                 || (_animator != null && _animator.IsPlayingAction) || speed<.4f || travel>.8f)
             { _distance=0;return; }
             _distance+=travel;
             // One quiet accent per cycle avoids a wall of taps from four runners.
-            float stride=_animator!=null ? Mathf.Max(.3f,_animator.FootfallCycleMetres) : 1f;
+            float stride=swimming ? 2.3f : _animator!=null ? Mathf.Max(.3f,_animator.FootfallCycleMetres) : 1f;
+            // MOUNTAIN FORM stamps on EVERY foot (`CharacterAnimator.ClipVariant`): the stone boots are what he is heard by.
+            bool mountain=!swimming&&_animator!=null&&_animator.ClipVariant==CharacterAnimator.MountainVariant;
+            if(mountain)stride*=.5f;
             if (_distance<stride)return;
             _distance%=stride;_left=!_left;
             // Quiet, short rubber contact. It cannot play from a parked or teleported
             // body, and never fabricates an approaching-enemy proximity warning.
             var randomState=Random.state;
-            try { GameServices.Audio?.PlayAtVaried("step_rubber",now+transform.right*(_left?-.11f:.11f),.96f,1.04f,.9f); }
+            string cue="step_rubber";Vector3 contact=now+transform.right*(_left?-.11f:.11f);
+            if(swimming)
+            {cue="sfx_swim_stroke";if(RooftopPool.TrySurface(now,out float water))contact.y=water;}
+            else if(LagoonWater.Instance!=null&&LagoonWater.Instance.Active
+                &&Physics.Raycast(now+Vector3.up*.25f,Vector3.down,out var hit,.60f,~0,QueryTriggerInteraction.Ignore))
+            {
+                string surface=hit.collider.name.ToLowerInvariant();
+                if(surface.Contains("deck")||surface.Contains("step")||surface.Contains("rail"))cue="sfx_step_deck";
+            }
+            // Amihan steps light (owner 2026-10-02): her own airy step in place of the rubber slap, on any dry surface.
+            if(!swimming&&_animator!=null&&_animator.Style==GaitStyles.Amihan)cue="step_amihan";
+            if(mountain)
+            {
+                // A stone boot on the court: the landing's thud pitched down and loud, the court's grit and dust kicked up under
+                // it, and the ground shaking for a camera near it (the player's own view less, or every step would be a jolt).
+                cue="land";
+                bool sprint=speed>OrdinaryStride(_motor)*1.15f;
+                DanteBoulderGrit.Stomp(contact,sprint?1f:.7f);
+                var cam=Camera.main;var rig=cam!=null?cam.GetComponent<CameraSystem.CameraRig>():null;
+                if(rig!=null)
+                {
+                    float near=1f-Mathf.Clamp01(Vector3.Distance(cam.transform.position,contact)/9f);
+                    float shake=(rig.Following==_motor?.05f:.16f*near)*(sprint?1.3f:1f);
+                    if(shake>.01f)rig.Shake(shake,.12f);
+                }
+                try { GameServices.Audio?.PlayAtVaried(cue,contact,.68f,.78f,sprint?1f:.85f); }
+                finally { Random.state=randomState; }
+                return;
+            }
+            try { GameServices.Audio?.PlayAtVaried(cue,contact,.96f,1.04f,swimming?.65f:.9f); }
             finally { Random.state=randomState; } // Cosmetic contacts must not advance the AI's random stream.
+        }
+        private static float OrdinaryStride(CharacterMotor motor)=>Core.Stamina.MovementSpeed(motor.IsDefender,false);
+        public static bool TryChalkCrossing(Vector3 from,Vector3 to,out Vector3 at)
+        {
+            float radius=Core.Confinement.Radius,first=2;at=to;
+            if(Core.Confinement.Round)
+            {
+                // Intersect the travelled segment with the same circular chalk the map draws.
+                // Use double precision for short steps near the line; Y follows the contact time.
+                double dx=(double)to.x-from.x,dz=(double)to.z-from.z;
+                double a=dx*dx+dz*dz;
+                if(a<=1e-10)return false;
+                double b=2*((double)from.x*dx+(double)from.z*dz);
+                double c=(double)from.x*from.x+(double)from.z*from.z-(double)radius*radius;
+                double discriminant=b*b-4*a*c;
+                if(discriminant<=0)return false; // A tangent touches the line without crossing it.
+                double root=System.Math.Sqrt(discriminant);
+                double t=(-b-root)/(2*a);
+                if(t<=0 || t>1)t=(-b+root)/(2*a);
+                if(t<=0 || t>1)return false;
+                at=Vector3.Lerp(from,to,(float)t);return true;
+            }
+            for(int axis=0;axis<2;axis++)for(int side=-1;side<=1;side+=2)
+            {
+                float a=axis==0?from.x:from.z,b=axis==0?to.x:to.z;
+                if(Mathf.Abs(b-a)<.00001f)continue;
+                float t=(side*radius-a)/(b-a);
+                if(t<=0 || t>1 || t>=first)continue;
+                var point=Vector3.Lerp(from,to,t);float other=axis==0?point.z:point.x;
+                if(Mathf.Abs(other)>radius+.12f)continue;
+                first=t;at=point;
+            }
+            return first<=1;
         }
     }
 }

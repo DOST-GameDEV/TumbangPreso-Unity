@@ -1,0 +1,74 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs",
+    "sha256": "08d95ea7f02b004ba2a10fb8ccd4fb6a1381080f2becae75eca51bf745db1f30"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+    "sha256": "d4af96e6b2a13eb87124a09623be3d1e30935edd80dddedee04afcebd7476ebc"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/BrandPickerTests.cs",
+    "sha256": "67077122444a845e7d9b06641f5d69aa1582cda71664e3f7f2c7b1b3d66e9091"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/BrandPreparationTests.cs",
+    "sha256": "f715384ab3115e49b5bb57ac9e8a1c22be309c5b75e8190e0850f30060ccce0f"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/CosmeticSurfaceProbe.cs",
+    "sha256": "ab832b1e8156cb0033198e9111cbf62eac1ab944b228c9a6ebf6130d93b4b7eb"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/HeroPickerLayoutProbe.cs",
+    "sha256": "371361573f1b6584f6965bdf016ac9c57eafd77c22d1e14303f22543324f3672"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/HudOverflowProbe.cs",
+    "sha256": "05a29fd2bcf3e92c031149f727cb1d494fcbb784f6a755f7a57915136ea9c2a9"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LoadoutSurfaceProbe.cs",
+    "sha256": "e7c6051b21509b15995a5e400900bd9b6f73b45b9c5516ee16984051737fc3b0"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/ModelPreviewTests.cs",
+    "sha256": "fcfd1db13afb675dde93420e0f6a71568e8434012c77fb6e4167068be152095c"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PhaseSurfaceLayoutProbe.cs",
+    "sha256": "27239ff9ae03c942e14cd6a353d6945750f092ddac7fdc8b621c64743870ac12"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubLayoutProbe.cs",
+    "sha256": "58545a60af53f3151a499f77408555a2aab1d3c98a322ba0555b2d6de68b575e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/SettingsScrollProbe.cs",
+    "sha256": "bba1724ab27cad49721d9c736b69aa50bb20133a3e922578dc46a80fce8e2cf1"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/SettingsWheelProbe.cs",
+    "sha256": "c33c2414d7c27313721dbf7d03c1e52bbab3d75775d2249ce2e0973b915f4e57"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/TumpNativeSettingsTests.cs",
+    "sha256": "7835513bbc3266646cdd24f6e89507057a9c30a72f9d5c3f4ead0e50f2243be8"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/UiClickProbe.cs",
+    "sha256": "1ee08dc9d5cd813fe00e2d785bca291a9bab1e9f753d8992259e247ef510189e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/UiRuntimeShots.cs",
+    "sha256": "ad993d362b963cc5600962ec29ec1c048439981641a97d9a611c9eb274dac176"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PaintedScreens.cs",
+    "sha256": "1058752bb4a00b9d1246b3766fe52c35bb69957bb227530d2edef50ab86df041"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PaintedScreens.cs.meta",
+    "sha256": "4e9b565072ec657371e4520aa2e2ada6f9482d9875c65e652525069dd182f4c4"
+  }
+]

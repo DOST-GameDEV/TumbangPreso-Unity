@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.3442929">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="889" result="Failed" site="Child" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.344293" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2066" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="889" result="Failed" site="Child" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.281631" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20244" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2067" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="889" result="Failed" site="Child" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.265412" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2068" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="889" result="Failed" site="Child" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.252906" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1838" name="RecentPlayerReportEligibilityTests" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.231927" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1847" name="ReportsRemainAvailableIndependentlyOfFriendOffers" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.226962" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1839" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;friend&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;friend&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="1150566084" result="Failed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.186020" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A report action was coupled to friendship eligibility.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers (System.String relationship, System.Boolean expectedReport, System.Boolean expectedAdd) [0x001dd] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RecentPlayerReportEligibilityTests.cs:90
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1840" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;blocked&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;blocked&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="1405494383" result="Failed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.002323" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A report action was coupled to friendship eligibility.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers (System.String relationship, System.Boolean expectedReport, System.Boolean expectedAdd) [0x001dd] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RecentPlayerReportEligibilityTests.cs:90
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1841" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;pending&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;pending&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="793028420" result="Failed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.001780" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A report action was coupled to friendship eligibility.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers (System.String relationship, System.Boolean expectedReport, System.Boolean expectedAdd) [0x001dd] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RecentPlayerReportEligibilityTests.cs:90
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1842" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;ordinary&quot;,True,True)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;ordinary&quot;,True,True)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="261555671" result="Passed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.016073" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1843" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;self&quot;,False,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;self&quot;,False,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="2028729352" result="Passed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.001779" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1844" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;bot&quot;,False,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;bot&quot;,False,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="178058104" result="Passed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.001565" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1845" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;empty&quot;,False,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;empty&quot;,False,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="566957226" result="Passed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.001583" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1846" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;no-social&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;no-social&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="1613176365" result="Failed" start-time="2026-10-02 04:16:45Z" end-time="2026-10-02 04:16:45Z" duration="0.001914" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A report action was coupled to friendship eligibility.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers (System.String relationship, System.Boolean expectedReport, System.Boolean expectedAdd) [0x001dd] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RecentPlayerReportEligibilityTests.cs:90
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

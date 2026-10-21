@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 20:48:42Z" end-time="2026-09-21 20:49:12Z" duration="30.1959381">
+  <test-suite type="TestSuite" id="1678" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="510" result="Passed" start-time="2026-09-21 20:48:42Z" end-time="2026-09-21 20:49:12Z" duration="30.195938" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1672" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="510" result="Passed" start-time="2026-09-21 20:48:42Z" end-time="2026-09-21 20:49:12Z" duration="30.180126" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4000" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1673" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="510" result="Passed" start-time="2026-09-21 20:48:42Z" end-time="2026-09-21 20:49:12Z" duration="30.173148" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1674" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="510" result="Passed" start-time="2026-09-21 20:48:42Z" end-time="2026-09-21 20:49:12Z" duration="30.166620" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1389" name="PaperPurityProbe" fullname="TumbangPreso.PlayTests.PaperPurityProbe" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-21 20:48:42Z" end-time="2026-09-21 20:48:49Z" duration="7.469529" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1392" name="NothingOnTheInventoryDisappeared" fullname="TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared" methodname="NothingOnTheInventoryDisappeared" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" seed="841267094" result="Passed" start-time="2026-09-21 20:48:42Z" end-time="2026-09-21 20:48:49Z" duration="7.451903" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code EED9
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1639" name="UiRuntimeShots" fullname="TumbangPreso.PlayTests.UiRuntimeShots" classname="TumbangPreso.PlayTests.UiRuntimeShots" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-21 20:48:49Z" end-time="2026-09-21 20:49:12Z" duration="22.635369" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1645" name="TheLobbyDraws" fullname="TumbangPreso.PlayTests.UiRuntimeShots.TheLobbyDraws" methodname="TheLobbyDraws" classname="TumbangPreso.PlayTests.UiRuntimeShots" runstate="Runnable" seed="680942747" result="Passed" start-time="2026-09-21 20:48:49Z" end-time="2026-09-21 20:49:06Z" duration="16.362359" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 793F
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Shot] wrote Logs/shots-runtime/Lobby-v95.png
+[Shot] wrote Logs/shots-runtime/LobbyAccount-v95.png
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Shot] wrote Logs/shots-runtime/HubFRIENDS-v95.png
+[Shot] wrote Logs/shots-runtime/HubCAREER-v95.png
+[Shot] the hub has no MATCHES tab.
+[Shot] wrote Logs/shots-runtime/HubACCOUNT-v95.png
+[Shot] wrote Logs/shots-runtime/LobbyRules-v95.png
+[Shot] wrote Logs/shots-runtime/LobbyServers-v95.png
+[Shot] wrote Logs/shots-runtime/LobbyChat-v95.png
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Shot] wrote Logs/shots-runtime/LobbyRanked-v95.png
+[Shot] wrote Logs/shots-runtime/LobbyQueue-v95.png
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Shot] wrote Logs/shots-runtime/LobbyPractice-v95.png
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code HZZS
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Shot] wrote Logs/shots-runtime/LobbyJoin-v95.png
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+]]></output>
+            </test-case>
+            <test-case id="1643" name="TheSettingsPanelDraws" fullname="TumbangPreso.PlayTests.UiRuntimeShots.TheSettingsPanelDraws" methodname="TheSettingsPanelDraws" classname="TumbangPreso.PlayTests.UiRuntimeShots" runstate="Runnable" seed="1296449187" result="Passed" start-time="2026-09-21 20:49:06Z" end-time="2026-09-21 20:49:12Z" duration="6.266306" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Shot] wrote Logs/shots-runtime/Settings-v95-Controls.png
+[Shot] wrote Logs/shots-runtime/Settings-v95-Audio.png
+[Shot] wrote Logs/shots-runtime/Settings-v95-Graphics.png
+[Shot] wrote Logs/shots-runtime/Settings-v95-Player.png
+[Shot] wrote Logs/shots-runtime/Settings-v95-Accessibility.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

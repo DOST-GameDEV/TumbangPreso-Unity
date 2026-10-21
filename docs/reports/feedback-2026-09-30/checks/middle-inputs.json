@@ -1,0 +1,17 @@
+{
+  "sourceEquivalent": "d3e21c9d2 plus latest MMB/F request",
+  "question": "requested default/group order, conflicts and saved overrides; MMB gameplay/F Ready hold-release interaction",
+  "expectedEditCases": 4,
+  "expectedPlayCases": 1,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Resources/TumbangPreso.inputactions": "3ccbc334ea0aa7dab543fc7feae823f990463cdfe168d646ce6d084205ecca2d",
+    "Assets/TumbangPreso/Runtime/Settings/Rebinding.cs": "ea4bbb00e9c90d8e9f8a31fa0c046383c4e6276d5ff8ceb0ea066603f480cd9a",
+    "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "7b8727389df940326e451c6170a725b57e075dc1ca6070747eedf1ac0742608d",
+    "Assets/TumbangPreso/Tests/InputMapAndAbilityTests.cs": "85828539d1d5d29747abfa9e3c7da94ebf967246ad878322080a7b39d8356e73",
+    "Assets/TumbangPreso/Tests/PlayMode/InputReaderTests.cs": "8b496d0b4554954bef53baa4852ea24f99c780e4d66078105fa48a30bc0acab8"
+  },
+  "initialEditCases": 3,
+  "separateConflictCases": 1,
+  "runtimeDrift": []
+}

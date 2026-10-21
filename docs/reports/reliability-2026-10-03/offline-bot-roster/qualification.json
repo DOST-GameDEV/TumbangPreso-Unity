@@ -1,0 +1,16 @@
+{
+  "original": {
+    "passed": 2,
+    "failed": 2,
+    "xmlSha256": "811d5d4fc42dc43518317e65ca7fb087d1d7c67cf0eaa3834013231277406c34"
+  },
+  "candidate": {
+    "passed": 4,
+    "failed": 0,
+    "xmlSha256": "ebbd222f22d3dc4471247b1dcc4444855d7c0a1e65618cb0c676fcf03a6c6134"
+  },
+  "candidateSource": {
+    "Assets/TumbangPreso/Runtime/MatchInstaller.cs": "f101c956e19861548953e9260d8a5a7dd8c58af51713b859122eabbd344d7733",
+    "Assets/TumbangPreso/Tests/OfflineBotRosterCoverageTests.cs": "1474a042ec2d13c771584cbc0117239f824be454c5cb376a9279ea70c029f662"
+  }
+}

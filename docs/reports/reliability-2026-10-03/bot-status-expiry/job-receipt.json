@@ -1,0 +1,40 @@
+{
+  "job": {
+    "id": "d6977f81703448d9a16dae4a1dc186fc",
+    "ownerPid": 1752,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T08:42:19Z",
+    "kind": "gpu",
+    "memoryMb": 6144,
+    "reserveMb": 1536,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-codex-slot1003",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-codex-slot1003\\library",
+    "profile": "bot-status-expiry1003",
+    "prefHive": "software\\unity\\unityeditor\\bh studios validation\\tumpworker-codex-slot1003",
+    "ports": [],
+    "worker": true,
+    "allowParallel": false,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": false,
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-codex-slot1003"
+  },
+  "requestedUtc": "2026-10-03T08:42:19Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 8298,
+    "activeJobsBefore": 0,
+    "outsideEditors": [],
+    "outsideReserveMb": 0,
+    "acquiredUtc": "2026-10-03T08:42:19Z"
+  },
+  "startedUtc": "2026-10-03T08:42:19Z",
+  "guardPid": 31792,
+  "endedUtc": "2026-10-03T08:44:26Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 5292,
+  "leaseHeld": false
+}

@@ -1,0 +1,4 @@
+native-source/** -text
+*.xml -text
+result.json -text
+source-restoration.json -text

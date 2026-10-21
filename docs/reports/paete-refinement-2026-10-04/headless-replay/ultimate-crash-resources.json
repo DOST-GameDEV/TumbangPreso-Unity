@@ -1,0 +1,1 @@
+{"pid": 158345, "exitCode": 245, "elapsedSeconds": 40.2, "peakTreeRss": 3569405952, "peakCgroupBytes": 6813642752, "monitorOnly": true, "memoryEventsBefore": "low 0\nhigh 0\nmax 5357971\noom 8\noom_kill 7\noom_group_kill 0\n", "memoryEventsNow": "low 0\nhigh 0\nmax 5357971\noom 8\noom_kill 7\noom_group_kill 0\n"}

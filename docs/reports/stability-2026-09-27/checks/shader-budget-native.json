@@ -1,0 +1,26 @@
+{
+  "base": "ecf1ac8cc66d03a910304ccff2e5a4507902c297",
+  "scope": "Changed shader preparation stage: complete collection and per-turn variant cap",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.3210436,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "45A01C49427225E262DF0A77EAD0D5527549591CC136DA40D135E735622C0A8A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "5B05E7E055C1D856EC3B0AC24D27DA3B5C84B9793B759BD3426CEC9CE05774FB"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6535024640,
+  "retryCount": 0,
+  "shaderReceipt": "[SplashShaders] shaders=50 variants=97 warmed=97 complete=True calls=97 frames=10 budget_ms=2.0 elapsed_ms=9.171 max_slice_ms=1.493",
+  "unverified": [
+    "Cold player/handset timings",
+    "Hard frame budget; a native compile is indivisible",
+    "No A/B comparison"
+  ]
+}

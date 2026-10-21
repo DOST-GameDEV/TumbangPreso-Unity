@@ -117,7 +117,12 @@ namespace TumbangPreso.UI
             _hud.Canvas.transform.SetParent(_previousParent, false); _hud.Canvas.sortingOrder = _sortBefore;
             TouchHud.ForceVisible = _forceBefore;
             _hud.ApplyLayout();
-            if (_createdHud) { _hud.Canvas.gameObject.SetActive(false); Destroy(_hud.gameObject); }
+            if (_createdHud)
+            {
+                _hud.Canvas.gameObject.SetActive(false);
+                _hud.gameObject.SetActive(false);
+                Destroy(_hud.gameObject);
+            }
             _canvas.gameObject.SetActive(false); if (gameObject.activeInHierarchy) _back?.Invoke();
         }
     }

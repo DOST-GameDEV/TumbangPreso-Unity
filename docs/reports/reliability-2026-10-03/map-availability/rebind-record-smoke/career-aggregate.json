@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "roles": {
+    "host": {
+      "fileExists": true,
+      "historyCount": 1,
+      "queueCount": 1,
+      "witnessCount": 1,
+      "ownerPresent": true,
+      "localOwnerLines": 1,
+      "localOwnerIsHuman": true,
+      "online": true,
+      "rounds": 1,
+      "mode": "HeroStrike",
+      "scores": [
+        130,
+        0,
+        0,
+        150
+      ],
+      "recordMatchesPeer": true,
+      "queueMatchesHistory": true,
+      "abandonMarkerCleared": true,
+      "passed": true
+    },
+    "client": {
+      "fileExists": true,
+      "historyCount": 1,
+      "queueCount": 1,
+      "witnessCount": 1,
+      "ownerPresent": true,
+      "localOwnerLines": 1,
+      "localOwnerIsHuman": true,
+      "online": true,
+      "rounds": 1,
+      "mode": "HeroStrike",
+      "scores": [
+        130,
+        0,
+        0,
+        150
+      ],
+      "recordMatchesPeer": true,
+      "queueMatchesHistory": true,
+      "abandonMarkerCleared": true,
+      "passed": true
+    }
+  },
+  "sameSavedMatch": true,
+  "sameSavedScores": true,
+  "scope": "After terminal player exits, inspect only task-owned fresh career files. Export no account identity, handle, token or profile contents."
+}

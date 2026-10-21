@@ -1,0 +1,60 @@
+{
+  "sourceCommit": "69e3414913c3bc582b9ce5b028239f65503e62d7",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Carrier.cs",
+      "variant": "original",
+      "sha256": "bbc4e49a3ff87cd23956a4d4b4e6adb45484bb9b960480960e16d72307c2ea34",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Carrier.cs.original.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Carrier.cs",
+      "variant": "baseline",
+      "sha256": "bbc4e49a3ff87cd23956a4d4b4e6adb45484bb9b960480960e16d72307c2ea34",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Carrier.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Carrier.cs",
+      "variant": "final",
+      "sha256": "266c5f537f1ad16ddf77b415b5fd88667de1f570231a021dbb6574ee213d6799",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Carrier.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Slipper.cs",
+      "variant": "original",
+      "sha256": "09cd06f1d68c4c2a0707a94236916dcff143cf2c54e4d5ec853053009fed488c",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Slipper.cs.original.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Slipper.cs",
+      "variant": "baseline",
+      "sha256": "09cd06f1d68c4c2a0707a94236916dcff143cf2c54e4d5ec853053009fed488c",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Slipper.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Slipper.cs",
+      "variant": "final",
+      "sha256": "01b301c5c28c883b1e8396cbaf12828a00fbbc67cf257ee539c0f9a130ead173",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Slipper.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlipperHandoverTests.cs",
+      "variant": "original",
+      "sha256": "5447a7594a5fa5e61df87b12ccc5254084f59108aecdbb3f55372a2dad310e02",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\SlipperHandoverTests.cs.original.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlipperHandoverTests.cs",
+      "variant": "baseline",
+      "sha256": "f7c7df4e4323da2d5d15e045fb6951c510f81bc12fdc086a1f58d4fbd3ca04a0",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\SlipperHandoverTests.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlipperHandoverTests.cs",
+      "variant": "final",
+      "sha256": "f7c7df4e4323da2d5d15e045fb6951c510f81bc12fdc086a1f58d4fbd3ca04a0",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\SlipperHandoverTests.cs.final.txt"
+    }
+  ],
+  "qualificationInstalled": false
+}

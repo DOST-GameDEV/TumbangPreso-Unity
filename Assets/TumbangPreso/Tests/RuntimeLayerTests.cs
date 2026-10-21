@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -243,7 +244,7 @@ namespace TumbangPreso.Tests
 
             float ring = Balance.ConfinementRadius + throwStandoff + capsuleRadius;
 
-            Assert.LessOrEqual(ring, AIController.PlayableHalfX,
+            Assert.LessOrEqual(ring, AIController.PlayableNearestX,
                 "the standoff ring lands inside a wall: bots will jam against it trying to " +
                 "reach a goal they can never stand on, and it reads as broken pathfinding");
         }
@@ -295,23 +296,23 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
-        public void Nemu_AstralProjection_SupportsReactivation()
+        public void NemuRoleSkillSwitchesBetweenFetchAndGuard()
         {
             var nemu = new Abilities.NemuHeroKit();
-            Assert.IsTrue(nemu.Skill2.CanReactivate, "Nemu Skill 2 should support early reactivation");
+            Assert.IsTrue(nemu.HasRoleAbilities);
+            var fetch = nemu.AttackingSkill;
+            var guard = nemu.DefendingSkill;
+            Assert.AreEqual("KURO FETCH", fetch.Name);
+            Assert.AreEqual("KURO GUARD", guard.Name);
+            Assert.IsFalse(fetch.CanReactivate, "Kuro Fetch is not the removed Astral Projection");
+            Assert.AreSame(fetch, nemu.Skill2);
 
-            var go = new GameObject("TestMotor");
-            var motor = go.AddComponent<CharacterMotor>();
-            var ctx = new Abilities.AbilityContext(motor, null, null);
-
-            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
-            Assert.IsTrue(nemu.Skill2.IsActive);
-
-            // Second activation reactivates and ends early (teleport trigger)
-            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
-            Assert.IsFalse(nemu.Skill2.IsActive, "Second activation should end early");
-
-            Object.DestroyImmediate(go);
+            nemu.SetRole(true, null);
+            Assert.AreSame(guard, nemu.Skill2, "the defending role did not equip Kuro Guard");
+            Assert.AreSame(fetch, nemu.IdleRoleSkill);
+            nemu.SetRole(false, null);
+            Assert.AreSame(fetch, nemu.Skill2, "the attacking role did not restore Kuro Fetch");
+            Assert.AreSame(guard, nemu.IdleRoleSkill);
         }
 
         [Test]
@@ -390,11 +391,13 @@ namespace TumbangPreso.Tests
 
             Assert.AreEqual(12, classic.Count);
 
-            // ⚠ SIX SINCE 2026-08-26, when Phaister merged in. The number is asserted rather
+            // Seven since Rafi joined Hero Strike. The number is asserted rather
             // than derived on purpose: a hero appearing or disappearing from the Hero Strike
             // roster is a product decision and should have to be typed here, not noticed later.
             // `docs/TODO.md` § 21.
-            Assert.AreEqual(6, heroes.Count);
+            Assert.AreEqual(9, heroes.Count);
+            Assert.IsTrue(heroes.Any(person => person.Id == "rafi"));
+            Assert.IsFalse(classic.Any(person => person.Id == "rafi"));
             Assert.AreEqual("bayan", classic[0].Id);
             Assert.AreEqual("dante", heroes[0].Id);
         }
@@ -467,6 +470,80 @@ namespace TumbangPreso.Tests
                 "\"1 / 1 WANT A REMATCH\" is a sentence about nobody");
             Assert.AreEqual("", UI.MatchResult.TallyLine(0, 0));
             Assert.AreEqual("2 / 3 WANT A REMATCH", UI.MatchResult.TallyLine(2, 3));
+        }
+
+        private sealed class RematchBallotHost : INetProvider
+        {
+            public bool IsHost => true;
+            public bool IsNetworked => true;
+            public int LocalSlot => 0;
+            public int LocalPeerId => 0;
+            public bool IsSeatlessReferee => false;
+        }
+
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void DepartedRematchMapBallotCannotChooseTheNextCourt(bool keepConnectedBallot, bool holdReconnectSeat)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            const BindingFlags hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+            var previousProvider = NetAuthority.Provider;
+            string previousMap = UI.SceneFlow.SelectedMap;
+            bool previousRevocation = MatchAbandon.AuthorityRevoked;
+            var sessionInstance = typeof(Net.NetSession).GetProperty("Instance"); var previousSession = sessionInstance.GetValue(null);
+            var rpcInstance = typeof(Net.MatchRpc).GetProperty("Instance"); var previousRpc = rpcInstance.GetValue(null);
+            var sessionRoot = new GameObject("Dormant rematch ballot lobby"); sessionRoot.SetActive(false);
+            var session = sessionRoot.AddComponent<Net.NetSession>();
+            var resultRoot = new GameObject("Dormant rematch ballot result"); resultRoot.SetActive(false);
+            var result = resultRoot.AddComponent<UI.MatchResult>();
+            var canvasRoot = new GameObject("Visible rematch ballot fixture"); var canvas = canvasRoot.AddComponent<Canvas>();
+            var resultType = typeof(UI.MatchResult);
+            try
+            {
+                // Exercise result logic without building UI, starting transport or loading an arena.
+                NetAuthority.Provider = new RematchBallotHost(); sessionInstance.SetValue(null, session); rpcInstance.SetValue(null, null);
+                typeof(MatchAbandon).GetProperty("AuthorityRevoked").SetValue(null, false);
+                resultType.GetField("_canvas", hidden).SetValue(result, canvas);
+                resultType.GetMethod("ClearMapVotes", hidden).Invoke(result, null);
+                UI.SceneFlow.SelectedMap = UI.SceneFlow.Maps[0];
+                Assert.Greater(UI.SceneFlow.Maps.Length, 2);
+                int departingMap = 2, connectedMap = UI.SceneFlow.Maps.Length - 1;
+                session.Lobby.OpenLobby(new System.Random(42));
+                session.Lobby.Admit(0, "rematch-host", "Host");
+                var departing = session.Lobby.Admit(7, "rematch-departing", "Departing");
+                var connected = session.Lobby.Admit(19, "rematch-connected", "Connected");
+                result.HostReceiveMapVote(departing.Seat, departingMap);
+                if (keepConnectedBallot) result.HostReceiveMapVote(connected.Seat, connectedMap);
+                result.HostReceiveVote(departing.PeerId);
+                Assert.AreEqual(1, result.VoteCount);
+                session.Lobby.MatchInProgress = holdReconnectSeat;
+
+                // This is the real router's ordering: Depart first, result notification second.
+                var removed = session.Lobby.Depart(departing.PeerId);
+                Assert.AreSame(departing, removed);
+                Assert.AreEqual(holdReconnectSeat, session.Lobby.IsSeatOccupied(departing.Seat));
+                result.OnPeerLeft(departing.PeerId);
+
+                int projected = (int)resultType.GetMethod("ProjectedNextMap", hidden).Invoke(result, null);
+                int expected = keepConnectedBallot ? connectedMap : 1;
+                Assert.AreEqual(expected, projected, "A departed player's ballot still selected the next court.");
+                var votes = (int[])resultType.GetField("_mapVotes", hidden).GetValue(result);
+                UI.SceneFlow.AdvanceMapRotation(votes);
+                Assert.AreEqual(UI.SceneFlow.Maps[expected], UI.SceneFlow.SelectedMap, "The actual rematch route retained a disconnected ballot.");
+                Assert.AreEqual(keepConnectedBallot ? connectedMap : MapRotationRules.NoVote, votes[connected.Seat], "A live player's ballot was discarded.");
+                Assert.AreEqual(0, result.VoteCount, "The departed player's rematch consent survived.");
+                Assert.AreEqual(2, result.ExpectedVotes());
+                Assert.IsTrue(result.IsVisible, "Removing a map ballot started an unconsented rematch.");
+            }
+            finally
+            {
+                NetAuthority.Provider = previousProvider; sessionInstance.SetValue(null, previousSession); rpcInstance.SetValue(null, previousRpc);
+                UI.SceneFlow.SelectedMap = previousMap;
+                typeof(MatchAbandon).GetProperty("AuthorityRevoked").SetValue(null, previousRevocation);
+                Object.DestroyImmediate(resultRoot); Object.DestroyImmediate(canvasRoot); Object.DestroyImmediate(sessionRoot);
+            }
         }
 
         /// <summary>

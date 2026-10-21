@@ -25,11 +25,17 @@ Shader "TumbangPreso/ColourGrade"
         _Exposure ("Tonemap Exposure", Range(0, 4)) = 0
         _White ("Tonemap White", Range(0.5, 8)) = 1.9
         _Chromatic ("Impact Chromatic Split", Range(0, 1)) = 0
+        _ConcussGhost ("Concussed double image (uv offset xy, weight z)", Vector) = (0, 0, 0, 0)
 
         // 0 is the flat horizontal split this pass shipped with, 1 is the radial one. See the
         // § THE SPLIT'S SHAPE note in the fragment. `Visual.ColourGrade` writes it off
         // `Settings.RenderStyles.RadialSplit`, so it is 0 in the default Toon style.
         _ChromaticRadial ("Chromatic Split Is Radial", Range(0, 1)) = 0
+        _BloomTex ("Bloom", 2D) = "black" {}
+        _BloomIntensity ("Bloom Intensity", Range(0, 2)) = 0
+        _BloomThreshold ("Bloom Threshold and knee", Vector) = (1.2, 0.6, 0, 0)
+        _Lift ("Coloured black lift", Color) = (0, 0, 0, 0)
+        _Vibrance ("Vibrance", Range(0, 1)) = 0
     }
 
     SubShader
@@ -44,6 +50,13 @@ Shader "TumbangPreso/ColourGrade"
             #include "UnityCG.cginc"
 
             sampler2D _MainTex;
+            sampler2D _CueMask;
+            UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+            float _HauntedSight;
+            float4 _ConcussGhost;
+            float4 _HauntedViewScale;
+            float _CueWorld,_CueSpeed,_CueTime,_CueEdges;
+            float4 _CuePixels,_CuePips[8];
             half _Brightness;
             half _Contrast;
             half _Saturation;
@@ -51,6 +64,25 @@ Shader "TumbangPreso/ColourGrade"
             half _White;
             half _Chromatic;
             half _ChromaticRadial;
+
+            // ⚠️⚠️ § THE BRIGHT LOOK'S GRADE, 2026-09-23. Three terms, all zero unless the
+            // camera belongs to a map's world look, so menus and portraits grade exactly as
+            // before:
+            //   * BLOOM, added in HDR before the tonemap. PEAK's skies, clouds and sunlit sand
+            //     carry a soft glow; the threshold sits above lit albedo so a sunny wall does not
+            //     glow, only the sky and true highlights do.
+            //   * A COLOURED BLACK LIFT after the tonemap. Nothing in PEAK is black; its darkest
+            //     values are plum, brown or teal. `c + lift * (1 - c)` raises the floor and
+            //     leaves white where it was.
+            //   * VIBRANCE, a saturation lift weighted toward the colours that have least. It
+            //     brightens the grey asphalt and plaster without pushing the cast's already
+            //     saturated shirts past their palette.
+            sampler2D _BloomTex;
+            half _BloomIntensity;
+            float4 _BloomThreshold;
+            half4 _Lift;
+            half4 _ShadowHue,_HighlightHue;
+            half _Vibrance;
 
             // ⚠️⚠️ THE TONEMAP BELONGS TO THE FRAME, NOT TO A MATERIAL, AND HAVING IT ON THE
             // MATERIAL IS WHY THE SKY BLEW OUT. `Toon.shader` was carrying the ACES curve because
@@ -206,12 +238,45 @@ Shader "TumbangPreso/ColourGrade"
             // general and is NOT what this game was graded against. Using it here pulls the
             // greens and the orange skin apart from the build the art was signed off on, which
             // is the whole thing this pass exists to match.
+            half3 CueEdges(float2 uv,half3 colour)
+            {
+                if(_CueEdges<=0)return colour;
+                if(_CueSpeed>0)
+                {
+                    float2 p=(uv-.5)*2;float radius=length(p);
+                    float angle=atan2(p.y,p.x);float sector=floor((angle+3.141593)*5.4);
+                    float strokeDistance=abs(frac((angle+3.141593)*5.4)-.5);
+                    float travel=frac(radius*2.4-_CueTime*2.6+sector*.173);
+                    float ink=(1-smoothstep(.024,.055,strokeDistance))*step(.66,travel)*smoothstep(.70,.98,radius);
+                    float face=(1-smoothstep(.008,.019,strokeDistance))*step(.69,travel)*smoothstep(.73,1.01,radius);
+                    colour=lerp(colour,half3(.015,.015,.015),ink*_CueSpeed*.22);
+                    colour=lerp(colour,half3(.97,.93,.82),face*_CueSpeed*.18);
+                }
+                [unroll] for(int n=0;n<8;n++)
+                {
+                    if(_CuePips[n].z<=0)continue;
+                    float2 pixel=(uv-_CuePips[n].xy)*_CuePixels.xy;
+                    // Hollow diamond, fixed pixel size: a heard event, not a
+                    // precise target indicator. No label or identity colour.
+                    float d=abs(pixel.x)+abs(pixel.y);
+                    float ink=step(3.0,d)*(1-smoothstep(9.0,10.0,d));
+                    float face=step(5.0,d)*(1-smoothstep(7.0,8.0,d));
+                    colour=lerp(colour,half3(.015,.015,.015),ink*_CuePips[n].z*.44);
+                    colour=lerp(colour,half3(.97,.93,.82),face*_CuePips[n].z*.38);
+                }
+                return colour;
+            }
             half4 frag (v2f_img i) : SV_Target
             {
                 half2 split = SplitOffset(i.uv);
                 half4 source = tex2D(_MainTex, i.uv);
                 source.r = tex2D(_MainTex, i.uv + split).r;
                 source.b = tex2D(_MainTex, i.uv - split).b;
+                // CONCUSSED, the victim's own view (`Visual.ConcussedPerception`): a second copy of the frame a couple of
+                // pixels off, swaying with their aim wobble. A double image, not a blur: the court stays sharp under it.
+                if (_ConcussGhost.z > 0.0)
+                    source.rgb = lerp(source.rgb, tex2D(_MainTex, i.uv + _ConcussGhost.xy).rgb, _ConcussGhost.z);
+                source.rgb += tex2D(_BloomTex, i.uv).rgb * _BloomIntensity;
 
                 // ⚠️ TONEMAP FIRST, THEN THE BCS ADJUSTMENT. That is the order Godot's
                 // `tonemap.glsl` runs them in, and it is not interchangeable: grading before the
@@ -229,8 +294,129 @@ Shader "TumbangPreso/ColourGrade"
                 half grey = dot(half3(1, 1, 1), c) * 0.33333h;
                 c = lerp(half3(grey, grey, grey), c, _Saturation);
 
-                return half4(saturate(c), source.a);
+                // § THE BRIGHT LOOK'S GRADE. Vibrance first so the lift does not count as colour.
+                if (_Vibrance > 0.0h || _Lift.a > 0.0h || _ShadowHue.a > 0.0h)
+                {
+                    half high = max(c.r, max(c.g, c.b));
+                    half low = min(c.r, min(c.g, c.b));
+                    half chroma = (high - low) / max(high, 0.0001h);
+                    half value = dot(c, half3(0.2126h, 0.7152h, 0.0722h));
+                    c = max(lerp(value.xxx, c, 1.0h + _Vibrance * (1.0h - chroma)), 0.0h);
+                    // § SPLIT TONE (2026-09-25): dark values lean toward the shade hue, light
+                    // ones toward the key's, each divided by its own luminance so the lean
+                    // changes hue and never value. The windows are in linear light: the shade
+                    // half fades out by 0.25 (about sRGB 137), the light half starts at 0.30.
+                    // Before the lift, so the floor is tinted by `_Lift` alone.
+                    if (_ShadowHue.a > 0.0h)
+                    {
+                        half3 w = half3(0.2126h, 0.7152h, 0.0722h);
+                        half v = dot(c, w);
+                        half3 toShade = c * _ShadowHue.rgb / max(dot(_ShadowHue.rgb, w), 0.0001h);
+                        half3 toLight = c * _HighlightHue.rgb / max(dot(_HighlightHue.rgb, w), 0.0001h);
+                        c = lerp(c, toShade, (1.0h - smoothstep(0.02h, 0.25h, v)) * _ShadowHue.a);
+                        c = lerp(c, toLight, smoothstep(0.30h, 0.85h, v) * _ShadowHue.a * 0.7h);
+                    }
+                    c = c + _Lift.rgb * (1.0h - saturate(c));
+                }
+
+                if(_CueWorld>0)
+                {
+                    half keep=tex2D(_CueMask,i.uv).r;
+                    half value=dot(c,half3(.2126,.7152,.0722));
+                    c=lerp(c,half3(value,value,value),_CueWorld*(1-keep));
+                }
+                c=saturate(CueEdges(i.uv,c));
+                if(_HauntedSight>0.5)
+                {
+                    float eyeDepth=LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv));
+                    // Eye depth alone creates a flat slice through the street. Reconstruct
+                    // the view ray so equal distances fade equally around the victim.
+                    float2 viewXY=(i.uv*2.0-1.0+_HauntedViewScale.zw)*_HauntedViewScale.xy;
+                    float radialDistance=eyeDepth*sqrt(1.0+dot(viewXY,viewXY));
+                    half obscured=smoothstep(2.5,7.0,radialDistance);
+                    // Nemu's existing deep-purple ink, not a black world-wide fog.
+                    c=lerp(c,half3(.05,.02,.08),obscured);
+                }
+                return half4(c, source.a);
             }
+            ENDCG
+        }
+
+        // ------------------------------------------------------------ § THE BRIGHT LOOK'S BLOOM
+        //
+        // ⚠️ A FOUR-TAP BOX CHAIN, THE CHEAPEST BLOOM THAT DOES NOT FLICKER. Pass 1 thresholds
+        // with a soft knee and halves, pass 2 halves again, pass 3 walks back up adding each level
+        // into the one above it (Blend One One). Five levels from half resolution is a glow about
+        // a twentieth of the frame wide, which is the soft haze in PEAK's frames rather than a
+        // lens-flare streak. `ColourGrade.Bloom` skips the whole chain on the Low graphics tier.
+        Pass
+        {
+            Name "BLOOM_PREFILTER"
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
+            float4 _BloomThreshold;
+            half3 BoxSample (float2 uv, float delta)
+            {
+                float4 o = _MainTex_TexelSize.xyxy * float2(-delta, delta).xxyy;
+                return (tex2D(_MainTex, uv + o.xy).rgb + tex2D(_MainTex, uv + o.zy).rgb +
+                        tex2D(_MainTex, uv + o.xw).rgb + tex2D(_MainTex, uv + o.zw).rgb) * 0.25h;
+            }
+            half4 frag (v2f_img i) : SV_Target
+            {
+                half3 c = BoxSample(i.uv, 1.0);
+                half brightness = max(c.r, max(c.g, c.b));
+                half knee = _BloomThreshold.x * _BloomThreshold.y;
+                half soft = clamp(brightness - _BloomThreshold.x + knee, 0.0h, 2.0h * knee);
+                soft = soft * soft / (4.0h * knee + 0.00001h);
+                half contribution = max(soft, brightness - _BloomThreshold.x) / max(brightness, 0.00001h);
+                // A clamp keeps one blown pixel (a sun glint, a VFX core) from ringing the frame.
+                return half4(min(c * contribution, 8.0h), 1.0h);
+            }
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "BLOOM_DOWN"
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
+            float4 _BloomThreshold;
+            half3 BoxSample (float2 uv, float delta)
+            {
+                float4 o = _MainTex_TexelSize.xyxy * float2(-delta, delta).xxyy;
+                return (tex2D(_MainTex, uv + o.xy).rgb + tex2D(_MainTex, uv + o.zy).rgb +
+                        tex2D(_MainTex, uv + o.xw).rgb + tex2D(_MainTex, uv + o.zw).rgb) * 0.25h;
+            }
+            half4 frag (v2f_img i) : SV_Target { return half4(BoxSample(i.uv, 1.0), 1.0h); }
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "BLOOM_UP"
+            Blend One One
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
+            float4 _BloomThreshold;
+            half3 BoxSample (float2 uv, float delta)
+            {
+                float4 o = _MainTex_TexelSize.xyxy * float2(-delta, delta).xxyy;
+                return (tex2D(_MainTex, uv + o.xy).rgb + tex2D(_MainTex, uv + o.zy).rgb +
+                        tex2D(_MainTex, uv + o.xw).rgb + tex2D(_MainTex, uv + o.zw).rgb) * 0.25h;
+            }
+            half4 frag (v2f_img i) : SV_Target { return half4(BoxSample(i.uv, 0.5), 1.0h); }
             ENDCG
         }
     }

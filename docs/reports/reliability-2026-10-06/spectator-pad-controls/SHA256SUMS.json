@@ -1,0 +1,13 @@
+{
+  "raw/candidate-classification.json": "290e5fda28ed4b4b8c57b969ba7f72549e85f786bb713bc6b1195a4d79bcd7f9",
+  "raw/candidate-result.json": "d552645d9879ab05dc66519ec8e605677353f3df7cba92d8642dcc325daabe21",
+  "raw/candidate-results.xml": "9713b2278f98ce597cf2115fb7086b232696ebc3f4d7aad9850846d527e52bd0",
+  "raw/keyboard-control-classification.json": "290e5fda28ed4b4b8c57b969ba7f72549e85f786bb713bc6b1195a4d79bcd7f9",
+  "raw/keyboard-control-result.json": "63299eaa6daca94b9c494b64ac93e6b9d1170c0b1eb3b4e21d72fe83ad9c79e4",
+  "raw/keyboard-control-results.xml": "5749a5f479dde52053ec928f2da893f7aced2d3c732b22e65d9f3315f45d1dcd",
+  "raw/original-classification.json": "290e5fda28ed4b4b8c57b969ba7f72549e85f786bb713bc6b1195a4d79bcd7f9",
+  "raw/original-result.json": "52ede79b4330874ab0efa0fae8bec36e8659e42b02a9202e32ce59f08f5caa7a",
+  "raw/original-results.xml": "6030a7cd08afbe512348caadec9072a3600fe041564cc93083a12691d5922124",
+  "raw/SpectatorPadControlsTests-qualified.cs": "c04fafc80832c4f5edbf5fc4527201dfbd895797b8cd47fb2cc7f0812c630e7e",
+  "raw/SpectatorPadControlsTests.cs": "a7bd8313eb68f5cb9a39e7533b26cf925aebf317447fce59893f30a84f1102e3"
+}

@@ -1,0 +1,17 @@
+{
+  "raw/candidate-classification.json": "3bf563fd52c4d6e78b1f8244e6f58697852cab66fd9cba454a572dbb5c04cf0e",
+  "raw/candidate-result.json": "ab49df17a1998fd474dfe7bca280a8da03c77a44794a2c9774e0a274a4d751e7",
+  "raw/candidate-results.xml": "547b27625d20b3592576f12bcc4b3071aa322fbe82b085f55390475d2bae2fc3",
+  "raw/final-classification.json": "3bf563fd52c4d6e78b1f8244e6f58697852cab66fd9cba454a572dbb5c04cf0e",
+  "raw/final-result.json": "827b0a282336bc88e284418e8bc3e50b10d417c8319a20781a08b9e995efb91b",
+  "raw/final-results.xml": "1d09e52de363193b1cc6eac7eed48c852e4baa80c919e2b4314beea6c62bbcb6",
+  "raw/fixture-qualified.cs": "ef9a2119a47261f1557dc9a92ccfc722df8c846199645d3e3c029db9f1e3417e",
+  "raw/fixture-release-control.cs": "cd471f5c93aded739045152f442eb7cae4c77a7cd0787cbc2ae8503ada4f34c1",
+  "raw/fixture.cs": "e1911e49f5bcb43dd1855737bcfab37ac8464f1f6f29bcbecdd48c9f7bf1d2b2",
+  "raw/original-classification.json": "3bf563fd52c4d6e78b1f8244e6f58697852cab66fd9cba454a572dbb5c04cf0e",
+  "raw/original-result.json": "5f3976fd43b5c4f5d270c6088a976d8e96453c03fa94b9af6df6811cdf7725e4",
+  "raw/original-results.xml": "bdb4e4ab07bf5198ff00f9ef92c2ae7160ecb2cea18ed49380b4e3176c25b364",
+  "raw/release-control-classification.json": "3bf563fd52c4d6e78b1f8244e6f58697852cab66fd9cba454a572dbb5c04cf0e",
+  "raw/release-control-result.json": "57839bde55650054712949f770bd98ff310f266a469ecbbea4f78611a1d8c75b",
+  "raw/release-control-results.xml": "4c11ff0a5c0290899232a0c3c477acdabf11d0fd0ac87cde64c136d34cff1ab9"
+}

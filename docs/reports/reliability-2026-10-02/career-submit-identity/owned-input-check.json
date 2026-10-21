@@ -1,0 +1,9 @@
+{
+  "source": "aa1f237ecd46b92cfe50cf2ea8e1e04aa0f99d2b",
+  "checks": {
+    "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": true,
+    "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs": true
+  },
+  "retry": 0,
+  "scope": "Actual CareerStore completion/cache and parallel witness lists, captured request record/cache supplied before await"
+}

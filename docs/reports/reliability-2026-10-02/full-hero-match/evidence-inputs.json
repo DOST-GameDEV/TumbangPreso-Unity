@@ -1,0 +1,52 @@
+[
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\result.json",
+    "retainedFile": "result.json",
+    "sha256": "4C2C13218B563F6FA4D793ABB7E30F4BB6E5546A868D2B93D3369BC5691D2BA4"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\completion-observations.json",
+    "retainedFile": "completion-observations.json",
+    "sha256": "FE0DFD0A21DA4C14FBE229121FE1575B04C0C8C5E7E8422CD2F8511874682A8B"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\completion-observations-addendum.json",
+    "retainedFile": "completion-observations-addendum.json",
+    "sha256": "413C202469E29DF42A41B3B8F12E06DCFB6C5563111465C82E0197BBD6916322"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\preservation.json",
+    "retainedFile": "preservation.json",
+    "sha256": "C3A4DA029829D3C7895A5F19A5DB15D33F2A51F520AD20E30FA30B2DE9CF9CC3"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\launch-contract.json",
+    "retainedFile": "launch-contract.json",
+    "sha256": "3E38AAF5E0811679A015A34185874214133AFFEE084D8679BE5CC1828F98AECD"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\host.txt",
+    "retainedFile": "host.txt",
+    "sha256": "55DBA0EFCFEF4B56BAFB41F2CD4AA016593ABE737C52E49252DDE8DFA39BF0E6"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\client.txt",
+    "retainedFile": "client.txt",
+    "sha256": "E801AC80E449410BA0466A917720651F796E705ED84ECB9B2DF833DF81299ECE"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\host.log",
+    "retainedFile": "host.log",
+    "sha256": "17FAA525A3D8B4952F5C3487D0F679AA8874B3492BCD5B93EC45A92FAEE06B2F"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\client.log",
+    "retainedFile": "client.log",
+    "sha256": "9059ACC4E52F3FDDBC18A5B01B0A53C1E917BF6DBB2F59CA9B7F974F8E32CC51"
+  },
+  {
+    "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\processes.json",
+    "retainedFile": "processes.json",
+    "sha256": "C61BCC1156498DAC6387FA2C5FC02C9A338AA3B5BBA16BCAAD0BB5350810BE9D"
+  }
+]

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-20 20:40:09Z" end-time="2026-09-20 20:40:18Z" duration="9.4155493">
+  <test-suite type="TestSuite" id="1600" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="453" result="Passed" start-time="2026-09-20 20:40:09Z" end-time="2026-09-20 20:40:18Z" duration="9.415549" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1594" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="453" result="Passed" start-time="2026-09-20 20:40:09Z" end-time="2026-09-20 20:40:18Z" duration="9.402704" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16440" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1595" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="453" result="Passed" start-time="2026-09-20 20:40:09Z" end-time="2026-09-20 20:40:18Z" duration="9.399631" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1596" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="453" result="Passed" start-time="2026-09-20 20:40:09Z" end-time="2026-09-20 20:40:18Z" duration="9.397062" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1127" name="ExchangePresentationTests" fullname="TumbangPreso.PlayTests.ExchangePresentationTests" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-20 20:40:09Z" end-time="2026-09-20 20:40:18Z" duration="9.378080" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1128" name="ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" methodname="ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="581158589" result="Passed" start-time="2026-09-20 20:40:09Z" end-time="2026-09-20 20:40:15Z" duration="5.578105" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/exchange-presentation-v2/Classic-can-down.png
+[Play] wrote Logs/exchange-presentation-v2/Classic-restored-danger.png
+]]></output>
+            </test-case>
+            <test-case id="1130" name="ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" methodname="ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="871182990" result="Passed" start-time="2026-09-20 20:40:15Z" end-time="2026-09-20 20:40:16Z" duration="0.952725" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1129" name="HeroExchangeUsesTruthfulStateAndPersonalConfirmation" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.HeroExchangeUsesTruthfulStateAndPersonalConfirmation" methodname="HeroExchangeUsesTruthfulStateAndPersonalConfirmation" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="1562307072" result="Passed" start-time="2026-09-20 20:40:16Z" end-time="2026-09-20 20:40:18Z" duration="2.824325" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/exchange-presentation-v2/HeroStrike-can-down.png
+[Play] wrote Logs/exchange-presentation-v2/HeroStrike-restored-danger.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

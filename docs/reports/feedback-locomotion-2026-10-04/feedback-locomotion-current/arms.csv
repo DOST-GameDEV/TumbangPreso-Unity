@@ -1,0 +1,7 @@
+case,frames,amount,strideMin,strideMax,leftFwdMin,leftFwdMax,rightFwdMin,rightFwdMax,leftSpreadMin,rightSpreadMin
+empty-sprint,60,1.00,-1.00,1.00,-30.0,70.0,-30.0,70.0,16.0,16.0
+# empty-sprint layer sprint|-6010|-6014|1.00|bayan along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)
+empty-walk,60,1.00,-1.00,1.00,-19.9,32.0,-20.0,31.9,18.0,18.0
+# empty-walk layer walk|-6010|-6014|1.00|bayan along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)
+carry-sprint,61,1.00,-1.00,1.00,-34.0,52.0,22.0,45.9,18.0,19.3
+# carry-sprint layer holding-right|-6276|-6280|1.00|inday along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)

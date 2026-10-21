@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.5215671">
+  <test-suite type="TestSuite" id="2492" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.521567" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2486" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.506835" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="333272" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2487" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.499583" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2488" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1221" result="Failed" site="Child" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.493138" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1556" name="KitRecallParityChecks" fullname="TumbangPreso.PlayTests.KitRecallParityChecks" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.465058" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1560" name="CurrentGuidesAndRecallCardsMatchBothCompleteKits" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.CurrentGuidesAndRecallCardsMatchBothCompleteKits" methodname="CurrentGuidesAndRecallCardsMatchBothCompleteKits" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="1536277951" result="Failed" label="Error" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.294003" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at TumbangPreso.PlayTests.KitRecallParityChecks+<CurrentGuidesAndRecallCardsMatchBothCompleteKits>d__4.MoveNext () [0x00210] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/LoadoutSurfaceProbe.cs:802 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1559" name="SameKitRoleChangeRefreshesItsRealNameAndDescription" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.153389" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1557" name="SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;cheska&quot;)" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;cheska&quot;)" methodname="SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="1921264905" result="Passed" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.097180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1558" name="SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;dante&quot;)" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;dante&quot;)" methodname="SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="1759514335" result="Passed" start-time="2026-10-01 16:04:57Z" end-time="2026-10-01 16:04:57Z" duration="0.052815" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

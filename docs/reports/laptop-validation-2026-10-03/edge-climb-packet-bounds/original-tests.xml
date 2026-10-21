@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.0945294">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.094529" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2513" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.082410" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15940" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.077391" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2515" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.074183" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1383" name="EdgeClimbPacketBoundsTests" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.055156" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1390" name="AClientNeverDecodesAnEmptyClimbRequest" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.AClientNeverDecodesAnEmptyClimbRequest" methodname="AClientNeverDecodesAnEmptyClimbRequest" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="1114076480" result="Passed" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.025669" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1389" name="CompletePayloadStillDecodesBeforeSeatOwnershipRejection" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.CompletePayloadStillDecodesBeforeSeatOwnershipRejection" methodname="CompletePayloadStillDecodesBeforeSeatOwnershipRejection" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="337674676" result="Passed" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.001959" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1388" name="TrailingBytesCannotDecodeAClimbRequest" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TrailingBytesCannotDecodeAClimbRequest" methodname="TrailingBytesCannotDecodeAClimbRequest" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="1324405489" result="Failed" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.006298" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 8
+  But was:  16
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TrailingBytesCannotDecodeAClimbRequest () [0x00056] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EdgeClimbPacketBoundsTests.cs:62
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1387" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.005929" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1384" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode(8)" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode(8)" methodname="TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="1596782782" result="Failed" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.001839" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReqEdgeClimbMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x00073] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.EdgeRecovery.cs:36 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.EdgeClimbPacketBoundsTests+<>c__DisplayClass9_0.<TruncatedClimbRequestIsRejectedWithoutPartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EdgeClimbPacketBoundsTests.cs:52 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode (System.Int32 length) [0x0005d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EdgeClimbPacketBoundsTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1385" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode(12)" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode(12)" methodname="TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="247004545" result="Failed" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.000485" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReqEdgeClimbMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x00073] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.EdgeRecovery.cs:36 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.EdgeClimbPacketBoundsTests+<>c__DisplayClass9_0.<TruncatedClimbRequestIsRejectedWithoutPartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EdgeClimbPacketBoundsTests.cs:52 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode (System.Int32 length) [0x0005d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EdgeClimbPacketBoundsTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1386" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode(15)" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode(15)" methodname="TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="931465095" result="Failed" start-time="2026-10-03 15:19:21Z" end-time="2026-10-03 15:19:21Z" duration="0.000387" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReqEdgeClimbMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x00073] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.EdgeRecovery.cs:36 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.EdgeClimbPacketBoundsTests+<>c__DisplayClass9_0.<TruncatedClimbRequestIsRejectedWithoutPartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EdgeClimbPacketBoundsTests.cs:52 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode (System.Int32 length) [0x0005d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EdgeClimbPacketBoundsTests.cs:52
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

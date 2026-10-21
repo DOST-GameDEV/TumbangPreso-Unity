@@ -1,4 +1,9 @@
+// V2 owner map: can down | object tilt/contact accent | Offense | can; restore
+// work/protection | filling/draining close ring | Defense/gold | can clock.
+// Voice/contact is one shared beat. No duplicate LATA DOWN world sentence.
 using System;
+using System.Collections.Generic;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -7,7 +12,7 @@ namespace TumbangPreso
     /// <summary>
     /// The can. It stands on its mark, it goes over, and the taya stands it back up.
     ///
-    /// ⚠️⚠️ IsUpright GATES FOUR SEPARATE RULES: the throw, the tag, passive scoring and the
+    /// ⚠️⚠️ IsUpright gates tagging, objective presentation and the
     /// reset channel. It is host-authoritative, and in the Godot build it is replicated by an
     /// EXPLICIT RPC rather than a synchronised property. That was not a style choice: a
     /// `MultiplayerSynchronizer` writes the property directly, so the setter's signal never
@@ -22,6 +27,8 @@ namespace TumbangPreso
     public sealed class Lata : MonoBehaviour
     {
         public event Action<bool> UprightChanged;
+        // Host bookkeeping for consumed target cycles, never a replicated outcome.
+        public int HostKnockdownSerial { get; private set; }
 
         [SerializeField] private int _skinIndex = -1;
 
@@ -29,13 +36,37 @@ namespace TumbangPreso
         private float _toppleTimer;
         private Vector3 _mark;
         private float _restoreProtectionLeft;
+        private readonly HashSet<HeroAbility> _abilityProtection = new HashSet<HeroAbility>();
         private GameObject _downBeacon;
         private GameObject _protectionShell;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
         public bool IsUpright => _isUpright;
-        public bool IsProtected => _restoreProtectionLeft > 0.0f;
-        public float ProtectionLeft => Mathf.Max(0.0f, _restoreProtectionLeft);
+        public bool IsProtected => ProtectionLeft > 0.0f;
+        public float ProtectionLeft
+        {
+            get
+            {
+                float left = Mathf.Max(0.0f, _restoreProtectionLeft);
+                foreach (var ability in _abilityProtection)
+                    if (ability != null && ability.IsActive)
+                        left = Mathf.Max(left, ability.DurationRemaining);
+                return left;
+            }
+        }
+        internal void AddAbilityProtection(HeroAbility ability, bool approvedReplica = false)
+        {
+            if ((!NetAuthority.ShouldResolve() && !approvedReplica) || !IsUpright || ability == null || !ability.IsActive) return;
+            if (_abilityProtection.Add(ability)) RefreshStatePresentation();
+        }
+        internal void RemoveAbilityProtection(HeroAbility ability)
+        {
+            _abilityProtection.Remove(ability);
+            RefreshStatePresentation();
+        }
+        // Actual supporting offset used by the can's grounded tilt. Imported
+        // renderer bounds are not a flight state and may include artist offsets.
+        public float PresentationSupportOffset => _isUpright?0:DownedLift*Mathf.Abs(Mathf.Sin(transform.eulerAngles.x*Mathf.Deg2Rad));
 
         /// <summary>The scoring window for the CURRENT can skin, divided by its STANCE.</summary>
         public float HitWindow => ThrowRules.HitWindow(_skinIndex);
@@ -68,9 +99,26 @@ namespace TumbangPreso
         /// </summary>
         private void Start() => SnapHomeToGround();
 
-        private void SnapHomeToGround()
+        /// <summary>
+        /// Host-side. The same snap again, for a map whose floor under the mark changes between
+        /// rounds (the Arena's layouts put the can anywhere from 0 to 1.5 m up, ARENA-1.1).
+        /// `SliceRunner.OnRoundStarted` calls it after the stage has switched its colliders and
+        /// BEFORE `HostRestore`, which is what reads `_mark`.
+        ///
+        /// ⚠️ BODIES ARE EXCLUDED HERE AND NOT IN Start. At Start nobody stands on the mark; at
+        /// a round change somebody can, and a ray that stops on a head seats the can 1.6 m up.
+        /// The cast also starts a metre higher, so a mark that was on the low layout still
+        /// finds the top of the tall one.
+        /// </summary>
+        public void HostResnapMark()
         {
-            var hits = Physics.RaycastAll(_mark + Vector3.up * 2.0f, Vector3.down, 8.0f,
+            if (!NetAuthority.ShouldResolve()) return;
+            SnapHomeToGround(3.0f, true);
+        }
+
+        private void SnapHomeToGround(float above = 2.0f, bool skipBodies = false)
+        {
+            var hits = Physics.RaycastAll(_mark + Vector3.up * above, Vector3.down, 6.0f + above,
                                           ~0, QueryTriggerInteraction.Ignore);
 
             if (hits == null || hits.Length == 0) return;
@@ -83,6 +131,8 @@ namespace TumbangPreso
                 if (hit.collider == null) continue;
                 if (hit.collider.transform == transform ||
                     hit.collider.transform.IsChildOf(transform)) continue;
+                if (skipBodies && (hit.collider.GetComponentInParent<CharacterMotor>() != null ||
+                                   hit.collider.GetComponentInParent<Slipper>() != null)) continue;
 
                 if (found && hit.point.y <= bestY) continue;
 
@@ -97,19 +147,53 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// Host-side. Did a slipper at this position connect?
-        ///
-        /// ⚠️ FLAT DISTANCE, TESTED PER PHYSICS FRAME, AND NOT AN OVERLAP VOLUME. The Godot
-        /// `Lata.tscn` still carries an `Area3D` authored to a hurtbox shape that nothing
-        /// ever read: the rule ran off a bare literal in another file while the balance doc
-        /// documented a third shape. Three numbers that were meant to be one. Here there is
-        /// exactly one, and it is <see cref="Balance.LataHitMargin"/>.
+        /// Host-side contact keeps the authored horizontal stance window, but a flight
+        /// must also overlap the actual can height. A flat-only test hit an infinite column.
         /// </summary>
         public bool Connects(Vector3 slipperPosition)
         {
             Vector3 a = new Vector3(slipperPosition.x, 0.0f, slipperPosition.z);
             Vector3 b = new Vector3(transform.position.x, 0.0f, transform.position.z);
-            return ThrowRules.Connects(Vector3.Distance(a, b), _skinIndex);
+            if (!ThrowRules.Connects(Vector3.Distance(a, b), _skinIndex)) return false;
+            ResolveContactHeight();
+            float y = transform.InverseTransformPoint(slipperPosition).y;
+            float margin = Balance.SlipperHitRadius / Mathf.Max(.001f, Mathf.Abs(transform.lossyScale.y));
+            return y >= _contactBottom - margin && y <= _contactTop + margin;
+        }
+
+        private Transform _contactVisual;
+        private bool _contactHeightReady;
+        private float _contactBottom;
+        private float _contactTop;
+
+        private void ResolveContactHeight()
+        {
+            var visual = transform.Find("Visual");
+            if (_contactHeightReady && _contactVisual == visual) return;
+            _contactVisual = visual;
+            _contactHeightReady = true;
+            // Same finite height as the fallback cylinder. Never include world cues,
+            // restoration shields or other presentation children in the target shape.
+            _contactBottom = 0;
+            _contactTop = .3f;
+            if (visual == null) return;
+            bool found = false;
+            foreach (var filter in visual.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (filter.sharedMesh == null) continue;
+                var bounds = filter.sharedMesh.bounds;
+                var matrix = transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var point = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
+                        (corner & 1) == 0 ? -1 : 1,
+                        (corner & 2) == 0 ? -1 : 1,
+                        (corner & 4) == 0 ? -1 : 1));
+                    float y = matrix.MultiplyPoint3x4(point).y;
+                    if (!found) { _contactBottom = y; _contactTop = y; found = true; }
+                    else { _contactBottom = Mathf.Min(_contactBottom, y); _contactTop = Mathf.Max(_contactTop, y); }
+                }
+            }
         }
 
         /// <summary>
@@ -161,6 +245,7 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve() && (knockedOnThisPeer || restoredOnThisPeer))
                 AnnounceUprightChange(isUpright);
 
+            if (restoredOnThisPeer) LowerHeldThrowCharges();
             if(knockedOnThisPeer||restoredOnThisPeer)UprightChanged?.Invoke(isUpright);
         }
 
@@ -186,9 +271,16 @@ namespace TumbangPreso
         }
 
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
-        public void HostKnockDown(int throwerSlot)
+        public void HostKnockDown(int throwerSlot) => HostKnockDown(throwerSlot, ScoreEvent.LataKnocked);
+
+        /// <summary>
+        /// Host-side, with the award named. Paete's wooden slippers knock the can for
+        /// `ScoreEvent.SproutKnock` (owner: *"maybe lessened plus"*); everything else is a knockdown.
+        /// </summary>
+        public void HostKnockDown(int throwerSlot, ScoreEvent award)
         {
             if (!NetAuthority.ShouldResolve()) return;
+            if (PracticeRange.CanIsFrozen(this)) return;
             if (!_isUpright) return;
 
             // A reset must create a real safe beat, not only refuse newly launched throws.
@@ -222,7 +314,9 @@ namespace TumbangPreso
             // `MatchFlair.PlayTag` calls `Hitstop.Trigger()` from the replicated path, so all
             // four screens get the tag's beat. `AnnounceUprightChange` is this event's
             // equivalent of that path and is reached exactly once per peer.
+            HostKnockdownSerial++;
             SetUpright(false);
+            GameServices.Match?.ResetHostCatchChain();
             _toppleTimer = Balance.ToppleTime;
 
             // ⚠️ THE KNOCKDOWN CUE IS NOT PLAYED HERE, AND ADDING ONE DOUBLED IT. `SetUpright`
@@ -248,7 +342,7 @@ namespace TumbangPreso
             if (GameServices.Round == null || !GameServices.Round.RoundActive) return;
             if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
 
-            GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
+            GameServices.Match.AddScore(throwerSlot, award);
             // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
             // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
             // everyone and not js host"*. See `Visual.MatchFlair` and
@@ -287,6 +381,9 @@ namespace TumbangPreso
             // ⚠️ AND THE CAN HAS NO BUSINESS KNOWING WHAT A BOT IS. Everything else on this path
             // is scoring and physics; a `GetComponent<AIController>` here is the kind of reach
             // that makes a rules object depend on the AI layer.
+            // ⚠️ A SPROUT KNOCK DOES NOT CHARGE THE ULTIMATE. A plant firing on its own clock would
+            // otherwise fill his meter for him; the lessened award is the whole payment.
+            if (award != ScoreEvent.LataKnocked) return;
             var throwerMotor = GameServices.Round.PlayerAt(throwerSlot);
             throwerMotor?.AbilitySystem?.OnLataKnocked();
         }
@@ -300,6 +397,7 @@ namespace TumbangPreso
         /// </summary>
         public void HostRestore()
         {
+            if (PracticeRange.CanIsFrozen(this)) return;
             // ⚠️⚠️ THIS GATE WAS MISSING AND THREE COMMENTS IN TWO FILES SAID IT WAS HERE.
             // `SetUpright`'s note and `AnnounceUprightChange`'s summary both claimed this method
             // and `HostKnockDown` "both open with `NetAuthority.ShouldResolve()`", and
@@ -344,10 +442,19 @@ namespace TumbangPreso
             GameServices.Round.NotifyLataRestored();
         }
 
+        private void LowerHeldThrowCharges()
+        {
+            var round = GameServices.Round;
+            if (round == null || round.Lata != this) return;
+            foreach (var body in round.Bodies)
+                if (body != null) body.GetComponent<Carrier>()?.BeginRestoreChargeDecay();
+        }
+
         private void SetUpright(bool value)
         {
             if (_isUpright == value) return;
             _isUpright = value;
+            if (value) LowerHeldThrowCharges();
 
             // ⚠️ ONE PLACE, BOTH DIRECTIONS. The can going over and the can going back up are
             // the same state change read two ways, and the .gd picks the cue off the same
@@ -416,51 +523,22 @@ namespace TumbangPreso
         {
             if (nowUpright)
             {
+                Visual.CanContactAccent.Play(transform.position, true);
                 GameServices.Voice?.OnLataRestored();
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
                 return;
             }
 
-            // ⚠️⚠️ THE IMPACT FRAME, ON EVERY SCREEN RATHER THAN ON THE HOST'S. It used to sit
-            // in `HostKnockDown` behind the authority gate; see the note there for why that made
-            // the loudest moment in a round land flat for three players out of four.
-            //
-            // ⚠️ THE NUMBERS ARE UNCHANGED AND THAT IS DELIBERATE. 0.045 s at 0.10 scale is what
-            // shipped and what the host has been feeling all along; this pass is fixing WHO gets
-            // it, not how hard it is. `Attention.md` is where "is it heavy enough" belongs, since
-            // only a person can answer it and only against a build where all four peers agree.
-            //
-            // ⚠️ RE-ENTRANT CALLS ARE IGNORED BY `Hitstop` ITSELF, so the listen host, which
-            // reaches this through `SetUpright` and never through `ApplySnapshotState`, cannot
-            // stack two freezes even if that ever changed.
-            Hitstop.Trigger(0.045f, 0.10f);
-
+            // Tin contact belongs at the can, below the next retrieval sightline.
+            // The accepted flair event supplies personal confirmation to the scorer.
+            // Ordinary contact adds no global pause or broadcast confetti.
             GameServices.Voice?.OnLataKnocked();
-            const string callout = "CAN DOWN!";
-            Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, callout, UI.UiTheme.Offense, 1.4f);
-            UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
-            Visual.ImpactBurst.SpawnAt(transform.position);
-            Abilities.HeroHazards.SpawnConfettiShower(transform.position, 24);
-
-            if (UnityEngine.Camera.main == null) return;
-
-            var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
-            if (rig == null) return;
-
-            Vector3 away = UnityEngine.Camera.main.transform.position - transform.position;
-            rig.ImpactPunch(away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back, 0.8f);
+            Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .18f);
+            Visual.CanContactAccent.Play(transform.position, false);
         }
 
-        /// <summary>
-        /// ⚠️ A TOPPLED CAN IS LIFTED BY ITS OWN RADIUS, AND THAT IS LOAD-BEARING. The tilt
-        /// rotates the visual about its BASE, so a lying-down cylinder's axis would sit at
-        /// floor level and half the can would be underground. That was reported from play as
-        /// "the cans are phasing thru the floor". Measure the lift off the mesh bounds so it
-        /// follows the skin rather than assuming a radius, because the four cans span 0.108
-        /// to 0.143 and the default is the slimmest of them.
-        /// </summary>
         private void Update()
         {
+            RestoreRaisePresentation();
             StepStatePresentation();
 
             if (_isUpright || _toppleTimer <= 0.0f) return;
@@ -489,6 +567,7 @@ namespace TumbangPreso
             }
 
             _restoreProtectionLeft = 0.0f;
+            _abilityProtection.Clear();
             ClearProtectionShell();
             BuildDownBeacon();
         }
@@ -578,11 +657,17 @@ namespace TumbangPreso
 
             if (_downCollar != null)
             {
+                // The shared clock, ground footprint and can glyph already carry
+                // this state. The legacy collar rotates with the fallen can and
+                // becomes an upright red crescent; retain it only for look-off.
+                _downCollar.gameObject.SetActive(Visual.WorldCueProfile.Current.HeroObjects < .001f);
                 float r = DownCollarRadius * (1.0f + beat * 0.07f);
                 _downCollar.localScale = new Vector3(r, 1.0f, r);
             }
 
-            SetRim(Mathf.Lerp(0.35f, 1.0f, beat));
+            // The new object treatment uses real metal/value/ground contrast.
+            // Off restores the legacy pulse without recolouring the label asset.
+            SetRim(Mathf.Lerp(0.35f,1.0f,beat)*(1-Visual.WorldCueProfile.Current.HeroObjects));
         }
 
         /// <summary>
@@ -602,6 +687,7 @@ namespace TumbangPreso
             {
                 if (r == null) continue;
                 r.GetPropertyBlock(_rimBlock);
+                _rimBlock.SetFloat("_DepthReadability", Visual.WorldCueProfile.Current.DistanceReadability);
                 _rimBlock.SetFloat(RimStrengthId, strength);
                 _rimBlock.SetColor(RimColorId, UI.UiTheme.Danger);
                 r.SetPropertyBlock(_rimBlock);
@@ -629,19 +715,18 @@ namespace TumbangPreso
             SetRim(0.0f);
         }
 
+        private float _protectionPulse;
         private void BuildProtectionShell()
         {
+            if (Visual.WorldCueProfile.Current.RestoreClock > 0)
+            { ClearProtectionShell(); return; }
             if (_protectionShell != null) return;
-
-            _protectionShell = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            _protectionShell.name = "LataRestoreShield";
-            _protectionShell.transform.SetParent(transform, false);
-            _protectionShell.transform.localPosition = new Vector3(0.0f, 0.22f, 0.0f);
-            _protectionShell.transform.localScale = Vector3.one * 0.72f;
+            // A close collar protects this can, without making a shield bubble
+            // around nearby attackers. The marker supplies the explicit state.
+            _protectionShell = Visual.VfxShapes.Lay(transform, "LataRestoreShield",
+                Visual.VfxShapes.Collar(24, .025f, .88f), .30f, .025f);
             Visual.VfxMaterial.Ghost(_protectionShell.GetComponent<Renderer>(),
-                new Color(UI.UiTheme.Defense.r, UI.UiTheme.Defense.g, UI.UiTheme.Defense.b, 0.28f),
-                2.0f);
-            Visual.VfxMaterial.StripCollider(_protectionShell);
+                new Color(1f, .83f, .45f, .55f), .9f);
         }
 
         private void ClearProtectionShell()
@@ -653,7 +738,7 @@ namespace TumbangPreso
         private void PulseProtection()
         {
             BuildProtectionShell();
-            if (_protectionShell != null) _protectionShell.transform.localScale = Vector3.one * 0.92f;
+            _protectionPulse = 1f;
             // ⚠️ NO WORD. `PulseProtection` fires on every refresh of the throw-restore window,
             // and the lata card carries `PROTECTED 1.2s` as a live countdown for the whole of it.
             // The shell is the signal; the countdown is the number. A callout on top of both was
@@ -664,20 +749,22 @@ namespace TumbangPreso
         private void StepStatePresentation()
         {
             if (_restoreProtectionLeft > 0.0f)
-            {
                 _restoreProtectionLeft = Mathf.Max(0.0f, _restoreProtectionLeft - Time.deltaTime);
+            // Ability clocks have their own owner; never decrement or clear a
+            // Catch grant through the independent restoration timer.
+            if (IsProtected)
+            {
                 BuildProtectionShell();
 
                 if (_protectionShell != null)
                 {
-                    float pulse = 0.72f + (Mathf.Sin(Time.time * 18.0f) * 0.5f + 0.5f) * 0.10f;
-                    _protectionShell.transform.localScale = Vector3.one * pulse;
-                    _protectionShell.transform.Rotate(0.0f, 120.0f * Time.deltaTime, 0.0f,
-                                                       Space.Self);
+                    _protectionPulse = Mathf.Max(0, _protectionPulse - Time.deltaTime * 5);
+                    float radius = .30f + .05f * _protectionPulse;
+                    _protectionShell.transform.localScale = new Vector3(radius, 1, radius);
                 }
 
-                if (_restoreProtectionLeft <= 0.0f) ClearProtectionShell();
             }
+            else if (_protectionShell != null) ClearProtectionShell();
 
             // ⚠️ THE WHOLE MARKER NO LONGER SCALES, ONLY THE COLLAR DOES. Scaling the parent
             // scaled the shaft's HEIGHT along with everything else, which is part of why the old
@@ -770,6 +857,139 @@ namespace TumbangPreso
         /// lying still must lie still rather than creep.
         /// </summary>
         private void LateUpdate()
+        {
+            RestoreRaisePresentation();
+            try { StepRoll(); }
+            finally { ApplyRaisePresentation(); }
+        }
+
+        // ⚠️⚠️ THE CAN RISES UNDER THE TAYA'S HANDS, IN THE DRAWING ONLY.
+        //
+        // 🧑 2026-09-24, *"refine ... the raising of can"*. It lay flat for the whole 1.5 s reset and popped up at
+        // the end, so nothing on screen said how far along the reset was
+        // (`docs/reports/gameplay-animation-2026-09-24/research-and-analysis.md` § 2.3). Now the MESH tilts from
+        // down toward upright with the raising taya's `CharacterAnimator.ResetRaiseProgress`, pivoting on its
+        // base, and stops just short of upright: only the host's restore stands it up.
+        //
+        // ⚠️ THE CAN'S OWN TRANSFORM IS NEVER TOUCHED BY THIS. That transform is the can's state, the host
+        // broadcasts it (`ApplySnapshotState` reads its rotation back as the topple angle), and a half-raised
+        // angle leaking into it would put a half-raised can on every screen as fact. Only the mesh child moves,
+        // and it is put back at the start of every frame.
+        private Transform _raiseMesh;
+        private bool _raiseMeshResolved, _raiseApplied;
+        private Vector3 _raiseMeshPos, _raiseMeshScale;
+        private Quaternion _raiseMeshRot;
+        /// <summary>The settle after the can is stood up: a squash and a little rebound, in the mesh only.</summary>
+        private float _clunkLeft;
+        private const float ClunkSeconds = .28f;
+        private bool _clunkSubscribed;
+
+        private void RestoreRaisePresentation()
+        {
+            // Replicated skin changes replace the Visual child. Forget its old
+            // pose before resolving the replacement; never restore into a dead mesh.
+            if (_raiseMesh == null) { _raiseApplied = false; _raiseMeshResolved = false; return; }
+            if (!_raiseApplied) return;
+            _raiseMesh.localPosition = _raiseMeshPos; _raiseMesh.localRotation = _raiseMeshRot; _raiseMesh.localScale = _raiseMeshScale;
+            _raiseApplied = false;
+        }
+
+        private void ApplyRaisePresentation()
+        {
+            if (!_clunkSubscribed) { _clunkSubscribed = true; UprightChanged += up => { if (up) _clunkLeft = ClunkSeconds; }; }
+            if (_isUpright)
+            {
+                // ⚠️ SATISFYING, NOT JUST CORRECT (🧑 2026-09-24): the can lands with a CLUNK, squashing into the
+                // road and springing back, instead of appearing upright.
+                if (_clunkLeft <= 0.0f) return;
+                _clunkLeft = Mathf.Max(0.0f, _clunkLeft - Time.deltaTime);
+                if (!ResolveRaiseMesh()) return;
+                float u = 1.0f - _clunkLeft / ClunkSeconds;
+                float squash = Mathf.Sin(u * Mathf.PI * 2.0f) * Mathf.Exp(-4.0f * u) * 0.16f;
+                _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
+                _raiseApplied = true;
+                var sc = _raiseMeshScale;
+                _raiseMesh.localScale = new Vector3(sc.x * (1 + squash * 0.6f), sc.y * (1 - squash), sc.z * (1 + squash * 0.6f));
+                return;
+            }
+            if (!RaiseTurn(out var turn, out float drop)) return;
+            if (!ResolveRaiseMesh()) return;
+            _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
+            _raiseApplied = true;
+            // About the can's base (its origin), then lowered so it keeps resting on the road.
+            var pivot = transform.position;
+            _raiseMesh.position = pivot + turn * (_raiseMesh.position - pivot) + Vector3.up * drop;
+            _raiseMesh.rotation = turn * _raiseMesh.rotation;
+        }
+
+        /// <summary>
+        /// How the drawn can is turned (about its base, world) and lowered for the raise in progress right now, if any: the
+        /// taya's channel or a Lookout heaving at it.
+        /// </summary>
+        private bool RaiseTurn(out Quaternion turn, out float drop)
+        {
+            turn = Quaternion.identity; drop = 0.0f;
+            if (_isUpright || _toppleTimer > 0.0f) return false;
+            float progress = 0.0f;
+            var players = GameServices.Round?.Players;
+            if (players != null)
+                foreach (var who in players)
+                {
+                    var anim = who != null ? who.GetComponent<Visual.CharacterAnimator>() : null;
+                    if (anim != null) progress = Mathf.Max(progress, anim.ResetRaiseProgress);
+                }
+            // Nemu's LOOKOUT heaves it up the same way, in the drawing only (owner on v1: *"make it look liek its actually
+            // lifting the can man"*); `Abilities.NemuLookout` keeps its hands on the rising rim (`PresentedEnds`).
+            progress = Mathf.Max(progress, Abilities.NemuLookout.LiftFor(this));
+            if (progress <= 0.0f) return false;
+            // Down to 80 per cent of the way up with the channel; the last of it is the host's restore.
+            float shown = Mathf.Lerp(_toppleAngle, 0.0f, 0.8f * Mathf.SmoothStep(0.0f, 1.0f, progress));
+            turn = transform.rotation * Quaternion.AngleAxis(shown - _toppleAngle, Vector3.right) * Quaternion.Inverse(transform.rotation);
+            drop = DownedLift * (Mathf.Abs(Mathf.Sin(shown * Mathf.Deg2Rad)) - Mathf.Abs(Mathf.Sin(_toppleAngle * Mathf.Deg2Rad)));
+            return true;
+        }
+
+        /// <summary>
+        /// The can's two ends as it is DRAWN this frame (its base and its rim, world), raise and all: what a ghost heaving it
+        /// up holds on to. False when there is no mesh to measure.
+        /// </summary>
+        public bool PresentedEnds(out Vector3 bottom, out Vector3 top)
+        {
+            bottom = top = transform.position;
+            if (!ResolveRaiseMesh()) return false;
+            var filter = _raiseMesh.GetComponent<MeshFilter>();
+            if (filter == null || filter.sharedMesh == null) return false;
+            var b = filter.sharedMesh.bounds;
+            Vector3 e = b.extents;
+            Vector3 axis = e.y >= e.x && e.y >= e.z ? new Vector3(0f, e.y, 0f) : e.x >= e.z ? new Vector3(e.x, 0f, 0f) : new Vector3(0f, 0f, e.z);
+            Vector3 a = _raiseMesh.TransformPoint(b.center + axis), c = _raiseMesh.TransformPoint(b.center - axis);
+            // ⚠️ `Update` puts the mesh back before `LateUpdate` raises it again, so a reader in between sees it flat:
+            // raise the ends here from the same turn instead of trusting where the mesh happens to be.
+            if (!_raiseApplied && RaiseTurn(out var turn, out float drop))
+            {
+                var pivot = transform.position;
+                a = pivot + turn * (a - pivot) + Vector3.up * drop;
+                c = pivot + turn * (c - pivot) + Vector3.up * drop;
+            }
+            // The base is the end at the can's own origin (it pivots there).
+            if ((a - transform.position).sqrMagnitude < (c - transform.position).sqrMagnitude) { bottom = a; top = c; }
+            else { bottom = c; top = a; }
+            return true;
+        }
+
+        private bool ResolveRaiseMesh()
+        {
+            if (!_raiseMeshResolved)
+            {
+                var visual = transform.Find("Visual");
+                var filter = visual != null ? visual.GetComponentInChildren<MeshFilter>() : GetComponentInChildren<MeshFilter>();
+                _raiseMesh = filter != null && filter.transform != transform ? filter.transform : null;
+                _raiseMeshResolved = true;
+            }
+            return _raiseMesh != null;
+        }
+
+        private void StepRoll()
         {
             if (_isUpright) { _rollAngleDeg = 0.0f; _lastRollPosition = transform.position; return; }
 

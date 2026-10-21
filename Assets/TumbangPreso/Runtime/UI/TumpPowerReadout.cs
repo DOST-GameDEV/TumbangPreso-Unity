@@ -67,7 +67,7 @@ namespace TumbangPreso.UI
                 _keys[i] = TumpUiFactory.Text(_deck, "LiveBinding" + i, "", 28, true);
                 _keys[i].color = f.Cream; _keys[i].alignment = TextAnchor.MiddleCenter;
                 TumpUiFactory.Place(_keys[i].rectTransform, 16 + i * 144, 120, 132, 52);
-                _keys[i].font = f.Bold; _keys[i].fontSize = 30;
+                _keys[i].font = InGameTypography.Resolve(f.Bold, true, _keys[i]); _keys[i].fontSize = 30;
                 _keycaps[i] = TumpUiFactory.Surface(_deck, "KeyboardCap" + i, TumpSurface.Form.Ticket, f.Cream);
                 TumpUiFactory.Place(_keycaps[i].rectTransform, 52 + i * 144, 122, 60, 48);
                 _keycaps[i].transform.SetSiblingIndex(_keys[i].transform.GetSiblingIndex());
@@ -125,12 +125,14 @@ namespace TumbangPreso.UI
             for (int i = 0; i < 3; i++)
             {
                 var skill = skills[i]; if (skill == null) continue;
+                _symbols[i].SetCastLocked(system.GetComponent<CharacterMotor>()?.IsZapped == true);
                 if (_symbols[i].Glyph != skill.Glyph) { _symbols[i].Glyph = skill.Glyph; _symbols[i].SetVerticesDirty(); }
-                bool ready = !kit.PracticeMode && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
-                float ratio = i == 2 ? kit.UltimateRatio : skill.IsActive ? skill.DurationRatio : 1 - skill.CooldownRatio;
+                bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
+                float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 _dials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? f.Lime : f.Cream;
-                string state = kit.PracticeMode ? "Wait" : skill.IsActive ? skill.CanReactivate ? "Again" : skill.DurationRemaining.ToString("0.0")
+                if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
+                string state = kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) : skill.DurationRemaining.ToString("0.0")
                     : i == 2 ? ready ? "" : Mathf.FloorToInt(kit.UltimateRatio * 100) + "%"
                     : skill.UsesCharges ? skill.ChargesRemaining.ToString() : skill.CooldownRemaining > 0 ? AbilityDeckHud.CooldownLabel(skill.CooldownRemaining) : "";
                 var slot = i == 0 ? HeroAbilitySystem.Slot.Skill1 : i == 1 ? HeroAbilitySystem.Slot.Skill2 : HeroAbilitySystem.Slot.Ultimate;
@@ -173,6 +175,14 @@ namespace TumbangPreso.UI
                     : skill.Cooldown > 0 ? skill.Cooldown.ToString("0.#") + "s cooldown" : "";
                 if (skill.Duration > 0) _timings[i].text += " · " + skill.Duration.ToString("0.#") + "s duration";
                 if (i == 2) _timings[i].text = kit.UltimateCost.ToString("0.#") + " charge needed";
+                // ⚠️ A ROLE KIT'S MIDDLE COLUMN NAMES ITS ROLE AND THE OTHER ROLE'S ABILITY, so the
+                // one reference screen answers "what do I get when I defend" without a fourth column.
+                if (i == 1 && kit.HasRoleAbilities && kit.IdleRoleSkill != null)
+                {
+                    _timings[i].text = (kit.IsDefending ? "Defending" : "Attacking") + " · " + _timings[i].text;
+                    _bodies[i].text = skill.EffectiveDescription + "\n\n" + (kit.IsDefending ? "Attacking: " : "Defending: ")
+                        + kit.IdleRoleSkill.EffectiveName + ". " + kit.IdleRoleSkill.EffectiveSummary;
+                }
             }
         }
         public void OpenForCapture(HeroKit kit)

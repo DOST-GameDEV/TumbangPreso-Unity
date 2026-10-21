@@ -8,7 +8,15 @@ namespace TumbangPreso.Visual
     public sealed class DanteSeismicVisual : MonoBehaviour, IVfxTimeline
     {
         private float _age, _duration;
-        private bool _warning;
+        private bool _warning,_fissure,_tremor;
+        private Vector3 _forward;
+        private float _radius;
+        public float RecordedAge=>_age;
+        public Vector3 RecordedForward=>_forward;
+        public float RecordedRadius=>_radius;
+        public bool RecordedWarning=>_warning;
+        public bool RecordedFissure=>_fissure;
+        public bool RecordedTremor=>_tremor;
         private HeroAbility _cast;
         private CharacterMotor _owner;
         private readonly List<Ink> _inks = new List<Ink>();
@@ -51,7 +59,8 @@ namespace TumbangPreso.Visual
             var randomState = Random.state;
             try
             {
-                NetCue.Play("sfx_quake_slam", position);
+                // This visual impact is constructed on each peer by the accepted cast.
+                using (NetCue.SuppressRelay()) NetCue.Play("sfx_quake_slam", position);
                 if (!fissure) ComicPopup.Spawn(position, tremor ? "RUMBLE!" : "THUD!", new Color(1, .74f, .35f), 1.1f);
                 int count = fissure ? 4 : 5;
                 for (int i = 0; i < count; i++)
@@ -79,6 +88,13 @@ namespace TumbangPreso.Visual
             }
         }
 
+        public static DanteSeismicVisual Recorded(Vector3 position,Vector3 forward,float radius,bool fissure,bool tremor,bool warning,float duration)
+        {
+            var effect=Create(position,duration,warning);effect.enabled=false;
+            effect.Build(forward,radius,fissure,tremor);if(!warning)effect.MakeDebris(forward,radius,fissure,tremor);
+            effect.StepTo(0);return effect;
+        }
+
         private static DanteSeismicVisual Create(Vector3 position, float duration, bool warning)
         {
             var root = new GameObject(warning ? "DanteGroundPressure" : "DanteGroundFracture");
@@ -90,6 +106,7 @@ namespace TumbangPreso.Visual
         private void Build(Vector3 forward, float radius, bool fissure, bool tremor)
         {
             forward.y = 0; if (forward.sqrMagnitude < .001f) forward = Vector3.forward; forward.Normalize();
+            _forward=forward;_radius=radius;_fissure=fissure;_tremor=tremor;
             var across = Vector3.Cross(Vector3.up, forward);
             var paths = new List<Vector3[]>();
             if (fissure)

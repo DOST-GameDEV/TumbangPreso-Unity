@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "role": "host",
+  "sourceCommit": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+  "directExecution": true,
+  "protocol": 145,
+  "runtimeSha256": "af9919abf43c9261c863494c5feb6b1060b1045d77f51cd4cbb6bec3360c7b45",
+  "exeSha256": "3d734c53f5b9da79f0d1c584e07ce65f5c24e02eaf637cf5c60bb5d5d24a6219",
+  "coreSha256": "e7553b7849b6364ff2999c2c07ac8426bac44f4a9f1b1ee5d3423c6f27e48d50",
+  "artifactManifestSha256": "cef828729584c4a1f0e6f6f33bf7ae0a8255bdc018ba8bdb1be6deaffdc3b176",
+  "characterPick": 0,
+  "scope": "Normal LAN lobby, ready, natural Hero1/30 completion and own saved career; no physical-input or current source-fix acceptance.",
+  "pid": 19356,
+  "exitCode": 0,
+  "saved": {
+    "historyCount": 1,
+    "queueCount": 1,
+    "witnessCount": 1,
+    "matchIdSha256": "d0b3451f831645859c60b3b52ba83f045a8ec55b499f8e1fdf35a9e7f1dd2330",
+    "scores": [
+      20,
+      0,
+      0,
+      150
+    ],
+    "ownHumanLine": true,
+    "twoHumanOrigins": true,
+    "markerCleared": true
+  },
+  "errors": [],
+  "profileSeedsRestored": true,
+  "inputRestored": true,
+  "runtimeUnchanged": true,
+  "manifestUnchanged": true,
+  "artifactUnchanged": true,
+  "terminal": true,
+  "leaseHeld": false
+}

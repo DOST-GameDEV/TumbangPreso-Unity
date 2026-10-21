@@ -39,14 +39,20 @@ namespace TumbangPreso
 
         public static readonly MapEntry[] Maps =
         {
-            new MapEntry("eskinita", "ESKINITA",
+            new MapEntry("eskinita", "TONDO",
                 "Urban side street. Sari-sari, sampay, kanal.", SceneFlow.Eskinita),
-            new MapEntry("bayan_plaza", "BAYAN PLAZA",
-                "Barangay plaza. Church, basketball ring, acacia.", SceneFlow.BayanPlaza),
-            new MapEntry("ilalim_ng_tulay", "ILALIM NG TULAY",
-                "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", SceneFlow.IlalimNgTulay),
-            new MapEntry("sa_bubong","SA BUBONG",
-                "Condo roofdeck. Watch the edge; lost slippers return after 10s.",SceneFlow.SaBubong),
+            new MapEntry("ilalim_ng_tulay", "ERMITA",
+                "Manila street court. Viaduct pillars and neighbourhood shops.", SceneFlow.IlalimNgTulay),
+            // "lagoon" keeps its id so a saved preference follows the Lagoon Court to its reworked
+            // scene; the first Lagoon is vaulted (SceneFlow.Lagoon).
+            new MapEntry("lagoon","SITANGKAI",
+                "A cove court in the rocks. Stilt village, reefs and a sunset sea.",SceneFlow.LagoonCove),
+            new MapEntry("kanto","BGC",
+                "City park block. Jeepney stop, traffic lights, busy streets.",SceneFlow.Kanto),
+            new MapEntry("arena","THE PHILIPPINE ARENA",
+                "Game-show stage. It rebuilds each round; mind the edges.",SceneFlow.Arena),
+            new MapEntry("payo","PAYO",
+                "Ifugao rice-terrace temple. Stones shift each round; night falls at halftime.",SceneFlow.Payo),
         };
 
         public static string SelectedMap = "eskinita";
@@ -128,6 +134,7 @@ namespace TumbangPreso
         /// is cleared on every ordinary launch reset.
         /// </summary>
         public static bool GuidedTutorial;
+        public static bool TrainingRange;
 
         public static void ClearSeating() => SeatTokens.Clear();
 
@@ -138,6 +145,7 @@ namespace TumbangPreso
             PendingStatusMessage = "";
             Spectator = false;
             GuidedTutorial = false;
+            TrainingRange = false;
 
             // ⚠️ THE SANDBOX SWITCH IS OFF ON EVERY LAUNCH, WHICH IS ABOUT THE BUTTON AND NOT
             // ABOUT THE RULE. `PracticeSandbox.Active` already ands with "this session is not

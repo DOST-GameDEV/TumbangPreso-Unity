@@ -248,11 +248,18 @@ namespace TumbangPreso.UI
 
         private UnityEngine.Camera _camera;
         private RenderTexture _texture;
+        private int _pendingTextureWidth, _pendingTextureHeight;
+        private float _textureResizeAfter;
+        private const float TextureResizeSettleSeconds = .12f;
         private RawImage _surface;
         private RectTransform _panel;
         private readonly Vector3[] _panelCorners=new Vector3[4];
         private Transform _pivot;
         private GameObject _model;
+        private GameObject _sourceModel, _sourcePet;
+        private AnimationClip[] _sourceClips;
+        private Color[] _sourcePalette;
+        private bool _sourceSlipper;
 
         private float _turnPhase;
         private bool _userTookOver;
@@ -275,10 +282,42 @@ namespace TumbangPreso.UI
         private float _userZoom = 1.0f;
 
         private bool _needsFrame;
+        private bool _loadTimingPending;
+        private string _loadTimingSource;
+        private static int _loadTimingEnabled=-1;
+        internal static bool LoadTimingEnabled
+        {
+            get
+            {
+                if(_loadTimingEnabled<0)
+                {
+                    var args=System.Environment.GetCommandLineArgs();
+                    _loadTimingEnabled=System.Array.IndexOf(args,"-tp-performance-only")>=0
+                        &&System.Array.IndexOf(args,"-tp-tournament")<0?1:0;
+                }
+                return _loadTimingEnabled==1;
+            }
+        }
+        internal static double LoadElapsedMs(long began)
+            =>(System.Diagnostics.Stopwatch.GetTimestamp()-began)*1000.0/System.Diagnostics.Stopwatch.Frequency;
 
         /// <summary>Set by <see cref="SetTileFraming"/>. See that function.</summary>
         private bool _centreSubject;
         private bool _uniformExtent;
+        private bool _isPerson;
+
+        /// <summary>
+        /// ⚠️ A CHARACTER IS FRAMED ON ITS STANDING HEIGHT, NEVER ON ITS T-POSE (2026-09-27). Each character used to be framed
+        /// from its own rest bounds, which are a T-pose, so WIDTH decided the distance: Paete's long branch arms (3.57 m across
+        /// at his size) pushed the camera back until he was drawn at a fraction of Cheska's height (owner: *"why is paete so
+        /// small here"*). Now the camera fits the posed (idle) height, and never comes closer than it would for the shared
+        /// hero body's standing height (0.79 mesh units, head included, measured off the preview at 2.38: 1.88), so a small
+        /// character (Nemu, 1.42) is still drawn small and a tall one (Paete, Phaister's hat) is never cropped. Measured
+        /// (`HeroPreviewSizeProbe`, 960x1015 panel): every standard hero at 0.64 to 0.66 of the panel, Paete 0.65, Nemu 0.49.
+        /// </summary>
+        private const float ReferenceStandingHeight = 0.79f;
+        /// <summary>This subject's own size over the cast's (`CharacterVisual.BodyScaleFor`), so the reference is not scaled with it.</summary>
+        private float _bodyScale = 1f;
 
         /// <summary>Set by <see cref="EnableTileInteraction"/>. See that function.</summary>
         private bool _wheelZooms = true;
@@ -299,6 +338,8 @@ namespace TumbangPreso.UI
         public RenderTexture Target => _texture;
 
         public GameObject Subject => _model;
+        /// <summary>Disable automatic pose/sweep motion for a static presentation; manual inspection remains available.</summary>
+        public bool AnimateSubject { get; set; } = true;
 
         /// <summary>
         /// Subject CENTRED in its box and pulled in to fill it, for a caller showing this rig as
@@ -375,6 +416,52 @@ namespace TumbangPreso.UI
             _needsFrame = true;
         }
 
+        /// <summary>
+        /// Every person stands on ONE floor line, whatever their height: the aim is taken from the
+        /// cast's reference standing height rather than the subject's own, so a short hero is drawn
+        /// short on the same floor instead of being lifted to the middle of the frame.
+        ///
+        /// ⚠️ CHARACTER SELECT ONLY, AND IT CHANGES NO SIZE. The distance is the same reference
+        /// distance `Frame` already uses (Nemu stays smaller than Sean, and Paete's measured shares
+        /// in `HubFlowTests` are unchanged); only where the camera points moves. Before this, Nemu's
+        /// feet stood about 60 units above the chalk ring drawn for everybody's feet
+        /// (`CharSelect-v1-nemu-1600x680.png`), because a smaller subject aimed at its own middle
+        /// put its feet higher up the picture.
+        /// </summary>
+        public void StandOnFloor()
+        {
+            _standOnFloor = true;
+            _needsFrame = true;
+        }
+
+        private bool _standOnFloor;
+
+        /// <summary>The floor under the subject's middle, measured when it was framed.</summary>
+        private Vector3 _groundPoint;
+
+        /// <summary>The subject <see cref="StandOnFloor"/> last measured, and what it measured.</summary>
+        private GameObject _floorSubject;
+        private Vector3 _floorGround;
+        private float _floorHeight;
+
+        /// <summary>
+        /// Where the floor under the subject is drawn, as a fraction of this preview's panel (0,0
+        /// bottom left, 1,1 top right). False until the subject has been framed.
+        ///
+        /// ⚠️ A SCREEN THAT DRAWS SOMETHING UNDER THE FEET ASKS HERE RATHER THAN GUESSING AN OFFSET.
+        /// The projection follows the panel's aspect, the zoom, the pitch and a player's orbit, so
+        /// the chalk ring and the contact shadow land on the feet at every window shape.
+        /// </summary>
+        public bool TryGroundViewport(out Vector2 viewport)
+        {
+            viewport = default;
+            if (_camera == null || _model == null || _needsFrame) return false;
+            var point = _camera.WorldToViewportPoint(_groundPoint);
+            if (point.z <= 0) return false;
+            viewport = new Vector2(point.x, point.y);
+            return true;
+        }
+
         public void SetTileFraming(float factor, bool uniformExtent = false)
         {
             _centreSubject = true;
@@ -421,6 +508,7 @@ namespace TumbangPreso.UI
             camGo.transform.SetParent(_pivot, false);
 
             _camera = camGo.AddComponent<UnityEngine.Camera>();
+            _camera.enabled=isActiveAndEnabled;
             _camera.clearFlags = CameraClearFlags.SolidColor;
 
             // Transparent, so the panel's own wood shows through behind the model rather than
@@ -558,7 +646,7 @@ namespace TumbangPreso.UI
         /// ⚠️ AND IT IS READ IN LateUpdate, NEVER IN Attach. `rect.width` is 0 before the first
         /// layout pass, and every number derived from it is nonsense.
         /// </summary>
-        private void EnsureTexture()
+        private void EnsureTexture(bool settleImmediately = false)
         {
             if (_panel == null || _camera == null) return;
 
@@ -593,7 +681,32 @@ namespace TumbangPreso.UI
             int width = Mathf.Max(64, Mathf.RoundToInt(displaySize.x * scale));
             int height = Mathf.Max(64, Mathf.RoundToInt(displaySize.y * scale));
 
-            if (_texture != null && _texture.width == width && _texture.height == height) return;
+            float aspect = (float)width / height;
+            if (_frameAspect != aspect)
+            {
+                _frameAspect = aspect;
+                _needsFrame = true;
+            }
+            // Projection follows the displayed panel even while the previous
+            // target is reused during a continuous resize.
+            _camera.aspect = aspect;
+
+            if (_texture != null && _texture.width == width && _texture.height == height)
+            {
+                _pendingTextureWidth = _pendingTextureHeight = 0;
+                return;
+            }
+            if (_texture != null && !settleImmediately)
+            {
+                if (_pendingTextureWidth != width || _pendingTextureHeight != height)
+                {
+                    _pendingTextureWidth = width; _pendingTextureHeight = height;
+                    _textureResizeAfter = Time.unscaledTime + TextureResizeSettleSeconds;
+                    return;
+                }
+                if (Time.unscaledTime < _textureResizeAfter) return;
+            }
+            _pendingTextureWidth = _pendingTextureHeight = 0;
 
             var old = _texture;
 
@@ -652,16 +765,32 @@ namespace TumbangPreso.UI
         /// what walks out cannot look like two different characters, and the only way to
         /// guarantee that is for both to go through `ToonSkin` with the same sixteen colours.
         /// </summary>
-        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette, GameObject petModel)
+        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette, GameObject petModel,
+                         bool forceRebuild = false)
         {
-            if (_model != null) Destroy(_model);
-            if (_pet != null) Destroy(_pet);
+            // Lock-in and menu refreshes repeat the same pick. Preserve its pose,
+            // materials and instance; snapshots also detect in-place palette edits.
+            // Authoring callers that scale/dress the subject need a clean instance.
+            if (!forceRebuild && _model != null && prefab == _sourceModel && petModel == _sourcePet &&
+                ShowingSlipper == _sourceSlipper && SameValues(_sourceClips, clips) &&
+                SameValues(_sourcePalette, palette) && (petModel == null || _pet != null)) return;
+            bool measure=LoadTimingEnabled;
+            long prepareBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            _loadTimingPending=false;
+            if (_model != null) { _model.SetActive(false); Destroy(_model); }
+            if (_pet != null) { _pet.SetActive(false); Destroy(_pet); }
+            _model = null; _pet = null;
+            _sourceModel = prefab; _sourcePet = petModel; _sourceSlipper = ShowingSlipper;
+            _sourceClips = clips != null ? (AnimationClip[])clips.Clone() : null;
+            _sourcePalette = palette != null ? (Color[])palette.Clone() : null;
 
             _idle = null;
 
             if (prefab == null) return;
 
+            long instantiateBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             _model = Instantiate(prefab, _pivot);
+            double instantiateMs=measure?LoadElapsedMs(instantiateBegan):0;
             _model.transform.localPosition = Vector3.zero;
             _model.transform.localRotation = Quaternion.identity;
             _model.transform.localScale = Vector3.one * PreviewScale;
@@ -714,12 +843,17 @@ namespace TumbangPreso.UI
             // for slippers doesnt lessen everyone's"*. A 16-colour subject still takes the 19 mm
             // this method's note derives.
             bool isPerson = palette != null && palette.Length == 16;
+            _isPerson = isPerson;
+            // The size this character plays at (`CharacterVisual.BodyScaleFor`), so the screens and the match agree.
+            _bodyScale = isPerson ? Visual.CharacterVisual.BodyScaleFor(prefab.name) : 1f;
+            _model.transform.localScale = Vector3.one * (PreviewScale * _bodyScale);
 
             // ⚠️ A TSINELAS TAKES THE FLAT SKIN HERE TOO, AND IT HAS TO BE THE SAME ONE THE MATCH
             // USES. This screen exists so that what you pick and what walks out cannot look like
             // two different things, which is the rule stated at the top of this method; dressing
             // the picker shoe differently from the match shoe would break it in the one place it
             // is most visible. § 79.7 was that bug in the other direction.
+            long dressBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             if (!isPerson && ShowingSlipper)
             {
                 Visual.ToonSkin.ApplySlipper(_model, Visual.ToonSkin.PropOutlineWidth);
@@ -731,6 +865,8 @@ namespace TumbangPreso.UI
                     palette);
             }
 
+            double dressMs=measure?LoadElapsedMs(dressBegan):0;
+            long petBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             if (petModel != null)
             {
                 _pet = Instantiate(petModel, _pivot);
@@ -741,9 +877,12 @@ namespace TumbangPreso.UI
                 Visual.ToonSkin.Apply(_pet, Visual.ToonSkin.PersonOutlineWidth, palette);
             }
 
+            double petMs=measure?LoadElapsedMs(petBegan):0;
+            long idleBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             PlayIdle(clips);
+            double idleMs=measure?LoadElapsedMs(idleBegan):0;
             IsolateFromForeignLights();
-            ApplyPreviewAmbient();
+            if(isActiveAndEnabled)ApplyPreviewAmbient();
 
             // A new subject gets a fresh sweep: the player picked this one to look at, and the
             // arc's phase carrying over means one pick greets you front-on and the next shows
@@ -755,6 +894,21 @@ namespace TumbangPreso.UI
             _turnPhase = InitialTurnPhase;
 
             _needsFrame = true;
+            if(measure)
+            {
+                _loadTimingPending=true;_loadTimingSource=prefab.name;
+                Debug.Log(System.FormattableString.Invariant($"[ModelPreviewLoad] model={_loadTimingSource} stage=prepare instantiate_ms={instantiateMs:F3} toon_ms={dressMs:F3} pet_ms={petMs:F3} idle_bind_ms={idleMs:F3} prepare_cpu_ms={LoadElapsedMs(prepareBegan):F3} scope=opt-in-cpu-includes-probe-overhead"));
+            }
+        }
+
+        private static bool SameValues<T>(T[] left, T[] right)
+        {
+            if (left == null || right == null) return left == right;
+            if (left.Length != right.Length) return false;
+            var comparer = System.Collections.Generic.EqualityComparer<T>.Default;
+            for (int i = 0; i < left.Length; i++)
+                if (!comparer.Equals(left[i], right[i])) return false;
+            return true;
         }
 
         /// <summary>
@@ -843,7 +997,7 @@ namespace TumbangPreso.UI
             if (_idle == null || _model == null) return;
 
             float elapsed = Mathf.Max(0.0f, Time.unscaledTime - _idleStartedAt);
-            _idle.SampleAnimation(_model, elapsed % Mathf.Max(0.01f, _idle.length));
+            _idle.SampleAnimation(_model, AnimateSubject ? elapsed % Mathf.Max(0.01f, _idle.length) : 0);
         }
 
         /// <summary>
@@ -865,6 +1019,11 @@ namespace TumbangPreso.UI
 
             if (avatar == null || !avatar.isValid)
             {
+                if (avatar != null)
+                {
+                    if (Application.isPlaying) Destroy(avatar);
+                    else DestroyImmediate(avatar);
+                }
                 Debug.LogWarning($"[Preview] could not build a generic avatar for " +
                                  $"{animator.name}; it will stand in its bind pose.");
                 return;
@@ -939,6 +1098,12 @@ namespace TumbangPreso.UI
             _frameAim = new Vector3(bounds.center.x,
                                     bounds.min.y + height * _aimHeightRatio,
                                     bounds.center.z);
+            // ⚠️ THE FLOOR IS THE POSED SOLES, NOT THE TRANSFORMED REST BOX. `updateWhenOffscreen`
+            // makes a skinned mesh's local bounds follow the animation after its first frame, so a
+            // subject framed again mid-idle (character select's LOCK IN re-applied its framing)
+            // measured a floor above its own soles and was drawn sunk into its chalk circle by 2
+            // per cent of the panel. The posed box's bottom is where the soles are on every frame.
+            _groundPoint = new Vector3(bounds.center.x, anyPosed ? posed.min.y : bounds.min.y, bounds.center.z);
 
             float halfFov = Mathf.Tan(_camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
             float aspect = Mathf.Max(0.01f, _frameAspect);
@@ -957,6 +1122,35 @@ namespace TumbangPreso.UI
             //
             // ⚠️ OPT-IN, AND THE CHARACTER SCREEN MUST NOT GET IT. There the subject is alone at
             // full size and should use the whole frame.
+            if (_isPerson && !_uniformExtent)
+            {
+                // The standing height, never closer than the reference body's. ⚠️ The reference is in mesh units and converted
+                // with the model's OWN world scale less its body scale (the preview stage is scaled; a metre value framed nothing).
+                float unit = _model.transform.lossyScale.y / Mathf.Max(.01f, _bodyScale);
+                float posedHeight = anyPosed ? Mathf.Max(posed.size.y, 0.001f) : height;
+                float framedHeight = Mathf.Max(ReferenceStandingHeight * unit, posedHeight);
+                if (_standOnFloor)
+                {
+                    // ⚠️ MEASURED ONCE PER SUBJECT. Every resize re-frames, and each re-frame samples
+                    // whatever idle pose the subject is in, so the floor and the distance drifted by
+                    // about 2 per cent of the panel between two shots of one hero at one size
+                    // (character select, Dante, before and after LOCK IN). A screen standing a chalk
+                    // ring on the floor needs the floor to stay where it was measured.
+                    if (_floorSubject != _model)
+                    {
+                        _floorSubject = _model;
+                        _floorGround = _groundPoint;
+                        _floorHeight = framedHeight;
+                    }
+                    _groundPoint = _floorGround;
+                    framedHeight = _floorHeight;
+                    // The same height the distance is chosen for, so the floor sits at one place in
+                    // the frame for every subject this tall or shorter.
+                    _frameAim = new Vector3(_groundPoint.x, _groundPoint.y + framedHeight * _aimHeightRatio, _groundPoint.z);
+                }
+                _frameDistance = (framedHeight * FrameMargin * 0.5f) / halfFov;
+            }
+
             if (_uniformExtent)
             {
                 float extent = Mathf.Max(height, width);
@@ -1014,28 +1208,42 @@ namespace TumbangPreso.UI
         /// </summary>
         public void StepForCapture()
         {
-            Step();
+            Step(settleImmediately: true);
 
             if (_camera != null) _camera.Render();
         }
 
-        private void Step()
+        public System.Collections.IEnumerator PrepareHiddenFrame()
+        {
+            if(isActiveAndEnabled||_camera==null)yield break;
+            Step(settleImmediately:true);
+            yield return null;
+            try{ApplyPreviewAmbient();_camera.Render();}
+            finally{RestoreAmbient();_camera.enabled=false;}
+        }
+
+        private void Step(bool settleImmediately = false)
         {
             if (_camera == null) return;
-
-            EnsureTexture();
+            bool measure=_loadTimingPending;
+            long stepBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            EnsureTexture(settleImmediately);
+            double textureMs=measure?LoadElapsedMs(stepBegan):0;
 
             // ⚠️ RE-DERIVED EVERY FRAME, NOT ONLY WHEN THE TARGET IS BUILT. Setting it once in
             // `EnsureTexture` is correct until something resets it, and a camera's aspect is
             // reset by the engine on a resolution change as well as by any code that assigns
             // `targetTexture`. One frame of the wrong aspect is a visibly stretched portrait, and
-            // this costs a float divide.
+            // keep the current panel projection while resize allocations settle.
             if (_texture != null && _texture.height > 0)
-                _camera.aspect = (float)_texture.width / _texture.height;
+                _camera.aspect = _frameAspect;
 
+            long sampleBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             SampleIdle();
-
+            double sampleMs=measure?LoadElapsedMs(sampleBegan):0;
+            long frameBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             if (_needsFrame) Frame();
+            double frameMs=measure?LoadElapsedMs(frameBegan):0;
 
             // ⚠️⚠️ THE HANDOVER EXPIRES NOW, IT IS NOT PERMANENT. 🧑 2026-08-29, on the picker:
             // *"this is supposed to be like rotating and shit, both slippers and tsinelas and
@@ -1061,7 +1269,7 @@ namespace TumbangPreso.UI
             // THE MODEL TURNS. The idle sweep is a there-and-back through TurnDegrees either
             // side of front-on, over TurnPeriod seconds. It stops while the player is handling
             // it and resumes once they have left it alone.
-            if (_model != null && !_userTookOver)
+            if (_model != null && !_userTookOver && AnimateSubject)
             {
                 _turnPhase += Time.unscaledDeltaTime;
                 float sweep = Mathf.Sin(_turnPhase / TurnPeriod * Mathf.PI * 2.0f) * TurnDegrees;
@@ -1069,6 +1277,11 @@ namespace TumbangPreso.UI
             }
 
             ApplyCamera();
+            if(measure)
+            {
+                _loadTimingPending=false;
+                Debug.Log(System.FormattableString.Invariant($"[ModelPreviewLoad] model={_loadTimingSource} stage=first-step texture_cpu_ms={textureMs:F3} sample_cpu_ms={sampleMs:F3} framing_cpu_ms={frameMs:F3} step_cpu_ms={LoadElapsedMs(stepBegan):F3} scope=cpu-only-not-gpu-or-present"));
+            }
         }
 
         /// <summary>
@@ -1194,8 +1407,15 @@ namespace TumbangPreso.UI
             foreach (Transform child in go.transform) SetLayerRecursively(child.gameObject, layer);
         }
 
+        private void OnEnable()
+        {
+            if(_model!=null)ApplyPreviewAmbient();
+            if(_camera!=null)_camera.enabled=true;
+        }
+
         private void OnDisable()
         {
+            if(_camera!=null)_camera.enabled=false;
             RestoreAmbient();
         }
 

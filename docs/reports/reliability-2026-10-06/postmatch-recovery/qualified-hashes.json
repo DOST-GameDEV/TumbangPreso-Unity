@@ -1,0 +1,13 @@
+{
+  "candidateSourceLF": "ef2f18054717d6f567b61d859627fa9aa4b8447173a4227a8c2df9207c1ce920",
+  "fixtureLF": "b9e6db1eba41b782cc71552682eceabd59e909f311bbc5c9564df5fa4fdc5103",
+  "originalCases": {
+    "failed": 2,
+    "passed": 6
+  },
+  "candidateCases": {
+    "failed": 0,
+    "passed": 8
+  },
+  "restoration": "21126 inputs byte exact;217 native metadata/TimeManager deltas preserved outside source; shared preferences/seed restored"
+}

@@ -112,7 +112,7 @@ namespace TumbangPreso.Diagnostics
             {
                 string dir = Application.persistentDataPath;
                 string path = Path.Combine(dir,
-                    $"tumbangpreso-bundle-{DateTime.Now:yyyyMMdd-HHmmss}.txt");
+                    $"tumbangpreso-bundle-{DateTime.Now:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.txt");
 
                 // ⚠️ THROUGH `SafeStore` LIKE EVERY OTHER WRITE, so a full disk produces a warning
                 // rather than an exception thrown out of the crash handler.
@@ -167,6 +167,8 @@ namespace TumbangPreso.Diagnostics
             sb.AppendLine($"  local slot    {NetAuthority.LocalSlot}");
             sb.AppendLine($"  local peer    {NetAuthority.LocalPeerId}");
             sb.AppendLine($"  referee       {NetAuthority.IsSeatlessReferee}");
+            if (MatchAbandon.Cause != SessionEndCause.None)
+                sb.AppendLine($"  session end   {MatchAbandon.Diagnostic}");
 
             // ⚠️ THE IDENTITY STATE, NOT THE IDENTITY. Whether sign-in succeeded is a diagnosis;
             // who signed in and with what is not this file's business.

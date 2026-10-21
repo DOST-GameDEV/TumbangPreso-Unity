@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.1452597">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="938" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.145260" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2130" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="938" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.126638" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15088" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2131" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="938" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.117576" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2132" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="938" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.108760" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1668" name="MenuExitLifetimeTests" fullname="TumbangPreso.Tests.MenuExitLifetimeTests" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.088245" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1673" name="HostLossRetiresSimulationBeforeReturningToTheLobby" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.HostLossRetiresSimulationBeforeReturningToTheLobby" methodname="HostLossRetiresSimulationBeforeReturningToTheLobby" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="1088880128" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.047844" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Abandon] RemovedByHost: ABANDONED at round 1 of 8; this peer may no longer resolve anything
+[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1669" name="LeavingALiveRoundRetiresPersistentSimulation" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.LeavingALiveRoundRetiresPersistentSimulation" methodname="LeavingALiveRoundRetiresPersistentSimulation" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="1342133812" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.003601" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1670" name="LeavingAnIntermissionRetiresItsHoldWithoutAdvancing" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.LeavingAnIntermissionRetiresItsHoldWithoutAdvancing" methodname="LeavingAnIntermissionRetiresItsHoldWithoutAdvancing" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="795543525" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.005347" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1674" name="LobbyAuthorityRestorationCannotReviveTheAbandonedClock" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.LobbyAuthorityRestorationCannotReviveTheAbandonedClock" methodname="LobbyAuthorityRestorationCannotReviveTheAbandonedClock" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="1307086838" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.002377" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Abandon] RemovedByHost: ABANDONED at round 1 of 8; this peer may no longer resolve anything
+[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1671" name="RepeatedExitRemainsQuiescent" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.RepeatedExitRemainsQuiescent" methodname="RepeatedExitRemainsQuiescent" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="1740570686" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.002145" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1672" name="TheControlRoundReallyTicksBeforeExit" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.TheControlRoundReallyTicksBeforeExit" methodname="TheControlRoundReallyTicksBeforeExit" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="931900607" result="Passed" start-time="2026-10-02 05:51:08Z" end-time="2026-10-02 05:51:08Z" duration="0.009283" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

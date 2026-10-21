@@ -1,0 +1,9 @@
+{
+  "question": "Finite Baha map boundary and grounded sweep plus retained Rafi geometry",
+  "expected_tests": 12,
+  "new_cases": 6,
+  "retry": 1,
+  "prelaunch_failure": "Guessed csproj filename absent; no compiler/test started",
+  "repair": "Use discovered Core.Tests/TumbangPreso.Core.Tests.csproj",
+  "stopping": "Fresh12nonzero cases and original failed command retained; no further tooling retry"
+}

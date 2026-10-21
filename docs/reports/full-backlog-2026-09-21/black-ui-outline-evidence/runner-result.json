@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sharedInputUnchanged": true,
+  "profile": "black-ui-spectator-v55",
+  "existingFilesRestored": 0,
+  "reviewPassed": false,
+  "error": "System.InvalidOperationException: Spectator POV still renders the world-held slipper alongside its viewmodel\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<SpectatorOnly>d__15.MoveNext () [0x00872] in <ddc53fbbfce8408fa7c8eb66d7d3b345>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__40.MoveNext () [0x00054] in <ddc53fbbfce8408fa7c8eb66d7d3b345>:0 "
+}

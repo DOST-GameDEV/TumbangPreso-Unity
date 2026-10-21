@@ -1,0 +1,29 @@
+{
+  "sourceCommit": "a3dae3cc556f6b48cd471a494b6b9d7cb00bc9dd",
+  "pid": 31308,
+  "terminal": true,
+  "passedCases": 25,
+  "caseGroups": {
+    "TumbangPreso.PlayTests.ArrivalViewOwnershipTests": 4,
+    "TumbangPreso.PlayTests.LateJoinReadyGateTests": 9,
+    "TumbangPreso.PlayTests.ReadyGateNetworkTests": 6,
+    "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests": 6
+  },
+  "originalExpectedCount": 24,
+  "countCorrection": "CurrentArrival suitecontainsfourcases; expected24 washarnesscountassumption, exact25selectedcasesallpass. Originalreceipt retainedunchanged.",
+  "protectedCount": 21403,
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/ReadyGate.cs": "a0020535abbde443558939c1e1c0be232afa75a961aaec64bf21f0c091b972b8",
+    "Assets/TumbangPreso/Runtime/Camera/RecordedSpecialFields.cs": "beef265714d7358b0083fb7d2509bc0cf813cf0b7ba4eabf13fd0d239d420c1c",
+    "Assets/TumbangPreso/Tests/PlayMode/LateJoinReadyGateTests.cs": "44293c65a2bea8d2b6b818bfa9381b4f3ae9ca71576bc1f517b9cda524ac6c56",
+    "Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs": "2d56f27111e696ee4ef0ac9f863059c407fd2c6a696694e8bb1b7d45d246044c",
+    "Assets/TumbangPreso/Tests/PlayMode/ArrivalViewOwnershipTests.cs": "c75ee419a0c1ebb8055ab3beb98869a84483802803efca8f7db17f5bfcb06995",
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedSeismicBoundaryTests.cs": "bdaaa1a0f1d14feadc020e639d360cac908fcd2f3ec5385567937d51405186db"
+  },
+  "copiedRawSha256": {
+    "result.json": "a26eb8a62ec0bbc2aab0d5dc290823e2dfc83e8f739f4b0be0bcf4c44527c99a",
+    "results.xml": "aade70e9512b92cc318d656d7e71da78908c47ac286ae695b740146d92834948",
+    "source-restoration.json": "2679fef5e3ebe2c2a9a3409f08310d2689ddf8175bc26869f843a04d91516396"
+  },
+  "scope": "WindowsnativeD3D11 lifecycle/state/field-codec integration; not realpeers/human/defaultmatch/wholeperformance/currentpackage acceptance"
+}

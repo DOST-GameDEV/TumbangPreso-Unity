@@ -1,0 +1,86 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "return System.Array.ConvertAll(UnityEngine.Object.FindObjectsByType<TumbangPreso.PlayerInputReader>(UnityEngine.FindObjectsSortMode.None),r=>{var a=(UnityEngine.InputSystem.InputActionAsset)typeof(TumbangPreso.PlayerInputReader).GetField(\"_actions\",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(r);var m=r.GetComponent<TumbangPreso.CharacterMotor>();return new{slot=m.PlayerSlot,reader=r.enabled,heroEnabled=m.AbilitySystem.enabled,signatureId=m.AbilitySystem.Kit.Skill1.Id,keyboard=UnityEngine.InputSystem.Keyboard.current?.displayName,actions=System.Array.ConvertAll(new[]{\"Skill1\",\"Skill2\",\"Ultimate\",\"Move\",\"SpecialAbility\"},n=>{var x=a.FindAction(n,false);return new{name=n,enabled=x?.enabled,controls=x?.controls.Count,paths=x==null?new string[0]:System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(x.bindings,b=>b.effectivePath))};})};});"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        {
+          "slot": 0,
+          "reader": true,
+          "heroEnabled": true,
+          "signatureId": "dante_skill1",
+          "keyboard": "Keyboard",
+          "actions": [
+            {
+              "name": "Skill1",
+              "enabled": true,
+              "controls": 1,
+              "paths": [
+                "<Keyboard>/e",
+                "<Gamepad>/leftShoulder"
+              ]
+            },
+            {
+              "name": "Skill2",
+              "enabled": true,
+              "controls": 1,
+              "paths": [
+                "<Keyboard>/q",
+                "<Gamepad>/rightShoulder"
+              ]
+            },
+            {
+              "name": "Ultimate",
+              "enabled": true,
+              "controls": 1,
+              "paths": [
+                "<Keyboard>/x",
+                "<Gamepad>/buttonNorth"
+              ]
+            },
+            {
+              "name": "Move",
+              "enabled": true,
+              "controls": 4,
+              "paths": [
+                "2DVector(mode=2)",
+                "<Keyboard>/w",
+                "<Keyboard>/s",
+                "<Keyboard>/a",
+                "<Keyboard>/d",
+                "<Gamepad>/leftStick"
+              ]
+            },
+            {
+              "name": "SpecialAbility",
+              "enabled": true,
+              "controls": 1,
+              "paths": [
+                "<Mouse>/leftButton",
+                "<Gamepad>/rightTrigger"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

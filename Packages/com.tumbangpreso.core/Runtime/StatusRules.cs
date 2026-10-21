@@ -1,0 +1,316 @@
+using System;
+using System.Collections.Generic;
+
+namespace TumbangPreso.Core
+{
+    /// <summary>
+    /// A named condition a body is under, shown to every player as an icon with a tooltip.
+    ///
+    /// ⚠️⚠️ THE OWNER'S TABLE, 2026-09-25, TRANSCRIBED AS DATA. He sent the four rows (status,
+    /// description, tooltip) as the one list of statuses for the ability overhaul, with Amihan's
+    /// kit the first to use them. `StatusRules` below is that table; `Core.Tests` asserts every
+    /// number against it so a retune cannot drift from what he wrote.
+    ///
+    /// ⚠️ APPEND ONLY. The byte value crosses the wire on `SyncUnit` for the two statuses that are
+    /// not stuns, and a renumbered member would repaint somebody else's icon on an older peer.
+    /// </summary>
+    public enum StatusKind : byte
+    {
+        None = 0,
+
+        /// <summary>Wind. Drops the slipper in hand and blocks slipper retrieval.</summary>
+        Whirled = 1,
+
+        /// <summary>Ice. Half movement speed.</summary>
+        Chilled = 2,
+
+        /// <summary>Ice. No movement or interaction (an Ice-element stun).</summary>
+        Frozen = 3,
+
+        /// <summary>The taya's tag. No movement or interaction, cannot be removed or resisted.</summary>
+        Tagged = 4,
+
+        /// <summary>
+        /// Growth (Paete's ultimate, 2026-09-25). No movement; throwing and skills still work
+        /// (owner: *"THEY CAN STILL THROW AND USE SKILLS WHILE STUCK BTW theyre js rooted"*). Ends
+        /// when they have held Interact for `PaeteRules.BreakFreeHoldSeconds`, when they are
+        /// tagged, or when the sentry withers.
+        /// </summary>
+        Rooted = 5,
+
+        // ⚠️⚠️ APPENDED 2026-09-26 FOR THE ROSTER REWORK (ABILITY-2,
+        // `docs/reports/ability-rework-2026-09-26/plan.md` section 2). The owner's answers are quoted
+        // on each; the numbers not given by him are marked in the plan's section 7 for his review.
+
+        /// <summary>Geo (Dante's Boulder and Earthquake). Owner picked the dizzy stumble: 30 % slower, no
+        /// sprint, throws wobble off aim.</summary>
+        Concussed = 6,
+
+        /// <summary>Necro (Nemu's Terrify). Owner: *"Flee from kuro and drop slipper"*, *"make an animation
+        /// for feared too dont js make them walk back"*. The body runs from the source on its own.</summary>
+        Feared = 7,
+
+        /// <summary>Voodoo (Phaister's attacking curse). Owner: *"hallucinations but make it so that some
+        /// of the shit they see are real"*. Local presentation on the victim's screen only.</summary>
+        Disoriented = 8,
+
+        /// <summary>Voodoo (Phaister's defending curse). Owner: *"easier to tag and phaister can go out of
+        /// box and tag them"*.</summary>
+        Vulnerable = 9,
+
+        // ⚠️⚠️ APPENDED 2026-09-27 FOR PHAISTER'S VOODOO KIT (HERO-10 v3), from the owner's status table:
+        // `docs/reports/phaister-kit-2026-09-27/plan.md` section 9.1.
+
+        /// <summary>Voodoo (CURSE: DRAIN). *"Depletes stamina to 0. Prevents stamina recovery for 2.5
+        /// seconds."*</summary>
+        Drained = 10,
+
+        /// <summary>Voodoo (CURSE: HEX). *"Hallucinations of slippers randomly appear on your screen for 7.5
+        /// seconds."* Local presentation on the victim's screen only, like Disoriented.</summary>
+        Hexed = 11,
+
+        /// <summary>Nemu. Reduced perception; status immunity does not prevent it.</summary>
+        Haunted = 12,
+        /// <summary>Electro. Ability casts disabled for five seconds; movement and ordinary actions remain.</summary>
+        Zapped = 13,
+        /// <summary>Nemu's LET THEM IN (owner 2026-10-11): a ghost rides the body for 15 s and contests its steering
+        /// (`NemuRules`). Control is kept: no stun, no lost actions, the camera stays the player's.</summary>
+        Possessed = 14,
+        /// <summary>Nemu's DON'T LOOK (owner 2026-10-15): a ghost covers the eyes for 2 s, and a slow that starts at 50 % wears
+        /// off over 5 s (`NecroRules.DontLookSpeedScale`). One clock: blind while more than 3 s of it remain.</summary>
+        Blinded = 15,
+    }
+
+    /// <summary>One row of the owner's status table.</summary>
+    public sealed class StatusRule
+    {
+        public StatusKind Kind { get; }
+        public string Name { get; }
+
+        /// <summary>The owner's description column, verbatim.</summary>
+        public string Description { get; }
+
+        /// <summary>The owner's tooltip column, verbatim. What the HUD prints beside the icon.</summary>
+        public string Tooltip { get; }
+
+        public float Seconds { get; }
+
+        /// <summary>Multiplier on movement speed while it runs. 1 = no change.</summary>
+        public float SpeedScale { get; }
+
+        public bool BlocksMovement { get; }
+        public bool BlocksInteraction { get; }
+        public bool BlocksSlipperRetrieval { get; }
+        public bool DropsHeldSlipper { get; }
+
+        /// <summary>False for Tagged: *"Cannot be removed"*, so no mash and no cleanse ends it.</summary>
+        public bool Removable { get; }
+
+        /// <summary>False for Tagged: *"or be immune to"*, so stun immunity does not stop it.</summary>
+        public bool ImmunityApplies { get; }
+
+        public StatusRule(StatusKind kind, string name, string description, string tooltip,
+                          float seconds, float speedScale, bool blocksMovement,
+                          bool blocksInteraction, bool blocksSlipperRetrieval,
+                          bool dropsHeldSlipper, bool removable, bool immunityApplies)
+        {
+            Kind = kind; Name = name; Description = description; Tooltip = tooltip;
+            Seconds = seconds; SpeedScale = speedScale; BlocksMovement = blocksMovement;
+            BlocksInteraction = blocksInteraction; BlocksSlipperRetrieval = blocksSlipperRetrieval;
+            DropsHeldSlipper = dropsHeldSlipper; Removable = removable; ImmunityApplies = immunityApplies;
+        }
+    }
+
+    public static class StatusRules
+    {
+        /// <summary>*"Prevents slipper retrieval for 2.5 seconds."*</summary>
+        public const float WhirledSeconds = 2.5f;
+
+        /// <summary>*"Decreases movement speed by 50% for 5 seconds."*</summary>
+        public const float ChilledSeconds = 5.0f;
+        public const float ChilledSpeedScale = 0.5f;
+
+        /// <summary>*"Prevents movement or interaction for 2.5 seconds."* Glacial Nova's number already.</summary>
+        public const float FrozenSeconds = 2.5f;
+        public const float ZappedSeconds = 5;
+
+        /// <summary>At most the sentry's life; the hold or a tag ends it sooner.</summary>
+        public const float RootedSeconds = PaeteRules.SentryLifeSeconds;
+
+        /// <summary>*"Prevents movement or interaction for 5 seconds."* The tag's own number.</summary>
+        public const float TaggedSeconds = Balance.TagStunTime;
+
+        /// <summary>Concussed: 5 s, speed x0.25, no sprint, aim wobble up to 16 degrees, and a throw may misfire (below). The Wiki's *"75% slower for 5 seconds"*
+        /// (owner approved the 2026-10-16 presentation plan, which follows the Wiki; was 2.5 s).</summary>
+        public const float ConcussedSeconds = 5.0f;
+        public const float ConcussedSpeedScale = 0.25f;
+        public const float ConcussedAimWobbleDegrees = 16.0f;
+
+        /// <summary>
+        /// A Concussed throw can MISFIRE (owner, 2026-10-17: *"inaccuracy gets increased by a lot ( u throw slipper somewhere but
+        /// it FLIES and theres a big chance it flies or goes somewhere completley off)"*). On the host, each throw while Concussed
+        /// has this chance to go wild: turned 35 to 80 degrees off the aim to a random side, kicked 8 to 28 degrees higher and
+        /// 10 to 40 per cent faster, so it sails off somewhere else entirely. A throw that does not misfire still takes the wobble.
+        /// </summary>
+        public const float ConcussedMisfireChance = 0.6f;
+        public const float ConcussedMisfireYawMin = 35.0f, ConcussedMisfireYawMax = 80.0f;
+        public const float ConcussedMisfirePitchMin = 8.0f, ConcussedMisfirePitchMax = 28.0f;
+        public const float ConcussedMisfireSpeedMin = 1.1f, ConcussedMisfireSpeedMax = 1.4f;
+
+        /// <summary>Feared: 1.5 s of fleeing from the source at run speed; the held slipper drops at once.</summary>
+        public const float FearedSeconds = 1.5f;
+
+        /// <summary>Disoriented: 4 s of hallucinations (two to three phantom players and slippers drawn
+        /// among the real ones on the victim's own screen) and a swaying aim of up to 6 degrees.</summary>
+        public const float DisorientedSeconds = 4.0f;
+        public const int DisorientedPhantomPlayers = 3;
+        public const int DisorientedPhantomSlippers = 3;
+        public const float DisorientedAimSwayDegrees = 6.0f;
+
+        /// <summary>Vulnerable: 5 s; the taya's tag reach x1.5 against them, stuns on them last x1.5, and
+        /// a taya who cast it may leave the box to tag them.</summary>
+        public const float VulnerableSeconds = 5.0f;
+        public const float VulnerableTagReachScale = 1.5f;
+        public const float VulnerableStunScale = 1.5f;
+
+        /// <summary>*"Depletes stamina to 0. Prevents stamina recovery for 2.5 seconds."*</summary>
+        public const float DrainedSeconds = 2.5f;
+
+        /// <summary>*"Hallucinations of slippers randomly appear on your screen for 7.5 seconds."*</summary>
+        public const float HexedSeconds = 7.5f;
+        public const float HauntedSeconds = 7.5f;
+        public const float PossessedSeconds = NemuRules.PossessedSeconds;
+        public const float BlindedSeconds = NecroRules.DontLookSlowSeconds;
+
+        private static readonly StatusRule[] Table =
+        {
+            new StatusRule(StatusKind.Whirled, "WHIRLED",
+                "Drops slipper if currently in hand. Prevents slipper retrieval and can resetting for 2.5 seconds.",
+                "Disabled Slipper Retrieval and Can Reset",
+                WhirledSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: true, dropsHeldSlipper: true, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Chilled, "CHILLED",
+                "Decreases movement speed by 50% for 5 seconds.",
+                "Reduced Movement Speed",
+                ChilledSeconds, ChilledSpeedScale, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Frozen, "FROZEN",
+                "Prevents movement or interaction for 2.5 seconds.",
+                "Disabled Movement and Interaction",
+                FrozenSeconds, 0.0f, blocksMovement: true, blocksInteraction: true,
+                blocksSlipperRetrieval: true, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Tagged, "TAGGED",
+                "Prevents movement or interaction for 5 seconds. Cannot be removed or be immune to.",
+                "Disabled Movement and Interaction",
+                TaggedSeconds, 0.0f, blocksMovement: true, blocksInteraction: true,
+                blocksSlipperRetrieval: true, dropsHeldSlipper: false, removable: false, immunityApplies: false),
+            // ⚠️ APPENDED, NOT INSERTED (the enum's note). Its seconds are the sentry's whole life:
+            // what actually ends it early is the break-free hold or a tag.
+            new StatusRule(StatusKind.Rooted, "ROOTED",
+                "Pulled to the sentry and held by the roots. Throwing and skills still work. Hold Interact for 7 seconds to break free; a tag also frees you.",
+                "Rooted: Hold Interact to Break Free",
+                RootedSeconds, 0.0f, blocksMovement: true, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). ABILITY-2.
+            new StatusRule(StatusKind.Concussed, "CONCUSSED",
+                "Dizzy for 5 seconds: 75% slower, no sprint, and throws wobble off aim.",
+                "Dizzy: Slower, No Sprint, Wobbly Aim",
+                ConcussedSeconds, ConcussedSpeedScale, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Feared, "FEARED",
+                "Drops the slipper in hand and runs away in terror for 1.5 seconds. No throwing, picking up or skills.",
+                "Feared: Fleeing",
+                FearedSeconds, 1.0f, blocksMovement: true, blocksInteraction: true,
+                blocksSlipperRetrieval: true, dropsHeldSlipper: true, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Disoriented, "DISORIENTED",
+                "For 4 seconds you see things that are not there, mixed in with things that are, and your aim sways.",
+                "Disoriented: Not Everything Is Real",
+                DisorientedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Vulnerable, "VULNERABLE",
+                "For 5 seconds the taya can tag you from further away, even from outside the box, and stuns on you last longer.",
+                "Vulnerable: Easy to Tag",
+                VulnerableSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). HERO-10 v3, the owner's rows verbatim.
+            new StatusRule(StatusKind.Drained, "DRAINED",
+                "Depletes stamina to 0. Prevents stamina recovery for 2.5 seconds.",
+                "Disabled Stamina Recovery",
+                DrainedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Hexed, "HEXED",
+                "Hallucinations of slippers randomly appear on your screen for 7.5 seconds.",
+                "Hallucinations",
+                HexedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Haunted, "HAUNTED",
+                "For 7.5 seconds, can and slipper HUD markers are hidden, sight is reduced and audio is muffled.",
+                "Reduced Perception",
+                HauntedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: false),
+            new StatusRule(StatusKind.Zapped, "ZAPPED",
+                "Prevents ability casts for 5 seconds.", "Disabled Ability Cast",
+                ZappedSeconds, 1, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). Nemu's LET THEM IN, `docs/reports/nemu-ultimate-2026-10-11/direction.md`.
+            new StatusRule(StatusKind.Possessed, "POSSESSED",
+                "For 15 seconds a ghost is inside you: 10% slower, and it drags your steering toward danger. Push against it to hold your ground; fighting wears its grip down.",
+                "Possessed: Slowed, Fight the Pull",
+                PossessedSeconds, NemuRules.PossessedSpeedScale, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). Nemu's DON'T LOOK SpeedScale is the slow's peak; it decays to none.
+            new StatusRule(StatusKind.Blinded, "BLINDED",
+                "A ghost covers your eyes for 2 seconds. You are slowed by 50%, wearing off over 5 seconds.",
+                "Blinded, Slowed (Wearing Off)",
+                BlindedSeconds, 1.0f - NecroRules.DontLookSlowPeak, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+        };
+
+        public static IReadOnlyList<StatusRule> All => Table;
+
+        public static StatusRule For(StatusKind kind)
+        {
+            foreach (var rule in Table) if (rule.Kind == kind) return rule;
+            return null;
+        }
+
+        /// <summary>
+        /// ⚠️ OVERLAP IS `Max()`, NEVER ADDITIVE, FOR EVERY STATUS (`CLAUDE.md` § 4). A second
+        /// Whirl inside the first refreshes it to its full length; two never add up to five
+        /// seconds of a player unable to touch their slipper.
+        /// </summary>
+        public static float Refresh(float left, float seconds) => Math.Max(left, seconds);
+    }
+
+    /// <summary>
+    /// ⚠️⚠️ A CARRY: A VELOCITY HELD FOR A SOLVED TIME, THEN LEFT TO DECAY AGAINST `Friction`.
+    ///
+    /// `CLAUDE.md` § 4: every impulse derives from `Friction`, write the distance and solve the
+    /// speed as v^2 / (2 x Friction). A single impulse is capped at `Balance.MaxKnockbackSpeed`
+    /// (16 m/s), which buys at most 16^2 / 60 = 4.27 m, and the ability overhaul asks for moves
+    /// longer than that: Quick Dash's 5 m and Storm Surge's "very far" (owner, 2026-09-25: *"we want
+    /// them to fall off the map or pushed to the edge"*). So the distance is still what is written,
+    /// and the arithmetic grows one term: the body is held at `speed` for `SecondsFor` seconds and
+    /// then released, and the release tail is exactly the impulse distance the old rule already
+    /// used. Total = speed x hold + speed^2 / (2 x Friction).
+    /// </summary>
+    public static class CarryRules
+    {
+        /// <summary>The distance a release at this speed slides before `Friction` stops it.</summary>
+        public static float TailDistance(float speed) => speed * speed / (2.0f * Balance.Friction);
+
+        /// <summary>How long to hold <paramref name="speed"/> so the whole move covers
+        /// <paramref name="distance"/>. Zero when the tail alone already covers it.</summary>
+        public static float SecondsFor(float distance, float speed)
+        {
+            if (speed <= 0.0f) return 0.0f;
+            return Math.Max(0.0f, (distance - TailDistance(speed)) / speed);
+        }
+
+        /// <summary>The whole distance a carry covers. The inverse of <see cref="SecondsFor"/>.</summary>
+        public static float DistanceFor(float speed, float seconds) => speed * Math.Max(0.0f, seconds) + TailDistance(speed);
+
+        /// <summary>The single-impulse speed that slides exactly <paramref name="distance"/>.</summary>
+        public static float ImpulseFor(float distance) => (float)Math.Sqrt(2.0 * Balance.Friction * Math.Max(0.0f, distance));
+    }
+}

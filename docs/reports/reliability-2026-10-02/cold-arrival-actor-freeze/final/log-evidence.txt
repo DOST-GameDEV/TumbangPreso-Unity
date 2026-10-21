@@ -1,0 +1,5 @@
+TumbangPreso.PlayTests.ColdArrivalActorFreezeTests
+   groupNames = TumbangPreso.PlayTests.ColdArrivalActorFreezeTests
+[Slice] match over. scores: 10 / 20 / 350 / 40. seat 2 wins
+TumbangPreso.PlayTests.ColdArrivalActorFreezeTests:Receive (int) (at Assets/TumbangPreso/Tests/PlayMode/ColdArrivalActorFreezeTests.cs:103)
+TumbangPreso.PlayTests.ColdArrivalActorFreezeTests:CompletedSnapshotBeforeBeginFreezesAllFourActors () (at Assets/TumbangPreso/Tests/PlayMode/ColdArrivalActorFreezeTests.cs:119)

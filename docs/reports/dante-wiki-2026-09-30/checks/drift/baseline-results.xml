@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:21Z" duration="0.2568099">
+  <test-suite type="TestSuite" id="2285" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:21Z" duration="0.256810" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2279" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:21Z" duration="0.246175" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="211138" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2280" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:21Z" duration="0.243130" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2281" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:21Z" duration="0.240087" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1257" name="DanteDriftTests" fullname="TumbangPreso.PlayTests.DanteDriftTests" classname="TumbangPreso.PlayTests.DanteDriftTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:21Z" duration="0.218391" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1258" name="MetadataMatchesContinentalDrift" fullname="TumbangPreso.PlayTests.DanteDriftTests.MetadataMatchesContinentalDrift" methodname="MetadataMatchesContinentalDrift" classname="TumbangPreso.PlayTests.DanteDriftTests" runstate="Runnable" seed="1667008284" result="Failed" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:20Z" duration="0.056132" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 17 but was 10. Strings differ at index 0.
+  Expected: "CONTINENTAL DRIFT"
+  But was:  "EARTHQUAKE"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteDriftTests.MetadataMatchesContinentalDrift () [0x00006] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteDriftTests.cs:56
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1259" name="ReleasedEarthquakeReachesNearThenFarAndNeverBehind" fullname="TumbangPreso.PlayTests.DanteDriftTests.ReleasedEarthquakeReachesNearThenFarAndNeverBehind" methodname="ReleasedEarthquakeReachesNearThenFarAndNeverBehind" classname="TumbangPreso.PlayTests.DanteDriftTests" runstate="Runnable" seed="1240851478" result="Failed" start-time="2026-10-01 00:12:20Z" end-time="2026-10-01 00:12:21Z" duration="0.149456" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The far end must wait for the travelling cascade.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteDriftTests+<ReleasedEarthquakeReachesNearThenFarAndNeverBehind>d__13.MoveNext () [0x000cb] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteDriftTests.cs:67
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

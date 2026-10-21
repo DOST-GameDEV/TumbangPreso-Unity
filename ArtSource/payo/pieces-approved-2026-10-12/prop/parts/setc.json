@@ -1,0 +1,106 @@
+{
+ "atlas": "setc-atlas.png",
+ "size": 2048,
+ "ppm": 300,
+ "used": 0.99,
+ "props": [
+  {
+   "name": "fire_bowl",
+   "real": "1.1 wide x 1.15 m tall, the flame 0.65 more",
+   "note": "",
+   "at": [
+    -0.3,
+    -1.0
+   ],
+   "yaw": 0.0,
+   "pieces": 15,
+   "lift": 0.0,
+   "groups": [
+    "flame"
+   ],
+   "size": [
+    1.31,
+    2.05,
+    1.26
+   ]
+  },
+  {
+   "name": "lantern_pole",
+   "real": "1.0 wide x 2.7 m tall (the lamp 0.36 x 0.62 m)",
+   "note": "",
+   "at": [
+    1.6,
+    -1.1
+   ],
+   "yaw": 0.0,
+   "pieces": 14,
+   "lift": 0.0,
+   "groups": [
+    "lantern"
+   ],
+   "size": [
+    1.51,
+    3.01,
+    0.74
+   ]
+  },
+  {
+   "name": "torch",
+   "real": "0.5 wide x 1.75 m tall, the flame 0.45 more",
+   "note": "",
+   "at": [
+    -2.0,
+    -0.5
+   ],
+   "yaw": 0.0,
+   "pieces": 14,
+   "lift": 0.0,
+   "groups": [
+    "flame"
+   ],
+   "size": [
+    0.67,
+    2.55,
+    0.7
+   ]
+  },
+  {
+   "name": "water_pipe",
+   "real": "3.2 long x 1.5 m tall",
+   "note": "",
+   "at": [
+    0.3,
+    0.9
+   ],
+   "yaw": 0.0,
+   "pieces": 24,
+   "lift": 0.0,
+   "groups": [
+    "water"
+   ],
+   "size": [
+    4.03,
+    1.84,
+    1.14
+   ]
+  },
+  {
+   "name": "water_trough",
+   "real": "1.7 long x 0.72 m tall",
+   "note": "",
+   "at": [
+    -1.9,
+    1.0
+   ],
+   "yaw": 8,
+   "pieces": 18,
+   "lift": 0.0,
+   "groups": [],
+   "size": [
+    2.34,
+    0.89,
+    1.22
+   ]
+  }
+ ]
+}

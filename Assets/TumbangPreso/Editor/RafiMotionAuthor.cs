@@ -1,0 +1,122 @@
+using System;
+using System.IO;
+using System.Linq;
+using TumbangPreso.Visual;
+using UnityEditor;
+using UnityEngine;
+using Object=UnityEngine.Object;
+
+namespace TumbangPreso.EditorTools
+{
+    // Rafi-only authored assets. Existing characters keep their retained GLB clips.
+    public static class RafiMotionAuthor
+    {
+        private const string Folder="Assets/TumbangPreso/Art/characters/rafi-motion";
+        public static void BuildPlayer()
+        {
+            RosterBookBuilder.BuildFromMenu();AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            GameBuilder.BuildWindows();
+        }
+        public static void BakeWaterwallFromCommandLine()
+        {
+            var art=RosterBook.Load()?.FindPersonArt("rafi");
+            if(art==null||art.Model==null)throw new InvalidOperationException("Ilyas authored model missing.");
+            Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var copy=Object.Instantiate(art.Model);copy.hideFlags=HideFlags.HideAndDontSave;
+            AnimationClip clip=null;
+            try
+            {
+                var animator=copy.GetComponentInChildren<Animator>(true);
+                var root=animator!=null?animator.transform:copy.transform;
+                clip=HeroAbilityClips.BuildRafiWallAuthored(root);
+                var bindings=AnimationUtility.GetCurveBindings(clip);
+                if(bindings.Length<21)throw new InvalidOperationException("Waterwall clip has insufficient bound curves.");
+                foreach(var binding in bindings)
+                    if(!string.IsNullOrEmpty(binding.path)&&root.Find(binding.path)==null)
+                        throw new InvalidOperationException("Missing wall bone: "+binding.path);
+                string path=Folder+"/hero-rafi-wall.anim";
+                var saved=AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
+                if(saved==null){AssetDatabase.CreateAsset(clip,path);saved=clip;}
+                else{EditorUtility.CopySerialized(clip,saved);EditorUtility.SetDirty(saved);}
+                art.Clips=(art.Clips??Array.Empty<AnimationClip>()).Where(c=>c!=null&&c.name!="hero-rafi-wall").Append(saved).ToArray();
+                EditorUtility.SetDirty(art);AssetDatabase.SaveAssets();
+                Debug.Log("[RafiWallBake] Saved one grounded wall clip and Ilyas roster reference; existing clips preserved.");
+            }
+            finally
+            {
+                if(clip!=null&&!AssetDatabase.Contains(clip))Object.DestroyImmediate(clip);
+                Object.DestroyImmediate(copy);
+            }
+        }
+
+        public static void BakeSkimFromCommandLine()
+        {
+            var art=RosterBook.Load()?.FindPersonArt("rafi");
+            if(art==null||art.Model==null)throw new InvalidOperationException("Ilyas authored model missing.");
+            Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var copy=Object.Instantiate(art.Model);copy.hideFlags=HideFlags.HideAndDontSave;
+            AnimationClip clip=null;
+            try
+            {
+                var animator=copy.GetComponentInChildren<Animator>(true);
+                var root=animator!=null?animator.transform:copy.transform;
+                clip=HeroAbilityClips.BuildRafiSkimAuthored(root);
+                var bindings=AnimationUtility.GetCurveBindings(clip);
+                if(bindings.Length<21)throw new InvalidOperationException("Skim clip has insufficient bound curves.");
+                foreach(var binding in bindings)
+                    if(!string.IsNullOrEmpty(binding.path)&&root.Find(binding.path)==null)
+                        throw new InvalidOperationException("Missing skim bone: "+binding.path);
+                string path=Folder+"/hero-rafi-skim.anim";
+                var saved=AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
+                if(saved==null){AssetDatabase.CreateAsset(clip,path);saved=clip;}
+                else{EditorUtility.CopySerialized(clip,saved);EditorUtility.SetDirty(saved);}
+                art.Clips=(art.Clips??Array.Empty<AnimationClip>()).Where(c=>c!=null&&c.name!="hero-rafi-skim").Append(saved).ToArray();
+                EditorUtility.SetDirty(art);AssetDatabase.SaveAssets();
+                Debug.Log("[RafiSkimBake] Saved one grounded skim clip and Ilyas roster reference; existing clips preserved.");
+            }
+            finally
+            {
+                if(clip!=null&&!AssetDatabase.Contains(clip))Object.DestroyImmediate(clip);
+                Object.DestroyImmediate(copy);
+            }
+        }
+
+        public static AnimationClip[] Bake(GameObject model)
+        {
+            if(model==null)throw new ArgumentNullException(nameof(model));
+            Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var copy=Object.Instantiate(model);copy.name="Ilyas motion authoring copy";
+            copy.hideFlags=HideFlags.HideAndDontSave;
+            AnimationClip[] generated=null;
+            try
+            {
+                var animator=copy.GetComponentInChildren<Animator>(true);
+                var root=animator!=null?animator.transform:copy.transform;
+                if(!GeneratedAnimationAuthor.BakeRig(root,"rafi"))
+                    throw new InvalidOperationException("Ilyas's player dance could not be baked.");
+                generated=HeroAbilityClips.BuildRafiAuthored(root);
+                var saved=new AnimationClip[generated.Length];
+                for(int i=0;i<generated.Length;i++)
+                {
+                    var clip=generated[i];var bindings=AnimationUtility.GetCurveBindings(clip);
+                    if(clip.length<=0||bindings.Length<21)throw new InvalidOperationException("Empty Ilyas action: "+clip.name);
+                    foreach(var binding in bindings)
+                        if(!string.IsNullOrEmpty(binding.path)&&root.Find(binding.path)==null)
+                            throw new InvalidOperationException(clip.name+" does not bind to "+binding.path);
+                    string path=Folder+"/"+clip.name+".anim";
+                    saved[i]=AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
+                    if(saved[i]==null){AssetDatabase.CreateAsset(clip,path);saved[i]=clip;}
+                    else{EditorUtility.CopySerialized(clip,saved[i]);saved[i].name=clip.name;EditorUtility.SetDirty(saved[i]);}
+                }
+                return saved;
+            }
+            finally
+            {
+                if(generated!=null)foreach(var clip in generated)
+                    if(clip!=null&&!AssetDatabase.Contains(clip))Object.DestroyImmediate(clip);
+                Object.DestroyImmediate(copy);
+            }
+        }
+    }
+}

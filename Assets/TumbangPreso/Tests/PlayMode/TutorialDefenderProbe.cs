@@ -274,7 +274,7 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ THE EXEMPTION IS BY LESSON, NOT BY "IS SOMETHING ALREADY WRONG". Whitelisting
                 // the state rather than the step is how a real stun leaking in from step 12 would
                 // be waved through as expected.
-                if (step != GuidedTraining.Lesson.TripRecovery && !local.CanAct())
+                if (!local.CanAct())
                     wrong.Add($"{step} begins with the player unable to act");
             }
 

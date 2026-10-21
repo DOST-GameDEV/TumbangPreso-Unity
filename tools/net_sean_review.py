@@ -23,6 +23,14 @@ def rows(path):
 
 def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     data = {name: rows(folder / (name + ".csv")) for name in ("host", "owner", "observer")}
+    if case == "steady":
+        return evaluate_steady(data)
+    if case == "cinder":
+        return evaluate_cinder(data)
+    if case == "stoke":
+        return evaluate_stoke(data)
+    if case == "empowered":
+        return evaluate_empowered(data)
     errors, measurements = [], {}
     host = data["host"]
     cast = next((row["time"] for row in host if row["charged"] == 1), None) if case == "ignite" else next((row["time"] for row in host if row["ultcharge"] < 1), None)
@@ -96,10 +104,132 @@ def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     return {"ok": not errors, "errors": errors, "measurements": measurements}
 
 
+def evaluate_empowered(data):
+    errors, measurements = [], {}
+    for name, records in data.items():
+        seat = {"host": 0, "owner": 1, "observer": 2}[name]
+        if len(records) < 200 or any(r["local"] != seat for r in records):
+            errors.append(name + " lacks a continuous correct-seat trace")
+            continue
+        loaded = [r for r in records if 12.5 < r["elapsed"] < 13.3]
+        flights = [r for r in records if r["fireFlight"]]
+        before = next((r for r in records if r["elapsed"] > 11), None)
+        tail = records[-1]
+        distance = ((tail["frontX"] - before["frontX"])**2 + (tail["frontZ"] - before["frontZ"])**2)**.5 if before else 0
+        result = {"samples": len(records), "loaded_samples": len(loaded), "fire_flight_samples": len(flights),
+                  "target_displacement": distance, "final_cooldown": tail["cooldown"],
+                  "final_charge": tail["charged"], "final_embers": tail["embers"]}
+        measurements[name] = result
+        if not loaded or any(not r["charged"] or r["heldAffinity"] != 1 or r["embers"] < 1 for r in loaded):
+            errors.append(name + " did not retain the marked held object and its ember")
+        if not flights: errors.append(name + " did not observe the real empowered flight")
+        if not .1 < distance <= 1.1: errors.append(name + " did not observe the bounded near-miss pressure")
+        if any(r["frontStun"] > 0 or r["craters"] > 0 for r in records):
+            errors.append(name + " added a stagger or lingering crater")
+        if tail["charged"] or tail["embers"] or tail["fireFlight"] or not 22 < tail["cooldown"] < 24:
+            errors.append(name + " leaked the load, flight payload or cooldown")
+    return {"ok": not errors, "errors": errors, "measurements": measurements}
+
+
+def evaluate_stoke(data):
+    errors, measurements = [], {}
+    for name, records in data.items():
+        seat = {"host": 0, "owner": 1, "observer": 2}[name]
+        if len(records) < 200 or any(r["local"] != seat or r["sean"] != 1 for r in records):
+            errors.append(name + " lacks continuous correct-seat evidence")
+            continue
+        before = next((r for r in records if 11 < r["elapsed"] < 12), None)
+        tail = records[-1]
+        active = [r for r in records if r["s1Remaining"] > 0]
+        recovering = [r for r in active if .02 < r["s1Remaining"] < .24]
+        windup = [r for r in records if r["s1Windup"] > 0]
+        distance = tail["casterZ"] - before["casterZ"] if before else 0
+        lateral = max(abs(r["casterX"] - before["casterX"]) for r in records if r["elapsed"] >= 12) if before else 99
+        measurements[name] = {"samples": len(records), "forward_travel": distance, "lateral_drift": lateral,
+                              "windup_samples": len(windup), "recovery_samples": len(recovering),
+                              "final_cooldown": tail["s1Cooldown"], "final_can_act": tail["canAct"]}
+        if not 1.6 < distance <= 2.15 or lateral > .15:
+            errors.append(name + " lost bounded committed travel")
+        if not active or not recovering or any(r["canAct"] or r["canMove"] for r in recovering):
+            errors.append(name + " missed the action/locomotion recovery gate")
+        if any(r["fireTrails"] or r["frontStun"] or r["craters"] for r in records):
+            errors.append(name + " created an obsolete damaging field/contact")
+        if tail["s1Remaining"] or tail["s1Windup"] or not tail["canAct"] or not tail["canMove"]:
+            errors.append(name + " leaked its commitment gate")
+        if not 17 < tail["s1Cooldown"] < 19:
+            errors.append(name + " did not spend the30second cooldown once")
+    return {"ok": not errors, "errors": errors, "measurements": measurements}
+
+
+def evaluate_cinder(data):
+    errors, measurements, identities = [], {}, set()
+    for name, records in data.items():
+        seat = {"host": 0, "owner": 1, "observer": 2}[name]
+        if len(records) < 150 or any(r["local"] != seat or r["round"] != 2 or not r["defending"] for r in records):
+            errors.append(name + " lacks continuous second-round client-defender evidence")
+            continue
+        live = [r for r in records if r["gates"]]
+        spent = [r for r in live if r["gateSpent"]]
+        active_ids = {r["gateId"] for r in live}
+        identities.update(active_ids)
+        tail = records[-1]
+        result = {"samples":len(records), "live_samples":len(live), "spent_samples":len(spent),
+                  "identities":sorted(active_ids), "final_target_z":tail["frontZ"],
+                  "minimum_target_velocity_z":min(r["frontVelocityZ"] for r in records),
+                  "final_cooldown":tail["cooldown"], "final_gates":tail["gates"]}
+        measurements[name] = result
+        if len(active_ids) != 1 or not live or not spent or any(r["gates"] != 1 for r in live):
+            errors.append(name + " missed or duplicated the one crossing field")
+        if spent and (any(r["gateDirection"] != -1 for r in spent) or tail["frontZ"] >= spent[0]["gateZ"]):
+            errors.append(name + " did not retain approach-side pushback")
+        if name == "observer" and result["minimum_target_velocity_z"] >= -1:
+            errors.append("The actual target owner did not receive the authoritative impulse")
+        if any(r["frontStun"] > 0 or r["craters"] or r["fireTrails"] for r in records):
+            errors.append(name + " added an unrelated status or field")
+        if tail["gates"] or tail["chargeRemaining"] or not 22 < tail["cooldown"] < 25:
+            errors.append(name + " leaked the gate clock or changed the one-cast cooldown")
+        if spent:
+            after = [r for r in live if r["time"] >= spent[0]["time"]]
+            if any(not r["gateSpent"] for r in after): errors.append(name + " revived a consumed field")
+    if len(identities) != 1: errors.append("Peers disagreed about the dynamic field identity")
+    return {"ok": not errors, "errors": errors, "measurements": measurements}
+
+
+def evaluate_steady(data):
+    errors, measurements = [], {}
+    for name, records in data.items():
+        seat = {"host":0,"owner":1,"observer":2}[name]
+        if len(records)<150 or any(r["local"]!=seat or r["defending"] for r in records):
+            errors.append(name+" lacks continuous attacker-seat evidence")
+            continue
+        active=[r for r in records if r["passiveRemaining"]>0]
+        regrab=[r for r in active if r["steadyRegrabbed"]]
+        flights=sum(r["shoeState"]==2 and (i==0 or records[i-1]["shoeState"]!=2) for i,r in enumerate(records))
+        result={"samples":len(records),"active_samples":len(active),"regrab_samples":len(regrab),
+                "flight_episodes":flights,"final_passive":records[-1]["passiveRemaining"]}
+        measurements[name]=result
+        if not active or not regrab or flights<2:errors.append(name+" did not complete throw, retrieve, drop/regrab and second throw")
+        if any(r["passiveRemaining"]>4.01 or (r["passiveRemaining"]>0 and abs(r["chargeRate"]-1.25)>.001) for r in records):
+            errors.append(name+" disagrees with bounded passive rate/clock")
+        if any(b["passiveRemaining"]>a["passiveRemaining"]+.15 for a,b in zip(active,active[1:])):
+            errors.append(name+" refreshed the original window during drop/regrab")
+        if records[-1]["passiveRemaining"] or records[-1]["chargeRate"]!=1:
+            errors.append(name+" retained the boost after the accepted throw")
+        if name=="owner":
+            charging=[r for r in regrab if r["chargeActive"] and .02<r["chargePower"]<.95]
+            if len(charging)<2:errors.append("Owner has insufficient actual boosted charge samples")
+            else:
+                a,b=charging[0],charging[-1];dt=b["time"]-a["time"]
+                rate=(b["chargePower"]-a["chargePower"])*a["fullChargeTime"]/dt if dt>0 else 0
+                result["measured_charge_rate"]=rate
+                if not 1.1<rate<1.4:errors.append("Owner's real held input did not charge at the1.25x rate")
+    return {"ok":not errors,"errors":errors,"measurements":measurements}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", type=Path)
-    parser.add_argument("--case", choices=["ignite", "supernova"], required=True)
+    parser.add_argument("--case", choices=["ignite", "supernova", "empowered", "stoke", "cinder", "steady"], required=True)
     parser.add_argument("--delay", type=float, default=0)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--hold-charge", action="store_true")
@@ -129,9 +259,17 @@ def main():
             return launch([str(args.exe.resolve()), "-batchmode", "-screen-width", "640", "-screen-height", "360",
                            "-screen-fullscreen", "0", "-tp-framecap", "60", "-tp-autostart", "3", "-tp-profile", "sean" + name,
                            "-tp-seancase", args.case, "-tp-seantrace", str(folder / (name + ".csv")),
-                           "-logFile", str(folder / (name + ".log"))] + (["-tp-holdcharge"] if args.hold_charge else [])
+                           "-logFile", str(folder / (name + ".log"))] + (["-force-glcore"] if sys.platform.startswith("linux") else []) + (["-tp-holdcharge"] if args.hold_charge else [])
                           + (["-tp-sean-observe-existing"] if observe_existing else []) + route)
-        host = peer("host", ["-tp-host", "8980"]); time.sleep(7)
+        host = peer("host", ["-tp-host", "8980"])
+        deadline = time.monotonic() + 45
+        while time.monotonic() < deadline:
+            path = folder / "host.log"
+            text = path.read_text(errors="replace") if path.exists() else ""
+            if re.search(r"arena installed: LocalSlot=0[^\n]*host=True", text): break
+            if host.poll() is not None: raise RuntimeError("Host exited before its arena was ready")
+            time.sleep(.25)
+        else: raise RuntimeError("Host arena was not ready before timeout")
         port = "8980"
         if args.delay:
             port = "8981"

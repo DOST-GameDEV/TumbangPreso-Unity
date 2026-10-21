@@ -1,0 +1,6 @@
+{
+  "Assets/TumbangPreso/Runtime/AIController.cs": "8d16eb19cd43547df7f7c912431b39a6e71612ad79ee23a64aba2db3e82de300",
+  "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs": "b22297bbc229344fd5ef9b91b97e9805346dc384ff1e70ad68b5ea2549ebce3e",
+  "Assets/TumbangPreso/Tests/PlayMode/BotProducerLifetimeTests.cs": "8d606979915c5811b835a28d98c0843057044d5dfa1bb23f552a2e55fb86a765",
+  "Assets/TumbangPreso/Tests/PlayMode/RecordedWorldOwnerSpaceTests.cs": "cad01a44ddf3973f0e3dc58e431fff244534780ef9ba3eff3d772639754409ae"
+}

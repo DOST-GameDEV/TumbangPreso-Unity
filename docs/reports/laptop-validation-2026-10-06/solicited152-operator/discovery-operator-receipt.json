@@ -1,0 +1,19 @@
+{
+  "source": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "manifest": "79d2dda2607afef210741d3484e173ff40051eefe6f8816e0a02c9aaca978814",
+  "room": "N743",
+  "laptopPid": 45284,
+  "window": 9242226,
+  "pcPid": 9444,
+  "firstLanUtc": "2026-10-05T20:36:46.052Z",
+  "immediateObservationSeconds": 0.361,
+  "rowVisibleByObservedSeconds": 14.789,
+  "naturalLanSourceUntoggled": true,
+  "rowJoinAdmittedSeat2": true,
+  "clientNormalBackHostPreserved": true,
+  "reopenedJoinDirectCodeNoLanRevisit": true,
+  "typedCode": "N743",
+  "codeJoinAdmittedSeat2": true,
+  "typedIp": false,
+  "scope": "Actual updated same packaged PC-host LAN visibility/row admission and code rejoin; no match/forced game APIs"
+}

@@ -1,0 +1,27 @@
+{
+  "ownerTraceAtHostStop": {
+    "wallTime": "63926756687.473",
+    "elapsed": "12.21795",
+    "local": "1",
+    "active": "1",
+    "remaining": "0.7709523",
+    "cooldown": "29.9",
+    "visuals": "1",
+    "orbit": "0",
+    "slow": "1",
+    "immune": "0",
+    "held": "1",
+    "refreshed": "0",
+    "x": "0",
+    "y": "0.12",
+    "z": "-8",
+    "ultcharge": "0",
+    "variant": "0",
+    "targetX": "0",
+    "targetZ": "-2",
+    "pullActive": "1"
+  },
+  "hostPid": 182892,
+  "action": "SIGTERM owned host during active player vine",
+  "time": 1791159887.4774837
+}

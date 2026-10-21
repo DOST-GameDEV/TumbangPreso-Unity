@@ -1,0 +1,121 @@
+{
+  "sourceBase": "26def0cd9be58e4a9de4c5af2e51fb91d4330d73",
+  "unity": "6000.5.8f1",
+  "protocol": 160,
+  "results": {
+    "baseline-owner": {
+      "total": "6",
+      "passed": "0",
+      "failed": "6",
+      "skipped": "0",
+      "result": "Failed(Child)",
+      "failures": [
+        {
+          "name": "TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack",
+          "message": "  The actual packet must be accepted, not rejected by the fixture.\n  Expected: 42.0f\n  But was:  250.0f\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack",
+          "message": "  The actual packet must be accepted, not rejected by the fixture.\n  Expected: 42.0f\n  But was:  250.0f\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedOtherSeatPosesStillMoveTheObservedReplica",
+          "message": "  The actual packet must be accepted, not rejected by the fixture.\n  Expected: 42.0f\n  But was:  250.0f\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerPoseFeedbackTests.ANewMovementEpochStillAppliesTheAuthoritativeTeleport",
+          "message": "  The actual packet must be accepted, not rejected by the fixture.\n  Expected: 42.0f\n  But was:  250.0f\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AnExplicitHostCorrectionStillCorrectsTheOwner",
+          "message": "  The actual packet must be accepted, not rejected by the fixture.\n  Expected: 42.0f\n  But was:  250.0f\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerPoseFeedbackTests.DelayedEchoesPreserveContinuousPredictedRunning",
+          "message": "  The actual packet must be accepted, not rejected by the fixture.\n  Expected: 42.0f\n  But was:  198.0f\n"
+        }
+      ]
+    },
+    "reproduction": {
+      "total": "11",
+      "passed": "7",
+      "failed": "4",
+      "skipped": "0",
+      "result": "Failed(Child)",
+      "failures": [
+        {
+          "name": "TumbangPreso.PlayTests.OwnerPoseFeedbackTests.PossessionRejectsMalformedAndOlderPosesWithoutConsumingTheirSerial",
+          "message": "  Every delayed packet must advance the actual receiver serial.\n  Expected: 2\n  But was:  1\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.ActualUnitSenderFitsTheLargestValidAimIdentity",
+          "message": "System.OverflowException : Writing past the end of the buffer"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.CrouchedOwnerDoesNotAskTheHostToSpendSprintStamina",
+          "message": "  Crouching still submitted a sprint request.\n  Expected: 0\n  But was:  4\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.RemoteCurseReachRefusesSprintWithoutDiscardingTheHeldRequest",
+          "message": "  The host charged for a refused sprint.\n  Expected: 250.0d +/- 0.0010000000474974513d\n  But was:  230.0d\n"
+        }
+      ]
+    },
+    "candidate": {
+      "total": "21",
+      "passed": "20",
+      "failed": "1",
+      "skipped": "0",
+      "result": "Failed(Child)",
+      "failures": [
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.CrouchedOwnerDoesNotAskTheHostToSpendSprintStamina",
+          "message": "  Standing did not resume the held sprint request.\n  Expected: not equal to 0\n  But was:  0\n"
+        }
+      ]
+    },
+    "crouch-final": {
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "skipped": "0",
+      "result": "Passed",
+      "failures": []
+    },
+    "core": {
+      "total": "742",
+      "executed": "742",
+      "passed": "742",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    }
+  },
+  "finalSourceSha256": {
+    "Assets/TumbangPreso/Runtime/CharacterMotor.NetworkStamina.cs": "b1b5ec86c0efeacf29857f66cf0f4b01c4d72fcddea8f5517ec9d122a4463e09",
+    "Assets/TumbangPreso/Runtime/Net/AbilityAimSnapshot.cs": "5cce96f4b51817476f99fd8310706a2be4a8ead181787057034263ffc8b407c5",
+    "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs": "4ae87471d050907be6d7266cce9a530dac3dacd4c16175cd15e09cdf74bc577e",
+    "Assets/TumbangPreso/Tests/PlayMode/OwnerPoseFeedbackTests.cs": "a1d4512f16724ec9dd295c6ac385ec03369cc4fff7a169d7c8e88150efb2cac0",
+    "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs": "854fdc2503398ea253b563a2484c0695cfcda4954b34022d54146531b73ed6cd"
+  },
+  "restoredGeneratedPaths": [
+    "Assets/TumbangPreso/Resources/WorldCueProfile.asset",
+    "Assets/TumbangPreso/Resources/WorldCueProfile.asset.meta",
+    "Assets/TumbangPreso/Resources/WorldLookProfile.asset",
+    "Assets/TumbangPreso/Resources/WorldLookProfile.asset.meta",
+    "ProjectSettings/ProjectAuditorSettings.asset",
+    "ProjectSettings/ShaderGraphSettings.asset"
+  ],
+  "peerScope": "Single Editor, plus local host named-message loopback; no remote peer qualification",
+  "coreTrxSha256": "4c1a874ab5639d3767768893541037f3e6052fee6e51e79eb989541070d3c6bf"
+}

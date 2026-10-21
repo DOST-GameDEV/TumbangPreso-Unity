@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 15:46:35Z" end-time="2026-09-27 15:47:05Z" duration="30.2191575">
+  <test-suite type="TestSuite" id="1954" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:46:35Z" end-time="2026-09-27 15:47:05Z" duration="30.219158" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1948" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:46:35Z" end-time="2026-09-27 15:47:05Z" duration="30.211258" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="60136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1949" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:46:35Z" end-time="2026-09-27 15:47:05Z" duration="30.208668" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1950" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:46:35Z" end-time="2026-09-27 15:47:05Z" duration="30.203213" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1242" name="HubSceneVideoTests" fullname="TumbangPreso.PlayTests.HubSceneVideoTests" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-09-27 15:46:35Z" end-time="2026-09-27 15:47:05Z" duration="30.178322" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1244" name="BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" methodname="BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="1240997137" result="Failed" start-time="2026-09-27 15:46:35Z" end-time="2026-09-27 15:47:05Z" duration="30.100773" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HubSceneVideoTests+<BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome>d__3.MoveNext () [0x000d7] in C:\Users\Matthew\Documents\Codex\2026-09-27\read-agents-md-too-opus-5\work\stability-validation\Assets\TumbangPreso\Tests\PlayMode\HubSceneVideoTests.cs:86
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[HubSceneVideo] Preparation exceeded its failure budget; retaining the poster. - showing the poster instead.
+]]></output>
+            </test-case>
+            <test-case id="1245" name="ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" methodname="ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="846920190" result="Passed" start-time="2026-09-27 15:47:05Z" end-time="2026-09-27 15:47:05Z" duration="0.066404" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

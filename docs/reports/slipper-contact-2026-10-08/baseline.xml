@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 15:05:36Z" end-time="2026-10-07 15:05:40Z" duration="3.6030835">
+  <test-suite type="TestSuite" id="3615" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2116" result="Failed" site="Child" start-time="2026-10-07 15:05:36Z" end-time="2026-10-07 15:05:40Z" duration="3.603084" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3607" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2116" result="Failed" site="Child" start-time="2026-10-07 15:05:36Z" end-time="2026-10-07 15:05:40Z" duration="3.557150" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="40730" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3608" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2116" result="Failed" site="Child" start-time="2026-10-07 15:05:37Z" end-time="2026-10-07 15:05:40Z" duration="3.530677" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3611" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2114" result="Failed" site="Child" start-time="2026-10-07 15:05:37Z" end-time="2026-10-07 15:05:40Z" duration="3.503830" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="3149" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 15:05:37Z" end-time="2026-10-07 15:05:40Z" duration="3.465542" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3150" name="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" fullname="TumbangPreso.PlayTests.SlipperContactTests.EveryRosterPalmAnchorTouchesItsVisibleHandSurface" methodname="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="976115630" result="Failed" start-time="2026-10-07 15:05:37Z" end-time="2026-10-07 15:05:40Z" duration="3.176170" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  bayan: gap -0.0447m (30 vertices)
+jun_jun: gap -0.0115m (32 vertices)
+lola_pacing: gap -0.0115m (32 vertices)
+dante: gap -0.1712m (189 vertices)
+cheska: gap -0.1005m (139 vertices)
+zack: gap -0.1511m (220 vertices)
+nemu: gap -0.0488m (80 vertices)
+phaister: gap -0.1972m (105 vertices)
+rafi: gap 0.1430m (161 vertices)
+amihan: gap -0.1176m (183 vertices)
+paete: gap -0.0246m (261 vertices)
+  Expected: <empty>
+  But was:  < "bayan: gap -0.0447m (30 vertices)", "jun_jun: gap -0.0115m (32 vertices)", "lola_pacing: gap -0.0115m (32 vertices)", "dante: gap -0.1712m (189 vertices)", "cheska: gap -0.1005m (139 vertices)", "zack: gap -0.1511m (220 vertices)", "nemu: gap -0.0488m (80 vertices)", "phaister: gap -0.1972m (105 vertices)", "rafi: gap 0.1430m (161 vertices)", "amihan: gap -0.1176m (183 vertices)"... >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SlipperContactTests+<EveryRosterPalmAnchorTouchesItsVisibleHandSurface>d__4.MoveNext () [0x00447] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/SlipperContactTests.cs:62
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="3151" name="UltimateCopyDoesNotBakeAStaleLiveCarryPose" fullname="TumbangPreso.PlayTests.SlipperContactTests.UltimateCopyDoesNotBakeAStaleLiveCarryPose" methodname="UltimateCopyDoesNotBakeAStaleLiveCarryPose" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="1473162806" result="Failed" start-time="2026-10-07 15:05:40Z" end-time="2026-10-07 15:05:40Z" duration="0.276127" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Bones do not match bindpose.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Renderer:set_localBounds (UnityEngine.Bounds)
+TumbangPreso.CameraSystem.MatchPoseHistory/Track:Clone (UnityEngine.Transform) (at Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs:239)
+TumbangPreso.PlayTests.SlipperContactTests/<UltimateCopyDoesNotBakeAStaleLiveCarryPose>d__5:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/SlipperContactTests.cs:80)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Bones do not match bindpose.
+Bones do not match bindpose.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

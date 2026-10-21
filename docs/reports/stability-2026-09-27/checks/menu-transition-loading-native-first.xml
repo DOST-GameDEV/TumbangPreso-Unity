@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 12:54:35Z" end-time="2026-09-27 12:54:36Z" duration="0.2781755">
+  <test-suite type="TestSuite" id="1934" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="743" result="Failed" site="Child" start-time="2026-09-27 12:54:35Z" end-time="2026-09-27 12:54:36Z" duration="0.278176" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1928" name="TumbangPreso.PlayTests.dll" fullname="VALIDATION_PROJECT/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="743" result="Failed" site="Child" start-time="2026-09-27 12:54:35Z" end-time="2026-09-27 12:54:36Z" duration="0.268819" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48608" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1929" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="743" result="Failed" site="Child" start-time="2026-09-27 12:54:35Z" end-time="2026-09-27 12:54:36Z" duration="0.265038" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1930" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="743" result="Failed" site="Child" start-time="2026-09-27 12:54:35Z" end-time="2026-09-27 12:54:36Z" duration="0.261000" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1415" name="MatchLoadingReadinessTests" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-27 12:54:35Z" end-time="2026-09-27 12:54:36Z" duration="0.246731" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1418" name="MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests.MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation" methodname="MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" seed="1723546408" result="Failed" start-time="2026-09-27 12:54:35Z" end-time="2026-09-27 12:54:36Z" duration="0.236353" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MatchLoadingReadinessTests+<MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation>d__4.MoveNext () [0x00119] in VALIDATION_PROJECT\Assets\TumbangPreso\Tests\PlayMode\MatchLoadingReadinessTests.cs:165
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: ISOLATED_PROFILE\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

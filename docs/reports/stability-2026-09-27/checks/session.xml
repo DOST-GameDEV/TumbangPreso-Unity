@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Passed" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 19:02:27Z" end-time="2026-09-26 19:02:30Z" duration="3.7187964">
+  <test-suite type="TestSuite" id="1859" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:02:27Z" end-time="2026-09-26 19:02:30Z" duration="3.718796" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1853" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:02:27Z" end-time="2026-09-26 19:02:30Z" duration="3.708283" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="37400" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1854" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:02:27Z" end-time="2026-09-26 19:02:30Z" duration="3.703066" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1855" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:02:27Z" end-time="2026-09-26 19:02:30Z" duration="3.697975" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1664" name="SessionRestartTests" fullname="TumbangPreso.PlayTests.SessionRestartTests" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-26 19:02:27Z" end-time="2026-09-26 19:02:30Z" duration="3.686162" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1671" name="CancelledClientHandshakeClosesOnlyItsOwnTransport" fullname="TumbangPreso.PlayTests.SessionRestartTests.CancelledClientHandshakeClosesOnlyItsOwnTransport" methodname="CancelledClientHandshakeClosesOnlyItsOwnTransport" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1870115252" result="Passed" start-time="2026-09-26 19:02:27Z" end-time="2026-09-26 19:02:28Z" duration="0.844777" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connecting to 127.0.0.1:18679
+[Net] offline
+[Net] connecting to 127.0.0.1:18679
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18680, join code 2NCG
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="1669" name="CancelledDelayedHostCannotReadvertiseOrReviveQueue" fullname="TumbangPreso.PlayTests.SessionRestartTests.CancelledDelayedHostCannotReadvertiseOrReviveQueue" methodname="CancelledDelayedHostCannotReadvertiseOrReviveQueue" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="179682942" result="Passed" start-time="2026-09-26 19:02:28Z" end-time="2026-09-26 19:02:28Z" duration="0.025917" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1670" name="CancelledDelayedJoinCannotEmitJoined" fullname="TumbangPreso.PlayTests.SessionRestartTests.CancelledDelayedJoinCannotEmitJoined" methodname="CancelledDelayedJoinCannotEmitJoined" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="2058493086" result="Passed" start-time="2026-09-26 19:02:28Z" end-time="2026-09-26 19:02:28Z" duration="0.023677" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1674" name="DestroyedQueueCannotPublishAfterDelayedHostCompletion" fullname="TumbangPreso.PlayTests.SessionRestartTests.DestroyedQueueCannotPublishAfterDelayedHostCompletion" methodname="DestroyedQueueCannotPublishAfterDelayedHostCompletion" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="514673779" result="Passed" start-time="2026-09-26 19:02:28Z" end-time="2026-09-26 19:02:28Z" duration="0.020752" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1666" name="HostingAgainWhileAlreadyHostingSucceeds" fullname="TumbangPreso.PlayTests.SessionRestartTests.HostingAgainWhileAlreadyHostingSucceeds" methodname="HostingAgainWhileAlreadyHostingSucceeds" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1491131219" result="Passed" start-time="2026-09-26 19:02:28Z" end-time="2026-09-26 19:02:28Z" duration="0.636046" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code HFBJ
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code HZE5
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="1665" name="HostingWorksEvenWhenTheSessionWasNestedUnderSomething" fullname="TumbangPreso.PlayTests.SessionRestartTests.HostingWorksEvenWhenTheSessionWasNestedUnderSomething" methodname="HostingWorksEvenWhenTheSessionWasNestedUnderSomething" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="195565836" result="Passed" start-time="2026-09-26 19:02:28Z" end-time="2026-09-26 19:02:29Z" duration="0.332807" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Netcode] [NotifyUserOfNestedNetworkManager] ~NetSession is nested under ~TestHolder. NetworkManager cannot be nested.
+
+[Net] ~NetSession was nested under ~TestHolder; moved back to the root so netcode can start.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code V9P6
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="1675" name="OldHostCompletionCannotClearNewAttemptOrItsAdvert" fullname="TumbangPreso.PlayTests.SessionRestartTests.OldHostCompletionCannotClearNewAttemptOrItsAdvert" methodname="OldHostCompletionCannotClearNewAttemptOrItsAdvert" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="202059138" result="Passed" start-time="2026-09-26 19:02:29Z" end-time="2026-09-26 19:02:29Z" duration="0.024288" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1673" name="QueueJoinTimeoutClosesAnUnseatedClient" fullname="TumbangPreso.PlayTests.SessionRestartTests.QueueJoinTimeoutClosesAnUnseatedClient" methodname="QueueJoinTimeoutClosesAnUnseatedClient" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="412298390" result="Passed" start-time="2026-09-26 19:02:29Z" end-time="2026-09-26 19:02:29Z" duration="0.378788" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connecting to 127.0.0.1:18679
+[Net] offline
+[Net] Connection timed out before a seat was assigned.
+]]></output>
+            </test-case>
+            <test-case id="1672" name="QueueJoinWaitsForSeatAfterClientTransportStarts" fullname="TumbangPreso.PlayTests.SessionRestartTests.QueueJoinWaitsForSeatAfterClientTransportStarts" methodname="QueueJoinWaitsForSeatAfterClientTransportStarts" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="532618789" result="Passed" start-time="2026-09-26 19:02:29Z" end-time="2026-09-26 19:02:29Z" duration="0.028343" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connecting to 127.0.0.1:18679
+[Net] connected as seat 2
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1668" name="StopDuringHostRestartPreventsThePendingStart" fullname="TumbangPreso.PlayTests.SessionRestartTests.StopDuringHostRestartPreventsThePendingStart" methodname="StopDuringHostRestartPreventsThePendingStart" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1501251301" result="Passed" start-time="2026-09-26 19:02:29Z" end-time="2026-09-26 19:02:29Z" duration="0.329693" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 2Z4N
+[Net] offline
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="1667" name="StopLeavesTheManagerListeningUntilTheNextFrame" fullname="TumbangPreso.PlayTests.SessionRestartTests.StopLeavesTheManagerListeningUntilTheNextFrame" methodname="StopLeavesTheManagerListeningUntilTheNextFrame" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1403289518" result="Passed" start-time="2026-09-26 19:02:29Z" end-time="2026-09-26 19:02:30Z" duration="1.029226" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code D9CN
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

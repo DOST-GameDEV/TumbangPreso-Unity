@@ -1,0 +1,6 @@
+{
+  "failure": "Fixture manually restored can and immediately asserted CanThrow; actual shared round restore cooldown still active",
+  "repair_count": 1,
+  "repair": "Allow1.4s shared cooldown while hidden can remains frozen, then show/control/hide in same frame. Same intended assertions, no production changes.",
+  "test_sha256": "b4c39c93c83fcd332faac7869b40596079b93285453b4aef3d3afea5dc1de116"
+}

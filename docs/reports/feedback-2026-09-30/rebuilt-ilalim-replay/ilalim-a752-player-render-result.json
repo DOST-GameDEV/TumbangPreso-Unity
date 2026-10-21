@@ -1,0 +1,9 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: Expected UI state did not arrive.\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__84.MoveNext () [0x00069] in <7269539f241e49d9973d7f66c4f3539c>:0 \n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__77.MoveNext () [0x00054] in <7269539f241e49d9973d7f66c4f3539c>:0 ",
+    "stages": [
+        "Ilalim a752 direct player rendering",
+        "Scene IlalimNgTulay, LagoonFoliage renderers=2079"
+    ],
+    "frameWindows": []
+}

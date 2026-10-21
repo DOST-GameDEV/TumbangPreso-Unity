@@ -187,6 +187,11 @@ namespace TumbangPreso.Visual
         [SerializeField] private float _fadeStart = -1.0f;
         [SerializeField] private float _fadeEnd = -1.0f;
 
+        /// <summary>A map may name the ink's own distances in place of its fog's
+        /// (`MapCameraRange`: the Arena's fog runs out to its city, kilometres past its stands).
+        /// Negative values adopt the fog again. Nothing calls this on a map that names none.</summary>
+        public void SetFade(float start, float end) { _fadeStart = start; _fadeEnd = end; }
+
         [Header("Exclusion")]
         [SerializeField] private Exclusion _exclusion = Exclusion.ToonSurfaces;
         [SerializeField] private LayerMask _excludedLayers;
@@ -263,6 +268,8 @@ namespace TumbangPreso.Visual
         private static readonly int MaskId = Shader.PropertyToID("_WorldOutlineMask");
         private static readonly int MaskStrengthId = Shader.PropertyToID("_MaskStrength");
         private static readonly int MaskToleranceId = Shader.PropertyToID("_MaskDepthTolerance");
+        private static readonly int NearFadeMaskId = Shader.PropertyToID("_WorldOutlineNearFadeBand");
+        private static readonly int NormalDetailFadeId = Shader.PropertyToID("_NormalDetailFade");
         private static readonly int ViewRayId = Shader.PropertyToID("_ViewRay");
         private static readonly int SupersampleId = Shader.PropertyToID("_Supersample");
 
@@ -282,6 +289,45 @@ namespace TumbangPreso.Visual
 
         private const int MaskPass = 1;
 
+        // ⚠️ PASSES 2 AND 3 ARE THE AMBIENT OCCLUSION AND ITS BLUR (LIGHT-3.6). Appended rather
+        // than inserted, so the composite and the mask keep the indices every other line here
+        // and in the shader already names.
+        private const int AmbientOcclusionPass = 2;
+        /// <summary>A debug session's test value for the cast's share of the ambient occlusion (F8,
+        /// `Hud`): negative means "use the player's setting" (`GameSettings.CharacterShading`).</summary>
+        public static float CharacterAoTest = -1f;
+        /// <summary>A debug session's test value for the RADIUS of the cast's own occlusion kernel, in
+        /// metres: zero or less means "use the look's own" (`WorldLookProfile.CharacterAmbientOcclusionRadius`,
+        /// a third of a metre). The redesigned cast's creases are centimetres deep (piping, a fringe
+        /// over a brow, a cuff on a wrist), and a third of a metre spreads the shade past them; a
+        /// smaller radius keeps it IN the crease. Owner, 2026-10-05: "the ao isnt being applied to the
+        /// character creases properly". Like `CharacterAoTest`, never set by the game itself.</summary>
+        public static float CharacterAoRadiusTest = -1f;
+        private const int AmbientOcclusionBlurPass = 3;
+        /// <summary>
+        /// ⚠️⚠️ THE OCCLUSION'S COST FOLLOWS THE GRAPHICS TIER (owner, 2026-10-04: the game is
+        /// "primarily not laggy for the server host but it is for players joining too", then "add
+        /// these optimization fixes"). Pass 2 is the dearest thing this component draws: sixteen
+        /// dependent depth-normal reads for every pixel of the frame, on every tier but Low.
+        /// On the top tier (High) it is unchanged. On the tiers between (Balanced, the DEFAULT)
+        /// the shader's `WORLD_AO_LITE` variant takes EIGHT probes: the same four rings, two
+        /// probes a ring, the same radius, bias and falloff, the same 4x4 tile of rotations, so
+        /// pass 3's blur still cancels the pattern (it now averages 128 probes, not 256).
+        /// ⚠️ STILL FULL RESOLUTION. Half resolution is the cheaper cut and it is the one the
+        /// owner turned down (see the note in `OnRenderImage`: the rotation tile reads as a grid).
+        /// Tests/PlayMode/IlalimPerfProbe.cs renders the same frame both ways and reports how
+        /// far the picture moves.
+        /// </summary>
+        private const string AmbientOcclusionLiteKeyword = "WORLD_AO_LITE";
+        /// <summary>REVIEW ONLY: 16 or 8 forces that many probes whatever the tier; 0 (the game)
+        /// lets the tier decide. Like `CharacterAoTest`, never set by the game itself.</summary>
+        public static int AmbientOcclusionSamplesTest;
+        private static bool AmbientOcclusionLite => AmbientOcclusionSamplesTest != 0
+            ? AmbientOcclusionSamplesTest <= 8
+            : Settings.SettingsStore.Current.GraphicsQuality < Settings.GraphicsProfiles.All.Length - 1;
+        private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
+        private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
+
         private const string ToonShaderName = "TumbangPreso/Toon";
 
         private Camera _camera;
@@ -294,6 +340,15 @@ namespace TumbangPreso.Visual
         private bool _missing;
 
         private readonly List<Renderer> _excluded = new List<Renderer>();
+        private readonly List<NearFadeMask> _nearFade = new List<NearFadeMask>();
+        private struct NearFadeMask
+        {
+            public Renderer Renderer;public Bounds Bounds;public bool Stationary;
+            public int Submesh;public float Start,End;
+        }
+        public int NearFadeMaskDraws { get; private set; }
+        public bool FadeOccluderOutlines { get; set; } = true;
+        public bool FadeDistantNormalDetail { get; set; } = true;
         private float _nextScan;
 
         private void Awake()
@@ -317,6 +372,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void RequestDepthNormals(bool want)
         {
+            RequestFineDepth(want && FineDepth);
             if (_camera == null || want == _depthNormalsRequested) return;
 
             if (want) _camera.depthTextureMode |= DepthTextureMode.DepthNormals;
@@ -345,10 +401,52 @@ namespace TumbangPreso.Visual
         /// the Chromatic style also stops paying for the depth-normals request and the exclusion
         /// mask rebuild rather than only for the composite.
         /// </summary>
-        private bool Live => _prototypeEnabled
-                             && Settings.RenderStyles.InkOutlinesActive
-                             && !_missing
-                             && _opacity > 0.0f;
+        /// <summary>
+        /// ⚠️⚠️ PAST THIS FAR PLANE THE OCCLUSION READS THE CAMERA'S OWN DEPTH TEXTURE (owner, 2026-10-18, on Payo:
+        /// "theres also some striping on the AO for both world and characters, this doesnt show on other maps").
+        /// The depth-normals texture's 16-bit depth steps by far / 65536: 240 m (every map but two) is 4 mm, the
+        /// Arena's 1300 m is 2 cm, Payo's 3700 m is 5.6 cm, past the occlusion's 3 cm bias, so smooth slopes and
+        /// bodies shaded in bands. Only a camera past this far plane (Payo) switches `WORLD_AO_FINE_DEPTH` on and asks
+        /// for `DepthTextureMode.Depth`; every other map keeps exactly what it had. With a shadowed sun the built-in
+        /// pipeline renders that depth texture for its screen-space shadows anyway.
+        /// </summary>
+        public const float FineDepthFar = 1500f;
+        /// <summary>The exclusion mask's depth tolerance past `FineDepthFar`, in metres (see where the mask is drawn).</summary>
+        private const float MaskToleranceMetres = 0.2f;
+        private const string FineDepthKeyword = "WORLD_AO_FINE_DEPTH";
+        private bool FineDepth => _camera != null && !_camera.orthographic
+            && (FineDepthTest >= 0 ? FineDepthTest > 0 : _camera.farClipPlane > FineDepthFar);
+        /// <summary>A probe's switches, never set by the game: `FineDepthTest` -1 lets the far plane decide, 0 forces
+        /// the old depth, 1 the fine one; `FineDepthView` 0 normal, 1 paints where the two depths agree (white) or
+        /// not (black), 2 the fine depth as a metre ramp, 3 the old one.</summary>
+        public static int FineDepthTest = -1, FineDepthView;
+        private bool _depthRequested;
+
+        private void RequestFineDepth(bool want)
+        {
+            if (_camera == null || want == _depthRequested) return;
+            // Only ever takes back what it added: a camera that already asked for depth keeps it, untouched.
+            if (want)
+            {
+                if ((_camera.depthTextureMode & DepthTextureMode.Depth) != 0) return;
+                _camera.depthTextureMode |= DepthTextureMode.Depth;
+            }
+            else _camera.depthTextureMode &= ~DepthTextureMode.Depth;
+            _depthRequested = want;
+        }
+
+        private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
+            && WorldCueProfile.LightingWeight>0 && WorldLookProfile.Current.EnvironmentContact>0
+            && Settings.SettingsStore.Current.GraphicsQuality>0;
+        /// <summary>
+        /// Whether this frame draws ambient occlusion: the contact term's gate (the look owns the
+        /// camera, the weight is up, not the Low tier), a perspective camera, since the pass
+        /// rebuilds points from a perspective view ray, and a non-zero strength.
+        /// </summary>
+        private bool AmbientOcclusionLive => HasWorldContact && !_camera.orthographic
+            && WorldLookPresentation.Current!=null && WorldLookProfile.Current.AmbientOcclusion>0;
+        private bool InkLive => _prototypeEnabled && Settings.RenderStyles.InkOutlinesActive && _opacity>0;
+        private bool Live => !_missing && (InkLive || HasWorldContact);
 
         private void LateUpdate() => RequestDepthNormals(Live);
 
@@ -435,15 +533,47 @@ namespace TumbangPreso.Visual
         // `FindObjectsByType<Renderer>` per second over roughly 450 renderers, which is cheap
         // enough to prototype behind and too rude to ship.
 
+        /// <summary>
+        /// ⚠️⚠️ THE AO NEAR GATE IS ON ONLY WHILE A NEAR-FADE PROP IS AT THE LENS (owner,
+        /// 2026-09-27, on Kanto: "i still see it. do we need the ao gate?"). The gate (the
+        /// shaders ignore every pixel nearer than NearFade.FadeStartMetres) exists for ONE fault:
+        /// a NearFade prop you stand beside (Ilalim's LRT pillars) dissolves in the colour pass
+        /// but lands in the depth-normals prepass as a solid wall at the lens, and the AO read the
+        /// whole frame as occluded. Always on, it drew a screen-wide line wherever a flat floor
+        /// crossed 1.8 m, on every map. It now returns the guard distance only while one of the
+        /// near-fade renderers found by Rescan is within the guard (plus a metre) of the camera,
+        /// and 0 otherwise, so maps with no near-fade props (Kanto, the Lagoon Cove) never gate.
+        /// </summary>
+        private float NearGuard()
+        {
+            if (_camera == null || _nearFade.Count == 0) return 0f;
+            var eye = _camera.transform.position;
+            float reach = NearFade.FadeStartMetres + 1f;
+            foreach (var item in _nearFade)
+            {
+                var r = item.Renderer;
+                if (r == null || !r.enabled) continue;
+                var bounds = item.Stationary ? item.Bounds : r.bounds;
+                if (bounds.SqrDistance(eye) < reach * reach) return NearFade.FadeStartMetres;
+            }
+            return 0f;
+        }
+
         private void Rescan()
         {
-            _excluded.Clear();
+            _excluded.Clear();_nearFade.Clear();
 
             if (_exclusion == Exclusion.Overlap) return;
 
             foreach (var renderer in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
             {
                 if (renderer == null || !renderer.enabled) continue;
+                // ⚠️ ONLY MESHES ARE MASKED (owner, 2026-10-19: shading outlines flashed through the platforms while
+                // ability effects were up; the recorder caught it with the mask list full of new effect parts). A line,
+                // trail, particle or billboard renderer builds its geometry per camera and is not meant for
+                // `CommandBuffer.DrawRenderer`; such effects also never write the depth-normals prepass, so masking them
+                // protects nothing.
+                if (!(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer)) continue;
 
                 bool wanted = _exclusion == Exclusion.Layers
                     ? (_excludedLayers.value & (1 << renderer.gameObject.layer)) != 0
@@ -452,6 +582,17 @@ namespace TumbangPreso.Visual
                 if (!wanted) wanted = IsTooThinToOutline(renderer);
 
                 if (wanted) _excluded.Add(renderer);
+                else
+                {
+                    var materials=renderer.sharedMaterials;
+                    for(int i=0;i<materials.Length;i++)
+                    {
+                        var material=materials[i];
+                        if(material==null||material.shader==null||material.shader.name!=NearFade.ShaderName)continue;
+                        _nearFade.Add(new NearFadeMask{Renderer=renderer,Bounds=renderer.bounds,Stationary=renderer.gameObject.isStatic,
+                            Submesh=i,Start=material.GetFloat("_NearFadeStart"),End=material.GetFloat("_NearFadeEnd")});
+                    }
+                }
             }
         }
 
@@ -502,6 +643,8 @@ namespace TumbangPreso.Visual
             return thinnest > 0.0f && thinnest < ThinMetres;
         }
 
+        private const string KantoFoliageShaderName = "TumbangPreso/KantoFoliage";
+
         private static bool IsToonSurface(Renderer renderer)
         {
             var materials = renderer.sharedMaterials;
@@ -511,6 +654,13 @@ namespace TumbangPreso.Visual
             {
                 if (material == null || material.shader == null) continue;
                 if (material.shader.name == ToonShaderName) return true;
+                // ⚠️ KANTO'S LEAF CARDS TOO (owner, 2026-09-27: "tree leaves look off in-game",
+                // twice). A canopy is thousands of tiny card-to-card creases in the depth-normals
+                // texture, so the bright look's crease shade, sun-caught bevel and the AO painted
+                // dark blotches and yellow rims all over it. Masked like the cast: foliage keeps
+                // its own shading. Kanto's shader only, so the approved Lagoon Cove look is
+                // unchanged.
+                if (material.shader.name == KantoFoliageShaderName) return true;
             }
 
             return false;
@@ -531,6 +681,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void OnPreRender()
         {
+            NearFadeMaskDraws=0;
             // ⚠️⚠️ THE DEPTH-NORMALS REQUEST IS REPEATED HERE BECAUSE `LateUpdate` DOES NOT RUN IN
             // EDIT MODE, AND WITHOUT THIS THE WHOLE PASS IS A SILENT NO-OP IN EVERY PROBE. Unity
             // does not tick `Update`/`LateUpdate` on a component outside play mode, but it DOES
@@ -550,7 +701,7 @@ namespace TumbangPreso.Visual
             // drawing.
             RequestDepthNormals(Live);
 
-            if (!Live || _exclusion == Exclusion.Overlap)
+            if (!Live || (_exclusion == Exclusion.Overlap && !HasWorldContact))
             {
                 DetachBuffer();
                 return;
@@ -577,7 +728,14 @@ namespace TumbangPreso.Visual
             _maskBuffer.SetRenderTarget(_mask);
             _maskBuffer.ClearRenderTarget(false, true, Color.black);
 
-            _maskMaterial.SetFloat(MaskToleranceId, _maskDepthTolerance);
+            // ⚠️ THE TOLERANCE IS A SHARE OF THE FAR PLANE: 0.0008 is 19 cm at 240 m but 3 m at Payo's 3700 m, so a vine up to
+            // 3 m BEHIND a platform passed as visible and cut its shape out of the platform's AO (owner, 2026-10-19: "the AO
+            // of the vines across the basin are visible through the platforms"). Past the fine-depth far plane it is held
+            // to `MaskToleranceMetres`; every other map keeps exactly its old value.
+            float tolerance = _maskDepthTolerance;
+            if (FineDepth) tolerance = Mathf.Min(tolerance, MaskToleranceMetres / _camera.farClipPlane);
+            _maskMaterial.SetFloat(MaskToleranceId, tolerance);
+            _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);NearFadeMaskDraws=0;
 
             foreach (var renderer in _excluded)
             {
@@ -635,6 +793,25 @@ namespace TumbangPreso.Visual
             // `CurrentActive` means "whatever was bound before this buffer ran", which is the
             // intermediate, at its own size, which is the actual restore this line was written to
             // perform.
+            // Only nearby occluders need this extra mask. Static map bounds and
+            // material/submesh bindings are cached by the normal rescan; distant
+            // city geometry neither loses its ink nor adds a draw every frame.
+            Vector3 eye=_camera.transform.position;
+            // While a cutscene has the sky opened through the map (`NearFade.SkyRevealId`), a wall at any distance may be
+            // dissolved, so every near-fade renderer is masked for those seconds, not only the ones at the lens.
+            bool skyOpen=Shader.GetGlobalVector(NearFade.SkyRevealId).w>.01f;
+            if(FadeOccluderOutlines)foreach(var item in _nearFade)
+            {
+                var renderer=item.Renderer;if(renderer==null)continue;
+                var bounds=item.Stationary?item.Bounds:renderer.bounds;
+                if(!skyOpen&&bounds.SqrDistance(eye)>item.Start*item.Start)continue;
+                if(!renderer.enabled||!renderer.gameObject.activeInHierarchy||renderer.forceRenderingOff||
+                    renderer.shadowCastingMode==ShadowCastingMode.ShadowsOnly)continue;
+                _maskBuffer.SetGlobalVector(NearFadeMaskId,new Vector4(item.Start,item.End,1,0));
+                _maskBuffer.DrawRenderer(renderer,_maskMaterial,item.Submesh,MaskPass);NearFadeMaskDraws++;
+            }
+            _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);
+
             _maskBuffer.SetRenderTarget(BuiltinRenderTextureType.CurrentActive);
 
             if (!_bufferAttached)
@@ -815,12 +992,16 @@ namespace TumbangPreso.Visual
             }
 
             _material.SetColor(OutlineColorId, _colour);
-            _material.SetFloat(OpacityId, _opacity);
+            _material.SetFloat(OpacityId, InkLive?_opacity:0);
             _material.SetFloat(ThicknessId, _thickness);
             _material.SetFloat(DepthSensitivityId, _depthSensitivity);
             _material.SetFloat(DepthBiasId, _depthBias);
             _material.SetFloat(NormalSensitivityId, _normalSensitivity);
             _material.SetFloat(NormalBiasId, _normalBias);
+            // Keep silhouette depth edges. Only normal creases which shrink below
+            // useful detail in the distant city fade; zoomed/orthographic previews
+            // retain their detail instead of inheriting a fixed distance penalty.
+            _material.SetVector(NormalDetailFadeId,new Vector4(30,80,FadeDistantNormalDetail?1:0,_camera.orthographic?0:1));
 
             // ⚠️ WRITTEN AS A FLOAT, AND THE SHADER ROUNDS IT BACK. A float uniform is the one
             // kind every graphics API in this project's build set agrees about without a
@@ -834,16 +1015,69 @@ namespace TumbangPreso.Visual
             ApplyFade();
             ApplyViewRay();
 
-            bool masked = _exclusion != Exclusion.Overlap && _mask != null && _bufferAttached;
-
-            _material.SetTexture(MaskId, masked ? (Texture)_mask : Texture2D.blackTexture);
-            _material.SetFloat(MaskStrengthId, masked ? _maskStrength : 0.0f);
+            bool maskReady=_mask!=null && _bufferAttached;
+            bool masked=_exclusion!=Exclusion.Overlap && maskReady;
+            _material.SetTexture(MaskId,maskReady?(Texture)_mask:Texture2D.blackTexture);
+            _material.SetFloat(MaskStrengthId,masked?_maskStrength:0);
+            float contact=HasWorldContact?WorldLookProfile.Current.EnvironmentContact*WorldCueProfile.LightingWeight:0;
+            _material.SetVector("_WorldGroundContact",new Vector4(WorldLookPresentation.Current!=null?WorldLookPresentation.Current.Floor:0,0,contact,.5f));
+            _material.SetFloat("_WorldContactMask",maskReady?1:0);
+            _material.SetMatrix("_WorldContactToWorld",_camera.cameraToWorldMatrix);
+            _material.SetVector("_WorldContactProjection",new Vector4(_camera.farClipPlane,_camera.orthographic?1:0,_camera.orthographicSize,_camera.aspect));
+            ApplyBrightLookEdges();
+            bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
+            _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
+            // The player's own setting (`GameSettings.CharacterShading`, Full by default); F8 in a debug session tests over it.
+            float castShare=CharacterAoTest>=0?CharacterAoTest:Settings.GameSettings.CharacterShadingShare(Settings.SettingsStore.Current.CharacterShading);
+            _material.SetFloat("_CharacterAO",castShare);
+            // The cast's own kernel (pass 2, CastAO): on only with a share, at a body's scale.
+            float castRadius=CharacterAoRadiusTest>0?CharacterAoRadiusTest:WorldLookProfile.Current.CharacterAmbientOcclusionRadius;
+            // The bias follows the radius down, or a tight kernel sits wholly inside its own bias.
+            float castBias=Mathf.Min(.02f,castRadius*.1f);   // was .006 / .02: a smooth slope shaded itself in stripes (owner, 2026-10-05: "weird lining effect too from the ao")
+            _material.SetVector("_CharacterAOParams",new Vector4(castShare,castRadius,castBias,0));
+            RenderTexture occlusion=null,occlusionBlur=null;
+            float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
+            if(aoStrength>0)
+            {
+                // ⚠️ FULL RESOLUTION. It was half, on the reasoning that occlusion is soft; the
+                // owner then saw its noise, and at half resolution the 4x4 rotation tile the blur
+                // cancels spans 8x8 screen pixels, big enough to read as a grid wherever the
+                // cancellation is imperfect. Full resolution also keeps the crease ramps crisp,
+                // which is what Minecraft's corners look like.
+                int w=Mathf.Max(1,source.width),h=Mathf.Max(1,source.height);
+                var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
+                // Two channels when the cast has a share: R the world's occlusion, G the cast's.
+                if(castShare>0)format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RG16)?RenderTextureFormat.RG16:RenderTextureFormat.ARGB32;
+                occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
+                occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
+                _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearGuard()));
+                // Eight probes below the top tier, sixteen on it (see `AmbientOcclusionLiteKeyword`).
+                if(AmbientOcclusionLite)_material.EnableKeyword(AmbientOcclusionLiteKeyword);else _material.DisableKeyword(AmbientOcclusionLiteKeyword);
+                if(FineDepth)_material.EnableKeyword(FineDepthKeyword);else _material.DisableKeyword(FineDepthKeyword);
+                _material.SetFloat("_FineDepthView",FineDepthView);
+                Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
+                Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
+                _material.SetTexture(WorldAOId,occlusionBlur);
+            }
+            else
+            {
+                // w still carries the near-fade guard: the ground occlusion reads it with AO off.
+                _material.SetVector(WorldAOParamsId,new Vector4(0,0,0,NearGuard()));
+                _material.SetTexture(WorldAOId,Texture2D.whiteTexture);
+            }
             _material.SetTexture(MainTexId, source);
+            // The composite's edge term reads the same refined depth as the occlusion (see `FineDepthFar`).
+            if(FineDepth)_material.EnableKeyword(FineDepthKeyword);else _material.DisableKeyword(FineDepthKeyword);
+            _material.SetVector("_WorldContactProjectionFar",new Vector4(_camera.farClipPlane,0,0,0));
+            // Payo's aerial haze reads the world from the same depth (`Map.PayoHaze`; nothing elsewhere).
+            if(FineDepth){_material.SetMatrix("_HazeToWorld",_camera.cameraToWorldMatrix);_material.SetMatrix("_HazeToView",_camera.worldToCameraMatrix);}
 
             // ⚠️ THE PASS INDEX IS NOT OPTIONAL. `Graphics.Blit` without one runs EVERY pass in
             // the SubShader, and pass 1 is the exclusion mask: blitted full-screen it writes
             // white over the entire frame. See the note at the top of the shader.
             Graphics.Blit(source, destination, _material, CompositePass);
+            if(occlusion!=null)RenderTexture.ReleaseTemporary(occlusion);
+            if(occlusionBlur!=null)RenderTexture.ReleaseTemporary(occlusionBlur);
         }
 
         /// <summary>
@@ -854,6 +1088,46 @@ namespace TumbangPreso.Visual
         /// them. A map with fog switched off falls back to the camera's far plane, which fades
         /// nothing and is the honest answer to "this map has no haze to match".
         /// </summary>
+        // ⚠️⚠️ § THE BRIGHT LOOK'S EDGES. Only a camera the map's world look owns trades the
+        // black ink for PEAK-style edges (see the shader's note of the same name), and it does so
+        // by the look's own weight, so WorldLighting 0 is the old ink exactly. A menu portrait
+        // that happens to carry this component keeps its ink. The map preview wears these edges
+        // since LIGHT-1.8, because its camera is tagged WorldLookCamera, and its sun is the
+        // preview's own through KeyLight rather than SkyEvent.RecordedSun, whose menu fallback is
+        // the first active directional light and can be the portrait's key.
+        private static readonly int PeakEdgeId = Shader.PropertyToID("_PeakEdge");
+        private static readonly int PeakSunViewId = Shader.PropertyToID("_PeakSunView");
+#if UNITY_EDITOR
+        // Native review only: reproduce the old ambiguous menu key in the same
+        // camera frame. This switch does not exist in a built player.
+        [System.NonSerialized] public bool LegacyKeyForReview;
+#endif
+        private static readonly int PeakShadeId = Shader.PropertyToID("_PeakShade");
+        private static readonly int PeakLightId = Shader.PropertyToID("_PeakLight");
+        private static readonly int PeakDepthId = Shader.PropertyToID("_PeakDepth");
+        private void ApplyBrightLookEdges()
+        {
+            var look=WorldLookPresentation.Current;
+            float weight=WorldLookPresentation.HandlesCamera(_camera)?look.Weight:0;
+            var profile=WorldLookProfile.Current;
+            _material.SetVector(PeakEdgeId,new Vector4(profile.SilhouetteShade,profile.EdgeHighlight,profile.CreaseShade,weight));
+            // The ground occlusion rides the contact term's gate: it needs the same rebuilt world
+            // position, so it is off wherever that is (the Low tier, a camera the look does not own).
+            _material.SetVector(PeakDepthId,new Vector4(profile.GroundOcclusion,Mathf.Max(.1f,profile.GroundOcclusionHeight),
+                look!=null?look.Floor:0,HasWorldContact?weight:0));
+            if(weight<=0)return;
+            var sun=look.KeyLight;
+#if UNITY_EDITOR
+            if(LegacyKeyForReview)sun=SkyEvent.RecordedSun;
+#endif
+            Vector3 toLight=sun!=null?-sun.transform.forward:Vector3.up;
+            _material.SetVector(PeakSunViewId,_camera.worldToCameraMatrix.MultiplyVector(toLight).normalized);
+            // ⚠️ A VECTOR OF THE AUTHORED NUMBERS, NOT A COLOUR: it is a multiplier on the pixel
+            // (violet cavity, 2026-09-25), and `SetColor` would convert it from sRGB first.
+            var cavity=profile.CavityHue;_material.SetVector(PeakShadeId,new Vector4(cavity.r,cavity.g,cavity.b,1));
+            _material.SetColor(PeakLightId,sun!=null?sun.color.linear:Color.white);
+        }
+
         private void ApplyFade()
         {
             float start = _fadeStart;

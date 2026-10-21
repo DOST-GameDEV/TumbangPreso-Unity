@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:23Z" duration="0.6727696">
+  <test-suite type="TestSuite" id="3100" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1712" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:23Z" duration="0.672770" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3092" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1712" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:23Z" duration="0.648977" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12424" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3093" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1712" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:23Z" duration="0.633415" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3096" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1710" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:23Z" duration="0.617549" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2155" name="OwnerPoseFeedbackTests" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:22Z" duration="0.289711" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2156" name="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1547356271" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:22Z" duration="0.124298" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2157" name="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1291687177" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:22Z" duration="0.036831" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2160" name="AcceptedOtherSeatPosesStillMoveTheObservedReplica" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedOtherSeatPosesStillMoveTheObservedReplica" methodname="AcceptedOtherSeatPosesStillMoveTheObservedReplica" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1337157508" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:22Z" duration="0.039592" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2159" name="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.ANewMovementEpochStillAppliesTheAuthoritativeTeleport" methodname="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="210419826" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:22Z" duration="0.036816" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2158" name="AnExplicitHostCorrectionStillCorrectsTheOwner" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AnExplicitHostCorrectionStillCorrectsTheOwner" methodname="AnExplicitHostCorrectionStillCorrectsTheOwner" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1443346077" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:22Z" duration="0.035556" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2674" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="51" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:23Z" duration="0.226293" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2707" name="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" fullname="TumbangPreso.PlayTests.SkillReceiptTests.VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" methodname="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1018070764" result="Passed" start-time="2026-10-04 18:02:22Z" end-time="2026-10-04 18:02:23Z" duration="0.215445" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

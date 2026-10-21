@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 15:58:52Z" end-time="2026-09-27 15:58:53Z" duration="1.059872">
+  <test-suite type="TestSuite" id="1955" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="763" result="Passed" start-time="2026-09-27 15:58:52Z" end-time="2026-09-27 15:58:53Z" duration="1.059872" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1949" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="763" result="Passed" start-time="2026-09-27 15:58:52Z" end-time="2026-09-27 15:58:53Z" duration="1.050394" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61412" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1950" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="763" result="Passed" start-time="2026-09-27 15:58:52Z" end-time="2026-09-27 15:58:53Z" duration="1.045628" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1951" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="763" result="Passed" start-time="2026-09-27 15:58:52Z" end-time="2026-09-27 15:58:53Z" duration="1.041213" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1514" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-09-27 15:58:52Z" end-time="2026-09-27 15:58:53Z" duration="1.015342" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1516" name="BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared" methodname="BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="500364913" result="Passed" start-time="2026-09-27 15:58:52Z" end-time="2026-09-27 15:58:53Z" duration="0.946310" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1515" name="FailedBootMenuOffersOneFocusablePointerExitWithoutReleasingTheCurtain" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.FailedBootMenuOffersOneFocusablePointerExitWithoutReleasingTheCurtain" methodname="FailedBootMenuOffersOneFocusablePointerExitWithoutReleasingTheCurtain" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1066004625" result="Passed" start-time="2026-09-27 15:58:53Z" end-time="2026-09-27 15:58:53Z" duration="0.057745" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Splash] main menu activation or initialization failed; readiness was not completed.
+[Splash] main menu activation or initialization failed; readiness was not completed.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

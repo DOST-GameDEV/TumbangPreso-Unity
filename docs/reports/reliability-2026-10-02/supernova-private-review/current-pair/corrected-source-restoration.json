@@ -1,0 +1,26 @@
+{
+  "qualificationHeroRestored": true,
+  "qualificationHeroSha256": "1536af5d76a4fe5753c74ca92bca42fdf9f406937089c410ee07ba7ec501f14e",
+  "mainPrivateHeroUnchanged": true,
+  "mainPrivateHeroSha256": "5e7daba22c8c08cc52311ab57aa65da332402f7b7e0e8c141e0983afd0577f1e",
+  "protectedCount": 1535,
+  "protectedUnchanged": true,
+  "protectedDrift": [],
+  "temporaryHelperRetired": [
+    {
+      "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Assets\\TumbangPreso\\Tests\\PlayMode\\SupernovaOpacityPairProbe.cs",
+      "retained": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\supernova-alpha1002\\retired-repair1\\SupernovaOpacityPairProbe.cs",
+      "sha256": "8edc5e70c8e67e3cc37fda0277c88209a2d1a13d8e10fb7a78587f1f5b57c762"
+    },
+    {
+      "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Assets\\TumbangPreso\\Tests\\PlayMode\\SupernovaOpacityPairProbe.cs.meta",
+      "retained": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\supernova-alpha1002\\retired-repair1\\SupernovaOpacityPairProbe.cs.meta",
+      "sha256": "35c501d98aa60a4fa10e6812e8fb7ee62602f7640bbdeb820a10786d529a8dce"
+    }
+  ],
+  "xmlExists": false,
+  "pngCount": 0,
+  "classification": "compiled then timed out before capture body; no accepted-cast or visual evidence",
+  "helperRepairsUsed": 1,
+  "furtherCaptureRetries": 0
+}

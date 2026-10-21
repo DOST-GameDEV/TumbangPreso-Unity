@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.4806869">
+  <test-suite type="TestSuite" id="1042" name="TUMP Bank Runtime1004" fullname="TUMP Bank Runtime1004" runstate="Runnable" testcasecount="28" result="Passed" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.480687" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1036" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="28" result="Passed" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.474150" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22362" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1037" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="28" result="Passed" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.473461" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1038" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="28" result="Passed" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.473073" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1003" name="ViewmodelRosterFallbackTests" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.472029" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1009" name="CatalogFailuresKeepTheAuthoredIdentityFallback" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.468756" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1004" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;missing&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;missing&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="626787545" result="Passed" start-time="2026-10-04 05:24:21Z" end-time="2026-10-04 05:24:22Z" duration="0.252281" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;rafi&quot;,&quot;missing&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;rafi&quot;,&quot;missing&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="658199508" result="Passed" start-time="2026-10-04 05:24:22Z" end-time="2026-10-04 05:24:22Z" duration="0.066365" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-list&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-list&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="2055538902" result="Passed" start-time="2026-10-04 05:24:22Z" end-time="2026-10-04 05:24:22Z" duration="0.045966" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-row&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;null-row&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="1997571986" result="Passed" start-time="2026-10-04 05:24:22Z" end-time="2026-10-04 05:24:22Z" duration="0.047165" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1008" name="CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;matched-control&quot;)" fullname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests.CatalogFailuresKeepTheAuthoredIdentityFallback(&quot;zack&quot;,&quot;matched-control&quot;)" methodname="CatalogFailuresKeepTheAuthoredIdentityFallback" classname="TumbangPreso.PlayTests.ViewmodelRosterFallbackTests" runstate="Runnable" seed="580022883" result="Passed" start-time="2026-10-04 05:24:22Z" end-time="2026-10-04 05:24:22Z" duration="0.047151" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Bank Runtime1004/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

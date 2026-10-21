@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
             _powers=gameObject.AddComponent<TumpPowerReadout>();_powers.Build(_root);
             _toast=Ink(_root,"MatchToast","",38,true);Pin(_toast.rectTransform,new Vector2(.5f,1),new Vector2(0,-204),new Vector2(1040,78));_toast.enabled=false;
             _countdown=Ink(_root,"Countdown","",110,true);Pin(_countdown.rectTransform,new Vector2(.5f,.58f),Vector2.zero,new Vector2(740,180));_countdown.enabled=false;
-            _crosshair=Ink(_root,"Reticle","+",34,false);Pin(_crosshair.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(76,76));
+            _crosshair=Ink(_root,"Reticle","○",34,false);Pin(_crosshair.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(76,76));
             _hit=Ink(_root,"HitConfirmation","×",72,true);Pin(_hit.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(120,120));_hit.enabled=false;
             _spectator=Ink(_root,"SpectatorReadout","",27,false);Pin(_spectator.rectTransform,new Vector2(.5f,0),new Vector2(0,100),new Vector2(1420,136));
             _sandbox=Ink(_root,"SandboxState","",25,false);Pin(_sandbox.rectTransform,new Vector2(1,0),new Vector2(-250,38),new Vector2(456,54));
@@ -28,7 +28,7 @@ namespace TumbangPreso.UI
         {
             var text=OwnerUiLayout.Text(root,name,words,size,main?OwnerUiLayout.TypeRole.Display:OwnerUiLayout.TypeRole.Reading);
             text.color=OwnerUiTheme.Current.Pale;text.alignment=TextAnchor.MiddleCenter;text.verticalOverflow=VerticalWrapMode.Overflow;
-            var edge=text.gameObject.AddComponent<Outline>();edge.effectColor=OwnerUiTheme.Current.DeepInk;edge.effectDistance=new Vector2(1.5f,-1.5f);
+            var edge=text.gameObject.AddComponent<Outline>();edge.effectColor=UiTheme.InGameOutline;edge.effectDistance=new Vector2(1.5f,-1.5f);
             return text;
         }
         private void BuildScores()
@@ -61,7 +61,7 @@ namespace TumbangPreso.UI
             _canRoot=OwnerUiLayout.Rect(_root,"CanReadout");Pin(_canRoot,new Vector2(1,1),new Vector2(-252,-112),new Vector2(464,176));
             var can=OwnerUiLayout.Rect(_canRoot,"CanStateIcon").gameObject.AddComponent<TumpSymbol>();
             can.Kind=TumpSymbol.Icon.Can;can.color=OwnerUiTheme.Current.Pale;can.raycastTarget=false;
-            var edge=can.gameObject.AddComponent<Outline>();edge.effectColor=OwnerUiTheme.Current.DeepInk;edge.effectDistance=new Vector2(2,-2);
+            var edge=can.gameObject.AddComponent<Outline>();edge.effectColor=UiTheme.InGameOutline;edge.effectDistance=new Vector2(2,-2);
             OwnerUiLayout.Place(can.rectTransform,0,0,84,99);
             _canState=Ink(_canRoot,"CanState","",34,true);_canState.alignment=TextAnchor.MiddleLeft;OwnerUiLayout.Place(_canState.rectTransform,106,12,348,73);
             _canHint=Ink(_canRoot,"CanHint","",27,false);_canHint.alignment=TextAnchor.UpperRight;OwnerUiLayout.Place(_canHint.rectTransform,0,110,452,66);

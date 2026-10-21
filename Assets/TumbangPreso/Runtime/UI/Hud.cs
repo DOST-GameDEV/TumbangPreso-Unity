@@ -166,7 +166,6 @@ namespace TumbangPreso.UI
         /// make a clean 10 Hz burst flicker. 0.14 s against the 0.10 s cap means a player at the
         /// cap holds the bar popped continuously, which is what "you are doing this right" wants
         /// to look like.</summary>
-        private const float MashPopSeconds = 0.14f;
         private string _getUpShown = "";
 
         // § THE STUN BREAK CARD. See `BuildStunBreakCard` for why it is pips and not a bar.
@@ -212,6 +211,7 @@ namespace TumbangPreso.UI
         private float _frostCoverage;
 
         public static Hud Instance { get; private set; }
+        public bool ReadyWindowOpen => _readyWindowOpen;
 
         private Text _vulnerable;
         private Text _crosshair;
@@ -634,8 +634,8 @@ namespace TumbangPreso.UI
             if (_nativeReadout != null)
             {
                 GameServices.Audio?.PlayUi(tick == "GO!" ? "countdown_go" : "countdown_tick");
-                if (tick != "GO!" && GameServices.Music != null && GameServices.Music.Current != "match")
-                    GameServices.Music.Play("match", GameServices.MatchTrack);
+                if (tick != "GO!" && GameServices.Music != null && GameServices.Music.Current != GameServices.ArenaMusicCue)
+                    GameServices.Music.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
                 _nativeReadout.Countdown(tick); return;
             }
             if (_countdown == null) return;
@@ -659,9 +659,9 @@ namespace TumbangPreso.UI
             // late by the length of the countdown. 🧑 2026-08-01: *"Remove the audio latency
             // during round initialization. RoundMusic should begin playing immediately."*
             if (tick != "GO!" && GameServices.Music != null
-                && GameServices.Music.Current != "match")
+                && GameServices.Music.Current != GameServices.ArenaMusicCue)
             {
-                GameServices.Music.Play("match", GameServices.MatchTrack);
+                GameServices.Music.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
             }
 
             _countdown.enabled = true;
@@ -773,8 +773,13 @@ namespace TumbangPreso.UI
         /// expire while the match it is announcing is stopped dead. A toast driven by scaled time
         /// would stay on screen forever at exactly the moment it is needed.
         /// </summary>
+        private float _lastBroadcastClockScale = 1f;
+
         private void OnBroadcastClock(float scale)
         {
+            // Clock snapshots reaffirm state; only a changed rate is a new announcement.
+            if (Mathf.Approximately(scale, _lastBroadcastClockScale)) return;
+            _lastBroadcastClockScale = scale;
             if (scale <= 0.001f)
             {
                 ShowToast("PAUSED BY A SPECTATOR", 2.0f);
@@ -843,7 +848,10 @@ namespace TumbangPreso.UI
             // telling is the moment the score system has nothing to say to them.** See `Rumble`.
             InputLayer.Rumble.WasTagged();
 
-            ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
+            // ⚠️ VISUAL-1.4: ONE WORD ON THE MATCH HUD. The caught screen edge and the return
+            // walk already say where they are going; the sentence was read once and then
+            // re-read on every catch for the rest of the match.
+            ShowToast(_nativeReadout != null ? "TAGGED" : "TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
         }
 
         /// <summary>
@@ -854,6 +862,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void OnScored(int slot, ScoreEvent e)
         {
+            if (MatchRules.IsChainBonus(e)) return; // The earned-moment channel owns bonus recognition.
             if (e == ScoreEvent.DefenseTick) return;
 
             // ⚠️⚠️ AND THE TWO TOURNAMENT PENALTIES ARE TICKS TOO, WHICH THE GUARD ABOVE MISSED.
@@ -887,6 +896,11 @@ namespace TumbangPreso.UI
             // your screen. The SOUND is the match reacting, and the original plays it off
             // `score_changed` without asking whose slot it was.
             int points = MatchRules.PointsFor(e);
+            bool ordinaryContact = e == ScoreEvent.LataKnocked || e == ScoreEvent.Tag;
+            bool personal = _local != null && _local.PlayerSlot == slot;
+            // Contact already has a positional sound. Only the scorer hears its
+            // personal score sting; other listeners keep hearing the chase.
+            if (ordinaryContact && !personal) return;
             GameServices.Audio?.PlayUiVaried("score_award",
                                              points < 0 ? 0.78f : 0.96f,
                                              points < 0 ? 0.86f : 1.04f,
@@ -914,6 +928,11 @@ namespace TumbangPreso.UI
                 InputLayer.Rumble.LataKnocked();
             else if (e == ScoreEvent.Tag || e == ScoreEvent.Sabotage) InputLayer.Rumble.Tagged();
 
+            // Routine attribution lives in the side feed; reserve the centre for
+            // recovery, required instructions and genuinely exceptional moments.
+            // VISUAL-1.4: the match HUD shows every event award as a "+N" rising into the
+            // scorer's own chip (`TumpMatchReadout.Moments`), so the centre toast stays free.
+            if (_nativeReadout != null && (ordinaryContact || TumpMatchReadout.PopsFor(e))) return;
             ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
         }
 
@@ -1027,27 +1046,15 @@ namespace TumbangPreso.UI
             if (_indicators != null) _indicators.gameObject.SetActive(false);
             if (_heroDeck != null) _heroDeck.SetActive(false);
 
-            // ⚠️⚠️ THE TWO CARDS THAT ARE NOT CHILDREN OF THIS HUD, SWEPT BY TYPE. 🧑 2026-08-27:
-            // *"fix all these spectator hud problems wtf some shit dont hide"*, with a watcher's
-            // screen showing the YOU card and its stamina bar in the corner. `MatchInstaller`
-            // skips building both for a spectator now, which covers a session that STARTS as one;
-            // this covers the other entry, `MatchInstaller.Bind(seat, spectator: true)`, which
-            // hands an existing player the camera mid-match with both cards already standing.
-            //
-            // ⚠️ BY TYPE RATHER THAN THROUGH A FIELD, because this HUD does not own either object
-            // and giving it a reference to two things it did not create is a second lifetime to
-            // keep in step. They are one-per-scene by construction.
+            // The personal seat/stamina card does not belong to a spectator.
+            // Shared next-taya/standings stay active for frozen round boundaries.
             foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include,
                                                             FindObjectsSortMode.None))
             {
                 card.gameObject.SetActive(false);
             }
 
-            foreach (var card in FindObjectsByType<RoleSwapCard>(FindObjectsInactive.Include,
-                                                                 FindObjectsSortMode.None))
-            {
-                card.gameObject.SetActive(false);
-            }
+            // Shared round standings remain available while spectating.
 
             BuildSpectatorReadout();
             SetSpectatorReadoutEnabled(true);
@@ -1153,6 +1160,7 @@ namespace TumbangPreso.UI
         private CameraSystem.SpectatorCamera _spectatorCamera;
         private string _spectatorStatusShown = "";
         private bool _spectatorControlsVisible = true;
+        public bool SpectatorControlsVisible => _spectatorControlsVisible;
 
         /// <summary>
         /// The two lines along the bottom of a spectator's screen.
@@ -1293,6 +1301,7 @@ namespace TumbangPreso.UI
         public bool Spectating => _spectating;
 
         private bool _cleanFeed;
+        public bool CleanFeedEnabled => _cleanFeed;
 
         /// <summary>
         /// ⚠️ THE NAMEPLATES AND GROUND RINGS ARE NOT PART OF THIS CANVAS, AND A CLEAN FEED THAT
@@ -1427,6 +1436,7 @@ namespace TumbangPreso.UI
             UpdateFrost(dt);
             UpdateIndicators();
             UpdateGetUpPrompt();
+            UpdateInteractPrompt();
             UpdateStunBreakPrompt();
             UpdatePickupPrompt();
             UpdateReadyObjective(dt);
@@ -1457,22 +1467,10 @@ namespace TumbangPreso.UI
             if (carrier != null && carrier.IsCharging)
             {
                 _crosshair.fontSize = 22;
-                var lata = GameServices.Round.Lata;
-
-                if (lata != null && !lata.IsUpright)
+                if (carrier.IsThrowChargeDecaying)
                 {
-                    // ⚠️ THE THIRD "LATA DOWN", AND THE ONE WITH THE LEAST CLAIM TO IT. See
-                    // `UpdateLataCard`: the card already carries the state and the alert already
-                    // carries the action, both within one glance of the reticle. What the
-                    // crosshair uniquely knows is that the slipper in hand is being wound up and
-                    // cannot legally be released yet, so that is all it says.
-                    _crosshair.text = "HOLDING CHARGE";
+                    _crosshair.text = "LOWERING CHARGE";
                     _crosshair.color = UiTheme.Offense;
-                }
-                else if (lata != null && lata.IsProtected)
-                {
-                    _crosshair.text = $"CAN PROTECTED\n{lata.ProtectionLeft:0.0}s";
-                    _crosshair.color = UiTheme.Defense;
                 }
                 else
                 {
@@ -1488,7 +1486,7 @@ namespace TumbangPreso.UI
                     }
                     else
                     {
-                        _crosshair.text = "+\nPEKTUS 0%";
+                        _crosshair.text = "○\nPEKTUS 0%";
                     }
                 }
             }
@@ -1510,13 +1508,13 @@ namespace TumbangPreso.UI
                 else
                 {
                     _crosshair.fontSize = 34;
-                    _crosshair.text = "+";
+                    _crosshair.text = "○";
                 }
             }
             else
             {
                 _crosshair.fontSize = 34;
-                _crosshair.text = "+";
+                _crosshair.text = "○";
             }
 
             _vulnerable.enabled = _local.IsTaggable();
@@ -1633,7 +1631,7 @@ namespace TumbangPreso.UI
                 // would be putting one of them straight back. See `BufferSkipVote`.
                 string skip = OnTouch ? "READY TO SKIP" : $"[{KeyLabel("ReadyUp")}] SKIP";
 
-                _round.text = BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
+                _round.text = HalftimePresentation.Playing ? "HALFTIME · BACK TO THE COURT IN "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s" : BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
                     ? $"{WarmupLine}   ·   {skip}  " +
                       $"{BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded}"
                     : BufferSkipVote.Showing
@@ -2182,7 +2180,8 @@ namespace TumbangPreso.UI
                         : "CAMPING  ·  DEFENSE SCORE PAUSED";
                 }
             }
-            else if (!_local.HoldingSlipper&&RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.WaitingForReturnWithoutLooseStock())
+            else if (!_local.HoldingSlipper&&((RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.WaitingForReturnWithoutLooseStock())
+                ||(LagoonWater.Instance!=null&&LagoonWater.Instance.WaitingForReturnWithoutLooseStock())))
             {
                 line="SLIPPER RETURNING";
             }
@@ -2539,96 +2538,15 @@ namespace TumbangPreso.UI
         private void UpdateGetUpPrompt()
         {
             if (_getUpCard == null) return;
-
-            // ⚠️ THE CARD FOLLOWS `IsTripped`, NOT `CanMashUp`. The old prompt returned early
-            // once the mash hit `Balance.MinTripDown`, so the feedback vanished for the last
-            // 0.9 s of every fall: the player was still on the floor, still unable to act, and
-            // the screen had gone quiet again. That gap is most of what "nothing happened" was.
-            if (_local == null || !_local.IsTripped)
-            {
-                if (_getUpCard.gameObject.activeSelf)
-                {
-                    _getUpCard.gameObject.SetActive(false);
-                    _getUpShown = "";
-                    if (_getUpBarRt != null) _getUpBarRt.localScale = Vector3.one;
-                }
-                return;
-            }
-
-            if (!_getUpCard.gameObject.activeSelf) _getUpCard.gameObject.SetActive(true);
-
-            // Two phases, because the fall genuinely has two. While there is slack above the
-            // floor, pressing buys time and the prompt asks for presses. Below it nothing more
-            // can be bought and the prompt stops asking, which is the rule `CanMashUp` already
-            // states: a prompt that keeps demanding presses it will not honour teaches the
-            // player that mashing does not work.
-            bool buying = _local.CanMashUp;
-
-            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
-
-            string text = buying
-                ? MashVerb("Jump") + " TO GET UP"
-                : "GETTING UP";
-
-            // ⚠️ THE STRING IS ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame
-            // once cost the 6x behaviour probe an eighth of its frames and most of its physics
-            // steps; that finding is recorded in `CLAUDE.md` § 7.1 and this is the same shape of
-            // code in the same file.
-            if (text != _getUpShown)
-            {
-                _getUpShown = text;
-                _getUpLabel.text = text;
-                _getUpLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
-            }
-
-            // ⚠️⚠️ THE BAR IS A MASH METER NOW, NOT A CLOCK, AND THAT INVERSION IS THE WHOLE
-            // FIX. 🧑, 2026-08-26, off the played build: *"progress bar increases on its own when
-            // u trip (not supposed to happen) and if i mash, the progress pauses (opposite of
-            // what i want)"*. He was reading it exactly right. This line used to be
-            // `1 - TripLeft / TripTotal`, which is ELAPSED TIME: it filled at the passive bleed
-            // whatever the player did, and a press only steepened a slope that was already
-            // moving. Two bars in two colours were added to explain that and it did not help,
-            // because the thing being explained was still a countdown.
-            //
-            // ⚠️ SO THE ONLY INPUT IS `MashRemoved`. It is written in exactly one place,
-            // `CharacterMotor.MashRecover`, and only by a press that `Combat.MashRecover`
-            // ACCEPTED. Nothing else in the game can move this bar by a pixel, which is the
-            // property he asked for stated as code rather than as a colour convention.
-            //
-            // ⚠️⚠️ THE DENOMINATOR IS THE WHOLE MASHABLE SLACK, `TripTotal - MinTripDown`, AND
-            // IT IS FIXED FOR THE FALL. It is 2.15 s on a 2.50 s trip. Dividing by what is
-            // CURRENTLY still buyable was the obvious alternative and it was wrong twice: it
-            // went to zero when the passive bleed reached the floor on its own (that bleed is
-            // deleted as of 2026-08-26, see below) and it would let the bar creep as the
-            // denominator shrank, which is the exact behaviour being removed.
-            // Fixed means the bar reaching 1.0 and the body standing up are the SAME EVENT:
-            // the last accepted press is the one that puts `TripLeft` on the floor, so the fill
-            // completes exactly as the get-up clip starts.
-            //
-            // ⚠️⚠️ AND AS OF 2026-08-26 THAT IS A GUARANTEE RATHER THAN A COINCIDENCE. Nothing
-            // else ends a fall any more: `Balance.TripPassiveDecayRate` is deleted, and the
-            // stranding guard in `CharacterMotor` credits the whole remaining slack to
-            // `MashRemoved` on its way out. 🧑: *"sometimes i get up with it still at middle or
-            // when i only clicked once"*. That frame is now unreachable.
-            float slack = Mathf.Max(0.01f, _local.TripTotal - Balance.MinTripDown);
-            _getUpFill.fillAmount = Mathf.Clamp01(_local.MashRemoved / slack);
-
-            // Amber once the presses have done all they can, so the colour change and the
-            // wording agree that the player has stopped being able to help.
-            _getUpFill.color = buying ? UiTheme.Offense : UiTheme.Amber;
-
-            // ⚠️⚠️ THE POP IS THE ONLY THING THAT SEPARATES A DEAD PRESS FROM A REAL ONE.
-            // `Combat.MashRecover` refuses a press inside `Balance.MashCooldown` and changes
-            // nothing, so without this a player mashing above 10 Hz watched most of their
-            // presses vanish and read the rate cap as a punishment for mashing. A press that
-            // counted moves the bar; the pop makes that visible even when the movement is
-            // 0.20 s out of 2.50.
-            if (_getUpBarRt != null)
-            {
-                float sincePress = Time.time - _local.LastMashAcceptedTime;
-                float pop = Mathf.Clamp01(1.0f - sincePress / MashPopSeconds);
-                _getUpBarRt.localScale = new Vector3(1.0f, 1.0f + 0.35f * pop * pop, 1.0f);
-            }
+            bool active = _local != null && _local.IsTripped;
+            _getUpCard.gameObject.SetActive(active);
+            if (!active) { _getUpShown = ""; return; }
+            string text = _local.IsEdgeRecovering ? "CLIMBING UP" : "GETTING UP";
+            if (text != _getUpShown) { _getUpShown = text; _getUpLabel.text = text; }
+            _getUpLabel.color = UiTheme.Amber;
+            _getUpFill.fillAmount = 1-Mathf.Clamp01(_local.TripLeft/Mathf.Max(.01f,_local.TripTotal));
+            _getUpFill.color = UiTheme.Amber;
+            if (_getUpBarRt != null) _getUpBarRt.localScale = Vector3.one;
         }
 
         private void UpdateToast(float dt)
@@ -2827,6 +2745,7 @@ namespace TumbangPreso.UI
             BuildClock();
             BuildLataCard();
             BuildGetUpCard();
+            BuildInteractCard();
             BuildStunBreakCard();
             BuildStatusStacks();
             BuildHeroDeck();
@@ -3787,7 +3706,7 @@ namespace TumbangPreso.UI
 
             _getUpLabel = HudLabel(group.transform, "GetUpLabel", 30, UiTheme.Cream,
                                    TextAnchor.MiddleCenter);
-            _getUpLabel.text = "MASH TO GET UP";
+            _getUpLabel.text = "GETTING UP";
             _getUpLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
 
             // The bar. Same two-part build as the status rows: a sunk plate, and a horizontal
@@ -3863,7 +3782,7 @@ namespace TumbangPreso.UI
 
             _stunLabel = HudLabel(group.transform, "StunBreakLabel", 30, UiTheme.Cream,
                                   TextAnchor.MiddleCenter);
-            _stunLabel.text = "BREAK FREE";
+            _stunLabel.text = "STUNNED";
             _stunLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
 
             var rowGo = new GameObject("StunPipRow", typeof(RectTransform));
@@ -3912,66 +3831,11 @@ namespace TumbangPreso.UI
         /// </summary>
         private void UpdateStunBreakPrompt()
         {
-            if (_stunCard == null) return;
-
-            var element = _local != null ? _local.StunElement : StunElement.None;
-
-            if (_local == null || element == StunElement.None)
-            {
-                if (_stunCard.gameObject.activeSelf)
-                {
-                    _stunCard.gameObject.SetActive(false);
-                    _stunShown = "";
-                }
-                return;
-            }
-
-            if (!_stunCard.gameObject.activeSelf) _stunCard.gameObject.SetActive(true);
-
-            var coat = Visual.StunCoat.For(element);
-            bool buying = _local.CanMashOutOfStun;
-
-            // ⚠️ THE VERB IS THE ELEMENTS, WHICH IS WHY `StunCoat` CARRIES ONE. "BREAK FREE"
-            // over a body encased in ice says less than "SHATTER THE ICE", and the element is
-            // already being tracked through the stun for the coat, so naming it costs nothing.
-            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
-
-            string text = buying
-                ? (OnTouch ? coat.Verb : coat.Verb + "  [" + KeyLabel("Jump") + "]")
-                : "BREAKING FREE";
-
-            // ⚠️ ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame once cost the
-            // 6x behaviour probe an eighth of its frames (`CLAUDE.md` section 7.1), and this runs
-            // on every frame of every stun.
-            if (text != _stunShown)
-            {
-                _stunShown = text;
-                _stunLabel.text = text;
-                _stunLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
-            }
-
-            int need = Mathf.Clamp(_local.StunBreakPresses,
-                                   Balance.StunBreakPressesMin, Balance.StunBreakPressesMax);
-            int done = Mathf.Clamp(_local.StunMashPresses, 0, need);
-
-            for (int i = 0; i < _stunPips.Count; i++)
-            {
-                var pip = _stunPips[i];
-                if (pip == null) continue;
-
-                // Pips past what this stun costs are switched OFF, not dimmed. The row is meant
-                // to be counted at a glance, and fourteen shapes of which five matter is not a
-                // count, it is a puzzle.
-                bool used = i < need;
-                if (pip.gameObject.activeSelf != used) pip.gameObject.SetActive(used);
-                if (!used) continue;
-
-                // ⚠️ FILLED PIPS TAKE THE ELEMENTS RIM COLOUR, so the card and the body the
-                // player is now looking at in third person are obviously the same event.
-                pip.color = i < done
-                    ? coat.Rim
-                    : new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
-            }
+            // Frozen and elemental stuns expire automatically. Their existing
+            // status indicators replace this retired recovery action surface.
+            if (_stunCard != null) _stunCard.gameObject.SetActive(false);
+            foreach (var pip in _stunPips) if (pip != null) pip.gameObject.SetActive(false);
+            _stunShown = "";
         }
 
         private void BuildStatusStacks()
@@ -4274,7 +4138,7 @@ namespace TumbangPreso.UI
             Place(_crosshair.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
                   new Vector2(520, 72));
 
-            _crosshair.text = "+";
+            _crosshair.text = "○";
             _crosshair.enabled = false;
 
             _hitmarker = HudLabel(_root, "HitmarkerLabel", 42, UiTheme.Highlight,
@@ -4506,7 +4370,7 @@ namespace TumbangPreso.UI
             go.transform.SetParent(parent, false);
 
             var t = go.AddComponent<Text>();
-            t.font = MenuKit.Font;
+            t.font = InGameTypography.Resolve(MenuKit.Font, true, t);
             t.fontSize = size;
             t.color = colour;
             t.alignment = align;
@@ -4666,7 +4530,7 @@ namespace TumbangPreso.UI
             glyphGo.transform.SetParent(tileGo.transform, false);
             card.Glyph = glyphGo.AddComponent<Image>();
             card.Glyph.sprite = AbilityIcons.For(AbilityGlyph.Burst);
-            card.Glyph.color = UiTheme.HeroGlyphOn;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
             card.Glyph.preserveAspect = true;
             card.Glyph.raycastTarget = false;
             MenuKit.Stretch(card.Glyph.rectTransform);
@@ -4882,7 +4746,7 @@ namespace TumbangPreso.UI
                 if (_bindingAsset != null) Settings.Rebinding.Load(_bindingAsset);
             }
 
-            if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+            if (_bindingAsset == null) return action == "Ultimate" ? "X" : action == "Skill2" ? "Q" : "E";
 
             // ⚠️⚠️ THE CACHE IS KEYED ON THE DEVICE AS WELL AS ON THE BINDING REVISION SINCE
             // 2026-09-02, AND WITHOUT THAT A PAD PLAYER IS TAUGHT KEYS THEY DO NOT HAVE. This
@@ -4916,7 +4780,7 @@ namespace TumbangPreso.UI
             var act = map?.FindAction(action);
 
             if (act == null || act.bindings.Count == 0)
-                return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+                return action == "Ultimate" ? "X" : action == "Skill2" ? "Q" : "E";
 
             // ⚠️⚠️ THE PAD'S OWN BINDING FIRST, WHEN THE PLAYER IS ON A PAD. `Rebinding` resolves
             // per device and returns "-" rather than falling back, which is right for the
@@ -5055,7 +4919,12 @@ namespace TumbangPreso.UI
             if (key == "Right Button" || key == "RightButton") return "RMB";
             if (key == "Middle Button" || key == "MiddleButton") return "MMB";
 
-            return key.ToUpperInvariant();
+            // The curve throw's default since 2026-09-27; `Scroll/Up` reads as a menu path.
+            string upper = key.ToUpperInvariant();
+            if (upper == "SCROLL/UP" || upper == "SCROLL UP") return "WHEEL UP";
+            if (upper == "SCROLL/DOWN" || upper == "SCROLL DOWN") return "WHEEL DOWN";
+
+            return upper;
         }
 
         private static UnityEngine.InputSystem.InputActionAsset _bindingAsset;
@@ -5095,6 +4964,7 @@ namespace TumbangPreso.UI
             if (sprite != null && card.KeyGlyph != null)
             {
                 card.KeyGlyph.sprite = sprite;
+                card.KeyGlyph.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, InputGlyphs.PromptWidth(sprite, 20));
                 card.KeyGlyph.enabled = true;
                 card.Key.text = string.Empty;
                 return;
@@ -5206,7 +5076,7 @@ namespace TumbangPreso.UI
             {
                 // A hero without this power draws an empty plate rather than a stale one.
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.HeroGlyphOff;
                 card.State.text = "";
                 if (card.Fill != null) card.Fill.fillAmount = 0.0f;
@@ -5248,7 +5118,7 @@ namespace TumbangPreso.UI
             if (roundClockStopped && !skill.IsActive)
             {
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
                 card.State.text = "WAIT";
 
@@ -5274,7 +5144,7 @@ namespace TumbangPreso.UI
             if (skill.UsesCharges && !skill.IsActive && skill.ChargesRemaining <= 0)
             {
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
                 card.State.text = "";
 
@@ -5302,7 +5172,7 @@ namespace TumbangPreso.UI
                 // the accent, and a fixed lift toward white is brighter than the old sine's
                 // average was anyway.
                 card.Rim.color = Color.Lerp(heroColor, Color.white, 0.30f);
-                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
                 card.Key.color = UiTheme.Cream;
 
                 // ⚠️⚠️ A RECASTABLE POWER SAYS SO, AND UNTIL NOW NOTHING IN THE GAME DID.
@@ -5348,7 +5218,7 @@ namespace TumbangPreso.UI
             else if (skill.CooldownRemaining > 0.0f)
             {
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
 
                 // ⚠️ ONE DECIMAL UNDER THREE SECONDS, WHOLE SECONDS ABOVE IT. A countdown that
@@ -5373,7 +5243,7 @@ namespace TumbangPreso.UI
                 // there permanently is a deck that is always shouting, and it leaves nothing
                 // louder to say when a power actually fires.
                 card.Rim.color = UiTheme.HeroRimLit;
-                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
                 card.Key.color = UiTheme.Cream;
 
                 // ⚠️⚠️ READY PRINTS NOTHING. See `docs/Hero_Strike_UI.md` section 4.
@@ -5647,7 +5517,7 @@ namespace TumbangPreso.UI
                 // branch had right: that IS what the player starts the round holding, and
                 // blanking it would lose the only readout of an ultimate carried across a round.
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
 
                 // ⚠️⚠️ "WAIT", NOT "NOT YET", AND `HudOverflowProbe` IS WHY. The first version of
@@ -5685,7 +5555,7 @@ namespace TumbangPreso.UI
                 // the deck worth interrupting a fight for, so it takes the top of the range it
                 // used to sweep rather than the middle of it.
                 card.Rim.color = Color.Lerp(heroColor, Color.white, 0.55f);
-                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
                 card.Key.color = UiTheme.Cream;
                 card.State.text = "";
 
@@ -5708,7 +5578,7 @@ namespace TumbangPreso.UI
             _lastUltReady = false;
 
             card.Rim.color = UiTheme.HeroRim;
-            card.Glyph.color = UiTheme.HeroGlyphOff;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
             card.Key.color = UiTheme.CreamMuted;
 
             // Only worth reading once it is nearly there. Below that the notches say enough.

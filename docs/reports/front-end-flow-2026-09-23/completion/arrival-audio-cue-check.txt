@@ -1,0 +1,98 @@
+AUDIO CUE CHECK
+sfx files on disk: 134
+live cues declared: 139
+
+-- cues with no file --
+  none
+
+-- cues fired in code that nothing declares --
+  UNDECLARED: CourtBoundaryPresentation.cs fires 'court_escape', which is in no cue list, so it plays silence.
+  UNDECLARED: MotionFoley.cs fires 'court_skid', which is in no cue list, so it plays silence.
+
+-- live cues that no code plays --
+  DORMANT: 'lata_impact' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'lata_knockdown' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'reset_channel_start' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'reset_channel_complete' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'tag' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'step_rubber' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ability_bagsak_bomb' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ability_bakya_bash' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ability_spin_guard' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_ice_freeze' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_fire_whoosh' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_slipper_burst' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_magma_cool' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_coven_summon' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_ult_theme_zack' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_ult_theme_cheska' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_ult_theme_sean' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_ult_theme_dante' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_ult_theme_nemu' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_sky_eclipse' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_sky_storm' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_sky_whiteout' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_sky_emberfall' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_sky_dustveil' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_sky_seance' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_dante_stomp' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_dante_carapace' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_dante_fissure' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_cheska_sheet' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_cheska_barricade' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_cheska_nova' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_sean_rush' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_sean_cannon' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_sean_supernova' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_zack_sprint' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_zack_magnet' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_zack_summon' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_nemu_veil' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_nemu_hijack' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_nemu_seance' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_phaister_hex' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_phaister_blink' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_phaister_coven' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_rafi_current' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_rafi_mirror' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_cast_rafi_breakwater' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_ult_theme_rafi' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_rafi_tightcut' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_rafi_longwake' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_step_deck' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_swim_stroke' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_dante_tremor' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_dante_plating' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_cheska_blackice' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_cheska_spires' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_sean_afterburn' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_sean_flare' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_zack_arcline' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_zack_discharge' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_nemu_fade' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_nemu_leash' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_phaister_brand' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'sfx_var_phaister_stride' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'throw_whoosh' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'grab' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'can_knockdown' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'reset_complete' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'countdown_tick' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'countdown_go' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'round_win' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'round_lose' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ui_hover' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ui_back' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ui_tick' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ui_toggle' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ui_valid' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'ui_start' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+  DORMANT: 'boot_sting' is declared and has a file, and no call site in Runtime plays it. Either it is a feature nobody selected, or it is fired from somewhere this text scan cannot see.
+
+-- files no live cue can reach --
+  none
+
+-- containers that do not match their extension --
+  none
+
+RESULT: 2 problem(s).

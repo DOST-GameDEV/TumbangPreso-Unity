@@ -1,0 +1,809 @@
+MAP GEOMETRY CHECK
+  float tolerance   : 0.030 m above its support
+  sink tolerance    : 0.100 m below its support
+  support coverage  : 34% of the footprint
+  box clearance     : nothing solid under 1.20 m inside |x|,|z| < 7.00
+
+== SaBubong  (GATED)
+   renderers  199
+   content    x[-180.00,180.00] y[-26.85,38.95] z[-180.00,180.00]
+   resting    0 floating, 0 buried, 0 over void
+   box        0 solid object(s) inside the chalk
+   floor      dry roof and physical pool basin covered; exterior fall space excluded
+   excused    18 airborne by design:
+      SaBubong/Dressing/Condo building/Resident swimming pool/Water surface  Water surface contained by the physical pool basin. Body buoyancy is handled by RooftopPool, not a solid water collider.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Cloth_Shorts_1  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Fixed clothesline  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_2_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Resident garden corners/Resident leaf mural/Painted leaf 1  Painted directly on the stairhouse east wall, with a measured3mm surface offset; not a free-standing sign.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_1_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Resident garden corners/Resident leaf mural/Painted leaf 2  Painted directly on the stairhouse east wall, with a measured3mm surface offset; not a free-standing sign.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Cloth_Towel_2  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Resident garden corners/Resident leaf mural/Painted pot  Painted directly on the stairhouse east wall, with a measured3mm surface offset; not a free-standing sign.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_0_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Resident garden corners/Resident leaf mural/Painted leaf 0  Painted directly on the stairhouse east wall, with a measured3mm surface offset; not a free-standing sign.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_2_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Cloth_Tee_0  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Cloth_Tee_3  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_1_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_3_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_3_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      SaBubong/Dressing/Laundry service corner/Resident laundry courtyard-line/courtyard-line/Peg_0_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+   findings   0
+
+== IlalimNgTulay  (GATED)
+   renderers  1509
+   content    x[-120.00,120.00] y[-0.86,22.19] z[-120.00,120.00]
+   resting    0 floating, 0 buried, 0 over void
+   box        0 solid object(s) inside the chalk
+   floor      solid across x +/-11.2, z +/-16.7
+   elevated   28 joined bays, 8 pillar-to-soffit joins, 2 track-to-deck joins, train on rail, 26 wire spans on 28 grounded single poles, trike and hoop brackets present
+   excused    381 airborne by design:
+      IlalimNgTulay/Dressing/PlaceRework/Column notice mount/Painted warning Bawal  Painted directly on the column face with a3mm render offset.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_3/wheels-back  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_102  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_11  Continuous utility wires carried by the single posts at both endpoints.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_0  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Load/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Banner fixing Clothing  Tarpaulin edge fixed to the fascia.
+      NeighborhoodFinish/TransversePierCap  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_70  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pisonet/Shop sign backing Pisonet  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_106  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-c/wheels-back  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pisonet/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_0/wheels-back  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Load/Carried_RoofAerial_W4/Arm_2  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 14.01.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_2  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Clothing/Carried_RoofAerial_E0/Arm_1  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 4.35.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_8  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Load/Sign face Load  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Load/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Laundry/Carried_RoofAerial_W0/Arm_1  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 9.19.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Bakery/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_2  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_N_W_0/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_62  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/BacklotKit/BacklotPipe_1  Pipe run carried by its two trestles at y = 3.34 in the back lot.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer drum frame  Drum is mounted in the washing machine cabinet.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Banner backing Laundry  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_PC_Express/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/SkylineKit/Hoarding_5  Advertising hoarding carried by its two masts to the lot at y = 9.8.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Laundry/Carried_RoofAerial_W0/Arm_2  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 9.19.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-b/wheels-front  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Banner fixing Laundry  Tarpaulin edge fixed to the fascia.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Hardware/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Bakery/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_PC_Express/Carried_RoofAerial_W3/Arm_2  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 5.37.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Repair/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Hardware/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_6_truck/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-b  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pares/Carried_RoofAerial_E2/Arm_2  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 6.49.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_74  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Repair/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Print/Carried_Sampay_Roof_W1/default  Washing strung across the west shophouse roof at y = 6.75.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_1  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_6  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pares/Carried_RoofAerial_E2/Arm_0  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 6.49.
+      IlalimNgTulay/Dressing/SkylineKit/Hoarding_1  Advertising hoarding carried by its two masts to the lot at y = 13.8.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Print/Carried_RoofAerial_W1/Arm_1  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 7.85.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Load/Original wall paint Tara Laro  Original lettering painted on the solid lower shop wall,7mm ahead of its surface.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pisonet/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_8_delivery/door  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_8  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_5  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/BacklotKit/BacklotPipe_3  Pipe run carried by its two trestles at y = 2.54 in the back lot.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_3  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_16  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Repair/Sign face Repair  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_21  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/MapFinalPass/IlalimUtilityConductors  Tensioned utility conductors join the existing pole crossarms above pedestrian height.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_12  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer dark drum  Drum is mounted in the washing machine cabinet.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Barber/Carried_Sampay_Roof_E1/default  Washing strung across the east shophouse roof at y = 6.87.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pisonet/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pisonet/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_PC_Express/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Laundry/Carried_RoofAerial_W0/Arm_0  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 9.19.
+      IlalimNgTulay/Dressing/SkylineKit/Hoarding_3  Advertising hoarding carried by its two masts to the lot at y = 12.9.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_12  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_6  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      NeighborhoodFinish/SoffitRib  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Hardware/Shop sign backing Hardware  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Print/Shop sign backing Print  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Print/Carried_RoofAerial_W1/Arm_0  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 7.85.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Hardware/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Barber/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_3  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_90  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_3_van/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_PC_Express/Shop sign backing PC_Express  Shop sign fixed to this frontage fascia.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Repair power lead  Connected lead descends from the repair outlet to its single ground cord.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pares/Carried_RoofAerial_E2/Arm_1  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 6.49.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_54  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer controls  Controls are inset into the washer cabinet.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_S_E_2/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_34  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_4_taxi/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_14  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Load/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_20  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pisonet/Sign face Pisonet  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_4  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      NeighborhoodFinish/TransversePierCap  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Clothing/Carried_RoofAerial_E0/Arm_0  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 4.35.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_3  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pisonet/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_3/wheels-front  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_1/wheels-front  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_N_E_0/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer controls  Controls are inset into the washer cabinet.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_10  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Bakery/Shop sign backing Bakery  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Print/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-c  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_38  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Load/Carried_RoofAerial_W4/Arm_1  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 14.01.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_PC_Express/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_1  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Load/Carried_RoofAerial_W4/Arm_0  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 14.01.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_S_W_1/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_0/wheels-front  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/TransversePierCap  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_2  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_94  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Hardware/Carried_Sampay_Roof_E5/default  Washing strung across the east shophouse roof at y = 9.49.
+      IlalimNgTulay/Dressing/MapFinalPass/Broadleaf_0_mango-yard  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_15  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_4  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_82  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_22  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_PC_Express/Carried_RoofAerial_W3/Arm_1  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 5.37.
+      IlalimNgTulay/Dressing/BacklotKit/BacklotPipe_4  Pipe run carried by its two trestles at y = 3.34 in the back lot.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Front lintel  Lintel spans between the substantial front piers.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_78  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Barber mirror  Mirror face is seated in its frame.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_7  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_1_sedan/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer dark drum  Drum is mounted in the washing machine cabinet.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Barber/Carried_RoofAerial_E1/Arm_0  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 7.97.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Sign face Clothing  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_19  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_N_E_1/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-b/collector  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Bakery/Carried_RoofAerial_E4/Arm_1  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 8.17.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_S_W_2/door  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_PC_Express/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_98  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_7  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_1/cargo  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_N_E_2/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_2  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_18  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/BacklotKit/BacklotPipe_0  Pipe run carried by its two trestles at y = 2.54 in the back lot.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/BacklotKit/BacklotPipe_5  Pipe run carried by its two trestles at y = 4.14 in the back lot.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Barber mirror frame  Mirror is fixed to the rear shop wall.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Load/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-b/wheels-back  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-a  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/BacklotKit/BacklotPipe_2  Pipe run carried by its two trestles at y = 4.14 in the back lot.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_S_E_0/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_46  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Bakery/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pares/Sign face Pares  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Print/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_18  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_7  Continuous utility wires carried by the single posts at both endpoints.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Repair power lead  Connected lead descends from the repair outlet to its single ground cord.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_5  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Bakery/Sign face Bakery  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pares/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_0  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_8  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_2/wheels-back  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_30  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_6  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_0_delivery/door  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Barber/Carried_RoofAerial_E1/Arm_2  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 7.97.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer controls  Controls are inset into the washer cabinet.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Print/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Hardware/Carried_RoofAerial_E5/Arm_1  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 10.59.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_5  Continuous utility wires carried by the single posts at both endpoints.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Bakery/Carried_RoofAerial_E4/Arm_2  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 8.17.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Barber/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/PlaceRework/Column notice mount/Painted warning Bawal  Painted directly on the column face with a3mm render offset.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_1  Continuous utility wires carried by the single posts at both endpoints.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Hardware/Carried_RoofAerial_E5/Arm_2  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 10.59.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_10  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Repair/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/SkylineKit/Hoarding_2  Advertising hoarding carried by its two masts to the lot at y = 11.2.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer dark drum  Drum is mounted in the washing machine cabinet.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Bakery/Carried_RoofAerial_E4/Arm_0  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 8.17.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_S_W_0/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/SkylineKit/Hoarding_0  Advertising hoarding carried by its two masts to the lot at y = 12.4.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-c/wheels-front  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_17  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Print/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Print/Sign face Print  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_12  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_2  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Banner fixing Laundry  Tarpaulin edge fixed to the fascia.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pares/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/SkylineKit/Hoarding_4  Advertising hoarding carried by its two masts to the lot at y = 10.6.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_86  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pisonet/Carried_Sampay_Roof_E3/default  Washing strung across the east shophouse roof at y = 8.53.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_11  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Hardware/Sign face Hardware  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer drum frame  Drum is mounted in the washing machine cabinet.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Clothing/Carried_RoofAerial_E0/Arm_2  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 4.35.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Banner backing Clothing  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pisonet/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_N_W_1/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/SoffitRib  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_42  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_8_delivery/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pisonet/Carried_RoofAerial_E3/Arm_1  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 9.63.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Barber/Carried_RoofAerial_E1/Arm_1  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 7.97.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_26  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pares/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_7_taxi/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_6  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_50  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_10  Continuous utility wires carried by the single posts at both endpoints.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Print/Carried_RoofAerial_W1/Arm_2  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 7.85.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_0_delivery/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_PC_Express/Sign face PC_Express  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_9  Continuous utility wires carried by the single posts at both endpoints.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_2/wheels-front  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Barber mirror  Mirror face is seated in its frame.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Barber mirror frame  Mirror is fixed to the rear shop wall.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_10  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      NeighborhoodFinish/BearingPad  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_PC_Express/Carried_RoofAerial_W3/Arm_0  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 5.37.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_PC_Express/Carried_Sampay_Roof_W3/default  Washing strung across the west shophouse roof at y = 4.27.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Hardware/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Banner fixing Clothing  Tarpaulin edge fixed to the fascia.
+      NeighborhoodFinish/TransversePierCap  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Repair power outlet  Power outlet fixed to the repair shop's lower front wall.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_14  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Print/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_N_W_2/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_S_W_2/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Hardware/Carried_RoofAerial_E5/Arm_0  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 10.59.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Repair/Carried_RoofAerial_W2/Arm_0  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 7.00.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_9  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Repair/Shop sign backing Repair  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Washer drum frame  Drum is mounted in the washing machine cabinet.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Shop sign backing Barber  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Hardware/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_13  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Hardware/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/SkylineKit/CrossTraffic_S_E_1/body  Cross-street traffic beyond the gameplay wall. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Print/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/BacklotKit/StabledCarriage_1/wheels-back  Stabled rail vehicle in the back lot. Its bogies are solved onto the yard and are still gated; the body above them is carried by them.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_2_truck/body  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/CapitalStep  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_W_0  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Repair/Carried_RoofAerial_W2/Arm_2  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 7.00.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_11  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Sign face Laundry  Printed or painted lettering lies on this shop's physical sign surface.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pares/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_9  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_PC_Express/Roof laundry support  Laundry support is seated on this building's roof and reaches its line.
+      IlalimNgTulay/Dressing/Kable/SidewalkWire_E_4  Continuous utility wires carried by the single posts at both endpoints.
+      IlalimNgTulay/Dressing/Kalat/BoundaryTraffic/BoundaryVehicle_5_jeepney/jeep.obj.cleaner.materialmerger.gles/Object_3  Boundary traffic. Its wheels are solved onto road y = 0 and are still gated; the body above them is carried by them.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pisonet/Carried_RoofAerial_E3/Arm_0  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 9.63.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Pares/Shop sign backing Pares  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Load/Shop sign backing Load  Shop sign fixed to this frontage fascia.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_110  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/WestboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Repair/Carried_RoofAerial_W2/Arm_1  Aerial crossarm clamped to the mast standing on the west shophouse roof at y = 7.00.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Clothing/Front lintel  Lintel spans between the substantial front piers.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/RetainedShop_Pisonet/Carried_RoofAerial_E3/Arm_2  Aerial crossarm clamped to the mast standing on the east shophouse roof at y = 9.63.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Barber/Sign face Barber  Printed or painted lettering lies on this shop's physical sign surface.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_58  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-a/wheels-back  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/GuidewayBay_66  The LRT-2 guideway. Its soffit is 8.0 m up and the live support rows stand at z = +/-10.
+      IlalimNgTulay/Dressing/Tulay/LrtGuideway/EastboundTrack/train_track-detailed  Detailed rail and sleepers resting on the LRT guideway deck.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Repair/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Bakery/Back shelf  Retail shelf fixed into the rear wall.
+      IlalimNgTulay/Dressing/Tulay/LrtTrainSystem/train_train-electric-city-a/wheels-front  The LRT-2 consist, riding the westbound rail head at y = 9.190 on the guideway. Root seated at y = 9.190, solved from the car bounds rather than the model origin.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      NeighborhoodFinish/DeckDrain  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_Laundry/Roof slab  Roof slab bears on the rear/side walls and front piers.
+      NeighborhoodFinish/DeckConstructionJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      IlalimNgTulay/Dressing/PlaceRework/Frontage_PC_Express/Back shelf  Retail shelf fixed into the rear wall.
+   findings   0
+
+== BayanPlaza  (GATED)
+   renderers  289
+   content    x[-100.00,100.00] y[-1.17,14.40] z[-100.00,100.00]
+   resting    0 floating, 0 buried, 0 over void
+   box        0 solid object(s) inside the chalk
+   floor      solid across x +/-13.0, z +/-13.0
+   excused    102 airborne by design:
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_5_narra-young  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/CivicArchedWindow  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/MapFinalPass/HallRoofEndWalls  Gable end walls close the retained municipal hall roof.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_6_acacia-spread  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_1_acacia-spread  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/CivicArchedWindow  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_0_narra-young  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/CivicArchedWindow  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_4_plaza-shade  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/MapFinalPass/EastHoopBracket  Architectural member attached to the existing building, not a freestanding prop.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_2_mango-yard  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/MapFinalPass/WaitingShadeBeam  Architectural member attached to the existing building, not a freestanding prop.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_7_mango-yard  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Window backing  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/CivicArchedWindow  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/CivicArchedWindow  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      NeighborhoodFinish/PlazaPerimeterJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/MapFinalPass/ChurchNaveRoof  Pitched roof seated on the authored nave walls.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_8_narra-young  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/MapFinalPass/WaitingShadeRoof  Architectural member attached to the existing building, not a freestanding prop.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear service door/Door stone lintel  Lintel spans the two grounded door jambs.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Window backing  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Window backing  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/MapFinalPass/WestHoopBracket  Architectural member attached to the existing building, not a freestanding prop.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/MapFinalPass/Broadleaf_3_narra-young  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      BayanPlaza/Dressing/MapFinalPass/WaitingShadeBeam  Architectural member attached to the existing building, not a freestanding prop.
+      NeighborhoodFinish/PlazaPerimeterJoint  Architectural trim fixed to the existing building or viaduct, not a standing prop.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Window backing  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone jamb  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Stone head or sill  Closed framed window fixed into the municipal rear wall.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Nave arched shuttered window/Arched shutter louver  Arched stone frame and closed shutters are fixed into the nave wall between its buttresses.
+      BayanPlaza/Dressing/CivicTown/Hall rear shuttered window/Timber louver  Closed framed window fixed into the municipal rear wall.
+   findings   0
+
+== Eskinita  (GATED)
+   renderers  735
+   content    x[-300.00,300.00] y[-2.33,70.33] z[-300.00,300.00]
+   resting    0 floating, 0 buried, 0 over void
+   box        0 solid object(s) inside the chalk
+   floor      solid across x +/-8.6, z +/-18.0
+   excused    263 airborne by design:
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Cloth_Towel_2  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Fixed clothesline  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_1_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_1_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Quad (1)  Painted distant landscape behind the neighborhood; no reachable collision.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_4_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Shorts_6  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_2_E  Window/cladding/terrace finishes are fitted to this retained solid house; source frame and wall positions are preserved.
+      Eskinita/Dressing/MapFinalPass/Broadleaf_3_mango-yard  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_0_-0.21  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_0_0.62  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_0_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/Bahay/Sasakyan_Rework_Sasakyan_6_W/body  Retained vehicle part attached to its chassis; author verifies four grounded wheels intersect the body. Wheels retain the ordinary grounding check.
+      Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_6_E  Window/cladding/terrace finishes are fitted to this retained solid house; source frame and wall positions are preserved.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_3_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_7_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_7_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Cloth_Tee_0  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_4_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/Supported rope hitch yard-1  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/Bahay/Sasakyan_Rework_Sasakyan_4_E/body  Retained vehicle part attached to its chassis; author verifies four grounded wheels intersect the body. Wheels retain the ordinary grounding check.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Tee_3  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_0_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_2_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Towel_3  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Cloth_Tee_2  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_2_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Dress_2  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_3_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Cloth_Towel_1  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_5_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_6_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Fixed clothesline  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Cloth_Pants_1  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_3_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Fixed clothesline  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_1_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_2_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_1_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/MapFinalPass/Broadleaf_8_mango-yard  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Tee_1  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_2_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Tee_4  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_4_W  Window/cladding/terrace finishes are fitted to this retained solid house; source frame and wall positions are preserved.
+      Eskinita/Dressing/Bahay/Sasakyan_Rework_Sasakyan_2_W/body  Retained vehicle part attached to its chassis; author verifies four grounded wheels intersect the body. Wheels retain the ordinary grounding check.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_6_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_4_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_2_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_6_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_3_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_3_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/Supported rope hitch west  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Cloth_Sheet_0  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/Supported rope hitch east  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_2_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_5_W  Window/cladding/terrace finishes are fitted to this retained solid house; source frame and wall positions are preserved.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Tee_0  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Towel_0  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Quad  Painted distant landscape behind the neighborhood; no reachable collision.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_7_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Shorts_5  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_0_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_5_E  Window/cladding/terrace finishes are fitted to this retained solid house; source frame and wall positions are preserved.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Cloth_Dress_3  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Fixed clothesline  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_5_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Tee_7  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Pants_6  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/Supported rope hitch east  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Towel_5  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Shorts_2  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/Bahay/Sasakyan_Rework_Sasakyan_0_E/body  Retained vehicle part attached to its chassis; author verifies four grounded wheels intersect the body. Wheels retain the ordinary grounding check.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_0_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/Supported rope hitch west  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_6_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_0_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_7_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_1_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Peg_3_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_0_-0.62  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/Bahay/Sasakyan_Rework_Sasakyan_2_W/door  Retained vehicle part attached to its chassis; author verifies four grounded wheels intersect the body. Wheels retain the ordinary grounding check.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_1_0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/Supported rope hitch yard-0  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Connected neighborhood conductors  Five separated conductors connect the actual retained pole insulators; circular cross-sections remain visible from oblique views.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_1_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Pants_1  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_4_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_2_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_4_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-colour-line/alley-colour-line/Cloth_Tee_7  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/Supported rope hitch yard-0  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/courtyard-family-line/Peg_0_-0.18  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_2_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_6_E/Closed gate rail  Closed gate leaf is supported by its hinges/jambs.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_1_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_5_-0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_1_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/MapFinalPass/Broadleaf_7_mango-yard  Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_4_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Peg_5_0.18  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry alley-line/alley-line/Cloth_Tee_4  The measured rope ends tie to the existing utility trunks below the electrical conductors.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_3_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_0_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-sheets-line/courtyard-sheets-line/Peg_0_0.21  Clothes hang from the fixed sagging line between its two supported end posts.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_5_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_0_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_6_W/Upper boundary rail  Upper rail spans the masonry piers and vertical grille bars.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Bahay_2_E/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Plot_Sasakyan_2_W/Closed gate bar  Vertical bar is part of the closed hinged gate leaf.
+      Eskinita/Dressing/NeighborhoodRework/Resident laundry courtyard-family-line/Supported rope hitch yard-1  Two rope turns hug the measured support; the crossed hitch joins the actual clothesline end.
+   findings   0
+
+
+RESULT: OK. No gated map has floating, buried, unsupported or box-blocking geometry.

@@ -1,0 +1,37 @@
+{
+  "Arena": {
+    "seamMeanRGBError": 4.580570220947266,
+    "ordinaryAdjacentMeanRGBError": 3.5515098571777344,
+    "seamPixelsOver32": 0.03959056712962963
+  },
+  "BayanPlaza": {
+    "seamMeanRGBError": 2.4517409801483154,
+    "ordinaryAdjacentMeanRGBError": 2.0328476428985596,
+    "seamPixelsOver32": 0.009562596450617284
+  },
+  "Eskinita": {
+    "seamMeanRGBError": 2.7080745697021484,
+    "ordinaryAdjacentMeanRGBError": 2.1850225925445557,
+    "seamPixelsOver32": 0.010034239969135803
+  },
+  "IlalimNgTulay": {
+    "seamMeanRGBError": 4.385270595550537,
+    "ordinaryAdjacentMeanRGBError": 3.6316146850585938,
+    "seamPixelsOver32": 0.03561197916666667
+  },
+  "Kanto": {
+    "seamMeanRGBError": 11.83968734741211,
+    "ordinaryAdjacentMeanRGBError": 4.571613788604736,
+    "seamPixelsOver32": 0.11894868827160494
+  },
+  "LagoonCove": {
+    "seamMeanRGBError": 3.3598554134368896,
+    "ordinaryAdjacentMeanRGBError": 2.4296154975891113,
+    "seamPixelsOver32": 0.020255594135802468
+  },
+  "SaBubong": {
+    "seamMeanRGBError": 2.5658459663391113,
+    "ordinaryAdjacentMeanRGBError": 2.1709656715393066,
+    "seamPixelsOver32": 0.014739583333333334
+  }
+}

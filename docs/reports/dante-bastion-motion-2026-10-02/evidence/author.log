@@ -1,0 +1,29 @@
+wrote /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Art/characters/persons/team-dante.glb  (1057068 bytes)
+{
+  "file": "team-dante.glb",
+  "clip": "hero-dante-bastion",
+  "duration": 0.8,
+  "samples": 53,
+  "authored_height": 0.785,
+  "original_clips_preserved": 37,
+  "original_binary_preserved": true,
+  "punch": 0.28,
+  "deepest_dip": 0.0,
+  "deepest_dip_at": 0.0,
+  "grounded_beats": [
+    0,
+    0.12,
+    0.28,
+    0.39,
+    0.58,
+    0.8
+  ],
+  "root_y_range": [
+    0.0,
+    0.0
+  ],
+  "largest_plant": 0.0
+}
+Blender 4.3.2
+
+Blender quit

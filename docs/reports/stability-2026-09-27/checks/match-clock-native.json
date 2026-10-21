@@ -1,0 +1,58 @@
+{
+  "base": "0d086f3728ff4ea16477ad0c5d375089479daed9",
+  "protocol": 76,
+  "scope": "Three new controlled match-clock cases, not actual peers",
+  "result": "Passed",
+  "total": 3,
+  "duration": 0.1631748,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Hitstop.cs",
+      "sha256": "858F39F42CFD7520C3FED44C623D1CEF893A9605B027DD3B118FB7C676BCDC5C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/PresentationClock.cs",
+      "sha256": "0FEC498B69B7ECDCFAFD0B20BB1F3AD096CD21CAAE49F1517C873C7BDAB7754A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "2FD57F8F3D797DF4AE9734B3590CFCC4CD465FFB72841E7818D84C39F9B3A04E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "8F13D3BF1B7E6311867E9CE97B6317A9055F278927F5FA5AEF266DCD24D54D7B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.Clock.cs",
+      "sha256": "7BFD7C5C3DC616A091E50F6D096CBB22ECE4B59709EBB132A87CF088E4363CED"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.Clock.cs.meta",
+      "sha256": "9DED035E516395B4EFED6096D3744F7775BB0C9567695EA413F8F5C568C21FAE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchClockMessage.cs",
+      "sha256": "D72554CF8668F881499AEBB837504945D78BF6389E1A48130D0A3842DF4EB01A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchClockMessage.cs.meta",
+      "sha256": "FAE529A37FCD185A32A5156955364129848002F2229D87E42450FA42FF42AFF7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "141118F48910417DEE00329225C4300CC64E2E57884247F67DC14DE7CB67F869"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "8355E1B14933487755AFACF9F98F9AD609A8A97E868EDE791D97BF218F8C075C"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6424379392,
+  "retryCount": 0,
+  "unverified": [
+    "Real peers/ranked/reconnect",
+    "QA-15 root cause",
+    "Player performance"
+  ]
+}

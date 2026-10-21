@@ -2125,6 +2125,14 @@ namespace TumbangPreso.UI
             if (field.textComponent != null) field.textComponent.color = UiTheme.PaperInk;
             if (field.placeholder is Text ghost) ghost.color = UiTheme.PaperInkSoft;
 
+            // ⚠️⚠️ AND THE SELECTION HIGHLIGHT, WHICH IS THE ONE PIECE OF THIS FIELD THAT WAS
+            // STILL UNITY'S `a8ceff`. `MenuKit.Dress`'s own header says a fifth field added
+            // later inherits the fix by calling it; this field is AUTHORED rather than built,
+            // so it inherited nothing and was the last blue left in the front end.
+            // `PaperPurityProbe.NoFieldHighlightsInBlue` found it and named it: blue 1.00 over
+            // red 0.66, against `CLAUDE.md` § 6.4's *"more blue in it than red"*.
+            MenuKit.Dress(field);
+
             field.characterLimit = Balance.PlayerNameMax;
             field.text = SettingsStore.Current.PlayerName;
 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.4933287">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1122" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.493329" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2368" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1122" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.479379" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="113327" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2369" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1122" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.471917" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2370" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1122" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.464674" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1812" name="MotionContinuityTests" fullname="TumbangPreso.Tests.MotionContinuityTests" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.323463" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1816" name="CommittedSlideKeepsItsAuthoredLegsInsteadOfTheWalkingLayer" fullname="TumbangPreso.Tests.MotionContinuityTests.CommittedSlideKeepsItsAuthoredLegsInsteadOfTheWalkingLayer" methodname="CommittedSlideKeepsItsAuthoredLegsInsteadOfTheWalkingLayer" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="148937476" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.264570" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1819" name="MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting" fullname="TumbangPreso.Tests.MotionContinuityTests.MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.045056" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1817" name="MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting(True)" fullname="TumbangPreso.Tests.MotionContinuityTests.MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting(True)" methodname="MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="668236348" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.030963" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1818" name="MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting(False)" fullname="TumbangPreso.Tests.MotionContinuityTests.MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting(False)" methodname="MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="12909589" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.011060" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2356" name="ZackCircuitMotionTests" fullname="TumbangPreso.Tests.ZackCircuitMotionTests" classname="TumbangPreso.Tests.ZackCircuitMotionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.024786" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2357" name="CircuitUsesDistinctBodyAndOwnerActionsWithoutRetuning" fullname="TumbangPreso.Tests.ZackCircuitMotionTests.CircuitUsesDistinctBodyAndOwnerActionsWithoutRetuning" methodname="CircuitUsesDistinctBodyAndOwnerActionsWithoutRetuning" classname="TumbangPreso.Tests.ZackCircuitMotionTests" runstate="Runnable" seed="251678054" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.001022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2359" name="OwnerDispatcherResolvesTheDedicatedGestureInsteadOfThrust" fullname="TumbangPreso.Tests.ZackCircuitMotionTests.OwnerDispatcherResolvesTheDedicatedGestureInsteadOfThrust" methodname="OwnerDispatcherResolvesTheDedicatedGestureInsteadOfThrust" classname="TumbangPreso.Tests.ZackCircuitMotionTests" runstate="Runnable" seed="2063326248" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.018630" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2358" name="ShippingRosterContainsAnAnimatedAcquisitionAndPreservesOldClips" fullname="TumbangPreso.Tests.ZackCircuitMotionTests.ShippingRosterContainsAnAnimatedAcquisitionAndPreservesOldClips" methodname="ShippingRosterContainsAnAnimatedAcquisitionAndPreservesOldClips" classname="TumbangPreso.Tests.ZackCircuitMotionTests" runstate="Runnable" seed="158566707" result="Passed" start-time="2026-10-03 14:33:32Z" end-time="2026-10-03 14:33:32Z" duration="0.003305" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 21:07:39Z" end-time="2026-09-21 21:08:27Z" duration="48.7344661">
+  <test-suite type="TestSuite" id="1679" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="511" result="Passed" start-time="2026-09-21 21:07:39Z" end-time="2026-09-21 21:08:27Z" duration="48.734466" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1673" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="511" result="Passed" start-time="2026-09-21 21:07:39Z" end-time="2026-09-21 21:08:27Z" duration="48.713880" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12364" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1674" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="511" result="Passed" start-time="2026-09-21 21:07:39Z" end-time="2026-09-21 21:08:27Z" duration="48.703061" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1675" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="511" result="Passed" start-time="2026-09-21 21:07:39Z" end-time="2026-09-21 21:08:27Z" duration="48.692951" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1513" name="SeanSkillTimingProbe" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-21 21:07:39Z" end-time="2026-09-21 21:08:01Z" duration="22.415630" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1518" name="AfterburnTradesTravelForAHeatWakeThatLastsLonger" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe.AfterburnTradesTravelForAHeatWakeThatLastsLonger" methodname="AfterburnTradesTravelForAHeatWakeThatLastsLonger" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" seed="1432432704" result="Passed" start-time="2026-09-21 21:07:39Z" end-time="2026-09-21 21:07:56Z" duration="16.751516" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1514" name="ThrowConversionSkillsDoNotSpendAChargeWhileDefending" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe.ThrowConversionSkillsDoNotSpendAChargeWhileDefending" methodname="ThrowConversionSkillsDoNotSpendAChargeWhileDefending" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" seed="719096199" result="Passed" start-time="2026-09-21 21:07:56Z" end-time="2026-09-21 21:08:01Z" duration="5.643430" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[DefenderThrowConversion] sean.2.cannon: CannotAct, charges 2->2
+[DefenderThrowConversion] sean.2.flare: CannotAct, charges 2->2
+[DefenderThrowConversion] zack.2.charge: CannotAct, charges 1->1
+[DefenderThrowConversion] zack.2.discharge: CannotAct, charges 1->1
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1547" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-21 21:08:01Z" end-time="2026-09-21 21:08:03Z" duration="1.841419" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1548" name="RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime" fullname="TumbangPreso.PlayTests.SkillReceiptTests.RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime" methodname="RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="11648834" result="Passed" start-time="2026-09-21 21:08:01Z" end-time="2026-09-21 21:08:03Z" duration="1.839031" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1607" name="TumpNativePickerTests" fullname="TumbangPreso.PlayTests.TumpNativePickerTests" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 21:08:03Z" end-time="2026-09-21 21:08:27Z" duration="24.336648" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1609" name="NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" methodname="NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="1183274146" result="Passed" start-time="2026-09-21 21:08:03Z" end-time="2026-09-21 21:08:27Z" duration="24.332769" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] Collection-hero-dante/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-hero-dante/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-hero-dante/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-hero-dante/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-hero-dante cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-dante cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-hero-cheska/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-hero-cheska/SelectedCheck: vertices=24, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] Collection-hero-cheska/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-hero-cheska/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-hero-cheska cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-cheska cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-hero-sean/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-hero-sean/SelectedCheck: vertices=24, cull=False, alpha=1, depth=28, material=1
+[TumpGeometry] Collection-hero-sean/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-hero-sean/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-hero-sean cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-sean cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-hero-zack/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-hero-zack/SelectedCheck: vertices=24, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] Collection-hero-zack/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-hero-zack/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-hero-zack cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-zack cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-hero-nemu/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-hero-nemu/SelectedCheck: vertices=24, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Collection-hero-nemu/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-hero-nemu/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-hero-nemu cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-nemu cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-hero-phaister/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-hero-phaister/SelectedCheck: vertices=24, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] Collection-hero-phaister/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-hero-phaister/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-hero-phaister cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-phaister cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-960x540/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-960x540/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-960x540/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-960x540/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-960x540 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-1280x720/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-1280x720/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-1280x720/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-1280x720/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-1280x720 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-1366x768/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-1366x768/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-1366x768/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-1366x768/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-1366x768 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-1920x1080/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-1920x1080/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-1920x1080/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-1920x1080/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-1920x1080 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-1920x1200/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-1920x1200/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-1920x1200/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-1920x1200/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-1920x1200 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-1280x960/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-1280x960/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-1280x960/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-1280x960/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-1280x960 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-2560x1440/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-2560x1440/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-2560x1440/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-2560x1440/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-2560x1440 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-3440x1440/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-3440x1440/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-3440x1440/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-3440x1440/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-3440x1440 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-3840x1080/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-3840x1080/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-3840x1080/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-3840x1080/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-3840x1080 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-heroes-3840x2160/BackIcon: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Collection-heroes-3840x2160/SelectedCheck: vertices=24, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] Collection-heroes-3840x2160/RotateModelIcon: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Collection-heroes-3840x2160/CollectionReadingCard: vertices=110, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] Collection-heroes-3840x2160 cream source=252,211,159 pixel=55,37,31; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-960x540 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-1280x720 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-1366x768 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-1920x1080 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-1920x1200 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-1280x960 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-2560x1440 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-3440x1440 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-3840x1080 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Biography-3840x2160 cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-960x540/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-960x540/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-960x540/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-960x540/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-1280x720/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-1280x720/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-1280x720/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-1280x720/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-1280x720 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-1366x768/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-1366x768/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-1366x768/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-1366x768/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-1366x768 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-1920x1080/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-1920x1080/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-1920x1080/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-1920x1080/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-1920x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-1920x1200/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-1920x1200/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-1920x1200/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-1920x1200/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-1920x1200 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-1280x960/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-1280x960/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-1280x960/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-1280x960/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-1280x960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-2560x1440/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-2560x1440/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-2560x1440/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-2560x1440/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-2560x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-3440x1440/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-3440x1440/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-3440x1440/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-3440x1440/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-3440x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-3840x1080/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-3840x1080/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-3840x1080/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-3840x1080/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-3840x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot1-3840x2160/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot1-3840x2160/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-slot1-3840x2160/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot1-3840x2160/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot1-3840x2160 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-variant/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-variant/Symbol: vertices=28, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] SkillGuide-variant/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-variant/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-variant cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-slot2/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-slot2/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-slot2/Symbol: vertices=40, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] SkillGuide-slot2/AbilityPicture: vertices=28, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] SkillGuide-slot2 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-960x540/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-960x540/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-960x540/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-960x540/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-1280x720/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-1280x720/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-1280x720/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-1280x720/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-1280x720 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-1366x768/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-1366x768/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-1366x768/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-1366x768/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-1366x768 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-1920x1080/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-1920x1080/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-1920x1080/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-1920x1080/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-1920x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-1920x1200/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-1920x1200/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-1920x1200/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-1920x1200/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-1920x1200 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-1280x960/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-1280x960/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-1280x960/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-1280x960/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-1280x960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-2560x1440/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-2560x1440/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-2560x1440/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-2560x1440/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-2560x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-3440x1440/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-3440x1440/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-3440x1440/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-3440x1440/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-3440x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-3840x1080/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-3840x1080/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-3840x1080/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-3840x1080/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-3840x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillGuide-ultimate-3840x2160/Symbol: vertices=28, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] SkillGuide-ultimate-3840x2160/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] SkillGuide-ultimate-3840x2160/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] SkillGuide-ultimate-3840x2160/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] SkillGuide-ultimate-3840x2160 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

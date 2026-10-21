@@ -1,0 +1,26 @@
+{
+  "base": "aecc0ee2c",
+  "sourceEquivalent": "8a85bb12c plus Xelu prompt unit",
+  "question": "Whole-image variants, family correctness, retention and known-label fallback",
+  "expectedCases": 5,
+  "retry": 0,
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/InputGlyphs.cs",
+      "sha256": "2B3345935CBA69270D9EC5FB08A66235094072078D440E6C6ED034D0A8C7F8DE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/InputGlyphImport.cs",
+      "sha256": "45911879CA0B08BBF1BFFB7D9F02C834F5B0EA8F8FBB42C79192DCD143CF88B6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/InputGlyphTests.cs",
+      "sha256": "AACF0249C62102A57F58CE5DF00D06A86FED976326E1310CB2370BB685325B08"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerTrainingUiTests.cs",
+      "sha256": "7400DFD85CF44CC1BCA9F500BBF7F2D2DF55EE7C1D79EED60EC1968569DD1844"
+    }
+  ],
+  "textureCount": 198
+}

@@ -1,0 +1,26 @@
+Bahay_Civic_1: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_3: retained o body, fitted existing timber/jalousie/terrace details.
+Bahay_Civic_4: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_6: retained o body, fitted existing timber/jalousie/terrace details.
+Bahay_Civic_11: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_12: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_13: retained o body, fitted existing timber/jalousie/terrace details.
+Bahay_Civic_14: retained o body, fitted existing timber/jalousie/terrace details.
+Bahay_Civic_22: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_23: retained o body, fitted existing timber/jalousie/terrace details.
+Bahay_Civic_27: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_28: retained o body, fitted existing timber/jalousie/terrace details.
+Bahay_Civic_32: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_33: retained o body, fitted existing timber/jalousie/terrace details.
+Bahay_Civic_37: retained e body, fitted existing timber/jalousie details.
+Bahay_Civic_38: retained o body, fitted existing timber/jalousie/terrace details.
+BayanPlaza: 16 renderers receive explicit surface roles.
+  16 | family 4 Timber course joints
+  16 | family 4 Timber upper quiet
+  16 | family 4 Timber upper warm
+  8 | family 4 Warm aged timber
+  16 | family 8 Dull painted steel
+  8 | family 8 Substantial dark window trim
+  8 | family 9 Cream goods
+  8 | family 9 Oxblood goods
+16local additions;6shared timber derivatives; bodies, lower walls, roof hues, collision and other maps retained.

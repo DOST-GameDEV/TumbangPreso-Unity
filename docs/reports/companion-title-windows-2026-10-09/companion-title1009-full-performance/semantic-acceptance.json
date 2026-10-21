@@ -1,0 +1,14 @@
+{
+  "source": "e1c1fd0fee188e8f41b2b30efe914aac7b29e766",
+  "pid": 69040,
+  "terminal": true,
+  "candidateAccepted": true,
+  "frameWindows": 191,
+  "acceptedActions": 74,
+  "requiredImpacts": 26,
+  "observedRequiredImpacts": 26,
+  "nonLegacyCopySamplingWarnings": 0,
+  "exceptions": [],
+  "invalidRecordedObjectWarnings": 0,
+  "scope": "Controlled legal UI/gameplay and short natural-result capture; recorder rebind warnings are separate from clean fresh natural recordings. Full default matches, human/peer quality and tournament smoothness remain unqualified."
+}

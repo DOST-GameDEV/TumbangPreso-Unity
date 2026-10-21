@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Passed" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-13 14:03:35Z" end-time="2026-10-13 14:05:32Z" duration="117.2406947">
+  <test-suite type="TestSuite" id="3682" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2167" result="Passed" start-time="2026-10-13 14:03:35Z" end-time="2026-10-13 14:05:32Z" duration="117.240695" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3674" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2167" result="Passed" start-time="2026-10-13 14:03:35Z" end-time="2026-10-13 14:05:32Z" duration="117.200247" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9524" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3675" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2167" result="Passed" start-time="2026-10-13 14:03:35Z" end-time="2026-10-13 14:05:32Z" duration="117.176628" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3678" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2165" result="Passed" start-time="2026-10-13 14:03:35Z" end-time="2026-10-13 14:05:32Z" duration="117.152552" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2387" name="NemuFamiliarPoseTests" fullname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" classname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-13 14:03:35Z" end-time="2026-10-13 14:03:36Z" duration="0.939915" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2388" name="AFamiliarReceiptForTheRetiredHauntChangesNothing" fullname="TumbangPreso.PlayTests.NemuFamiliarPoseTests.AFamiliarReceiptForTheRetiredHauntChangesNothing" methodname="AFamiliarReceiptForTheRetiredHauntChangesNothing" classname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" runstate="Runnable" seed="229044713" result="Passed" start-time="2026-10-13 14:03:35Z" end-time="2026-10-13 14:03:36Z" duration="0.847926" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2389" name="ReusedSweepStopsAtAWallAndFailsClosedWhenItsBufferFills" fullname="TumbangPreso.PlayTests.NemuFamiliarPoseTests.ReusedSweepStopsAtAWallAndFailsClosedWhenItsBufferFills" methodname="ReusedSweepStopsAtAWallAndFailsClosedWhenItsBufferFills" classname="TumbangPreso.PlayTests.NemuFamiliarPoseTests" runstate="Runnable" seed="921072259" result="Passed" start-time="2026-10-13 14:03:36Z" end-time="2026-10-13 14:03:36Z" duration="0.073637" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2454" name="NemuPossessionMovementTests" fullname="TumbangPreso.PlayTests.NemuPossessionMovementTests" classname="TumbangPreso.PlayTests.NemuPossessionMovementTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-13 14:03:36Z" end-time="2026-10-13 14:04:00Z" duration="24.126887" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2455" name="APossessedAttackerIsDraggedTowardTheTayaButCanFightIt" fullname="TumbangPreso.PlayTests.NemuPossessionMovementTests.APossessedAttackerIsDraggedTowardTheTayaButCanFightIt" methodname="APossessedAttackerIsDraggedTowardTheTayaButCanFightIt" classname="TumbangPreso.PlayTests.NemuPossessionMovementTests" runstate="Runnable" seed="1282821166" result="Passed" start-time="2026-10-13 14:03:36Z" end-time="2026-10-13 14:04:00Z" duration="24.125009" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2444" name="NemuPrusisyonFilm" fullname="TumbangPreso.PlayTests.NemuPrusisyonFilm" classname="TumbangPreso.PlayTests.NemuPrusisyonFilm" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-13 14:04:00Z" end-time="2026-10-13 14:05:32Z" duration="91.367531" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="Review" />
+            </properties>
+            <test-case id="2445" name="FilmPrusisyonInAMatch" fullname="TumbangPreso.PlayTests.NemuPrusisyonFilm.FilmPrusisyonInAMatch" methodname="FilmPrusisyonInAMatch" classname="TumbangPreso.PlayTests.NemuPrusisyonFilm" runstate="Runnable" seed="1861714346" result="Passed" start-time="2026-10-13 14:04:00Z" end-time="2026-10-13 14:05:32Z" duration="91.365512" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="1200000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[LocalReplay] Invalid pose time
+[LocalReplay] Invalid pose time
+Releasing render texture that is set to be RenderTexture.active!
+[NemuFilm] scene frames 20-196 (5.90 s); clock 85.161 to 85.161; victim seat 2
+[LocalReplay] Invalid pose time
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2446" name="NemuPrusisyonTests" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.375194" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2448" name="AnObserverCannotPossessAnybody" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.AnObserverCannotPossessAnybody" methodname="AnObserverCannotPossessAnybody" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="1075447585" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.051458" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2449" name="ARefreshNeverAddsAndCleanseOrRoundClearEndsIt" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.ARefreshNeverAddsAndCleanseOrRoundClearEndsIt" methodname="ARefreshNeverAddsAndCleanseOrRoundClearEndsIt" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="1893527277" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.054215" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2453" name="AStrayHauntMessageChangesNothing" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.AStrayHauntMessageChangesNothing" methodname="AStrayHauntMessageChangesNothing" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="784072116" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.047723" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2452" name="TheContestHoldsAgainstTheFightAndWearsDownTheGrip" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheContestHoldsAgainstTheFightAndWearsDownTheGrip" methodname="TheContestHoldsAgainstTheFightAndWearsDownTheGrip" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="931384768" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.054688" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2451" name="TheGhostsPullTowardTheWorstPlaceAndNeverMoveAStunnedBody" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheGhostsPullTowardTheWorstPlaceAndNeverMoveAStunnedBody" methodname="TheGhostsPullTowardTheWorstPlaceAndNeverMoveAStunnedBody" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="1391683372" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.054960" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2447" name="TheUltimateKeepsItsIdentityAndPossessesEveryOtherPlayerForFifteenSeconds" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheUltimateKeepsItsIdentityAndPossessesEveryOtherPlayerForFifteenSeconds" methodname="TheUltimateKeepsItsIdentityAndPossessesEveryOtherPlayerForFifteenSeconds" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="1180670921" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.055373" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2450" name="TheWireValueIsBoundedAndItsOwnClockRunsOut" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheWireValueIsBoundedAndItsOwnClockRunsOut" methodname="TheWireValueIsBoundedAndItsOwnClockRunsOut" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="1279895148" result="Passed" start-time="2026-10-13 14:05:32Z" end-time="2026-10-13 14:05:32Z" duration="0.053436" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

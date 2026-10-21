@@ -1,0 +1,205 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using NUnit.Framework;
+using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
+using UnityEngine;
+using UnityEngine.UI;
+using Object=UnityEngine.Object;
+namespace TumbangPreso.Tests
+{
+    public sealed class HubLobbySeatControlsTests
+    {
+        sealed class Host : IHubHost
+        {
+            public string OnlineBrowserMessage { get; set; } = "No public rooms yet. Host one, or join with a code.";
+            public bool Allow=true; public int Requested=-1;
+            public HubSeat[] Data={
+                new HubSeat{Slot=0,Occupied=true,Mine=true,Host=true,Name="YOU",CharacterPick=-1},
+                new HubSeat{Slot=1,Occupied=true,Name="GUEST",Ready=true,CharacterPick=-1},
+                new HubSeat{Slot=2,Bot=true,CharacterPick=-1},new HubSeat{Slot=3,CharacterPick=-1}};
+            public MapPreviewSurface Preview=>null; public bool OverlayOpen=>false;
+            public bool InRoom=>true; public bool IsHost=>true; public bool LocalReady=>false;
+            public string RoomCode=>"TEST";public bool RoomOnline=>false;public string RoomTitle=>"SEAT CONTROLS";
+            public bool MatchInProgress{get;set;}public bool Spectating=>false;public string RoomAddress=>"";
+            public bool MapVoting=>false;public float MapVoteSecondsLeft=>0;public int MapVoteWinner=>0;
+            public int MapVoteFor(int seat)=>-1;public HubSeat[] Seats()=>Data;
+            public TumbangPreso.Net.LobbySeatSwapOffer SeatSwapOffer {get;set;}
+            public string SeatSwapResult=>"";public long Replied;public bool Accepted;
+            public void RespondToSeatSwap(long id,bool accept){Replied=id;Accepted=accept;SeatSwapOffer=null;}
+            public bool CanTakeSeat(int seat)=>Allow&&!MatchInProgress&&SeatSwapOffer==null&&seat>=0&&seat<Data.Length&&!Data[seat].Mine;
+            public void TakeSeat(int seat){Requested=seat;}
+            public bool EditBots=true;public int BotSeat=-1;public bool BotWanted;
+            public bool CanEditBots=>EditBots&&!MatchInProgress;
+            public void SetSeatBot(int seat,bool bot){BotSeat=seat;BotWanted=bot;}
+            public void OpenSettings(){}public void OpenProfile(){}public void OpenCareer(){}public void OpenParty(){}public void OpenCustomRules(){}
+            public void StartPractice(){}public string StartQueue(GameMode mode,QueueStake stake)=>"";
+            public void CancelQueue(){}public void AcceptBots(){}public void LeaveRoom(){}
+            public Task<string> HostRoom(string title,string map,GameMode mode,RoomVisibility visibility,bool online)=>Task.FromResult("");
+            public Task<string> Join(string codeOrAddress)=>Task.FromResult("");
+            public void StartGame(){}public void ToggleReady(){}public void LockIn(){}public void VoteMap(int index){}
+            public void PublishPicks(){}public void SelectMap(string map){}public void SelectMode(GameMode mode){}
+            public void Browse(){}public void RefreshRooms(bool lan){}public List<HubRoom> Rooms(bool lan)=>new List<HubRoom>();public void ToggleChat(){}public void ToggleSpectate(){}
+        }
+        GameObject _root,_hubRoot,_cameraRoot;Host _host;HubLobby _screen;Camera _camera;RenderTexture _target;
+        [SetUp] public void Before()
+        {
+            _host=new Host();BuildForCurrentSeats();
+        }
+        private void BuildForCurrentSeats()
+        {
+            _hubRoot=new GameObject("Seat control host");var hub=_hubRoot.AddComponent<TumpHub>();hub.enabled=false;
+            typeof(TumpHub).GetProperty("Host").SetValue(hub,_host);
+            _root=new GameObject("Seat control canvas",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));
+            typeof(TumpHub).GetProperty("Canvas").SetValue(hub,_root.GetComponent<Canvas>());
+            _screen=_root.AddComponent<HubLobby>();_screen.enabled=false;
+            typeof(HubScreen).GetProperty("Hub").SetValue(_screen,hub);
+            typeof(HubScreen).GetProperty("Root").SetValue(_screen,_root.GetComponent<RectTransform>());
+            _cameraRoot=new GameObject("Seat control UI camera",typeof(Camera));_camera=_cameraRoot.GetComponent<Camera>();
+            _camera.enabled=false;_camera.cullingMask=1<<31;_camera.clearFlags=CameraClearFlags.SolidColor;_camera.backgroundColor=new Color(.1f,.1f,.1f);
+            _target=new RenderTexture(960,540,24);_camera.targetTexture=_target;
+            var canvas=_root.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=_camera;canvas.planeDistance=1;
+            var scaler=_root.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1920,1080);
+            _screen.Build();foreach(var t in _root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=31;
+        }
+        [TearDown] public void After()
+        {
+            if(_camera!=null)_camera.targetTexture=null;
+            Object.DestroyImmediate(_root);Object.DestroyImmediate(_hubRoot);Object.DestroyImmediate(_cameraRoot);
+            _target.Release();Object.DestroyImmediate(_target);
+        }
+        private void RebuildForCurrentSeats()
+        {
+            // Each new Editor case needs its initial roster, not a runtime deferred row redraw.
+            // Dispose only this fixture's previous canvas/camera, then build the real lobby.
+            After();BuildForCurrentSeats();
+        }
+        Button Button(string name)=>_root.GetComponentsInChildren<Button>(true).FirstOrDefault(b=>b.name==name);
+        [Test] public void OpenAndBotSlotsExposeRealSeatActions()
+        {
+            var bot=Button("TakeSeat2");var open=Button("TakeSeat3");
+            Assert.IsNotNull(bot,"The current lobby needs a seat action for a bot slot.");
+            Assert.IsNotNull(open,"The current lobby needs a seat action for an open slot.");
+            Assert.IsTrue(bot.interactable);Assert.IsTrue(open.interactable);
+            bot.onClick.Invoke();Assert.AreEqual(2,_host.Requested);
+            open.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
+        }
+        /// <summary>
+        /// The review picture of the room, written only when TUMP_LOBBY_CAPTURE names a file: the
+        /// room at rest, and a second frame (`_hover` suffix) with P4's row in its hover state.
+        /// ⚠️ THE ENTRANCE IS SETTLED FIRST. `HubSlap` animates the players' panel in from
+        /// `Update`, which never runs inside an EditMode test, so the first capture of this screen
+        /// was a room with no panel in it at all.
+        /// </summary>
+        [Test] public void RenderTheRoomForReview()
+        {
+            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+            if(string.IsNullOrEmpty(path) || SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
+            // A warm street tone rather than flat grey: every shadow alpha is judged against what is behind it.
+            _camera.backgroundColor=new Color(.47f,.45f,.38f);
+            foreach(var slap in _root.GetComponentsInChildren<HubSlap>(true))
+            {
+                slap.enabled=false;slap.transform.localScale=Vector3.one;slap.transform.localRotation=Quaternion.identity;
+                var group=slap.GetComponent<CanvasGroup>();if(group!=null)group.alpha=1;
+            }
+            Write(path);
+            var row=(HubButton)Button("TakeSeat3");
+            row.Shape.Lit=1;row.Shape.OutlineBoost=1.5f;row.Shape.DepthScale=1.45f;row.Shape.Redraw();
+            row.Body.anchoredPosition=new Vector2(0,4);
+            row.Body.Find("Label").GetComponent<Text>().enabled=true;
+            Write(Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)+"_hover.png"));
+        }
+        private void Write(string path)
+        {
+            Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(960,540,TextureFormat.RGBA32,false);
+            try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
+            finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
+        }
+        [Test] public void TheWholeRowIsTheSeatDoorAndSitHereIsGone()
+        {
+            // Owner 2026-10-17: click anywhere on another P row to move there.
+            var row=Button("TakeSeat3");Assert.IsNotNull(row);
+            var rect=(RectTransform)row.transform;var seat=(RectTransform)rect.parent;
+            Assert.AreEqual(seat.rect.size,rect.rect.size,"The seat door must cover the whole row.");
+            Assert.IsFalse(_root.GetComponentsInChildren<Text>(true).Any(t=>t.text.Contains("SIT HERE")));
+        }
+        [Test] public void TheHostAddsAndRemovesBotsSeatBySeat()
+        {
+            var add=Button("AddBot3");var remove=Button("RemoveBot2");
+            Assert.IsNotNull(add,"An open seat offers ADD BOT to the host.");
+            Assert.IsNotNull(remove,"A bot seat offers REMOVE BOT to the host.");
+            Assert.IsNull(Button("AddBot1"),"An occupied seat has no bot control.");
+            Assert.IsNull(Button("AddBot0"));
+            add.onClick.Invoke();Assert.AreEqual(3,_host.BotSeat);Assert.IsTrue(_host.BotWanted);
+            remove.onClick.Invoke();Assert.AreEqual(2,_host.BotSeat);Assert.IsFalse(_host.BotWanted);
+            Assert.AreEqual(-1,_host.Requested,"A bot control must not also move the player.");
+        }
+        [Test] public void OnlyTheHostSeesBotControls()
+        {
+            _host.EditBots=false;RebuildForCurrentSeats();
+            Assert.IsNull(Button("AddBot3"));Assert.IsNull(Button("RemoveBot2"));
+            Assert.IsNotNull(Button("TakeSeat3"),"Moving seats does not depend on editing bots.");
+        }
+        [Test] public void EmptySeatsWithNoBotsStillLetTheHostStart()
+        {
+            // Owner 2026-10-17: the host starts with nobody else in the room, and the old
+            // "Bots are off" line under START is gone.
+            foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,CharacterPick=-1};
+            RebuildForCurrentSeats();Assert.IsTrue(Button("StartGame").interactable);
+            var status=_root.GetComponentsInChildren<Text>(true).First(t=>t.name=="Status");
+            StringAssert.DoesNotContain("Bots are off",status.text);
+        }
+        [Test] public void FillingVacanciesWithBotsKeepsStartAvailable()
+        {
+            foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,Bot=true,CharacterPick=-1};
+            RebuildForCurrentSeats();Assert.IsTrue(Button("StartGame").interactable);
+        }
+        [Test] public void FourHumansKeepStartAvailableWithoutBots()
+        {
+            foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,Occupied=true,CharacterPick=-1,Name="PLAYER"};
+            RebuildForCurrentSeats();Assert.IsTrue(Button("StartGame").interactable);
+        }
+        [Test] public void StaleRoomStateIsRecheckedBeforeSendingASeatRequest()
+        {
+            var button=Button("TakeSeat2");Assert.IsNotNull(button);
+            _host.MatchInProgress=true;button.onClick.Invoke();Assert.AreEqual(-1,_host.Requested);
+            _host.MatchInProgress=false;_host.Allow=false;button.onClick.Invoke();Assert.AreEqual(-1,_host.Requested);
+            _host.Allow=true;button.onClick.Invoke();Assert.AreEqual(2,_host.Requested);
+            Assert.AreNotEqual(Navigation.Mode.None,button.navigation.mode);
+        }
+        [Test] public void ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute()
+        {
+            var button=Button("TakeSeat3");Assert.IsNotNull(button);
+            _host.Data[3].Occupied=true;button.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
+            Assert.IsTrue(_host.Data[3].Occupied);
+        }
+        [TestCase(true),TestCase(false)] public void RecipientPopupSendsTheChosenAnswerExactlyOnce(bool accept)
+        {
+            var popupRoot=new GameObject("Consent popup",typeof(RectTransform));
+            try
+            {
+                var offer=new TumbangPreso.Net.LobbySeatSwapOffer{Id=21,FromSeat=0,ToSeat=1,Incoming=true,RequesterName="Alice",ExpiresAt=double.MaxValue};
+                _host.SeatSwapOffer=offer;var popup=popupRoot.AddComponent<HubSeatSwapPopup>();popup.Offer=offer;
+                typeof(HubScreen).GetProperty("Hub").SetValue(popup,_hubRoot.GetComponent<TumpHub>());
+                typeof(HubScreen).GetProperty("Root").SetValue(popup,popupRoot.GetComponent<RectTransform>());popup.Build();
+                var yes=popupRoot.GetComponentsInChildren<Button>().First(b=>b.name=="AcceptSeatSwap");
+                var no=popupRoot.GetComponentsInChildren<Button>().First(b=>b.name=="DeclineSeatSwap");
+                Assert.AreSame(no,popup.FirstFocus);
+                if(accept)yes.onClick.Invoke();else Assert.IsTrue(popup.Back());
+                Assert.AreEqual(21,_host.Replied);Assert.AreEqual(accept,_host.Accepted);
+                yes.onClick.Invoke();Assert.AreEqual(accept,_host.Accepted);
+            }
+            finally{Object.DestroyImmediate(popupRoot);}
+        }
+        [Test] public void HumanSlotOffersSwitchAndOwnSlotHasNoAction()
+        {
+            Assert.IsNull(Button("TakeSeat0")); Assert.IsNotNull(Button("TakeSeat1"));
+            Assert.AreEqual("SWITCH",HubKit.LabelOf((HubButton)Button("TakeSeat1")).text);
+            Assert.AreEqual(-1,_host.Requested);
+        }
+    }
+}

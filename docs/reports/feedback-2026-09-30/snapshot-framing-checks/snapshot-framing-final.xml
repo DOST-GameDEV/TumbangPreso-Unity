@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 06:08:33Z" end-time="2026-10-01 06:08:35Z" duration="2.4068043">
+  <test-suite type="TestSuite" id="2357" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1101" result="Passed" start-time="2026-10-01 06:08:33Z" end-time="2026-10-01 06:08:35Z" duration="2.406804" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2351" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1101" result="Passed" start-time="2026-10-01 06:08:33Z" end-time="2026-10-01 06:08:35Z" duration="2.380406" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24064" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2352" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1101" result="Passed" start-time="2026-10-01 06:08:33Z" end-time="2026-10-01 06:08:35Z" duration="2.363355" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2353" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1101" result="Passed" start-time="2026-10-01 06:08:33Z" end-time="2026-10-01 06:08:35Z" duration="2.346882" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2067" name="SessionRestartTests" fullname="TumbangPreso.PlayTests.SessionRestartTests" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-01 06:08:33Z" end-time="2026-10-01 06:08:35Z" duration="2.207214" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2068" name="EmptySnapshotRequestDoesNotConsumeRefreshBudget" fullname="TumbangPreso.PlayTests.SessionRestartTests.EmptySnapshotRequestDoesNotConsumeRefreshBudget" methodname="EmptySnapshotRequestDoesNotConsumeRefreshBudget" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1972764871" result="Passed" start-time="2026-10-01 06:08:33Z" end-time="2026-10-01 06:08:34Z" duration="0.707984" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18691, join code KVX4
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2071" name="SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable" fullname="TumbangPreso.PlayTests.SessionRestartTests.SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable" methodname="SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="569275286" result="Passed" start-time="2026-10-01 06:08:34Z" end-time="2026-10-01 06:08:35Z" duration="1.336730" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18689, join code 49TG
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2070" name="TrailingSnapshotBytesDoNotConsumeRefreshBudget" fullname="TumbangPreso.PlayTests.SessionRestartTests.TrailingSnapshotBytesDoNotConsumeRefreshBudget" methodname="TrailingSnapshotBytesDoNotConsumeRefreshBudget" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1904329187" result="Passed" start-time="2026-10-01 06:08:35Z" end-time="2026-10-01 06:08:35Z" duration="0.052183" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18691, join code RBJ5
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2069" name="UnknownSnapshotMarkerDoesNotConsumeRefreshBudget" fullname="TumbangPreso.PlayTests.SessionRestartTests.UnknownSnapshotMarkerDoesNotConsumeRefreshBudget" methodname="UnknownSnapshotMarkerDoesNotConsumeRefreshBudget" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1697843147" result="Passed" start-time="2026-10-01 06:08:35Z" end-time="2026-10-01 06:08:35Z" duration="0.052459" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18691, join code A5E6
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

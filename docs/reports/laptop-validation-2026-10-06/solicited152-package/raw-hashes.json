@@ -1,0 +1,34 @@
+{
+  "launch.json": {
+    "bytes": 959,
+    "sha256": "f1430fc8db363185aa63173f2d744711b4bff010f9b375edac971efdebcbb23a"
+  },
+  "direct-result.json": {
+    "bytes": 23219,
+    "sha256": "4bb0c4b93f7afbfb7bc722e777e60547281f001a2b6dde060cada4eef8f2885d"
+  },
+  "source-classification.json": {
+    "bytes": 1538,
+    "sha256": "eaef20bfda69fd6900460be799efd0f171d638b6c063060c5f4cca55605c731e"
+  },
+  "artifact-verification.json": {
+    "bytes": 640,
+    "sha256": "12a0172c8db1f34255237d6f830203e1d7aa83f22a5382a7d78573f6b33e6128"
+  },
+  "artifact-manifest.json": {
+    "bytes": 51033,
+    "sha256": "79d2dda2607afef210741d3484e173ff40051eefe6f8816e0a02c9aaca978814"
+  },
+  "laptop-readiness.json": {
+    "bytes": 884,
+    "sha256": "c9e1494f925b58d8437a03c2bb352ffc4c335cbdaf859a9754bf3eb32b73828c"
+  },
+  "share-cleanup.json": {
+    "bytes": 202,
+    "sha256": "70b45ac465728b4241c68c12038d24c09ee789754901d91761d09f0500079561"
+  },
+  "pc-full-copy-correlation.json": {
+    "bytes": 453,
+    "sha256": "549317379f5afe3de9728268150b758e52a36dc544eee18ea90d5c4004b47d1f"
+  }
+}

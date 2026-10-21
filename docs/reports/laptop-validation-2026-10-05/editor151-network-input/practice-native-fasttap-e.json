@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "var r=System.Linq.Enumerable.First(UnityEngine.Object.FindObjectsByType<TumbangPreso.PlayerInputReader>(UnityEngine.FindObjectsSortMode.None));var a=r.GetComponent<TumbangPreso.CharacterMotor>().AbilitySystem.Kit.Skill1;bool ready=a.IsReady;var k=(UnityEngine.InputSystem.Keyboard)System.AppDomain.CurrentDomain.GetData(\"lpt151-test-keyboard\");UnityEngine.InputSystem.InputSystem.QueueStateEvent(k,new UnityEngine.InputSystem.LowLevel.KeyboardState());if(ready){UnityEngine.InputSystem.InputSystem.QueueStateEvent(k,new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.E));UnityEngine.InputSystem.InputSystem.QueueStateEvent(k,new UnityEngine.InputSystem.LowLevel.KeyboardState());}return new{ready=ready,beforeDuration=a.DurationRemaining,beforeCooldown=a.CooldownRemaining,queuedDownUpSameUpdate=ready};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "ready": true,
+        "beforeDuration": 0,
+        "beforeCooldown": 0,
+        "queuedDownUpSameUpdate": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

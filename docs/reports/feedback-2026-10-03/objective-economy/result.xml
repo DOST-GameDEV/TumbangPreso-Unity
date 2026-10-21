@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.2821734">
+  <test-suite type="TestSuite" id="2721" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1401" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.282173" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2715" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1401" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.266414" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="45638" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2716" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1401" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.257563" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2717" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1401" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.249303" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1920" name="ObjectiveEconomyTests" fullname="TumbangPreso.PlayTests.ObjectiveEconomyTests" classname="TumbangPreso.PlayTests.ObjectiveEconomyTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.226021" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1922" name="DefenderGetsOnePointPerRoundDespiteResetAndStalePracticeFlag" fullname="TumbangPreso.PlayTests.ObjectiveEconomyTests.DefenderGetsOnePointPerRoundDespiteResetAndStalePracticeFlag" methodname="DefenderGetsOnePointPerRoundDespiteResetAndStalePracticeFlag" classname="TumbangPreso.PlayTests.ObjectiveEconomyTests" runstate="Runnable" seed="554596987" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.099498" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1924" name="FullMeterCapsAndResetCannotReissueTheSameRoundGrant" fullname="TumbangPreso.PlayTests.ObjectiveEconomyTests.FullMeterCapsAndResetCannotReissueTheSameRoundGrant" methodname="FullMeterCapsAndResetCannotReissueTheSameRoundGrant" classname="TumbangPreso.PlayTests.ObjectiveEconomyTests" runstate="Runnable" seed="90731269" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.040535" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1921" name="OnlyKnockdownsAndTagsGrantActivityIncomeAndZackDiscounts" fullname="TumbangPreso.PlayTests.ObjectiveEconomyTests.OnlyKnockdownsAndTagsGrantActivityIncomeAndZackDiscounts" methodname="OnlyKnockdownsAndTagsGrantActivityIncomeAndZackDiscounts" classname="TumbangPreso.PlayTests.ObjectiveEconomyTests" runstate="Runnable" seed="1120087204" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.038285" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1923" name="ReplicaTutorialAndClassicDoNotMintDefenderIncome" fullname="TumbangPreso.PlayTests.ObjectiveEconomyTests.ReplicaTutorialAndClassicDoNotMintDefenderIncome" methodname="ReplicaTutorialAndClassicDoNotMintDefenderIncome" classname="TumbangPreso.PlayTests.ObjectiveEconomyTests" runstate="Runnable" seed="862163384" result="Passed" start-time="2026-10-03 06:56:09Z" end-time="2026-10-03 06:56:09Z" duration="0.035400" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

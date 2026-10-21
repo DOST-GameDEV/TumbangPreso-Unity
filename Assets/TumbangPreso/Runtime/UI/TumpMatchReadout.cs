@@ -13,10 +13,14 @@ namespace TumbangPreso.UI
         public Canvas Canvas { get; private set; }
         private RectTransform _root, _scoreRoot, _clockRoot, _canRoot, _personalRoot, _promptRoot;
         private Text _clock, _round, _canState, _canHint, _role, _stock, _prompt, _context, _toast, _countdown, _spectator, _sandbox;
-        private Text _crosshair, _hit;
+        // VISUAL-1.6: a Graphic, so the court HUD's drawn `HudReticle` and the older
+        // builders' "+" Text share one enable and placement path.
+        private Graphic _crosshair;
+        private Text _hit, _staminaCaption;
+        private float _staminaCaptionWidth;
         private CharacterMotor _aimOwner;
         private Carrier _aimCarrier;
-        private Image _stamina, _progress;
+        private Image _stamina, _progress, _bindingGlyph;
         private readonly Text[] _names = new Text[4], _scores = new Text[4], _roles = new Text[4];
         private readonly Image[] _portraits = new Image[4];
         private readonly RectTransform[] _scoreRows = new RectTransform[4];
@@ -28,6 +32,8 @@ namespace TumbangPreso.UI
         private Slipper[] _slippers;
         private float _scanAt;
         private float _scoreAt;
+        private readonly int[] _lastScoreValues = new int[4];
+        private readonly bool[] _hasScoreValue = new bool[4];
         private CameraSystem.SpectatorCamera _spectatorCamera;
         public bool ReadyWindow;
 
@@ -46,7 +52,7 @@ namespace TumbangPreso.UI
             _countdown = Ink(_root, "Countdown", "", 112, true);
             TumpUiFactory.Anchor(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180));
             _countdown.enabled = false;
-            _crosshair = Ink(_root, "Reticle", "+", 34, false);
+            _crosshair = Ink(_root, "Reticle", "○", 34, false);
             TumpUiFactory.Anchor(_crosshair.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(76, 76));
             _hit = Ink(_root, "HitConfirmation", "×", 72, true);
             TumpUiFactory.Anchor(_hit.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(120, 120)); _hit.enabled = false;
@@ -63,7 +69,7 @@ namespace TumbangPreso.UI
             var text = TumpUiFactory.Text(root, name, words, size, main);
             text.color = TumpUiTheme.Current.Cream; text.alignment = TextAnchor.MiddleCenter;
             var outline = text.gameObject.AddComponent<Outline>();
-            outline.effectColor = new Color(.10f, .08f, .035f, .95f); outline.effectDistance = new Vector2(2, -2);
+            outline.effectColor = new Color(0, 0, 0, .95f); outline.effectDistance = new Vector2(2, -2);
             return text;
         }
         private void BuildScoresPrevious()
@@ -100,7 +106,7 @@ namespace TumbangPreso.UI
             TumpUiFactory.Anchor(_canRoot, new Vector2(1, 1), new Vector2(-252, -112), new Vector2(464, 176));
             var can = TumpUiFactory.Rect(_canRoot, "CanStateIcon").gameObject.AddComponent<TumpSymbol>();
             can.Kind = TumpSymbol.Icon.Can; can.color = TumpUiTheme.Current.Cream; can.raycastTarget = false;
-            var canOutline = can.gameObject.AddComponent<Outline>(); canOutline.effectColor = TumpUiTheme.Current.DeepOlive;
+            var canOutline = can.gameObject.AddComponent<Outline>(); canOutline.effectColor = UiTheme.InGameOutline;
             canOutline.effectDistance = new Vector2(2, -2);
             TumpUiFactory.Place(can.rectTransform, 0, 0, 92, 106);
             _canState = Ink(_canRoot, "CanState", "", 36, true); _canState.alignment = TextAnchor.MiddleLeft;
@@ -145,43 +151,85 @@ namespace TumbangPreso.UI
             track.gameObject.SetActive(false);
         }
         public void Toast(string words, float duration)
-        { _toast.text = words; _toastLeft = duration; _toast.enabled = true; }
+        { if (!_toast.enabled || _toast.text != words) _toastBorn = Time.unscaledTime; _toast.text = words; _toastLeft = duration; _toast.enabled = true; SizeToastPlate(); }
         public void Countdown(string words) { _countdown.text = words; _countdown.enabled = !string.IsNullOrEmpty(words); }
-        public void Hit(Color color) { _hit.color = color; _hit.enabled = true; _hitLeft = .25f; }
+        /// <summary>
+        /// The two things `RoundLabel` can ever say, and the widest form of each.
+        ///
+        /// ⚠️⚠️ THIS EXISTS SO A LAYOUT PROBE READS THE SHIPPING FORMATTER RATHER THAN A
+        /// STRING TYPED INTO A TEST. `HudOverflowProbe` was fed `Hud.TopCentreLines()`, which is
+        /// the LEGACY hud's worst case: `ROUND n / N   ·   DEFENDER: &lt;14 chars&gt;`, about 704
+        /// units of text. **The painted readout never draws that line.** It writes the round and
+        /// the total, and the defender is named on its own row, so the probe reported nine
+        /// overflows across nine resolutions about a sentence this HUD cannot produce. A probe
+        /// fed a guess measures the guess, which is the same warning `Hud.TopCentreLines`'s own
+        /// header carries one HUD earlier.
+        /// </summary>
+        public static IEnumerable<string> RoundLabelLines()
+        {
+            // ⚠️ EIGHT OF EIGHT IS THE WIDEST LEGAL ROUND LINE, not a round number anybody
+            // plays: `CustomGameRules` caps the count at eight, and one digit either side is
+            // the longest this string gets.
+            yield return RoundLine(8, 8);
+        }
+
+        internal static string RoundLine(int round, int total)
+            => $"Round {Mathf.Max(1, round)} / {total}";
+
+        public void Hit(Color color)
+        {
+            if (_hitMark != null) { _hitMark.color = color; _hitMark.enabled = true; _hitLeft = HitLife; return; }
+            _hit.color = color; _hit.enabled = true; _hitLeft = .25f;
+        }
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
+            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.ArenaIntro.HidesUi;
             float dt = Time.unscaledDeltaTime;
-            if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) _toast.enabled = false; }
-            if (_hitLeft > 0) { _hitLeft -= dt; if (_hitLeft <= 0) _hit.enabled = false; }
+            if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }
+            if (_hitLeft > 0)
+            {
+                _hitLeft -= dt;
+                if (_hitLeft <= 0) { if (_hitMark != null) _hitMark.enabled = false; else _hit.enabled = false; }
+            }
             var match = GameServices.Match; var round = GameServices.Round;
             _effects.Tick(local, spectating);
             if (match == null || round == null) return;
             _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
-            _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.Orange : OwnerUiTheme.Current.Pale;
-            _round.text = match.IsWarmupBuffer ? "Warm up · Scores paused" : $"Round {Mathf.Max(1, match.RoundNumber)} / {match.TotalRounds}";
+            _round.text = RoundLine(match.RoundNumber, match.TotalRounds);
+            MatchBarClock(match, round, time);
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }
-            Can(local, training); Personal(local, spectating);
+            Can(local, training, spectating); Personal(local, spectating);
             _crosshair.enabled = !spectating && local != null && round.RoundActive;
             if(_aimOwner!=local){_aimOwner=local;_aimCarrier=local!=null?local.GetComponent<Carrier>():null;}
             Prompts(local, spectating);
+            Warnings(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
-            _spectator.enabled = spectating && spectatorControls;
+            _spectator.enabled = spectating;
             if (_spectator.enabled)
             {
                 if (_spectatorCamera == null) _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
-                _spectator.text = (_spectatorCamera != null ? _spectatorCamera.StatusText() : "Spectating")
-                    + "\n" + Hud.KeyLabelFor("SpectatorControls") + " hide controls · " + Hud.KeyLabelFor("CleanFeed") + " clean feed";
+                _spectator.text = spectatorControls
+                    ? (_spectatorCamera != null ? _spectatorCamera.StatusText() : "Spectating")
+                        + "\n" + Hud.KeyLabelFor("SpectatorControls") + " hide controls · " + Hud.KeyLabelFor("CleanFeed") + " clean feed"
+                    : Hud.KeyLabelFor("SpectatorControls") + " show controls";
             }
             Sandbox();
         }
 
         private void LateUpdate()
         {
+            PaintScoreMoments();
+            SizePromptPlate();
+            PaintToast();
+            ArrangeMessageLanes();
+            PaintHitMark();
+            PaintScorePops();
+            PaintRecede();
             if(_crosshair==null || !_crosshair.enabled)return;
             var anchor=new Vector2(.5f,.5f);
             var view=UnityEngine.Camera.main;
@@ -191,66 +239,126 @@ namespace TumbangPreso.UI
                 if(point.z>0)anchor=view.rect.min+Vector2.Scale(new Vector2(point.x,point.y),view.rect.size);
             }
             _crosshair.rectTransform.anchorMin=_crosshair.rectTransform.anchorMax=anchor;
+            PaintReticle();
         }
         private void Scores(CharacterMotor local, bool spectating)
         {
-            var match = GameServices.Match; var order = match.Ranking();
+            var match = GameServices.Match;
+            // VISUAL-1.4: fixed seat order and a crown for a unique leader, instead of rows
+            // that re-sort on every score. See `TumpMatchReadout.MatchBar`.
+            int leader = -1, best = 0; bool tied = false;
+            for (int seat = 0; seat < 4; seat++)
+            {
+                if (GameServices.Round.PlayerAt(seat) == null) continue;
+                int value = match.ScoreFor(seat);
+                if (value > best) { best = value; leader = seat; tied = false; }
+                else if (value == best && value > 0) tied = true;
+            }
+            if (tied) leader = -1;
             for (int i = 0; i < 4; i++)
             {
-                int slot = order[i]; var actor = GameServices.Round.PlayerAt(slot);
+                int slot = i; _scoreRowSeats[i] = slot; var actor = GameServices.Round.PlayerAt(slot);
                 _scoreRows[i].gameObject.SetActive(actor != null); if (actor == null) continue;
-                _names[i].text = SeatLabel.ForBoard(slot); _scores[i].text = match.ScoreFor(slot).ToString();
+                int score = match.ScoreFor(slot);
+                if (!_hasScoreValue[i] || _lastScoreValues[i] != score)
+                {
+                    _hasScoreValue[i] = true;
+                    _lastScoreValues[i] = score;
+                    PaintScoreValue(_scores[i], score);
+                }
                 bool defender = slot == match.DefenderSlot;
                 string state = defender ? "Defender" : "";
                 if (!spectating && local != null && slot == local.PlayerSlot) state = string.IsNullOrEmpty(state) ? "You" : "You · Defender";
                 if (spectating)
                 {
                     string activity = actor.IsSwimming ? "Swimming" : actor.IsTripped ? "Down" : actor.IsStunned ? "Stunned" :
-                        actor.IsDefender ? (actor.GetComponent<Carrier>()?.ChannelRatio > 0 ? "Resetting can" : "") :
+                        actor.IsDefender ? (actor.GetComponent<Carrier>()?.ChannelRatio > 0 ? "Resetting Can" : "") :
                         actor.HoldingSlipper ? "Holding" : "Retrieving";
                     if (!string.IsNullOrEmpty(activity)) state += (state.Length > 0 ? " · " : "") + activity;
                 }
                 _roles[i].text = state;
-                _roles[i].color = defender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
-                var people = Roster.GetPeople(actor.Mode);
-                var portrait = actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count
-                    ? OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
+                _roles[i].color = defender ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
+                var portrait = PortraitFor(actor);
                 if (_portraits[i].sprite != portrait) _portraits[i].sprite = portrait;
                 _portraits[i].enabled = portrait != null;
-                var strip = _scoreRows[i].GetComponent<OwnerScoreStrip>();
                 bool mine = !spectating && local != null && slot == local.PlayerSlot;
-                if (strip.Local != mine) { strip.Local = mine; strip.SetVerticesDirty(); }
+                MatchBarChip(i, slot, actor, defender, mine, slot == leader, spectating);
             }
         }
-        private void Can(CharacterMotor local, bool training)
+        private void Can(CharacterMotor local, bool training, bool spectating)
         {
+            // VISUAL-1.4: the can's state is one glyph in the clock plate for players and
+            // spectators alike, so the corner readout that said it in words stays built (the
+            // reading layout and probes address it by name) and is never shown.
             var lata = GameServices.Round.Lata;
-            _canRoot.gameObject.SetActive(!training && lata != null && GameServices.Round.RoundActive); if (lata == null) return;
+            MatchBarCan(lata);
+            _canRoot.gameObject.SetActive(false);
+            if (lata == null || !spectating) return;
             _canState.text = lata.IsUpright ? "Can upright" : "Can down";
-            _canHint.text = lata.IsProtected ? $"Protected · {lata.ProtectionLeft:0.0}s" : local == null
-                ? lata.IsUpright ? "Defender may tag" : "Retrieve or reset"
-                : !lata.IsUpright ? local.IsDefender ? "Reset the can" : "Retrieve your slipper" : "";
-            _canState.color = lata.IsUpright ? OwnerUiTheme.Current.Pale : OwnerUiTheme.Current.Lime;
+            _canHint.text = lata.IsProtected ? "Can protected · Defender may tag" :
+                lata.IsUpright ? "Defender may tag" : "Retrieve or reset";
+            _canState.color = lata.IsUpright ? OwnerUiTheme.Current.Pale : CourtPresentationPalette.Gold;
         }
         private void Personal(CharacterMotor local, bool spectating)
         {
             bool show = local != null && !spectating;
             _personalRoot.gameObject.SetActive(show);
             foreach (var text in _status) text.enabled = false;
+            PaintVitals(local, show);
+            PaintStatusChips(local, show);
+            StaminaArc(show ? local : null);
             if (!show) return;
             _role.text = local.IsDefender ? "Defender" : "Attacker";
-            _role.color = local.IsDefender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
+            _role.color = local.IsDefender ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
             _stock.text = local.HoldingSlipper ? "Slipper in hand" : local.IsDefender ? "Guard the can" : "Slipper away";
+            bool piloting=PilotingFamiliar(local);
+            if(piloting)
+            {
+                _role.text="Controlling Kuro";_role.color=CourtPresentationPalette.Paper;
+                bool danger=local.IsTaggable()&&GameServices.Round?.Lata!=null&&GameServices.Round.Lata.IsUpright;
+                _stock.text=local.IsStunned?"Nemu's body is recovering":danger?"Nemu's body can be tagged":
+                    local.IsDefender?"Nemu's body is the defender":local.HoldingSlipper?"Nemu's body has the slipper":"Nemu's body is unarmed";
+            }
+            if(_staminaCaption==null)
+            {
+                var caption=_personalRoot.Find("StaminaLabel");
+                if(caption!=null){_staminaCaption=caption.GetComponent<Text>();_staminaCaptionWidth=_staminaCaption.rectTransform.sizeDelta.x;}
+            }
+            string staminaName=piloting?"Nemu stamina":"Stamina";
+            if(_staminaCaption!=null&&_staminaCaption.text!=staminaName)
+            {
+                _staminaCaption.text=staminaName;var size=_staminaCaption.rectTransform.sizeDelta;
+                size.x=piloting?Mathf.Max(_staminaCaptionWidth,190):_staminaCaptionWidth;_staminaCaption.rectTransform.sizeDelta=size;
+            }
             var stock = GameServices.Tsinelas;
-            if (stock != null && stock.Live && !local.IsDefender) _stock.text += " · " + stock.StockFor(local.PlayerSlot) + " left";
+            bool stockLive = stock != null && stock.Live && !local.IsDefender;
+            if (stockLive) _stock.text += " · " + stock.StockFor(local.PlayerSlot) + " left";
+            // ⚠️ VISUAL-1.4: THESE LINES ONLY SPEAK WHEN THEY SAY SOMETHING NOTHING ELSE DOES.
+            // The role is on the chip, the slipper is in the viewmodel's hand and stamina is the
+            // arc beside the reticle, so "Attacker / Slipper in hand / Stamina" repeated the
+            // screen (and broke VISION § 3's no-sentences rule) for the whole match. They stay
+            // computed, because tests and the familiar readout read them, and are drawn only
+            // while piloting Kuro or while a limited slipper stock is counting down.
+            _role.enabled = piloting; _stock.enabled = piloting || stockLive;
+            if (_staminaCaption != null) _staminaCaption.enabled = piloting;
+            // Piloting Kuro keeps the labelled bar: whose stamina it is IS the information there.
+            if (_stamina != null && _stamina.transform.parent.gameObject.activeSelf != piloting) _stamina.transform.parent.gameObject.SetActive(piloting);
             _stamina.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(local.Stamina.Ratio), 1);
             _stamina.enabled = local.Stamina.Ratio > .001f;
-            _stamina.color = local.Stamina.IsFatigued ? OwnerUiTheme.Current.Orange : OwnerUiTheme.Current.Lime;
+            _stamina.color = local.Stamina.IsFatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold;
             StatusStack.Collect(local, local.GetComponent<Carrier>(), local.GetComponent<CombatVerbs>(), _statusRows);
             int index = 0;
             foreach (var row in _statusRows)
             {
                 if (row.Label == "VULNERABLE" || index >= _status.Length) continue;
+                // ⚠️ VISUAL-1.6: TIMED ROWS ARE SHAPES NOW, NOT "· 1.0s" LINES. Verb cooldowns
+                // are the reticle's sweep, power timers are the deck's rings, fatigue is the
+                // stamina arc turning orange and a stun is the caught screen edge thawing with
+                // the time left. Only the untimed power states (Overcharge, Ignition,
+                // Witchfire) still name themselves, because nothing else draws them.
+                // A named self-buff whose world visual is hidden in FPP still
+                // needs confirmation; ordinary timed status shapes stay unchanged.
+                if (_reticle != null && row.Timed && !row.ShowWithReticle) continue;
                 _status[index].enabled = true; _status[index].text = row.Label + (row.Timed ? $" · {row.Remaining:0.0}s" : ""); index++;
             }
         }
@@ -259,19 +367,31 @@ namespace TumbangPreso.UI
             _promptRoot.gameObject.SetActive(local != null && !spectating);
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
-            _prompt.color = OwnerUiTheme.Current.Pale;
+            if (_bindingGlyph != null) _bindingGlyph.enabled = false;
+            _prompt.color = PromptInk;
+            if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
             {
-                _prompt.text = local.CanMashUp ? Hud.MashVerb("Jump") + " to get up" : "Getting up";
-                float ratio = local.MashRemoved / Mathf.Max(.01f, local.TripTotal - Balance.MinTripDown); Progress(ratio);
-                if (local.CanMashUp && Hud.OnTouch) TouchHud.Emphasise(Verb.Jump); return;
+                _prompt.text = local.IsEdgeRecovering ? "Climbing up" : "Getting up";
+                Progress(1-Mathf.Clamp01(local.TripLeft/Mathf.Max(.01f,local.TripTotal)));
+                return;
             }
             if (local.StunElement != StunElement.None)
             {
-                _prompt.text = local.CanMashOutOfStun ? Visual.StunCoat.For(local.StunElement).Verb + " " + Hud.PressCue("Jump") : "Breaking free";
-                _context.text = local.StunMashPresses + " / " + local.StunBreakPresses + " presses";
-                if (local.CanMashOutOfStun && Hud.OnTouch) TouchHud.Emphasise(Verb.Jump); return;
+                // Timed incapacity is shown by status indicators, not an action
+                // the player could perform. Keep genuine root interaction below.
+                _promptRoot.gameObject.SetActive(false);
+                return;
+            }
+            // The native HUD bypasses Hud.UpdateInteractPrompt, so recovery from
+            // Paete's roots must be represented on this live action surface too.
+            if (local.IsRooted)
+            {
+                BindingPrompt("Interact", local.Intent.Pressed(Verb.Interact) ? "Removing Rooted" : "Remove Rooted");
+                Progress(local.BreakFreeProgress);
+                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
+                return;
             }
             if (BufferSkipVote.Showing)
             {
@@ -280,23 +400,50 @@ namespace TumbangPreso.UI
             }
             if (ReadyWindow)
             {
-                _prompt.text = Hud.PressCue("ReadyUp") + (round.RoundActive ? "Ready" : "Ready to play");
-                _context.text = SceneFlow.SelectedMode == GameMode.HeroStrike ? "Warm up freely. Powers start with the round." : "Warm up freely. Scores are paused."; return;
+                BindingPrompt("ReadyUp", "Ready Up");
+                return;
             }
+            if(PilotingFamiliar(local))
+            {
+                _prompt.text=Hud.PressCue("Skill2")+"Bring Nemu to Kuro";
+                _context.text="Move to scout. Recall uses Kuro's last safe landing spot.";
+                if(Hud.OnTouch)TouchHud.Emphasise(Verb.Skill2);
+                return;
+            }
+            if (PlantPrompt(local)) return;
             if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
             {
-                _prompt.text = carrier != null && carrier.ChannelRatio > 0 ? "Resetting can" : "Hold " + Hud.KeyLabelFor("Grab") + " at the can to reset";
-                if (carrier != null && carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
+                if (!local.CanAct()) return;
+                if (carrier == null || !carrier.HasResetTarget)
+                {
+                    _prompt.text = "Get close to the can to reset";
+                    return;
+                }
+                bool toggle = Settings.SettingsStore.Current.ToggleRestore;
+                string cue = Hud.PressCue("Grab");
+                if (carrier.ChannelRatio > 0)
+                    _prompt.text = toggle ? "Resetting Can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting Can";
+                else BindingPrompt("Grab", "Reset Can");
+                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
+                if (carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
             }
+            // ⚠️ VISUAL-1.6: CHARGING SAYS NOTHING HERE. The charge ring, the pektus tick and
+            // the grey refused state are on the reticle (`HudReticle`), where the eye already
+            // is; "Release to throw", "Pektus left · 34%" and the bar under them asked the
+            // player to look away from the aim point at the moment it mattered most. The
+            // older builders without a drawn reticle keep the words.
             if (carrier != null && carrier.IsCharging)
             {
+                if (_reticle != null) return;
                 float spin = carrier.CurrentPektusSpin;
                 _prompt.text = round.Lata != null && round.Lata.IsProtected ? "Can protected" : "Release to throw";
                 _context.text = Mathf.Abs(spin) > .08f ? $"Pektus {(spin < 0 ? "left" : "right")} · {Mathf.RoundToInt(Mathf.Abs(spin) * 100)}%" : "Move the aim sideways for pektus";
                 Progress(carrier.ChargeRatio); return;
             }
-            if (local.IsTaggable()) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Lime; }
-            else _prompt.color = OwnerUiTheme.Current.Pale;
+            // ⚠️ VISUAL-1.1: DANGER IS THE SCREEN-EDGE FRAME (`HudDangerFrame`), NOT A SENTENCE.
+            // The older builders, which have no frame, keep the words.
+            if (_reticle == null && local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
+            else _prompt.color = PromptInk;
             if (!local.IsDefender && !local.HoldingSlipper)
             {
                 if (Time.time >= _scanAt) { _scanAt = Time.time + .2f; _slippers = FindObjectsByType<Slipper>(FindObjectsInactive.Include, FindObjectsSortMode.None); }
@@ -306,13 +453,18 @@ namespace TumbangPreso.UI
                     if (slipper == null) continue;
                     if (slipper.CanBeGrabbedBy(local))
                     {
-                        _prompt.text = Hud.PressCue("Grab") + "Pick up";
+                        BindingPrompt("Grab", "Retrieve Slipper");
                         if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab); return;
                     }
                     if (slipper.OwnerSlot == local.PlayerSlot && RooftopRecovery.Instance != null)
                         returning = Mathf.Max(returning, RooftopRecovery.Instance.SecondsUntilReturn(slipper));
+                    if (slipper.OwnerSlot == local.PlayerSlot && LagoonWater.Instance != null)
+                        returning = Mathf.Max(returning, LagoonWater.Instance.SecondsUntilReturn(slipper));
                 }
-                if (returning > 0) _context.text = $"Slipper returning · {returning:0.0}s";
+                // ⚠️ VISUAL-1.3: THESE CLOCKS ARE ON THE SHOE'S OWN RECALL RING NOW
+                // (`SlipperRecallMark.Timer`); the sentences stay only for the older builders.
+                if (_reticle != null) { }
+                else if (returning > 0) _context.text = $"Slipper returning · {returning:0.0}s";
                 else
                 {
                     float idle = round.AttackerIdleSeconds(local.PlayerSlot);
@@ -320,16 +472,86 @@ namespace TumbangPreso.UI
                         ? $"Fetch your slipper · {Balance.SlipperUnretrievedGracePeriod - idle:0.0}s" : "Fetch your slipper · -5 / second";
                 }
             }
-            if (local.IsDefender && round.IsTayaCampWarningActive)
-                _context.text = "Leave the can ring";
+            // Persistent penalties have their own warning surface.
+            // A street character's offer (StreetInteractions, the Ilalim rebuild's beggar): read
+            // last and only into an empty line, so every match prompt above keeps its priority.
+            // No offer on any other map, so this line never speaks there.
+            if (string.IsNullOrEmpty(_prompt.text))
+            {
+                string street = StreetInteractions.ActionFor(local);
+                if (street != null)
+                {
+                    _prompt.text = Hud.PressCue("Interact") + street;
+                    if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
+                }
+            }
+        }
+        private void BindingPrompt(string action, string label)
+        {
+            if (_bindingGlyph != null)
+            {
+                _bindingGlyph.sprite = Hud.OnTouch ? null : InputGlyphs.For(Hud.KeyLabelFor(action), true);
+                _bindingGlyph.enabled = _bindingGlyph.sprite != null;
+            }
+            _prompt.text = !Hud.OnTouch && _bindingGlyph?.enabled != true ? Hud.PressCue(action) + label : label;
+        }
+
+        private static bool PilotingFamiliar(CharacterMotor local)
+        {
+            var visual=local!=null?local.GetComponent<Visual.CharacterVisual>():null;
+            return visual!=null&&visual.Companion!=null&&visual.Companion.IsPossessed;
+        }
+        private string _interactAction, _interactBinding, _interactText;
+
+        private void InteractPrompt(string action, float progress)
+        {
+            string binding = Hud.PressCue("Interact");
+            if (_interactAction != action || _interactBinding != binding)
+            {
+                _interactAction = action; _interactBinding = binding;
+                _interactText = "Hold " + binding + "to " + action;
+            }
+            _prompt.text = _interactText;
+            Progress(progress);
+            if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
+        }
+
+        private bool PlantPrompt(CharacterMotor local)
+        {
+            if (!local.CanAct()) return false;
+            float reachSquared = PaeteRules.PlantPullReach * PaeteRules.PlantPullReach;
+            foreach (var plant in Abilities.PaetePlant.Live)
+            {
+                if (plant == null || plant.OwnerSlot == local.PlayerSlot || !plant.Landed || !plant.Pullable) continue;
+                Vector3 offset = plant.transform.position - local.transform.position;
+                offset.y = 0;
+                if (offset.sqrMagnitude > reachSquared) continue;
+                InteractPrompt("pull it out", local.PullingPlantProgress);
+                return true;
+            }
+            return false;
         }
         private void Progress(float ratio)
         { _progress.transform.parent.gameObject.SetActive(true); _progress.enabled = ratio > .001f; _progress.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(ratio), 1); }
         private void Sandbox()
         {
             if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed) PracticeSandbox.Toggle();
+            // The F8 character ambient occlusion switch lived here (off, half, full). Removed on
+            // 2026-10-05 at the owner's word ("we dont need the F8 character AO toggle anymore"):
+            // the editor's Character Redesign menu drives the same single value
+            // (`WorldOutline.CharacterAoTest`), and two writers of one value could disagree.
             _sandbox.enabled = PracticeSandbox.Allowed && !Hud.OnTouch && (PracticeSandbox.Active || ReadyWindow);
             _sandbox.text = "F7 · No cooldowns " + (PracticeSandbox.Active ? "on" : "off");
+            // Keep the practice status above the enlarged deck and its reading hint.
+            // The deck itself retains the same right/bottom screen margins.
+            float y = 71;
+            if (_powers != null && _powers.DeckVisible && !Hud.OnTouch)
+            {
+                float scale = Mathf.Max(Settings.GameSettings.ValidHudScale(Settings.SettingsStore.Current.HudScale),
+                    Settings.SettingsStore.Current.LargerText ? 1.2f : 1);
+                y = _powers.DeckRect().yMax - _root.rect.yMin + 116 * scale;
+            }
+            _sandbox.rectTransform.anchoredPosition = new Vector2(-286, y);
         }
     }
 }

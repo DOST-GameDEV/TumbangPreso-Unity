@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.1503531">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.150353" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2514" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.135670" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26516" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2515" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.126316" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2516" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.107862" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2416" name="TouchStickPointerLifetimeTests" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.046768" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2421" name="AFreshPointerSteersAfterThePreviousOwnerReleases" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.AFreshPointerSteersAfterThePreviousOwnerReleases" methodname="AFreshPointerSteersAfterThePreviousOwnerReleases" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="517095126" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.026294" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2417" name="ASecondPointerCannotReplaceTheFirstPointersSteering" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.ASecondPointerCannotReplaceTheFirstPointersSteering" methodname="ASecondPointerCannotReplaceTheFirstPointersSteering" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="187617501" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.000711" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2423" name="DirectSetValueKeepsItsClampAndExplicitZeroAllowsAFreshPointer" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.DirectSetValueKeepsItsClampAndExplicitZeroAllowsAFreshPointer" methodname="DirectSetValueKeepsItsClampAndExplicitZeroAllowsAFreshPointer" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="200679854" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.000680" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2418" name="LiftingTheSecondPointerCannotZeroStillHeldSteering" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.LiftingTheSecondPointerCannotZeroStillHeldSteering" methodname="LiftingTheSecondPointerCannotZeroStillHeldSteering" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="1150104755" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.000574" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2424" name="ResizingKeepsCapturedSteeringNormalisedAndClamped" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.ResizingKeepsCapturedSteeringNormalisedAndClamped" methodname="ResizingKeepsCapturedSteeringNormalisedAndClamped" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="300254530" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.000559" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2422" name="TheManagedDisableCallbackReleasesOwnershipBeforeAFreshPointer" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.TheManagedDisableCallbackReleasesOwnershipBeforeAFreshPointer" methodname="TheManagedDisableCallbackReleasesOwnershipBeforeAFreshPointer" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="971419652" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.000494" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2419" name="TheOwningPointerCanDragThroughTheCentreAndContinueSteering" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.TheOwningPointerCanDragThroughTheCentreAndContinueSteering" methodname="TheOwningPointerCanDragThroughTheCentreAndContinueSteering" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="1578299875" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.000420" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2420" name="TheOwningPointerStillReleasesMovementAndKnob" fullname="TumbangPreso.Tests.TouchStickPointerLifetimeTests.TheOwningPointerStillReleasesMovementAndKnob" methodname="TheOwningPointerStillReleasesMovementAndKnob" classname="TumbangPreso.Tests.TouchStickPointerLifetimeTests" runstate="Runnable" seed="2111342131" result="Passed" start-time="2026-10-03 15:15:33Z" end-time="2026-10-03 15:15:33Z" duration="0.000368" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

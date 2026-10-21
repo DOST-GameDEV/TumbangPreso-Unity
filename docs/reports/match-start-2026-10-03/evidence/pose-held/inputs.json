@@ -1,0 +1,21 @@
+{
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs": "42b97f2bf9e7722ad4c214516628a1e0a2d02fa8efb2856255bee6b5e33c388c",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.QueueArrival.cs": "d62f1a6f994f8705a333f1deb63371d12ea9a653ef3516ff14b88a2f2902bd76",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs": "655f8f0f9cd72b84e5dbec086754df91955d48fc6a1bfe7d20e56738e42ba96e",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "ad76e554ac7dab833242d93e3c3c9af268db8d2813c26c71999d24c3fd55bdfc",
+  "Assets/TumbangPreso/Runtime/ReadyGate.cs": "d021abbfdaade434f479b78672fe5557429ed943175dd36c7b72cd70f3f9c2f2",
+  "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs": "6cd2851045d79ea1751e764532da748b500648deb74504c9547daba34ada1c56",
+  "Assets/TumbangPreso/Runtime/UI/CustomGameScreen.MatchSlate.cs": "2de3c2860adf3faacbceef3d0a769f20f6746d6006a580d3c1afb17c0b767d48",
+  "Assets/TumbangPreso/Runtime/UI/CustomGameScreen.OwnerPainted.cs": "677608e31b2fde604de1603b8a4bc297dd45986d8deec3791515190ece87bfe7",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs": "25f9ee816fdb1e1cf3df5a19606e12ca7e27aa5b00e3a77ca69be7e357a29335",
+  "Assets/TumbangPreso/Runtime/UI/Hub/TumpHub.cs": "68ffccb78a4e9cbc6124e7644e03747bd0808d571c36507a508fb3e1a4baf306",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "aaa55d06d8e2c9b8f587996668b00f9aac960a2fb2ab72cb8fdf36031de1d22f",
+  "Assets/TumbangPreso/Tests/PlayMode/MapVotePacketTests.cs": "60673d037fa97b4b5f1a475e4dffe7ae2652eed57fc4de630a495279557dbd1b",
+  "Assets/TumbangPreso/Tests/PlayMode/MatchArrivalFlowTests.cs": "93d0a045e978bb32fb276945a10f65edc80b416e3b60c5bdc8e335edebdf5b5d",
+  "Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs": "508a2a027adb991d78c2b7cd11eb2dc8006301c6bbb38b1fb5eeeaef49d8e155",
+  "Packages/com.tumbangpreso.core/Runtime/CustomGame.cs": "4bfa3aa46d6973d9cecf0d5f00467325d27cf91484a6550c6cabf738a5690df9",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.Arrival.cs": "9c81d9a06c25b75e9a6f5614fe5cebbcf2b3500f3bf4c56d9ba883d2ac9338e8",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.Arrival.cs.meta": "7c2634fd37c4723c808730220f7dc0ee8a982e49c1652095f8dbf3b76a28e9f7",
+  "Assets/TumbangPreso/Tests/PlayMode/MatchStartContractTests.cs": "83bd6ab140583c57f4cab900b54d38715a1a1920cfe12f1ee9f827ed21b03c23",
+  "Assets/TumbangPreso/Tests/PlayMode/MatchStartContractTests.cs.meta": "1738c8a44eea1861ea6872fcba2a86f47090190ca9e845c2f9efe52918558b20"
+}

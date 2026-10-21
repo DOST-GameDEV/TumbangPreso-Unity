@@ -7,10 +7,14 @@ namespace TumbangPreso.Visual
     {
         public static Vector3 ClampToCourt(CharacterMotor owner,Vector3 position)
         {
-            float x=owner!=null && owner.IsDefender?Core.Balance.ConfinementRadius:AIController.PlayableHalfX;
-            float z=owner!=null && owner.IsDefender?Core.Balance.ConfinementRadius:AIController.PlayableHalfZ;
-            position.x=Mathf.Clamp(position.x,-x,x);position.z=Mathf.Clamp(position.z,-z,z);
-            return position;
+            // ⚠️ THE TAYA KEEPS THE MAP'S CHALK SHAPE; everybody else gets the arena walls, PER SIDE since
+            // 2026-09-27 (`AIController.PlayableMinX`), so a familiar can scout to a shore the far wall allows.
+            if(owner!=null && owner.IsDefender)
+            {
+                Core.Confinement.ClampToBox(ref position.x,ref position.z);
+                return position;
+            }
+            return AIController.ClampToPlayable(position);
         }
         private static void Capsule(CharacterMotor owner,Vector3 ground,bool allowSteps,out Vector3 low,out Vector3 high,out float radius)
         {
@@ -34,7 +38,7 @@ namespace TumbangPreso.Visual
                 if(!Ignore(collider,owner,actors))return false;
             return true;
         }
-        public static Vector3 Move(CharacterMotor owner,Vector3 from,Vector3 displacement)
+        public static Vector3 Move(CharacterMotor owner,Vector3 from,Vector3 displacement,RaycastHit[] sweepStorage=null)
         {
             var position=ClampToCourt(owner,from);
             var wanted=ClampToCourt(owner,position+displacement);
@@ -46,8 +50,19 @@ namespace TumbangPreso.Visual
                 Capsule(owner,ground,true,out var low,out var high,out float radius);
                 float distance=remaining.magnitude;Vector3 direction=remaining/distance;
                 float travel=distance;Vector3 normal=Vector3.zero;
-                foreach(var hit in Physics.CapsuleCastAll(low,high,radius,direction,distance,~0,QueryTriggerInteraction.Ignore))
+                var hits=sweepStorage;
+                int count;
+                if(hits==null)
+                { hits=Physics.CapsuleCastAll(low,high,radius,direction,distance,~0,QueryTriggerInteraction.Ignore);count=hits.Length; }
+                else
                 {
+                    count=Physics.CapsuleCastNonAlloc(low,high,radius,direction,hits,distance,~0,QueryTriggerInteraction.Ignore);
+                    // A full buffer may omit the closest blocker. Keep the last safe position.
+                    if(count==hits.Length)return position;
+                }
+                for(int i=0;i<count;i++)
+                {
+                    var hit=hits[i];
                     if(Ignore(hit.collider,owner,false) || hit.normal.y>.65f)continue;
                     if(hit.distance<travel){travel=Mathf.Max(0,hit.distance-.025f);normal=hit.normal;}
                 }

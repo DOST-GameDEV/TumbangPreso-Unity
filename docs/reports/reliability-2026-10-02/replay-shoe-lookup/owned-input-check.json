@@ -1,0 +1,12 @@
+{
+  "source": "f871f40067ad3c5c34dae063202be2475bfda5a4",
+  "checks": {
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedEffectsTests.cs": true,
+    "Assets/TumbangPreso/Runtime/Camera/RecordedFlightStroke.cs": true,
+    "Assets/TumbangPreso/Runtime/BotSlipperInventory.cs": true,
+    "Assets/TumbangPreso/Runtime/Slipper.cs": true
+  },
+  "retry": 1,
+  "scope": "Actual native capture with four flying shoes, disabled Slipper components, active/inactive and destroyed/replaced objects",
+  "measurementLimit": "Mono allocation counter returned zero despite allocated arrays; unavailable, not allocation-free evidence. Only same-case wall time and data/lifecycle acceptance compared."
+}

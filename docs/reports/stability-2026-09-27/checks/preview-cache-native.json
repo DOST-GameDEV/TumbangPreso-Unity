@@ -1,0 +1,45 @@
+{
+  "base": "5a50452f261b03ea9faa1b056ec4d69efa0d6c7f",
+  "native": {
+    "result": "Passed",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "0.2274302",
+    "unity": "6000.5.8f1",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.MapPreviewResizeDestroysTheOldTargetAndRebindsItsSurface",
+      "result": "Passed",
+      "duration": "0.117972"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.SharedSourceMaterialKeepsBaseAndOverlayVariantsSeparateAndReusable",
+      "result": "Passed",
+      "duration": "0.053001"
+    }
+  ],
+  "originalXmlSha256": "F8941D7ECEE648F4949DB959D7ADFCAC21D9328A61A122A403817F02771BAD90",
+  "frozenInputs": 240,
+  "nativeInputChurn": 0,
+  "minimumFreeBytes": 6567550976,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+      "sha256": "72B8EB0E98ABD3E08DC9B96EC6FEE4255C08851150B29FAE347B74DEECB98522"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/ToonSkin.cs",
+      "sha256": "D2A07FC0B7BEDD744EFF6B80FCAF7015C7BFEBE3ABF662BF013085B94DBDA1F1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "A8EDD41EDF66B6F87F14676457215CE538235019DBF8DE449A564B700E00ADD8"
+    }
+  ],
+  "limits": "Material properties/cache reuse and native target lifetime, not art approval or player frame/memory measurements."
+}

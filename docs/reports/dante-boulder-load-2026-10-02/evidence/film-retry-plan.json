@@ -1,0 +1,7 @@
+{
+  "failure": "Unity Mono pipe startup assertion ToFileDescriptor before any test; exit250; no XML",
+  "diagnostic": "Soft/hard/OPEN_MAX all16384; no live Editor or compiler remains; profile preserved and lease released; not memory pressure",
+  "retry_budget": 1,
+  "action": "One fresh-process startup retry, same frozen product inputs and memory guard, separate outputs. No limits changed, no cache deletion. Stop supplementary film if it fails again.",
+  "reason": "Transient native startup crash, distinct from an unchanged product test failure."
+}

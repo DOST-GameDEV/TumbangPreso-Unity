@@ -131,12 +131,23 @@ namespace TumbangPreso.Core
         public static readonly IReadOnlyList<RosterEntry> HeroPeople = new[]
         {
             //                id              name           bilis lakas tatag
-            new RosterEntry("dante",       "DANTE",           2,    4,    5),
-            new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
-            new RosterEntry("sean",        "SEAN",            1,    5,    3),
-            new RosterEntry("zack",        "ZACK",            4,    3,    3),
+            new RosterEntry("dante",       "DANTE",         2,    4,    5),
+            new RosterEntry("cheska",      "YASMIN",          3,    4,    4),
+            new RosterEntry("sean",        "RAGO",            1,    5,    3),
+            new RosterEntry("zack",        "ISAGANI",         4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
-            new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
+            new RosterEntry("phaister",    "PHAISTER",          4,    4,    3),
+            new RosterEntry("rafi",        "ILYAS",           4,    2,    4),
+            // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
+            // bare int, so a row inserted above an existing one renders another character for
+            // the same pick on a peer. Wind is speed: the fastest hero, light, average grit, a
+            // row no other hero has (`AllPersonRows_AreDistinct`). A prototype number, not a
+            // balance verdict. Her skills are placeholders until the owner designs them.
+            new RosterEntry("amihan",      "AMIHAN",          5,    2,    3),
+            // ⚠️ PAETE, APPENDED (2026-09-25), for the same wire reason as Amihan. A tree is grit:
+            // average pace and strength, the toughest in the cast beside Dante. A row no hero or
+            // street character has (`AllPersonRows_AreDistinct`). A prototype number.
+            new RosterEntry("paete",       "PAETE",           3,    3,    5),
         };
 
         /// <summary>
@@ -156,12 +167,23 @@ namespace TumbangPreso.Core
             new RosterEntry("lola_pacing", "LOLA PACING",     1,    4,    5),
             new RosterEntry("mang_kanor",  "MANG KANOR",      5,    3,    2),
             new RosterEntry("aling_nena",  "ALING NENA",      2,    3,    5),
-            new RosterEntry("dante",       "DANTE",           2,    4,    5),
-            new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
-            new RosterEntry("sean",        "SEAN",            1,    5,    3),
-            new RosterEntry("zack",        "ZACK",            4,    3,    3),
+            new RosterEntry("dante",       "DANTE",         2,    4,    5),
+            new RosterEntry("cheska",      "YASMIN",          3,    4,    4),
+            new RosterEntry("sean",        "RAGO",            1,    5,    3),
+            new RosterEntry("zack",        "ISAGANI",         4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
-            new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
+            new RosterEntry("phaister",    "PHAISTER",          4,    4,    3),
+            new RosterEntry("rafi",        "ILYAS",           4,    2,    4),
+            // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
+            // bare int, so a row inserted above an existing one renders another character for
+            // the same pick on a peer. Wind is speed: the fastest hero, light, average grit, a
+            // row no other hero has (`AllPersonRows_AreDistinct`). A prototype number, not a
+            // balance verdict. Her skills are placeholders until the owner designs them.
+            new RosterEntry("amihan",      "AMIHAN",          5,    2,    3),
+            // ⚠️ PAETE, APPENDED (2026-09-25), for the same wire reason as Amihan. A tree is grit:
+            // average pace and strength, the toughest in the cast beside Dante. A row no hero or
+            // street character has (`AllPersonRows_AreDistinct`). A prototype number.
+            new RosterEntry("paete",       "PAETE",           3,    3,    5),
         };
 
         /// <summary>Default people list for global lookups.</summary>
@@ -332,8 +354,8 @@ namespace TumbangPreso.Core
         // change movement or contact; equipment handling remains independent.
         public static float PersonSpeedScale(int index) => PersonSpeedScale(index, GameMode.Classic);
 
-        public static float PersonSpeedScale(int index, GameMode mode) =>
-            mode == GameMode.Classic ? 1.0f : TraitScale(PersonTrait(index, Trait.Bilis, mode), Balance.TraitSpeedPerPoint);
+        // Character traits no longer change base walking/running in either mode.
+        public static float PersonSpeedScale(int index, GameMode mode) => 1.0f;
 
         public static float PersonPowerScale(int index) => PersonPowerScale(index, GameMode.Classic);
 

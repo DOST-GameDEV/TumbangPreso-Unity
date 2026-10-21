@@ -153,6 +153,16 @@ namespace TumbangPreso.Core
     public static class HeroLoadoutRules
     {
         /// <summary>
+        /// ⚠️⚠️ THE SKILL TREE IS SWITCHED OFF, NOT DELETED (owner, 2026-09-26: *"WE MIGHT DUMP THE SKILL
+        /// TREE IDEA FOR NOW AND WILL COME BACK TO IT LATER (DEPENDS ON WHTEHTER WE STILL HAVE TIME)"*,
+        /// *"JS REMOVE ITS UI FOR NOW AND HARDCODE THE SKILLS AND SHIT"*). While false every kit is built
+        /// on its DEFAULT variant whatever a saved build or the wire says, and the screens hide every
+        /// door to the tree and the loadout. Every variant, unlock, challenge and saved build is kept;
+        /// turning the tree back on is this one line. `docs/reports/ability-rework-2026-09-26/plan.md` § 4.
+        /// </summary>
+        public static readonly bool SidegradesOpen = false;
+
+        /// <summary>
         /// ⚠️ DERIVED FROM `Roster.HeroPeople` RATHER THAN TYPED OUT AGAIN. The list it replaces
         /// was a hand-written array that disagreed with the roster in two places at once.
         /// </summary>
@@ -241,11 +251,11 @@ namespace TumbangPreso.Core
 
             new AbilityVariant("sean.2.cannon", "sean", 2, "IGNITION CANNON", "SeanIgnite",
                 "IGNITION CANNON",
-                "Your next throw explodes where it lands, on a slipper arc.",
+                "Attacker only. Your next arcing throw explodes where it lands.",
                 0.0f, 0.0f, "It still arcs over", "You have to lead it"),
 
             new AbilityVariant("sean.2.flare", "sean", 2, "IGNITION CANNON", "SeanIgnite",
-                "FLARE SHOT", "Flat, fast, and cracks in a tight circle. Made for the can.",
+                "FLARE SHOT", "Attacker only. A fast, flat throw with a tight blast.",
                 0.25f, -0.25f, "Hard to dodge", "You must hit it",
                 "Use Ignition Cannon eight times", true, 8),
 
@@ -279,14 +289,14 @@ namespace TumbangPreso.Core
             // exact fault § 108.3 records about `berto`.
             new AbilityVariant("zack.2.charge", "zack", 2, "MAGNET", "ZackOvercharge",
                 "MAGNET",
-                "Your slipper comes back charged, so you never walk in for it.",
+                "Attacker only. Recall your slipper, charged for the next throw.",
                 0.0f, 0.0f, "You never walk in", "One use per knockdown"),
 
             // ⚠️ THE ALTERNATE SELLS THE THROW AND PAYS WITH THE WINDOW, which is the same trade
             // Snap Discharge made and the one row of the old pair that still describes something
             // the ability does. What changed is what it is attached to.
             new AbilityVariant("zack.2.discharge", "zack", 2, "MAGNET", "ZackOvercharge",
-                "SNAP DISCHARGE", "It comes back hot and does not stay hot. Throw it now.",
+                "SNAP DISCHARGE", "Attacker only. Recall it hot; throw before the charge fades.",
                 0.50f, -0.50f, "No time to read it", "Gone in a moment",
                 "Use Magnet eight times", true, 8),
 
@@ -324,7 +334,12 @@ namespace TumbangPreso.Core
             // ---------------------------------------------------------------
             new AbilityVariant("phaister.1.hex", "phaister", 1, "HEX", "PhaisterHexSigil",
                 "HEX",
-                "Place a broad binding. Opponents who remain inside suffer repeated stumbles.",
+                // ⚠️ 66 AND 65 CHARACTERS, AGAINST `EveryVariantRowFitsTheTileItIsDrawnOn`'S 67.
+                // Both of Phaister's slot 1 rows were written at 76 and 101 and shipped over the
+                // budget, because this hero was added after the bound was measured and the core
+                // suite that holds it had been red for long enough that a third red case read as
+                // the weather. They say the same two things in the room the tile has.
+                "Bind a broad patch of ground. Whoever stays in it keeps stumbling.",
                 0.0f, 0.0f, "Covers more space", "Lighter, slower pulses"),
 
             // ⚠️ THE GAIN REACHES THREE NUMBERS, for the reason Arc Line's note above gives: a
@@ -333,7 +348,7 @@ namespace TumbangPreso.Core
             // 1.44 m brand is a place one attacker genuinely cannot cross rather than a smaller
             // version of the same puddle.
             new AbilityVariant("phaister.1.brand", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "SLOW BRAND", "A smaller binding with stronger, more frequent stumbles. Go around it or push through between pulses.",
+                "SLOW BRAND", "A tighter patch, and whoever stays in it stumbles harder, sooner.",
                 0.40f, -0.40f, "Stronger, quicker pulses", "Smaller reach",
                 "Use Hex eight times", true, 8),
 
@@ -346,7 +361,70 @@ namespace TumbangPreso.Core
                 "LONG STRIDE", "Reaches much further, and takes long enough to aim to be read.",
                 0.30f, -0.30f, "Crosses the court", "They see it coming",
                 "Use Shadow Blink eight times", true, 8),
+            new AbilityVariant("rafi.1.current", "rafi", 1, "CROSSCURRENT", "RafiCrosscurrent",
+                "CROSSCURRENT", "Bend one flying slipper toward your aim. Keep its throw credit.",
+                0, 0, "Turns a throw", "One slipper only"),
+            new AbilityVariant("rafi.1.tightcut", "rafi", 1, "CROSSCURRENT", "RafiCrosscurrent",
+                "TIGHT CUT", "A faster current, with a narrower interception band.",
+                .35f, -.35f, "Arrives sooner", "Needs precise aim",
+                "Use Crosscurrent eight times", true, 8),
+            new AbilityVariant("rafi.2.mirror", "rafi", 2, "MIRRORWAKE", "RafiMirrorwake",
+                "MIRRORWAKE", "A watery reflection retraces your steps and feints a throw.",
+                0, 0, "Invites a wrong turn", "You stay vulnerable"),
+            new AbilityVariant("rafi.2.longwake", "rafi", 2, "MIRRORWAKE", "RafiMirrorwake",
+                "LONG WAKE", "The echo lasts longer, but reveals its watery ribbons sooner.",
+                .35f, -.35f, "Lingers in view", "Easier to read",
+                "Use Mirrorwake six times", true, 6),
+
+            // ⚠️⚠️ AMIHAN'S REAL KIT (2026-09-25), WITH NO SIDEGRADE TUNING YET. Owner, asked how the
+            // loadout variants fit the new signature plus role abilities: *"we will figure out the
+            // variants soon, keep them all as extra skills for now"*. So every hero's existing
+            // variants are untouched, and hers are named for her real abilities with the second
+            // reading of each slot marked as still being designed: it plays exactly as the default
+            // (nothing in `AmihanHeroKit` reads the alternates), and the +/-0.30 is only there to
+            // keep the sidegrade rule true (`EveryVariantIsBudgetNeutral`). Slot 2 is her ROLE
+            // ability, named for the attacking one her kit reports before a role is known; the
+            // screens show both role abilities beside it (`HeroKit.AttackingSkill`, `DefendingSkill`).
+            new AbilityVariant("amihan.1.quickdash", "amihan", 1, "DRIFT", "AmihanQuickDash",
+                "DRIFT", "Dash where you aim. Whoever you pass is Whirled and shoved.",
+                0, 0, "Dash through a crowd", "35 s to come back"),
+            new AbilityVariant("amihan.1.quickdash_next", "amihan", 1, "DRIFT", "AmihanQuickDash",
+                "DRIFT II", "A second reading, still being designed. Plays as Drift.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Drift eight times", true, 8),
+            new AbilityVariant("amihan.2.updraft", "amihan", 2, "FEATHERFALL", "AmihanUpdraft",
+                "FEATHERFALL", "Attacking: fly high for 5 s. Throw from the air, land to grab.",
+                0, 0, "Throw from above", "Land to pick up"),
+            new AbilityVariant("amihan.2.updraft_next", "amihan", 2, "FEATHERFALL", "AmihanUpdraft",
+                "FEATHERFALL II", "A second reading, still being designed. Plays as Featherfall.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Featherfall six times", true, 6),
+
+            // ⚠️ PAETE (2026-09-25), SAME RULE AS AMIHAN'S ROWS ABOVE: named for his real abilities,
+            // the second reading of each slot plays as the default until the owner designs the
+            // variants (*"keep them all as extra skills for now"*). Slot 2 is named for the
+            // attacking role ability.
+            new AbilityVariant("paete.1.vine", "paete", 1, "LIANA LEAP", "PaeteVine",
+                "LIANA LEAP", "Vines from both arms haul you to where you aim.",
+                0, 0, "Escape with a slipper", "30 s to come back"),
+            new AbilityVariant("paete.1.vine_next", "paete", 1, "LIANA LEAP", "PaeteVine",
+                "LIANA LEAP II", "A second reading, still being designed. Plays as Liana Leap.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Liana Leap eight times", true, 8),
+            new AbilityVariant("paete.2.sprout", "paete", 2, "BAKYA BLOOM", "PaeteSprout",
+                "BAKYA BLOOM", "Attacking: a sapling grows wooden slippers and throws them for you.",
+                0, 0, "A second thrower", "Pulled out after 15 s"),
+            new AbilityVariant("paete.2.sprout_next", "paete", 2, "BAKYA BLOOM", "PaeteSprout",
+                "BAKYA BLOOM II", "A second reading, still being designed. Plays as Bakya Bloom.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Bakya Bloom six times", true, 6),
         };
+
+        /// <summary>⚠️⚠️ THE ONE SWITCH. `false` while the owner tests (every skill open); `true`
+        /// locks each alternate behind its cast challenge again. See <see cref="ChallengesEnforced"/>.
+        /// ⚠️ DECLARED ABOVE `ChallengesEnforced` ON PURPOSE: static initialisers run in text order,
+        /// so a switch declared below the field it seeds would be read as `false` whatever it says.</summary>
+        public static readonly bool LockSkillTree = false;
 
         /// <summary>
         /// Whether a variant's challenge has to be finished before it can be equipped.
@@ -372,8 +450,22 @@ namespace TumbangPreso.Core
         /// lets the compiler fold the branch and report the ledger lookup below it as unreachable,
         /// which this project builds as an error. The point of the flag is that the path stays
         /// compiled and reachable; a `const` would delete it.
+        ///
+        /// ⚠️⚠️ TESTING BUILD, OWNER 2026-09-24: *"ur supposed to unlock the other skills as u play the
+        /// character more but for now keep it all unlocked and make it easy to lock again"*. So the
+        /// live value comes from <see cref="LockSkillTree"/>, which is `false`: every branch of every
+        /// hero's tree is open, while the cast counters keep counting underneath so nothing earned is
+        /// lost. **To lock the tree again, set `LockSkillTree` to `true`. That is the whole change.**
+        /// `HubSkillTree` says on screen when the tree is open for testing, so a tester never reads an
+        /// open branch as a broken unlock.
+        ///
+        /// ⚠️ A FIELD RATHER THAN A PROPERTY SO THE LOCKED PATH STAYS TESTABLE IN THIS BUILD. The
+        /// PlayMode probes that press a locked branch set it for their own run and put it back; the
+        /// engine-free tests use the <see cref="HeroBuildRules.IsUnlocked(List{AbilityChallengeProgress},
+        /// AbilityVariant, bool)"/> overload instead, because xunit runs classes in parallel and a
+        /// shared static would race.
         /// </summary>
-        public static readonly bool ChallengesEnforced = true;
+        public static bool ChallengesEnforced = LockSkillTree;
 
         public static IReadOnlyList<AbilityVariant> AllVariants => Variants;
 
@@ -572,10 +664,16 @@ namespace TumbangPreso.Core
         /// </summary>
         public static bool IsUnlocked(List<AbilityChallengeProgress> counters,
                                       AbilityVariant variant)
+            => IsUnlocked(counters, variant, HeroLoadoutRules.ChallengesEnforced);
+
+        /// <summary>The same answer with the switch passed in, so a test can ask about the locked
+        /// tree whatever this build ships with (<see cref="HeroLoadoutRules.LockSkillTree"/>).</summary>
+        public static bool IsUnlocked(List<AbilityChallengeProgress> counters,
+                                      AbilityVariant variant, bool enforced)
         {
             if (variant == null) return false;
             if (variant.IsDefault) return true;
-            if (!HeroLoadoutRules.ChallengesEnforced) return true;
+            if (!enforced) return true;
             return ChallengeCount(counters, variant.Id) >= variant.ChallengeTarget;
         }
 

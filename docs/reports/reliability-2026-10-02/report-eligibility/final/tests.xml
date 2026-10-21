@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.2172698">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="889" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.217270" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2066" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="889" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.195149" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24088" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2067" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="889" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.182296" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2068" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="889" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.169714" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1838" name="RecentPlayerReportEligibilityTests" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.148679" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1847" name="ReportsRemainAvailableIndependentlyOfFriendOffers" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.143702" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1839" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;friend&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;friend&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="1625140251" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.114502" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1840" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;blocked&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;blocked&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="2061219207" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.002633" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1841" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;pending&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;pending&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="1395834568" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.002163" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1842" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;ordinary&quot;,True,True)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;ordinary&quot;,True,True)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="2102314656" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.003573" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1843" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;self&quot;,False,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;self&quot;,False,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="1309903153" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.001838" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1844" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;bot&quot;,False,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;bot&quot;,False,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="531673765" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.001523" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1845" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;empty&quot;,False,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;empty&quot;,False,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="870068558" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.001531" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1846" name="ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;no-social&quot;,True,False)" fullname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers(&quot;no-social&quot;,True,False)" methodname="ReportsRemainAvailableIndependentlyOfFriendOffers" classname="TumbangPreso.Tests.RecentPlayerReportEligibilityTests" runstate="Runnable" seed="1444708542" result="Passed" start-time="2026-10-02 04:17:58Z" end-time="2026-10-02 04:17:58Z" duration="0.002153" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

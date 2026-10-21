@@ -1,0 +1,38 @@
+{
+  "base": "210cd8019a05bd5d1a56b6b5b1880c6e4b52cc7b",
+  "method": "Direct Unity Roslyn compiler using frozen source and existing Bee response inputs",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0",
+  "retry": "One preflight block before compiler start; one successful retry after disk headroom recovery",
+  "nativeTests": "NOT RUN: existing disk reserve boundary; no repeated editor launch",
+  "runtimeAssemblySha256": "544293E94F633ED5C0AF9E810F2D1AAC1C316B6405864941E3E519D1B09DD825",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubHome.cs",
+      "sha256": "8759AE6CF7F495B2B79B190623EC7F40C8D803E11E105BDAD9B56D02E8229BB9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+      "sha256": "F556B0E1BFA7760FCF40C94ECC1667DC8980C1014E7F57A22BBBB7169A4F5907"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubModeSelect.cs",
+      "sha256": "A8A82B0FAF0E757F096150CFE4B31F6ED3F7E80F5413D4AC190F0C8BA15714F2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/OwnerPortraitArt.cs",
+      "sha256": "2C92F77A2CDD49C7997CB9772E6DD8A340AFB23C7C8D58FD2D074B1DBB2DEF41"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "9D3E467B8892ECE9F8D9AA4144EBF80FCF75161835101CCBAAEFE8C1FAFDC6EA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpUiFactory.cs",
+      "sha256": "29ED5DB850A92683E441BC48BA11706A88D52AB568AB675A9AB1024B0FBD0BAA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "D9027923A99C87C3E38EE4A7DED1A418ABBC847631DF1B061103067773767AA2"
+    }
+  ]
+}

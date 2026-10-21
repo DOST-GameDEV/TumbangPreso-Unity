@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 15:26:17Z" end-time="2026-09-27 15:26:18Z" duration="0.3210436">
+  <test-suite type="TestSuite" id="1953" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="761" result="Passed" start-time="2026-09-27 15:26:17Z" end-time="2026-09-27 15:26:18Z" duration="0.321044" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1947" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="761" result="Passed" start-time="2026-09-27 15:26:18Z" end-time="2026-09-27 15:26:18Z" duration="0.310634" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61908" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1948" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="761" result="Passed" start-time="2026-09-27 15:26:18Z" end-time="2026-09-27 15:26:18Z" duration="0.306042" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1949" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="761" result="Passed" start-time="2026-09-27 15:26:18Z" end-time="2026-09-27 15:26:18Z" duration="0.301562" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1514" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-27 15:26:18Z" end-time="2026-09-27 15:26:18Z" duration="0.288127" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1525" name="SplashShaderAndMenuArtWarmupsCompleteInBoundedStages" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.SplashShaderAndMenuArtWarmupsCompleteInBoundedStages" methodname="SplashShaderAndMenuArtWarmupsCompleteInBoundedStages" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1059491081" result="Passed" start-time="2026-09-27 15:26:18Z" end-time="2026-09-27 15:26:18Z" duration="0.277699" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[SplashShaders] shaders=50 variants=97 warmed=97 complete=True calls=97 frames=10 budget_ms=2.0 elapsed_ms=9.171 max_slice_ms=1.493
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

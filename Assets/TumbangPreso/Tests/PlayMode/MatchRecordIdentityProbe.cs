@@ -57,6 +57,15 @@ namespace TumbangPreso.PlayTests
         private bool _savedNetworked;
         private Net.CareerStore _suspendedCareer;
 
+        private sealed class MutableHostProvider : INetProvider
+        {
+            public bool IsHost => true;
+            public bool IsNetworked { get; set; }
+            public int LocalSlot => 0;
+            public int LocalPeerId => 0;
+            public bool IsSeatlessReferee => false;
+        }
+
         [SetUp]
         public void SetUp()
         {
@@ -96,6 +105,11 @@ namespace TumbangPreso.PlayTests
             {
                 var scene = SceneManager.GetSceneAt(i);
                 if (scene == blank || !scene.isLoaded) continue;
+                if (scene.name != null && scene.name.Contains("InitTestScene"))
+                {
+                    Debug.Log("[IdentityProbe] preserving InitTestScene");
+                    continue;
+                }
 
                 var unload = SceneManager.UnloadSceneAsync(scene);
                 yield return ProbeWait.Done(unload, "scene unload");
@@ -117,6 +131,63 @@ namespace TumbangPreso.PlayTests
         {
             _suspendedCareer = Net.CareerStore.Instance;
             if (_suspendedCareer != null) Object.DestroyImmediate(_suspendedCareer);
+        }
+
+        [Test]
+        public void MatchEligibilityIsCapturedFromTheChosenRouteAtStart()
+        {
+            var previousProvider = NetAuthority.Provider;
+            bool previousRoute = SceneFlow.Networked;
+            const System.Reflection.BindingFlags Static = System.Reflection.BindingFlags.Public |
+                                                  System.Reflection.BindingFlags.Static;
+            var careerSlot = typeof(Net.CareerStore).GetProperty("Instance", Static);
+            var rpcSlot = typeof(Net.MatchRpc).GetProperty("Instance", Static);
+            var telemetrySlot = typeof(GameServices).GetProperty("Telemetry", Static);
+            var revokedSlot = typeof(MatchAbandon).GetProperty("AuthorityRevoked", Static);
+            var previousCareer = careerSlot.GetValue(null);
+            var previousRpc = rpcSlot.GetValue(null);
+            var previousTelemetry = telemetrySlot.GetValue(null);
+            var previousRevoked = revokedSlot.GetValue(null);
+            var provider = new MutableHostProvider { IsNetworked = true };
+            var owner = new GameObject("EligibilityCaptureProbe");
+            var collector = owner.AddComponent<MatchStatsCollector>();
+            var begin = typeof(MatchStatsCollector).GetMethod("BeginMatch",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var finish = typeof(MatchStatsCollector).GetMethod("OnMatchEnded",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            try
+            {
+                careerSlot.SetValue(null, null);
+                rpcSlot.SetValue(null, null);
+                telemetrySlot.SetValue(null, null);
+                revokedSlot.SetValue(null, false);
+                NetAuthority.Provider = provider;
+                SceneFlow.Networked = false;
+                begin.Invoke(collector, null);
+                finish.Invoke(collector, new object[] { -1 });
+                Assert.IsNotNull(collector.Last);
+                Assert.IsFalse(collector.Last.Online,
+                    "Practice became eligible while the previous room's transport was still listening");
+
+                SceneFlow.Networked = true;
+                provider.IsNetworked = true;
+                begin.Invoke(collector, null);
+                provider.IsNetworked = false;
+                finish.Invoke(collector, new object[] { -1 });
+                Assert.IsTrue(collector.Last.Online,
+                    "a LAN result lost eligibility when its transport dropped after match start");
+                Debug.Log("[IdentityProbe] eligibility body complete");
+            }
+            finally
+            {
+                NetAuthority.Provider = previousProvider;
+                SceneFlow.Networked = previousRoute;
+                Object.DestroyImmediate(owner);
+                careerSlot.SetValue(null, previousCareer);
+                rpcSlot.SetValue(null, previousRpc);
+                telemetrySlot.SetValue(null, previousTelemetry);
+                revokedSlot.SetValue(null, previousRevoked);
+            }
         }
 
         [UnityTest]

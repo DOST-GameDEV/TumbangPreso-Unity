@@ -1,0 +1,42 @@
+{
+  "job": {
+    "id": "26d23de0c8564b3aa5ce1a9b68c58f36",
+    "ownerPid": 24184,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T09:54:24Z",
+    "kind": "cpu",
+    "memoryMb": 4096,
+    "reserveMb": 1024,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-codex-slot1003",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-codex-slot1003\\library",
+    "profile": "current-integration139",
+    "prefHive": "software\\unity\\unityeditor\\bh studios validation\\tumpworker-codex-slot1003",
+    "ports": [],
+    "worker": true,
+    "allowParallel": true,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": false,
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-codex-slot1003",
+    "coexistEditorProject": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks",
+    "coexistReserveMb": 1024
+  },
+  "requestedUtc": "2026-10-03T09:54:24Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 8493,
+    "activeJobsBefore": 0,
+    "outsideEditors": [],
+    "outsideReserveMb": 0,
+    "acquiredUtc": "2026-10-03T09:54:24Z"
+  },
+  "startedUtc": "2026-10-03T09:54:24Z",
+  "guardPid": 492,
+  "endedUtc": "2026-10-03T09:55:16Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 8405,
+  "leaseHeld": false
+}

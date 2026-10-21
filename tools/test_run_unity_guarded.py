@@ -78,4 +78,57 @@ class ProfileIsolationTests(unittest.TestCase):
                 self.assertEqual(save.read_bytes(),b"original")
 
 
+
+class MachineResolutionTests(unittest.TestCase):
+    """The guard on each machine: the Windows PC, the Mac, and the Linux cloud container."""
+
+    def test_explicit_editor_path_wins_on_every_platform(self):
+        for platform in ("win32","darwin","linux"):
+            with self.subTest(platform=platform):
+                self.assertEqual(guard.unity_executable({"UNITY_EDITOR_PATH":"/x/Unity"},platform),Path("/x/Unity"))
+        self.assertEqual(guard.unity_executable({},"linux"),Path("/opt/tump/unity/Editor/Unity"))
+        self.assertTrue(str(guard.unity_executable({},"win32")).endswith("Unity.exe"))
+
+    def test_linux_profile_follows_xdg_config_home(self):
+        self.assertEqual(guard.player_profile({"XDG_CONFIG_HOME":"/c"},"linux"),
+                         Path("/c/unity3d/BH Studios/Tumbang Preso"))
+        self.assertEqual(guard.player_profile({"USERPROFILE":"/u"},"win32"),
+                         Path("/u/AppData/LocalLow/BH Studios/Tumbang Preso"))
+
+    def test_validation_identity_scopes_both_saves_and_editor_preferences(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);(root/'ProjectSettings').mkdir()
+            settings=root/'ProjectSettings/ProjectSettings.asset'
+            settings.write_text('PlayerSettings:\n  companyName: "BH Studios Validation"\n  productName: TumpWorker-a1002\n')
+            company,product=guard.project_identity(root)
+            self.assertEqual((company,product),('BH Studios Validation','TumpWorker-a1002'))
+            self.assertEqual(guard.player_profile({'USERPROFILE':'/u'},'win32',company,product),
+                Path('/u/AppData/LocalLow/BH Studios Validation/TumpWorker-a1002'))
+            self.assertEqual(guard.playerprefs_guard.editor_key(company,product),
+                r'Software\Unity\UnityEditor\BH Studios Validation\TumpWorker-a1002')
+            self.assertNotEqual(guard.playerprefs_guard.editor_key(company,product),guard.playerprefs_guard.EDITOR_KEY)
+
+    def test_malformed_existing_identity_never_falls_back_to_player_data(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);(root/'ProjectSettings').mkdir()
+            settings=root/'ProjectSettings/ProjectSettings.asset'
+            for text in ('  companyName: Test\n', '  companyName: ../player\n  productName: Test\n',
+                         '  companyName: Test\n  productName: ""\n'):
+                settings.write_text(text)
+                with self.subTest(text=text),self.assertRaises(ValueError):guard.project_identity(root)
+
+    def test_headless_linux_gets_a_virtual_display_and_a_linux_target(self):
+        command=guard.launch_command("/u/Unity",["-batchmode","-runTests"],{},"linux",has_xvfb=True)
+        self.assertEqual(command[:4],["xvfb-run","-a","-s","-screen 0 1920x1080x24"])
+        self.assertEqual(command[-2:],["-buildTarget","Linux64"])
+
+    def test_nographics_a_display_or_an_explicit_target_are_left_alone(self):
+        self.assertEqual(guard.launch_command("/u/Unity",["-nographics"],{},"linux",has_xvfb=True)[0],"/u/Unity")
+        self.assertEqual(guard.launch_command("/u/Unity",[],{"DISPLAY":":1"},"linux",has_xvfb=True)[0],"/u/Unity")
+        command=guard.launch_command("/u/Unity",["-buildTarget","Win64"],{"DISPLAY":":1"},"linux",has_xvfb=True)
+        self.assertEqual(command.count("-buildTarget"),1)
+        self.assertEqual(guard.launch_command("/u/Unity.exe",["-batchmode"],{},"win32"),
+                         ["/u/Unity.exe","-projectPath",str(guard.ROOT),"-batchmode"])
+
+
 if __name__=="__main__":unittest.main()

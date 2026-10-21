@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LagoonSky
+  m_Shader: {fileID: 4800000, guid: 9b4c2bb81879f9747b568c1ab0daab09, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _CloudMap:
+        m_Texture: {fileID: 2800000, guid: ac72d87d64d4a5746abcb7cfa1917680, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _CloudLumaHigh: 1.9445188
+    - _CloudLumaLow: 0.48335156
+    - _CloudLumaScale: 1.540209
+    - _CloudOpacity: 0.79
+    - _CloudSpeed: 0.000105555555
+    - _CloudSunCutoff: 6.6844497
+    - _CloudYaw: -0.3272515
+    - _Exposure: 1
+    m_Colors:
+    - _CloudLight: {r: 0.91, g: 0.92, b: 0.89, a: 1}
+    - _CloudShade: {r: 0.45, g: 0.54, b: 0.63, a: 1}
+    - _Ground: {r: 0.4, g: 0.37, b: 0.31, a: 1}
+    - _Horizon: {r: 0.66, g: 0.79, b: 0.83, a: 1}
+    - _SunColor: {r: 1, g: 0.88, b: 0.7, a: 1}
+    - _SunDirection: {r: 0.32612237, g: 0.71933985, b: -0.61334693, a: 0}
+    - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _Zenith: {r: 0.29, g: 0.52, b: 0.71, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

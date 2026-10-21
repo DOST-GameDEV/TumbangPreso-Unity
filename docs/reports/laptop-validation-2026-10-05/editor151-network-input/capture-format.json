@@ -1,0 +1,159 @@
+{
+  "scope": "Image metadata read from exact published Git blobs; sparse working-tree omissions do not mean missing evidence",
+  "captures": [
+    {
+      "path": "01-matchsetup-editor.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "f29214085ff6283ad51afc7f55d0e9a62a7e8f99fbe4093ad1d04c9a0adb8725"
+    },
+    {
+      "path": "02-rwck-editor-admission.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "99752b92336ca03909e8bb56581f4004af405dbd7d08085af1296adf2d4f1930"
+    },
+    {
+      "path": "03-live-editor-match.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "25fc17f4312ab4c00422b3b023710326eb5c3e1467ae9a51a7eb0bbbb5373d23"
+    },
+    {
+      "path": "04-before-move-input.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "9ae1fb71e9e39bbb43f5a55ba28341fd4c5c994a01dfb1f1f8b75fe14de85d10"
+    },
+    {
+      "path": "05-ended-match-no-results-ui.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "74972c2c7b13e0e5c64f22f354cb459864514ccb8473071d1fdf27f7ad13c161"
+    },
+    {
+      "path": "06-escape-returned-home.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "1139409de2c75911e2d532e1ba26759d452dbe4632fcaf77cfaffeb729c3f97a"
+    },
+    {
+      "path": "07-laptop-lan-host-vgnr.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "3799aa662116253c5dffb0cd82ff9eb0e4ce09c0a0f455ad2975a555a353335b"
+    },
+    {
+      "path": "08-lan-desktop-admitted.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "0375bfa061478e4542566ed13f3ba58dbdb783916a788c72774303f198639a31"
+    },
+    {
+      "path": "09-lan-rules-four90.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "ce22bfc3ae55fc0fc264f44741793dc64f965fcca1dc6c69a202c820a8991f6d"
+    },
+    {
+      "path": "10-console-probe-disconnect-timestamps.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "10812ec95777c12dedc105b723be5df23d25e2777d2fa790d9a2e5b8e183ae00"
+    },
+    {
+      "path": "11-lan-basilio-selected.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "eaae98cc9bb020d3ae1e9253dbb1a977d9b8be4f83e021f261e48d9230b445d8"
+    },
+    {
+      "path": "12-active-basilio-e-after-focus.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "f38e048a86d80b8f3f03a7de89d0a439ab1c685c794b914e973061fdfc292978"
+    },
+    {
+      "path": "13-active-basilio-q-held-shoe.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "da307c9574c887dd69ebe6f28935720248bba0ee525d87c240e54aed900a8291"
+    },
+    {
+      "path": "14-lan-result-visible.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "43a180e19f7a3599f91c9ab722376cd1d3cef7f75028cda8f4d95253c1ceed41"
+    },
+    {
+      "path": "15-pc-heak-missing-lan-browser.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "ef645dd334f84bc773d4b1d641cbbb04ed02d88657111bda675bb99681bae295"
+    },
+    {
+      "path": "16-pc-lan-row-after-source-toggle.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "616a264c81b27066bea7df97d1bf5e7c2739097f5c07be22f5f58a6b42e3b27b"
+    },
+    {
+      "path": "17-pc-heak-row-join-admitted.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "9f8e87bd59b82d866d2ace968168162029e7f924efab8b26892fa2d85fcb4a16"
+    },
+    {
+      "path": "18-native-keyboard-signature-active.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "d38f24c4a1c3dd6e132dd9a826271f9416f775ec41401e43c1fe37c0d6c44893"
+    },
+    {
+      "path": "19-native-fasttap-signature.png",
+      "actualFormat": "JPEG",
+      "width": 1536,
+      "height": 864,
+      "mode": "RGB",
+      "sha256": "d89c0880519349b8ddbf66becd90832c1177b0387aa3cd9d8af8c4546f6bf884"
+    }
+  ],
+  "losslessUnresizedAcceptance": "Not established by these Sky captures",
+  "nativeViewportAndDPI": "Not independently measured"
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 20:54:27Z" end-time="2026-10-04 20:54:46Z" duration="19.0567278">
+  <test-suite type="TestSuite" id="3119" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1730" result="Failed" site="Child" start-time="2026-10-04 20:54:27Z" end-time="2026-10-04 20:54:46Z" duration="19.056728" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3111" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1730" result="Failed" site="Child" start-time="2026-10-04 20:54:27Z" end-time="2026-10-04 20:54:46Z" duration="19.041555" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="166318" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3112" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1730" result="Failed" site="Child" start-time="2026-10-04 20:54:27Z" end-time="2026-10-04 20:54:46Z" duration="19.030573" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3115" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1728" result="Failed" site="Child" start-time="2026-10-04 20:54:27Z" end-time="2026-10-04 20:54:46Z" duration="19.021650" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2202" name="PaeteKitPlayProbe" fullname="TumbangPreso.PlayTests.PaeteKitPlayProbe" classname="TumbangPreso.PlayTests.PaeteKitPlayProbe" runstate="Runnable" testcasecount="30" result="Failed" site="Child" start-time="2026-10-04 20:54:27Z" end-time="2026-10-04 20:54:46Z" duration="18.996885" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2203" name="PaeteCarryAnchorRestsOnHisBranchPalm" fullname="TumbangPreso.PlayTests.PaeteKitPlayProbe.PaeteCarryAnchorRestsOnHisBranchPalm" methodname="PaeteCarryAnchorRestsOnHisBranchPalm" classname="TumbangPreso.PlayTests.PaeteKitPlayProbe" runstate="Runnable" seed="1727543914" result="Failed" start-time="2026-10-04 20:54:27Z" end-time="2026-10-04 20:54:46Z" duration="18.984389" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The carried sole support must rest on the branch palm, not a human-hand-height offset above it.
+  Expected: in range (-0.005,0.03)
+  But was:  0.0828126371f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PaeteKitPlayProbe+<PaeteCarryAnchorRestsOnHisBranchPalm>d__5.MoveNext () [0x00227] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/PaeteKitPlayProbe.cs:88
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

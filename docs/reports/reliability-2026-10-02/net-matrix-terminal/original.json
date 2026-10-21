@@ -1,0 +1,6 @@
+{
+  "run": 3,
+  "failures": 2,
+  "errors": 0,
+  "intended": "HOST with active old round and HOST without round state incorrectly accepted; explicit inactive control passes."
+}

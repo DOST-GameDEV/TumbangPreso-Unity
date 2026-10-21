@@ -1,0 +1,8 @@
+{
+  "question": "Actual owner shoe overlay image without fixture floor occlusion",
+  "observation": "Five split tests pass, but owner image below floor is obscured; geometry assertions not visual acceptance",
+  "change": "Temporarily isolate target renderer subtree to camera layer31 and restore; no assertions or product input changes",
+  "retry": 1,
+  "test_sha256": "6ad91aef9498b1319f4c8f0680c8a0d268b78ae0c80a77b870b71fffefa3daa8",
+  "stop": "one fresh owner test and inspect frame; no further capture repair"
+}

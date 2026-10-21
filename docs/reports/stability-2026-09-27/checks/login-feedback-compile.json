@@ -1,0 +1,37 @@
+{
+  "base": "55aca6cbecea1100059a17c40985f7c96f3ae93a",
+  "method": "Direct Unity Roslyn compiler using frozen source and existing Bee response inputs",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0",
+  "nativeTests": "NOT RUN: existing disk reserve boundary; no repeated editor launch",
+  "runtimeAssemblySha256": "7A13EE8F9744D306E3F0A7571E10BD1D02684A6F902330FE73838AAFF19EC08D",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/OwnerFieldPulse.cs",
+      "sha256": "999D2A034CEFCE83CB6182E99700A496458F7B99607EA71D74FD6C8F132044D6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/OwnerFieldPulse.cs.meta",
+      "sha256": "E4FF548DA378D650F87A329A95BA9C4B2B973BE08F9335520402842B442FEEBD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+      "sha256": "B80246BC2C0D9863DC63FDEC0DDC4A12119B0152C210A5A2DB62B8B83B4AD982"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SignInScreen.OwnerPainted.cs",
+      "sha256": "9A97A04D6F86ADE7350CC5D370981EA218F040E106ABBB89A6E01BD9CC6836C0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SignInScreen.OwnerState.cs",
+      "sha256": "02AB1EAE260E1CCD65A840FC92EF1BF1E998E52FB2EFFE5C3594F87D6C5BB53C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerLoginFeedbackTests.cs",
+      "sha256": "0FF268F656DEC35B6424DC67C236A132C734372F8CDEA267018758870B2BF179"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerLoginFeedbackTests.cs.meta",
+      "sha256": "453EC5A23AF122919566588EE8F40BFE39F8B5466BB0165CA25E9A1B8237125E"
+    }
+  ]
+}

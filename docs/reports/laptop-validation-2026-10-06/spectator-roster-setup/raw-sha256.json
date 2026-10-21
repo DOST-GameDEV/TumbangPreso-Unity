@@ -1,0 +1,14 @@
+{
+  "raw/setup-launch.json": "f76c5b3173f9c7511ef0e37103ff8f7ca3594ff7fe23fad78b7c55da7a2e59f2",
+  "raw/setup-classified-result.json": "bb35da91e046fef8501405f11932a4a6ca7acc29d6ce92f112ff0f2e1e46c64a",
+  "raw/setup-tests.xml": "d1038500eb40105d47932608596b7446c0af40a393e86c6fbad5d024840578eb",
+  "raw/setup-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/lifecycle-launch.json": "d3f50f655cb81a5f521b7d9f1a15de3079a3c1414d96ce3de0a77f49e9ee477c",
+  "raw/lifecycle-classified-result.json": "09fdd00346ec6e9e736aa9665ee273e582a135efa83926638481e9390ff12e23",
+  "raw/lifecycle-tests.xml": "b17be1419d5a88034c70f49c47c052b7f2890416837631ad9d847169d60d0734",
+  "raw/lifecycle-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/SpectatorRosterSetupProbe-original.cs": "8d2eb400d7249aab0610f7dd2d5837395a6086f1863e7187490610d6d7b4cafd",
+  "raw/SpectatorRosterSetupProbe.cs": "2297b809eeb2d48ab7a10c1a80911df58c9c4a5376b62bfffd98d22e15917bd4",
+  "raw/SpectatorRosterSetupProbe.cs.meta": "de53677f4b1eb7057badd28fc2713bbf5782f07f532f1ee4e09b3fd249ca55bf",
+  "raw/installed-cast.txt": "67ba37292e67d1e3209c123529644b6efe76357456f9a58df95a40c8cec7c904"
+}

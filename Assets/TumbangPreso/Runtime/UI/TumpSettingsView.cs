@@ -23,14 +23,17 @@ namespace TumbangPreso.UI
         private InputDeviceKind _device = InputDeviceKind.KeyboardMouse;
         private Action _back, _controller, _touch;
         private bool _suspended;
+        private bool _genericSupportShown;
         private TumpChoice _frameCap;
         private Text _frameReason;
+        private bool? _readingLarge;
+        private Button[] _chips = Array.Empty<Button>();
         public static readonly string[] Sections = { "Controls", "Audio", "Graphics", "Player", "Accessibility" };
 
         public void Open(Transform owner, Action back, Action controller, Action touch)
         {
             _back = back; _controller = controller; _touch = touch;
-            if (_session != null) _session.Dispose();
+            ReleaseSession();
             _session = new TumpSettingsSession(); _session.Changed += Changed;
             if (_canvas == null) Build(owner);
             ScreenTakeover.Register(this, () => !_suspended && _canvas != null && _canvas.gameObject.activeInHierarchy);
@@ -41,19 +44,30 @@ namespace TumbangPreso.UI
         private void OnDisable()
         {
             if (_canvas != null) _canvas.gameObject.SetActive(false);
-            if (_session != null) { if (_session.Dirty) _session.Discard(); _session.Dispose(); }
+            if (_session != null && _session.Dirty) _session.Discard();
+            ReleaseSession();
         }
         private void Update()
         {
             if (_suspended || _canvas == null || !_canvas.gameObject.activeSelf) return;
+            if (_tab == 0 && _device != InputDeviceKind.Touch && !_session.Listening
+                && SettingsOptionMenu.OpenOption == null && _genericSupportShown != ControllerWatch.HasUnrecognised)
+                ShowSection(0);
             if (!MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpokenExcept(this)) return;
             ScreenTakeover.ConsumeEscape();
             if (_session.Listening) { _session.CancelRebind(); return; }
             if (SettingsOptionMenu.OpenOption != null) { SettingsOptionMenu.OpenOption.Close(); return; }
-            if (_decision != null && _decision.activeSelf) { _decision.SetActive(false); return; }
+            if (_decision != null && _decision.activeSelf) { CloseDecision(); return; }
             Back();
         }
-        private void OnDestroy() => ScreenTakeover.Unregister(this);
+        private void ReleaseSession()
+        {
+            if (_session == null) return;
+            _session.Changed -= Changed;
+            _session.Dispose();
+            _session = null;
+        }
+        private void OnDestroy() { ReleaseSession(); ScreenTakeover.Unregister(this); }
         private void BuildPrevious(Transform owner)
         {
             var f = TumpUiTheme.Current;
@@ -111,7 +125,7 @@ namespace TumbangPreso.UI
                 case 4: Accessibility(); break;
             }
             var scroll = _list.GetComponentInParent<ScrollRect>(); scroll.verticalNormalizedPosition = 1;
-            Changed(""); _canvas.GetComponent<ScreenFocus>().Rebuild();
+            PrepareSettingsRows(); Changed(""); _canvas.GetComponent<ScreenFocus>().Rebuild();
         }
         private void NotePrevious(string words)
         {
@@ -145,6 +159,7 @@ namespace TumbangPreso.UI
                 v => { s.RenderStyle = v; RenderStyles.Apply(v); });
             Choice("AntiAliasing", "Smooth edges", AntiAliasModes.All.Select(p => p.Label).ToArray(), s.AntiAliasMode,
                 v => { s.AntiAliasMode = v; AntiAliasModes.Apply(v); });
+            Choice("CharacterShading", "Character shading", GameSettings.CharacterShadingLabels, s.CharacterShading, v => s.CharacterShading = v);
             Choice("VSync", "Vertical sync", VSyncModes.All.Select(p => p.Label).ToArray(), s.VSyncMode,
                 v => { s.VSyncMode = v; VSyncModes.Apply(v); FrameRateOptions.Apply(s.FrameRateLimit); UpdateFrameCapState(); });
             _frameCap = TumpFormWidgets.Choice(Row("FrameRate", "Frame rate limit"), "FrameRateValue",
@@ -233,16 +248,47 @@ namespace TumbangPreso.UI
         }
         private void Changed(string message)
         {
+            bool reflow = _readingLarge != SettingsStore.Current.LargerText;
+            if (reflow)
+            {
+                SettingsReadingLayout.Apply(_canvas, _list);
+                _readingLarge = SettingsStore.Current.LargerText;
+            }
             if (_status != null) _status.text = message;
-            if (_save != null) _save.interactable = _session.Dirty;
+            bool dirty = _session.Dirty;
+            if (_save != null) _save.interactable = dirty;
+            RefreshSave(dirty);
             foreach (var pair in _bindingRows)
-                if (pair.Value != null) pair.Value.GetComponentInChildren<Text>().text = BindingLabel(pair.Key);
+            {
+                if (pair.Value == null) continue;
+                var label = pair.Value.GetComponentInChildren<Text>();
+                string value = BindingLabel(pair.Key);
+                if (label.text == value) continue;
+                label.text = value;
+                SettingsWorkspaceRows.FitChip(pair.Value);
+            }
+            if (reflow)
+                foreach (var chip in _chips) if (chip != null) SettingsWorkspaceRows.FitChip(chip);
+        }
+
+        private void PrepareSettingsRows()
+        {
+            _readingLarge = null;
+            _chips = _list == null ? Array.Empty<Button>() : _list.GetComponentsInChildren<Button>(false)
+                .Where(button => button.transform.Find("ChipFace") != null).ToArray();
         }
         public void Back()
         {
             if (_session.Listening) { _session.CancelRebind(); return; }
             if (_session.Dirty) { Decision(); return; }
             _canvas.gameObject.SetActive(false); _back?.Invoke();
+        }
+        private void CloseDecision()
+        {
+            var selected = UnityEngine.EventSystems.EventSystem.current?.currentSelectedGameObject;
+            bool owned = selected != null && _decision != null && selected.transform.IsChildOf(_decision.transform);
+            _decision?.SetActive(false);
+            if (owned && _canvas != null) _canvas.GetComponent<ScreenFocus>()?.Rebuild();
         }
         private void DecisionPrevious()
         {

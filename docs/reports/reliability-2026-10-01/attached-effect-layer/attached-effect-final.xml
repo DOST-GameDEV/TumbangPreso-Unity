@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 14:05:33Z" end-time="2026-10-01 14:05:33Z" duration="0.209743">
+  <test-suite type="TestSuite" id="2468" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:05:33Z" end-time="2026-10-01 14:05:33Z" duration="0.209743" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2462" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:05:33Z" end-time="2026-10-01 14:05:33Z" duration="0.198743" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10016" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2463" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:05:33Z" end-time="2026-10-01 14:05:33Z" duration="0.196508" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2464" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:05:33Z" end-time="2026-10-01 14:05:33Z" duration="0.194485" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1099" name="AttachedEffectVisibilityTests" fullname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests" classname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-01 14:05:33Z" end-time="2026-10-01 14:05:33Z" duration="0.161817" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1100" name="AuraOnPreviewLayerIsVisibleToTheHostsCamera" fullname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests.AuraOnPreviewLayerIsVisibleToTheHostsCamera" methodname="AuraOnPreviewLayerIsVisibleToTheHostsCamera" classname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests" runstate="Runnable" seed="2121688360" result="Failed" start-time="2026-10-01 14:05:33Z" end-time="2026-10-01 14:05:33Z" duration="0.146892" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Setting the random seed while system is still playing is not supported. Please wait until the system has stopped and all particles have expired or call Stop with ParticleSystemStopBehavior.StopEmittingAndClear to completely stop the system.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.ParticleSystem:set_useAutoRandomSeed (bool)
+TumbangPreso.PlayTests.AttachedEffectVisibilityTests/<AuraOnPreviewLayerIsVisibleToTheHostsCamera>d__2:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/AttachedEffectVisibilityTests.cs:24)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Setting the random seed while system is still playing is not supported. Please wait until the system has stopped and all particles have expired or call Stop with ParticleSystemStopBehavior.StopEmittingAndClear to completely stop the system.
+Setting the random seed while system is still playing is not supported. Please wait until the system has stopped and all particles have expired or call Stop with ParticleSystemStopBehavior.StopEmittingAndClear to completely stop the system.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

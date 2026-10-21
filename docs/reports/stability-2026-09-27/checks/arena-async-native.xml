@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 18:33:19Z" end-time="2026-09-27 18:33:35Z" duration="15.3152177">
+  <test-suite type="TestSuite" id="1970" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="777" result="Passed" start-time="2026-09-27 18:33:19Z" end-time="2026-09-27 18:33:35Z" duration="15.315218" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1964" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="777" result="Passed" start-time="2026-09-27 18:33:19Z" end-time="2026-09-27 18:33:35Z" duration="15.306118" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="65156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1965" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="777" result="Passed" start-time="2026-09-27 18:33:19Z" end-time="2026-09-27 18:33:35Z" duration="15.302230" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1966" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="777" result="Passed" start-time="2026-09-27 18:33:19Z" end-time="2026-09-27 18:33:35Z" duration="15.298650" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1416" name="MatchLoadingReadinessTests" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-27 18:33:19Z" end-time="2026-09-27 18:33:35Z" duration="15.272074" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1417" name="LoadingDeckIsRetainedAndAnUnstartedArenaLoadCanBeCancelled" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests.LoadingDeckIsRetainedAndAnUnstartedArenaLoadCanBeCancelled" methodname="LoadingDeckIsRetainedAndAnUnstartedArenaLoadCanBeCancelled" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" seed="465737553" result="Passed" start-time="2026-09-27 18:33:19Z" end-time="2026-09-27 18:33:20Z" duration="0.320516" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1418" name="OfflineAndNetworkArenaEntryShareOneAsynchronousLoadingOwner" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests.OfflineAndNetworkArenaEntryShareOneAsynchronousLoadingOwner" methodname="OfflineAndNetworkArenaEntryShareOneAsynchronousLoadingOwner" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" seed="1161005608" result="Passed" start-time="2026-09-27 18:33:20Z" end-time="2026-09-27 18:33:35Z" duration="14.940494" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[ArenaPrewarm] drew 20 views in 0.29 s.
+[HubLoading] Eskinita ready after 13.54 s.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[ArenaPrewarm] drew 20 views in 0.17 s.
+[HubLoading] Eskinita ready after 0.73 s.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

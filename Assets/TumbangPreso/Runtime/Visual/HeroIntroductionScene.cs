@@ -1,0 +1,566 @@
+using System;
+using System.Collections.Generic;
+using TumbangPreso.CameraSystem;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+namespace TumbangPreso.Visual
+{
+    // Private scene authoring, driven explicitly by presentation time. No ability,
+    // physics, score, input or global-clock callbacks. Activation in a live match
+    // still requires the accepted shared phase; only opt-in art probes use this now.
+    //
+    // ⚠️⚠️ REFINE-2.11 (owner 2026-09-24): "give every hero a memorable moment in which the stage
+    // briefly feels like theirs", authored one hero at a time, "dont js spam copy paste stuff bcz
+    // it will be boring". THIS FILE IS ONLY THE PLUMBING every hero needs: pieces, the stage wall,
+    // the authored shots, the voice clock and capture visibility. Each hero's stage, props and
+    // timing live in their own partial file (`HeroIntroductionScene.<Hero>.cs`), written from
+    // their own section of `docs/reports/ultimate-performances-2026-09-24/plan.md`, and share no
+    // shapes, colours or beats. The body keys and shots come from `UltimatePerformance`.
+    //
+    // ⚠️ EVERYTHING HERE EXISTS ONLY IN THE OVERLAY'S RENDER COPY. The stage is forced off except
+    // inside `UltimatePhaseView`'s own camera render, so the live court never changes and nobody's
+    // aim or information is affected by it.
+    public sealed partial class HeroIntroductionScene : IDisposable
+    {
+        private sealed class Piece
+        {
+            public Transform Transform;
+            public Renderer Renderer;
+            public Color Color;
+            public readonly MaterialPropertyBlock Block = new MaterialPropertyBlock();
+        }
+        private static readonly int GlowColourId = Shader.PropertyToID("_Color"), GlowFacingId = Shader.PropertyToID("_Facing");
+        private readonly GameObject _root;
+        private readonly string _hero;
+        private readonly Vector3 _ground;
+        private readonly Quaternion _facing;
+        private readonly List<Piece> _pieces = new List<Piece>();
+        private readonly List<LineRenderer> _lines = new List<LineRenderer>();
+        private readonly Transform _rightHand, _leftArm, _head;
+        private readonly Vector3 _leftPalm;
+        private Renderer[] _renderers;
+        private readonly Renderer[] _bodyRenderers;
+        // The caster's own copy, for a stage that shows them a second time (Cheska's miniature court).
+        private readonly GameObject _bodyRoot;
+        private GameObject _heldItem;
+        private Renderer[] _heldRenderers;
+        private AudioSource _sound, _voice;
+        private readonly UltimatePerformance _performance;
+        private readonly bool _reducedEffects;
+        // The caster and where the cast was aimed, for stages that answer the world (Paete's TAKE).
+        private readonly CharacterMotor _source;
+        private readonly Vector3 _aim;
+        public GameObject Root => _root;
+        public UltimatePerformance Performance => _performance;
+        public float Seconds => _performance?.Seconds ?? UltimatePerformance.DefaultSeconds;
+        /// <summary>True once this introduction has spoken the hero's own line inside the gesture.</summary>
+        public bool VoicePlayed { get; private set; }
+
+        /// <param name="aim">The accepted cast's aim (`UltimateCommit.Aim`), for a stage that must know where the power will land
+        /// (Paete's TAKE stages the players his tree will catch). Null falls back to the caster's own intent.</param>
+        public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source, MatchPoseHistory.Copy body, Vector3? aim = null)
+        {
+            _source = source;
+            _aim = aim ?? (source != null && source.Intent != null ? source.Intent.AimPoint : Vector3.zero);
+            _bodyRenderers = body.Root.GetComponentsInChildren<Renderer>(true);
+            _bodyRoot = body.Root;
+            foreach (var bone in body.Bones)
+            {
+                if (bone.name == "HandAnchor") _rightHand = bone;
+                if (bone.name == "arm-left") _leftArm = bone;
+                if (bone.name == "head") _head = bone;
+            }
+            if (_rightHand != null)
+            { _leftPalm = _rightHand.localPosition; _leftPalm.x = -_leftPalm.x; }
+            // Outfits can be asymmetric. Use this rig's real free-hand surface,
+            // with the mirrored point only as the same missing-rig fallback.
+            foreach (var skin in body.Root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                int left = Array.IndexOf(skin.bones, _leftArm);
+                if (left >= 0 && CharacterVisual.PalmCentre(skin, left, out var palm))
+                { _leftPalm = palm; break; }
+            }
+            _hero = hero; _ground = VfxShapes.GroundPoint(source.transform.position);
+            // A caster standing on a floor the court lookup does not know by name (Arena's raised ring, 2026-10-14) put the whole
+            // stage on a floor far below: then the stage stands on what is under their own feet.
+            if (source.IsGrounded && Mathf.Abs(_ground.y - source.transform.position.y) > 1f)
+            {
+                float feet = Slipper.GroundY(source.transform.position + Vector3.up * .3f);
+                if (!float.IsInfinity(feet) && Mathf.Abs(feet - source.transform.position.y) < 1f) _ground.y = feet;
+            }
+            _facing = Quaternion.Euler(0, source.transform.eulerAngles.y, 0);
+            _performance = UltimatePerformance.For(hero, source.GetComponent<Carrier>()?.Held != null);
+            _reducedEffects = Settings.SettingsStore.Current.ReducedEffects;
+            _root = new GameObject("IntroductionScene-" + hero);
+            _root.transform.SetParent(parent, false); _root.transform.SetPositionAndRotation(_ground, _facing);
+            try
+            {
+                CopyHeldItem(source);
+                switch (hero)
+                {
+                    case "sean": BuildSean(); break;
+                    case "phaister": BuildPhaister(); break;
+                    case "zack": BuildZack(); break;
+                    case "nemu": BuildNemu(source); break;
+                    case "dante": BuildDante(); break;
+                    case "cheska": BuildCheska(); break;
+                    case "rafi": BuildRafi(); break;
+                    case "amihan": BuildAmihan(); break;
+                    case "paete": BuildPaete(); break;
+                    default: throw new ArgumentOutOfRangeException(nameof(hero));
+                }
+                _renderers = _root.GetComponentsInChildren<Renderer>(true);
+                // Amihan's cutscene faces are look renderers beside the copied head, outside the root: captured with the scene.
+                if (_amFace != null) { var all = new List<Renderer>(_renderers); all.AddRange(_amFace.Renderers); _renderers = all.ToArray(); }
+                // Dante's suit rides the copy's bones, outside the root: captured with the scene too.
+                if (_dnArmour != null) { var all = new List<Renderer>(_renderers); all.AddRange(_dnArmour.Renderers); _renderers = all.ToArray(); }
+                SetVisibleForCapture(false);
+                Sample(0);
+            }
+            catch { Dispose(); throw; }
+        }
+
+        // ------------------------------------------------------------------ shared plumbing
+
+        private Vector3 RightPalm => _rightHand != null ? _root.transform.InverseTransformPoint(_rightHand.position) : new Vector3(-.4f, 1.2f, .3f);
+        private Vector3 BothPalms => _rightHand != null && _leftArm != null
+            ? _root.transform.InverseTransformPoint((_rightHand.position + _leftArm.TransformPoint(_leftPalm)) * .5f)
+            : new Vector3(0, .7f, .5f);
+        private Vector3 HeadPoint => _head != null ? _root.transform.InverseTransformPoint(_head.position) + Vector3.up * .35f : new Vector3(0, 1.6f, 0);
+        private float LiftAt(float t) => _performance?.LiftAt(t) ?? 0;
+        private Vector3 FreePalm => _leftArm != null ? _root.transform.InverseTransformPoint(_leftArm.TransformPoint(_leftPalm)) : BothPalms;
+
+        private void CopyHeldItem(CharacterMotor actor)
+        {
+            var held = actor.GetComponent<Carrier>()?.Held;
+            var liveHand = actor.GetComponent<CharacterVisual>()?.HandAnchor;
+            if (held == null || liveHand == null || _rightHand == null) return;
+            // Preserve the actual selected shoe and fitted grip from the live rig.
+            // Only mesh/material data is copied, never Slipper/physics/ownership.
+            _heldItem = new GameObject("IntroductionHeldSlipper");
+            _heldItem.transform.SetParent(_rightHand, false);
+            var surfaces = new List<Renderer>();
+            foreach (var source in held.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (!source.enabled || source.GetComponent<VfxRenderTag>() != null) continue;
+                bool activePart = true;
+                for (var part = source.transform; part != held.transform; part = part.parent)
+                    if (!part.gameObject.activeSelf) { activePart = false; break; }
+                if (!activePart) continue;
+                var mesh = source.GetComponent<MeshFilter>();
+                if (mesh == null || mesh.sharedMesh == null) continue;
+                var go = new GameObject("HeldShoeSurface"); go.transform.SetParent(_heldItem.transform, false);
+                held.FitCarriedSurface(source.transform, liveHand, go.transform);
+                go.AddComponent<MeshFilter>().sharedMesh = mesh.sharedMesh;
+                var copy = go.AddComponent<MeshRenderer>(); copy.sharedMaterials = source.sharedMaterials;
+                var properties = new MaterialPropertyBlock(); source.GetPropertyBlock(properties); copy.SetPropertyBlock(properties);
+                copy.shadowCastingMode = ShadowCastingMode.On; copy.forceRenderingOff = true;
+                surfaces.Add(copy);
+            }
+            _heldRenderers = surfaces.ToArray();
+        }
+
+        /// <summary>A translucent, glowing piece. Returns its index for <see cref="Place"/>.</summary>
+        private int Add(string name, Mesh mesh, Color color, float emission = .32f, bool plain = false)
+        {
+            var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
+            var renderer = go.GetComponent<Renderer>();
+            renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
+            // Rafi's own water uses his water shader; his sky and land (`plain`) do not.
+            if (_hero == "rafi" && !plain) RafiWaterVisual.Paint(renderer, color);
+            else VfxMaterial.Ghost(renderer, color, emission);
+            _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = color });
+            return _pieces.Count - 1;
+        }
+
+        /// <summary>
+        /// ⚠️ A PIECE OF LIGHT (`Resources/Shaders/SpiritGlow.shader`, added for Paete's eyes, 2026-09-26): unlit,
+        /// additive, soft from its middle out. A quad unless a <paramref name="mesh"/> is given. `billboard` turns it
+        /// to the lens in the shader; `band` fades it across the mesh's v (a glowing stripe); `lift` pulls it toward
+        /// the lens so a glow ON a surface is not half inside it; `facing` lets <see cref="PlaceGlow"/> dim it when
+        /// seen from behind. Strength is set per frame by <see cref="PlaceGlow"/>, and may exceed 1.
+        /// </summary>
+        private int AddGlow(string name, Color colour, Mesh mesh = null, bool billboard = true, bool band = false,
+                            float falloff = 2f, float core = .6f, float lift = 0f, bool facing = false)
+        {
+            var go = VfxShapes.Stand(_root.transform, name, mesh ?? GlowQuad(), 1);
+            var renderer = go.GetComponent<Renderer>();
+            renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
+            var shader = Resources.Load<Shader>("Shaders/SpiritGlow");
+            if (shader != null)
+            {
+                var m = new Material(shader) { name = name };
+                m.SetFloat("_Billboard", billboard ? 1f : 0f); m.SetFloat("_Band", band ? 1f : 0f);
+                m.SetFloat("_Falloff", falloff); m.SetFloat("_Core", core); m.SetFloat("_Lift", lift);
+                renderer.sharedMaterial = m;
+                VfxRenderTag.Own(go, m);
+            }
+            else VfxMaterial.Ghost(renderer, colour, 1f);
+            _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = colour });
+            return _pieces.Count - 1;
+        }
+
+        /// <summary>A unit quad in XY, uv 0 to 1: what a glow is drawn on.</summary>
+        private static Mesh GlowQuad()
+        {
+            var mesh = new Mesh { name = "IntroductionGlowQuad" };
+            mesh.vertices = new[] { new Vector3(-.5f, -.5f, 0), new Vector3(.5f, -.5f, 0), new Vector3(.5f, .5f, 0), new Vector3(-.5f, .5f, 0) };
+            mesh.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
+            mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
+            mesh.RecalculateNormals();
+            // A billboard is laid out in view space by the shader, so its object bounds must not cull it early.
+            mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2f);
+            return mesh;
+        }
+
+        /// <summary>Place a glow and set its strength (0 hides it; above 1 is brighter); `facing` is its outward direction in the SCENE's space.</summary>
+        private void PlaceGlow(int index, Vector3 position, Vector3 scale, Quaternion rotation, float strength, Vector3? facing = null)
+        {
+            var p = _pieces[index]; p.Transform.localPosition = position;
+            p.Transform.localScale = scale; p.Transform.localRotation = rotation;
+            var color = p.Color; color.a = Mathf.Max(0f, strength);
+            p.Block.SetColor(GlowColourId, color);
+            p.Block.SetVector(GlowFacingId, facing.HasValue ? (Vector4)_root.transform.TransformDirection(facing.Value).normalized + new Vector4(0, 0, 0, 1) : Vector4.zero);
+            p.Renderer.SetPropertyBlock(p.Block);
+            p.Renderer.enabled = strength > .002f;
+        }
+
+        /// <summary>An opaque, lit piece: stone and ice that must read as objects, not light.</summary>
+        private int AddSolid(string name, Mesh mesh, Color color)
+        {
+            var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
+            var renderer = go.GetComponent<Renderer>();
+            renderer.shadowCastingMode = ShadowCastingMode.On;
+            VfxMaterial.Solid(renderer, color);
+            _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = color });
+            return _pieces.Count - 1;
+        }
+
+        /// <summary>
+        /// ⚠️ THE STAGE WALL. A cylinder round the hero, open at the top, seen from inside, so every
+        /// authored shot (front, side, over the shoulder, from below) has THEIR world behind them
+        /// instead of the court. Radius 8 m keeps every intro camera (3 to 6 m out) inside it.
+        /// Translucent on purpose: the court recedes behind it rather than vanishing, which is
+        /// Sepak U's rule that the summoned world sits BEHIND the action (research.md § 1).
+        /// Each hero builds its own bands from this, in its own colours; nobody shares a wall.
+        /// </summary>
+        private int Wall(string name, float bottom, float top, Color color, float radius = 8f, int sides = 28, float emission = .25f, bool cap = false)
+        {
+            int index = Add(name, WallMesh(sides, cap), color, emission, plain: true);
+            var p = _pieces[index];
+            p.Transform.localPosition = new Vector3(0, bottom, 0);
+            p.Transform.localScale = new Vector3(radius, top - bottom, radius);
+            return index;
+        }
+
+        /// <summary>
+        /// A cylinder wall of unit radius and height. `cap` closes the top: the stage sketch showed
+        /// every low shot looking up through the open top into the bright real sky, which reads
+        /// as a hole in the night (`previews/phaister_v7_stage.png`).
+        /// </summary>
+        private static Mesh WallMesh(int sides, bool cap = false)
+        {
+            var mesh = new Mesh { name = "Introduction stage wall" };
+            var vertices = new List<Vector3>((sides + 1) * 2 + 1);
+            var triangles = new List<int>(sides * 18);
+            for (int i = 0; i <= sides; i++)
+            {
+                float a = i * Mathf.PI * 2 / sides;
+                var rim = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                vertices.Add(rim); vertices.Add(rim + Vector3.up);
+                if (i == sides) continue;
+                int n = i * 2;
+                triangles.AddRange(new[] { n, n + 1, n + 2, n + 2, n + 1, n + 3 });
+            }
+            if (cap)
+            {
+                int centre = vertices.Count; vertices.Add(Vector3.up);
+                for (int i = 0; i < sides; i++)
+                {
+                    int a = i * 2 + 1, b = i * 2 + 3;
+                    triangles.AddRange(new[] { centre, a, b });
+                }
+            }
+            mesh.SetVertices(vertices); mesh.SetTriangles(triangles, 0);
+            // Opposite faces must not share normals. Their cancellation made
+            // these large lit walls black even after TwoSided's other users
+            // were fixed. Reuse its separated front/back vertices here too.
+            return VfxShapes.TwoSided(mesh);
+        }
+
+        private void Place(int index, Vector3 position, Vector3 scale, Quaternion rotation, float opacity)
+        {
+            var p = _pieces[index]; p.Transform.localPosition = position;
+            p.Transform.localScale = scale; p.Transform.localRotation = rotation;
+            Tint(index, opacity);
+        }
+
+        private void Tint(int index, float opacity, Color? colour = null)
+        {
+            var p = _pieces[index];
+            Color color = colour ?? p.Color; color.a *= Mathf.Clamp01(opacity);
+            p.Block.SetColor("_Color", color); p.Block.SetColor("_BaseColor", color);
+            p.Renderer.SetPropertyBlock(p.Block);
+            p.Renderer.enabled = opacity > .002f;
+        }
+
+        private LineRenderer Line(string name, int points, float width, Color color)
+        {
+            var go = new GameObject(name); go.transform.SetParent(_root.transform, false);
+            var line = go.AddComponent<LineRenderer>(); line.useWorldSpace = false;
+            line.positionCount = points; line.widthMultiplier = width; line.numCapVertices = 2;
+            line.shadowCastingMode = ShadowCastingMode.Off;
+            VfxMaterial.Ghost(line, color, .65f);
+            _lines.Add(line);
+            return line;
+        }
+
+        private static float Ease(float from, float to, float time)
+        { float u = Mathf.InverseLerp(from, to, time); return u * u * (3 - 2 * u); }
+
+        /// <summary>0 before the stage arrives, 1 while it holds, 0 again as play returns.</summary>
+        private float StagePresence(float t, float arrive = .35f)
+            => Ease(0, arrive, t) * (1 - Ease(Seconds - .45f, Seconds - .05f, t));
+
+        /// <summary>A flash is one bright moment. Reduced effects keeps the shape and drops the flash.</summary>
+        private float Flash(float t, float at, float width = .08f)
+            => _reducedEffects ? 0 : Mathf.Clamp01(1 - Mathf.Abs(t - at) / width);
+
+        /// <summary>
+        /// Where this cutscene leaves other players at its last frame, for the host to put them there as play resumes (by seat,
+        /// world space). Empty for a stage that moves nobody. Owner, 2026-10-17: *"Play keeps the cutscene's moves"*.
+        /// </summary>
+        public void HandBackPlaces(List<(int seat, Vector3 world)> into)
+        {
+            if (into == null) return;
+            if (_hero == "nemu") NemuHandBackPlaces(into);
+        }
+
+        public bool StartSound()
+        {
+            if (_sound != null) return true;
+            string cue = Abilities.HeroAbilitySystem.ThemeFor(_hero);
+            // Hero skill sounds, the ultimate themes among them, are off until they are reworked (`AudioCues.SkillSfxOn`).
+            if (!Audio.AudioCues.Audible(cue)) return false;
+            var clip = !string.IsNullOrEmpty(cue) ? Resources.Load<AudioClip>("Sfx/" + Audio.AudioCues.FileStemFor(cue)) : null;
+            if (clip == null) return false;
+            _sound = _root.AddComponent<AudioSource>(); _sound.playOnAwake = false;
+            _sound.spatialBlend = 0; _sound.loop = false; _sound.clip = clip;
+            _sound.volume = 0; _sound.Play();
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ THE HERO'S OWN LINE PLAYS INSIDE THE GESTURE IT DESCRIBES (Phaister's laugh while she
+        /// laughs), at the authored `voice` time, once. Overwatch's ultimate lines are the model
+        /// (research.md § 1): the voice is part of the performance, not a stinger afterwards. The
+        /// live ability skips its copy when this one played (`HeroAbility.IntroductionVoiced`).
+        /// </summary>
+        private void SampleVoice(float t)
+        {
+            if (VoicePlayed || _performance == null || _performance.VoiceAt < 0 || t < _performance.VoiceAt) return;
+            VoicePlayed = true;
+            var clip = Resources.Load<AudioClip>("Sfx/" + Audio.AudioCues.FileStemFor(_performance.VoiceCue));
+            if (clip == null) { VoicePlayed = false; return; }
+            _voice = _root.AddComponent<AudioSource>(); _voice.playOnAwake = false; _voice.spatialBlend = 0;
+            _voice.clip = clip; _voice.volume = Settings.SettingsStore.Current.SfxGain * .85f; _voice.Play();
+        }
+
+        /// <summary>
+        /// The shared boundary when this hero is one of a cohort. A shorter performance holds its
+        /// last full moment and only plays its exit as the LONGEST caster's ends, so no stage
+        /// vanishes while the overlay is still up.
+        /// </summary>
+        public float Boundary { get; set; } = -1;
+
+        private float Local(float seconds)
+        {
+            float t = Mathf.Max(0, seconds);
+            if (Boundary <= Seconds + .001f) return Mathf.Min(t, Seconds);
+            float holdFrom = Seconds - .45f;
+            if (t <= holdFrom) return t;
+            if (t >= Boundary - .45f) return Mathf.Min(Seconds, Seconds - (Boundary - t));
+            return holdFrom;
+        }
+
+        /// <summary>
+        /// Pose the stage at this moment. `audible` false is for judging shots ahead of time: it
+        /// must never fire the voice line early.
+        /// </summary>
+        public void Sample(float seconds, bool audible = true)
+        {
+            float t = Local(seconds);
+            float leave = 1 - Ease(Seconds - .42f, Seconds, t);
+            if (_sound != null) _sound.volume = Settings.SettingsStore.Current.SfxGain * .60f * Ease(0, .15f, t) * leave;
+            if (audible) SampleVoice(t);
+            switch (_hero)
+            {
+                case "sean": SampleSean(t); break;
+                case "phaister": SamplePhaister(t); break;
+                case "zack": SampleZack(t); break;
+                case "nemu": SampleNemu(t); break;
+                case "dante": SampleDante(t); break;
+                case "cheska": SampleCheska(t); break;
+                case "rafi": SampleRafi(t); break;
+                case "amihan": SampleAmihan(t); break;
+                case "paete": SamplePaete(PaeteClock(t)); break;
+            }
+        }
+
+        // ------------------------------------------------------------------ shots
+
+        public int ShotCount => _performance?.Shots.Count ?? 0;
+        public int ShotIndexAt(float seconds) => ShotCount > 0 ? _performance.ShotIndexAt(seconds) : -1;
+        public bool IsCloseShot(float seconds) { int i = ShotIndexAt(seconds); return i >= 0 && _performance.Shots[i].Close; }
+        public float ShotStart(int index) => _performance.Shots[index].Start;
+        public float ShotEnd(int index) => _performance.Shots[index].End;
+
+        /// <summary>The authored shot covering this moment, in world space. Convenience for probes.</summary>
+        public void Shot(float seconds, out Vector3 position, out Vector3 focus, out float fov, float aspect = 16f / 9)
+            => ShotAt(ShotIndexAt(seconds), seconds, out position, out focus, out fov, aspect);
+
+        public void ShotAt(int index, float seconds, out Vector3 position, out Vector3 focus, out float fov, float aspect = 16f / 9)
+        {
+            if (index < 0)
+            {
+                position = _ground + _facing * new Vector3(2.2f, 1.1f, 4.5f); focus = _ground + _facing * (Vector3.up * 1.05f); fov = 46; return;
+            }
+            _performance.Shot(index, seconds, out var eye, out var look, out fov);
+            // Paete's RISE follows his guardian when it had to be pushed off the can (`HeroIntroductionScene.PaeteVfx.cs`).
+            if (_hero == "paete") PaeteFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Phaister's THROW and MARK are computed from where she aimed and who is marked (`HeroIntroductionScene.PhaisterMark.cs`).
+            if (_hero == "phaister") PhaisterFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Amihan's OPEN whip pan, CATCH orbit and high HIT finish are computed from the scene (`HeroIntroductionScene.Amihan.cs`).
+            if (_hero == "amihan") AmihanFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Cheska's three looks are shot through her eyes at whoever she turns to (`HeroIntroductionScene.Cheska.cs`).
+            if (_hero == "cheska") CheskaFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Sean's RISE looks at his lantern wherever it has climbed to (`HeroIntroductionScene.Sean.cs`).
+            if (_hero == "sean") SeanFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Nemu's FLOOD and LET THEM IN are computed from where the players stand (`HeroIntroductionScene.Nemu.cs`).
+            if (_hero == "nemu") NemuFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            if (_hero == "rafi") RafiFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Dante's shots are framed from his own body and the real enemies (`HeroIntroductionScene.DanteFrame.cs`).
+            if (_hero == "dante") DanteFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
+            if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
+            position = _ground + _facing * eye; focus = _ground + _facing * look;
+            if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
+        }
+
+        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(PaeteClock(t)) : _hero == "phaister" ? PhaisterShake(t)
+            : _hero == "amihan" ? AmihanShake(t) : _hero == "dante" ? DanteShake(t) : _hero == "cheska" ? CheskaShake(t) : _hero == "rafi" ? RafiShake(t) : _hero == "nemu" ? NemuShake(t) : Vector3.zero;
+
+        /// <summary>
+        /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
+        /// moment, applied by `UltimatePhaseView` through `ColourGrade.SetEventGrade` (which multiplies the map's grade, so it returns
+        /// to exactly the map at 1, 1). The burst references all step the world back while the power is on screen; Paete's is the
+        /// first hero to use it. Every other hero returns 1, 1, which is what the phase camera rendered before.
+        /// </summary>
+        public void GradeAt(float seconds, out float brightness, out float saturation)
+        {
+            brightness = 1f; saturation = 1f;
+            if (_hero == "paete") PaeteGrade(PaeteClock(Local(seconds)), out brightness, out saturation);
+            if (_hero == "phaister") PhaisterGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "amihan") AmihanGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "sean") SeanGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "nemu") NemuGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "zack") ZackGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "dante") DanteGrade(Local(seconds), out brightness, out saturation);
+        }
+
+        /// <summary>
+        /// ⚠️ A HERO'S OWN PASS OVER THE FINISHED FRAME (HERO-10, 2026-09-27): `UltimatePhaseView` hands every rendered frame of the
+        /// cutscene here before it goes on screen. Only Phaister's impact frame uses it (two frames of the picture turned inside out
+        /// as her eye lands, `HeroIntroductionScene.PhaisterMark.cs`); every other hero returns at once.
+        /// </summary>
+        public void PostProcess(RenderTexture frame, Camera camera, float seconds)
+        {
+            if (frame == null || camera == null) return;
+            if (_hero == "phaister") PhaisterPostProcess(frame, camera, Local(seconds));
+            if (_hero == "nemu") NemuPostProcess(frame, camera, Local(seconds));
+            if (_hero == "dante") DantePostProcess(frame, camera, Local(seconds));
+        }
+
+        /// <summary>
+        /// ⚠️ THE LAST MOVE ON THE CASTER'S OWN SCREEN (2026-10-09, for Sean). `UltimatePhaseView` calls this only for the peer
+        /// that is watching this caster, after the shot is chosen: a stage may bring the lens from its last shot to where that
+        /// player's own first-person view will be when play resumes, so they arrive in their own eyes instead of being cut
+        /// to them. Everyone else's picture is left alone and ends on the ordinary quick dissolve, which reads as a cut.
+        /// Positions are world ones here. Every hero but Sean returns at once.
+        /// </summary>
+        public void HandBackView(float seconds, float duration, Camera live, ref Vector3 eye, ref Vector3 target, ref float fov)
+        {
+            if (_hero == "sean" && live != null) SeanHandBack(Local(seconds), live, ref eye, ref target, ref fov);
+        }
+
+        /// <summary>The single locked shot for reduced motion: no cut and no camera move.</summary>
+        public void StillShot(out Vector3 position, out Vector3 focus, out float fov)
+        {
+            if (_performance != null && _performance.HasStill)
+            { position = _ground + _facing * _performance.StillEye; focus = _ground + _facing * _performance.StillLook; fov = _performance.StillFov; return; }
+            ShotAt(ShotCount - 1, Seconds, out position, out focus, out fov);
+        }
+
+        /// <summary>
+        /// Keep every body in frame, keeping the lens constant and
+        /// backing the camera out along its own line. Retained from the previous Nemu reveal.
+        /// </summary>
+        private void FitBodies(ref Vector3 position, ref Vector3 focus, float fov, float aspect, float seconds)
+        {
+            if (!TryCharacterBounds(out var bounds)) return;
+            Vector3 backward = (position - focus).normalized;
+            float distance = Vector3.Distance(position, focus);
+            focus = Vector3.Lerp(focus, bounds.center, Ease(ShotStart(ShotIndexAt(seconds)), ShotEnd(ShotIndexAt(seconds)), seconds));
+            var inverse = Quaternion.Inverse(Quaternion.LookRotation(-backward, Vector3.up));
+            // .78, not .82: the 4:3 framing check missed by 0.003 of the frame (NemuKeeps...Aspect).
+            float vertical = Mathf.Tan(fov * Mathf.Deg2Rad * .5f) * .78f;
+            float horizontal = vertical * Mathf.Max(.5f, aspect);
+            for (int corner = 0; corner < 8; corner++)
+            {
+                Vector3 at = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
+                    (corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+                Vector3 view = inverse * (at - focus);
+                distance = Mathf.Max(distance, Mathf.Max(Mathf.Abs(view.x) / horizontal - view.z + .1f,
+                    Mathf.Abs(view.y) / vertical - view.z + .1f));
+            }
+            position = focus + backward * distance;
+        }
+
+        public bool TryCharacterBounds(out Bounds bounds)
+        {
+            bounds = default; bool found = false; Bounds result = default;
+            void Include(Renderer[] renderers)
+            {
+                if (renderers == null) return;
+                foreach (var renderer in renderers)
+                {
+                    if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy || renderer.name == "KuroEyeWisp") continue;
+                    if (!found) { result = renderer.bounds; found = true; } else result.Encapsulate(renderer.bounds);
+                }
+            }
+            Include(_bodyRenderers); Include(_heldRenderers); bounds = result;
+            return found;
+        }
+
+        public void SetVisibleForCapture(bool visible)
+        {
+            if (_renderers != null) foreach (var r in _renderers) if (r != null) r.forceRenderingOff = !visible;
+            if (_heldRenderers != null) foreach (var r in _heldRenderers) if (r != null) r.forceRenderingOff = !visible;
+        }
+
+        public void Dispose()
+        {
+            if (_sound != null) _sound.Stop();
+            if (_voice != null) _voice.Stop();
+            // Paete's opens the sky through the map for her (`NearFade.OpenSky`); it must never outlive him.
+            if (_hero == "paete") NearFade.CloseSky();
+            if (_hero == "nemu") NemuDispose();
+            _amFace?.Dispose(); _amFace = null;
+            if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
+            if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }
+        }
+        private static void ObjectDestroy(UnityEngine.Object value)
+        { if (Application.isPlaying) UnityEngine.Object.Destroy(value); else UnityEngine.Object.DestroyImmediate(value); }
+    }
+}

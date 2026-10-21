@@ -1,0 +1,98 @@
+{
+  "base": "7252ec9e8",
+  "runs": {
+    "cold-order": {
+      "pid": 27512,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Failed",
+          "message": "  First Home arrival must advance decoded frames without navigating away\n  Expected: greater than 9\n  But was:  7\n"
+        }
+      ],
+      "restoredInputCount": 21249,
+      "remainingSourceDeltas": [],
+      "inputRestored": true,
+      "editorInputRestored": true,
+      "profileRestored": true
+    },
+    "decoder-reprepare": {
+      "pid": 16216,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "restoredInputCount": 21249,
+      "remainingSourceDeltas": [],
+      "inputRestored": true,
+      "editorInputRestored": true,
+      "profileRestored": true
+    },
+    "playback-controls": {
+      "pid": 10748,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.EveryListedHeroShipsItsLoopAndPoster",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.FailedBootWarmupGetsFreshPlaybackWhenHomeOpens",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.OpaqueHomeMediaSuspendsTheHiddenCourtAndRestoresItsFallback",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.PhaistersLoopPlaysWhenPicked",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.ThePickCanLandOnEveryHeroAndFallsBackToZack",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HubSceneVideoTests.TheStudioMarkLoadsAtItsOwnShape",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "restoredInputCount": 21249,
+      "remainingSourceDeltas": [],
+      "inputRestored": true,
+      "editorInputRestored": true,
+      "profileRestored": true
+    }
+  },
+  "sourceSha256": {
+    "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs": "4e4583bdfe11cdccb78e7c98e0a846ebfef380161731419eec942378f889ca2e",
+    "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "364e521150e85b8bc936be321b6c2a07549e1a9776f0376015e387279768bf9a",
+    "Assets/TumbangPreso/Runtime/UI/Hub/HubSceneVideo.Warmup.cs": "420d0a3106186f2f2985925f9bbd19d475f199b6cd9d335e72f8563256d06480",
+    "Assets/TumbangPreso/Tests/PlayMode/HubSceneVideoTests.cs": "81a132f56fe3ac9bd5d767693953625ba5b135a069d95d8acbf2c149642b7a68",
+    "Assets/TumbangPreso/Tests/PlayMode/StartupOrder1007Tests.cs": "906a0dc551e6de6c5fe9fcb7c1efb8e5bb90f483cb70a9bf3a26b6c2d9567645",
+    "Assets/TumbangPreso/Tests/PlayMode/StartupOrder1007Tests.cs.meta": "0578d971e0f3d748612b13253795e95f9364787733fe7726a844658693f8bd8d"
+  }
+}

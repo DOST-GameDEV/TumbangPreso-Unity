@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.3481316">
+  <test-suite type="TestSuite" id="3517" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2038" result="Failed" site="Child" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.348132" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3509" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2038" result="Failed" site="Child" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.336955" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48168" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3510" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2038" result="Failed" site="Child" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.334751" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3513" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2036" result="Failed" site="Child" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.332872" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1092" name="AiSkimDecisionTests" fullname="TumbangPreso.PlayTests.AiSkimDecisionTests" classname="TumbangPreso.PlayTests.AiSkimDecisionTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.278508" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1095" name="ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper" fullname="TumbangPreso.PlayTests.AiSkimDecisionTests.ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper" classname="TumbangPreso.PlayTests.AiSkimDecisionTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.274158" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1093" name="ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper(True)" fullname="TumbangPreso.PlayTests.AiSkimDecisionTests.ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper(True)" methodname="ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper" classname="TumbangPreso.PlayTests.AiSkimDecisionTests" runstate="Runnable" seed="686291413" result="Failed" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.210486" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The current held-slipper coating must be considered before throwing, without needing a nearby pursuer or movement.
+  Expected: Skill2
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiSkimDecisionTests.ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper (System.Boolean held) [0x00247] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiSkimDecisionTests.cs:48
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1094" name="ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper(False)" fullname="TumbangPreso.PlayTests.AiSkimDecisionTests.ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper(False)" methodname="ArmedThrowPlanConsidersSkimOnlyWithAHeldSlipper" classname="TumbangPreso.PlayTests.AiSkimDecisionTests" runstate="Runnable" seed="1921965784" result="Passed" start-time="2026-10-07 07:06:10Z" end-time="2026-10-07 07:06:10Z" duration="0.049986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

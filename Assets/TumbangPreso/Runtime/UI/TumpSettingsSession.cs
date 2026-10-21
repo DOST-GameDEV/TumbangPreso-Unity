@@ -58,6 +58,8 @@ namespace TumbangPreso.UI
             Changed?.Invoke("Press a control for " + Rebinding.LabelFor(action) + ". Cancel to stop.");
             _rebind = RebindSession.Begin(Actions, action, device, (outcome, conflict) =>
             {
+                // The operation ends during input update, before the view reads legacy Back.
+                if (outcome == RebindOutcome.Cancelled) ScreenTakeover.ConsumeEscape();
                 _rebind = null;
                 if (outcome != RebindOutcome.Bound) RestoreBindings(_beforeRebind);
                 Changed?.Invoke(outcome == RebindOutcome.Bound ? "Control updated. Save to keep it."

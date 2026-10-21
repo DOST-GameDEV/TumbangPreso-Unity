@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 11:31:11Z" end-time="2026-10-01 11:31:23Z" duration="12.1286189">
+  <test-suite type="TestSuite" id="2430" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1169" result="Failed" site="Child" start-time="2026-10-01 11:31:11Z" end-time="2026-10-01 11:31:23Z" duration="12.128619" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2424" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1169" result="Failed" site="Child" start-time="2026-10-01 11:31:11Z" end-time="2026-10-01 11:31:23Z" duration="12.103032" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="296271" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2425" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1169" result="Failed" site="Child" start-time="2026-10-01 11:31:11Z" end-time="2026-10-01 11:31:23Z" duration="12.085497" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2426" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1169" result="Failed" site="Child" start-time="2026-10-01 11:31:11Z" end-time="2026-10-01 11:31:23Z" duration="12.069487" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2218" name="SwimmingNameplateTests" fullname="TumbangPreso.PlayTests.SwimmingNameplateTests" classname="TumbangPreso.PlayTests.SwimmingNameplateTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 11:31:11Z" end-time="2026-10-01 11:31:16Z" duration="5.254332" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2219" name="FlatGlowPreservesDiscAndOpenTayaSilhouettes" fullname="TumbangPreso.PlayTests.SwimmingNameplateTests.FlatGlowPreservesDiscAndOpenTayaSilhouettes" methodname="FlatGlowPreservesDiscAndOpenTayaSilhouettes" classname="TumbangPreso.PlayTests.SwimmingNameplateTests" runstate="Runnable" seed="1961181473" result="Failed" start-time="2026-10-01 11:31:11Z" end-time="2026-10-01 11:31:14Z" duration="3.004695" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Attacker retains a filled identity centre.
+  Expected: greater than 0.0149999997f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SwimmingNameplateTests+<FlatGlowPreservesDiscAndOpenTayaSilhouettes>d__3.MoveNext () [0x002f5] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/SwimmingNameplateTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="2220" name="RoleMarkerFollowsWaterAndReturnsToTheCapsuleFloor" fullname="TumbangPreso.PlayTests.SwimmingNameplateTests.RoleMarkerFollowsWaterAndReturnsToTheCapsuleFloor" methodname="RoleMarkerFollowsWaterAndReturnsToTheCapsuleFloor" classname="TumbangPreso.PlayTests.SwimmingNameplateTests" runstate="Runnable" seed="1028638136" result="Passed" start-time="2026-10-01 11:31:14Z" end-time="2026-10-01 11:31:16Z" duration="2.234906" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2376" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="31" result="Passed" start-time="2026-10-01 11:31:16Z" end-time="2026-10-01 11:31:23Z" duration="6.763727" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2398" name="TayaTargetsAreCameraScopedAndReadableAtTenMetres" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.TayaTargetsAreCameraScopedAndReadableAtTenMetres" methodname="TayaTargetsAreCameraScopedAndReadableAtTenMetres" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="868136523" result="Passed" start-time="2026-10-01 11:31:16Z" end-time="2026-10-01 11:31:23Z" duration="6.756971" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-1.1-v1/shots/taya-10m-before.png
+[Play] wrote Logs/look-1.1-v1/shots/taya-10m-after.png
+[Play] wrote Logs/look-1.1-v1/shots/taya-10m-comfort.png
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

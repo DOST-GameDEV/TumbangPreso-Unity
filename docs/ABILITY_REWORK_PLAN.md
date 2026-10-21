@@ -4,7 +4,7 @@
 
 The older OPEN/not-implemented headings below preserve design history. They are
 not instructions to rebuild completed skills or restore rejected models/UI.
-Use ACTIVE_REWORK_LEDGER.md and GAMEPLAY_RESUME_AFTER_UI.md for the live queue.
+Use ACTIVE_REWORK_LEDGER.md and archive/GAMEPLAY_RESUME_AFTER_UI.md for the live queue.
 The owner reopened UI on September15; the finalized supplied menu/login and its
 cloud/dust effects are now implemented and qualified. Continue gameplay afterward.
 

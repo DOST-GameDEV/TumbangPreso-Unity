@@ -1,0 +1,302 @@
+0.000	1	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.500	1	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	1	88.980	Quiet	QuietEstablish	the street	1	0
+1.502	1	88.460	Quiet	QuietEstablish	the street	1	0
+2.004	1	87.960	Quiet	QuietEstablish	the street	1	0
+2.505	1	87.460	ThrowPrep	Objective	throw · ILYAS	2	0
+3.006	1	86.961	ThrowPrep	Objective	throw · ILYAS	2	0
+3.703	1	86.261	LataHit	Objective	the can · YASMIN	3	0
+4.204	1	85.761	LataHit	Objective	the can · YASMIN	3	0
+4.705	1	85.261	LataHit	Objective	the can · YASMIN	3	0
+5.206	1	84.761	Retrieval	Chase	retrieval · YASMIN	3	0
+5.708	1	84.321	Retrieval	RetrievalTwoShot	retrieval · ILYAS	4	0
+6.209	1	83.821	Retrieval	RetrievalTwoShot	retrieval · ILYAS	4	0
+6.710	1	83.321	Retrieval	RetrievalTwoShot	retrieval · ILYAS	4	0
+7.211	1	82.821	Retrieval	RetrievalTwoShot	retrieval · ILYAS	4	0
+7.711	1	82.321	Retrieval	RetrievalTwoShot	retrieval · ILYAS	4	0
+8.211	1	81.821	Retrieval	Chase	retrieval · ILYAS	4	0
+8.711	1	81.321	Retrieval	Chase	retrieval · ILYAS	4	0
+9.212	1	80.882	Tag	Defender	tag · YASMIN	5	0
+9.713	1	80.382	Tag	Defender	tag · YASMIN	5	0
+10.245	1	79.842	Tag	Defender	tag · YASMIN	5	0
+10.746	1	79.342	Tag	Defender	tag · YASMIN	5	0
+11.247	1	78.842	Tag	Defender	tag · YASMIN	5	0
+11.748	1	78.342	Retrieval	Chase	retrieval · YASMIN	6	0
+12.249	1	77.842	Retrieval	Chase	retrieval · YASMIN	6	0
+12.749	1	77.342	Downed	Recovery	down · OWNER UPDATED	7	0
+13.250	1	76.842	Downed	Recovery	down · OWNER UPDATED	7	0
+13.750	1	76.342	Downed	Recovery	down · ILYAS	8	0
+14.252	1	75.842	Downed	Recovery	down · ILYAS	8	0
+14.753	1	75.342	Downed	Recovery	down · ILYAS	8	0
+15.255	1	74.843	LataHit	Objective	the can · YASMIN	9	0
+15.757	1	74.343	Retrieval	RetrievalTwoShot	retrieval · YASMIN	10	0
+16.259	1	73.843	Retrieval	RetrievalTwoShot	retrieval · YASMIN	10	1
+16.761	1	73.323	Retrieval	RetrievalTwoShot	retrieval · YASMIN	10	1
+17.262	1	72.823	Retrieval	RetrievalTwoShot	retrieval · YASMIN	10	1
+17.764	1	72.323	Retrieval	RetrievalTwoShot	retrieval · YASMIN	10	1
+18.264	1	71.823	Retrieval	RetrievalTwoShot	retrieval · YASMIN	10	1
+18.767	1	71.323	Retrieval	RetrievalTwoShot	retrieval · YASMIN	10	1
+19.267	1	70.823	Retrieval	RetrievalTwoShot	retrieval · YASMIN	11	2
+19.769	1	70.383	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	3
+20.269	1	69.883	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	3
+20.770	1	69.383	Retrieval	RetrievalTwoShot	retrieval · YASMIN	13	4
+21.271	1	68.884	Retrieval	RetrievalTwoShot	retrieval · YASMIN	13	4
+21.773	1	68.384	Retrieval	RetrievalTwoShot	retrieval · YASMIN	14	4
+22.275	1	67.884	Retrieval	RetrievalTwoShot	retrieval · YASMIN	14	4
+22.776	1	67.384	Retrieval	RetrievalTwoShot	retrieval · YASMIN	15	5
+23.278	1	66.864	Retrieval	RetrievalTwoShot	retrieval · YASMIN	16	6
+23.778	1	66.364	Retrieval	RetrievalTwoShot	retrieval · YASMIN	16	6
+24.278	1	65.864	Downed	Recovery	down · ILYAS	17	6
+24.780	1	65.364	Downed	Recovery	down · ILYAS	17	6
+25.280	1	64.924	Retrieval	Chase	retrieval · ILYAS	17	6
+25.782	1	64.424	Retrieval	Chase	retrieval · ILYAS	17	6
+26.283	1	63.924	Retrieval	Chase	retrieval · ILYAS	17	6
+26.784	1	63.424	Tag	Defender	tag · YASMIN	18	6
+27.284	1	62.924	Tag	Defender	tag · YASMIN	18	6
+27.784	1	62.424	LataHit	Objective	the can · ILYAS	19	6
+28.285	1	61.924	LataHit	Objective	the can · ILYAS	19	6
+28.786	1	61.424	LataHit	Objective	the can · ILYAS	19	6
+29.287	1	60.924	LataHit	Objective	the can · ILYAS	19	6
+29.789	1	60.424	Retrieval	RetrievalTwoShot	retrieval · ILYAS	19	6
+30.289	1	59.924	Retrieval	RetrievalTwoShot	retrieval · ILYAS	19	6
+30.790	1	59.424	Retrieval	RetrievalTwoShot	retrieval · ILYAS	19	6
+31.291	1	58.924	Retrieval	RetrievalTwoShot	retrieval · ILYAS	19	6
+31.793	1	58.424	Retrieval	RetrievalTwoShot	retrieval · ILYAS	19	6
+32.293	1	57.924	Retrieval	RetrievalTwoShot	retrieval · ILYAS	19	6
+32.794	1	57.464	Tag	Defender	tag · YASMIN	20	6
+33.296	1	56.964	Tag	Defender	tag · YASMIN	20	6
+33.798	1	56.464	Tag	Defender	tag · YASMIN	20	6
+34.298	1	55.964	Tag	Defender	tag · YASMIN	20	6
+34.799	1	55.464	Tag	Defender	tag · YASMIN	20	6
+35.299	1	54.964	Tag	Defender	tag · YASMIN	20	6
+35.801	1	54.464	SlipperLanded	Objective	the can	21	6
+36.302	1	53.964	Downed	Recovery	down · ILYAS	22	6
+36.803	1	53.464	Downed	Recovery	down · ILYAS	22	6
+37.304	1	52.964	Downed	Recovery	down · ILYAS	22	6
+37.805	1	52.464	Quiet	QuietEstablish	the street	23	6
+38.307	1	52.004	Quiet	QuietEstablish	the street	23	6
+38.808	1	51.524	Quiet	QuietEstablish	the street	23	6
+39.309	1	51.024	Quiet	QuietEstablish	the street	23	6
+39.811	1	50.524	Quiet	QuietEstablish	the street	23	6
+40.311	1	50.024	Tag	Defender	tag · YASMIN	24	6
+40.812	1	49.524	Tag	Defender	tag · YASMIN	24	6
+41.313	1	49.004	SlipperLanded	Objective	the can	25	6
+41.815	1	48.504	SlipperLanded	Objective	the can	25	6
+42.317	1	48.004	SlipperLanded	Objective	the can	25	6
+42.819	1	47.504	Downed	Recovery	down · YASMIN	26	6
+43.320	1	47.004	Downed	Recovery	down · YASMIN	26	6
+43.820	1	46.504	Downed	Recovery	down · YASMIN	26	6
+44.321	1	46.004	ThrowPrep	Objective	throw · OWNER UPDATED	27	6
+44.822	1	45.504	ThrowPrep	Objective	throw · OWNER UPDATED	27	6
+45.322	1	45.004	ThrowPrep	Objective	throw · OWNER UPDATED	27	6
+45.823	1	44.504	ThrowPrep	Objective	throw · OWNER UPDATED	27	6
+46.325	1	44.064	Tag	Defender	tag · YASMIN	27	6
+46.827	1	43.564	Tag	Defender	tag · YASMIN	27	6
+47.330	1	43.064	Tag	Defender	tag · YASMIN	27	6
+47.831	1	42.544	Tag	Defender	tag · YASMIN	27	6
+48.332	1	42.044	Tag	Defender	tag · YASMIN	27	6
+48.833	1	41.544	Tag	Defender	tag · YASMIN	27	6
+49.335	1	41.044	Downed	Recovery	down · ILYAS	28	6
+49.837	1	40.544	Downed	Recovery	down · ILYAS	28	6
+50.339	1	40.044	Downed	Recovery	down · ILYAS	28	6
+50.840	1	39.544	Downed	Recovery	down · ILYAS	28	6
+51.340	1	39.044	SlipperLanded	Objective	the can	29	6
+51.840	1	38.544	SlipperLanded	Objective	the can	29	6
+52.342	1	38.044	SlipperLanded	Objective	the can	29	6
+52.843	1	37.544	ThrowPrep	Objective	throw · OWNER UPDATED	29	6
+53.344	1	37.044	ThrowPrep	Objective	throw · OWNER UPDATED	29	6
+53.844	1	36.544	ThrowPrep	Objective	throw · OWNER UPDATED	29	6
+54.345	1	36.104	ThrowPrep	Objective	throw · OWNER UPDATED	29	6
+54.846	1	35.604	Tag	Defender	tag · YASMIN	30	6
+55.348	1	35.104	Tag	Defender	tag · YASMIN	30	6
+55.848	1	34.604	Tag	Defender	tag · YASMIN	30	6
+56.350	1	34.084	Tag	Defender	tag · YASMIN	30	6
+56.850	1	33.584	Downed	Recovery	down · YASMIN	31	6
+57.351	1	33.084	Downed	Recovery	down · YASMIN	31	6
+57.852	1	32.584	Downed	Recovery	down · YASMIN	31	6
+58.353	1	32.144	Downed	Recovery	down · YASMIN	31	6
+58.855	1	31.644	Downed	Recovery	down · YASMIN	31	6
+59.356	1	31.144	Tag	Defender	tag · YASMIN	32	6
+59.857	1	30.644	Tag	Defender	tag · YASMIN	32	6
+60.357	1	30.144	Tag	Defender	tag · YASMIN	32	6
+60.858	1	29.644	Tag	Defender	tag · YASMIN	32	6
+61.358	1	29.144	Downed	Recovery	down · ILYAS	33	6
+61.859	1	28.644	Downed	Recovery	down · ILYAS	33	6
+62.360	1	28.144	Downed	Recovery	down · ILYAS	33	6
+62.860	1	27.644	Downed	Recovery	down · ILYAS	33	6
+63.361	1	27.144	SlipperLanded	Objective	the can	33	6
+63.862	1	26.644	SlipperLanded	Objective	the can	33	6
+64.363	1	26.144	SlipperLanded	Objective	the can	33	6
+64.863	1	25.643	Retrieval	Chase	retrieval · ILYAS	34	6
+65.364	1	25.143	Retrieval	Chase	retrieval · ILYAS	34	6
+65.864	1	24.643	ThrowPrep	Objective	throw · OWNER UPDATED	35	6
+66.366	1	24.143	ThrowPrep	Objective	throw · OWNER UPDATED	35	6
+66.867	1	23.643	ThrowPrep	Objective	throw · OWNER UPDATED	35	6
+67.368	1	23.123	ThrowPrep	Objective	throw · OWNER UPDATED	35	6
+67.869	1	22.623	ThrowPrep	Objective	throw · OWNER UPDATED	35	6
+68.370	1	22.183	Retrieval	Chase	retrieval · ILYAS	37	6
+68.872	1	21.683	Retrieval	Chase	retrieval · ILYAS	37	6
+69.372	1	21.183	Tag	Defender	tag · YASMIN	38	6
+69.873	1	20.683	Tag	Defender	tag · YASMIN	38	6
+70.374	1	20.183	Tag	Defender	tag · YASMIN	38	6
+70.875	1	19.683	Tag	Defender	tag · YASMIN	38	6
+71.376	1	19.183	Downed	Recovery	down · YASMIN	39	6
+71.876	1	18.683	Downed	Recovery	down · YASMIN	39	6
+72.376	1	18.183	Downed	Recovery	down · YASMIN	39	6
+72.877	1	17.683	Downed	Recovery	down · YASMIN	39	6
+73.378	1	17.183	SlipperLanded	Objective	the can	40	6
+73.879	1	16.683	Retrieval	Chase	retrieval · YASMIN	42	7
+74.381	1	16.183	Retrieval	Chase	retrieval · YASMIN	42	7
+74.881	1	15.683	Retrieval	Chase	retrieval · YASMIN	42	7
+75.383	1	15.183	ThrowPrep	Objective	throw · OWNER UPDATED	44	7
+75.884	1	14.683	ThrowPrep	Objective	throw · OWNER UPDATED	44	7
+76.385	1	14.183	ThrowPrep	Objective	throw · OWNER UPDATED	44	7
+76.886	1	13.663	ThrowPrep	Objective	throw · OWNER UPDATED	44	7
+77.387	1	13.163	SlipperLanded	Objective	the can	45	7
+77.889	1	12.663	SlipperLanded	Objective	the can	45	7
+78.390	1	12.163	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+78.891	1	11.663	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+79.392	1	11.163	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+79.894	1	10.663	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+80.394	1	10.163	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+80.897	1	9.663	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+81.398	1	9.163	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+81.898	1	8.663	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+82.399	1	8.163	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+82.899	1	7.723	ThrowPrep	Objective	throw · OWNER UPDATED	45	7
+83.401	1	7.223	Tag	Defender	tag · YASMIN	46	7
+83.901	1	6.723	Tag	Defender	tag · YASMIN	46	7
+84.402	1	6.703	Tag	Defender	tag · YASMIN	46	7
+84.908	1	6.703	Tag	Defender	tag · YASMIN	46	7
+85.414	1	6.703	Tag	Defender	tag · YASMIN	46	7
+85.918	1	6.703	Tag	Defender	tag · YASMIN	46	7
+86.423	1	6.703	Tag	Defender	tag · YASMIN	46	7
+86.923	1	6.703	Tag	Defender	tag · YASMIN	46	7
+87.424	1	6.403	Ultimate	UltimateWide	ultimate · YASMIN	47	7
+87.926	1	5.903	Ultimate	UltimateWide	ultimate · YASMIN	47	7
+88.428	1	5.403	Ultimate	UltimateWide	ultimate · YASMIN	47	7
+88.930	1	4.903	Ultimate	UltimateWide	ultimate · YASMIN	47	7
+89.434	1	4.383	Ultimate	UltimateWide	ultimate · YASMIN	47	7
+89.934	1	3.883	Ultimate	UltimateWide	ultimate · YASMIN	47	7
+90.435	1	3.383	Ultimate	UltimateWide	ultimate · YASMIN	47	7
+90.936	1	2.883	LataHit	Objective	the can · YASMIN	48	7
+91.439	1	2.383	ThrowPrep	Objective	throw · OWNER UPDATED	48	7
+91.939	1	1.883	ThrowPrep	Objective	throw · OWNER UPDATED	48	7
+92.440	1	1.383	ThrowPrep	Objective	throw · OWNER UPDATED	49	7
+92.942	1	0.883	ThrowPrep	Objective	throw · OWNER UPDATED	51	7
+93.444	1	0.383	LataHit	Objective	the can · ILYAS	51	7
+93.944	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+94.446	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+94.946	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+95.446	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+95.947	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+96.448	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+96.949	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+97.449	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+97.949	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+98.450	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+98.951	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+99.452	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+99.954	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+100.456	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+100.956	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+101.457	1	0.000	LataHit	Objective	the can · ILYAS	51	7
+101.957	2	89.880	Quiet	QuietEstablish	the street	52	7
+102.459	2	89.380	Quiet	QuietEstablish	the street	52	7
+102.960	2	88.880	Quiet	QuietEstablish	the street	52	7
+103.461	2	88.380	Quiet	QuietEstablish	the street	52	7
+103.962	2	87.880	Quiet	QuietEstablish	the street	52	7
+104.463	2	87.380	ThrowPrep	Objective	throw · ILYAS	53	7
+104.964	2	86.881	ThrowPrep	Objective	throw · ILYAS	53	7
+105.464	2	86.381	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+105.965	2	85.881	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+106.466	2	85.381	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+106.968	2	84.881	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+107.468	2	84.381	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+107.968	2	83.881	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+108.470	2	83.381	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+108.970	2	82.881	Retrieval	RetrievalTwoShot	retrieval · YASMIN	54	7
+109.472	2	82.421	Tag	Defender	tag · OWNER UPDATED	56	7
+109.974	2	81.921	Tag	Defender	tag · OWNER UPDATED	56	7
+110.474	2	81.421	Tag	Defender	tag · OWNER UPDATED	56	7
+110.975	2	80.922	Tag	Defender	tag · OWNER UPDATED	56	7
+111.476	2	80.422	Tag	Defender	tag · OWNER UPDATED	56	7
+111.977	2	79.922	Tag	Defender	tag · OWNER UPDATED	56	7
+112.478	2	79.422	Downed	Recovery	down · YASMIN	57	7
+113.056	2	78.842	Downed	Recovery	down · YASMIN	57	7
+113.557	2	78.342	Downed	Recovery	down · YASMIN	57	7
+114.058	2	77.842	Downed	Recovery	down · YASMIN	57	7
+114.559	2	77.402	Retrieval	Chase	retrieval · YASMIN	58	7
+115.059	2	76.902	Retrieval	Chase	retrieval · YASMIN	58	7
+115.560	2	76.402	Retrieval	Chase	retrieval · YASMIN	58	7
+116.061	2	75.902	Tag	Defender	tag · OWNER UPDATED	58	7
+116.562	2	75.402	Tag	Defender	tag · OWNER UPDATED	58	7
+117.064	2	74.903	Tag	Defender	tag · OWNER UPDATED	58	7
+117.564	2	74.403	Downed	Recovery	down · ILYAS	59	7
+118.066	2	73.903	Downed	Recovery	down · ILYAS	59	7
+118.567	2	73.403	Downed	Recovery	down · ILYAS	59	7
+119.067	2	72.903	Downed	Recovery	down · ILYAS	59	7
+119.569	2	72.383	Quiet	QuietEstablish	the street	60	7
+120.069	2	71.883	Quiet	QuietEstablish	the street	60	7
+120.571	2	71.383	Quiet	QuietEstablish	the street	60	7
+121.071	2	70.883	Quiet	QuietEstablish	the street	60	7
+121.571	2	70.383	Quiet	QuietEstablish	the street	60	7
+122.072	2	69.883	ThrowPrep	Objective	throw · YASMIN	61	7
+122.573	2	69.383	ThrowPrep	Objective	throw · YASMIN	61	7
+123.075	2	68.884	Retrieval	Chase	retrieval · YASMIN	62	7
+123.576	2	68.384	Retrieval	Chase	retrieval · YASMIN	62	7
+124.077	2	67.884	Retrieval	Chase	retrieval · YASMIN	62	7
+124.578	2	67.384	Quiet	QuietEstablish	the street	62	7
+125.079	2	66.884	Quiet	QuietEstablish	the street	62	7
+125.580	2	66.384	Quiet	QuietEstablish	the street	62	7
+126.080	2	65.884	Quiet	QuietEstablish	the street	62	7
+126.580	2	65.384	Retrieval	Chase	retrieval · ILYAS	63	7
+127.081	2	64.884	Retrieval	Chase	retrieval · ILYAS	63	7
+127.583	2	64.384	Retrieval	Chase	retrieval · ILYAS	63	7
+128.083	2	63.884	SlipperLanded	Objective	the can	64	7
+128.585	2	63.384	ThrowPrep	Objective	throw · YASMIN	64	7
+129.086	2	62.884	ThrowPrep	Objective	throw · YASMIN	64	7
+129.588	2	62.384	Retrieval	Chase	retrieval · YASMIN	65	7
+130.090	2	61.864	LataHit	Objective	the can · YASMIN	66	7
+130.591	2	61.364	LataHit	Objective	the can · YASMIN	66	7
+131.093	2	60.864	LataHit	Objective	the can · YASMIN	66	7
+131.594	2	60.364	LataHit	Objective	the can · YASMIN	66	7
+132.094	2	59.864	Retrieval	RetrievalTwoShot	retrieval · ILYAS	67	7
+132.595	2	59.364	Retrieval	Chase	retrieval · YASMIN	69	7
+133.096	2	58.864	Retrieval	Chase	retrieval · YASMIN	69	7
+133.597	2	58.364	Retrieval	Chase	retrieval · YASMIN	69	7
+134.097	2	57.864	Retrieval	Chase	retrieval · YASMIN	69	7
+134.599	2	57.364	Retrieval	Chase	retrieval · YASMIN	69	7
+135.100	2	56.864	Retrieval	Chase	retrieval · YASMIN	69	7
+135.602	2	56.364	Retrieval	Chase	retrieval · YASMIN	69	7
+136.103	2	55.864	Retrieval	Chase	retrieval · YASMIN	69	7
+136.603	2	55.364	Retrieval	Chase	retrieval · YASMIN	69	7
+137.104	2	54.864	Retrieval	Chase	retrieval · ILYAS	70	7
+137.605	2	54.364	Retrieval	Chase	retrieval · ILYAS	70	7
+138.106	2	53.904	Retrieval	Chase	retrieval · YASMIN	71	7
+138.606	2	53.424	Retrieval	Chase	retrieval · YASMIN	71	7
+139.106	2	52.924	Retrieval	Chase	retrieval · YASMIN	71	7
+139.607	2	52.404	Retrieval	Chase	retrieval · YASMIN	71	7
+140.108	2	51.904	Retrieval	Chase	retrieval · YASMIN	71	7
+140.608	2	51.404	Retrieval	Chase	retrieval · YASMIN	71	7
+141.111	2	50.904	Retrieval	Chase	retrieval · YASMIN	71	7
+141.612	2	50.404	Retrieval	Chase	retrieval · YASMIN	71	7
+142.113	2	49.904	Retrieval	Chase	retrieval · YASMIN	71	7
+142.614	2	49.404	Retrieval	Chase	retrieval · YASMIN	71	7
+143.114	2	48.904	Retrieval	Chase	retrieval · YASMIN	71	7
+143.614	2	48.404	Retrieval	Chase	retrieval · YASMIN	71	7
+144.116	2	47.904	Retrieval	Chase	retrieval · YASMIN	71	7
+144.617	2	47.404	Retrieval	Chase	retrieval · YASMIN	71	7
+145.118	2	46.904	Retrieval	Chase	retrieval · YASMIN	71	7
+145.619	2	46.404	Retrieval	Chase	retrieval · YASMIN	71	7
+146.119	2	45.904	Retrieval	Chase	retrieval · YASMIN	71	7
+146.620	2	45.404	Retrieval	Chase	retrieval · YASMIN	72	7
+147.120	2	44.904	Retrieval	Chase	retrieval · YASMIN	72	7
+147.622	2	44.404	Retrieval	Chase	retrieval · YASMIN	72	7
+148.123	2	43.904	Retrieval	Chase	retrieval · YASMIN	72	7
+148.623	2	43.404	Retrieval	Chase	retrieval · YASMIN	72	7
+149.124	2	42.904	LataHit	Objective	the can · ILYAS	73	7
+149.624	2	42.404	LataHit	Objective	the can · ILYAS	73	7
+150.124	2	41.904	LataHit	Objective	the can · ILYAS	73	7
+150.626	2	41.404	LataHit	Objective	the can · ILYAS	73	7
+151.127	2	40.884	Retrieval	Chase	retrieval · YASMIN	74	7

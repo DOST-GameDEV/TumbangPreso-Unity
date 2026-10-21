@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using TumbangPreso.Net;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -51,9 +54,273 @@ namespace TumbangPreso.PlayTests
 
         private static IEnumerator Await(System.Threading.Tasks.Task<bool> task, Action<bool> onDone)
         {
-            while (!task.IsCompleted) yield return null;
+            int frames = 0;
+            float deadline = Time.realtimeSinceStartup + 20f;
+            while (!task.IsCompleted)
+            {
+                if (frames++ > 600 || Time.realtimeSinceStartup > deadline)
+                    throw new TimeoutException("network operation exceeded 600 frames or 20 seconds");
+                yield return null;
+            }
             if (task.IsFaulted) throw task.Exception;
             onDone(task.Result);
+        }
+
+        private static IEnumerator Await(Task task)
+        {
+            int frames = 0;
+            float deadline = Time.realtimeSinceStartup + 20f;
+            while (!task.IsCompleted)
+            {
+                if (frames++ > 600 || Time.realtimeSinceStartup > deadline)
+                    throw new TimeoutException("queue operation exceeded 600 frames or 20 seconds");
+                yield return null;
+            }
+            if (task.IsFaulted) throw task.Exception;
+        }
+
+        private static Task InvokeQueue(Matchmaker queue, string method, params object[] args)
+            => (Task)typeof(Matchmaker).GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic)
+                                       .Invoke(queue, args);
+
+        private static void SetQueueNet(Matchmaker queue, NetSession net)
+            => typeof(Matchmaker).GetField("_net", BindingFlags.Instance | BindingFlags.NonPublic)
+                                 .SetValue(queue, net);
+
+        [UnityTest] public IEnumerator EmptySnapshotRequestDoesNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(System.Array.Empty<byte>());
+        [UnityTest] public IEnumerator UnknownSnapshotMarkerDoesNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(new byte[]{1});
+        [UnityTest] public IEnumerator TrailingSnapshotBytesDoNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(new byte[]{0,0});
+        private IEnumerator RejectMalformedSnapshotRequest(byte[] payload)
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18691),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);
+                var router=net.GetComponent<MatchRpc>();
+                const BindingFlags flags=BindingFlags.Instance|BindingFlags.NonPublic;
+                var handler=typeof(MatchRpc).GetMethod("OnReqSnapshotMsg",flags);
+                var sent=(System.Collections.Generic.Dictionary<ulong,float>)typeof(MatchRpc).GetField("_lastSnapshotRequest",flags).GetValue(router);
+                var pending=(System.Collections.Generic.Dictionary<ulong,long>)typeof(MatchRpc).GetField("_pendingSnapshotReplies",flags).GetValue(router);
+                void Deliver(byte[] bytes)
+                {
+                    using var writer=new FastBufferWriter(32,Allocator.Temp);
+                    writer.WriteValueSafe(123UL);
+                    foreach(byte b in bytes)writer.WriteValueSafe(b);
+                    using var reader=new FastBufferReader(writer,Allocator.Temp);
+                    reader.ReadValueSafe(out ulong hash);
+                    handler.Invoke(router,new object[]{NetworkManager.ServerClientId,reader});
+                }
+                Deliver(payload);
+                Assert.AreEqual(0,sent.Count,"Malformed snapshot request consumed the refresh throttle.");
+                Assert.AreEqual(0,pending.Count);
+                Deliver(new byte[]{0});
+                Assert.IsTrue(sent.ContainsKey(NetworkManager.ServerClientId),"The valid request after rejection was lost.");
+                Assert.AreEqual(0,pending.Count);
+            }
+            finally{net.Stop();}
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            MatchRpc router = null;
+            try
+            {
+                bool hosted = false;
+                yield return Await(net.StartHostAsync(18689), value => hosted = value);
+                Assert.IsTrue(hosted, net.Status);
+                var network = net.GetComponent<NetworkManager>();
+                router = net.GetComponent<MatchRpc>();
+                Assert.IsTrue(network.ConnectedClients.ContainsKey(NetworkManager.ServerClientId));
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var handler = typeof(MatchRpc).GetMethod("OnReqSnapshotMsg", flags);
+                var sent = (System.Collections.Generic.Dictionary<ulong, float>)typeof(MatchRpc).GetField("_lastSnapshotRequest", flags).GetValue(router);
+                var pending = (System.Collections.Generic.Dictionary<ulong, long>)typeof(MatchRpc).GetField("_pendingSnapshotReplies", flags).GetValue(router);
+                void Request(ulong peer)
+                {
+                    using var writer = new FastBufferWriter(1, Allocator.Temp);
+                    writer.WriteValueSafe((byte)0);
+                    using var reader = new FastBufferReader(writer, Allocator.Temp);
+                    handler.Invoke(router, new object[] { peer, reader });
+                }
+                const ulong peer = NetworkManager.ServerClientId;
+                Request(peer);
+                Assert.IsTrue(sent.ContainsKey(peer));
+                float first = sent[peer];
+                for (int i = 0; i < 8; i++) Request(peer);
+                Assert.AreEqual(1, pending.Count);
+                yield return new WaitForSecondsRealtime(.15f);
+                if (Time.realtimeSinceStartup - first < .5f)
+                    Assert.AreEqual(first, sent[peer], "The coalesced reply ignored the half-second floor.");
+                float deadline = Time.realtimeSinceStartup + 2;
+                while (pending.ContainsKey(peer) && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsFalse(pending.ContainsKey(peer), "A throttled request was dropped instead of receiving its deferred reply.");
+                float second = sent[peer];
+                Assert.GreaterOrEqual(second - first, .5f);
+                yield return new WaitForSecondsRealtime(.1f);
+                Assert.AreEqual(second, sent[peer], "Duplicate requests produced additional deadline replies.");
+                Request(ulong.MaxValue);
+                Assert.IsFalse(pending.ContainsKey(ulong.MaxValue));
+                Request(peer);
+                Request(peer);
+                Assert.AreEqual(1, pending.Count);
+                float beforeDisable = sent[peer];
+                router.enabled = false;
+                Assert.IsEmpty(pending);
+                yield return new WaitForSecondsRealtime(.65f);
+                Assert.AreEqual(beforeDisable, sent[peer], "A disabled router's pending callback still sent state.");
+                router.enabled = true;
+                Request(peer);
+                Assert.Greater(sent[peer], beforeDisable);
+                Assert.IsEmpty(pending);
+            }
+            finally
+            {
+                if (router != null) router.enabled = true;
+                net.Stop();
+            }
+        }
+
+        [UnityTest] public IEnumerator ReconnectIdentifyKeepsServerPicksUntilReturningToLobby()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18692),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);
+                var lobby=net.Lobby;const int peer=0;
+                lobby.SetPicks(peer,2,1,3);lobby.StartMatch();
+                var router=net.GetComponent<MatchRpc>();
+                var identify=typeof(MatchRpc).GetMethod("HandleIdentify",BindingFlags.Instance|BindingFlags.NonPublic);
+                void Identify() => identify.Invoke(router,new object[]{0UL,lobby.PeerById(peer).Token,"Owner","","",0,0,0,"","",""});
+                Identify();
+                Assert.AreEqual(2,lobby.PeerById(peer).CharacterPick,"Identify replaced the retained match character.");
+                Assert.AreEqual(1,lobby.PeerById(peer).CanPick);Assert.AreEqual(3,lobby.PeerById(peer).SlipperPick);
+                lobby.ReturnToLobby();Identify();
+                Assert.AreEqual(0,lobby.PeerById(peer).CharacterPick,"Ordinary lobby choice must remain available.");
+                Assert.AreEqual(0,lobby.PeerById(peer).CanPick);Assert.AreEqual(0,lobby.PeerById(peer).SlipperPick);
+                lobby.StartMatch();var backfill=lobby.Admit(99,"fresh-backfill","Backfill");
+                lobby.SetArrivalPicks(99,2,1,3);
+                Assert.AreEqual(2,backfill.CharacterPick,"Fresh backfill must still initialize its choices.");
+                Assert.AreEqual(1,backfill.CanPick);Assert.AreEqual(3,backfill.SlipperPick);
+            }
+            finally{net.Stop();}
+        }
+
+        [UnityTest] public IEnumerator PreRoundArrivalAppliesItsPickToTheBotPlaceholder()
+            => CheckArrivalCharacter(false);
+
+        [UnityTest] public IEnumerator ValidIdentifyFrameStillUsesApprovedIdentityOnTheConnectedHost()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18694),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);string approved=net.Lobby.PeerById(0).Token;
+                using var writer=new FastBufferWriter(256,Allocator.Temp);
+                writer.WriteValueSafe(123UL);writer.WriteValueSafe("untrusted-message-token");writer.WriteValueSafe("QA 雨");
+                writer.WriteValueSafe("");writer.WriteValueSafe("");
+                writer.WriteValueSafe(2);writer.WriteValueSafe(1);writer.WriteValueSafe(3);
+                writer.WriteValueSafe("");writer.WriteValueSafe("");writer.WriteValueSafe("");
+                using var reader=new FastBufferReader(writer,Allocator.Temp);reader.ReadValueSafe(out ulong envelope);
+                var rpc=net.GetComponent<MatchRpc>();
+                typeof(MatchRpc).GetMethod("OnIdentifyMsg",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(rpc,new object[]{0UL,reader});
+                Assert.AreEqual(approved,net.Lobby.PeerById(0).Token);
+                Assert.AreEqual(2,net.Lobby.PeerById(0).CharacterPick);
+                Assert.IsTrue(((System.Collections.Generic.HashSet<int>)typeof(MatchRpc)
+                    .GetField("_identified",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(rpc)).Contains(0));
+            }
+            finally{net.Stop();}
+        }
+
+        [UnityTest] public IEnumerator LobbyPickUsesSenderAndRejectsChangesDuringTheMatch()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18696),r=>hosted=r);Assert.IsTrue(hosted,net.Status);
+                var lobby=net.Lobby;var other=lobby.Admit(99,"other-owner","Other");lobby.SetPicks(99,1,0,0);
+                var rpc=net.GetComponent<MatchRpc>();var handler=typeof(MatchRpc).GetMethod("OnSelectLobbyPickMsg",BindingFlags.Instance|BindingFlags.NonPublic);
+                void Deliver(int character)
+                {
+                    using var writer=new FastBufferWriter(128,Allocator.Temp);writer.WriteValueSafe(123UL);
+                    writer.WriteValueSafe(99);writer.WriteValueSafe(character);writer.WriteValueSafe(1);writer.WriteValueSafe(3);
+                    writer.WriteValueSafe("");writer.WriteValueSafe("");writer.WriteValueSafe("");
+                    using var reader=new FastBufferReader(writer,Allocator.Temp);reader.ReadValueSafe(out ulong hash);
+                    handler.Invoke(rpc,new object[]{0UL,reader});
+                }
+                Deliver(2);Assert.AreEqual(2,lobby.PeerById(0).CharacterPick);Assert.AreEqual(1,other.CharacterPick);
+                lobby.StartMatch();Deliver(0);rpc.SelectLobbyPickServerRpc(0,0,0);
+                Assert.AreEqual(2,lobby.PeerById(0).CharacterPick,"Lobby pick replaced a running match choice.");
+                lobby.ReturnToLobby();Deliver(0);Assert.AreEqual(0,lobby.PeerById(0).CharacterPick);
+            }
+            finally{net.Stop();}
+        }
+        [UnityTest] public IEnumerator RunningMatchArrivalKeepsTheExistingCharacter()
+            => CheckArrivalCharacter(true);
+        [UnityTest] public IEnumerator PreRoundArrivalKeepsTheMirroredFormatCharacter()
+            => CheckArrivalCharacter(false,true);
+        private IEnumerator CheckArrivalCharacter(bool underway,bool mirror=false)
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18693),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);GameServices.Ensure();GameServices.Round.Clear();
+                var rules=Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike);
+                if(mirror)rules.Format=Core.MatchFormat.Mirror;
+                UI.SceneFlow.SetSelectedRules(rules);
+                var body=new GameObject("Arrival placeholder").AddComponent<CharacterMotor>();body.enabled=false;
+                body.PlayerSlot=0;body.Mode=Core.GameMode.HeroStrike;body.CharacterIndex=3;body.IsBot=true;
+                GameServices.Round.Register(body);net.Lobby.SetPicks(0,2,1,3);
+                GameServices.Match.ApplySnapshot(new int[4],underway?1:0,underway);
+                var rpc=net.GetComponent<MatchRpc>();
+                typeof(MatchRpc).GetMethod("HostTakeSeatBackFromBot",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(rpc,new object[]{0});
+                Assert.IsFalse(body.IsBot);
+                int expected=mirror?Core.EconomyRules.UnlockedMirrorPick(Core.Roster.GetPeople(Core.GameMode.HeroStrike),System.DateTime.UtcNow):underway?3:2;
+                Assert.AreEqual(expected,body.CharacterIndex,"Pre-round handover kept the bot's placeholder pick.");
+            }
+            finally{net.Stop();}
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A NESTED SESSION STILL HOSTS (QA, 2026-09-26: *"Could not open an online room. (relay allocation failed: There
+        /// is no NetworkManager assigned to this instance!)"*). Netcode's `Initialize` returns silently for a NetworkManager
+        /// whose GameObject has a parent, and its clean-up then throws that message. Before the fix this host start failed
+        /// with it; `NetSession.PrepareManagerForStart` puts the object back at the root first.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator HostingWorksEvenWhenTheSessionWasNestedUnderSomething()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            var holder = new GameObject("~TestHolder");
+            // Netcode reports the nesting itself, the moment it happens; that report is the fault being set up, not a failure.
+            LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("cannot be nested"));
+            net.transform.SetParent(holder.transform, true);
+            try
+            {
+                bool hosted = false;
+                yield return Await(net.StartHostAsync(), r => hosted = r);
+                Assert.IsTrue(hosted, "a nested session must still host. Status: " + net.Status);
+                Assert.IsNull(net.transform.parent, "the session object must be back at the root");
+                yield return new WaitForSecondsRealtime(0.3f);
+                Assert.IsTrue(net.IsNetworked, "the host should be listening");
+            }
+            finally
+            {
+                net.Stop();
+                if (net.transform.parent == holder.transform) net.transform.SetParent(null, true);
+                UnityEngine.Object.Destroy(holder);
+            }
         }
 
         [UnityTest]
@@ -109,6 +376,219 @@ namespace TumbangPreso.PlayTests
 
             yield return new WaitForSecondsRealtime(0.3f);
             Assert.IsFalse((bool)Get(nm, "IsListening"), "the shutdown should have completed by now");
+        }
+
+        [UnityTest]
+        public IEnumerator StopDuringHostRestartPreventsThePendingStart()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            bool first = false;
+            yield return Await(net.StartHostAsync(), value => first = value);
+            Assert.IsTrue(first, net.Status);
+
+            var restart = net.StartHostAsync();
+            Assert.IsFalse(restart.IsCompleted, "the restart must be waiting for NGO shutdown");
+            net.Stop();
+            bool restarted = true;
+            yield return Await(restart, value => restarted = value);
+            Assert.IsFalse(restarted, "STOP must invalidate a host start still awaiting shutdown");
+            yield return new WaitForSecondsRealtime(0.3f);
+            Assert.IsFalse(net.IsNetworked, "the cancelled host restart opened a new room");
+        }
+
+        [UnityTest] public IEnumerator FailedHostStartupReturnsToSearchingWithoutFaulting()
+            => QueueStartupFault("HostAsync", false);
+        [UnityTest] public IEnumerator FailedJoinStartupReturnsToSearchingWithoutFaulting()
+            => QueueStartupFault("JoinAsync", false);
+        [UnityTest] public IEnumerator CancelledHostStartupFaultCannotReviveQueue()
+            => QueueStartupFault("HostAsync", true);
+        [UnityTest] public IEnumerator CancelledJoinStartupFaultCannotReviveQueue()
+            => QueueStartupFault("JoinAsync", true);
+        private IEnumerator QueueStartupFault(string method, bool cancel)
+        {
+            var net = NetSession.Ensure(); var queue = Matchmaker.Ensure(); SetQueueNet(queue, net);
+            var delayed = new TaskCompletionSource<bool>();
+            var start = (Func<Task<bool>>)(() => delayed.Task);
+            var operation = method == "HostAsync" ? InvokeQueue(queue, method, start)
+                : InvokeQueue(queue, method, new ServerQuery.Entry { Id = "fault-entry", RelayCode = "fault-relay", JoinCode = "" }, start);
+            Assert.AreEqual(method == "HostAsync" ? QueueState.Hosting : QueueState.Joining, queue.State);
+            if (cancel) queue.Cancel();
+            delayed.SetException(new System.IO.IOException("injected connection startup failure"));
+            float until = Time.realtimeSinceStartup + 5;
+            while (!operation.IsCompleted && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsTrue(operation.IsCompleted);
+            var observed = operation.Exception; // Observe the baseline fault without rethrowing it.
+            System.IO.Directory.CreateDirectory("Logs/queue-start-fault1002");
+            System.IO.File.WriteAllText("Logs/queue-start-fault1002/" + method + "-" + cancel + ".txt",
+                $"faulted={operation.IsFaulted}\nstate={queue.State}\nbusy={typeof(Matchmaker).GetField("_busy", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(queue)}\n");
+            Assert.IsFalse(operation.IsFaulted, "The startup dependency exception escaped the queue and its async-void caller.");
+            Assert.AreEqual(cancel ? QueueState.Cancelled : QueueState.Searching, queue.State);
+            Assert.IsFalse((bool)typeof(Matchmaker).GetField("_busy", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(queue));
+            queue.Cancel();
+        }
+
+        [UnityTest]
+        public IEnumerator CancelledDelayedHostCannotReadvertiseOrReviveQueue()
+        {
+            var net = NetSession.Ensure();
+            var queue = Matchmaker.Ensure();
+            SetQueueNet(queue, net);
+            foreach (bool result in new[] { true, false })
+            {
+                var delayed = new TaskCompletionSource<bool>();
+                var host = InvokeQueue(queue, "HostAsync", (Func<Task<bool>>)(() => delayed.Task));
+                Assert.AreEqual(QueueState.Hosting, queue.State);
+
+                queue.Cancel();
+                delayed.SetResult(result);
+                yield return Await(host);
+
+                Assert.AreEqual(QueueState.Cancelled, queue.State);
+                Assert.IsEmpty(net.Advert.PoolKey, "a cancelled host advertised itself to QUICK MATCH");
+                Assert.IsFalse(queue.IsQueueing);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CancelledDelayedJoinCannotEmitJoined()
+        {
+            var net = NetSession.Ensure();
+            var queue = Matchmaker.Ensure();
+            SetQueueNet(queue, net);
+            int joined = 0;
+            queue.Joined += () => joined++;
+            var entry = new ServerQuery.Entry { JoinCode = "" };
+            foreach (bool result in new[] { true, false })
+            {
+                var delayed = new TaskCompletionSource<bool>();
+                var join = InvokeQueue(queue, "JoinAsync", entry,
+                    (Func<Task<bool>>)(() => delayed.Task));
+                Assert.AreEqual(QueueState.Joining, queue.State);
+
+                queue.Cancel();
+                delayed.SetResult(result);
+                yield return Await(join);
+
+                Assert.AreEqual(QueueState.Cancelled, queue.State);
+                Assert.AreEqual(0, joined, "a cancelled join entered the found-lobby route");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CancelledClientHandshakeClosesOnlyItsOwnTransport()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            using var cancelled = new System.Threading.CancellationTokenSource();
+            bool started = false;
+            yield return Await(net.StartClientAsync("127.0.0.1", 18679, cancelled.Token),
+                               value => started = value);
+            Assert.IsTrue(started, net.Status);
+            Assert.IsTrue(net.IsNetworked, "StartClient did not enter its pending handshake");
+
+            cancelled.Cancel();
+            yield return null;
+            yield return new WaitForSecondsRealtime(0.3f);
+            Assert.IsFalse(net.IsNetworked, "cancelled client socket kept listening");
+
+            using var superseded = new System.Threading.CancellationTokenSource();
+            bool secondClient = false;
+            yield return Await(net.StartClientAsync("127.0.0.1", 18679, superseded.Token),
+                               value => secondClient = value);
+            Assert.IsTrue(secondClient, net.Status);
+            var newerHost = net.StartHostAsync(18680);
+            superseded.Cancel();
+            bool hosted = false;
+            yield return Await(newerHost, value => hosted = value);
+            Assert.IsTrue(hosted, "a new host could not start after cancelling the old client");
+            yield return new WaitForSecondsRealtime(0.3f);
+            Assert.IsTrue(net.IsNetworked && net.IsHost,
+                "the old client cancellation shut down its successor");
+            net.Stop();
+        }
+
+        [UnityTest]
+        public IEnumerator QueueJoinWaitsForSeatAfterClientTransportStarts()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            bool started = false;
+            yield return Await(net.StartClientAsync("127.0.0.1", 18679), value => started = value);
+            Assert.IsTrue(started, net.Status);
+
+            var seated = net.WaitForConnectionAsync(timeoutSeconds: 1f);
+            Assert.IsFalse(seated.IsCompleted, "transport start was mistaken for an assigned seat");
+            yield return null;
+            typeof(NetSession).GetField("_everConnected", BindingFlags.Instance | BindingFlags.NonPublic)
+                              .SetValue(net, true);
+            net.ApplyAssignedSeat(1);
+            bool joined = false;
+            yield return Await(seated, value => joined = value);
+            Assert.IsTrue(joined, "an admitted peer with an assigned seat was not released to the queue");
+            yield return null;
+            bool alreadySeated = false;
+            yield return Await(net.WaitForConnectionAsync(), value => alreadySeated = value);
+            Assert.IsTrue(alreadySeated, "Update clearing the completed attempt must not turn an admitted client into a failed join");
+            net.Stop();
+        }
+
+        [UnityTest]
+        public IEnumerator QueueJoinTimeoutClosesAnUnseatedClient()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            bool started = false;
+            yield return Await(net.StartClientAsync("127.0.0.1", 18679), value => started = value);
+            Assert.IsTrue(started, net.Status);
+
+            bool joined = true;
+            yield return Await(net.WaitForConnectionAsync(timeoutSeconds: 0.05f),
+                               value => joined = value);
+            Assert.IsFalse(joined, "an unseated client was accepted into the queue room");
+            yield return new WaitForSecondsRealtime(0.3f);
+            Assert.IsFalse(net.IsNetworked, "the timed-out client kept a listening transport");
+            Assert.That(net.Status, Does.Contain("timed out"), "Transport cleanup hid the actionable reason behind 'offline'.");
+        }
+
+        [UnityTest]
+        public IEnumerator DestroyedQueueCannotPublishAfterDelayedHostCompletion()
+        {
+            var net = NetSession.Ensure();
+            var queue = Matchmaker.Ensure();
+            SetQueueNet(queue, net);
+            var delayed = new TaskCompletionSource<bool>();
+            var host = InvokeQueue(queue, "HostAsync", (Func<Task<bool>>)(() => delayed.Task));
+            Assert.AreEqual(QueueState.Hosting, queue.State);
+
+            UnityEngine.Object.Destroy(queue);
+            yield return null;
+            delayed.SetResult(true);
+            yield return Await(host);
+            Assert.IsEmpty(net.Advert.PoolKey, "a destroyed queue published its old advert");
+        }
+
+        [UnityTest]
+        public IEnumerator OldHostCompletionCannotClearNewAttemptOrItsAdvert()
+        {
+            var net = NetSession.Ensure();
+            var queue = Matchmaker.Ensure();
+            SetQueueNet(queue, net);
+            var oldCompletion = new TaskCompletionSource<bool>();
+            var old = InvokeQueue(queue, "HostAsync", (Func<Task<bool>>)(() => oldCompletion.Task));
+            queue.Cancel();
+
+            var newCompletion = new TaskCompletionSource<bool>();
+            var current = InvokeQueue(queue, "HostAsync", (Func<Task<bool>>)(() => newCompletion.Task));
+            oldCompletion.SetResult(false);
+            yield return Await(old);
+            Assert.AreEqual(QueueState.Hosting, queue.State,
+                "an older failure changed the new hosting attempt's state");
+
+            newCompletion.SetResult(true);
+            yield return Await(current);
+            Assert.AreEqual(QueueState.Searching, queue.State);
+            Assert.IsNotEmpty(net.Advert.PoolKey, "the current host did not publish its queue advert");
         }
     }
 }

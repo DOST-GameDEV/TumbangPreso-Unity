@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Failed(Child)" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 07:57:39Z" end-time="2026-10-01 07:57:40Z" duration="0.2264393">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 07:57:39Z" end-time="2026-10-01 07:57:40Z" duration="0.226439" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1911" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 07:57:39Z" end-time="2026-10-01 07:57:40Z" duration="0.209446" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14160" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1912" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 07:57:39Z" end-time="2026-10-01 07:57:40Z" duration="0.201834" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1913" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 07:57:39Z" end-time="2026-10-01 07:57:40Z" duration="0.194594" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1455" name="LobbyRosterPacketTests" fullname="TumbangPreso.Tests.LobbyRosterPacketTests" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.101582" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1469" name="DuplicateSeatCannotReplaceAnotherRow" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.DuplicateSeatCannotReplaceAnotherRow" methodname="DuplicateSeatCannotReplaceAnotherRow" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="551959158" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.039303" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Malformed roster partially replaced a seat.
+  Expected: same as <TumbangPreso.Net.LobbySeatInfo>
+  But was:  <TumbangPreso.Net.LobbySeatInfo>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:48
+at TumbangPreso.Tests.LobbyRosterPacketTests.DuplicateSeatCannotReplaceAnotherRow () [0x00022] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:59
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1468" name="ImpossibleWatchingCountDoesNotApplySeats" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.008275" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1466" name="ImpossibleWatchingCountDoesNotApplySeats(-1)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats(-1)" methodname="ImpossibleWatchingCountDoesNotApplySeats" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="698572289" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001053" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Malformed roster partially replaced a seat.
+  Expected: same as <TumbangPreso.Net.LobbySeatInfo>
+  But was:  <TumbangPreso.Net.LobbySeatInfo>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:48
+at TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats (System.Int32 watching) [0x00022] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1467" name="ImpossibleWatchingCountDoesNotApplySeats(5)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats(5)" methodname="ImpossibleWatchingCountDoesNotApplySeats" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1329536053" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.000525" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Malformed roster partially replaced a seat.
+  Expected: same as <TumbangPreso.Net.LobbySeatInfo>
+  But was:  <TumbangPreso.Net.LobbySeatInfo>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:48
+at TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats (System.Int32 watching) [0x00022] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1465" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.017760" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1462" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(-1)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(-1)" methodname="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="504070411" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.007904" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 3
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Unchanged () [0x00021] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:48
+at TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount (System.Int32 count) [0x00022] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:54
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1463" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(0)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(0)" methodname="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1021819266" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 3
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Unchanged () [0x00021] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:48
+at TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount (System.Int32 count) [0x00022] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:54
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1464" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(5)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(5)" methodname="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1474645235" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.002291" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSyncLobbyPicksMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x002b7] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4984 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRosterPacketTests+<>c__DisplayClass14_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 length, System.UInt64 sender) [0x0003a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45
+at TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount (System.Int32 count) [0x00018] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:54
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1470" name="TrailingBytesDoNotCommitTheRoster" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TrailingBytesDoNotCommitTheRoster" methodname="TrailingBytesDoNotCommitTheRoster" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1364183291" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001796" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Malformed roster partially replaced a seat.
+  Expected: same as <TumbangPreso.Net.LobbySeatInfo>
+  But was:  <TumbangPreso.Net.LobbySeatInfo>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:48
+at TumbangPreso.Tests.LobbyRosterPacketTests.TrailingBytesDoNotCommitTheRoster () [0x00036] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:61
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1461" name="TruncatedRosterDoesNotThrowOrPartiallyApply" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.014471" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1456" name="TruncatedRosterDoesNotThrowOrPartiallyApply(8)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(8)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1002722110" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001929" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSyncLobbyPicksMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x002b7] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4984 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRosterPacketTests+<>c__DisplayClass14_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 length, System.UInt64 sender) [0x0003a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45
+at TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply (System.Int32 length) [0x00018] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1457" name="TruncatedRosterDoesNotThrowOrPartiallyApply(11)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(11)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="845391641" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001670" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSyncLobbyPicksMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x002b7] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4984 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRosterPacketTests+<>c__DisplayClass14_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 length, System.UInt64 sender) [0x0003a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45
+at TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply (System.Int32 length) [0x00018] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1458" name="TruncatedRosterDoesNotThrowOrPartiallyApply(24)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(24)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="948675856" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001525" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSyncLobbyPicksMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0005c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4914 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRosterPacketTests+<>c__DisplayClass14_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 length, System.UInt64 sender) [0x0003a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45
+at TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply (System.Int32 length) [0x00018] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1459" name="TruncatedRosterDoesNotThrowOrPartiallyApply(90)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(90)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1468234530" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001554" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSyncLobbyPicksMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000f0] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4924 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRosterPacketTests+<>c__DisplayClass14_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 length, System.UInt64 sender) [0x0003a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45
+at TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply (System.Int32 length) [0x00018] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1460" name="TruncatedRosterDoesNotThrowOrPartiallyApply(170)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(170)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="570550923" result="Failed" start-time="2026-10-01 07:57:40Z" end-time="2026-10-01 07:57:40Z" duration="0.001535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSyncLobbyPicksMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000e6] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4923 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRosterPacketTests+<>c__DisplayClass14_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 length, System.UInt64 sender) [0x0003a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:45
+at TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply (System.Int32 length) [0x00018] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:51
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

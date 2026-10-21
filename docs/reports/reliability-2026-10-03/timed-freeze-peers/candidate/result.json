@@ -1,0 +1,15 @@
+{
+  "ok": false,
+  "errors": [
+    "host lacks finite, continuous Cheska/Sean evidence from its required seat",
+    "owner lacks finite, continuous Cheska/Sean evidence from its required seat"
+  ],
+  "measurements": {},
+  "observer_reconnected": false,
+  "case": "cheska-sean",
+  "delay_one_way_ms": 0.0,
+  "normal_lobby_admission": true,
+  "host_udp_port": 60936,
+  "exe_sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtime_sha256": "1ced9f265d9c2d0e60f11283c932fbc1f4ce9905b9606e263689462a98c6389b"
+}

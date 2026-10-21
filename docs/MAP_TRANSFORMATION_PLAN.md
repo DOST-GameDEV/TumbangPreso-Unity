@@ -490,7 +490,7 @@ hide behind the submitted angle or claim landmarks were removed without checking
 The owner also rejects the clean framed "BAWAL UMIHI DITO" sign. Replace it with
 surface-painted lettering,appropriate to an ordinary concrete wall/column and
 natural hand-brush construction. No tidy placard/frame or generic shop-sign layout.
-Current EXECUTION_PLAN.md records the correction sequence before implementation.
+Current archive/EXECUTION_PLAN.md records the correction sequence before implementation.
 
 
 ### Superseding owner clarification

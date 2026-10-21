@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 14:59:40Z" end-time="2026-10-04 15:00:21Z" duration="41.0767145">
+  <test-suite type="TestSuite" id="3057" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 14:59:40Z" end-time="2026-10-04 15:00:21Z" duration="41.076715" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3051" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 14:59:40Z" end-time="2026-10-04 15:00:21Z" duration="41.060070" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="121843" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3052" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 14:59:40Z" end-time="2026-10-04 15:00:21Z" duration="41.049195" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3053" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1677" result="Passed" start-time="2026-10-04 14:59:40Z" end-time="2026-10-04 15:00:21Z" duration="41.039506" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2529" name="SeanCinderGateProbe" fullname="TumbangPreso.PlayTests.SeanCinderGateProbe" classname="TumbangPreso.PlayTests.SeanCinderGateProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 14:59:40Z" end-time="2026-10-04 15:00:21Z" duration="40.990714" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2534" name="ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay" fullname="TumbangPreso.PlayTests.SeanCinderGateProbe.ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay" methodname="ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay" classname="TumbangPreso.PlayTests.SeanCinderGateProbe" runstate="Runnable" seed="1116664665" result="Passed" start-time="2026-10-04 14:59:40Z" end-time="2026-10-04 15:00:20Z" duration="39.927363" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2533" name="CinderVisualKeepsBoundaryAndDeterministicRetirement" fullname="TumbangPreso.PlayTests.SeanCinderGateProbe.CinderVisualKeepsBoundaryAndDeterministicRetirement" methodname="CinderVisualKeepsBoundaryAndDeterministicRetirement" classname="TumbangPreso.PlayTests.SeanCinderGateProbe" runstate="Runnable" seed="281661211" result="Passed" start-time="2026-10-04 15:00:20Z" end-time="2026-10-04 15:00:21Z" duration="1.050088" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

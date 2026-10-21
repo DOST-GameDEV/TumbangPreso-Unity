@@ -1,0 +1,4 @@
+0 phaister IsBot=True
+1 nemu IsBot=False
+2 cheska IsBot=True
+3 phaister IsBot=True

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.0692759">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="899" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.069276" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2080" name="TumbangPreso.Tests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="899" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.054143" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="83783" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2081" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="899" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.047139" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2082" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="899" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.040433" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1806" name="RafiBackwashTests" fullname="TumbangPreso.Tests.RafiBackwashTests" classname="TumbangPreso.Tests.RafiBackwashTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.028359" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1807" name="BackwashStartsNeutralAndHasItsOwnBound" fullname="TumbangPreso.Tests.RafiBackwashTests.BackwashStartsNeutralAndHasItsOwnBound" methodname="BackwashStartsNeutralAndHasItsOwnBound" classname="TumbangPreso.Tests.RafiBackwashTests" runstate="Runnable" seed="196334094" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.012830" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1810" name="ExpiredPassiveDoesNotExpireTheLoadedSlipper" fullname="TumbangPreso.Tests.RafiBackwashTests.ExpiredPassiveDoesNotExpireTheLoadedSlipper" methodname="ExpiredPassiveDoesNotExpireTheLoadedSlipper" classname="TumbangPreso.Tests.RafiBackwashTests" runstate="Runnable" seed="1357642992" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.002969" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1809" name="InvalidOrUnboundPassiveCannotRestore" fullname="TumbangPreso.Tests.RafiBackwashTests.InvalidOrUnboundPassiveCannotRestore" methodname="InvalidOrUnboundPassiveCannotRestore" classname="TumbangPreso.Tests.RafiBackwashTests" runstate="Runnable" seed="354579572" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.000360" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1808" name="SkimAndBackwashAgeIndependently" fullname="TumbangPreso.Tests.RafiBackwashTests.SkimAndBackwashAgeIndependently" methodname="SkimAndBackwashAgeIndependently" classname="TumbangPreso.Tests.RafiBackwashTests" runstate="Runnable" seed="100135572" result="Passed" start-time="2026-10-02 06:14:14Z" end-time="2026-10-02 06:14:14Z" duration="0.000190" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

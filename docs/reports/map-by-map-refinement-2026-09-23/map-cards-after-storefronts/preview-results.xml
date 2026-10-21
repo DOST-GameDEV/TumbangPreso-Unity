@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 07:59:41Z" end-time="2026-09-24 07:59:46Z" duration="4.3341258">
+  <test-suite type="TestSuite" id="1797" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="620" result="Passed" start-time="2026-09-24 07:59:41Z" end-time="2026-09-24 07:59:46Z" duration="4.334126" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1791" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="620" result="Passed" start-time="2026-09-24 07:59:41Z" end-time="2026-09-24 07:59:46Z" duration="4.318776" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12008" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1792" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="620" result="Passed" start-time="2026-09-24 07:59:41Z" end-time="2026-09-24 07:59:46Z" duration="4.312679" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1793" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="620" result="Passed" start-time="2026-09-24 07:59:41Z" end-time="2026-09-24 07:59:46Z" duration="4.306878" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1290" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="50" result="Passed" start-time="2026-09-24 07:59:41Z" end-time="2026-09-24 07:59:46Z" duration="4.283614" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1306" name="UpdatedStreetMapCardsUseTheirRealPreviewCameras" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.UpdatedStreetMapCardsUseTheirRealPreviewCameras" methodname="UpdatedStreetMapCardsUseTheirRealPreviewCameras" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="430789388" result="Passed" start-time="2026-09-24 07:59:41Z" end-time="2026-09-24 07:59:46Z" duration="4.262582" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Play] wrote Logs/map-cards-after-storefronts/Eskinita-updated-card.png
+[Env] repainted 325 of 2820 renderers, 0 with a roof variant.
+[NearFade] 3314 occluder nodes matched, 1621 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Play] wrote Logs/map-cards-after-storefronts/IlalimNgTulay-updated-card.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

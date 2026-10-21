@@ -1,0 +1,5 @@
+BayanPlaza aspin-cream only: 89 supported nodes, 691 clear links.
+Existing marking surface / Mark at (-8.00, 0.10, 11.60)
+South plaza watch / Watch at (-8.50, 0.10, 3.50)
+Planted-edge investigation / Investigate at (-9.50, 0.10, 9.00)
+Plaza corner survey / Watch at (-9.60, 0.10, 0.80)

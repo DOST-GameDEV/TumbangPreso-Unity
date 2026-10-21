@@ -1,0 +1,20 @@
+{
+  "raw/candidate-classified-result.json": "bca6961aa2c100e657be4cb93554efd4c546a78c007e8f39ae8dd42597810352",
+  "raw/candidate-launch.json": "f986232e7862a7caac5a668a66ea859146022b4f261fa69def32a73cd82d7f8e",
+  "raw/candidate-profile-restoration.json": "d6a7193566a4d40c9ed99497fc412c5766b974e7f27ba82f1e632b405358590c",
+  "raw/candidate-tests.xml": "8b0d570d43e9b928cac86f427475133ae08cb261d4d7fe4549056f1d40b06e17",
+  "raw/capture-classified-result.json": "83e41346f7cc0df3d053743333ab2b1375c4879678cad91527d60805648f42f3",
+  "raw/capture-launch.json": "ca69a6e38bfb8ed46a51fda57c3a8444b04b9328c99c0d27741a3916f0804854",
+  "raw/capture-manual-restoration-receipt.json": "490250221c3c6e8f3ca78cde6df292d24a6f674365b28405855659d0d3002686",
+  "raw/capture-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/capture-tests.xml": "ffd78398baaee1f703209ff76a5a3d472c5895d0e0a368698e05bffb7cc65dc4",
+  "raw/HubMapVote.cs": "f8362b8ee5aa96d47d214e1de5bf23c58325097eaff09ed0d4e96c523d680f97",
+  "raw/Kanto-efficient-psnr.txt": "c1287ec3110397feb6ba0a88e34743fe1a3b33f434e43bc330809c849a518987",
+  "raw/MapVoteBackgroundTests.cs": "0199ad1bfb06ceacbf2ea1ed84195691c22ae595c7f2357ffe524a80ea0633dd",
+  "raw/media-sha256.json": "3400427684d8928690156a8b5fd7a11e7bae43dbc961577b1318cb728e437162",
+  "raw/original-classified-result.json": "c06666f6f3eb951c2ccae29300107ffcbf92afd72005e3fa450924578894fb72",
+  "raw/original-launch.json": "a03f5a992d20f46cf47867f00b8ab72f1697179d55399025b88174f6e8056874",
+  "raw/original-profile-restoration.json": "d6a7193566a4d40c9ed99497fc412c5766b974e7f27ba82f1e632b405358590c",
+  "raw/original-tests.xml": "81ba3b1661649cecca12a32f7d2366a1ef219ebfe1651a29e18fd80477691413",
+  "raw/six-preview-comparison.json": "f6b0790209b7d32339a944c2deea8814a5fd754e135ed107884885b1033e5e78"
+}

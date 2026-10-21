@@ -1,0 +1,23 @@
+{
+  "preparationBookkeepingCorrections": 1,
+  "nativeRepairs": 0,
+  "baseline": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "intendedFailures": [
+      "RecoveredPrimaryThenNormalSaveKeepsTheLastUsableBackup",
+      "RefusedSaveUnderAPrimaryLockPreservesItsUsableBackup"
+    ]
+  },
+  "player1002hContainsPatch": false,
+  "candidate": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "protectedInputs": 12531,
+  "fixtureRepairs": 0,
+  "protectedChanged": 0,
+  "claim": "Windows Editor temporary-file Read/Write behavior only"
+}

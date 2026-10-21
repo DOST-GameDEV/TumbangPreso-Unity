@@ -28,7 +28,8 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward,
                                                    float duration = 6.0f,
                                                    float spanScale = 1.0f,
-                                                   float thicknessScale = 1.0f, bool split = false, bool silent = false)
+                                                   float thicknessScale = 1.0f, bool split = false, bool silent = false,
+                                                   float arcLength = 0.0f, float arcRadius = 3.0f)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("IceBarricade");
@@ -37,15 +38,22 @@ namespace TumbangPreso.Abilities
 
             // Authored fractured slabs replace the rotated cubes, disconnected
             // diamond toppers, rigidbody chips and persistent cyan point light.
-            CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale,split);
+            if (arcLength > 0.0f) CheskaIceVisuals.BuildArc(go.transform, arcLength, arcRadius);
+            else CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale,split);
 
             if (!silent) GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
 
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
             comp.SpanScale = spanScale; comp.ThicknessScale = thicknessScale; comp.Split = split;
+            comp.ArcLength = arcLength; comp.ArcRadius = arcRadius;
 
             HazardVolume.Attach(go, 1.6f * spanScale, -1);
+
+            // Glacial Wall's approved look (owner 2026-10-18, "depth b looks good"). The slabs above stay as the
+            // colliders and stop being drawn; the look reads its clock from `comp`, so every peer and a late joiner
+            // draw the same wall at the same moment of its life.
+            if (arcLength > 0.0f && CheskaGlacialWallLook.Enabled) CheskaGlacialWallPresenter.Attach(comp, arcLength, arcRadius);
 
             return go;
         }
@@ -54,7 +62,26 @@ namespace TumbangPreso.Abilities
         {
             public float Duration = 6.0f;
             public float SpanScale = 1, ThicknessScale = 1;
+            public float ArcLength, ArcRadius = 3;
             public bool Split;
+
+            /// <summary>
+            /// Slipper hits it takes before it shatters, 0 for none (the old barricade). Glacial Wall
+            /// (ABILITY-2): *"The icicle wall takes 3 slipper hits to shatter."* Counted on the host by
+            /// `Slipper.BounceOffObstacles`; the shatter's flair breaks it on every peer (`MatchFlair`).
+            /// </summary>
+            public int HitsToShatter;
+            private int _hits;
+            public int RemainingHits => HitsToShatter > 0 ? Mathf.Max(0, HitsToShatter - _hits) : 0;
+            public bool IsShattered => _shattered;
+
+            public void HostSlipperHit()
+            {
+                if (HitsToShatter <= 0 || _shattered) return;
+                _hits++;
+                NetCue.Play("sfx_cheska_wall_crack", transform.position);
+                if (_hits >= HitsToShatter) Shatter();
+            }
             private float _left;
             private bool _shattered;
             private bool _started;
@@ -77,7 +104,9 @@ namespace TumbangPreso.Abilities
                 if (_shattered) return;
                 _shattered=true;
                 foreach (var collider in GetComponentsInChildren<Collider>()) collider.enabled=false;
-                CheskaIceVisuals.Shatter(transform.position,true);
+                // The reworked look sinks into the road by itself at the end of its life, so a wall that runs out
+                // throws no chunks; one broken early by slippers still bursts, and its crystals sink behind the burst.
+                if (!CheskaGlacialWallPresenter.End(transform, Remaining)) CheskaIceVisuals.ShatterWall(transform);
                 // Keep the actual ice-break cue and shared match event. Decorative
                 // fragments have no physics or colliders and cannot shove players.
                 NetCue.Play("sfx_ice_shatter", transform.position);
@@ -183,10 +212,7 @@ namespace TumbangPreso.Abilities
                     // Same rule as the entry: see the note in `Update`. ⚠️ BRACED, because
                     // `tools/audit_ability_authority.py` tracks the gate by brace depth and reads
                     // a braceless one-liner as ungated.
-                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
-                    {
-                        p.ExitSpeedZone(ChillMultiplier);
-                    }
+                    // The speed half is the Chilled status now and runs out on its own clock.
                 }
 
                 _chilled.Clear();
@@ -278,15 +304,19 @@ namespace TumbangPreso.Abilities
                         {
                             p.SetIceSurface(this,SlipScale);
                             _tractionTargets.Add(p);
+                            // ⚠️⚠️ CHILLED, NOT A SPEED ZONE (owner's status table, 2026-09-25:
+                            // *"Decreases movement speed by 50% for 5 seconds"*, and the answer that
+                            // Cheska's sheet applies it). Refreshed every frame on the ice by `Max`,
+                            // so it runs its full five seconds from the moment you step OFF. The old
+                            // 0.55 speed zone ended at the edge; the slip below is unchanged.
+                            p.ApplyChilled();
                         }
                         if (inside && !chilled)
                         {
-                            p.EnterSpeedZone(ChillMultiplier);
                             _chilled.Add(p.PlayerSlot);
                         }
                         else if (!inside && chilled)
                         {
-                            p.ExitSpeedZone(ChillMultiplier);
                             p.SetIceSurface(this,0);
                             _tractionTargets.Remove(p);
                             _chilled.Remove(p.PlayerSlot);
@@ -672,8 +702,7 @@ namespace TumbangPreso.Abilities
                     // teleport itself is clamped as a last line of defence, but clamping the
                     // ghost is what keeps the destination somewhere worth blinking to.
                     Vector3 flown = transform.position;
-                    flown.x = Mathf.Clamp(flown.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-                    flown.z = Mathf.Clamp(flown.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+                    flown = AIController.ClampToPlayable(flown);
                     transform.position = flown;
                 }
                 else
@@ -1030,208 +1059,8 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        // -------------------------------------------------------------------
-        // SEANCE VOID ZONE (Nemu Ultimate)
-        // -------------------------------------------------------------------
-        public static GameObject SpawnSeanceVoid(Vector3 position, float radius = 3.2f, float duration = 5.0f, int ownerSlot = -1)
-        {
-            var go = new GameObject("SeanceVoidZone");
-            go.transform.position = position;
-
-            // ⚠️⚠️ THE VOID IS DARK IN THE MIDDLE AND BRIGHT AT THE RIM, AND IT USED TO BE THE
-            // EXACT OPPOSITE. `Logs/shots-abilities/ability_seance_void_v1.png` is the evidence
-            // and there is no kind way to describe what it showed: a violet ring around a disc
-            // of pure 255,255,255 white with a solid purple ball sitting in it, which reads as a
-            // cartoon EYEBALL and not as a hole in the world. It was the worst-looking effect in
-            // the game and it had never been rendered on its own.
-            //
-            // Three separate faults, all of them the same mistake made three times:
-            //  * `VortexInner` was `HeroSpiritBright` at 0.70 alpha and 0.8 emission, which
-            //    clips past white before `ColourGrade` ever sees it, so the brightest part of
-            //    the effect was its CENTRE;
-            //  * `SingularityCore` was a 1.54 m sphere at 0.95 alpha, which is opaque, so the
-            //    "singularity" was a beach ball;
-            //  * a 4.5-intensity light 1.2 m up then lit all of it at once.
-            //
-            // ⚠️ A THING THAT PULLS YOU IN HAS TO LOOK LIKE IT GOES DOWN. That is the whole read
-            // and it is what `docs/VISION.md` § 2 rule 3 means by spending the budget on detail:
-            // the darkest point is the middle, the rim is where the light is, and the shards
-            // lean inward so the eye is carried toward the centre rather than around the edge.
-            // It also lets the void be SMALLER (2.8 m, down from 3.2) without reading as weaker.
-
-            // ⚠️⚠️ IT HOVERS. A BLACK HOLE LYING FLAT ON THE ROAD IS A MANHOLE. 🧑 2026-08-25:
-            // *"make make blackhole float, its on the floor"*. Every other effect in this file
-            // is ground-level because every other effect IS ground: a scorch, a fracture, a
-            // frozen patch. This one is a tear in the world, and the one thing that separates it
-            // from a painted circle is that the street carries on underneath it.
-            //
-            // ⚠️ THE HOVER IS ALSO WHY IT IS THE ONLY ROUND SHAPE LEFT. Every other effect got
-            // its own silhouette on 2026-08-25 because they were all discs (see
-            // `SpawnFireTrail`). A vortex is genuinely radial and a circle is the honest shape
-            // for it, so instead of changing the outline it changes AXIS: horizontal versus
-            // vertical is a bigger difference than any two outlines on the same plane.
-            const float Hover = 1.35f;
-
-            var core = new GameObject("VoidCore");
-            core.transform.SetParent(go.transform, false);
-            core.transform.localPosition = new Vector3(0.0f, Hover, 0.0f);
-
-            // ⚠️⚠️ ONE FUNNEL, NOT THREE STACKED DISCS, AND THE THREE DISCS ARE WHY THIS READ AS
-            // A PANCAKE. What stood here was a mouth, a throat and a lip, each a
-            // `PrimitiveType.Cylinder` scaled flat and offset a centimetre from the last. The
-            // comment they carried said *"two steps down reads as a funnel where one step reads
-            // as a lid"*, and `ability_seance_void_v11.png` says otherwise in one frame: three
-            // discs of decreasing size stack into ONE lilac plate with a darker ellipse painted
-            // in the middle. Concentric flat rings are a target, not a hole. No arrangement of
-            // discs is a funnel, because every one of them is parallel to the road.
-            //
-            // ⚠️⚠️ 🧑, 2026-08-26, naming the class this belongs to: *"the same logic and code was
-            // used to generate all of them"*. This is the purest case of it in the file. Four
-            // objects, four scaled cylinders, and the effect that is supposed to be a tear in the
-            // world was built out of exactly the primitive the § 8 silhouette pass was written to
-            // get rid of, in the one ability that never got the pass.
-            //
-            // `VfxShapes.Funnel` is a surface with a vertical PROFILE: unit radius at the lip,
-            // deepest at the centre, falling on a power curve so the wall is near vertical at the
-            // rim and most of the depth lives in the inner half. It is one mesh, one renderer and
-            // one draw where three stood, and it is the only thing in the frame the eye reads as
-            // going down.
-            //
-            // ⚠️ THE DEPTH IS TIED TO THE RADIUS BUT NOT EQUAL TO IT. At `radius * 0.40` a 2.8 m
-            // void is 0.62 m deep, which is under half the 1.35 m hover, so the bottom of the
-            // funnel stays clear of the road it is supposed to be floating above. Uniform scaling
-            // would put it through the street.
-            var outer = VfxShapes.Stand(core.transform, "VoidMouth",
-                                        VfxShapes.Funnel(5, 12, 0.55f, 0.08f, 2.4f),
-                                        radius, heightScale: radius * 0.40f);
-            VfxMaterial.Ghost(outer.GetComponent<Renderer>(), new Color(0.06f, 0.01f, 0.11f, 0.93f), 0.0f);
-
-            // The event horizon: a thin bright collar at the LIP, which is the only lit part.
-            // A `Prism` ring rather than a fourth disc, so the rim has a real edge standing proud
-            // of the mouth instead of another translucent plate blending into it.
-            var lip = VfxShapes.Stand(core.transform, "VoidLip",
-                                      VfxShapes.Collar(14, 1.0f, 0.945f, 0.0f, 0.0f, 3),
-                                      radius * 1.05f, heightScale: 0.10f, lift: -0.02f);
-            VfxMaterial.Ghost(lip.GetComponent<Renderer>(),
-                              new Color(0.62f, 0.20f, 0.98f, 0.60f), 0.30f);
-            VfxMaterial.StripCollider(lip);
-
-            // ⚠️⚠️ AND THE GROUND STILL HAS TO SAY WHERE THE DANGER IS, WHICH IS THE HALF A
-            // HOVERING EFFECT BREAKS. The hazard resolves by distance on the FLOOR
-            // (`SeanceVoidComponent` compares flat positions), so lifting the art off the floor
-            // without leaving a mark would put the gameplay circle somewhere the player cannot
-            // see it. That is the exact fault `HeroAbility.TelegraphRadius` exists to stop: a
-            // telegraph that lies is worse than no telegraph.
-            //
-            // ⚠️⚠️ A DASHED RING, NOT A FILLED DISC, AND THE FILLED DISC WAS THE SINGLE LARGEST
-            // PAINTED AREA IN THE GAME. This telegraph was a `Cylinder` at the FULL radius at
-            // 0.42 alpha, so a 2.8 m void laid a 24.6 m² violet plate on a 196 m² court: 12.5 per
-            // cent of the box for a marker whose entire job is to say where the edge is. It is
-            // most of the purple in `ability_worstframe_v11.png` and most of the reason the void
-            // reads as a puddle rather than as a hole.
-            //
-            // ⚠️ THE INFORMATION IS THE RADIUS, AND A RING CARRIES IT. `HeroAbility.TelegraphRadius`
-            // exists so a telegraph cannot lie about where the danger is, and the note above is
-            // right that a hovering effect must still mark the floor. None of that requires
-            // filling the circle in. Sixteen short plates at the rim say exactly the same thing
-            // over about a twelfth of the area, and a broken ring reads as a boundary rather than
-            // as a surface a player might think they can stand on.
-            //
-            // ⚠️⚠️ IT IS A CONTINUOUS RING, AND `Wedges` WAS THE WRONG BUILDER FOR IT. The
-            // fracture builder was the first answer here because it is cheap and it made the
-            // area small, which was the actual problem with the filled disc. But
-            // `ability_seance_void_eye_v15.png` shows what it costs at eye height: eighteen
-            // separate plates, each at its own angle and depth, read as PURPLE LITTER strewn
-            // across the road rather than as the edge of anything. A boundary has to be
-            // continuous to be read as a boundary, and Dante's crust wants the opposite because
-            // broken ground genuinely is in pieces. Same shape budget, right builder.
-            //
-            // ⚠️ 0.93 INNER RATIO IS A 7 PER CENT BAND: about 1.1 m² at a 2.8 m void, against the
-            // 24.6 m² the filled `Cylinder` painted. That is the whole point of the change and it
-            // is unaffected by which builder draws it.
-            var pull = VfxShapes.Lay(go.transform, "VoidGroundPull",
-                                     VfxShapes.Collar(24, 0.02f, 0.93f, 0.0f, 0.0f, 5),
-                                     radius, 0.015f);
-            VfxMaterial.Ghost(pull.GetComponent<Renderer>(),
-                              new Color(0.42f, 0.13f, 0.76f, 0.42f), 0.16f);
-            VfxMaterial.StripCollider(pull);
-
-            // ⚠️ THE SHARDS ARE THE PULL, AND THEY ARE WHAT THE OLD CORE ORB SHOULD HAVE BEEN.
-            // Eight chips of debris caught mid-fall, leaning in and tipped down toward the
-            // centre. They say "this drags things" in a still frame, which a rotating disc
-            // cannot, and they are cubes for the same reason the fire trail's embers are: the
-            // cast and the props are voxel art and a smooth effect is the thing that looks
-            // wrong. `SeanceVoidComponent` spins the parent, so they orbit for free.
-            for (int s = 0; s < 8; s++)
-            {
-                var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                shard.name = $"VoidShard_{s}";
-                shard.transform.SetParent(go.transform, false);
-
-                // ⚠️ THE SHARDS SPAN THE GAP BETWEEN THE ROAD AND THE HOVERING CORE, which is
-                // what sells the hover: debris caught partway UP is the only thing in the frame
-                // that says the vortex is lifting rather than that the art is floating by
-                // mistake. Heights are spread across the whole 0.2 m to 1.5 m column on purpose.
-                float a = s * 45.0f * Mathf.Deg2Rad;
-                float rr = radius * Random.Range(0.55f, 0.92f);
-                shard.transform.localPosition = new Vector3(Mathf.Cos(a) * rr,
-                                                            Random.Range(0.20f, 1.50f),
-                                                            Mathf.Sin(a) * rr);
-
-                // Tipped toward the middle, which is the half of this that carries the meaning.
-                shard.transform.localRotation = Quaternion.Euler(Random.Range(28.0f, 52.0f),
-                                                                 -a * Mathf.Rad2Deg,
-                                                                 Random.Range(-20.0f, 20.0f));
-                float sc = Random.Range(0.10f, 0.20f);
-                shard.transform.localScale = new Vector3(sc, sc * Random.Range(1.2f, 2.4f), sc);
-
-                VfxMaterial.Solid(shard.GetComponent<Renderer>(),
-                                  new Color(0.55f, 0.28f, 0.85f), 0.22f);
-                VfxMaterial.StripCollider(shard);
-            }
-
-            // Pulsing violet gravity light
-            var lightGo = new GameObject("VoidLight");
-            lightGo.transform.SetParent(go.transform, false);
-            // ⚠️ RAISED AND CUT TO A QUARTER. See the ice sheet's light: at 4.5 sitting 1.2 m
-            // over its own disc, this lit the void rather than the street, which is how a hole
-            // in the world ended up being the brightest thing in the frame.
-            lightGo.transform.localPosition = new Vector3(0, 2.1f, 0);
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroSpiritBright;
-            light.range = radius * 2.6f;
-            light.intensity = 1.1f * .40f; // Keep the effect readable without bleaching nearby bodies.
-
-            // ⚠️ THE VORTEX EMITS FOR ITS WHOLE LIFE, not just at the moment it opens. It is
-            // a 5 s zone that DRAGS people in, so it has to keep looking dangerous the whole
-            // time; a one-shot burst at cast leaves four seconds of a flat purple disc.
-            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.VoidWisp, duration);
-
-            // ⚠️ A TEAR IN THE WORLD IS NOT A BOMB. This played `ability_bagsak_bomb`, so Nemu's
-            // ultimate opened with the same detonation as Sean's and Dante's. `sfx_possess_enter`
-            // is the rising, sucking shape written for her possession and it is the same gesture
-            // a vortex makes: something being pulled through.
-            GameServices.Audio?.PlayAt("sfx_possess_enter", position);
-
-            HazardVolume.Attach(go, radius, ownerSlot);
-
-            var comp = go.AddComponent<SeanceVoidComponent>();
-            comp.Radius = radius;
-            comp.Duration = duration;
-            comp.OwnerSlot = ownerSlot;
-
-            // ⚠️⚠️ NOTHING SOURCED IS DRESSED ONTO THIS ONE, AND IT IS THE ONLY EFFECT IN THE
-            // FILE THAT WAS DELIBERATELY LEFT OUT OF `docs/TODO.md` § 131's PASS.
-            // `SpawnSeanceVoid` is no longer cast by anything: `NemuHeroKit` builds
-            // `SpawnKuroUnbound` and only `AbilityShowcaseProbe` still reaches this, which
-            // `grep -rn SpawnSeanceVoid` says in one line. Devouring Seance's sourced implosion
-            // is in `SpawnKuroUnbound`, where the ultimate actually is. Putting art on a zone
-            // the game cannot produce is § 130.7's dead `MapPreview` with a fresh coat on it.
-
-            return go;
-        }
-
+        // Kuro's live intake simulation. The retired floor-vortex factory was
+        // removed under TODO131.6; recorded fields and the familiar still use this component.
         public sealed class SeanceVoidComponent : MonoBehaviour
         {
             public float Radius = 7.5f;
@@ -1241,8 +1070,7 @@ namespace TumbangPreso.Abilities
             /// <summary>
             /// How hard a body is dragged toward the centre, in impulse per second.
             ///
-            /// ⚠️ THE DEFAULT IS THE OLD CONSTANT, so `SpawnSeanceVoid` keeps exactly the
-            /// behaviour it was measured with. Only Kuro Unbound raises it: see § THE PULL.
+            /// SpawnKuroUnbound supplies the live ultimate's pull strength explicitly.
             /// </summary>
             public float PullStrength = 4.0f;
 
@@ -1251,11 +1079,17 @@ namespace TumbangPreso.Abilities
             ///
             /// ⚠️ IT IS A MULTIPLIER ON TOP OF `PullStrength` RATHER THAN A SECOND STRENGTH, so
             /// the rim of every zone using this component keeps the force it was tuned with and
-            /// only the inside gains. Nemu's SKILL-tier Seance Void and her ULTIMATE share this
-            /// class, and a skill that suddenly funnelled like an ultimate would be the
-            /// *"reads as a one time"* complaint in another costume.
+            /// only the inside gains. Recorded Kuro fields restore the same intake profile.
             /// </summary>
             public float CentreBite = 2.2f;
+
+            /// <summary>
+            /// ⚠️ HERO-10 (Phaister's OMEN): > 0 holds caught bodies on a RING this far out instead of dragging them to the
+            /// middle, pushing a body back out if it is inside it, so they orbit the rim of her eye rather than covering it. The
+            /// lift is then measured from the ring, so a body on it is held at the full `LiftHeight`. 0 (every other use, Nemu's
+            /// void and Kuro's maw) keeps the old pull to the centre exactly as it was.
+            /// </summary>
+            public float HoldRadius = 0.0f;
 
             /// <summary>
             /// How far off the ground the very centre of the vortex holds a body.
@@ -1276,10 +1110,19 @@ namespace TumbangPreso.Abilities
             /// <summary>How fast a loose tsinelas slides in, in metres per second.</summary>
             public float SlipperPull = 5.5f;
 
+            /// <summary>HIGOP (ABILITY-2): slippers owned by this seat are spared (owner: *"pulls players
+            /// ands slipeprs except for her shit"*). -1 spares none.</summary>
+            public int SparedSlipperOwner = -1;
+
+            /// <summary>Seconds between the small drowse stumbles; 0 turns them off (HIGOP: no mashing).</summary>
+            public float DrowseEvery = 1.25f;
+
             private float _left;
             private readonly Dictionary<int, float> _nextDrowseBySlot = new Dictionary<int, float>();
 
-            private void Start() => _left = Duration;
+            private bool _started;
+            public float Remaining=>Mathf.Max(0,_started?_left:Duration);
+            private void Start() {_left=Duration;_started=true;}
 
             private void Update()
             {
@@ -1358,6 +1201,14 @@ namespace TumbangPreso.Abilities
                     // the rim, so the rim behaves exactly as it did and only the inside changes.
                     float closeness = 1.0f - (distance / Radius);
                     float bite = Mathf.Lerp(1.0f, CentreBite, closeness);
+                    if (HoldRadius > 0.0f)
+                    {
+                        // Toward the ring from either side, gently near it so the body settles on it instead of oscillating.
+                        float error = distance - HoldRadius;
+                        closeness = Mathf.Clamp01(1.0f - error / Mathf.Max(0.01f, Radius - HoldRadius));
+                        bite = Mathf.Lerp(1.0f, CentreBite, closeness) * Mathf.Clamp(Mathf.Abs(error) / 0.6f, 0.15f, 1.0f);
+                        if (error < 0.0f) diff = -diff;
+                    }
 
                     // ⚠️⚠️ THE PULL HAS TO BEAT `Balance.Friction`, AND THIS IS THE ARITHMETIC
                     // THAT EXPLAINS WHY 14 FELT LIKE NOTHING EVEN ON THE HOST.
@@ -1432,8 +1283,8 @@ namespace TumbangPreso.Abilities
                     // your own body would flinch you on a frame the host never agreed to, and
                     // `StunElement`/`ApplyStagger` is exactly the class of state `CLAUDE.md` § 4
                     // keeps on one machine.
-                    if (NetAuthority.ShouldResolve() &&
-                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                    if (NetAuthority.ShouldResolve() && DrowseEvery > 0.0f &&
+                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, DrowseEvery))
                     {
                         p.ApplyStagger(0.35f);
                     }
@@ -1453,7 +1304,7 @@ namespace TumbangPreso.Abilities
                 // the carry would be a disarm, which is a verb this game does not have.
                 foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                 {
-                    if (s != null && s.State != SlipperState.Held)
+                    if (s != null && s.State != SlipperState.Held && (SparedSlipperOwner < 0 || s.OwnerSlot != SparedSlipperOwner))
                     {
                         Vector3 sDiff = transform.position - s.transform.position;
                         sDiff.y = 0.0f;
@@ -2135,7 +1986,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static GameObject SpawnHexSigil(Vector3 position, float radius = 2.4f,
                                                float duration = 6.0f, int ownerSlot = -1,
-                                               float effectScale = 1.0f, bool silent = false)
+                                               float effectScale = 1.0f, bool silent = false, bool renderOnly = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("HexWardZone");
@@ -2190,8 +2041,9 @@ namespace TumbangPreso.Abilities
 
 
 
-            if (!silent) GameServices.Audio?.PlayAt("sfx_hex_cast", position);
+            if (!silent && !renderOnly) GameServices.Audio?.PlayAt("sfx_hex_cast", position);
 
+            if(!renderOnly) {
             var comp = go.AddComponent<HexSigilComponent>();
             comp.Radius = radius;
             comp.Duration = duration;
@@ -2199,6 +2051,7 @@ namespace TumbangPreso.Abilities
             comp.EffectScale = effectScale;
 
             HazardVolume.Attach(go, radius, ownerSlot);
+            }
             return go;
         }
 
@@ -2598,7 +2451,7 @@ namespace TumbangPreso.Abilities
         /// them is a star polygon.
         /// </summary>
         public static GameObject SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f,
-                                                        float duration = 5.0f, float gatherSeconds = 0.0f)
+                                                        float duration = 5.0f, float gatherSeconds = 0.0f, bool renderOnly = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("GrandCovenEclipseEffect");
@@ -2753,13 +2606,13 @@ namespace TumbangPreso.Abilities
             anim.Corona = corona.transform;
             anim.Reach = reach.transform;
             anim.Glow = light;
-            anim.Duration = life;
+            anim.Duration = life;anim.RecordedRadius=radius;
             anim.GatherSeconds = gatherSeconds;
             anim.RestHeight = height;
             anim.Initialize();
             anim.StepTo(0);
 
-            Object.Destroy(go, life);
+            if(!renderOnly)Object.Destroy(go, life);
             return go;
         }
 
@@ -2951,8 +2804,167 @@ namespace TumbangPreso.Abilities
                 AddFigure("Fig_Core", VfxShapes.Sigil(3, 1, 0.030f, 0.84f, 0, 36, 907),
                           0.212f, 63.0f, pale, 0.64f);
 
-                AddFloatingGlyphs(6);
+                AddFloatingGlyphs(20);
+                AddPresence();
             }
+
+            // -------------------------------------------------------------------
+            // § PRESENCE: WHY THE CIRCLE STOPPED READING AS "A PURPLE EMPTY CIRCLE"
+            //
+            // ⚠️⚠️ 🧑 2026-09-24: *"circle doesnt look that amazing its js a purple empty circle"*.
+            // The line work above is correct and stays; what it lacked was VALUE and HEIGHT (plan:
+            // `docs/reports/skill-performances-2026-09-24/plan.md` § 2, from Riot's VFX style guide:
+            // one readable primary shape, a real value range, illumination). Every rule was a thin
+            // mid purple on mid grey road, so from eye height perspective squeezed it into a faint
+            // ellipse with nothing darker or brighter than anything else. So, still line art and
+            // still no painted floor:
+            //  * a SHADOW POOL: the road inside darkens a little, so the lines glow against a dark
+            //    ground (the lata and players stay bright on it; darkness is not paint);
+            //  * a bright CORE on the three primary rules, with a wide soft underlay;
+            //  * a CURTAIN, a low luminous wall rising from the rim, so the boundary a cursed player
+            //    must escape reads edge-on from anywhere (VALORANT's hard edge, a Jujutsu domain);
+            //  * the sigils COUNTER-ROTATE and twenty distinct glyphs orbit and rise (he asked for
+            //    "like 20 or so" all different);
+            //  * each curse sends a WAVE from the centre to the rim and flares the curtain;
+            //  * the circle CLOSES with one snap of light (none under reduced effects).
+            // -------------------------------------------------------------------
+            private Renderer _pool, _curtainLow, _curtainMid, _curtainHigh, _wave;
+            private readonly List<Renderer> _cores = new List<Renderer>(3);
+            private readonly List<Transform> _spinners = new List<Transform>(3);
+            private readonly List<float> _spinRate = new List<float>(3);
+            private Transform _curtain, _waveRing;
+            private static readonly Color CovenCore = new Color(.96f, .36f, .86f);
+
+            private void AddPresence()
+            {
+                var pool = VfxShapes.Lay(transform, "ShadowPool", VfxShapes.Splat(48, 0.0f, 3), Radius * .985f, 0.012f);
+                _pool = pool.GetComponent<Renderer>();
+                VfxMaterial.Ghost(_pool, new Color(.10f, .03f, .16f, .0f), 0.0f);
+                VfxMaterial.StripCollider(pool); VfxShapes.DrapeToGround(pool);
+
+                foreach (var (name, scale) in new[] { ("Core_Outer", 1.0f), ("Core_Mid", .742f), ("Core_Inner", .238f) })
+                {
+                    var under = VfxShapes.Lay(transform, name + "_Glow", VfxShapes.Collar(72, 0.05f, 0.955f), Radius * scale * 1.012f, 0.0205f);
+                    VfxMaterial.Ghost(under.GetComponent<Renderer>(), new Color(CovenCore.r, CovenCore.g, CovenCore.b, 0), .9f);
+                    VfxMaterial.StripCollider(under); VfxShapes.DrapeToGround(under);
+                    _cores.Add(under.GetComponent<Renderer>());
+                    var core = VfxShapes.Lay(transform, name, VfxShapes.Collar(72, 0.05f, 0.985f), Radius * scale, 0.021f);
+                    VfxMaterial.Ghost(core.GetComponent<Renderer>(), new Color(1, .82f, .98f, 0), 1.1f);
+                    VfxMaterial.StripCollider(core); VfxShapes.DrapeToGround(core);
+                    _cores.Add(core.GetComponent<Renderer>());
+                }
+
+                _curtain = new GameObject("Curtain").transform;
+                _curtain.SetParent(transform, false);
+                _curtainLow = CurtainBand("CurtainLow", 0.00f, .30f, .34f);
+                _curtainMid = CurtainBand("CurtainMid", .30f, .62f, .18f);
+                _curtainHigh = CurtainBand("CurtainHigh", .62f, .95f, .07f);
+
+                var wave = VfxShapes.Lay(transform, "CurseWave", VfxShapes.Collar(64, 0.05f, 0.93f), Radius, 0.022f);
+                _wave = wave.GetComponent<Renderer>(); _waveRing = wave.transform;
+                VfxMaterial.Ghost(_wave, new Color(1, .7f, .97f, 0), 1.0f);
+                VfxMaterial.StripCollider(wave);
+
+                foreach (Transform layer in transform)
+                {
+                    if (layer.name == "Fig_Outer") { _spinners.Add(layer); _spinRate.Add(6); }
+                    if (layer.name == "Fig_Mid") { _spinners.Add(layer); _spinRate.Add(-9); }
+                    if (layer.name == "Fig_Core") { _spinners.Add(layer); _spinRate.Add(15); }
+                }
+            }
+
+            private Renderer CurtainBand(string name, float from, float to, float alpha)
+            {
+                var go = new GameObject(name);
+                go.transform.SetParent(_curtain, false);
+                go.transform.localPosition = new Vector3(0, from, 0);
+                go.transform.localScale = new Vector3(Radius, to - from, Radius);
+                go.AddComponent<MeshFilter>().sharedMesh = CurtainMesh();
+                var r = go.AddComponent<MeshRenderer>();
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false;
+                VfxMaterial.Ghost(r, new Color(CovenCore.r, CovenCore.g, CovenCore.b, 0), .8f);
+                _curtainAlpha[r] = alpha;
+                return r;
+            }
+
+            private readonly Dictionary<Renderer, float> _curtainAlpha = new Dictionary<Renderer, float>(3);
+            private static Mesh _curtainMesh;
+            private static Mesh CurtainMesh()
+            {
+                if (_curtainMesh != null) return _curtainMesh;
+                // ⚠️⚠️ TWO SHEETS, NOT ONE SHEET WOUND BOTH WAYS. The first version shared each
+                // vertex between the outward and the inward triangle, so `RecalculateNormals`
+                // averaged opposite faces to a ZERO normal and the whole wall lit pure black: the
+                // first native still (`ability_coven_eclipse_eye_v56.png`, 2026-09-24) showed an
+                // opaque black ring standing round the circle instead of a luminous curtain. Each
+                // side now owns its vertices and its normal (out on the outer sheet, in on the inner).
+                const int sides = 64, ring = (sides + 1) * 2;
+                var vertices = new Vector3[ring * 2]; var normals = new Vector3[ring * 2];
+                var triangles = new int[sides * 12];
+                for (int i = 0; i <= sides; i++)
+                {
+                    float a = i * Mathf.PI * 2 / sides;
+                    var rim = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                    for (int side = 0; side < 2; side++)
+                    {
+                        int v = side * ring + i * 2;
+                        vertices[v] = rim; vertices[v + 1] = rim + Vector3.up;
+                        normals[v] = normals[v + 1] = side == 0 ? rim : -rim;
+                    }
+                    if (i == sides) continue;
+                    int n = i * 2, m = ring + i * 2, t = i * 12;
+                    int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, m, m + 2, m + 1, m + 2, m + 3, m + 1 };
+                    for (int k = 0; k < 12; k++) triangles[t + k] = faces[k];
+                }
+                _curtainMesh = new Mesh { name = "Coven curtain", vertices = vertices, normals = normals, triangles = triangles };
+                _curtainMesh.RecalculateBounds();
+                return _curtainMesh;
+            }
+
+            private static void SetAlpha(Renderer r, float alpha)
+            {
+                if (r == null || r.sharedMaterial == null) return;
+                var c = r.sharedMaterial.color; c.a = Mathf.Clamp01(alpha); r.sharedMaterial.color = c;
+                r.enabled = alpha > .003f;
+            }
+
+            private void StepPresence(float seconds, float fade)
+            {
+                bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+                float built = BuildSeconds <= .001f ? 1 : Mathf.Clamp01(seconds / BuildSeconds);
+                float closed = seconds >= BuildSeconds ? 1 : 0;
+                // The pool darkens as the circle is written, and lifts with the fade.
+                SetAlpha(_pool, .30f * Mathf.SmoothStep(0, 1, built) * fade);
+                // The primary cores light as the circle closes.
+                float snap = reduced ? 0 : Mathf.Exp(-Mathf.Max(0, seconds - BuildSeconds) * 7) * closed;
+                float sincePulse = Mathf.Max(0, seconds - _lastPulse);
+                float pulse = seconds >= BuildSeconds && _lastPulse > 0 ? Mathf.Exp(-sincePulse * 5) : 0;
+                for (int i = 0; i < _cores.Count; i++)
+                {
+                    bool glow = i % 2 == 0;
+                    float on = Mathf.SmoothStep(0, 1, Mathf.Clamp01((seconds - BuildSeconds * (.55f + .15f * (i / 2))) / .3f));
+                    SetAlpha(_cores[i], (glow ? .30f + .25f * snap + .15f * pulse : .92f) * on * fade);
+                }
+                // The curtain rises in the last part of the build, breathes, flares on each curse.
+                float rise = Mathf.SmoothStep(0, 1, Mathf.Clamp01((seconds - BuildSeconds * .6f) / (BuildSeconds * .4f + .01f)));
+                float sink = Mathf.Clamp01((Duration - seconds) / .6f);
+                if (_curtain != null)
+                    _curtain.localScale = new Vector3(1, Mathf.Max(.01f, rise * sink * (1 + .25f * pulse + .35f * snap)), 1);
+                float breathe = reduced ? 1 : .9f + .1f * Mathf.Sin(seconds * 2.4f);
+                foreach (var kv in _curtainAlpha)
+                    SetAlpha(kv.Key, kv.Value * rise * sink * breathe * (1 + .8f * pulse + 1.2f * snap));
+                // Each curse: a wave from the centre out to the rim.
+                if (_waveRing != null)
+                {
+                    float u = Mathf.Clamp01(sincePulse / .5f);
+                    _waveRing.localScale = new Vector3(Radius * Mathf.Lerp(.15f, 1, u), Radius, Radius * Mathf.Lerp(.15f, 1, u));
+                    SetAlpha(_wave, pulse > 0 ? .85f * (1 - u) * fade : 0);
+                }
+                // Counter-rotating sigils: a spell being held, not a decal.
+                for (int i = 0; i < _spinners.Count; i++)
+                    if (_spinners[i] != null) _spinners[i].localRotation = Quaternion.Euler(0, _spinRate[i] * seconds, 0) * _spinnerRest[i];
+            }
+            private readonly List<Quaternion> _spinnerRest = new List<Quaternion>(3);
 
             /// <summary>One medallion: a small ring with its own figure in it, or empty.</summary>
             private void AddMedallion(float angleDeg, float at, float size,
@@ -3266,9 +3278,13 @@ namespace TumbangPreso.Abilities
                 {
                     if(_floaters[i]==null)continue;
                     float settle=BuildSeconds<=.001f?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/BuildSeconds));
-                    _floaters[i].localPosition=_floatPosition[i]+Vector3.up*(settle*.20f+Mathf.Sin(seconds*1.4f+_floatPhase[i])*.045f);
-                    _floaters[i].localRotation=_floatRest[i]*Quaternion.Euler(0,(1-settle)*(i%2==0?25:-25),0);
+                    // SKILL-FX-1: the glyphs ORBIT (inner and outer rings opposite ways) and climb.
+                    var orbit=Quaternion.Euler(0,seconds*(i%2==0?7f:-10f),0);
+                    _floaters[i].localPosition=orbit*_floatPosition[i]+Vector3.up*(settle*(.20f+.18f*(i%3))+Mathf.Sin(seconds*1.4f+_floatPhase[i])*.045f);
+                    _floaters[i].localRotation=orbit*_floatRest[i]*Quaternion.Euler(0,(1-settle)*(i%2==0?25:-25),0);
                 }
+                if(_spinnerRest.Count!=_spinners.Count){_spinnerRest.Clear();foreach(var spinner in _spinners)_spinnerRest.Add(spinner!=null?spinner.localRotation:Quaternion.identity);}
+                StepPresence(seconds,fade);
             }
 
         }
@@ -3292,6 +3308,8 @@ namespace TumbangPreso.Abilities
             public Transform Corona;
             public Transform Reach;
             public Light Glow;
+            public float RecordedRadius {get;internal set;}=5;
+            public float RecordedAge=>_elapsed;
             public float Duration = 5.0f;
             public float RestHeight = 11.0f;
             public float GatherSeconds;
@@ -3476,7 +3494,7 @@ namespace TumbangPreso.Abilities
         // itself survives in that file and is now used by nothing.
         // -------------------------------------------------------------------
 
-        public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
+        public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1, bool applyGameplay = true)
         {
             position = VfxShapes.GroundPoint(position);
             // 1. Sky Lightning Bolt Column & Multi-segment Arc
@@ -3607,7 +3625,7 @@ namespace TumbangPreso.Abilities
                 if (rig != null) rig.Shake(0.6f, 0.3f);
             }
 
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve() || !applyGameplay) return;
             // Stagger and knock back enemies
             var round = GameServices.Round;
             if (round != null)
@@ -3667,6 +3685,7 @@ namespace TumbangPreso.Abilities
                 // ultimate" in this enum's own words, and a thrown tsinelas that encased
                 // somebody would be the single least readable thing in the game.
                 case ExplosionStyle.Slipper: return StunElement.None;
+                case ExplosionStyle.Ignition: return StunElement.None;
 
                 default: return StunElement.Fire;
             }
@@ -3685,6 +3704,9 @@ namespace TumbangPreso.Abilities
 
             /// <summary>A thrown tsinelas. Small, light, and the joke rather than an ultimate.</summary>
             Slipper,
+
+            /// <summary>Sean's charged slipper impact, distinct from his ultimate and ordinary throws.</summary>
+            Ignition,
         }
 
         /// <summary>The per-style numbers. See `ExplosionStyle` for why this is not one look.</summary>
@@ -3741,6 +3763,11 @@ namespace TumbangPreso.Abilities
                     case ExplosionStyle.Frost:
                         return VfxShapes.NovaShell(5, 9, 0.0f, seed);
 
+                    // A charged slipper needs a short point of ignition from
+                    // eye height, without borrowing Supernova's broad shell.
+                    case ExplosionStyle.Ignition:
+                        return VfxShapes.Spire(5, .08f, .08f, seed);
+
                     // Fire is the same form roughened. A blast is radial but it is not TIDY.
                     default:
                         return VfxShapes.NovaShell(6, 10, 0.16f, seed);
@@ -3748,7 +3775,8 @@ namespace TumbangPreso.Abilities
             }
 
             /// <summary>How high off the ground the core sits. A ground wave sits ON the road.</summary>
-            public float CoreLift => _style == ExplosionStyle.Quake ? 0.04f : 0.6f;
+            public float CoreLift => _style == ExplosionStyle.Quake ? .04f :
+                _style == ExplosionStyle.Ignition ? .10f : .6f;
 
             /// <summary>
             /// The vertical scale ceiling. ⚠️ ONLY THE GROUND WAVE HAS ONE: a shell is meant to
@@ -3757,7 +3785,8 @@ namespace TumbangPreso.Abilities
             /// rather than a wall standing in a 14 m box.
             /// </summary>
             public float CoreVerticalCap =>
-                _style == ExplosionStyle.Quake ? 0.9f : float.PositiveInfinity;
+                _style == ExplosionStyle.Quake ? .9f :
+                _style == ExplosionStyle.Ignition ? .85f : float.PositiveInfinity;
 
             /// <summary>
             /// ⚠️ ONLY THE FRONT CARES WHICH WAY IT POINTS. A shell is radial, so yawing it
@@ -3790,6 +3819,7 @@ namespace TumbangPreso.Abilities
 
                     // A sandal makes a comic pop, not a crater. Few points, short ones.
                     case ExplosionStyle.Slipper: return VfxShapes.Star(6, 0.62f, seed);
+                    case ExplosionStyle.Ignition: return VfxShapes.StarOutline(5, 0.58f, seed);
 
                     // Burnt ground: ragged, but rounder than a fracture.
                     default: return VfxShapes.Splat(11, 0.22f, seed);
@@ -3815,6 +3845,9 @@ namespace TumbangPreso.Abilities
                             ? new Color(0.24f, 0.45f, 0.72f)
                             : new Color(0.92f, 0.88f, 0.74f);
 
+                    case ExplosionStyle.Ignition:
+                        return new Color(1f, Random.Range(.65f, .9f), .25f);
+
                     default:
                         return new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f);
                 }
@@ -3833,6 +3866,7 @@ namespace TumbangPreso.Abilities
                     case ExplosionStyle.Quake: Visual.AbilityVfx.SpawnMagmaEruption(at, radius); break;
                     case ExplosionStyle.Frost: Visual.AbilityVfx.SpawnIceBurst(at, radius); break;
                     case ExplosionStyle.Slipper: break;   // deliberately bare. It is a slipper.
+                    case ExplosionStyle.Ignition: break;  // the small BoltHead and embers are its payload.
 
                     // ⚠️ SEAN'S OWN BURST, not `SpawnCastFlash`. That flash is what every
                     // ability in the game plays at cast, so routing the ultimate's PAYLOAD to it
@@ -3872,6 +3906,14 @@ namespace TumbangPreso.Abilities
                         debrisLift: 1.8f, debrisLife: 0.7f,
                         flashIntensity: 1.6f, flashSeconds: 0.14f,
                         shakeAmount: 0.22f, shakeSeconds: 0.16f);
+
+                case ExplosionStyle.Ignition:
+                    return new ExplosionLook(style, new Color(1f, .68f, .2f), new Color(1f, .92f, .5f),
+                        "sfx_slipper_burst", hasCore: true, debrisCount: 6,
+                        debrisSize: new Vector2(.12f, .22f), debrisSpeed: new Vector2(5f, 9f),
+                        debrisLift: 1.3f, debrisLife: .45f,
+                        flashIntensity: 1.5f, flashSeconds: .12f,
+                        shakeAmount: .22f, shakeSeconds: .16f);
 
                 default:
                     return new ExplosionLook(style, AbilityVfx.FireHotColour, AbilityVfx.FireColour,
@@ -4033,14 +4075,23 @@ namespace TumbangPreso.Abilities
                     VfxFlipbook.Play(VfxSheets.Smoke, center + Vector3.up * 0.10f, radius * 1.2f);
                     break;
 
+                case ExplosionStyle.Ignition:
+                    VfxFlipbook.Play(VfxSheets.BoltHead, center + Vector3.up * .22f,
+                        radius * .68f, tint: new Color(1f, .86f, .4f));
+                    break;
+
                 default:
                     // ⚠️ TWO SHEETS FOR SEAN AND ONLY FOR SEAN. `warm-explosion` is the bloom and
                     // `solar-shrapnel` is what it throws, which is the composition
                     // `docs/Asset_Sourcing.md` § 3 asks Supernova for by name: *"one main burst
                     // with shrapnel and sparse embers."* The shrapnel is wider than the burst on
                     // purpose, because pieces travel further than the flash that launched them.
-                    VfxFlipbook.Play(VfxSheets.Burst, center + Vector3.up * 0.35f, radius * 0.85f, tint: new Color(1, 1, .08f));
-                    VfxFlipbook.Play(VfxSheets.Shrapnel, center + Vector3.up * 0.30f, radius * 1.15f, tint: new Color(1, 1, .08f));
+                    // ⚠️⚠️ BOTH SHEETS ARE OFF (owner 2026-10-09, of SUPERNOVA's landing in play: "i dont like the pixel impact
+                    // effects, doesnt fit our style"; asked which, "for sean;s ultimate. landing has a pixel impact effect /
+                    // explosion"). They are flat pixel-art flipbooks drawn over a blast that is otherwise built shapes, and they
+                    // were the part that read as a different game. What is left is the faceted core, the ring and the thrown
+                    // debris below, which are this game's own. The sheets are still built and listed in `VfxSheets`; do not
+                    // hook them back here. The other styles above still play theirs: he has only named this one.
                     break;
             }
 
@@ -4074,10 +4125,9 @@ namespace TumbangPreso.Abilities
                 VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), look.CoreColour, 0.9f);
 
                 var anim = vfx.AddComponent<ExplosionVfxAnim>();
-                anim.TargetRadius = radius * 1.1f;
+                anim.TargetRadius = radius * (style == ExplosionStyle.Ignition ? .42f : 1.1f);
 
-                // Every `VfxShapes` mesh is unit RADIUS. See `ExplosionVfxAnim.MeshRadius`.
-                anim.MeshRadius = 1.0f;
+                anim.MeshRadius = 1f;
 
                 // Only the ground wave is capped, and only vertically. 0.9 keeps Dante's rim
                 // around 0.30 m: a lip of broken road you can see over and step across.
@@ -4103,7 +4153,7 @@ namespace TumbangPreso.Abilities
             VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), look.Edge, 0.8f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
-            ringAnim.TargetRadius = radius * 1.4f;
+            ringAnim.TargetRadius = radius * (style == ExplosionStyle.Ignition ? 1f : 1.4f);
             Object.Destroy(shockRing, 0.4f);
 
             // 3. Debris. ⚠️ THE COUNT AND THE SIZE SCALE WITH THE BLAST. Ten cubes at a fixed
@@ -4112,14 +4162,14 @@ namespace TumbangPreso.Abilities
             int shards = Mathf.Clamp(Mathf.RoundToInt(look.DebrisCount * (radius / 3.0f)), 4, 22);
             for (int i = 0; i < shards; i++)
             {
-                var spark = style == ExplosionStyle.Fire
+                var spark = style == ExplosionStyle.Fire || style == ExplosionStyle.Ignition
                     ? SeanBurstEmber.Create() : GameObject.CreatePrimitive(PrimitiveType.Cube);
                 spark.name = "ExplosionSpark";
                 spark.transform.position = center + Vector3.up * 0.5f;
                 spark.transform.localScale = Vector3.one
                     * Random.Range(look.DebrisSize.x, look.DebrisSize.y)
                     * Mathf.Clamp(radius / 3.0f, 0.7f, 1.6f);
-                if (style == ExplosionStyle.Fire) spark.transform.localScale *= .55f;
+                if (style == ExplosionStyle.Fire || style == ExplosionStyle.Ignition) spark.transform.localScale *= .55f;
                 spark.transform.rotation = Random.rotation;
 
                 VfxMaterial.Ghost(spark.GetComponent<Renderer>(), look.DebrisColour(), 0.9f);
@@ -4138,7 +4188,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = look.CoreColour;
             light.range = radius * 2.6f;
-            light.intensity = look.FlashIntensity * .40f;
+            light.intensity = look.FlashIntensity * .40f * Settings.SettingsStore.Current.EffectiveFlashIntensity;
             Object.Destroy(lightGo, look.FlashSeconds);
 
             // 5. The elemental particle burst, which already existed per element and was simply
@@ -4177,17 +4227,29 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnIceCubePrison(Transform victim, float duration = 2.5f)
         {
             if (victim == null) return null;
+            if (victim.GetComponent<CharacterMotor>() != null)
+            {
+                var marks = victim.GetComponent<StatusBodyMarks>();
+                if (marks == null) marks = victim.gameObject.AddComponent<StatusBodyMarks>();
+                return marks.EnsureFrozenRestraint();
+            }
+            return CreateIceCubePrison(victim, duration);
+        }
 
+        internal static GameObject CreateIceCubePrison(Transform victim, float duration)
+        {
             var go = new GameObject("IceCubePrison");
-            go.transform.position = victim.position;
-            go.transform.rotation = victim.rotation;
-            CheskaIceVisuals.BuildRestraint(go.transform);
-
-            var comp = go.AddComponent<IceCubePrisonComponent>();
-            comp.Duration = duration;
-            comp.Victim = victim;
-
-            return go;
+            try
+            {
+                go.transform.position = victim.position;
+                go.transform.rotation = victim.rotation;
+                CheskaIceVisuals.BuildRestraint(go.transform);
+                var comp = go.AddComponent<IceCubePrisonComponent>();
+                comp.Duration = duration;
+                comp.Victim = victim;
+                return go;
+            }
+            catch { Object.Destroy(go); throw; }
         }
 
         public sealed class IceCubePrisonComponent : MonoBehaviour
@@ -4197,6 +4259,7 @@ namespace TumbangPreso.Abilities
             private float _left;
             private CharacterMotor _motor;
             private bool _shattered;
+            public bool Shattered => _shattered;
             private void Start()
             {
                 _left=Duration;
@@ -4209,16 +4272,22 @@ namespace TumbangPreso.Abilities
                 _left-=Time.deltaTime;
                 // Mash-out, immunity and a replaced status must release the visual
                 // restraint too; a fixed timer falsely showed escaped players frozen.
-                if (_left<=0 || (_motor != null && (!_motor.IsStunned || _motor.StunElement != StunElement.Ice)))
+                // Received refreshes can extend the same frozen episode. The body's
+                // current status owns its lifetime, not the timer of the first picture.
+                if (_motor != null ? !_motor.IsFrozen : _left <= 0)
                     Shatter();
             }
             public void Shatter()
             {
                 if (_shattered) return;
                 _shattered=true;
-                CheskaIceVisuals.Shatter(transform.position,false);
-                NetCue.PlayVaried("sfx_ice_shatter",transform.position,.98f,1.04f,.45f);
-                Object.Destroy(gameObject);
+                try
+                {
+                    CheskaIceVisuals.Shatter(transform.position,false);
+                    // This status picture now exists on every peer, including joiners.
+                    GameServices.Audio?.PlayAtVaried("sfx_ice_shatter",transform.position,.98f,1.04f,.45f);
+                }
+                finally { Object.Destroy(gameObject); }
             }
         }
 
@@ -4227,35 +4296,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         public static void SpawnConfettiShower(Vector3 center, int count = 24)
         {
-            Color[] colors =
-            {
-                new Color(1.0f, 0.25f, 0.35f), // Pink Red
-                new Color(1.0f, 0.85f, 0.15f), // Gold
-                new Color(0.25f, 0.85f, 1.0f), // Sky Blue
-                new Color(0.35f, 1.0f, 0.45f), // Emerald Green
-                new Color(0.95f, 0.45f, 1.0f), // Magenta
-                new Color(1.0f, 0.55f, 0.15f), // Orange
-            };
-
-            for (int i = 0; i < count; i++)
-            {
-                var confetti = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                confetti.name = "ConfettiRibbon";
-                confetti.transform.position = center + Vector3.up * 1.2f + Random.insideUnitSphere * 0.4f;
-                confetti.transform.localScale = new Vector3(0.10f, 0.006f, 0.035f);
-                confetti.transform.rotation = Random.rotation;
-
-                ConfettiPaperMaterial.Apply(confetti.GetComponent<Renderer>(), colors[Random.Range(0, colors.Length)]);
-                VfxMaterial.StripCollider(confetti);
-
-                var rb = confetti.AddComponent<Rigidbody>();
-                rb.linearDamping = 1.8f;
-                rb.angularDamping = 2.5f;
-                rb.linearVelocity = (Random.insideUnitSphere * 4.0f + Vector3.up * Random.Range(6.0f, 11.0f));
-                rb.angularVelocity = Random.insideUnitSphere * 35.0f;
-
-                Object.Destroy(confetti, Random.Range(2.2f, 3.2f));
-            }
+            PaperConfetti.Play(center, count);
         }
 
         // -------------------------------------------------------------------
@@ -4397,7 +4438,7 @@ namespace TumbangPreso.Abilities
             /// ⚠️⚠️ UNIT RADIUS, NOT UNIT DIAMETER, AND GETTING THIS WRONG DOUBLES EVERY BLAST.
             /// This used to read `TargetRadius * 2.0f` and that was CORRECT for what it animated:
             /// `PrimitiveType.Sphere` is one unit ACROSS, so radius 0.5, so a scale of 2R gives a
-            /// radius of R. Every shape `VfxShapes` generates is built at one unit of RADIUS
+            /// radius of R. Explosion core shapes are built at one unit of RADIUS
             /// instead, so the same line would have drawn a 4.8 m Supernova at 9.9 m and swallowed
             /// most of a 14 m arena. `VISION.md` § 2 exists because of exactly that failure.
             /// </summary>

@@ -1,0 +1,9 @@
+{
+  "Packages/com.tumbangpreso.core/Runtime/Balance.cs": "ec0088de2d8033e09c7cf082cf0c77092d2901131e842f7095782e033b7d96f7",
+  "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs": "07ab7783f4eda71cb13acacc4cca6267d5125157e8bfcd2ff89fce7281c2e54f",
+  "Assets/TumbangPreso/Runtime/RoundDirector.cs": "e0fa85c2472e9abedaaa8cf6b9044c5d4aa4bb3c578a71f5b5d9c5fec16b3f47",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "8ca2941fed6a05589a96c9a8770fed35bd57ee1edae67774f08b1b600d915606",
+  "Assets/TumbangPreso/Tests/PlayMode/ObjectiveEconomyTests.cs": "d66865f0146edd66dc091616e7bc3d2464eeaca3451fbb917dcb1be1da4cfebf",
+  "Assets/TumbangPreso/Tests/PlayMode/ObjectiveEconomyTests.cs.meta": "ab8e73fa3e7a9251eb2fea829a25f08355540f6851992d980fd0de6c88c519f0",
+  "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs": "79f40623329424642059025729475a51b9096ed81d6e77e4ace953fb214f95b5"
+}

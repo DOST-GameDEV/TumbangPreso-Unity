@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 17:00:02Z" duration="11.4095444">
+  <test-suite type="TestSuite" id="2174" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="942" result="Failed" site="Child" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 17:00:02Z" duration="11.409544" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2168" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="942" result="Failed" site="Child" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 17:00:02Z" duration="11.398776" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23184" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2169" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="942" result="Failed" site="Child" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 17:00:02Z" duration="11.396585" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2170" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="942" result="Failed" site="Child" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 17:00:02Z" duration="11.394862" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1097" name="BotRecoveryInputTests" fullname="TumbangPreso.PlayTests.BotRecoveryInputTests" classname="TumbangPreso.PlayTests.BotRecoveryInputTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 17:00:02Z" duration="11.368065" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1101" name="SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics" fullname="TumbangPreso.PlayTests.BotRecoveryInputTests.SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics" classname="TumbangPreso.PlayTests.BotRecoveryInputTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 17:00:02Z" duration="11.363975" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1098" name="SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics(2)" fullname="TumbangPreso.PlayTests.BotRecoveryInputTests.SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics(2)" methodname="SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics" classname="TumbangPreso.PlayTests.BotRecoveryInputTests" runstate="Runnable" seed="131248298" result="Failed" start-time="2026-09-30 16:59:50Z" end-time="2026-09-30 16:59:58Z" duration="7.554117" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An even render/physics ratio cancelled the bot's recovery tap.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotRecoveryInputTests.SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics (System.Int32 renderUpdates) [0x0001c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotRecoveryInputTests.cs:32
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+              </test-case>
+              <test-case id="1099" name="SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics(4)" fullname="TumbangPreso.PlayTests.BotRecoveryInputTests.SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics(4)" methodname="SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics" classname="TumbangPreso.PlayTests.BotRecoveryInputTests" runstate="Runnable" seed="1223400669" result="Failed" start-time="2026-09-30 16:59:58Z" end-time="2026-09-30 17:00:00Z" duration="2.075224" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An even render/physics ratio cancelled the bot's recovery tap.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotRecoveryInputTests.SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics (System.Int32 renderUpdates) [0x0001c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotRecoveryInputTests.cs:32
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+              </test-case>
+              <test-case id="1100" name="SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics(6)" fullname="TumbangPreso.PlayTests.BotRecoveryInputTests.SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics(6)" methodname="SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics" classname="TumbangPreso.PlayTests.BotRecoveryInputTests" runstate="Runnable" seed="1236955755" result="Failed" start-time="2026-09-30 17:00:00Z" end-time="2026-09-30 17:00:02Z" duration="1.721439" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An even render/physics ratio cancelled the bot's recovery tap.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotRecoveryInputTests.SeveralRenderUpdatesRetainOneRecoveryPressUntilPhysics (System.Int32 renderUpdates) [0x0001c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotRecoveryInputTests.cs:32
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

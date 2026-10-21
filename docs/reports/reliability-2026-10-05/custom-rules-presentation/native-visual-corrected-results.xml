@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 07:55:52Z" end-time="2026-10-05 07:55:55Z" duration="2.8923153">
+  <test-suite type="TestSuite" id="3138" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1744" result="Passed" start-time="2026-10-05 07:55:52Z" end-time="2026-10-05 07:55:55Z" duration="2.892315" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3130" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1744" result="Passed" start-time="2026-10-05 07:55:52Z" end-time="2026-10-05 07:55:55Z" duration="2.872338" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10856" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3131" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1744" result="Passed" start-time="2026-10-05 07:55:52Z" end-time="2026-10-05 07:55:55Z" duration="2.861974" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3134" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1742" result="Passed" start-time="2026-10-05 07:55:52Z" end-time="2026-10-05 07:55:55Z" duration="2.854174" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1431" name="CustomRulesVisualReview" fullname="TumbangPreso.PlayTests.CustomRulesVisualReview" classname="TumbangPreso.PlayTests.CustomRulesVisualReview" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-05 07:55:52Z" end-time="2026-10-05 07:55:55Z" duration="2.799854" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1432" name="MatchAndPrivateRoomPagesRenderWithTheirExistingControls" fullname="TumbangPreso.PlayTests.CustomRulesVisualReview.MatchAndPrivateRoomPagesRenderWithTheirExistingControls" methodname="MatchAndPrivateRoomPagesRenderWithTheirExistingControls" classname="TumbangPreso.PlayTests.CustomRulesVisualReview" runstate="Runnable" seed="1803202327" result="Passed" start-time="2026-10-05 07:55:52Z" end-time="2026-10-05 07:55:55Z" duration="2.779591" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] Custom-rules-match-1920/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=35, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Custom-rules-match-1920/Arrow: vertices=12, cull=False, alpha=1, depth=51, material=1
+[TumpUiCapture] Custom-rules-match-1920 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Custom-rules-match-2560/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=35, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Custom-rules-match-2560/Arrow: vertices=12, cull=False, alpha=1, depth=51, material=1
+[TumpUiCapture] Custom-rules-match-2560 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Custom-rules-match-3840/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=35, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Custom-rules-match-3840/Arrow: vertices=12, cull=False, alpha=1, depth=51, material=1
+[TumpUiCapture] Custom-rules-match-3840 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Custom-rules-private-room-1920/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Custom-rules-private-room-1920/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] Custom-rules-private-room-1920/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] Custom-rules-private-room-1920/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] Custom-rules-private-room-1920/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] Custom-rules-private-room-1920/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Custom-rules-private-room-1920/Arrow: vertices=12, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] Custom-rules-private-room-1920 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Custom-rules-private-room-3840/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] Custom-rules-private-room-3840/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] Custom-rules-private-room-3840/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] Custom-rules-private-room-3840/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] Custom-rules-private-room-3840/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] Custom-rules-private-room-3840/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] Custom-rules-private-room-3840/Arrow: vertices=12, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] Custom-rules-private-room-3840 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

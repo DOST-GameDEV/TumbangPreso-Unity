@@ -1,0 +1,17 @@
+{
+  "original": {
+    "passed": 2,
+    "failed": 2,
+    "xmlSha256": "70d74bb6cf7cf37e05fad8062df568a9739707f6048db47a26c32cc16a44e1f0"
+  },
+  "candidate": {
+    "passed": 4,
+    "failed": 0,
+    "xmlSha256": "afc1db5f063bbb94d72a1955dfd008c815b4390d41529b4f73e2586f517ba5e7"
+  },
+  "candidateSource": {
+    "Assets/TumbangPreso/Runtime/MatchInstaller.cs": "315e33783e75ca65abad1c1ce11d6cecf580ed8fda749278bdfcb4dd429bb42c",
+    "Assets/TumbangPreso/Tests/NetworkBotRosterConsistencyTests.cs": "3841f246b64f42d88a8630fe253a3d1b0bcf6a4c73df55cad93a802d1e5042f9"
+  },
+  "scope": "Actual installer selection method with host/client provider roles; no live transport. Isolated d786 dependency base with current installer overlay; Main protocol139 requires rebuilt peer acceptance."
+}

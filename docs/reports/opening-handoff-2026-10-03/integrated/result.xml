@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:32Z" duration="4.1362556">
+  <test-suite type="TestSuite" id="2770" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:32Z" duration="4.136256" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2764" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:32Z" duration="4.127538" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="124645" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2765" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:32Z" duration="4.125952" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2766" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:32Z" duration="4.124692" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1101" name="ArrivalHandoffTests" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:28Z" duration="0.372740" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1102" name="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" methodname="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="2049592323" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:28Z" duration="0.151008" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1104" name="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" methodname="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1874854321" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:28Z" duration="0.087307" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_20', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1105" name="NameplatesHideDuringIntroductionAndReturnAfterCancellation" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NameplatesHideDuringIntroductionAndReturnAfterCancellation" methodname="NameplatesHideDuringIntroductionAndReturnAfterCancellation" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="684679789" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:28Z" duration="0.082466" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1103" name="OpeningTakesCameraBeforeLoadingCurtainDisappears" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.OpeningTakesCameraBeforeLoadingCurtainDisappears" methodname="OpeningTakesCameraBeforeLoadingCurtainDisappears" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1397870977" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:28Z" duration="0.039094" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_43', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1827" name="MatchStartContractTests" fullname="TumbangPreso.PlayTests.MatchStartContractTests" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:32Z" duration="3.652277" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1831" name="DisablingCountdownReleasesItsHoldAndCannotStartLater" fullname="TumbangPreso.PlayTests.MatchStartContractTests.DisablingCountdownReleasesItsHoldAndCannotStartLater" methodname="DisablingCountdownReleasesItsHoldAndCannotStartLater" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1950228271" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:28Z" duration="0.045162" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1832" name="LegacyManualRuleCannotShowAnotherReadyPrompt" fullname="TumbangPreso.PlayTests.MatchStartContractTests.LegacyManualRuleCannotShowAnotherReadyPrompt" methodname="LegacyManualRuleCannotShowAnotherReadyPrompt" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1874982057" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:28Z" duration="0.063668" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1830" name="ThreeSecondCountdownHoldsGameplayStartsOnceAndReleases" fullname="TumbangPreso.PlayTests.MatchStartContractTests.ThreeSecondCountdownHoldsGameplayStartsOnceAndReleases" methodname="ThreeSecondCountdownHoldsGameplayStartsOnceAndReleases" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1258813012" result="Passed" start-time="2026-10-03 16:22:28Z" end-time="2026-10-03 16:22:32Z" duration="3.540218" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -68,8 +68,8 @@ namespace TumbangPreso.PlayTests
                                 Assert.IsNotEmpty(bodies,"No real foot-bearing body mesh found.");
                                 foreach(var body in bodies)
                                 {
-                                    body.BakeMesh(mesh);bounds=Mathf.Min(bounds,body.bounds.min.y);
-                                    foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);
+                                    bounds=Mathf.Min(bounds,body.bounds.min.y);
+                                    sole=Mathf.Min(sole,RenderedSole(body,mesh));
                                 }
                                 float support=Slipper.GroundY(who.transform.position),gap=sole-support;
                                 rows.Add(string.Format(CultureInfo.InvariantCulture,"{0},{1:F4},{2:F4},{3:F4},{4:F4},{5:F4},{6:F4},{7:F4},{8}",
@@ -145,7 +145,7 @@ namespace TumbangPreso.PlayTests
                     {
                         float sole=float.PositiveInfinity;
                         foreach(var body in who.GetComponentsInChildren<SkinnedMeshRenderer>().Where(s=>s.bones.Any(b=>b!=null && b.name=="leg-left")))
-                        {body.BakeMesh(mesh);foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);}
+                        {sole=Mathf.Min(sole,RenderedSole(body,mesh));}
                         float support=Slipper.GroundY(who.transform.position);
                         records.Add(string.Format(CultureInfo.InvariantCulture,"{0},{1:F4},{2:F4},{3:F4},{4}",stage,who.transform.position.y,sole,support,who.IsGrounded));
                         if(planted)Assert.AreEqual(support,sole,.025f,stage+" foot lost contact.");
@@ -157,6 +157,23 @@ namespace TumbangPreso.PlayTests
                 while(!done)yield return null;
                 if(failure!=null)throw failure;
             }
+        }
+
+        // BakeMesh(true) compensates renderer scale before TransformPoint. The
+        // old minimum over the whole body measured a hanging HAND on some rigs.
+        // Read only vertices predominantly attached to the actual leg bones.
+        private static float RenderedSole(SkinnedMeshRenderer skin,Mesh baked)
+        {
+            skin.BakeMesh(baked,true);var vertices=baked.vertices;var weights=skin.sharedMesh.boneWeights;
+            var bones=skin.bones;float lowest=float.PositiveInfinity;
+            bool Leg(int index)=>index>=0&&index<bones.Length&&bones[index]!=null&&(bones[index].name=="leg-left"||bones[index].name=="leg-right");
+            for(int i=0;i<vertices.Length;i++)
+            {
+                var w=weights[i];float leg=(Leg(w.boneIndex0)?w.weight0:0)+(Leg(w.boneIndex1)?w.weight1:0)
+                    +(Leg(w.boneIndex2)?w.weight2:0)+(Leg(w.boneIndex3)?w.weight3:0);
+                if(leg>.5f)lowest=Mathf.Min(lowest,skin.transform.TransformPoint(vertices[i]).y);
+            }
+            return lowest;
         }
 
         [DefaultExecutionOrder(-300)]

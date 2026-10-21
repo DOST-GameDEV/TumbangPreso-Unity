@@ -1,0 +1,262 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    public sealed partial class HeroIntroductionScene
+    {
+        // =========================================================================================
+        // ILYAS, BAHA: THE TIDE GOES OUT FIRST, 6.0 s (was BREAKWATER, 3.4 s; plan.md § 7 is the first one).
+        //
+        // ⚠️ RESTAGED 2026-10-09, UNPITCHED. The owner was away and asked for "something for the rest of the heroes ...
+        // surprise me with something really good", so this was not chosen from options as batch 1 was. BLOCKING until he
+        // says the idea stays. The first cutscene is whole in `tools/cutscene_rework/old/`.
+        //
+        // "Draws you into the wrong current. Leaves with his slipper." He likes making a rival commit too early, so the
+        // sea does what a big wave really does: it LEAVES first.
+        //   1. THE TEASE (0 to 1.46): the two feints, the shrug, the beckon (kept). The sea comes in ankle deep.
+        //   2. THE TIDE GOES OUT (1.46 to 3.0), from high over the court: on his pull the water runs off the whole court
+        //      toward him and past him. Everyone is left standing on wet sand with a few fish flopping about.
+        //   3. WHERE IT WENT (3.0 to 4.5), low: all of it is stacked up behind him, four storeys of sea with a little
+        //      boat rocking on top, and he shrugs.
+        //   4. BAHA (4.5 to 6.0), from high: he sends it. It comes down to the low front the ultimate really is and
+        //      crosses the court, everyone it passes is carried a step, and a loose slipper rides it to his feet.
+        //
+        // ⚠️ THE FRONT IN SHOT 4 IS LOW ON PURPOSE. The ultimate is "a low flood front" that rivals can jump; the tall
+        // wall is the wind-up, and it must be seen to fall to what the players will actually meet.
+        //
+        // ⚠️ THE STILT HOUSES DO NOT BOB. Fixed houses stand on piles; only boats float (owner's lagoon correction,
+        // AGENTS.md). The boat on the crest is a boat, so it rocks.
+        //
+        // ⚠️ THE SLIPPER AND THE BOAT ARE BLOCKS, to judge the idea. Every time below is on the table's clock
+        // (`tools/author_ultimate_intros.py`, `rafi`).
+        // =========================================================================================
+        private const float RfPull = 1.5f, RfDry = 2.7f, RfStacked = 3.5f, RfSend = 4.55f, RfWall = 7.2f, RfWide = 6.5f;
+        private int _rfShallows, _rfBed, _rfHull, _rfMast, _rfSail, _rfSlipper, _rfStrap;
+        private readonly List<int> _rfFish = new List<int>(5);
+        private int _seaLow, _foamLine, _seaSky, _wave, _waveCrest;
+        private readonly List<int> _stilts = new List<int>(16), _ripples = new List<int>(3), _currents = new List<int>(4), _spray = new List<int>(6);
+        private static readonly float[] RafiSteps = { .16f, .46f, 1.12f };
+
+        private void BuildRafi()
+        {
+            // 15 m, not 8: the high shots stand 12 m out and must be inside their own sea.
+            _seaLow = Wall("SeaGround", 0, 1.0f, new Color(.04f, .22f, .25f, .88f), radius: 15f, emission: .1f);
+            _foamLine = Wall("SeaHorizonFoam", 1.0f, 1.09f, new Color(.9f, .97f, .95f, .85f), radius: 15f, emission: .5f);
+            _seaSky = Wall("SeaSky", 1.09f, 18, new Color(.55f, .78f, .76f, .6f), radius: 15f, emission: .3f, cap: true);
+            _rfBed = Add("WetSand", VfxShapes.Prism(32, .02f, 1f), new Color(.38f, .31f, .22f, .9f), emission: .02f, plain: true);
+            _rfShallows = Add("Shallows", VfxShapes.Prism(32, .02f, 1f), new Color(.2f, .62f, .68f, .62f));
+            // The water lies ON the sand whichever is nearer the lens: film r1 drew the sand over it the moment it began to leave.
+            _pieces[_rfBed].Renderer.sortingOrder = -4; _pieces[_rfShallows].Renderer.sortingOrder = 2;
+            for (int i = 0; i < 5; i++)
+                _rfFish.Add(Add("StrandedFish" + i, VfxShapes.TwoSided(VfxShapes.Splat(6, .2f, 80 + i)), new Color(.78f, .86f, .9f, 1f), emission: .25f, plain: true));
+            _rfHull = Add("LepaHull", VfxShapes.Prism(4, 1, .62f), new Color(.5f, .3f, .16f, 1f), emission: .05f, plain: true);
+            _rfMast = Add("LepaMast", VfxShapes.Prism(4, 1, 1), new Color(.4f, .26f, .15f, 1f), emission: .05f, plain: true);
+            _rfSail = Add("LepaSail", VfxShapes.TwoSided(VfxShapes.Prism(3, 1, .05f)), new Color(.95f, .9f, .75f, 1f), emission: .2f, plain: true);
+            _rfSlipper = Add("LooseSlipper", VfxShapes.Prism(10, 1, .92f), new Color(.96f, .5f, .16f, 1f), emission: .15f, plain: true);
+            _rfStrap = Add("LooseSlipperStrap", VfxShapes.Prism(4, 1, .8f), new Color(.98f, .92f, .8f, 1f), emission: .15f, plain: true);
+            // Everyone else where they stand: left on the sand when the water goes, carried a step when it comes back.
+            StageOthers(3f, 10f);
+            for (int i = 0; i < 4; i++)
+            {
+                _stilts.Add(Add("StiltHouse" + i, VfxShapes.Prism(4, 1, .8f), new Color(.10f,.28f,.28f,.62f), emission:0, plain:true));
+                _stilts.Add(Add("StiltRoof" + i, VfxShapes.Prism(4, 1, .05f), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+                _stilts.Add(Add("StiltPileA" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+                _stilts.Add(Add("StiltPileB" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+            }
+            for (int i = 0; i < 3; i++) _ripples.Add(Add("FalseStepRipple" + i, VfxShapes.Collar(24, .02f, .82f), new Color(.6f, .9f, .92f, .7f)));
+            for (int i = 0; i < 4; i++) _currents.Add(Add("GatheredCurrent" + i, WaterRibbon(), new Color(.25f, .67f, .78f, .5f)));
+            _wave = Add("BreakwaterWave", ArcWallMesh(18, 120), Color.white);
+            _pieces[_wave].Renderer.sharedMaterial.SetFloat("_UseVertexColour", 1);
+            _pieces[_wave].Renderer.sharedMaterial.SetFloat("_UseVertexTint", 1);
+            _waveCrest = Add("BreakwaterCrest", ArcCrestMesh(18, 120), new Color(.88f, .97f, .96f, .9f));
+            _pieces[_waveCrest].Renderer.sharedMaterial.SetFloat("_UseVertexTint", 1);
+            for (int i = 0; i < 6; i++) _spray.Add(Add("SendSpray" + i, VfxShapes.TwoSided(VfxShapes.Splat(8, .3f, 60 + i)), new Color(.85f, .96f, .95f, .85f), plain: true));
+        }
+
+        /// <summary>An arc of wall behind the hero, open toward the camera side: the wave's face.</summary>
+        private static Mesh ArcWallMesh(int sides, float arcDegrees)
+        {
+            var mesh=new Mesh {name="Ilyas rolled wave"};
+            float[] heights={0,.34f,.70f,.94f,1,.93f,.79f};
+            float[] radii={1,.99f,.90f,.74f,.53f,.45f,.56f};
+            Color[] bands={new Color(.10f,.34f,.38f,.08f),new Color(.12f,.45f,.49f,.25f),
+                new Color(.16f,.58f,.61f,.40f),new Color(.35f,.73f,.72f,.50f),
+                new Color(.72f,.91f,.84f,.72f),new Color(.48f,.79f,.76f,.48f),new Color(.16f,.53f,.57f,.18f)};
+            const int rows=7;
+            var vertices=new Vector3[(sides+1)*rows];var uv=new Vector2[vertices.Length];var colours=new Color[vertices.Length];
+            var triangles=new int[sides*(rows-1)*6];int at=0;
+            for(int i=0;i<=sides;i++)
+            {
+                float u=i/(float)sides,a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*u);
+                var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
+                for(int row=0;row<rows;row++)
+                {
+                    vertices[i*rows+row]=rim*radii[row]+Vector3.up*(heights[row]*WaveLipHeight(u));
+                    uv[i*rows+row]=new Vector2(u,heights[row]);
+                    colours[i*rows+row]=bands[row];
+                    colours[i*rows+row].a*=Mathf.Sin(Mathf.PI*u);
+                    if(i==sides||row==rows-1)continue;
+                    int n=i*rows+row,w=n+rows;
+                    // RafiWater is Cull Off: one winding, not two coplanar draws.
+                    triangles[at++]=n;triangles[at++]=w;triangles[at++]=n+1;
+                    triangles[at++]=w;triangles[at++]=w+1;triangles[at++]=n+1;
+                }
+            }
+            mesh.vertices=vertices;mesh.colors=colours;mesh.uv=uv;mesh.triangles=triangles;
+            mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        }
+        private static float WaveLipHeight(float u)
+            => 1-.44f*Mathf.Pow(Mathf.Abs(2*u-1),1.5f)+.045f*Mathf.Sin(u*Mathf.PI*5);
+
+        private static Mesh ArcCrestMesh(int sides,float arcDegrees)
+        {
+            var mesh=new Mesh {name="Ilyas rolled crest"};
+            var vertices=new Vector3[(sides+1)*2];var triangles=new int[sides*6];var colours=new Color[vertices.Length];
+            for(int i=0;i<=sides;i++)
+            {
+                float a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*i/sides);
+                var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
+                float u=i/(float)sides,height=WaveLipHeight(u);
+                colours[i*2]=colours[i*2+1]=new Color(1,1,1,Mathf.Sin(Mathf.PI*u));
+                vertices[i*2]=rim*.55f+Vector3.up*(height*.998f);
+                vertices[i*2+1]=rim*.49f+Vector3.up*(height*.97f);
+                if(i==sides)continue;int n=i*2,t=i*6;
+                triangles[t]=n;triangles[t+1]=n+2;triangles[t+2]=n+1;
+                triangles[t+3]=n+2;triangles[t+4]=n+3;triangles[t+5]=n+1;
+            }
+            mesh.vertices=vertices;mesh.colors=colours;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        }
+
+        /// <summary>How far along the court (z) the flood front has got; it starts behind him, where the wall stood.</summary>
+        private static float RafiFront(float t) => Mathf.Lerp(-RfWide * .5f, 16f, Mathf.Clamp01((t - (RfSend + .18f)) / 1.05f));
+
+        private void SampleRafi(float t)
+        {
+            float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
+            // The sea comes in with the beckon: he is inviting you onto his water.
+            float sea = Ease(.85f, 1.5f, t) * leave;
+            Tint(_seaLow, sea); Tint(_foamLine, sea); Tint(_seaSky, sea);
+            for (int i = 0; i < 4; i++)
+            {
+                float angle = (180 - 55 + i * 34) * Mathf.Deg2Rad;
+                var at = new Vector3(Mathf.Sin(angle) * 14f, 0, Mathf.Cos(angle) * 14f);
+                var face = Quaternion.LookRotation(-at.normalized, Vector3.up);
+                var across = face * Vector3.right * .8f;
+                Place(_stilts[i * 4 + 2], at - across, new Vector3(.12f, 2.2f, .12f), face, sea);
+                Place(_stilts[i * 4 + 3], at + across, new Vector3(.12f, 2.2f, .12f), face, sea);
+                Place(_stilts[i * 4], at + Vector3.up * 2.2f, new Vector3(1.4f, 1.0f, 1.0f), face * Quaternion.Euler(0, 45, 0), sea);
+                Place(_stilts[i * 4 + 1], at + Vector3.up * 3.2f, new Vector3(1.55f, .7f, 1.15f), face * Quaternion.Euler(0, 45, 0), sea);
+            }
+
+            // Every false step leaves a ripple at his feet.
+            for (int i = 0; i < _ripples.Count; i++)
+            {
+                float age = t - RafiSteps[i], u = Mathf.Clamp01(age / .5f);
+                Place(_ripples[i], Vector3.up * .02f, Vector3.one * Mathf.Lerp(.3f, 1.3f, u), Quaternion.identity, age >= 0 ? (1 - u) * .8f * leave : 0);
+            }
+
+            // THE TIDE. Ankle deep over the whole court, then on his pull it runs toward him and past him, quicker as
+            // it goes; after the send it is back, a hand deep, behind the front.
+            float goes = Mathf.Clamp01((t - RfPull) / (RfDry - RfPull)); goes = goes * goes * (3 - 2 * goes); goes *= goes;
+            float back = Ease(RfSend + .45f, RfSend + 1.1f, t);
+            float deep = Ease(.85f, 1.5f, t);
+            Place(_rfShallows, Vector3.Lerp(new Vector3(0, .13f, 0), new Vector3(0, .13f, -RfWide * .55f), goes * (1 - back)),
+                new Vector3(Mathf.Lerp(12.5f, .4f, goes * (1 - back)), 1, Mathf.Lerp(12.5f, .4f, goes * (1 - back))), Quaternion.identity,
+                deep * leave * Mathf.Max(1 - Ease(RfDry - .15f, RfDry + .05f, t), back));
+            Place(_rfBed, new Vector3(0, .03f, 0), new Vector3(12.5f, 1, 12.5f), Quaternion.identity, Ease(RfPull, RfPull + .5f, t) * (1 - back) * leave);
+
+            // What the water left behind: a few fish, flopping.
+            float stranded = Ease(RfPull + .7f, RfDry, t) * (1 - Ease(RfSend + .3f, RfSend + .7f, t)) * leave;
+            for (int i = 0; i < _rfFish.Count; i++)
+            {
+                float a = (35 + i * 71) * Mathf.Deg2Rad, r = 3.2f + (i * 3 % 5) * 1.25f;
+                float flop = Mathf.Sin(t * (11f + i) + i * 2.1f);
+                var at = new Vector3(Mathf.Sin(a) * r, .08f + Mathf.Abs(flop) * .16f, Mathf.Cos(a) * r * .8f + 1.5f);
+                Place(_rfFish[i], at, new Vector3(.62f, 1, .24f), Quaternion.Euler(0, i * 67, flop * 40), stranded);
+            }
+
+            // Currents gather at his palms while he holds it.
+            float current = Ease(RfPull, RfPull + .4f, t) * (1 - Ease(RfStacked, RfStacked + .3f, t));
+            for (int i = 0; i < _currents.Count; i++)
+            {
+                float angle = i * Mathf.PI * .5f + t * 2.2f;
+                var palm = i % 2 == 0 ? FreePalm : RightPalm;
+                var origin = palm + new Vector3(Mathf.Cos(angle) * .12f, .02f + i * .02f, Mathf.Sin(angle) * .12f);
+                Place(_currents[i], origin, Vector3.one * Mathf.Lerp(.25f, .7f, current), Quaternion.Euler(8, i * 90 + t * 60, 18), current * leave);
+            }
+
+            // WHERE IT WENT. The wall stacks up behind him as the court empties, stands there breathing, and on the send
+            // pitches over and falls to the low front that crosses the court.
+            float stack = Ease(RfPull + .35f, RfStacked, t);
+            float pitch = Ease(RfSend, RfSend + .4f, t);
+            float fall = Ease(RfSend + .1f, RfSend + .7f, t);
+            float height = Mathf.Lerp(Mathf.Lerp(.05f, RfWall, stack) + Mathf.Sin(t * 2.1f) * .12f * stack, 1.1f, fall);
+            float front = RafiFront(t);
+            var waveTilt = Quaternion.Euler(-pitch * 26 * (1 - fall * .6f), 0, 0);
+            var wavePos = new Vector3(0, 0, front + RfWide * .5f);
+            float waveOn = stack * leave * (1 - Ease(RfSend + .95f, RfSend + 1.3f, t));
+            Place(_wave, wavePos, new Vector3(RfWide * (1 + fall * .5f), height, RfWide), waveTilt, waveOn * (1 - pitch * .25f));
+            Place(_waveCrest, wavePos, new Vector3(RfWide * (1 + fall * .5f), height, RfWide), waveTilt, waveOn);
+
+            // The boat on top of it. It rocks; it goes over the front edge when the wall falls.
+            float rock = Mathf.Sin(t * 2.6f);
+            var deck = new Vector3(.6f, height * .99f + rock * .06f, -RfWide * .5f + .1f) + new Vector3(0, -pitch * 1.5f, pitch * 2.5f);
+            var keel = Quaternion.Euler(pitch * 50, 25, rock * 9);
+            float afloat = Ease(RfDry, RfStacked, t) * (1 - Ease(RfSend + .2f, RfSend + .5f, t)) * leave;
+            Place(_rfHull, deck, new Vector3(.95f, .3f, .34f), keel * Quaternion.Euler(0, 45, 0), afloat);
+            Place(_rfMast, deck + keel * new Vector3(0, .25f, 0), new Vector3(.04f, 1.0f, .04f), keel, afloat);
+            Place(_rfSail, deck + keel * new Vector3(.12f, .5f, 0), new Vector3(.5f, .7f, .5f), keel * Quaternion.Euler(0, 0, 0), afloat);
+
+            // Spray off the top as it pitches.
+            for (int i = 0; i < _spray.Count; i++)
+            {
+                float age = t - (RfSend + .08f), u = Mathf.Clamp01(age / .55f);
+                float x = (i - 2.5f) * 1.5f;
+                var at = new Vector3(x, RfWall * (1 - u * .7f) + u * .6f, -RfWide * .45f + u * 6.5f);
+                Place(_spray[i], at, Vector3.one * (.5f + u * .5f), Quaternion.Euler(-70, i * 30, 0), age >= 0 ? (1 - u) * leave : 0);
+            }
+
+            // Everyone the front passes is carried one step with it, once, and set down.
+            for (int i = 0; i < _others.Count; i++)
+            {
+                var other = _others[i];
+                float reached = (RfSend + .18f) + Mathf.Clamp01((other.Home.z + RfWide * .5f) / (16f + RfWide * .5f)) * 1.05f;
+                float carried = Ease(reached, reached + .3f, t);
+                float lifted = Mathf.Sin(Mathf.Clamp01((t - reached) / .3f) * Mathf.PI);
+                other.Holder.transform.localPosition = other.Home + new Vector3(0, lifted * .16f, carried * .6f);
+            }
+
+            // And a loose slipper rides it in from behind him and stops at his feet.
+            float ride = Mathf.Clamp01((t - (RfSend + .3f)) / .75f);
+            float slide = 1 - (1 - ride) * (1 - ride);
+            var slipperAt = Vector3.Lerp(new Vector3(1.5f, 1.3f, -3.6f), new Vector3(.12f, .14f, .5f), slide) + Vector3.up * (Mathf.Sin(ride * Mathf.PI) * .25f);
+            var slipperTurn = Quaternion.Euler(0, Mathf.Lerp(250, 12, slide), Mathf.Sin(ride * 9f) * 14 * (1 - ride));
+            float slipperOn = ride > 0 ? leave : 0;
+            // Twice life size, as blocking: at its real size it was not seen from the high shot (film r1).
+            Place(_rfSlipper, slipperAt, new Vector3(.28f, .09f, .62f), slipperTurn, slipperOn);
+            Place(_rfStrap, slipperAt + slipperTurn * new Vector3(0, .09f, .2f), new Vector3(.26f, .09f, .1f), slipperTurn * Quaternion.Euler(0, 45, 0), slipperOn);
+        }
+
+        /// <summary>The low shot under the wall is kept off whoever stands near it.</summary>
+        private void RafiFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
+        {
+            if (index == 2) eye = KeepLensOffOthers(eye, 2.4f);
+        }
+
+        private static Mesh WaterRibbon()
+        {
+            var mesh = new Mesh { name = "Ilyas cupped current ribbon" }; var vertices = new Vector3[26]; var triangles = new int[72];
+            for (int i = 0; i < 13; i++)
+            {
+                float t = i / 12f, a = t * 2.1f;
+                var point = new Vector3(Mathf.Sin(a) * .28f, t * .4f, Mathf.Cos(a) * .28f);
+                vertices[i * 2] = point - Vector3.up * .035f; vertices[i * 2 + 1] = point + Vector3.up * .035f;
+                if (i == 12) continue; int n = i * 2, j = i * 6;
+                int[] faces = { n, n + 2, n + 1, n + 2, n + 3, n + 1 };
+                for (int k = 0; k < 6; k++) triangles[j + k] = faces[k];
+            }
+            mesh.vertices = vertices; mesh.triangles = triangles; mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
+        }
+    }
+}

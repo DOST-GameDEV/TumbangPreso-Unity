@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 06:39:00Z" end-time="2026-10-04 06:39:24Z" duration="24.5395321">
+  <test-suite type="TestSuite" id="2999" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1625" result="Passed" start-time="2026-10-04 06:39:00Z" end-time="2026-10-04 06:39:24Z" duration="24.539532" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2993" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1625" result="Passed" start-time="2026-10-04 06:39:00Z" end-time="2026-10-04 06:39:24Z" duration="24.526989" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34298" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2994" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1625" result="Passed" start-time="2026-10-04 06:39:00Z" end-time="2026-10-04 06:39:24Z" duration="24.520923" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2995" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1625" result="Passed" start-time="2026-10-04 06:39:00Z" end-time="2026-10-04 06:39:24Z" duration="24.515013" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1881" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-04 06:39:00Z" end-time="2026-10-04 06:39:24Z" duration="24.493456" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1887" name="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" methodname="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="373940438" result="Passed" start-time="2026-10-04 06:39:00Z" end-time="2026-10-04 06:39:24Z" duration="24.481737" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code QKXW
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[ArenaPrewarm] drew 20 views in 3.47 s.
+[HubLoading] Eskinita ready after 7.23 s.
+[Slice] round 1 begins, taya is seat 0
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

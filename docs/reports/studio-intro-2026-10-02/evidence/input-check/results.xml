@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 18:43:18Z" end-time="2026-10-02 18:43:19Z" duration="1.1899302">
+  <test-suite type="TestSuite" id="2654" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-02 18:43:18Z" end-time="2026-10-02 18:43:19Z" duration="1.189930" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2648" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-02 18:43:18Z" end-time="2026-10-02 18:43:19Z" duration="1.170197" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="170631" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2649" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-02 18:43:18Z" end-time="2026-10-02 18:43:19Z" duration="1.157167" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2650" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1346" result="Passed" start-time="2026-10-02 18:43:18Z" end-time="2026-10-02 18:43:19Z" duration="1.144363" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2395" name="StudioIntroTests" fullname="TumbangPreso.PlayTests.StudioIntroTests" classname="TumbangPreso.PlayTests.StudioIntroTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 18:43:18Z" end-time="2026-10-02 18:43:19Z" duration="1.119590" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2397" name="KeyboardMousePadAndTouchSkipOnlyTheIntroThroughWhite" fullname="TumbangPreso.PlayTests.StudioIntroTests.KeyboardMousePadAndTouchSkipOnlyTheIntroThroughWhite" methodname="KeyboardMousePadAndTouchSkipOnlyTheIntroThroughWhite" classname="TumbangPreso.PlayTests.StudioIntroTests" runstate="Runnable" seed="1707824914" result="Passed" start-time="2026-10-02 18:43:18Z" end-time="2026-10-02 18:43:19Z" duration="1.106884" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

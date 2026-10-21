@@ -6,12 +6,46 @@ The supplied TUMP idea board names three faces. Their jobs are distinct.
 |---|---|---|
 | Darumadrop One | Screen headings, mode names and a few large display moments | Short phrases, generous space, no outline added to every word |
 | Kawit Extended | Primary action, short navigation and section accents | Brush lettering used sparingly; never a paragraph or a dense row of numbers |
-| Lydian | Descriptions, instructions, profile text and other reading | Sentence case, deliberate leading, enough size for its finer letterforms |
+| Nunito Bold | Temporarily replaces Lydian Regular for descriptions, instructions, profile text and other owner-theme reading | Sentence case; use the real bold face and retain readable leading |
 
 Back, Close, previous/next and other familiar controls use actual icons instead
 of relying on a special character in a display font. Meaningful choices such as
 Ranked, Custom Room, abilities and their consequences keep words. UI copy is
 English; place and character proper names retain their identity.
+
+## October3 temporary reading-font override
+
+The owner requested all current Lydian Regular usage become Nunito Bold for now.
+OwnerUiTheme's serialized reference and missing-theme fallback use Nunito Bold;
+OwnerUiArtAuthor preserves that choice when rebuilding the theme. A later
+owner correction reduces these newly replaced reading labels to85percent of
+their authored size, preserving the28-unit small-window reading floor without
+enlarging already-smaller labels (tutorial30 becomes28). Display/accent sizes
+stay intact.
+Loading tips
+already used Nunito Bold through HubStyle. Existing Work Sans reading routes,
+display/accent fonts, source Lydian files, GUIDs and permission records remain.
+
+## October 6 in-game DIN override
+
+The owner supplied DIN Next LT Arabic Light and Bold and requested DIN throughout
+in-game interface text. Bold carries headings, scores, status names and actions;
+Light carries descriptions and reading text. Only the central match clock named
+TimeLeft (TimerLabel in the legacy HUD) keeps Darumadrop One. Front-end typography
+retains its existing roles. Font-drawn reticle and offscreen direction symbols
+retain their symbol-capable face. World TextMesh nameplates are separate from
+the interface.
+
+InGameTypography selects by the label's owning map scene, including prefetched
+maps and persistent UI opened during a match. Common factories and direct match
+label builders use the same routing, including pause settings, results, replay
+and training UI. The supplied font binaries are unchanged and dynamic imports
+include font data. The Light file's embedded family is ntaqat; its importer uses
+that actual family while the asset path identifies the supplied DIN file.
+Existing font assets and front-end theme references are preserved.
+
+The scoped implementation and validation limits are recorded in
+[the DIN report](reports/ingame-din-2026-10-06/README.md).
 
 ## Sources and permission
 

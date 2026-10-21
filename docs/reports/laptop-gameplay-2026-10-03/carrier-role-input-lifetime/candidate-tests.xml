@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 10:02:11Z" end-time="2026-10-03 10:02:12Z" duration="0.2349692">
+  <test-suite type="TestSuite" id="2856" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1510" result="Passed" start-time="2026-10-03 10:02:11Z" end-time="2026-10-03 10:02:12Z" duration="0.234969" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2850" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1510" result="Passed" start-time="2026-10-03 10:02:11Z" end-time="2026-10-03 10:02:12Z" duration="0.227729" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6344" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2851" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1510" result="Passed" start-time="2026-10-03 10:02:11Z" end-time="2026-10-03 10:02:12Z" duration="0.225522" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2852" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1510" result="Passed" start-time="2026-10-03 10:02:11Z" end-time="2026-10-03 10:02:12Z" duration="0.223738" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1211" name="CarrierRoleInputLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 10:02:11Z" end-time="2026-10-03 10:02:12Z" duration="0.203348" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1213" name="BecomingAttackerRetiresTheOldDefenderResetChannel" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingAttackerRetiresTheOldDefenderResetChannel" methodname="BecomingAttackerRetiresTheOldDefenderResetChannel" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="370545783" result="Passed" start-time="2026-10-03 10:02:11Z" end-time="2026-10-03 10:02:12Z" duration="0.094246" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1212" name="BecomingDefenderRetiresTheOldAttackerThrowCharge" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingDefenderRetiresTheOldAttackerThrowCharge" methodname="BecomingDefenderRetiresTheOldAttackerThrowCharge" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1212115017" result="Passed" start-time="2026-10-03 10:02:12Z" end-time="2026-10-03 10:02:12Z" duration="0.026159" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1216" name="OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" methodname="OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1602197825" result="Passed" start-time="2026-10-03 10:02:12Z" end-time="2026-10-03 10:02:12Z" duration="0.026196" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1214" name="SameAttackerSnapshotPreservesTheHeldThrowCharge" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.SameAttackerSnapshotPreservesTheHeldThrowCharge" methodname="SameAttackerSnapshotPreservesTheHeldThrowCharge" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="2096323389" result="Passed" start-time="2026-10-03 10:02:12Z" end-time="2026-10-03 10:02:12Z" duration="0.022128" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1215" name="SameDefenderSnapshotPreservesTheHeldResetChannel" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.SameDefenderSnapshotPreservesTheHeldResetChannel" methodname="SameDefenderSnapshotPreservesTheHeldResetChannel" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1525450201" result="Passed" start-time="2026-10-03 10:02:12Z" end-time="2026-10-03 10:02:12Z" duration="0.024470" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

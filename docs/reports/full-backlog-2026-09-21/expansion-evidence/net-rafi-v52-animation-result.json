@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "errors": [],
+  "measured": {
+    "host": {
+      "rows": 448,
+      "eventIds": [
+        1,
+        2,
+        3
+      ],
+      "starts": 1,
+      "bodyClips": [
+        "hero-rafi-breakwater",
+        "hero-rafi-cut",
+        "hero-rafi-feint",
+        "holding-right",
+        "idle",
+        "walk"
+      ],
+      "snapshots": 6,
+      "largestExpiryOffset": 0.03188323974609375
+    },
+    "owner": {
+      "rows": 441,
+      "eventIds": [
+        1,
+        2,
+        3
+      ],
+      "starts": 1,
+      "bodyClips": [
+        "hero-rafi-breakwater",
+        "hero-rafi-cut",
+        "hero-rafi-feint",
+        "idle",
+        "walk"
+      ],
+      "snapshots": 0,
+      "largestExpiryOffset": 0.2210845947265625
+    },
+    "observer": {
+      "rows": 439,
+      "eventIds": [
+        1,
+        2,
+        3
+      ],
+      "starts": 1,
+      "bodyClips": [
+        "hero-rafi-breakwater",
+        "hero-rafi-cut",
+        "hero-rafi-feint",
+        "idle",
+        "walk"
+      ],
+      "snapshots": 0,
+      "largestExpiryOffset": 0.2010040283203125
+    }
+  },
+  "runtimeSha256": "e376976a864b2326f247b7e4f267d918f414655e34dbd7d9982c586a09476da9",
+  "link": {
+    "delayMs": 150.0,
+    "jitterMs": 0,
+    "loss": 0,
+    "seed": 20260922
+  },
+  "scope": "Three actual Windows peers on Lagoon; owner Q/E/shared ultimate, authoritative field IDs/paths/lifetime, repeated world snapshots and cleanup. Staged inputs; no WAN or balance claim."
+}

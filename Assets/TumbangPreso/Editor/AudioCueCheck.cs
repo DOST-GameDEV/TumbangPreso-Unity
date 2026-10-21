@@ -167,6 +167,10 @@ namespace TumbangPreso.EditorTools
 
                     if (declared.Contains(cue)) continue;
 
+                    // A hero skill sound was deleted on the owner's instruction (2026-09-29, `AudioCues.IsSkillSfx`): its call
+                    // sites stay, silent by design, until the skill sounds are reworked.
+                    if (AudioCues.IsSkillSfx(cue) && !AudioCues.SkillSfxOn) continue;
+
                     sb.AppendLine($"  UNDECLARED: {Path.GetFileName(file)} fires '{cue}', " +
                                   "which is in no cue list, so it plays silence.");
                     undeclared++;

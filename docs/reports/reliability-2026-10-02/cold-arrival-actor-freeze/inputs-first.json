@@ -1,0 +1,44 @@
+{
+  "sourceCommit": "cce112e9b19069094710116dfcea13bf5c571c92",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/SliceRunner.cs",
+      "variant": "baseline",
+      "sha256": "ed3455f0567942a5f95ff8933715dee2afecbd64d8023746d08b380caae47764",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\cold-arrival-freeze1002-inputs\\SliceRunner.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/SliceRunner.cs",
+      "variant": "final",
+      "sha256": "55e05934faaba82d02dec19e965ab911005655c2906cd7ba6521b5d973ef9c5c",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\cold-arrival-freeze1002-inputs\\SliceRunner.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ColdArrivalActorFreezeTests.cs",
+      "variant": "baseline",
+      "sha256": "80b69c889e5160bdecf02bc2c1c61005f09b93b39cdfcdb7eda5d6e6364a4a52",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\cold-arrival-freeze1002-inputs\\ColdArrivalActorFreezeTests.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ColdArrivalActorFreezeTests.cs",
+      "variant": "final",
+      "sha256": "80b69c889e5160bdecf02bc2c1c61005f09b93b39cdfcdb7eda5d6e6364a4a52",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\cold-arrival-freeze1002-inputs\\ColdArrivalActorFreezeTests.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ColdArrivalActorFreezeTests.cs.meta",
+      "variant": "baseline",
+      "sha256": "679542e97c4d0538c3952ec40edb913efcb1b1869fbf1cacd98188ebe0a2abc4",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\cold-arrival-freeze1002-inputs\\ColdArrivalActorFreezeTests.cs.meta.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ColdArrivalActorFreezeTests.cs.meta",
+      "variant": "final",
+      "sha256": "679542e97c4d0538c3952ec40edb913efcb1b1869fbf1cacd98188ebe0a2abc4",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\cold-arrival-freeze1002-inputs\\ColdArrivalActorFreezeTests.cs.meta.final.txt"
+    }
+  ],
+  "testFilter": "TumbangPreso.PlayTests.ColdArrivalActorFreezeTests",
+  "expectedBaseline": "1 causal failure, 2 controls passed",
+  "expectedFinal": "3 passed"
+}

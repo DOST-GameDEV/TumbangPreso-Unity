@@ -1,0 +1,26 @@
+[
+  {
+    "distance": 0,
+    "fault": "None"
+  },
+  {
+    "distance": 1000,
+    "fault": "None"
+  },
+  {
+    "distance": 1656,
+    "fault": "None"
+  },
+  {
+    "distance": 1700,
+    "fault": "None"
+  },
+  {
+    "distance": 1800,
+    "fault": "None"
+  },
+  {
+    "distance": 1801,
+    "fault": "ImpossibleTravel"
+  }
+]

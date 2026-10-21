@@ -1,0 +1,1 @@
+variant fx; logged errors 0 (first: ); scene frames 32-138; handback 139; release 184; victim whirled 184; palm peak frame 185 (0.537 m); outsider whirled False; clock 88.800 to 88.800

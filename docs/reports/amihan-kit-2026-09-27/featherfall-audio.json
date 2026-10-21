@@ -1,0 +1,34 @@
+{
+  "cue": "sfx_amihan_updraft_settle",
+  "mix_review": "Native film and mix review pending. Peak/RMS are measurements only.",
+  "versions": [
+    {
+      "version": "before",
+      "sha256": "9b54c8cd0db9931a27ab9a3ce54046924144558cae45804d4eb75fb24e76cfad",
+      "seconds": 0.5,
+      "peak": 0.5999938962981048,
+      "rms": 0.0992707320090177,
+      "rms_per_0_1s": [
+        0.137593,
+        0.149148,
+        0.065806,
+        0.058958,
+        0.017023
+      ]
+    },
+    {
+      "version": "contact_v1",
+      "sha256": "6a22c813657a53a9af6ae729827f33b38b6550831fa49dd84c513982e0ee9757",
+      "seconds": 0.5,
+      "peak": 0.5999938962981048,
+      "rms": 0.06788952527651862,
+      "rms_per_0_1s": [
+        0.111087,
+        0.08315,
+        0.053502,
+        0.028558,
+        0.01062
+      ]
+    }
+  ]
+}

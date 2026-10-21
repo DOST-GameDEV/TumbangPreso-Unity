@@ -1,0 +1,480 @@
+character	button	BackButton	BACK
+character	button	BotsNextButton	
+character	button	BotsPrevButton	
+character	button	ChatButton	CHAT
+character	button	ChatHistoryButton	HISTORY
+character	button	CloseChatButton	CLOSE
+character	button	CopyRoomAddress	COPY ADDRESS
+character	button	CopyRoomCode	COPY CODE
+character	button	CustomGameButton	CUSTOM SETTINGS
+character	button	FriendsRoute	FRIENDS
+character	button	JoinRoomButton	JOIN A ROOM
+character	button	LoadoutButton	CHANGE LOADOUT
+character	button	MapNextButton	
+character	button	MapPrevButton	
+character	button	MeetCharacter	STORY
+character	button	ModeNextButton	
+character	button	ModePrevButton	
+character	button	OnlineRoomButton	GO ONLINE
+character	button	Portrait_alpombra	
+character	button	Portrait_boyben	
+character	button	Portrait_cheska	
+character	button	Portrait_crocs	
+character	button	Portrait_dante	
+character	button	Portrait_decades	
+character	button	Portrait_heels	
+character	button	Portrait_karne	
+character	button	Portrait_loafers	
+character	button	Portrait_metal	
+character	button	Portrait_nemu	
+character	button	Portrait_pambahay	
+character	button	Portrait_pantulog	
+character	button	Portrait_pasip	
+character	button	Portrait_phaister	
+character	button	Portrait_piyesta	
+character	button	Portrait_sandals	
+character	button	Portrait_sean	
+character	button	Portrait_sike	
+character	button	Portrait_spartan	
+character	button	Portrait_tsinelas	
+character	button	Portrait_zack	
+character	button	PracticeRoute	OFFLINE
+character	button	ProfileButton	Player
+character	button	RankedRoute	RANKED
+character	button	SeatButton0	YOU
+character	button	SeatButton1	BOT
+character	button	SeatButton2	BOT
+character	button	SeatButton3	BOT
+character	button	SettingsButton	SETTINGS
+character	button	SpectateButton	WATCH INSTEAD
+character	button	StartButton	START MATCH
+character	button	TumpBack	
+character	button	TumpCategory0	
+character	button	TumpCategory1	
+character	button	TumpCategory2	
+character	button	TumpSkills	SKILLS
+character	button	TumpUseLoadout	USE LOADOUT
+character	field	ChatInput	
+controller	button	Callout_buttonEast	Ready Up
+controller	button	Callout_buttonNorth	Ultimate
+controller	button	Callout_buttonSouth	Jump
+controller	button	Callout_buttonWest	Pick Up / Shove / Reset
+controller	button	Callout_dpad/down	Hide HUD
+controller	button	Callout_dpad/left	Curve Left (Pektus)
+controller	button	Callout_dpad/right	Curve Right (Pektus)
+controller	button	Callout_dpad/up	Emote Wheel
+controller	button	Callout_leftShoulder	Skill 1
+controller	button	Callout_leftStick	Move
+controller	button	Callout_leftStickPress	Sprint
+controller	button	Callout_leftTrigger	Lunge Tag
+controller	button	Callout_rightShoulder	Skill 2
+controller	button	Callout_rightStick	Aim / Look
+controller	button	Callout_rightStickPress	-
+controller	button	Callout_rightTrigger	Throw / Punch
+controller	button	Callout_select	Hold: Ability Info
+controller	button	Callout_start	Pause / Match Menu
+controller	button	Done	DONE
+controller	button	Reset	RESET ALL
+credits	button	CreditsBack	BACK
+credits	scrollbar	Scrollbar	
+join	button	BackButton	BACK
+join	button	BotsNextButton	
+join	button	BotsPrevButton	
+join	button	ChatButton	CHAT
+join	button	ChatHistoryButton	HISTORY
+join	button	CloseChatButton	CLOSE
+join	button	CloseJoinButton	BACK
+join	button	ConnectToRoom	JOIN
+join	button	CopyRoomAddress	COPY ADDRESS
+join	button	CopyRoomCode	COPY CODE
+join	button	CustomGameButton	CUSTOM SETTINGS
+join	button	FriendsRoute	FRIENDS
+join	button	JoinRoomButton	JOIN A ROOM
+join	button	LeaveGameButton	LEAVE CURRENT ROOM
+join	button	LoadoutButton	CHANGE LOADOUT
+join	button	MapNextButton	
+join	button	MapPrevButton	
+join	button	ModeNextButton	
+join	button	ModePrevButton	
+join	button	NearbyChip	Nearby
+join	button	OnlineChip	Online
+join	button	OnlineRoomButton	GO ONLINE
+join	button	PracticeRoute	OFFLINE
+join	button	ProfileButton	Player
+join	button	RankedRoute	RANKED
+join	button	Room0	No nearby rooms found yet
+join	button	Room0	No online rooms found yet
+join	button	SeatButton0	YOU
+join	button	SeatButton1	BOT
+join	button	SeatButton2	BOT
+join	button	SeatButton3	BOT
+join	button	SettingsButton	SETTINGS
+join	button	SpectateButton	WATCH INSTEAD
+join	button	StartButton	START MATCH
+join	field	ChatInput	
+join	field	JoinCode	
+lobby	button	BackButton	BACK
+lobby	button	BotsNextButton	
+lobby	button	BotsPrevButton	
+lobby	button	ChatButton	CHAT
+lobby	button	ChatHistoryButton	HISTORY
+lobby	button	CloseChatButton	CLOSE
+lobby	button	CopyRoomAddress	COPY ADDRESS
+lobby	button	CopyRoomCode	COPY CODE
+lobby	button	CustomGameButton	CUSTOM SETTINGS
+lobby	button	FriendsRoute	FRIENDS
+lobby	button	JoinRoomButton	JOIN A ROOM
+lobby	button	LoadoutButton	CHANGE LOADOUT
+lobby	button	MapNextButton	
+lobby	button	MapPrevButton	
+lobby	button	ModeNextButton	
+lobby	button	ModePrevButton	
+lobby	button	OnlineRoomButton	GO ONLINE
+lobby	button	PracticeRoute	OFFLINE
+lobby	button	ProfileButton	Player
+lobby	button	RankedRoute	RANKED
+lobby	button	SeatButton0	YOU
+lobby	button	SeatButton1	BOT
+lobby	button	SeatButton2	BOT
+lobby	button	SeatButton3	BOT
+lobby	button	SettingsButton	SETTINGS
+lobby	button	SpectateButton	WATCH INSTEAD
+lobby	button	StartButton	START MATCH
+lobby	field	ChatInput	
+login	button	CreateAccountTab	SIGN UP
+login	button	ForgotPassword	FORGOT PASSWORD?
+login	button	GuestAccount	GUEST
+login	button	RevealConfirmation	
+login	button	RevealPassword	
+login	button	SignInBack	BACK
+login	button	SignInTab	SIGN IN
+login	button	SubmitAccount	CREATE
+login	button	SubmitAccount	LOG IN
+login	button	TermsLink	TERMS & CONDITIONS
+login	field	ConfirmPassword	
+login	field	Password	
+login	field	Username	
+login	toggle	TermsAcceptance	
+play	button	BackButton	BACK
+play	button	ClassicButton	CLASSIC
+play	button	CustomButton	WITH FRIENDS
+play	button	HeroStrikeButton	HERO STRIKE
+play	button	PracticeButton	WITH BOTS
+play	button	RankedButton	RANKED
+play	button	TutorialButton	LEARN TO PLAY
+profile	button	BackButton	BACK
+profile	button	BotsNextButton	
+profile	button	BotsPrevButton	
+profile	button	ChatButton	CHAT
+profile	button	ChatHistoryButton	HISTORY
+profile	button	CloseChatButton	CLOSE
+profile	button	ClosePlayerHub	BACK
+profile	button	CopyRoomAddress	COPY ADDRESS
+profile	button	CopyRoomCode	COPY CODE
+profile	button	CustomGameButton	CUSTOM SETTINGS
+profile	button	DeleteAccount	DELETE
+profile	button	FriendsRoute	FRIENDS
+profile	button	Group_Account details/ToggleGroup	+  Account details
+profile	button	Group_Account details/ToggleGroup	-  Account details
+profile	button	Group_Achievements/ToggleGroup	+  Achievements
+profile	button	Group_Achievements/ToggleGroup	-  Achievements
+profile	button	Group_Banner/ToggleGroup	+  Banner
+profile	button	Group_Banner/ToggleGroup	-  Banner
+profile	button	Group_Delete account/ToggleGroup	+  Delete account
+profile	button	Group_Delete account/ToggleGroup	-  Delete account
+profile	button	Group_Find a friend/ToggleGroup	+  Find a friend
+profile	button	Group_Find a friend/ToggleGroup	-  Find a friend
+profile	button	Group_Hero mastery/ToggleGroup	+  Hero mastery
+profile	button	Group_Hero mastery/ToggleGroup	-  Hero mastery
+profile	button	Group_Optional details/ToggleGroup	+  Optional details
+profile	button	Group_Optional details/ToggleGroup	-  Optional details
+profile	button	Group_Tournament guest/ToggleGroup	+  Tournament guest
+profile	button	Group_Tournament guest/ToggleGroup	-  Tournament guest
+profile	button	HubPrimary	REFRESH
+profile	button	HubPrimary	SAVE
+profile	button	HubTabAccount	ACCOUNT
+profile	button	HubTabCareer	CAREER
+profile	button	HubTabFriends	FRIENDS
+profile	button	HubTabMatches	HISTORY
+profile	button	HubTabProfile	PROFILE
+profile	button	JoinRoomButton	JOIN A ROOM
+profile	button	LoadoutButton	CHANGE LOADOUT
+profile	button	MapNextButton	
+profile	button	MapPrevButton	
+profile	button	ModeNextButton	
+profile	button	ModePrevButton	
+profile	button	OnlineRoomButton	GO ONLINE
+profile	button	OpenMatchDetail	0 PTS
+profile	button	PlayFromCareer	PLAY
+profile	button	PracticeRoute	OFFLINE
+profile	button	ProfileButton	Player
+profile	button	RankedRoute	RANKED
+profile	button	SeatButton0	YOU
+profile	button	SeatButton1	BOT
+profile	button	SeatButton2	BOT
+profile	button	SeatButton3	BOT
+profile	button	SendFriendRequest	SEND REQUEST
+profile	button	SettingsButton	SETTINGS
+profile	button	SetupAccount	SET UP SIGN IN
+profile	button	SpectateButton	WATCH INSTEAD
+profile	button	StartButton	START MATCH
+profile	button	ToggleGroup	+  Account details
+profile	button	ToggleGroup	+  Achievements
+profile	button	ToggleGroup	+  Banner
+profile	button	ToggleGroup	+  Delete account
+profile	button	ToggleGroup	+  Find a friend
+profile	button	ToggleGroup	+  Hero mastery
+profile	button	ToggleGroup	+  Optional details
+profile	button	ToggleGroup	+  Tournament guest
+profile	button	ToggleGroup	-  Account details
+profile	button	ToggleGroup	-  Achievements
+profile	button	ToggleGroup	-  Banner
+profile	button	ToggleGroup	-  Delete account
+profile	button	ToggleGroup	-  Find a friend
+profile	button	ToggleGroup	-  Hero mastery
+profile	button	ToggleGroup	-  Optional details
+profile	button	ToggleGroup	-  Tournament guest
+profile	button	TournamentGuest	PLAY AS GUEST
+profile	dropdown	CareerModeValue	HERO STRIKE
+profile	field	ChatInput	
+profile	field	FriendSearch	
+profile	field	PlayerNameEdit	
+profile	field	ProfileBio	
+profile	field	ProfileCountry	
+profile	field	ProfilePronouns	
+profile	scrollbar	Scrollbar	
+queue-conditional	button	CancelQueueButton	conditional built control
+queue-conditional	button	StartWithBotsButton	conditional built control
+ready-conditional	button	PrimaryButton	conditional built control
+rules	button	BackButton	BACK
+rules	button	BotsNext	
+rules	button	BotsNextButton	
+rules	button	BotsPrevButton	
+rules	button	BotsPrevious	
+rules	button	ChatButton	CHAT
+rules	button	ChatHistoryButton	HISTORY
+rules	button	CloseChatButton	CLOSE
+rules	button	CopyRoomAddress	COPY ADDRESS
+rules	button	CopyRoomCode	COPY CODE
+rules	button	CustomGameButton	CUSTOM SETTINGS
+rules	button	CustomRulesBack	BACK
+rules	button	FormatNext	
+rules	button	FormatPrevious	
+rules	button	FriendsRoute	FRIENDS
+rules	button	JoinRoomButton	JOIN A ROOM
+rules	button	LoadoutButton	CHANGE LOADOUT
+rules	button	MapNextButton	
+rules	button	MapPrevButton	
+rules	button	MatchRulesTab	THE MATCH
+rules	button	ModeNext	
+rules	button	ModeNextButton	
+rules	button	ModePrevButton	
+rules	button	ModePrevious	
+rules	button	OnlineRoomButton	GO ONLINE
+rules	button	PracticeRoute	OFFLINE
+rules	button	PrivateNext	
+rules	button	PrivatePrevious	
+rules	button	ProfileButton	Player
+rules	button	RankedRoute	RANKED
+rules	button	ResetRulesButton	RESET TO DEFAULTS
+rules	button	RoomRulesTab	THE ROOM
+rules	button	RoundsNext	
+rules	button	RoundsPrevious	
+rules	button	SeatButton0	YOU
+rules	button	SeatButton1	BOT
+rules	button	SeatButton2	BOT
+rules	button	SeatButton3	BOT
+rules	button	SecondsNext	
+rules	button	SecondsPrevious	
+rules	button	SettingsButton	SETTINGS
+rules	button	SpectateButton	WATCH INSTEAD
+rules	button	StartButton	START MATCH
+rules	button	TargetNext	
+rules	button	TargetPrevious	
+rules	button	UseRulesButton	DONE
+rules	field	ChatInput	
+settings	button	AntiAliasingValue	FXAA
+settings	button	BindingGroupValue	BROADCAST GALLERY
+settings	button	BindingGroupValue	HERO POWERS
+settings	button	BindingGroupValue	MOVEMENT
+settings	button	BindingGroupValue	PLAYING THE GAME
+settings	button	BindingGroupValue	ROUND AND SCREEN
+settings	button	BindingGroupValue	SPECTATOR CAMERA
+settings	button	Binding_AbilityInfoAction	Select
+settings	button	Binding_AbilityInfoAction	Tab
+settings	button	Binding_CleanFeedAction	D-Pad/Down
+settings	button	Binding_CleanFeedAction	H
+settings	button	Binding_CurveLeftAction	D-Pad/Left
+settings	button	Binding_CurveLeftAction	Z
+settings	button	Binding_CurveRightAction	C
+settings	button	Binding_CurveRightAction	D-Pad/Right
+settings	button	Binding_EmoteWheelAction	B
+settings	button	Binding_EmoteWheelAction	D-Pad/Up
+settings	button	Binding_GrabAction	Button West
+settings	button	Binding_GrabAction	X
+settings	button	Binding_JumpAction	Button South
+settings	button	Binding_JumpAction	Space
+settings	button	Binding_LungeAction	Left Trigger
+settings	button	Binding_LungeAction	Right Button
+settings	button	Binding_MoveBackwardAction	Left Stick
+settings	button	Binding_MoveBackwardAction	S
+settings	button	Binding_MoveForwardAction	Left Stick
+settings	button	Binding_MoveForwardAction	W
+settings	button	Binding_MoveLeftAction	A
+settings	button	Binding_MoveLeftAction	Left Stick
+settings	button	Binding_MoveRightAction	D
+settings	button	Binding_MoveRightAction	Left Stick
+settings	button	Binding_PauseAction	Escape
+settings	button	Binding_PauseAction	Start
+settings	button	Binding_ReadyUpAction	Button East
+settings	button	Binding_ReadyUpAction	R
+settings	button	Binding_Skill1Action	Left Shoulder
+settings	button	Binding_Skill1Action	Q
+settings	button	Binding_Skill2Action	E
+settings	button	Binding_Skill2Action	Right Shoulder
+settings	button	Binding_SpecialAbilityAction	Left Button
+settings	button	Binding_SpecialAbilityAction	Right Trigger
+settings	button	Binding_SpectatorAutopilotAction	K
+settings	button	Binding_SpectatorAutopilotAction	Left Shoulder
+settings	button	Binding_SpectatorControlsAction	C
+settings	button	Binding_SpectatorControlsAction	D-Pad/Right
+settings	button	Binding_SpectatorCycleTargetAction	Right Shoulder
+settings	button	Binding_SpectatorCycleTargetAction	Tab
+settings	button	Binding_SpectatorDownAction	Left Control
+settings	button	Binding_SpectatorDownAction	Left Trigger
+settings	button	Binding_SpectatorFreeFlyAction	Button North
+settings	button	Binding_SpectatorFreeFlyAction	F
+settings	button	Binding_SpectatorMarkAction	B
+settings	button	Binding_SpectatorMarkAction	D-Pad/Up
+settings	button	Binding_SpectatorPauseAction	Button South
+settings	button	Binding_SpectatorPauseAction	P
+settings	button	Binding_SpectatorPovAction	Button West
+settings	button	Binding_SpectatorPovAction	V
+settings	button	Binding_SpectatorRecallAction	D-Pad/Down
+settings	button	Binding_SpectatorRecallAction	N
+settings	button	Binding_SpectatorReplayAction	D-Pad/Left
+settings	button	Binding_SpectatorReplayAction	Y
+settings	button	Binding_SprintAction	Left Shift
+settings	button	Binding_SprintAction	Left Stick Press
+settings	button	Binding_ToggleFullscreenAction	-
+settings	button	Binding_ToggleFullscreenAction	F11
+settings	button	Binding_UltimateAction	Button North
+settings	button	Binding_UltimateAction	F
+settings	button	ControllerMapAction	OPEN
+settings	button	FrameRateValue	Unlimited
+settings	button	GraphicsQualityValue	Balanced
+settings	button	InputDeviceValue	Controller
+settings	button	InputDeviceValue	Keyboard & mouse
+settings	button	InputDeviceValue	Touch
+settings	button	RenderStyleValue	Toon (Ink Outlines)
+settings	button	ResetControlsAction	RESET CONTROLS
+settings	button	SettingsCredits	CREDITS
+settings	button	SettingsSection0	Controls
+settings	button	SettingsSection1	Audio
+settings	button	SettingsSection2	Graphics
+settings	button	SettingsSection3	Player
+settings	button	SettingsSection4	Accessibility
+settings	button	SlipperHighlightValue	Blue
+settings	button	TouchLayoutAction	ARRANGE
+settings	button	TumpSaveSettings	SAVE CHANGES
+settings	button	TumpSettingsBack	
+settings	button	VSyncValue	On
+settings	field	PlayerNameField	
+settings	scrollbar	Scrollbar	
+settings	slider	AnnouncerVolumeValue	80%
+settings	slider	CameraShakeValue	100%
+settings	slider	FlashIntensityValue	100%
+settings	slider	MasterVolumeValue	80%
+settings	slider	MusicVolumeValue	80%
+settings	slider	SensitivityValue	1.0×
+settings	slider	SoundVolumeValue	80%
+settings	toggle	CinematicCameraMotionValue	ON
+settings	toggle	FullscreenValue	ON
+settings	toggle	GenericControllerValue	ON
+settings	toggle	InvertYValue	OFF
+settings	toggle	ReducedUiMotionValue	OFF
+settings	toggle	RumbleValue	ON
+settings	toggle	TelemetryValue	ON
+settings-options	button	BindingGroupValue	MOVEMENT
+settings-options	button	Binding_JumpAction	Space
+settings-options	button	Binding_MoveBackwardAction	S
+settings-options	button	Binding_MoveForwardAction	W
+settings-options	button	Binding_MoveLeftAction	A
+settings-options	button	Binding_MoveRightAction	D
+settings-options	button	Binding_SprintAction	Left Shift
+settings-options	button	ControllerMapAction	OPEN
+settings-options	button	InputDeviceValue	Keyboard & mouse
+settings-options	button	Option0	Keyboard & mouse
+settings-options	button	Option1	Controller
+settings-options	button	Option2	Touch
+settings-options	button	OutsideChoice	
+settings-options	button	ResetControlsAction	RESET CONTROLS
+settings-options	button	SettingsCredits	CREDITS
+settings-options	button	SettingsSection0	Controls
+settings-options	button	SettingsSection1	Audio
+settings-options	button	SettingsSection2	Graphics
+settings-options	button	SettingsSection3	Player
+settings-options	button	SettingsSection4	Accessibility
+settings-options	button	TumpSaveSettings	SAVE CHANGES
+settings-options	button	TumpSettingsBack	
+settings-options	scrollbar	Scrollbar	
+settings-options	slider	SensitivityValue	1.0×
+settings-options	toggle	GenericControllerValue	ON
+settings-options	toggle	InvertYValue	OFF
+skills	button	BackButton	BACK
+skills	button	BotsNextButton	
+skills	button	BotsPrevButton	
+skills	button	ChatButton	CHAT
+skills	button	ChatHistoryButton	HISTORY
+skills	button	CloseChatButton	CLOSE
+skills	button	CopyRoomAddress	COPY ADDRESS
+skills	button	CopyRoomCode	COPY CODE
+skills	button	CustomGameButton	CUSTOM SETTINGS
+skills	button	FriendsRoute	FRIENDS
+skills	button	JoinRoomButton	JOIN A ROOM
+skills	button	LoadoutButton	CHANGE LOADOUT
+skills	button	MapNextButton	
+skills	button	MapPrevButton	
+skills	button	ModeNextButton	
+skills	button	ModePrevButton	
+skills	button	OnlineRoomButton	GO ONLINE
+skills	button	PracticeRoute	OFFLINE
+skills	button	ProfileButton	Player
+skills	button	RankedRoute	RANKED
+skills	button	SeatButton0	YOU
+skills	button	SeatButton1	BOT
+skills	button	SeatButton2	BOT
+skills	button	SeatButton3	BOT
+skills	button	SettingsButton	SETTINGS
+skills	button	SpectateButton	WATCH INSTEAD
+skills	button	StartButton	START MATCH
+skills	button	TumpEquipSkill	EQUIPPED
+skills	button	TumpSkillBack	BACK
+skills	button	TumpSkillSlot0	ULTIMATE
+skills	button	TumpSkillSlot1	SKILL 1
+skills	button	TumpSkillSlot2	SKILL 2
+skills	button	TumpVariant_dante.1.stomp	SEISMIC STOMP
+skills	button	TumpVariant_dante.1.tremor	LONG TREMOR
+skills	button	TumpVariant_dante.2.carapace	DEMONIC CARAPACE
+skills	button	TumpVariant_dante.2.plating	HEAVY PLATING
+skills	field	ChatInput	
+touch	button	CancelTouchLayout	CANCEL
+touch	button	ResetTouchLayout	RESET
+touch	button	SandboxToggle	NO COOLDOWNS OFF
+touch	button	SaveTouchLayout	SAVE LAYOUT
+touch	button	TouchAdjustments	SIZE & OPACITY
+touch	button	TouchToolbarPosition	TOOLS BELOW
+touch	slider	TouchOpacity	55%
+touch	slider	TouchSize	100%
+welcome-conditional	button	ContinueAccount	conditional built control
+welcome-conditional	button	CreateAccountTab	conditional built control
+welcome-conditional	button	ForgotPassword	conditional built control
+welcome-conditional	button	GoogleAccount	conditional built control
+welcome-conditional	button	GuestAccount	conditional built control
+welcome-conditional	button	OtherAccount	conditional built control
+welcome-conditional	button	RevealConfirmation	conditional built control
+welcome-conditional	button	RevealPassword	conditional built control
+welcome-conditional	button	SignInBack	conditional built control
+welcome-conditional	button	SignInTab	conditional built control
+welcome-conditional	button	SubmitAccount	conditional built control
+welcome-conditional	button	TermsLink	conditional built control

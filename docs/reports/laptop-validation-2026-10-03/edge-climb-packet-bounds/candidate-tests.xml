@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.0717071">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.071707" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2513" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.062256" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11236" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.058533" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2515" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1234" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.053508" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1383" name="EdgeClimbPacketBoundsTests" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.038586" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1390" name="AClientNeverDecodesAnEmptyClimbRequest" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.AClientNeverDecodesAnEmptyClimbRequest" methodname="AClientNeverDecodesAnEmptyClimbRequest" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="263675136" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.022455" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1389" name="CompletePayloadStillDecodesBeforeSeatOwnershipRejection" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.CompletePayloadStillDecodesBeforeSeatOwnershipRejection" methodname="CompletePayloadStillDecodesBeforeSeatOwnershipRejection" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="632961694" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.001411" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1388" name="TrailingBytesCannotDecodeAClimbRequest" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TrailingBytesCannotDecodeAClimbRequest" methodname="TrailingBytesCannotDecodeAClimbRequest" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="926169063" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.000735" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1387" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.003344" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1384" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode(8)" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode(8)" methodname="TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="1715642455" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.000803" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1385" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode(12)" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode(12)" methodname="TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="2098973780" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.000231" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1386" name="TruncatedClimbRequestIsRejectedWithoutPartialDecode(15)" fullname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests.TruncatedClimbRequestIsRejectedWithoutPartialDecode(15)" methodname="TruncatedClimbRequestIsRejectedWithoutPartialDecode" classname="TumbangPreso.Tests.EdgeClimbPacketBoundsTests" runstate="Runnable" seed="1385729754" result="Passed" start-time="2026-10-03 15:21:04Z" end-time="2026-10-03 15:21:04Z" duration="0.000181" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

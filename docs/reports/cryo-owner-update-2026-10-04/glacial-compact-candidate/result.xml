@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 11:49:07Z" end-time="2026-10-04 11:49:08Z" duration="0.979223">
+  <test-suite type="TestSuite" id="3043" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1665" result="Passed" start-time="2026-10-04 11:49:07Z" end-time="2026-10-04 11:49:08Z" duration="0.979223" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3037" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1665" result="Passed" start-time="2026-10-04 11:49:07Z" end-time="2026-10-04 11:49:08Z" duration="0.970694" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="87405" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3038" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1665" result="Passed" start-time="2026-10-04 11:49:07Z" end-time="2026-10-04 11:49:08Z" duration="0.968423" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3039" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1665" result="Passed" start-time="2026-10-04 11:49:07Z" end-time="2026-10-04 11:49:08Z" duration="0.966259" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1283" name="CheskaFrostbiteLoadTests" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-04 11:49:08Z" end-time="2026-10-04 11:49:08Z" duration="0.907902" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1295" name="ActualCryoFieldsUseNewRadiusLifeAndThreeHitWall" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.ActualCryoFieldsUseNewRadiusLifeAndThreeHitWall" methodname="ActualCryoFieldsUseNewRadiusLifeAndThreeHitWall" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1019304853" result="Passed" start-time="2026-10-04 11:49:08Z" end-time="2026-10-04 11:49:08Z" duration="0.347629" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1292" name="CryoPlacementUsesTheNewOwnerNumbers" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.CryoPlacementUsesTheNewOwnerNumbers" methodname="CryoPlacementUsesTheNewOwnerNumbers" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1590428906" result="Passed" start-time="2026-10-04 11:49:08Z" end-time="2026-10-04 11:49:08Z" duration="0.220758" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1296" name="GlacialWallHasNoGapsAcrossItsFiveMetreArc" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.GlacialWallHasNoGapsAcrossItsFiveMetreArc" methodname="GlacialWallHasNoGapsAcrossItsFiveMetreArc" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1088525704" result="Passed" start-time="2026-10-04 11:49:08Z" end-time="2026-10-04 11:49:08Z" duration="0.326183" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/glacial-compact-candidate/frames/glacial-wall-front.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/glacial-compact-candidate/frames/glacial-wall-side.png
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

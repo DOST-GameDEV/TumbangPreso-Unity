@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
@@ -12,6 +12,13 @@ namespace TumbangPreso.Tests
         [TestCase(GhostPetCompanion.FidgetState.CatSmile,"KuroCatMouth")]
         [TestCase(GhostPetCompanion.FidgetState.GoofyDizzy,"KuroCrossLeft")]
         [TestCase(GhostPetCompanion.FidgetState.ShyPout,"KuroShyEye")]
+        [TestCase(GhostPetCompanion.FidgetState.HappyHop,"KuroGrinMouth")]
+        [TestCase(GhostPetCompanion.FidgetState.CuriousPeek,"KuroSparkleL")]
+        [TestCase(GhostPetCompanion.FidgetState.CheekyGiggle,"KuroTongue")]
+        [TestCase(GhostPetCompanion.FidgetState.HeartbeatPulse,"KuroHeartEyeR")]
+        [TestCase(GhostPetCompanion.FidgetState.TwirlSpin,"KuroHappyEyeL")]
+        [TestCase(GhostPetCompanion.FidgetState.OrbitArc,"KuroSparkleR")]
+        [TestCase(GhostPetCompanion.FidgetState.SleepySnooze,"KuroSleepEyeL")]
         public void CuteExpressionsUseAuthoredShapesAndClearBeforeACast(GhostPetCompanion.FidgetState gesture,string visiblePart)
         {
             var source=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="nemu").PetModel;
@@ -24,15 +31,27 @@ namespace TumbangPreso.Tests
                 companion.SampleIdleForCapture(gesture,GhostPetCompanion.IdleGestureDuration(gesture)*.5f);
                 Assert.AreEqual(Vector3.one,group.localScale);
                 Assert.AreEqual(Vector3.one,nodes.Single(n=>n.name==visiblePart).localScale);
-                Assert.AreEqual(Vector3.zero,nodes.Single(n=>n.name=="ghost-mouth").localScale,"Neutral and expression mouths overlap.");
+                if(GhostPetCompanion.ExpressionFor(gesture).HideMouth)
+                    Assert.AreEqual(Vector3.zero,nodes.Single(n=>n.name=="ghost-mouth-dot").localScale,"Neutral and expression mouths overlap.");
                 companion.SampleIdleForCapture(GhostPetCompanion.FidgetState.None,0);
                 Assert.AreEqual(Vector3.zero,group.localScale);
-                Assert.Greater(nodes.Single(n=>n.name=="ghost-mouth").localScale.sqrMagnitude,0);
+                Assert.Greater(nodes.Single(n=>n.name=="ghost-mouth-dot").localScale.sqrMagnitude,0);
                 companion.SampleIdleForCapture(gesture,GhostPetCompanion.IdleGestureDuration(gesture)*.5f);
                 companion.Devour(2);companion.StepTo(.1f);
                 Assert.AreEqual(Vector3.zero,group.localScale,"A cute idle expression survives into the ultimate.");
             }
             finally {Object.DestroyImmediate(pet);Object.DestroyImmediate(owner);}
+        }
+
+        /// <summary>Every part a face names exists in the model, so a typo cannot silently show nothing.</summary>
+        [Test]
+        public void EveryAuthoredFacePartExistsInTheModel()
+        {
+            var source=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="nemu").PetModel;
+            var names=source.GetComponentsInChildren<Transform>(true).Select(t=>t.name).ToHashSet();
+            foreach(GhostPetCompanion.FidgetState gesture in System.Enum.GetValues(typeof(GhostPetCompanion.FidgetState)))
+                foreach(var part in GhostPetCompanion.ExpressionFor(gesture).Parts??new string[0])
+                    Assert.IsTrue(names.Contains(part),gesture+" names a missing part "+part);
         }
 
         [Test]
@@ -114,11 +133,11 @@ namespace TumbangPreso.Tests
             try
             {
                 var transforms=pet.GetComponentsInChildren<Transform>();
-                var mouth=transforms.Single(t=>t.name=="ghost-mouth");
+                var mouth=transforms.Single(t=>t.name=="ghost-mouth-dot");
                 var left=transforms.Single(t=>t.name=="ghost-eye-l");
                 var tail=transforms.Where(t=>t.name.Contains("ghost-tail")).ToArray();
-                Assert.AreEqual(3,tail.Length);
-                Assert.IsTrue(transforms.Any(t=>t.name=="ghost-arm-l"));
+                Assert.AreEqual(5,tail.Length,"Retain all five original wisp pieces.");
+                Assert.IsTrue(transforms.Any(t=>t.name=="RestoredCalm"),"The approved original familiar was replaced.");
                 var mouthRest=mouth.localScale;var eyeRest=left.localRotation;
                 var sourceMaterials=pet.GetComponentsInChildren<Renderer>().Select(r=>r.sharedMaterial).Distinct().ToArray();
                 var colors=sourceMaterials.Select(m=>m.color).ToArray();

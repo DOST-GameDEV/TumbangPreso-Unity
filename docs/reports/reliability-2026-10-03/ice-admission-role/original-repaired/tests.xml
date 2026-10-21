@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:10:19Z" end-time="2026-10-03 06:10:20Z" duration="0.147325">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1097" result="Failed" site="Child" start-time="2026-10-03 06:10:19Z" end-time="2026-10-03 06:10:20Z" duration="0.147325" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2336" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1097" result="Failed" site="Child" start-time="2026-10-03 06:10:19Z" end-time="2026-10-03 06:10:20Z" duration="0.125864" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16604" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2337" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1097" result="Failed" site="Child" start-time="2026-10-03 06:10:19Z" end-time="2026-10-03 06:10:20Z" duration="0.113830" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2338" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1097" result="Failed" site="Child" start-time="2026-10-03 06:10:19Z" end-time="2026-10-03 06:10:20Z" duration="0.102055" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1906" name="NetIceAdmissionRoleTests" fullname="TumbangPreso.Tests.NetIceAdmissionRoleTests" classname="TumbangPreso.Tests.NetIceAdmissionRoleTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 06:10:19Z" end-time="2026-10-03 06:10:20Z" duration="0.078561" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1911" name="AlreadyAdmittedClientStillSelectsSeanFromItsClientSeat" fullname="TumbangPreso.Tests.NetIceAdmissionRoleTests.AlreadyAdmittedClientStillSelectsSeanFromItsClientSeat" methodname="AlreadyAdmittedClientStillSelectsSeanFromItsClientSeat" classname="TumbangPreso.Tests.NetIceAdmissionRoleTests" runstate="Runnable" seed="93581062" result="Passed" start-time="2026-10-03 06:10:19Z" end-time="2026-10-03 06:10:20Z" duration="0.049086" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1910" name="IntendedHostStillSelectsCheskaFromItsHostSeat" fullname="TumbangPreso.Tests.NetIceAdmissionRoleTests.IntendedHostStillSelectsCheskaFromItsHostSeat" methodname="IntendedHostStillSelectsCheskaFromItsHostSeat" classname="TumbangPreso.Tests.NetIceAdmissionRoleTests" runstate="Runnable" seed="1615869073" result="Passed" start-time="2026-10-03 06:10:20Z" end-time="2026-10-03 06:10:20Z" duration="0.000864" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1909" name="JoiningPeerKeepsSeanUntilItsAssignedClientSeat" fullname="TumbangPreso.Tests.NetIceAdmissionRoleTests.JoiningPeerKeepsSeanUntilItsAssignedClientSeat" classname="TumbangPreso.Tests.NetIceAdmissionRoleTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 06:10:20Z" end-time="2026-10-03 06:10:20Z" duration="0.011860" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1907" name="JoiningPeerKeepsSeanUntilItsAssignedClientSeat(True)" fullname="TumbangPreso.Tests.NetIceAdmissionRoleTests.JoiningPeerKeepsSeanUntilItsAssignedClientSeat(True)" methodname="JoiningPeerKeepsSeanUntilItsAssignedClientSeat" classname="TumbangPreso.Tests.NetIceAdmissionRoleTests" runstate="Runnable" seed="996524501" result="Failed" start-time="2026-10-03 06:10:20Z" end-time="2026-10-03 06:10:20Z" duration="0.008501" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A pre-admission seat zero overwrote the configured Sean pick with Cheska
+  Expected: 2
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.NetIceAdmissionRoleTests.JoiningPeerKeepsSeanUntilItsAssignedClientSeat (System.Boolean temporaryHost) [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\NetIceAdmissionRoleTests.cs:80
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1908" name="JoiningPeerKeepsSeanUntilItsAssignedClientSeat(False)" fullname="TumbangPreso.Tests.NetIceAdmissionRoleTests.JoiningPeerKeepsSeanUntilItsAssignedClientSeat(False)" methodname="JoiningPeerKeepsSeanUntilItsAssignedClientSeat" classname="TumbangPreso.Tests.NetIceAdmissionRoleTests" runstate="Runnable" seed="2086874451" result="Failed" start-time="2026-10-03 06:10:20Z" end-time="2026-10-03 06:10:20Z" duration="0.000632" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A pre-admission seat zero overwrote the configured Sean pick with Cheska
+  Expected: 2
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.NetIceAdmissionRoleTests.JoiningPeerKeepsSeanUntilItsAssignedClientSeat (System.Boolean temporaryHost) [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\NetIceAdmissionRoleTests.cs:80
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1912" name="OfflineJoiningProcessKeepsConfiguredPickAndDoesNotConsumeSelection" fullname="TumbangPreso.Tests.NetIceAdmissionRoleTests.OfflineJoiningProcessKeepsConfiguredPickAndDoesNotConsumeSelection" methodname="OfflineJoiningProcessKeepsConfiguredPickAndDoesNotConsumeSelection" classname="TumbangPreso.Tests.NetIceAdmissionRoleTests" runstate="Runnable" seed="250642862" result="Passed" start-time="2026-10-03 06:10:20Z" end-time="2026-10-03 06:10:20Z" duration="0.000925" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

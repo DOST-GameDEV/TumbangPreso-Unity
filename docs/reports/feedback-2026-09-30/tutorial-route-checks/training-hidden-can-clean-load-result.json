@@ -1,0 +1,21 @@
+{
+  "exit": 0,
+  "seconds": 47.5322163105011,
+  "stoppedForMemory": false,
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "5479211",
+    "oom": "10",
+    "oom_kill": "5",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "5488390",
+    "oom": "10",
+    "oom_kill": "5",
+    "oom_group_kill": "0"
+  }
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:12Z" duration="0.8330709">
+  <test-suite type="TestSuite" id="2233" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:12Z" duration="0.833071" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2227" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:12Z" duration="0.824921" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="188839" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2228" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:12Z" duration="0.823629" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2229" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:12Z" duration="0.822741" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1055" name="AmihanAirburstTests" fullname="TumbangPreso.PlayTests.AmihanAirburstTests" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:12Z" duration="0.803727" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1057" name="CaughtLooseSlipperBecomesAirborne" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.CaughtLooseSlipperBecomesAirborne" methodname="CaughtLooseSlipperBecomesAirborne" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="1621715199" result="Failed" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:11Z" duration="0.566144" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Airburst must lift the slipper instead of sliding it on the road.
+  Expected: greater than 0.25f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmihanAirburstTests+<CaughtLooseSlipperBecomesAirborne>d__12.MoveNext () [0x00142] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/AmihanAirburstTests.cs:65
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1056" name="ReleaseWhirlsOnlyCaughtPlayers" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.ReleaseWhirlsOnlyCaughtPlayers" methodname="ReleaseWhirlsOnlyCaughtPlayers" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="1307541510" result="Failed" start-time="2026-09-30 22:14:11Z" end-time="2026-09-30 22:14:12Z" duration="0.225141" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Airburst must apply the current Wiki Whirled status.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmihanAirburstTests+<ReleaseWhirlsOnlyCaughtPlayers>d__11.MoveNext () [0x00057] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/AmihanAirburstTests.cs:52
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,13 @@
+{
+  "provenance": "Original deterministic synthesis (numpy only, tools/build_amihan_steps.py); no external samples or voices.",
+  "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
+  "cues": [
+    {
+      "cue": "step_amihan",
+      "seconds": 0.2,
+      "peak": 0.5,
+      "rms": 0.10906488873618855,
+      "sha256": "faedda9179e5cba1e3999d52a5190718f5b47b09cc19f78764abb38ef889c7d1"
+    }
+  ]
+}

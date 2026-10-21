@@ -1,0 +1,26 @@
+{
+  "sourceRef": "7589683f85eeb623f4cd9bb14001bdf63e1c82a4",
+  "profile": "pc-spectator-ultimate-candidate1006",
+  "filter": "TumbangPreso.PlayTests.SpectatorUltimateEventTests",
+  "expectedCases": 12,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-spectator-ultimate-candidate1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.SpectatorUltimateEventTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-ultimate-event1006\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-ultimate-event1006\\candidate-native\\editor.log"
+  ],
+  "pid": 4308
+}

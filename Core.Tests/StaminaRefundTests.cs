@@ -7,7 +7,7 @@ namespace TumbangPreso.Core.Tests
     /// THE REVERSE OF A SPEND, WHICH IS THE ONLY THING `Stamina.Refund` MAY BE.
     ///
     /// ⚠️⚠️ IT EXISTS FOR ONE CALLER AND THESE TESTS ARE WHAT KEEP IT THAT NARROW.
-    /// `CombatVerbs.RollBackRefusedVerb` calls it when the host refused a shove this peer had
+    /// `CombatVerbs.RollBackRefusedVerb` calls it when the host refused a retrieval slide this peer had
     /// already paid for, which is `docs/TODO.md` § 135.2. The bar is escape distance
     /// (`CLAUDE.md` § 4: *the real price of a shove is the sprint*), so a refund that could be
     /// reached any other way, or that gave back more than was taken, is a way to buy escape
@@ -29,10 +29,10 @@ namespace TumbangPreso.Core.Tests
             var s = new Stamina();
             float before = s.Current;
 
-            Assert.True(s.Spend(Balance.ShoveStaminaCost));
-            Assert.Equal(before - Balance.ShoveStaminaCost, s.Current, Places);
+            Assert.True(s.Spend(Balance.SlideStaminaCost));
+            Assert.Equal(before - Balance.SlideStaminaCost, s.Current, Places);
 
-            s.Refund(Balance.ShoveStaminaCost);
+            s.Refund(Balance.SlideStaminaCost);
             Assert.Equal(before, s.Current, Places);
         }
 
@@ -49,7 +49,7 @@ namespace TumbangPreso.Core.Tests
             // Drain to just inside one shove of empty, so the shove is what tips it over.
             const float dt = 1.0f / 60.0f;
             int guard = 0;
-            while (s.Current > Balance.ShoveStaminaCost && guard++ < 5000)
+            while (s.Current > Balance.SlideStaminaCost && guard++ < 5000)
                 s.Step(dt, moving: true, sprintHeld: true);
 
             Assert.False(s.IsFatigued);
@@ -57,10 +57,10 @@ namespace TumbangPreso.Core.Tests
             Assert.True(s.IsFatigued);
             Assert.Equal(0.0f, s.Current, Places);
 
-            s.Refund(Balance.ShoveStaminaCost);
+            s.Refund(Balance.SlideStaminaCost);
 
             Assert.False(s.IsFatigued);
-            Assert.Equal(Balance.ShoveStaminaCost, s.Current, Places);
+            Assert.Equal(Balance.SlideStaminaCost, s.Current, Places);
         }
 
         /// <summary>
@@ -77,14 +77,14 @@ namespace TumbangPreso.Core.Tests
 
             const float dt = 1.0f / 60.0f;
             int guard = 0;
-            while (s.Current > Balance.ShoveStaminaCost && guard++ < 5000)
+            while (s.Current > Balance.SlideStaminaCost && guard++ < 5000)
                 s.Step(dt, moving: true, sprintHeld: true);
 
             Assert.True(s.Spend(s.Current));
             Assert.True(s.IsFatigued);
             Assert.Equal(widthAtRest + 1, zones.Count);
 
-            s.Refund(Balance.ShoveStaminaCost);
+            s.Refund(Balance.SlideStaminaCost);
 
             Assert.Equal(widthAtRest, zones.Count);
             Assert.Equal(1.0f, zones.Value, Places);
@@ -99,10 +99,10 @@ namespace TumbangPreso.Core.Tests
         public void ARefundNeverPushesTheBarOverTheMaximum()
         {
             var s = new Stamina();
-            Assert.True(s.Spend(Balance.ShoveStaminaCost));
+            Assert.True(s.Spend(Balance.SlideStaminaCost));
 
-            s.Refund(Balance.ShoveStaminaCost);
-            s.Refund(Balance.ShoveStaminaCost);
+            s.Refund(Balance.SlideStaminaCost);
+            s.Refund(Balance.SlideStaminaCost);
             s.Refund(Balance.StaminaMax);
 
             Assert.Equal(Balance.StaminaMax, s.Current, Places);
@@ -132,7 +132,7 @@ namespace TumbangPreso.Core.Tests
         /// SPRINT ran into is not fatigue a refund reverses: the bar is at zero, the refund
         /// refills it, and the lockout that was already running when the spend would have
         /// happened must survive. `Spend` refuses outright while fatigued, so in the real flow
-        /// this state cannot have been produced by the shove being reversed.
+        /// this state cannot have been produced by the paid slide being reversed.
         /// </summary>
         [Fact]
         public void ASprintIntoFatigueIsStillFatigueTheNextFrame()
@@ -142,7 +142,7 @@ namespace TumbangPreso.Core.Tests
 
             // The lockout is live, so the shove that would have been refused was never paid:
             // `Spend` returns false and takes nothing.
-            Assert.False(s.Spend(Balance.ShoveStaminaCost));
+            Assert.False(s.Spend(Balance.SlideStaminaCost));
 
             // And with nothing taken there is nothing for `RollBackRefusedVerb` to give back,
             // which is why the caller only ever refunds a spend that returned true.

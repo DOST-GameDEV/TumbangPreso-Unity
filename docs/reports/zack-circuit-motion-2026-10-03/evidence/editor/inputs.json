@@ -1,0 +1,13 @@
+{
+  "Assets/TumbangPreso/Art/characters/persons/team-zack.glb": "ea1cdcdcd933aa21bd7085e252d854dff7d1203e6c8f3f41eca5953b629fe12c",
+  "Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.ClosedCircuit.cs": "f6c83a53856ac86b457b1d0af0a2342861a1c5926805dbffa36fc1c8269ebe12",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "496bfccecff065593073f51e5617ce61c6eb50dd2d599de29a09aecd05d068b2",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "b88ee28744f6bf9b74cbc4c95eabe4071f3568cb48f78f27a5013f3e0c125df4",
+  "Assets/TumbangPreso/Editor/ZackCircuitMotionAuthor.cs": "c814a6b2e04853ecd100d50327a434b1e256618dc2a2327ab94f2cbfd05a0159",
+  "Assets/TumbangPreso/Editor/ZackCircuitMotionAuthor.cs.meta": "0d18b7c6fc265adf0cf5425b0e536b97edac9e227a7e1df33c637925308dc591",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.ZackCircuit.cs": "e8cff5211372a42de859741011b6d7d2e99103bcc33f910696777e9e4a5ab302",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.ZackCircuit.cs.meta": "a264888db1b7d1111b9e8082716162f943babb245d151a63c681bcc916249871",
+  "Assets/TumbangPreso/Tests/ZackCircuitMotionTests.cs": "ddaaef6dde402904aa59105ba6bef353e1a72066899f6f15c5973ab5a984c37a",
+  "Assets/TumbangPreso/Tests/ZackCircuitMotionTests.cs.meta": "82bb7eb4e6e1501c04671458dcced7293181d2c854f7a2e0628733dc80946ab8",
+  "Assets/TumbangPreso/Resources/Roster/person_zack.asset": "c1aa03be6116a205a11e7fe2da997071fbacf023a60bb14f92ff361736efa9ba"
+}

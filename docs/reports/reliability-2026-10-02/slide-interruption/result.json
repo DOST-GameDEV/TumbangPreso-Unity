@@ -1,0 +1,75 @@
+{
+  "status": "qualified_controlled_native",
+  "sourceCommit": "5f47abc848512d73df488ebd5147666b5f5a211f",
+  "fixtureRepairs": 0,
+  "nativeRetries": 0,
+  "protectedCount": 1472,
+  "protectedDrift": [],
+  "ownedCandidateHashesMatch": true,
+  "runs": {
+    "baseline": {
+      "total": 4,
+      "passed": 1,
+      "failed": 3,
+      "durationSeconds": 0.1753864,
+      "cases": [
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"stun\",True)",
+          "result": "Failed",
+          "message": "  A cancelled slide resumed its old retrieval sweep after recovery.\n  Expected: null\n  But was:  <Owned loose slipper (TumbangPreso.Slipper)>\n"
+        },
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"fear\",True)",
+          "result": "Failed",
+          "message": "  A cancelled slide resumed its old retrieval sweep after recovery.\n  Expected: null\n  But was:  <Owned loose slipper (TumbangPreso.Slipper)>\n"
+        },
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"round-end\",True)",
+          "result": "Failed",
+          "message": "  A cancelled slide resumed its old retrieval sweep after recovery.\n  Expected: null\n  But was:  <Owned loose slipper (TumbangPreso.Slipper)>\n"
+        },
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"pause\",False)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "guardPid": 21308,
+      "unityPid": 22220,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    },
+    "final": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "durationSeconds": 0.1549652,
+      "cases": [
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"stun\",True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"fear\",True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"round-end\",True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(\"pause\",False)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "guardPid": 23956,
+      "unityPid": 24084,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    }
+  }
+}

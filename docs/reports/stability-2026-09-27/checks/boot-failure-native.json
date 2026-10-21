@@ -1,0 +1,29 @@
+{
+  "base": "ca83fe1d79d4e31607150082b38d4824a7d2886e",
+  "scope": "New failure-exit controls and first original boot-menu handoff",
+  "result": "Passed",
+  "total": 2,
+  "duration": 1.059872,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "A07BB3F9F4FE1F844192FCDDF7951508A48D3B2C9A95590A58EEE3618B737949"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.MenuActivation.cs",
+      "sha256": "1BF9E227DA1B4BD26EF9DAE902B6B493BA73BED051786F1D3FB0A6A684F67435"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "B4D7642D9DC8E311F3FEFF3E7E8D906E753B379763C8BF206DD61A94294DB7E6"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6312722432,
+  "retryCount": 0,
+  "unverified": [
+    "Actual device quit",
+    "Physical inputs and visual judgment",
+    "Whole cold-player boot timing"
+  ]
+}

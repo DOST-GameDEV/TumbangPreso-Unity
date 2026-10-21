@@ -12,7 +12,7 @@ namespace TumbangPreso.Tests
         [Test]
         public void AnAcceptedRemoteChargeAppearsOnTheListenHost()
         {
-            var oldRound=GameServices.Round;var oldNet=NetSession.Instance;var oldProvider=NetAuthority.Provider;
+            var oldRound=GameServices.Round;var oldMatch=GameServices.Match;var oldNet=NetSession.Instance;var oldProvider=NetAuthority.Provider;
             var root=new GameObject("Remote charge routing contract");
             try
             {
@@ -20,6 +20,7 @@ namespace TumbangPreso.Tests
                 NetAuthority.Provider=new SoloProvider();
                 var peer=net.Lobby.Admit(9,"charge-contract","Peer");
                 var round=root.AddComponent<RoundDirector>();SetStatic(typeof(GameServices),"Round",round);
+                var match=root.AddComponent<MatchDirector>();SetStatic(typeof(GameServices),"Match",match);
                 var seat=new GameObject("Remote player");seat.transform.SetParent(root.transform);
                 var unit=seat.AddComponent<CharacterMotor>();unit.PlayerSlot=peer.Seat;unit.RoundActive=true;
                 var carrier=seat.AddComponent<Carrier>();
@@ -31,6 +32,14 @@ namespace TumbangPreso.Tests
                 Assert.GreaterOrEqual(carrier.ObservedChargePower,0,"The accepted tell was forwarded to peers but omitted on the host.");
                 Assert.AreEqual(.5f,carrier.ObservedChargePower,.001f,"Received progress must not restart the visible windup.");
                 Assert.AreEqual(-.65f,carrier.ObservedPektusSpin,.001f);
+                var scope = new GameplayActionScope { Match = rpc.EnsurePresentationMatch(), Round = match.RoundNumber, Epoch = unit.MovementEpoch };
+                var stale = scope; stale.Round++;
+                Send(rpc,9,peer.Seat,false,scope:stale);
+                stale = scope; stale.Epoch++;
+                Send(rpc,9,peer.Seat,false,scope:stale);
+                stale = scope; stale.Match++;
+                Send(rpc,9,peer.Seat,false,scope:stale);
+                Assert.AreEqual(.5f,carrier.ObservedChargePower,.001f,"A different match,round or body epoch cancelled current preparation.");
                 Send(rpc,9,peer.Seat,true,float.NaN,1);
                 Assert.AreEqual(.5f,carrier.ObservedChargePower,.001f,"NaN changed the observed clock.");
                 Assert.AreEqual(-.65f,carrier.ObservedPektusSpin,.001f,"A malformed clock changed spin.");
@@ -43,14 +52,18 @@ namespace TumbangPreso.Tests
             {
                 Object.DestroyImmediate(root);
                 SetStatic(typeof(GameServices),"Round",oldRound);SetStatic(typeof(NetSession),"Instance",oldNet);
+                SetStatic(typeof(GameServices),"Match",oldMatch);
                 NetAuthority.Provider=oldProvider;
             }
         }
-        private static void Send(MatchRpc rpc,ulong sender,int slot,bool active,float seconds=1.25f,float spin=-.65f)
+        private static void Send(MatchRpc rpc,ulong sender,int slot,bool active,float seconds=1.25f,float spin=-.65f,GameplayActionScope? scope=null)
         {
             using var writer=new FastBufferWriter(32,Allocator.Temp);
             writer.WriteValueSafe(slot);writer.WriteValueSafe(active);
             writer.WriteValueSafe(seconds);writer.WriteValueSafe(spin);
+            writer.WriteValueSafe((byte)0);
+            writer.WriteNetworkSerializable(scope ?? new GameplayActionScope
+            { Match=rpc.EnsurePresentationMatch(),Round=GameServices.Match.RoundNumber,Epoch=GameServices.Round.PlayerAt(slot).MovementEpoch });
             using var reader=new FastBufferReader(writer,Allocator.Temp);
             typeof(MatchRpc).GetMethod("OnReqThrowChargeMsg",BindingFlags.Instance|BindingFlags.NonPublic)
                 .Invoke(rpc,new object[]{sender,reader});

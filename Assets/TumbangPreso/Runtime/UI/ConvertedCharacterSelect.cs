@@ -927,7 +927,7 @@ namespace TumbangPreso.UI
             // board; a bare `!open` would switch the chip straight back on over a picture of a
             // tin can. **Two writers of one visibility flag, and this one runs second.**
             if (_customDoor != null) _customDoor.gameObject.SetActive(!open);
-            if (_loadoutDoor != null) _loadoutDoor.gameObject.SetActive(!open && OnHeroTab);
+            if (_loadoutDoor != null) _loadoutDoor.gameObject.SetActive(!open && OnHeroTab && HeroLoadoutRules.SidegradesOpen);
 
             if (!open)
             {
@@ -1179,7 +1179,7 @@ namespace TumbangPreso.UI
 
             var glyph = glyphGo.GetComponent<Image>();
             glyph.sprite = ability != null ? AbilityIcons.For(ability.Glyph) : null;
-            glyph.color = accent;
+            glyph.color = AbilityIcons.Tint(glyph.sprite, accent);
             glyph.preserveAspect = true;
             glyph.raycastTarget = false;
             MenuKit.Place((RectTransform)glyphGo.transform, new Vector2(0.5f, 1.0f),
@@ -1667,7 +1667,8 @@ namespace TumbangPreso.UI
             // ⚠️ AND THE BOARD CLOSES WITH IT. Switching tabs while the board is open would leave
             // a hero's build panel standing over a picture of a tin can, which is § 121.2's stuck
             // state on a whole screen instead of on one plate.
-            bool heroTab = OnHeroTab;
+            // ⚠️ THE LOADOUT IS OFF WITH THE SKILL TREE (`HeroLoadoutRules.SidegradesOpen`, owner 2026-09-26).
+            bool heroTab = OnHeroTab && HeroLoadoutRules.SidegradesOpen;
 
             if (_loadoutDoor != null && _loadoutDoor.gameObject.activeSelf != heroTab)
             {
@@ -2072,7 +2073,7 @@ namespace TumbangPreso.UI
                 // for the paper pass under a note saying `HeroGlyphOn` would draw the icon in the
                 // colour of the plate behind it; that note was correct then and is now correct in
                 // the other direction, which is why the colour is `BoardInk` rather than a literal.
-                glyph.color = BoardInk;
+                glyph.color = AbilityIcons.Tint(glyph.sprite, BoardInk);
                 glyph.preserveAspect = true;
                 glyph.raycastTarget = false;
 
@@ -2722,7 +2723,7 @@ namespace TumbangPreso.UI
             return Mathf.Ceil(tagline.fontSize * 1.35f) * lines + 6.0f;
         }
 
-        private static string TaglineFor(string id)
+        internal static string TaglineFor(string id)
         {
             switch (id)
             {
@@ -2733,6 +2734,9 @@ namespace TumbangPreso.UI
                 case "zack": return "LIGHTNING SKIRMISHER\nSprint through fights, build charge, and call down Thunderstrike.";
                 case "nemu": return "SPIRIT TRICKSTER\nSlip beyond reach, possess the street, and turn a seance into a trap.";
                 case "phaister": return "STREET WITCH\nCurse the ground, blink out of trouble, and black out the whole street.";
+                case "rafi": return "CURRENT TRICKSTER\nBend a throw, leave a watery feint, and send a low wave through a chase.";
+                case "paete": return "THE FOREST OF MOUNT MAKILING\nVines to cross the court, a seedling that throws, thorns that take your slipper.";
+                case "amihan": return "WIND RUNNER FROM VIGAN\nThe fastest hero on the court. Her skills are still being designed.";
 
                 // Classic Roster
                 case "bayan":
@@ -2775,6 +2779,9 @@ namespace TumbangPreso.UI
         private void Confirm()
         {
             var s = Settings.SettingsStore.Current;
+            // ⚠️ A LOCKED HERO IS REFUSED HERE TOO (`EconomyRules.UnlockedHeroes`, owner 2026-10-20).
+            int playable = EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), _pick[0]);
+            if (playable != _pick[0]) { MenuSfx.Error(); return; }
             s.CharacterPick = _pick[0];
             s.CanPick = _pick[1];
             s.SlipperPick = _pick[2];

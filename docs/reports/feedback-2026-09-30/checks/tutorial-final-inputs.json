@@ -1,0 +1,6 @@
+{
+  "question": "Composite both actual canvases at the same viewport and project bounds to pixels; real ultimate press/release and post-delay",
+  "expectedCases": 1,
+  "priorRun": "Synthetic input now received; previous bound compared camera-world units against overlay pixels",
+  "input": "E954C7AB02C385F2777316596E2A038CB5847079E8131EDBBFA661958133423E"
+}

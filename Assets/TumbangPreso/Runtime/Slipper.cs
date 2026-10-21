@@ -16,6 +16,11 @@ namespace TumbangPreso
         Normal,
         FireExplosive,  // Sean Skill 2 (Ignition Cannon)
         ElectricZap,    // Zack Skill 2 (Overcharge Throw)
+        Frost = 3,      // Cheska attacking: the player it hits is Frozen
+        Concussed = 4,  // Dante Boulder held-slipper payload; stable wire value
+        Skim = 5,       // Hydro first-ground continuation; stable wire value
+        BankShot = 6,   // Zack: one remaining powered wall bank
+        OverclockBank = 7, // Zack: two remaining powered wall banks
     }
 
     /// <summary>
@@ -26,13 +31,40 @@ namespace TumbangPreso
     /// moment they pick one up inside the box. Anything that makes retrieval cheaper is a
     /// change to the core loop, not a convenience.
     /// </summary>
-    public sealed class Slipper : MonoBehaviour
+    public sealed partial class Slipper : MonoBehaviour
     {
         [SerializeField] private int _skinIndex = -1;
         [SerializeField] private int _ownerSlot = -1;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
-        public SlipperAffinity Affinity { get; set; } = SlipperAffinity.Normal;
+        private SlipperAffinity _affinity = SlipperAffinity.Normal;
+        private double _affinityLoadUntil;
+        public SlipperAffinity Affinity
+        {
+            get => _affinity;
+            set { if (_affinity != value) _affinityLoadUntil = 0; _affinity = value; }
+        }
+
+        // The deadline belongs to this shoe, so drop/regrab cannot reset it and
+        // another payload cannot be erased by a retired load. Peers receive the
+        // host's existing affinity-state update when the load expires.
+        public bool HostLoadTimedAffinity(SlipperAffinity affinity, float seconds)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.Held || Holder == null
+                || affinity == SlipperAffinity.Normal || !float.IsFinite(seconds) || seconds <= 0) return false;
+            Affinity = affinity;
+            _affinityLoadUntil = Time.timeAsDouble + seconds;
+            return true;
+        }
+
+        private bool ExpireLoadedAffinity()
+        {
+            if (!NetAuthority.ShouldResolve() || _affinityLoadUntil <= 0 || Time.timeAsDouble < _affinityLoadUntil) return false;
+            _affinityLoadUntil = 0;
+            Affinity = SlipperAffinity.Normal;
+            Net.MatchRpc.Instance?.BroadcastSlipperState(this);
+            return true;
+        }
         private GameObject _affinityVfxGo;
 
 
@@ -64,12 +96,8 @@ namespace TumbangPreso
         /// question the grab now actually enforces, and an attacker can no longer be deleted
         /// from a round by a rival walking off with their ammunition.
         ///
-        /// ⚠️⚠️ AND THE AI'S TWO SOFTENERS FOR CALL 2 ARE DEAD RATHER THAN DELETED.
-        /// `AIController.ChooseSlipper`, `IsNearestClaimant` and `HumanSlipperBias` exist only
-        /// to stop bots converging on, and repeatedly stealing, a human's shoe. **They were
-        /// already unreachable before this change** (the live fetch path is `MySlipper`, which
-        /// has always been owner-scoped), so this rule did not strand them and removing them is
-        /// not part of it. `docs/TODO.md` § 154 carries that as its own item.
+        /// The obsolete any-shoe bot selector and human-distance handicap were
+        /// removed under TODO154.5. The live fetch path remains owner-scoped MySlipper.
         ///
         /// ⚠️⚠️ AN UNOWNED TSINELAS IS STILL FREE AND THAT IS NOT A LOOPHOLE, IT IS THE PRACTICE
         /// LOBBY. `SliceRunner.EquipOwnedSlippers` sets `OwnerSlot = -1` in two cases that look
@@ -137,8 +165,26 @@ namespace TumbangPreso
         /// </summary>
         private void SetState(SlipperState next)
         {
+            // ⚠️⚠️ § THE RECALL BEAM IS DRIVEN FROM HERE AND THE RIM IS NOT, WHICH LOOKS
+            // INCONSISTENT AND IS NOT. `SetLandedHighlight(false)` above returns on its first
+            // line when the flag is already false, so it is not a reliable "the state moved"
+            // signal: a tsinelas going from Held to Loose with no landed rim on it repaints
+            // nothing at all. The beam stands on ANY loose tsinelas of yours, so it needs the
+            // transition itself. `Visual.SlipperBeam` carries why the two differ.
+            //
+            // ⚠️ ON A REAL CHANGE ONLY. `ApplySnapshotState` calls this on every reliable state
+            // packet including keepalives, and a repaint per packet would rebuild four materials
+            // at the wire's cadence.
+            bool changed = State != next;
+            if (State == SlipperState.InFlight && next != SlipperState.InFlight) FinishChain(ThrowChainEnd.Miss);
+
             State = next;
+            // HostGrab captures eligibility first; other Held routes consume it without a reward.
+            if (next == SlipperState.Held) ClearRetrievalEpisode();
+            if (next != SlipperState.InFlight) { _skimLeft = 0; _skimStarted = false; }
+            if (next != SlipperState.InFlight && _motionAccent != null) _motionAccent.ClearFlight();
             if (next != SlipperState.Loose) SetLandedHighlight(false);
+            if (changed) RefreshBeam();
         }
 
         public CharacterMotor Holder { get; private set; }
@@ -159,8 +205,50 @@ namespace TumbangPreso
         /// reset. See <see cref="Balance.MaxAirborneTime"/>.</summary>
         private float _airborneTotal;
         private int _throwerSlot = -1;
+        private CharacterMotor _retrievalActor;
+        private MatchDirector _retrievalMatch;
+        private long _retrievalEpoch;
+        private int _retrievalRound;
+        private bool IsQualifiedOwnRetrieval(CharacterMotor who)
+            => State == SlipperState.Loose && who != null && who == _retrievalActor
+                && OwnerSlot == who.PlayerSlot && GameServices.Round?.RoundActive == true
+                && _retrievalMatch != null && _retrievalMatch == GameServices.Match
+                && _retrievalEpoch == _retrievalMatch.HostChainEpoch
+                && _retrievalRound == _retrievalMatch.RoundNumber;
+        private void ClearRetrievalEpisode()
+        { _retrievalActor=null;_retrievalMatch=null;_retrievalEpoch=0;_retrievalRound=0; }
+
         private float _throwerIgnoreLeft;
+        // Contact episodes, not a timed immunity: separation re-arms this body.
+        private int _bodyContacts;
+        // Host only: this flight was thrown by Dante in MOUNTAIN FORM, so the first player it hits is staggered and knocked back.
+        private bool _mountainHit;
+
+        /// <summary>The throw just made was a MOUNTAIN FORM throw (`Carrier.HostThrowAt`, host).</summary>
+        public void HostArmMountainHit() { if (NetAuthority.ShouldResolve() && State == SlipperState.InFlight) _mountainHit = true; }
+        private MatchDirector _chainMatch;
+        private long _chainThrow, _chainEpoch;
+        private int _chainOwner, _launchCanSerial;
+        private void FinishChain(ThrowChainEnd outcome)
+        {
+            if (_chainThrow == 0) return;
+            int serial = GameServices.Round != null && GameServices.Round.Lata != null
+                ? GameServices.Round.Lata.HostKnockdownSerial : _launchCanSerial;
+            if (_chainMatch != null && _chainMatch == GameServices.Match)
+                _chainMatch.FinishHostThrowChain(_chainEpoch, _chainOwner, _chainThrow, outcome,
+                    serial, serial > _launchCanSerial);
+            _chainThrow = 0; _chainMatch = null;
+        }
         private int _bankCount;
+        private int _bankCreditLimit = Balance.MaxScoringBanks;
+        internal static bool IsPoweredBank(SlipperAffinity affinity)
+            => affinity == SlipperAffinity.BankShot || affinity == SlipperAffinity.OverclockBank;
+        internal static SlipperAffinity ConsumePoweredBank(SlipperAffinity affinity)
+            => affinity == SlipperAffinity.OverclockBank ? SlipperAffinity.BankShot
+                : affinity == SlipperAffinity.BankShot ? SlipperAffinity.Normal : affinity;
+        internal static float BankRestitution(float spin, int banks, SlipperAffinity affinity)
+            => IsPoweredBank(affinity) ? .85f : Mathf.Abs(spin) >= Balance.PektusBankSpinThreshold && banks == 0
+                ? Balance.PektusBankRestitution : Balance.BounceRestitution;
         private float _closestCanFlat = float.PositiveInfinity;
         private bool _nearMissReported;
 
@@ -268,42 +356,111 @@ namespace TumbangPreso
                           && Settings.SlipperHighlights.Enabled(
                                  Settings.SettingsStore.Current.SlipperHighlight);
 
-            float rim;
-            Color rimColour;
-            Color outline;
-
-            if (landed)
-            {
-                rim = Balance.LandedRimStrength;
-                rimColour = Settings.SlipperHighlights.ColourOf(
-                                Settings.SettingsStore.Current.SlipperHighlight);
-                outline = rimColour;
-            }
-            else if (_glowOn)
-            {
-                rim = Balance.OwnerRimStrength;
-                rimColour = OwnerRimColour;
-                outline = Visual.ToonSkin.Ink;
-            }
-            else
-            {
-                rim = 0.0f;
-                rimColour = OwnerRimColour;
-                outline = Visual.ToonSkin.Ink;
-            }
-
             foreach (var r in GetComponentsInChildren<Renderer>())
             {
+                // ⚠️⚠️ AN EFFECT PARENTED TO THIS PROP IS NOT PART OF THIS PROP, AND THE RIM PASS
+                // HAD NO WAY TO KNOW THAT UNTIL § THE RECALL BEAM ARRIVED. `VfxRenderTag`'s own
+                // note makes this argument for `InputEdgeTests`' toon-outline sweep one level up:
+                // the rule is *"is this part of the model"* rather than a skip list somebody has
+                // to remember to extend. Writing rim properties into a beam's block is harmless
+                // today, because its material carries none of them, and it is the shape of the
+                // fault that put a landed-rim assertion on the wrong renderer.
+                if (r.GetComponent<Visual.VfxRenderTag>() != null) continue;
+
                 var block = new MaterialPropertyBlock();
                 r.GetPropertyBlock(block);
 
-                block.SetFloat(RimStrengthId, rim);
-                block.SetColor(RimColorId, rimColour);
-                block.SetColor(OutlineColorId, outline);
+                WriteHighlight(block, _glowOn, landed);
 
                 r.SetPropertyBlock(block);
             }
+
+            // Every input the beam reads has just been re-decided, so it follows from here as
+            // well as from the state. See `RefreshBeam`.
+            RefreshBeam();
         }
+
+        internal static void ApplyRecordedNonLooseHighlight(MaterialPropertyBlock block, Slipper liveSource)
+        {
+            // Ownership remains this viewer's existing local choice. A held or flying
+            // recorded shoe cannot inherit its source's present-time landing cue.
+            WriteHighlight(block, liveSource != null && liveSource._glowOn, false);
+        }
+
+        private static void WriteHighlight(MaterialPropertyBlock block, bool ownerGlow, bool landed)
+        {
+            float rim;
+            Color rimColour;
+            Color outline;
+            if (landed)
+            {
+                rim = Balance.LandedRimStrength;
+                rimColour = Settings.SlipperHighlights.ColourOf(Settings.SettingsStore.Current.SlipperHighlight);
+                outline = rimColour;
+            }
+            else
+            {
+                rim = ownerGlow ? Balance.OwnerRimStrength : 0.0f;
+                rimColour = OwnerRimColour;
+                outline = Visual.ToonSkin.Ink;
+            }
+            block.SetFloat(RimStrengthId, rim);
+            block.SetColor(RimColorId, rimColour);
+            block.SetColor(OutlineColorId, outline);
+        }
+
+        /// <summary>
+        /// § THE RECALL BEAM, decided. `Visual.SlipperBeam` draws it; this owns whether it draws
+        /// at all and in what colour.
+        ///
+        /// ⚠️⚠️ THE THREE CLAUSES ARE THE SAME THREE THE REST OF THE PRESENTATION ALREADY ASKS,
+        /// WHICH IS THE WHOLE REASON THE BEAM CANNOT ARGUE WITH ANYTHING. **Mine** is `_glowOn`,
+        /// the per-peer flag `MatchInstaller` and `MatchRpc` maintain, not a second reading of
+        /// `OwnerSlot`. **On** is the player's own `SlipperHighlight` setting, so Off silences the
+        /// rim, the screen mark's colour source and this together rather than leaving one lit.
+        /// **Loose** is the state, asked here rather than restated anywhere else.
+        ///
+        /// ⚠️ IT IS BROADER THAN THE LANDED RIM ON PURPOSE. The rim answers *"where did the one
+        /// you just threw end up"* and is therefore cleared by a recovery that teleports the shoe
+        /// home; the beam answers *"your tsinelas is lying over there"*, which is true however it
+        /// got there. 🧑 asked for it *"when your tsinelas is in the ground"*.
+        ///
+        /// ⚠️ NOTHING IS BUILT UNTIL SOMETHING IS LIT. `SlipperBeam.Attach` is only reached on the
+        /// frame a beam is actually wanted, so three of the four tsinelas in a round never carry
+        /// one.
+        /// </summary>
+        private void RefreshBeam()
+        {
+            int pick = Settings.SettingsStore.Current.SlipperHighlight;
+
+            bool lit = State == SlipperState.Loose
+                       && _glowOn
+                       && gameObject.activeInHierarchy
+                       && Settings.SlipperHighlights.Enabled(pick);
+
+            if (!lit)
+            {
+                if (_beam != null) _beam.Set(false, Color.white);
+                return;
+            }
+
+            if (_beam == null) _beam = Visual.SlipperBeam.Attach(this);
+            if (_beam != null) _beam.Set(true, Settings.SlipperHighlights.ColourOf(pick));
+        }
+
+        private Visual.SlipperBeam _beam;
+        private Visual.SlipperMotionAccent _motionAccent;
+        private void Awake()
+        {
+            BotSlipperInventory.Invalidate();
+            _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
+            if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
+            Visual.DanteBoulderStone.TrackWorld(this);
+            // Bank Shot's silk trail and head, drawn from this shoe's own state on every peer (`Visual.ZackBankFlight`).
+            Visual.ZackBankFlight.TrackWorld(this);
+        }
+
+        private void OnDestroy() => BotSlipperInventory.Invalidate();
 
         /// <summary>
         /// `slipper.gd::OWNER_RIM_COLOR`. Gold, and deliberately NOT the UI theme's highlight:
@@ -332,7 +489,11 @@ namespace TumbangPreso
         /// "Parameter 'material' is null" errors, one per surface, from a slipper freed a moment
         /// earlier while an autoload signal was still connected to it.
         /// </summary>
-        private void OnDisable() => Settings.SettingsStore.SlipperHighlightChanged -= RefreshHighlight;
+        private void OnDisable()
+        {
+            Settings.SettingsStore.SlipperHighlightChanged -= RefreshHighlight;
+            FinishChain(ThrowChainEnd.Miss);
+        }
 
         /// <summary>
         /// ⚠️ THE PREVIEW MUST CALL THIS SAME FUNCTION. The dotted aim arc and the real
@@ -456,6 +617,21 @@ namespace TumbangPreso
             }
         }
 
+        /// <summary>Fit a render-copy surface to its hand without sampling a stale live carry pose.</summary>
+        public void FitCarriedSurface(Transform source, Transform hand, Transform copy)
+        {
+            // A cast/replay may begin before Carrier.LateUpdate, or while the
+            // live shoe is stowed. Reconstruct the grip from mesh-relative data.
+            Quaternion correction = hand.rotation * CarryRotation * Quaternion.Inverse(transform.rotation);
+            float support = CarrySupportExtent(Quaternion.Inverse(correction) * hand.up);
+            Vector3 centre = transform.position + DrawnCentreOffset;
+            Vector3 fitted = hand.position + hand.up * support + correction * (source.position - centre);
+            copy.localPosition = hand.InverseTransformPoint(fitted);
+            copy.localRotation = Quaternion.Inverse(hand.rotation) * correction * source.rotation;
+            Vector3 scale = source.lossyScale, parentScale = hand.lossyScale;
+            copy.localScale = new Vector3(scale.x / parentScale.x, scale.y / parentScale.y, scale.z / parentScale.z);
+        }
+
         public float CarrySupportExtent(Vector3 palmNormal)
         {
             var renderer=GetComponentInChildren<Renderer>();
@@ -470,7 +646,9 @@ namespace TumbangPreso
             float extent=Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.right)))*extents.x
                 +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.up)))*extents.y
                 +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.forward)))*extents.z;
-            return Mathf.Max(Balance.SlipperRestHeight,extent);
+            // Ground/flight clearance is not a palm spacer. The thin tsinelas
+            // needs less than that minimum; its anchor already clears the skin.
+            return Mathf.Max(.001f,extent);
         }
 
         public float RestHeight
@@ -478,8 +656,19 @@ namespace TumbangPreso
             get
             {
                 var r = GetComponentInChildren<Renderer>();
-                return r != null ? Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y)
-                                 : Balance.SlipperRestHeight;
+                if (r == null) return Balance.SlipperRestHeight;
+                var filter = r.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null)
+                    return Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y);
+                // Rest support is measured with the shoe root upright, even
+                // when callers ask while it is held or tumbling. Authored
+                // sole pivots must not be lifted by half the mesh's height.
+                var mesh = filter.sharedMesh.bounds;
+                var local = transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                float centre = local.MultiplyPoint3x4(mesh.center).y;
+                float extent = Mathf.Abs(local.m10) * mesh.extents.x
+                    + Mathf.Abs(local.m11) * mesh.extents.y + Mathf.Abs(local.m12) * mesh.extents.z;
+                return Mathf.Max(.001f, (extent - centre) * Mathf.Abs(transform.lossyScale.y));
             }
         }
 
@@ -542,6 +731,25 @@ namespace TumbangPreso
         /// this"* costs. <see cref="OwnerSlot"/> carries the rule and the three times it has been
         /// called.
         /// </summary>
+        // This shared identity gate also applies to force equip and credited
+        // throws. Ownerless equipment is an explicit training exception.
+        public bool OwnershipAllows(CharacterMotor who)
+        {
+            if (who == null) return false;
+            if (_ownerSlot >= 0) return _ownerSlot == who.PlayerSlot;
+            // Ownerless equipment is deliberate training stock, never a live
+            // multiplayer escape from the ownership rule. The absent seat is
+            // still its stable address; it does not become the human's identity.
+            if (!PracticeSandbox.Allowed) return false;
+            if (GameLaunch.GuidedTutorial) return true;
+            var round = GameServices.Round;
+            if (round == null || SeatOfOrigin < 0 || SeatOfOrigin >= Balance.PlayerCount ||
+                round.PlayerAt(SeatOfOrigin) != null) return false;
+            int seated = 0;
+            for (int i = 0; i < Balance.PlayerCount; i++) if (round.PlayerAt(i) != null) seated++;
+            return seated == 1 && round.PlayerAt(who.PlayerSlot) == who;
+        }
+
         public bool IsGrabbableIgnoringReach(CharacterMotor who)
         {
             if(!gameObject.activeInHierarchy)return false;
@@ -558,12 +766,18 @@ namespace TumbangPreso
             // lying in the street deliberately. Writing this as `!= who.PlayerSlot` takes every
             // one of them away and leaves the single human with nothing to practise retrieving,
             // which `SoloPracticeTests` asserts against by name.
-            if (_ownerSlot >= 0 && _ownerSlot != who.PlayerSlot) return false;
+            if (!OwnershipAllows(who)) return false;
 
             // The same empty-hand rule as Carrier's local pickup route. A delayed
             // remote grab must not overwrite a newer, already accepted possession.
             if(who.HoldingSlipper) return false;
             if (!who.CanAct()) return false;
+
+            // ⚠️ THE STATUS GATES (owner's status table, 2026-09-25). WHIRLED: *"Prevents slipper
+            // retrieval for 2.5 seconds."* ALOFT (Updraft): *"cant pick up unless they choose to go
+            // down"*. Both live here, in the one gate every pickup path already asks (the local grab,
+            // `HostPickUp` and the networked request), so no path can skip them.
+            if (who.IsWhirled || who.IsFeared || who.IsAloft) return false;
 
             return true;
         }
@@ -573,7 +787,41 @@ namespace TumbangPreso
             if (!IsGrabbableIgnoringReach(who)) return false;
 
             float d = Vector3.Distance(who.transform.position, transform.position);
-            return d <= Balance.PickupRadius;
+            return d <= Balance.PickupRadius && ReachableThroughTheStreet(who.transform.position, transform.position);
+        }
+
+        private static readonly RaycastHit[] StreetReachHits = new RaycastHit[32];
+
+        /// <summary>Pickup and slide share the same short reach through street geometry.
+        /// Bodies, shoes and triggers do not hide a solid wall farther along that reach.</summary>
+        internal static bool ReachableThroughTheStreet(Vector3 from, Vector3 target)
+        {
+            Vector3 eye = from + Vector3.up * 0.5f;
+            Vector3 toward = (target + Vector3.up * 0.1f) - eye;
+            float distance = toward.magnitude;
+            if (distance < 0.05f) return true;
+
+            var hits = StreetReachHits;
+            int count = Physics.RaycastNonAlloc(eye, toward / distance, hits, distance, ~0, QueryTriggerInteraction.Ignore);
+            try
+            {
+                // A full buffer may omit the wall behind ignored bodies or shoes.
+                if (count == hits.Length)
+                {
+                    hits = Physics.RaycastAll(eye, toward / distance, distance, ~0, QueryTriggerInteraction.Ignore);
+                    count = hits.Length;
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    var collider = hits[i].collider;
+                    if (collider == null || collider.GetComponentInParent<CharacterMotor>() != null ||
+                        collider.GetComponentInParent<Slipper>() != null) continue;
+                    return false;
+                }
+                return true;
+            }
+            finally { Array.Clear(StreetReachHits, 0, StreetReachHits.Length); }
         }
 
         /// <summary>
@@ -605,13 +853,17 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve()) return false;
             if (!CanBeGrabbedBy(who)) return false;
 
+            bool retrievedOwnThrow = IsQualifiedOwnRetrieval(who);
             ReleasePreviousHolder(who);
             SetState(SlipperState.Held);
             Holder = who;
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
 
-            who.GetComponent<Carrier>()?.NotifyHolding(this);
+            who.GetComponent<Carrier>()?.NotifyHolding(this, retrievedOwnThrow);
+            if (retrievedOwnThrow && who.Mode == GameMode.HeroStrike)
+                who.AbilitySystem?.Kit?.OnManualOwnThrowRetrieved(new Abilities.AbilityContext(
+                    who,who.GetComponent<Carrier>(),who.GetComponent<CombatVerbs>()));
 
             // ⚠️⚠️ THE RETRIEVAL IS RECORDED HERE BECAUSE THIS IS THE ONE PLACE ONE HAPPENS.
             // `docs/VISION.md` § 0: *"the tension is the retrieval, not the throw"*, and until
@@ -660,7 +912,7 @@ namespace TumbangPreso
         public bool HostForceEquip(CharacterMotor who)
         {
             if (!NetAuthority.ShouldResolve()) return false;
-            if (who == null || who.IsDefender) return false;
+            if (who == null || who.IsDefender || !OwnershipAllows(who)) return false;
 
             // A warmup grab or a recall may already occupy this hand. Replacing
             // only Carrier.Held leaves the displaced shoe claiming the same holder,
@@ -679,7 +931,7 @@ namespace TumbangPreso
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
 
-            who.GetComponent<Carrier>()?.NotifyEquipped(this);
+            who.GetComponent<Carrier>()?.NotifyEquipped(this, resetPickupLock: true);
             return true;
         }
 
@@ -717,6 +969,7 @@ namespace TumbangPreso
 
             var previous = Holder;
 
+            if (Affinity == SlipperAffinity.FireExplosive) Affinity = SlipperAffinity.Normal;
             SetState(SlipperState.Loose);
             Holder = null;
             _velocity = Vector3.zero;
@@ -732,7 +985,49 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// Host: Paete's thorns take this slipper wherever it is (owner: *"i want it too be ALL, even
+        /// the ones on the hands"*). Out of a hand it is disarmed; out of the air its throw ends as a
+        /// miss and it drops where it is; on the ground it is already loose. True if it is loose now.
+        /// </summary>
+        public bool HostSnatch()
+        {
+            if (!NetAuthority.ShouldResolve() || !gameObject.activeInHierarchy) return false;
+            if (State == SlipperState.Held) return HostDisarm();
+            if (State == SlipperState.InFlight)
+            {
+                FinishChain(ThrowChainEnd.Miss);
+                Land(true);
+                return true;
+            }
+            return State == SlipperState.Loose;
+        }
+
         public float PektusSpin { get; private set; }
+
+        /// <summary>
+        /// Put a LOOSE slipper on the ground a short way from where it is: a slipper knocked out
+        /// of a hand (Whirled) lands beside the body rather than hanging where the hand was.
+        /// </summary>
+        public void HostScatter(Vector3 offset)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.Loose) return;
+            offset.y = 0.0f;
+            var at = transform.position + offset;
+            at = AIController.ClampToPlayable(at);
+            transform.position = at;
+            Land(false, FindGroundY(at, Balance.SlipperRestHeight + 2.0f));
+        }
+
+        // A stationary water curtain ends the existing flight on its incoming side.
+        public bool HostDropFlightAt(Vector3 at)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight || IsSkimming
+                || !float.IsFinite(at.sqrMagnitude) || Vector3.Distance(at, transform.position) > 2f) return false;
+            transform.position = AIController.ClampToPlayable(at);
+            Land(true, FindGroundY(at, Balance.SlipperRestHeight + 2f));
+            return true;
+        }
 
         public bool HostBeginMapRecovery()
         {
@@ -749,6 +1044,19 @@ namespace TumbangPreso
         }
 
         /// <summary>
+        /// The same return, to a place the MAP chose rather than to the owner's mark: the Arena sets
+        /// a slipper that left its stage back down at the nearest standable point to where it left
+        /// (`Map.ArenaFallRecovery`). Only that map calls it. `Land` still applies its own rules to
+        /// the resting place (the walls and recovery for inaccessible or unsupported heights).
+        /// </summary>
+        public void HostFinishMapRecoveryAt(Vector3 at)
+        {
+            if(!NetAuthority.ShouldResolve())return;
+            transform.position=at;gameObject.SetActive(true);
+            Land(false,FindGroundY(at,Balance.SlipperRestHeight+1f));
+        }
+
+        /// <summary>
         /// Restores authoritative slipper state for a late join without firing pickup sounds,
         /// animation, scoring, or throw feedback. Both halves of the carrier relationship are
         /// rewritten so a reclaimed player never has a slipper visually in hand while the
@@ -760,13 +1068,13 @@ namespace TumbangPreso
                                        SlipperAffinity affinity, int throwerSlot)
         {
             bool enteringEmpoweredFlight = state == SlipperState.InFlight
-                && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap)
+                && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap || IsPoweredBank(affinity))
                 && (State != SlipperState.InFlight || Affinity != affinity);
             if (enteringEmpoweredFlight && Holder != null && Holder.PlayerSlot == throwerSlot)
             {
                 if (affinity == SlipperAffinity.FireExplosive && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                     sean.ConsumeIgnition();
-                else if (affinity == SlipperAffinity.ElectricZap && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
+                else if ((affinity == SlipperAffinity.ElectricZap || IsPoweredBank(affinity)) && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
                     zack.ConsumeMagnetCharge();
             }
             ReleasePreviousHolder(holder);
@@ -791,8 +1099,8 @@ namespace TumbangPreso
                 // can only ever refuse a position the host would also have refused. A tsinelas
                 // that came to rest outside the wall is an attacker deleted from the round, which
                 // is what the note on the resting clamp already says at length.
-                position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
-                position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+                position.x = ClampToPlayableAxis(position.x, AIController.PlayableMinX, AIController.PlayableMaxX);
+                position.z = ClampToPlayableAxis(position.z, AIController.PlayableMinZ, AIController.PlayableMaxZ);
 
                 // ⚠️ THE LID IS CLAMPED ON THE REPLICA TOO, and only downward: a client must not
                 // draw a tsinelas above a ceiling the host bounced it off, but it must not push
@@ -833,13 +1141,17 @@ namespace TumbangPreso
             PektusSpin = state == SlipperState.InFlight
                 ? Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin)
                 : 0.0f;
-            Affinity = state == SlipperState.InFlight ? affinity : SlipperAffinity.Normal;
+            Affinity = state == SlipperState.InFlight || affinity == SlipperAffinity.Concussed
+                || (state == SlipperState.Held && holder != null && affinity == SlipperAffinity.FireExplosive)
+                ? affinity : SlipperAffinity.Normal;
             _throwerSlot = state == SlipperState.InFlight ? throwerSlot : -1;
             if (enteringEmpoweredFlight)
             {
                 if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
                 if (affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
-                else CreateZapFlightVisual();
+                // A loaded Bank Shot is drawn by `Visual.ZackBankFlight` while its switch is on. The two thin rails were
+                // only ever drawn here, on a client, so the host never showed them: the new look is the same on both.
+                else if (!(IsPoweredBank(affinity) && Visual.ZackBankFlight.Silk)) CreateZapFlightVisual();
             }
             else if (state != SlipperState.InFlight || affinity == SlipperAffinity.Normal)
             {
@@ -851,6 +1163,7 @@ namespace TumbangPreso
             _flightTime = 0.0f;
             _airborneTotal = 0.0f;
             _throwerIgnoreLeft = 0.0f;
+            _bodyContacts = 0;
             _bankCount = 0;
             _closestCanFlat = float.PositiveInfinity;
             _nearMissReported = false;
@@ -896,8 +1209,8 @@ namespace TumbangPreso
         {
             if (State == SlipperState.Held) return;
 
-            position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
-            position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+            position.x = ClampToPlayableAxis(position.x, AIController.PlayableMinX, AIController.PlayableMaxX);
+            position.z = ClampToPlayableAxis(position.z, AIController.PlayableMinZ, AIController.PlayableMaxZ);
 
             float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
             if (position.y > ceiling) position.y = ceiling;
@@ -913,9 +1226,40 @@ namespace TumbangPreso
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
             if (!NetAuthority.ShouldResolve()) return;
+            _mountainHit = false;   // armed again by the thrower's own form, after this (`HostArmMountainHit`)
+            // Null identifies an environmental ability displacement, which may
+            // move any loose shoe without granting somebody else's shot credit.
+            if (thrower != null && !OwnershipAllows(thrower)) return;
+            var expiringAffinity = Affinity;
+            if (ExpireLoadedAffinity() && affinity == expiringAffinity) affinity = SlipperAffinity.Normal;
+            bool heldRelease = thrower != null && State == SlipperState.Held && Holder == thrower;
+            if (heldRelease) _affinityLoadUntil = 0; // A timely throw transfers the one-hit payload to flight.
+            if (heldRelease)
+            {
+                ClearRetrievalEpisode();
+                if (OwnerSlot == thrower.PlayerSlot && GameServices.Round?.RoundActive == true && GameServices.Match != null)
+                {
+                    _retrievalActor=thrower;_retrievalMatch=GameServices.Match;
+                    _retrievalEpoch=_retrievalMatch.HostChainEpoch;_retrievalRound=_retrievalMatch.RoundNumber;
+                }
+                if (thrower.Mode == GameMode.HeroStrike)
+                    thrower.AbilitySystem?.Kit?.OnAuthoritativeThrow(new Abilities.AbilityContext(
+                        thrower,thrower.GetComponent<Carrier>(),thrower.GetComponent<CombatVerbs>()));
+            }
+            if (_motionAccent != null) _motionAccent.ClearFlight();
+            FinishChain(ThrowChainEnd.Miss); // A credited flight replaced by a new launch has ended.
+            _skimLeft = 0; _skimStarted = false;
+            _chainMatch = GameServices.Match;
+            _chainOwner = thrower != null ? thrower.PlayerSlot : -1;
+            _launchCanSerial = GameServices.Round != null && GameServices.Round.Lata != null
+                ? GameServices.Round.Lata.HostKnockdownSerial : 0;
+            _chainEpoch = _chainMatch != null ? _chainMatch.HostChainEpoch : 0;
+            _chainThrow = _chainMatch != null && thrower != null
+                ? _chainMatch.BeginHostThrowChain(_chainOwner, _launchCanSerial) : 0;
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;
+            _bankCreditLimit = affinity == SlipperAffinity.OverclockBank ? 2 : Balance.MaxScoringBanks;
             PektusSpin = Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
             _bankCount = 0;
             _airborneTotal = 0.0f;
@@ -953,37 +1297,30 @@ namespace TumbangPreso
 
             // You cannot block your own throw on release.
             _throwerIgnoreLeft = Balance.ThrowerIgnoreTime;
+            _bodyContacts = 0;
 
             if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
 
             if (Affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
             else if (Affinity == SlipperAffinity.ElectricZap) CreateZapFlightVisual();
-            else if (UI.SceneFlow.SelectedMode == GameMode.HeroStrike)
-            {
-                _affinityVfxGo = new GameObject("HeroSlipperTrail");
-                _affinityVfxGo.transform.SetParent(transform, false);
-                var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
-                trail.time = 0.22f;
-                trail.startWidth = 0.14f;
-                trail.endWidth = 0.0f;
-                var mat = new Material(Shader.Find("Sprites/Default")) { color = new Color(1.0f, 0.95f, 0.7f, 0.6f) };
-                trail.material = mat;
-                trail.startColor = mat.color;
-                trail.endColor = new Color(1.0f, 0.95f, 0.7f, 0.0f);
-            }
+            // Normal flight now uses the same public motion stroke on every peer
+            // and in both modes. Charged fire/electric effects keep their own shapes.
         }
 
         private void CreateFireFlightVisual()
         {
             _affinityVfxGo = new GameObject("FireSlipperVfx");
             _affinityVfxGo.transform.SetParent(transform, false);
+            // The s2 fireball draws itself off the shoe (a trail is history); this empty marker keeps every cleanup above as it was.
+            if (Visual.SeanThrowFire.Painted) { Visual.SeanThrowFire.Follow(this); return; }
             var light = _affinityVfxGo.AddComponent<Light>();
             light.color = Visual.AbilityVfx.FireHotColour; light.range = 2.1f; light.intensity = .65f;
             light.shadows = LightShadows.None;
             var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
             trail.time = .22f; trail.startWidth = .14f; trail.endWidth = 0;
             trail.minVertexDistance = .04f;
-            var material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+            var material = new Material(Shader.Find("TumbangPreso/InkFlight"));
+            material.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
             trail.sharedMaterial = material; Visual.VfxRenderTag.Own(_affinityVfxGo, material);
             trail.startColor = Visual.AbilityVfx.FireHotColour;
             trail.endColor = new Color(1, .22f, .015f, 0);
@@ -996,7 +1333,8 @@ namespace TumbangPreso
             var light = _affinityVfxGo.AddComponent<Light>();
             light.color = UI.UiTheme.HeroElectricBright; light.range = 1.6f; light.intensity = .45f;
             light.shadows = LightShadows.None;
-            var material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+            var material = new Material(Shader.Find("TumbangPreso/InkFlight"));
+            material.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
             Visual.VfxRenderTag.Own(_affinityVfxGo, material);
             for (int i = 0; i < 2; i++)
             {
@@ -1013,38 +1351,9 @@ namespace TumbangPreso
 
         private void TriggerAffinityImpact()
         {
+            _skimLeft = 0;
             if (Affinity == SlipperAffinity.FireExplosive)
-            {
-                // ⚠️⚠️ 2.6 m, DOWN FROM 4.5, BECAUSE THIS IS A SKILL'S PAYLOAD AND NOT AN
-                // ULTIMATE. At 4.5 m it covered **32.5 per cent of the 14 by 14 box**, the same
-                // area as Zack's Thunderstrike, off Sean's second skill. `docs/VISION.md` § 2
-                // rule 1 asks a skill for 1.8 to 2.5 m and rule 2 reserves "big" for one
-                // ultimate at a time.
-                //
-                // ⚠️ THE REACH IS REPLACED BY A HARD VERTICAL, WHICH IS RULE 3. A smaller flat
-                // blast is still a puddle, so `CreateExplosion` is given a taller, faster
-                // silhouette to work with rather than a wider one: the knockback is unchanged
-                // at 13.0 and the stun at 1.4 s, so what a direct hit DOES is untouched. What
-                // changed is how far away it can be felt by someone who was nowhere near it.
-                // ⚠️ THE SLIPPER STYLE, because a tsinelas going off is the game's joke and not
-                // an ultimate. It shared the supernova's fireball, flash, shake and sound, which
-                // told the player the two were the same size of event.
-                //
-                // ⚠️⚠️ FLARE SHOT TIGHTENS THE CRATER, AND IT IS READ HERE RATHER THAN AT THE
-                // THROW. `AdoptState` can hand a peer a shoe that is already in flight with no
-                // record of how it left the hand, so a flag latched in `HostThrow` would be
-                // false on exactly the machines that did not watch the throw and they would
-                // draw a 2.6 m fireball over a 1.95 m blast. Every peer binds the seat's
-                // checked build in `MatchInstaller`, so asking the thrower at impact gives the
-                // same answer everywhere. The fraction is read off the row rather than written
-                // here, for the reason `Carrier`'s throw note gives.
-                var caster = GameServices.Round?.PlayerAt(_throwerSlot);
-                float blastRadius = 2.6f * (caster != null && caster.AbilitySystem != null
-                    ? caster.AbilitySystem.VariantCost("sean.2.flare")
-                    : 1.0f);
-                Abilities.HeroHazards.CreateExplosion(transform.position, blastRadius, 13.0f, 1.4f, _throwerSlot, "BOOM!",
-                    style: Abilities.HeroHazards.ExplosionStyle.Slipper);
-            }
+                ResolveEmpoweredThrowImpact();
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
                 NetCue.Play("ability_flick_dash", transform.position);
@@ -1097,6 +1406,18 @@ namespace TumbangPreso
         /// overlap volume fires on whichever peer owns the body, and 16 of 36 were measured
         /// failing to land.
         /// </summary>
+        // Shared by real flight and its local landing preview. This has no effects,
+        // collision, score or authority mutation.
+        internal static Vector3 StepFlightVelocity(Vector3 velocity, float spin, float dt)
+        {
+            velocity.y -= Balance.Gravity * dt;
+            var flat = new Vector3(velocity.x, 0, velocity.z);
+            if (Mathf.Abs(spin) > .01f && flat.sqrMagnitude > .1f)
+                velocity += Vector3.Cross(flat.normalized, Vector3.up).normalized * (spin * Balance.PektusCurveStrength * dt);
+            const float terminalSpeed = 34;
+            return velocity.sqrMagnitude > terminalSpeed * terminalSpeed ? velocity.normalized * terminalSpeed : velocity;
+        }
+
         private void FixedUpdate()
         {
             if (State != SlipperState.InFlight) return;
@@ -1105,56 +1426,28 @@ namespace TumbangPreso
             float dt = Time.fixedDeltaTime;
             _flightTime += dt;
             _airborneTotal += dt;
+            // Contact may rebound and return below. It cannot bypass the existing
+            // lifetime ceiling, even while a protected can repeatedly rejects it.
+            if (_flightTime >= Balance.MaxFlightTime || _airborneTotal >= Balance.MaxAirborneTime)
+            { Land(fromFlight: false); return; }
             if (_throwerIgnoreLeft > 0.0f) _throwerIgnoreLeft -= dt;
 
-            _velocity.y -= Balance.Gravity * dt;
-
-            // Apply lateral Magnus acceleration from Pektus spin
-            if (Mathf.Abs(PektusSpin) > 0.01f)
-            {
-                Vector3 flatVel = new Vector3(_velocity.x, 0.0f, _velocity.z);
-                if (flatVel.sqrMagnitude > 0.1f)
-                {
-                    Vector3 lateral = Vector3.Cross(flatVel.normalized, Vector3.up).normalized;
-                    _velocity += lateral * (PektusSpin * Balance.PektusCurveStrength * dt);
-                }
-            }
-
-            // -------------------------------------------------------------------
-            // ⚠️⚠️ A TSINELAS HAS A TERMINAL SPEED, AND THIS IS A GUARD RATHER THAN A CURE.
-            // 🧑 2026-08-27: *"appparently slippers randomly fly to sky too? idk how playtesters
-            // did that"*. The exact source is NOT identified and this does not claim to have
-            // found it; what it does is bound the symptom so a single bad frame cannot remove a
-            // slipper from the match.
-            //
-            // ⚠️ THERE ARE SEVERAL PLACES A LARGE VELOCITY CAN BE MANUFACTURED and none of them
-            // is obviously wrong on its own: `Deflect` off the lata multiplies the incoming speed
-            // by `LataRecoilScale`, so two recoils in quick succession compound; a
-            // `Vector3.Reflect` in `BounceOffObstacles` falls back to `-disp.normalized` which is
-            // ZERO if the slipper did not move that frame, and reflecting about a zero normal
-            // returns the velocity unchanged rather than reversing it; and `HeroHazards`
-            // teleports loose slippers every frame during Nemu's ultimate, which can drive one
-            // into a collider that then ejects it.
-            //
-            // ⚠️ 34 m/s IS ABOVE ANYTHING THE GAME CAN LEGITIMATELY PRODUCE. The hardest legal
-            // throw leaves the hand well under this, so a slipper that reaches it has been given
-            // energy by a defect. Clamping preserves the DIRECTION, so a hard throw still flies
-            // hard and only the impossible case is cut. **If this clamp ever fires in normal
-            // play the number is wrong; if the sky-launch stops being reported, the cause is
-            // still out there and is worth finding.** `docs/TODO.md` § 32.
-            const float TerminalSpeed = 34.0f;
-            if (_velocity.sqrMagnitude > TerminalSpeed * TerminalSpeed)
-            {
-                _velocity = _velocity.normalized * TerminalSpeed;
-            }
-
             Vector3 prevPos = transform.position;
-            transform.position += _velocity * dt;
-
-            BounceOffObstacles(prevPos, dt);
-            BounceOffBounds();
-            SpinInFlight(dt);
+            bool skimming = _skimLeft > 0 && Affinity == SlipperAffinity.Skim;
+            if (skimming)
+            {
+                if (!MoveSkim(dt)) return;
+            }
+            else
+            {
+                _velocity = StepFlightVelocity(_velocity, PektusSpin, dt);
+                transform.position += _velocity * dt;
+                BounceOffObstacles(prevPos, dt);
+                BounceOffBounds();
+                SpinInFlight(dt);
+            }
             if(RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.TryLoseSlipper(this))return;
+            if(LagoonWater.Instance!=null&&LagoonWater.Instance.TryRecoverSlipper(this))return;
 
             // ⚠️ LOST BELOW THE WORLD IS A REAL CASE, NOT A SAFETY NET. A slipper that
             // clears the arena falls forever and the round quietly loses a piece of its
@@ -1163,6 +1456,9 @@ namespace TumbangPreso
             if (transform.position.y < Balance.VoidY) { Land(fromFlight: false); return; }
 
             var round = GameServices.Round;
+            if (round != null && _bodyContacts != 0)
+                foreach (var player in round.Bodies)
+                    if (player != null && !HitsBody(player)) _bodyContacts &= ~(1 << player.PlayerSlot);
 
             // ⚠️⚠️ THE TAYA'S BODY IS TESTED BEFORE THE CAN, AND EVERY OTHER BODY AFTER IT.
             // 🧑 2026-08-29: *"make sure defender cna block too"*, and *"feels like shit get past
@@ -1183,28 +1479,39 @@ namespace TumbangPreso
             // this line is what makes the trade a real one rather than a lost tie.
             if (round != null && _throwerIgnoreLeft <= 0.0f)
             {
-                foreach (var p in round.Players)
+                foreach (var p in round.Bodies)
                 {
-                    if (p == null || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
+                    if (p == null || !p.gameObject.activeInHierarchy || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
-
+                    // Keep simulating the rebound, but don't restart its lift, body
+                    // impulse, sound and flair on every step spent inside one body.
+                    int contactBit = 1 << p.PlayerSlot;
+                    if ((_bodyContacts & contactBit) != 0) { EndFlightOnGround(prevPos, skimming); return; }
+                    _bodyContacts |= contactBit;
+                    HostBodyAffinity(p);
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
+                    KeepAboveFloor(prevPos);
                     return;
                 }
             }
 
             // The can next: it is the thing being aimed at.
-            if (round?.Lata != null && round.Lata.IsUpright && round.Lata.Connects(transform.position))
+            if (round?.Lata != null && round.Lata.gameObject.activeInHierarchy
+                && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
+                int before = round.Lata.HostKnockdownSerial;
                 TriggerAffinityImpact();
                 round.Lata.HostKnockDown(_throwerSlot);
+                FinishChain(_throwerSlot >= 0 && round.Lata.HostKnockdownSerial > before
+                    ? ThrowChainEnd.Hit : ThrowChainEnd.Miss);
                 // REBOUND belongs to the shared can that was hit, never the thrower's
                 // own loadout. Host-owned velocity already replicates to every peer.
                 // The restore shield still returns the shoe without awarding a hit.
                 float rebound = Roster.CanReboundScale(round.Lata.SkinIndex);
                 Deflect(-_velocity * Balance.LataRecoilScale * rebound,
                         Balance.LataRecoilLiftScale * rebound);
+                KeepAboveFloor(prevPos);
                 return;
             }
 
@@ -1213,15 +1520,22 @@ namespace TumbangPreso
             // ⚠️ THEN ANY STANDING BODY, ATTACKERS INCLUDED. Three of them crowding one box
             // means friendly fire is part of the traffic, and a slipper that passed through
             // teammates would make the Defender's body block the only block in the game.
+            // `Bodies`: a companion (Phaister's doll) stands in the way like anyone.
             if (round != null && _throwerIgnoreLeft <= 0.0f)
             {
-                foreach (var p in round.Players)
+                foreach (var p in round.Bodies)
                 {
-                    if (p == null || p.PlayerSlot == _throwerSlot) continue;
+                    if (p == null || !p.gameObject.activeInHierarchy || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
-
+                    // Keep simulating the rebound, but don't restart its lift, body
+                    // impulse, sound and flair on every step spent inside one body.
+                    int contactBit = 1 << p.PlayerSlot;
+                    if ((_bodyContacts & contactBit) != 0) { EndFlightOnGround(prevPos, skimming); return; }
+                    _bodyContacts |= contactBit;
+                    HostBodyAffinity(p);
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
+                    KeepAboveFloor(prevPos);
                     return;
                 }
             }
@@ -1240,14 +1554,44 @@ namespace TumbangPreso
             // 3.6 m throw, so it previously landed and recovered on the first step.
             // Include the previous height so a fast descent cannot skip a raised
             // slab. Pass this same support into Land rather than reselecting a roof.
+            EndFlightOnGround(prevPos, skimming);
+        }
+
+        private void EndFlightOnGround(Vector3 prevPos, bool skimming)
+        {
             Vector3 supportAt = transform.position;
             supportAt.y = Mathf.Max(prevPos.y, supportAt.y);
             float flightGround = FindGroundY(supportAt, Balance.SlipperRestHeight);
-            if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
-                Land(fromFlight: true, landingGround: flightGround);
-            else if (_flightTime >= Balance.MaxFlightTime
-                     || _airborneTotal >= Balance.MaxAirborneTime)
-                Land(fromFlight: false);
+            if (skimming)
+            {
+                if (_skimLeft <= 0) Land(fromFlight: true, landingGround: _skimGround);
+            }
+            else if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
+            {
+                if (!BeginSkim(flightGround)) Land(fromFlight: true, landingGround: flightGround);
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ A STEP THAT ENDS IN A HIT MUST NOT LEAVE THE SLIPPER UNDER THE FLOOR (owner, 2026-10-12, on Eskinita:
+        /// "if your slipper hits the can ... its possible that the slipper goes through the floor"). The can's branch and
+        /// the two body branches RETURN before the ground test, and a throw that comes down onto the can covers up to
+        /// 0.37 m in that one step, so it could end the step below the court. The ground test looks down from the
+        /// slipper's own height (so that a roof far overhead is not taken for the floor), and a ray that starts inside
+        /// a solid floor does not meet it: from there the next thing down was the map under the court, and the slipper
+        /// came to rest on that. Eskinita's ground is solid boxes with a street below, which is why it showed there.
+        /// Here the support is found from where the step BEGAN, and the slipper is put back on top of it.
+        /// </summary>
+        private void KeepAboveFloor(Vector3 prevPos)
+        {
+            Vector3 at = transform.position;
+            if (prevPos.y <= at.y) return;
+            float ground = FindGroundY(new Vector3(at.x, prevPos.y, at.z), Balance.SlipperRestHeight);
+            float floor = ground + Balance.SlipperRestHeight;
+            if (at.y >= floor || ground > prevPos.y + Balance.SlipperRestHeight) return;
+            at.y = floor;
+            transform.position = at;
+            if (_velocity.y < 0) _velocity.y = 0;
         }
 
         /// <summary>
@@ -1436,10 +1780,8 @@ namespace TumbangPreso
 
             if (!hitFound) return;
 
-            float restitution = Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold
-                                && _bankCount == 0
-                ? Balance.PektusBankRestitution
-                : Balance.BounceRestitution;
+            bool poweredContact = IsPoweredBank(Affinity);
+            float restitution = BankRestitution(PektusSpin, _bankCount, Affinity);
 
             Vector3 normal = closest.normal;
             normal.y = 0.0f;
@@ -1449,19 +1791,30 @@ namespace TumbangPreso
             _velocity = Vector3.Reflect(_velocity, normal) * restitution;
             transform.position = closest.point + normal * (Balance.SlipperHitRadius + 0.02f);
 
+            if (Affinity == SlipperAffinity.FireExplosive) TriggerAffinityImpact();
+            Affinity = ConsumePoweredBank(Affinity);
             _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
-            if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
+            // GLACIAL WALL counts the slippers that strike it (ABILITY-2: three shatter it). Host only:
+            // the flight is host-simulated, and the shatter's flair breaks it on every other screen.
+            if (NetAuthority.ShouldResolve())
+                closest.collider.GetComponentInParent<Abilities.HeroHazards.IceBarricadeComponent>()?.HostSlipperHit();
+
+            if (poweredContact || (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold))
             {
                 // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
                 // drawn on one screen. See `Visual.MatchFlair`.
                 Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
-                                           _throwerSlot, -1, transform.position);
+                                           _throwerSlot, -1, transform.position,
+                                           poweredContact ? Visual.BankShotContact.FlairStrength : 0);
             }
 
-            if (_bankCount > Balance.MaxScoringBanks)
+            if (_bankCount > _bankCreditLimit)
+            {
+                FinishChain(ThrowChainEnd.Miss);
                 _throwerSlot = -1;
+            }
         }
 
         /// <summary>
@@ -1470,37 +1823,68 @@ namespace TumbangPreso
         /// ⚠️ IT IS SHARED BY THE BOUNCE, THE RESTING PLACE AND THE REPLICA so the three cannot
         /// drift. All three had the same two lines written out separately, which is how the
         /// replica came to be missing them entirely.
+        ///
+        /// ⚠️ PER SIDE SINCE 2026-09-27 (`AIController.PlayableMinX`'s note has why). The margin
+        /// comes in from each wall: `min + r` and `max - r`. On a symmetric arena that is the old
+        /// `-(half - r)` and `half - r` to the bit, and `hi &gt; lo` is the old `limit &gt; 0`,
+        /// the guard that leaves a degenerate arena narrower than a tsinelas unclamped.
         /// </summary>
-        private static float ClampToPlayableAxis(float value, float half)
+        private static float ClampToPlayableAxis(float value, float min, float max)
         {
-            float limit = half - Balance.SlipperHitRadius;
-            return limit > 0.0f ? Mathf.Clamp(value, -limit, limit) : value;
+            float lo = min + Balance.SlipperHitRadius;
+            float hi = max - Balance.SlipperHitRadius;
+            return hi > lo ? Mathf.Clamp(value, lo, hi) : value;
         }
 
         private void BounceOffBounds()
         {
-            float limitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;
-            float limitZ = AIController.PlayableHalfZ - Balance.SlipperHitRadius;
+            float loX = AIController.PlayableMinX + Balance.SlipperHitRadius;
+            float hiX = AIController.PlayableMaxX - Balance.SlipperHitRadius;
+            float loZ = AIController.PlayableMinZ + Balance.SlipperHitRadius;
+            float hiZ = AIController.PlayableMaxZ - Balance.SlipperHitRadius;
 
             Vector3 p = transform.position;
             bool bounced = false;
-            float restitution = Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold
-                                && _bankCount == 0
-                ? Balance.PektusBankRestitution
-                : Balance.BounceRestitution;
+            bool powered = IsPoweredBank(Affinity);
+            float restitution = powered ? 1 : BankRestitution(PektusSpin, _bankCount, Affinity);
 
-            if (limitX > 0.0f && Mathf.Abs(p.x) > limitX)
+            // ⚠️⚠️ EACH WALL TURNS THE SHOE BACK TOWARD THE MIDDLE, WHICHEVER SIDE IT IS ON.
+            // The symmetric version read the side off `Mathf.Sign(p.x)`; with per-side walls the
+            // side is WHICH LIMIT WAS CROSSED, so the far wall sends velocity negative and the near
+            // wall sends it positive. Past the high wall is `p > hi`, pinned to `hi` and sent
+            // back with `-|v|`; past the low wall is `p < lo`, pinned to `lo` with `+|v|`. On a
+            // symmetric arena these are the old branches exactly (`Sign(p) * limit` is `hi` or
+            // `-limit == lo`, and `-Sign(p) * |v|` is `-|v|` or `+|v|`).
+            if (hiX > loX)
             {
-                p.x = Mathf.Sign(p.x) * limitX;
-                _velocity.x = -Mathf.Sign(p.x) * Mathf.Abs(_velocity.x) * restitution;
-                bounced = true;
+                if (p.x > hiX)
+                {
+                    p.x = hiX;
+                    _velocity.x = -Mathf.Abs(_velocity.x) * restitution;
+                    bounced = true;
+                }
+                else if (p.x < loX)
+                {
+                    p.x = loX;
+                    _velocity.x = Mathf.Abs(_velocity.x) * restitution;
+                    bounced = true;
+                }
             }
 
-            if (limitZ > 0.0f && Mathf.Abs(p.z) > limitZ)
+            if (hiZ > loZ)
             {
-                p.z = Mathf.Sign(p.z) * limitZ;
-                _velocity.z = -Mathf.Sign(p.z) * Mathf.Abs(_velocity.z) * restitution;
-                bounced = true;
+                if (p.z > hiZ)
+                {
+                    p.z = hiZ;
+                    _velocity.z = -Mathf.Abs(_velocity.z) * restitution;
+                    bounced = true;
+                }
+                else if (p.z < loZ)
+                {
+                    p.z = loZ;
+                    _velocity.z = Mathf.Abs(_velocity.z) * restitution;
+                    bounced = true;
+                }
             }
 
             // ⚠️⚠️ AND THE SKY IS A WALL TOO, WHICH IT WAS NOT UNTIL 2026-08-29. 🧑: *"make sure
@@ -1514,12 +1898,13 @@ namespace TumbangPreso
             // ⚠️ IT IS A CEILING AND NOT A FLOOR. Nothing here touches downward travel: the
             // ground, the kill plane and the resting height own that, and reflecting upward off
             // a low Y would turn every landing into a bounce.
+            bool sideBank = bounced;
             float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
 
             if (p.y > ceiling)
             {
                 p.y = ceiling;
-                _velocity.y = -Mathf.Abs(_velocity.y) * restitution;
+                _velocity.y = -Mathf.Abs(_velocity.y) * (powered ? Balance.BounceRestitution : restitution);
                 bounced = true;
             }
 
@@ -1527,21 +1912,31 @@ namespace TumbangPreso
 
             if (!bounced) return;
 
-            _bankCount++;
+            if (Affinity == SlipperAffinity.FireExplosive) TriggerAffinityImpact();
+            if (sideBank && powered) _velocity *= .85f;
+            if (sideBank) Affinity = ConsumePoweredBank(Affinity);
+            // A safety-ceiling return does not spend Zack's promised wall bank.
+            // Keep ordinary throws' existing bounded-contact credit rule.
+            bool spendsBank = sideBank || !powered;
+            if (spendsBank) _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
-            if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
+            if (spendsBank && (powered || (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)))
             {
                 // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
                 // drawn on one screen. See `Visual.MatchFlair`.
                 Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
-                                           _throwerSlot, -1, transform.position);
+                                           _throwerSlot, -1, transform.position,
+                                           powered ? Visual.BankShotContact.FlairStrength : 0);
             }
 
             // One authored bank can still score. Further wall contacts remain valid
             // physics but lose player credit, preventing pinball loops from farming cans.
-            if (_bankCount > Balance.MaxScoringBanks)
+            if (_bankCount > _bankCreditLimit)
+            {
+                FinishChain(ThrowChainEnd.Miss);
                 _throwerSlot = -1;
+            }
         }
 
         /// <summary>
@@ -1570,8 +1965,42 @@ namespace TumbangPreso
         /// costs position, which is what a block is actually about, and cannot lock anybody
         /// out of the game.
         /// </summary>
+        /// <summary>
+        /// Apply a carried body payload before generic impact consumes its affinity.
+        /// Frostbite freezes; Boulder inflicts Concussed. Each is spent once.
+        /// </summary>
+        private void HostBodyAffinity(CharacterMotor victim)
+        {
+            // Body hits must call this before generic impact consumes affinity.
+            if (victim == null) return;
+            if (_mountainHit)
+            {
+                // MOUNTAIN FORM's throw hits like a rock: a short stagger and a knock away along its flight, lifted off the court
+                // (`CharacterMotor.AsLaunch`, past the knock's lift cap). Once per throw; an immune body refuses both.
+                _mountainHit = false;
+                Vector3 along = new Vector3(_velocity.x, 0f, _velocity.z);
+                if (along.sqrMagnitude < 1e-4f) along = victim.transform.position - transform.position;
+                along.y = 0f; along = along.sqrMagnitude > 1e-4f ? along.normalized : Vector3.forward;
+                victim.ApplyStagger(GeoRules.MountainHitStun, StunElement.None, Balance.StunBreakPressesDefault);
+                victim.ApplyResolvedImpact(CharacterMotor.AsLaunch(along * GeoRules.MountainHitAway + Vector3.up * GeoRules.MountainHitUp));
+                NetCue.Play("land", transform.position);
+            }
+            if (Affinity == SlipperAffinity.Concussed)
+            {
+                victim.ApplyConcussed();
+                Affinity = SlipperAffinity.Normal;
+                return;
+            }
+            if (Affinity != SlipperAffinity.Frost) return;
+            victim.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
+            Abilities.HeroHazards.SpawnIceCubePrison(victim.transform, StatusRules.FrozenSeconds);
+            NetCue.Play("sfx_cheska_frostbite_hit", transform.position);
+            Affinity = SlipperAffinity.Normal;
+        }
+
         private void HostBlockedBy(CharacterMotor blocker)
         {
+            FinishChain(ThrowChainEnd.Block);
             // A body block is a hit too — it is the taya's entire passive verb.
             //
             // ⚠️⚠️ AND IT WAS DRAWN ON ONE SCREEN. `FixedUpdate` is host-gated, so the flash, the
@@ -1579,7 +2008,7 @@ namespace TumbangPreso
             // unpressed verb means three players out of four blocked a throw with no sign that
             // anything happened. See `Visual.MatchFlair`.
             Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Block,
-                                       -1, blocker.PlayerSlot, transform.position,
+                                       _throwerSlot, blocker.PlayerSlot, transform.position,
                                        _velocity.magnitude);
 
             // ⚠️⚠️ AND IT MAKES A SOUND, WHICH IT DID NOT. `slipper.gd:1170` plays `hit_body` on
@@ -1594,7 +2023,7 @@ namespace TumbangPreso
             // See `docs/TODO.md` § 83.12.
             NetCue.PlayImpact("hit_body", "guard_block", transform.position, 0.72f);
 
-            float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
+            float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex, blocker.Mode);
             Vector3 along = _velocity;
             along.y = 0.0f;
             blocker.ApplyImpulse(along.normalized * speed);
@@ -1608,10 +2037,46 @@ namespace TumbangPreso
 
         public void Deflect(Vector3 horizontal, float liftScale)
         {
+            FinishChain(ThrowChainEnd.Block);
             _velocity = horizontal;
             _velocity.y = Balance.DeflectLift * liftScale;
             _flightTime = 0.0f;
             _throwerSlot = -1; // a deflected slipper credits nobody
+            _mountainHit = false; // nor carries his rock back at anyone
+        }
+
+        // A current bends an existing throw; it is not a block or a new throw.
+        // Preserve vertical speed, spin, affinity, owner, chain and ignore clocks.
+        public bool HostSteerFlight(Vector3 toward, float degrees)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight || IsSkimming
+                || !float.IsFinite(degrees) || !float.IsFinite(toward.sqrMagnitude)) return false;
+            toward.y = 0;
+            var horizontal = new Vector3(_velocity.x, 0, _velocity.z);
+            if (toward.sqrMagnitude < .001f || horizontal.sqrMagnitude < .001f) return false;
+            float turn = Mathf.Clamp(Vector3.SignedAngle(horizontal, toward, Vector3.up),
+                -Mathf.Clamp(degrees, 0, 60), Mathf.Clamp(degrees, 0, 60));
+            var bent = Quaternion.AngleAxis(turn, Vector3.up) * horizontal;
+            _velocity.x = bent.x; _velocity.z = bent.z;
+            return true;
+        }
+
+        // Water carries loose equipment along the floor without arming a throw.
+        public float HostSweepLoose(Vector3 displacement)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.Loose
+                || !float.IsFinite(displacement.sqrMagnitude)) return 0;
+            displacement.y = 0; float distance = Mathf.Min(displacement.magnitude, 1.4f);
+            if (distance < .001f) return 0;
+            var direction = displacement.normalized;
+            foreach (var hit in Physics.SphereCastAll(transform.position + Vector3.up * .14f,
+                         .10f, direction, distance, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.GetComponentInParent<Slipper>() == this) continue;
+                distance = Mathf.Min(distance, Mathf.Max(0, hit.distance - .035f));
+            }
+            transform.position += direction * distance;
+            return distance;
         }
 
         /// <summary>
@@ -1634,17 +2099,24 @@ namespace TumbangPreso
         public static float GroundY(Vector3 at)
             => FindGroundY(at, 6.0f);
 
-        private static float FindGroundY(Vector3 at, float scanAbove)
+        private static readonly RaycastHit[] GroundHits = new RaycastHit[64];
+
+        internal static float FindGroundY(Vector3 at, float scanAbove)
         {
             var from = new Vector3(at.x, at.y + scanAbove, at.z);
 
-            var hits = Physics.RaycastAll(from, Vector3.down, 40.0f, ~0,
-                                          QueryTriggerInteraction.Ignore);
+            var hits = GroundHits;
+            int count = Physics.RaycastNonAlloc(from, Vector3.down, hits, 40, ~0, QueryTriggerInteraction.Ignore);
+            // NonAlloc does not promise nearest hits if the buffer fills. Preserve
+            // the original complete query on unusually dense geometry.
+            if (count == hits.Length)
+            { hits = Physics.RaycastAll(from, Vector3.down, 40, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
 
             float best = float.NegativeInfinity;
 
-            foreach (var hit in hits)
+            for (int i = 0; i < count; i++)
             {
+                var hit = hits[i];
                 // ⚠️⚠️ A BODY IS NOT THE GROUND, AND SKIPPING THIS PUT SLIPPERS ON PEOPLE'S
                 // HEADS. Every slipper starts at its owner's FEET, so the first thing a downward
                 // cast from above that mark meets is the owner's own capsule — and the slipper
@@ -1718,7 +2190,7 @@ namespace TumbangPreso
             // it inside whatever it landed on top of, and the void branch above already declares
             // the intended rule for ammunition that leaves play: give it back rather than let
             // the round quietly lose a piece of itself.
-            if (rest > ReachablePlaneY() + Balance.SlipperMaxRestReach)
+            if (NeedsHeightRecovery(new Vector3(p.x, rest, p.z)))
             {
                 p = OwnerMark();
                 rest = GroundY(p) + RestHeight;
@@ -1738,12 +2210,10 @@ namespace TumbangPreso
             // from the round exactly as the note above describes.
             //
             // ⚠️ THE SAME LIMITS THE BOUNCE USES, so a slipper cannot come to rest anywhere a
-            // flight would have been turned back from.
-            float restLimitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;
-            float restLimitZ = AIController.PlayableHalfZ - Balance.SlipperHitRadius;
-
-            if (restLimitX > 0.0f) p.x = Mathf.Clamp(p.x, -restLimitX, restLimitX);
-            if (restLimitZ > 0.0f) p.z = Mathf.Clamp(p.z, -restLimitZ, restLimitZ);
+            // flight would have been turned back from. Per side since 2026-09-27, through the
+            // one helper the bounce's margin and the replica share.
+            p.x = ClampToPlayableAxis(p.x, AIController.PlayableMinX, AIController.PlayableMaxX);
+            p.z = ClampToPlayableAxis(p.z, AIController.PlayableMinZ, AIController.PlayableMaxZ);
 
             transform.position = new Vector3(p.x, rest, p.z);
 
@@ -1764,6 +2234,41 @@ namespace TumbangPreso
             // clears the flag on any move out of Loose, so setting it first would be undone by
             // the very transition that brought us here.
             SetLandedHighlight(fromFlight);
+        }
+
+        private bool NeedsHeightRecovery(Vector3 resting)
+        {
+            if (resting.y <= ReachablePlaneY() + Balance.SlipperMaxRestReach) return false;
+
+            // The Arena's raised decks and ramps are playable even while the owner is
+            // below them. Only actual support in the active layout exempts a shoe:
+            // roofs above a deck and shoes left floating still recover normally.
+            var stage = Map.ArenaStage.Instance;
+            if (stage != null && stage.Applied >= 0 && stage.Applied < stage.Layouts.Length)
+            {
+                var layout = stage.Layouts[stage.Applied];
+                var support = layout != null ? layout.Colliders : null;
+                if (support != null)
+                {
+                    Vector3 from = resting + Vector3.up * 0.1f;
+                    var hits = GroundHits;
+                    int count = Physics.RaycastNonAlloc(from, Vector3.down, hits,
+                        RestHeight + 0.2f, ~0, QueryTriggerInteraction.Ignore);
+                    if (count == hits.Length)
+                    {
+                        hits = Physics.RaycastAll(from, Vector3.down, RestHeight + 0.2f,
+                            ~0, QueryTriggerInteraction.Ignore);
+                        count = hits.Length;
+                    }
+                    for (int i = 0; i < count; i++)
+                    {
+                        var hit = hits[i];
+                        if (hit.normal.y >= 0.707f && hit.collider.transform.IsChildOf(support.transform))
+                            return false;
+                    }
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -1813,6 +2318,7 @@ namespace TumbangPreso
 
         private void Update()
         {
+            ExpireLoadedAffinity();
             if (State != SlipperState.Loose) return;
             if (!NetAuthority.ShouldResolve()) return;
 
@@ -1820,7 +2326,7 @@ namespace TumbangPreso
             if (_reachSweepAccum < 0.5f) return;
             _reachSweepAccum = 0.0f;
 
-            if (transform.position.y <= ReachablePlaneY() + Balance.SlipperMaxRestReach) return;
+            if (!NeedsHeightRecovery(transform.position)) return;
 
             Vector3 mark = OwnerMark();
             transform.position = new Vector3(mark.x, GroundY(mark) + RestHeight, mark.z);

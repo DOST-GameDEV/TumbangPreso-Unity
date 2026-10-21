@@ -1,0 +1,8 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: Expected UI state did not arrive.\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__83.MoveNext () [0x00069] in <55ce0830d2d745fb8e2288d20528483c>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__76.MoveNext () [0x00054] in <55ce0830d2d745fb8e2288d20528483c>:0 ",
+    "stages": [
+        "Classic complete default match, four active input writers"
+    ],
+    "frameWindows": []
+}

@@ -1,0 +1,9 @@
+{
+  "fixture": "frozen CareerAndCloudCodeTests.candidate.cs",
+  "profile": "social-cache-owner1002",
+  "stoppingCondition": "Fresh XML with11 social cases and terminal guard process; do not broaden suite",
+  "expectedCases": 11,
+  "question": "Does the prior SocialStore expose another owner cache, drop owner refresh, and lack guest/offline service guards?",
+  "source": "frozen SocialStore.baseline.cs",
+  "retryCount": 0
+}

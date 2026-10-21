@@ -1,0 +1,24 @@
+{
+  "source": "70a600a1657438399caa02de1aa8db88df0033d8",
+  "platform": "Linux x86_64 OpenGL core llvmpipe",
+  "profile": "cloud70aBoot, isolated XDG config/data/cache",
+  "observations": [
+    "Cold boot loading screen visible",
+    "Sign-up/login screen and owner logo rendered",
+    "Guest action reached supplied title artwork",
+    "Click-to-continue reached Home menu",
+    "Mode picker \u2192 Practice \u2192 Training accepted; Eskinita load in progress",
+    "Eskinita training world and HUD rendered without missing-shader pink surfaces",
+    "Desktop W input moved the player; exact speed not measured",
+    "Escape opened training controls; Leave returned Home",
+    "Quit Game shut down normally: exit0,371.3seconds, no new OOM"
+  ],
+  "limitations": [
+    "Built-in PLAYTEST_TOPUP displays999999, not a wallet award receipt",
+    "No audio device: FMOD runs silent software output",
+    "Wire socket connections refused in this cloud environment; online not qualified",
+    "Bound X11 CUA input had no observed effect; desktop pointer input worked",
+    "Native screen1364x1024, source defaults overrode1280x720 command-line preference"
+  ],
+  "characterCheck": "Training BASILIO label, dante source portrait, green outfit and earth skill icons agree. Earlier suspicion from visual identity recollection was disproven by actual portrait inspection."
+}

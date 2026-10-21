@@ -1,0 +1,24 @@
+{
+  "phase": "final",
+  "preparedUtc": "2026-10-02T07:08:37.3462416Z",
+  "expectedCases": 3,
+  "testFilter": "TumbangPreso.PlayTests.RecordChoiceFocusTests",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/RecordChoice.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\record-choice-focus1002\\frozen\\RecordChoice.candidate.cs",
+      "sha256": "3CCD25757ED0943310454E95828101077913B9A9763909062A8D3EE43AC1CF9E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/RecordChoiceFocusTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\record-choice-focus1002\\frozen\\RecordChoiceFocusTests.cs",
+      "sha256": "406FDCD5897E56B4428A9810CFD5059D7DCCDABB9E47B61662ECFF61C453904A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/RecordChoiceFocusTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\record-choice-focus1002\\frozen\\RecordChoiceFocusTests.cs.meta",
+      "sha256": "72715D2551836C9D27B4114855C21D766B09A265FAD117D2C88A6AF3615C7A38"
+    }
+  ],
+  "protectedCount": 1294
+}

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.4255741">
+  <test-suite type="TestSuite" id="2352" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1096" result="Failed" site="Child" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.425574" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2346" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1096" result="Failed" site="Child" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.413915" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22436" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2347" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1096" result="Failed" site="Child" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.411169" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2348" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1096" result="Failed" site="Child" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.408711" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1113" name="BotCompanionObservationTests" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.281346" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1114" name="AnUnseenActorHasNoPositionWhileHaunted" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.AnUnseenActorHasNoPositionWhileHaunted" methodname="AnUnseenActorHasNoPositionWhileHaunted" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1911451866" result="Failed" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.145480" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Unknown actor position fell back to live truth.
+  Expected: null
+  But was:  (6.00, 0.00, 6.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.AnUnseenActorHasNoPositionWhileHaunted () [0x00016] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:49
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1117" name="AnUnseenReplacementCannotInheritADeadCompanionsMemory" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.AnUnseenReplacementCannotInheritADeadCompanionsMemory" methodname="AnUnseenReplacementCannotInheritADeadCompanionsMemory" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1600781894" result="Failed" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.037505" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Unseen replacement inherited or exposed a position.
+  Expected: null
+  But was:  (10.00, 0.00, 10.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.AnUnseenReplacementCannotInheritADeadCompanionsMemory () [0x00086] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:79
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1116" name="HauntedRemembersOldPositionsWithoutTrackingUnseenMovement" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.HauntedRemembersOldPositionsWithoutTrackingUnseenMovement" methodname="HauntedRemembersOldPositionsWithoutTrackingUnseenMovement" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1378925783" result="Failed" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.041859" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Blind memory followed live distant movement.
+  Expected: (2.00, 0.00, 0.00)
+  But was:  (6.00, 0.00, 6.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.HauntedRemembersOldPositionsWithoutTrackingUnseenMovement () [0x00084] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:67
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1115" name="HauntedSelectorsCannotAcquireAFarActor" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.HauntedSelectorsCannotAcquireAFarActor" methodname="HauntedSelectorsCannotAcquireAFarActor" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1372419575" result="Failed" start-time="2026-10-01 05:52:07Z" end-time="2026-10-01 05:52:07Z" duration="0.037414" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Tag selection sees through Haunted.
+  Expected: null
+  But was:  <Observed body 0 (TumbangPreso.CharacterMotor)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.HauntedSelectorsCannotAcquireAFarActor () [0x00016] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:56
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

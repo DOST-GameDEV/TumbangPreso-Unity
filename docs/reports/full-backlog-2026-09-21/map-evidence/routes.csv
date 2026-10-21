@@ -1,0 +1,63 @@
+map,mode,target,shoe_x,shoe_y,shoe_z,route_nodes,seconds,picked_up
+Eskinita,Classic,west wall,-7.840,0.166,-3.740,40,7.064,True
+Eskinita,Classic,east wall,7.660,0.166,-0.240,33,5.661,True
+Eskinita,Classic,south wall,-2.340,0.166,-17.240,57,10.278,True
+Eskinita,Classic,north wall,-0.840,0.166,17.260,20,2.880,True
+Eskinita,Classic,tree trunk,-6.840,0.166,-14.240,61,11.061,True
+BayanPlaza,Classic,west wall,-12.240,0.168,-0.240,42,7.443,True
+BayanPlaza,Classic,east wall,12.260,0.168,1.260,39,6.880,True
+BayanPlaza,Classic,south wall,-0.240,0.168,-12.240,42,7.539,True
+BayanPlaza,Classic,north wall,1.260,0.168,12.260,11,1.044,True
+BayanPlaza,Classic,monument,-8.240,0.168,-8.240,51,9.239,True
+IlalimNgTulay,Classic,west wall,-10.740,0.278,-3.240,46,8.259,True
+IlalimNgTulay,Classic,east wall,10.760,0.278,-0.240,39,6.880,True
+IlalimNgTulay,Classic,south wall,-0.240,0.066,-16.240,50,9.121,True
+IlalimNgTulay,Classic,north wall,-0.240,0.066,16.260,16,2.400,True
+IlalimNgTulay,Classic,guideway pillar,4.260,0.066,8.760,10,1.019,True
+IlalimNgTulay,Classic,Vendor_FruitCart,-10.240,0.278,10.260,23,3.962,True
+IlalimNgTulay,Classic,utility pole,9.760,0.278,10.260,24,3.582,True
+IlalimNgTulay,Classic,Vendor_ClothesAndCases,9.260,0.278,-16.240,68,12.599,True
+IlalimNgTulay,Classic,Vendor_FishballCart,-10.240,0.278,-13.240,64,11.820,True
+IlalimNgTulay,Classic,Vendor_ParesCounter,10.260,0.278,-5.240,48,8.661,True
+SaBubong,Classic,west wall,-18.490,0.926,21.860,62,11.659,True
+SaBubong,Classic,east wall,18.860,0.926,-0.140,54,10.138,True
+SaBubong,Classic,south wall,18.860,0.926,-21.490,96,18.480,True
+SaBubong,Classic,north wall,-0.140,0.926,21.860,26,4.681,True
+SaBubong,Classic,floating pool stock 6,-14.140,0.106,5.860,60,13.339,True
+SaBubong,Classic,floating pool stock 12,-15.140,0.106,11.860,74,18.098,True
+SaBubong,Classic,pool surround,-10.640,0.106,-0.140,40,7.039,True
+SaBubong,Classic,shade supports,-8.140,0.166,-6.640,48,8.620,True
+SaBubong,Classic,tabletop,-10.100,1.046,-9.650,60,11.399,True
+SaBubong,Classic,stairhead,7.860,0.166,15.860,32,5.319,True
+SaBubong,Classic,water tank,-3.140,0.166,18.360,26,4.281,True
+Eskinita,HeroStrike,west wall,-7.840,0.166,-3.740,40,6.743,True
+Eskinita,HeroStrike,east wall,7.660,0.166,-0.240,33,5.381,True
+Eskinita,HeroStrike,south wall,-2.340,0.166,-17.240,57,9.780,True
+Eskinita,HeroStrike,north wall,-0.840,0.166,17.260,20,2.741,True
+Eskinita,HeroStrike,tree trunk,-6.840,0.166,-14.240,61,10.540,True
+BayanPlaza,HeroStrike,west wall,-12.240,0.168,-0.240,42,7.083,True
+BayanPlaza,HeroStrike,east wall,12.260,0.168,1.260,39,6.559,True
+BayanPlaza,HeroStrike,south wall,-0.240,0.168,-12.240,42,7.176,True
+BayanPlaza,HeroStrike,north wall,1.260,0.168,12.260,11,0.978,True
+BayanPlaza,HeroStrike,monument,-8.240,0.168,-8.240,51,8.800,True
+IlalimNgTulay,HeroStrike,west wall,-10.740,0.278,-3.240,46,7.843,True
+IlalimNgTulay,HeroStrike,east wall,10.760,0.278,-0.240,39,6.540,True
+IlalimNgTulay,HeroStrike,south wall,-0.240,0.066,-16.240,50,8.681,True
+IlalimNgTulay,HeroStrike,north wall,-0.240,0.066,16.260,16,2.281,True
+IlalimNgTulay,HeroStrike,guideway pillar,-4.240,0.066,8.760,9,0.963,True
+IlalimNgTulay,HeroStrike,Vendor_ParesCounter,10.260,0.278,-5.240,48,8.242,True
+IlalimNgTulay,HeroStrike,utility pole,9.760,0.278,10.260,24,3.420,True
+IlalimNgTulay,HeroStrike,Vendor_ClothesAndCases,9.260,0.278,-16.240,68,12.000,True
+IlalimNgTulay,HeroStrike,Vendor_FruitCart,-10.240,0.278,10.260,23,3.786,True
+IlalimNgTulay,HeroStrike,Vendor_FishballCart,-10.240,0.278,-13.240,64,11.261,True
+SaBubong,HeroStrike,west wall,-18.490,0.926,21.860,62,11.132,True
+SaBubong,HeroStrike,east wall,18.860,0.926,-0.140,54,9.660,True
+SaBubong,HeroStrike,south wall,18.860,0.926,-21.490,96,17.601,True
+SaBubong,HeroStrike,north wall,-0.140,0.926,21.860,26,4.460,True
+SaBubong,HeroStrike,floating pool stock 6,-14.140,0.106,5.860,60,12.717,True
+SaBubong,HeroStrike,floating pool stock 12,-15.140,0.106,11.860,74,17.260,True
+SaBubong,HeroStrike,stairhead,7.860,0.166,15.860,32,5.080,True
+SaBubong,HeroStrike,pool surround,-10.640,0.166,-0.590,40,6.699,True
+SaBubong,HeroStrike,shade supports,-12.140,0.166,-6.640,56,9.300,True
+SaBubong,HeroStrike,tabletop,-10.100,1.046,-9.650,60,10.838,True
+SaBubong,HeroStrike,water tank,-3.140,0.166,18.360,26,4.059,True

@@ -1,0 +1,26 @@
+{
+  "sourceRef": "48c2d4df05f7ba0076ca7b4c75234f3b4424e0e4",
+  "profile": "pc-vector-logo1004",
+  "filter": "TumbangPreso.PlayTests.OwnerUiAuthoringTests.OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-vector-logo1004",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.OwnerUiAuthoringTests.OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\logo-vector1004\\native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\logo-vector1004\\native\\editor.log"
+  ],
+  "pid": 11788
+}

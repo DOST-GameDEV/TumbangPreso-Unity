@@ -1,0 +1,10 @@
+{
+  "mainHead": "70a600a1657438399caa02de1aa8db88df0033d8",
+  "mainStatus": "",
+  "scope": "Internal Linux x86_64 standalone via existing GameBuilder checks; not a Windows release or tournament certification. Editor-only adapter is validation-owned; runtime source unchanged. Build stamp may have no Git identity because validation project is not a checkout.",
+  "editorAdapter": "Assets/TumbangPreso/Editor/CloudLinuxValidationBuild.cs",
+  "titlePixelsSynced": [
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-logo.png",
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-background.png"
+  ]
+}

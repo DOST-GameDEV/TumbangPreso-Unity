@@ -1,0 +1,105 @@
+{
+  "sourceCommit": "2c3f39dc97756b23f12239bdd7bba0429ab2e352",
+  "runtimeSha256": "539deda0cc4e225dcf653c55eacf70e5af4218bca12e9ff34f8d2eebea1ead74",
+  "originalGenericVerdict": false,
+  "originalCompletionVerdict": false,
+  "originalVerdictsUnchanged": true,
+  "naturalEndObserved": true,
+  "basis": "Both real SliceRunner.OnMatchEnded log lines, host rounds1-through8, terminal peer reports and matching winner/scores",
+  "peers": [
+    {
+      "side": "host",
+      "role": "HOST",
+      "localSlot": 0,
+      "mode": "HeroStrike",
+      "map": "IlalimNgTulay",
+      "round": 8,
+      "roundActive": "False",
+      "loggedRoundStarts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "naturalEndLine": "[Slice] match over. scores: 40 / 40 / 3500 / 3035. seat 2 wins",
+      "winner": 2,
+      "scores": [
+        40,
+        40,
+        3500,
+        3035
+      ],
+      "reportScores": [
+        40,
+        40,
+        3500,
+        3035
+      ],
+      "reportSha256": "55DBA0EFCFEF4B56BAFB41F2CD4AA016593ABE737C52E49252DDE8DFA39BF0E6",
+      "logSha256": "17FAA525A3D8B4952F5C3487D0F679AA8874B3492BCD5B93EC45A92FAEE06B2F"
+    },
+    {
+      "side": "client",
+      "role": "CLIENT",
+      "localSlot": 1,
+      "mode": "HeroStrike",
+      "map": "IlalimNgTulay",
+      "round": 8,
+      "roundActive": "False",
+      "loggedRoundStarts": [
+        1
+      ],
+      "naturalEndLine": "[Slice] match over. scores: 40 / 40 / 3500 / 3035. seat 2 wins",
+      "winner": 2,
+      "scores": [
+        40,
+        40,
+        3500,
+        3035
+      ],
+      "reportScores": [
+        40,
+        40,
+        3500,
+        3035
+      ],
+      "reportSha256": "E801AC80E449410BA0466A917720651F796E705ED84ECB9B2DF833DF81299ECE",
+      "logSha256": "9059ACC4E52F3FDDBC18A5B01B0A53C1E917BF6DBB2F59CA9B7F974F8E32CC51"
+    }
+  ],
+  "careerEvidence": {
+    "pathAndSchemaCorrect": true,
+    "hostHistoryCount": 0,
+    "hostQueueCount": 0,
+    "hostStartFlagRemains": true,
+    "clientCareerFileExists": false,
+    "qualified": false,
+    "sourceInference": "Direct NetBootstrap host/join bypasses SceneFlow.Networked=true, set only on its lobby branch; MatchStatsCollector records Online as SceneFlow.Networked && NetAuthority.IsNetworked; CareerStore.Record declines Online=false before identity matching.",
+    "normalUiLossEstablished": false,
+    "independentIdentityConcern": "Empty offline AccountPlayerId versus canonical local token needs its own normal-UI causal check; not concluded from this CLI run."
+  },
+  "scopeLimits": [
+    "Career persistence not qualified",
+    "Operator end-board/menu/rematch flow not qualified",
+    "No replay or rerun",
+    "No correction of the original generic or completion verdict",
+    "No live SDK/report/friendship/message call"
+  ],
+  "preservation": {
+    "existingFilesRestored": 0,
+    "sharedInputUnchanged": true
+  },
+  "ownedPids": [
+    21364,
+    5612
+  ],
+  "ownedPlayersStillRunning": [],
+  "rawHashes": {
+    "result": "4C2C13218B563F6FA4D793ABB7E30F4BB6E5546A868D2B93D3369BC5691D2BA4",
+    "completion": "FE0DFD0A21DA4C14FBE229121FE1575B04C0C8C5E7E8422CD2F8511874682A8B"
+  }
+}

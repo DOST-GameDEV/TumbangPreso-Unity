@@ -1,0 +1,13 @@
+{
+  "expectedCases": 6,
+  "expectedOriginalCauses": 2,
+  "controls": 4,
+  "retryCount": 0,
+  "question": "Does same-round new-match identity retire live history while preserving same-match and detached data?",
+  "candidate": {
+    "Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs": "4d46ff57c4b541d54be7244b70618ee4410e799b5760ed5930ba3506e2939721",
+    "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs": "2aafc766d5a96bc31dec2a8a4d6e2e2c791a95cb611f5e9021c1a84bad08fefa",
+    "Assets/TumbangPreso/Tests/ReplayMatchIdentityTests.cs": "f35c96eccd928ccbb8c8f8f0bdc8e3dffc67746279149fa91260a97b2e50440e",
+    "Assets/TumbangPreso/Tests/ReplayMatchIdentityTests.cs.meta": "8bcab9c7617fee9a055277ae78bcd524a307d0915e4664bfc98dfd7b523495f7"
+  }
+}

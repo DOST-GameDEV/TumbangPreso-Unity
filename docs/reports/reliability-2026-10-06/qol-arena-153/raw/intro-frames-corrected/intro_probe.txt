@@ -1,0 +1,21 @@
+PASS
+ARENA INTRO PROBE, Arena, three bots and an idle player in seat 1
+timeline (full): walk 3.60, glare 4.60, peak 6.70, reveal 6.95, taya 9.80, lands 13.10, spot 15.20, build 17.85, handoff 23.25, end 24.05
+the opening ran 24.05 s of 24.05 and ran out; 13 of 13 frames saved
+  beat Tunnel   began at   0.00 s on its clock (  0.00 s of real time after it was found)
+  beat Walk     began at   3.60 s on its clock (  3.60 s of real time after it was found)
+  beat Glare    began at   4.60 s on its clock (  4.60 s of real time after it was found)
+  beat Reveal   began at   7.02 s on its clock (  7.01 s of real time after it was found)
+  beat Taya     began at   9.80 s on its clock (  9.80 s of real time after it was found)
+  beat Spot     began at  15.20 s on its clock ( 15.20 s of real time after it was found)
+  beat Build    began at  17.85 s on its clock ( 17.85 s of real time after it was found)
+  beat Handoff  began at  23.25 s on its clock ( 23.25 s of real time after it was found)
+in the tunnel: stage out of sight True, listener muffled True; simulation held throughout True, input blocked throughout True
+the screens landed on seat 0 ("BASILIO"), showing seat 0; round 1's taya is seat 0
+the round went live 3.99 s after the opening ended (the gate's countdown is 3.5 s)
+stage: layout 2 applied (round 1's is 2), travelling False, colliders live True
+  seat 0 (BASILIO, bot): 0.00 m from its mark, floor under the mark at y 1.46, model 0.00 m from its body
+  seat 1 (CAREERORDERFIX): 0.00 m from its mark, floor under the mark at y 1.46, model 0.00 m from its body
+  seat 2 (ILYAS, bot): 0.00 m from its mark, floor under the mark at y 1.46, model 0.00 m from its body
+  seat 3 (BASILIO, bot): 0.00 m from its mark, floor under the mark at y 1.46, model 0.00 m from its body
+after: low pass filters on listeners 0, the opening still muffling False, still playing False

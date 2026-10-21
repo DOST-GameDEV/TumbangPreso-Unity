@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 07:12:53Z" end-time="2026-09-24 07:12:58Z" duration="5.0242636">
+  <test-suite type="TestSuite" id="1794" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="617" result="Passed" start-time="2026-09-24 07:12:53Z" end-time="2026-09-24 07:12:58Z" duration="5.024264" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1788" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="617" result="Passed" start-time="2026-09-24 07:12:53Z" end-time="2026-09-24 07:12:58Z" duration="5.007579" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14456" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1789" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="617" result="Passed" start-time="2026-09-24 07:12:53Z" end-time="2026-09-24 07:12:58Z" duration="5.000670" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1790" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="617" result="Passed" start-time="2026-09-24 07:12:53Z" end-time="2026-09-24 07:12:58Z" duration="4.994131" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1290" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="47" result="Passed" start-time="2026-09-24 07:12:53Z" end-time="2026-09-24 07:12:58Z" duration="4.968177" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1312" name="IlalimVulcanizingReview" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.IlalimVulcanizingReview" methodname="IlalimVulcanizingReview" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="298728859" result="Passed" start-time="2026-09-24 07:12:53Z" end-time="2026-09-24 07:12:58Z" duration="4.945535" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 325 of 2820 renderers, 0 with a roof variant.
+[NearFade] 3314 occluder nodes matched, 1621 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ilalim-vulcanizing-v2/Ilalim-vulcanizing-front-before.png
+[Play] wrote Logs/ilalim-vulcanizing-v2/Ilalim-vulcanizing-front-after.png
+[Play] wrote Logs/ilalim-vulcanizing-v2/Ilalim-vulcanizing-street-before.png
+[Play] wrote Logs/ilalim-vulcanizing-v2/Ilalim-vulcanizing-street-after.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

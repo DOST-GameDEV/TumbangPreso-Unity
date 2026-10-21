@@ -474,16 +474,20 @@ namespace TumbangPreso.PlayTests
             var pixels = new Texture2D(960, 540, TextureFormat.RGB24, false);
             var log = new StringBuilder("frame,real_seconds,game_seconds,speed,held,leg_angle,action,charge,spin,torso_x,arm_x,hand_y,hand_forward,hand_side,body_y\n");
             var field = typeof(CharacterAnimator).GetField("_current", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            bool simulationClock=Environment.GetEnvironmentVariable("TUMP_REVIEW_SIMULATION_CLOCK")=="1";
+            int previousCaptureRate=Time.captureFramerate;
+            if(simulationClock)Time.captureFramerate=20;
             float start = Time.realtimeSinceStartup, gameStart = Time.time, next = 0;
+            float Clock()=>simulationClock?Time.time-gameStart:Time.realtimeSinceStartup-start;
             int frame = 0;
             var late=camera.gameObject.AddComponent<LateMotionCapture>();
             var previous = camera.targetTexture;
             var previousActive = RenderTexture.active;
             try
             {
-                while (Time.realtimeSinceStartup - start < seconds)
+                while (Clock() < seconds)
                 {
-                    float t = Time.realtimeSinceStartup - start;
+                    float t = Clock();
                     drive?.Invoke(t);
                     yield return null;
                     if (t < next) continue;
@@ -573,6 +577,7 @@ namespace TumbangPreso.PlayTests
             }
             finally
             {
+                Time.captureFramerate=previousCaptureRate;
                 if(late!=null){late.Draw=null;Object.Destroy(late);}
                 camera.targetTexture = previous;
                 RenderTexture.active = previousActive;

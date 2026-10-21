@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 10:51:07Z" end-time="2026-10-01 10:51:07Z" duration="0.2091954">
+  <test-suite type="TestSuite" id="2423" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1162" result="Failed" site="Child" start-time="2026-10-01 10:51:07Z" end-time="2026-10-01 10:51:07Z" duration="0.209195" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2417" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1162" result="Failed" site="Child" start-time="2026-10-01 10:51:07Z" end-time="2026-10-01 10:51:07Z" duration="0.200003" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="291278" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2418" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1162" result="Failed" site="Child" start-time="2026-10-01 10:51:07Z" end-time="2026-10-01 10:51:07Z" duration="0.197375" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2419" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1162" result="Failed" site="Child" start-time="2026-10-01 10:51:07Z" end-time="2026-10-01 10:51:07Z" duration="0.194972" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1189" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="41" result="Failed" site="Child" start-time="2026-10-01 10:51:07Z" end-time="2026-10-01 10:51:07Z" duration="0.171928" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1191" name="CatchCameraRenderingBaselineOnKanto" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.CatchCameraRenderingBaselineOnKanto" methodname="CatchCameraRenderingBaselineOnKanto" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1276509543" result="Failed" start-time="2026-10-01 10:51:07Z" end-time="2026-10-01 10:51:07Z" duration="0.153204" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Failed to set desired worker count 0'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.StackTraceUtility:ExtractStackTrace ()
+TumbangPreso.PlayTests.CatchReconstructionTests/<CheckRendering>d__7:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs:60)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Failed to set desired worker count 0
+[CatchRenderReview] Released idle asset workers; previous desired=2
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

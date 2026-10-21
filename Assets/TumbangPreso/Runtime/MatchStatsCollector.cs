@@ -76,10 +76,13 @@ namespace TumbangPreso
 
         /// <summary>The current match's frame sample, so a probe can assert it filled.</summary>
         public FrameRateHistogram FrameRate => _frameRate;
+        /// <summary>Local state when the largest accepted frame sample was observed; not its cause.</summary>
+        public string SlowestFrameContext { get; private set; }
 
         private string _matchId = "";
         private string _mode = "";
         private string _mapId = "";
+        private bool _onlineAtStart;
         private int _roundsSeen;
         private float _matchClock;
         private bool _running;
@@ -184,7 +187,7 @@ namespace TumbangPreso
             // into the next one and report a number describing two matches on two different
             // maps. The first round of a match is the one moment every peer reaches, whatever
             // happened to the match before it.
-            if (round <= 1) _frameRate.Clear();
+            if (round <= 1) { _frameRate.Clear(); SlowestFrameContext = null; }
 
             // ⚠️⚠️ THE WITNESS STARTS ON EVERY PEER AT ROUND 1, ABOVE THE HOST GATE, FOR THE
             // SAME REASON TELEMETRY DOES. `ScoreWitness` is the peer's independent tally of what
@@ -249,6 +252,7 @@ namespace TumbangPreso
             _matchId = Guid.NewGuid().ToString("N");
             _mode = UI.SceneFlow.SelectedMode.ToString();
             _mapId = UI.SceneFlow.SelectedMap ?? "";
+            _onlineAtStart = UI.SceneFlow.Networked && NetAuthority.IsNetworked;
             _matchClock = 0.0f;
             _roundsSeen = 0;
             _roundsCommitted = 0;
@@ -428,7 +432,7 @@ namespace TumbangPreso
                 DurationSeconds = _matchClock,
                 PlayedUtc = DateTime.UtcNow.ToString("O"),
                 WinningSlot = winningSlot,
-                Online = NetAuthority.IsNetworked,
+                Online = _onlineAtStart,
 
                 // ⚠️⚠️ THE STAKES COME OFF THE QUEUE THAT PRODUCED THE ROOM, NOT OFF A
                 // TOGGLE. `INSPIRATION.md` § 3.1: the mode is the ruleset and the queue is the
@@ -536,7 +540,17 @@ namespace TumbangPreso
         private void SampleFrameRate(RoundDirector round)
         {
             if (!round.RoundActive || !Net.TelemetrySink.Enabled) return;
-            _frameRate.Add(Time.unscaledDeltaTime);
+            float seconds = Time.unscaledDeltaTime;
+            double previousMax = _frameRate.MaxSeconds;
+            long previousFrames = _frameRate.Frames;
+            _frameRate.Add(seconds);
+            if (_frameRate.Frames == previousFrames || seconds <= previousMax) return;
+            // Capture only on a new maximum, avoiding a string allocation on every frame.
+            SlowestFrameContext = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                "sample_frame={0}; observed_s={1:F3}; scene={2}; round={3}; scale={4:F3}; focused={5}; pause={6}; loading={7}; gc0_total={8}",
+                Time.frameCount, Time.realtimeSinceStartup, UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,
+                GameServices.Match?.RoundNumber ?? 0, Time.timeScale, Application.isFocused,
+                UI.Panel.AnyOpen, UI.Hub.HubLoading.Visible, GC.CollectionCount(0));
         }
 
         private void NoteMatchStartedToTelemetry()

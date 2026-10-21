@@ -1,0 +1,13 @@
+{
+  "source": "7a0ae33638a186cb865a6153c6b718b5392692db",
+  "build": "Builds/p7-chat-7a0ae3363/TumbangPreso.exe",
+  "sizeMb": 1278,
+  "buildSeconds": 157,
+  "dirty": true,
+  "diagnosticInputs": {
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Accessibility.cs": "f6a5617b6b16a28117f0a2bc3aa558c64642cfe180a32c22ce6c1b49dfc80ad9",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.cs": "6e58e52b9fc5fe9ee062c8d4eb4b98e29492f9e70ae882585eee58f1482b81e5",
+    "tools/run_ui_player_review.py": "4bcae689820cebe9a082452902089bbe9ff19206d0e4e8e9db686f58a0625a33"
+  },
+  "limits": "Build also regenerated four recovery/swimming animation assets and two original PNG meta whitespace changes; exact full diff retained in QUAL Logs/p7-chat-build/generated-and-source.patch. This is a native chat receipt, not a clean final artifact or whole-game visual approval."
+}

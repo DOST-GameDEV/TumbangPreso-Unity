@@ -145,12 +145,17 @@ namespace TumbangPreso.UI
             string pass = _password.text ?? "";
             string confirm = _ownerConfirm.text ?? "";
 
+            if (_credentialPairFault && (user != _serverUserValue || pass != _serverPassValue))
+            { _serverUserFault = _serverPassFault = null; _credentialPairFault = false; }
             if (_serverUserFault != null && user != _serverUserValue) _serverUserFault = null;
             if (_serverPassFault != null && pass != _serverPassValue) _serverPassFault = null;
 
-            string userFault = _serverUserFault ?? (_creating ? OwnerFieldFault(user, false) : null);
-            string passFault = _serverPassFault ?? (_creating ? OwnerFieldFault(pass, true) : null);
-            string confirmFault = _creating ? OwnerFieldFault(confirm, true, pass) : null;
+            string userFault = _serverUserFault ?? (_ownerSubmitAttempted && string.IsNullOrWhiteSpace(user)
+                ? (_creating ? "Enter a username." : "Enter your TUMP ID.") : _creating ? OwnerFieldFault(user.Trim(), false) : null);
+            string passFault = _serverPassFault ?? (_ownerSubmitAttempted && pass.Length == 0
+                ? "Enter a password." : _creating ? OwnerFieldFault(pass, true) : null);
+            string confirmFault = !_creating ? null : _ownerSubmitAttempted && confirm.Length == 0
+                ? "Confirm your password." : OwnerFieldFault(confirm, true, pass);
 
             _faultUser.text = userFault ?? "";
             _faultPass.text = passFault ?? "";
@@ -160,8 +165,8 @@ namespace TumbangPreso.UI
             bool passGood = pass.Length > 0 && passFault == null;
             bool confirmGood = _creating && confirm.Length > 0 && confirmFault == null;
 
-            _markUser.Show(user.Length == 0 ? OwnerFieldMark.State.None
-                : userFault != null ? OwnerFieldMark.State.Refused : OwnerFieldMark.State.Accepted);
+            _markUser.Show(userFault != null ? OwnerFieldMark.State.Refused
+                : string.IsNullOrWhiteSpace(user) ? OwnerFieldMark.State.None : OwnerFieldMark.State.Accepted);
 
             // ⚠️ THE CHIME IS THE EDGE, NOT THE STATE. A field is valid on every
             // keystroke after the one that fixed it, so playing on the state would
@@ -169,15 +174,51 @@ namespace TumbangPreso.UI
             if ((userGood && !_userWasGood) || (passGood && !_passWasGood) || (confirmGood && !_confirmWasGood))
                 MenuSfx.Valid();
             _userWasGood = userGood; _passWasGood = passGood; _confirmWasGood = confirmGood;
+            RefreshOwnerRefusalSummary();
+            PlaceOwnerTermsForFeedback();
         }
 
         private string _serverUserValue = "", _serverPassValue = "";
+        private bool _ownerSubmitAttempted, _credentialPairFault, _ownerLocalRefusal;
+        private const float TermsRestLift = 12;
+        private bool? _ownerTermsHasFeedback;
+
+        private void PlaceOwnerTermsForFeedback()
+        {
+            if (_ownerTermsRow == null || !_ownerTermsRow.activeSelf) return;
+            bool feedback = !string.IsNullOrEmpty(_faultUser.text) || !string.IsNullOrEmpty(_faultPass.text)
+                || !string.IsNullOrEmpty(_faultConfirm.text) || !string.IsNullOrEmpty(_error.text);
+            if (_ownerTermsHasFeedback == feedback) return;
+            _ownerTermsHasFeedback = feedback;
+            var position = new Vector2(TermsRow.x, -TermsRow.y + (feedback ? 0 : TermsRestLift));
+            var motion = _ownerTermsRow.GetComponent<OwnerUiMotion>();
+            if (motion != null) motion.SetRestPosition(position);
+            else ((RectTransform)_ownerTermsRow.transform).anchoredPosition = position;
+        }
+
+        private void RefreshOwnerRefusalSummary()
+        {
+            if (!_ownerLocalRefusal) return;
+            bool fields = !string.IsNullOrEmpty(_faultUser.text) || !string.IsNullOrEmpty(_faultPass.text)
+                || (_creating && !string.IsNullOrEmpty(_faultConfirm.text));
+            bool terms = _creating && !_ownerTerms.isOn;
+            _error.text = fields ? terms ? "Fix the highlighted fields and tick the terms checkbox."
+                : "Fix the highlighted fields." : terms ? "Read and accept the terms to create an account." : "";
+            if (!fields && !terms) _ownerLocalRefusal = false;
+        }
 
         private void ClearOwnerFaults()
         {
             _serverUserFault = _serverPassFault = null;
+            _ownerSubmitAttempted = _credentialPairFault = false;
+            _ownerLocalRefusal = false;
+            _ownerTermsHasFeedback = null;
             if (_faultUser != null) { _faultUser.text = ""; _faultPass.text = ""; _faultConfirm.text = ""; }
             if (_markUser != null) _markUser.Show(OwnerFieldMark.State.None);
+            _username?.GetComponent<OwnerFieldPulse>()?.Clear();
+            _password?.GetComponent<OwnerFieldPulse>()?.Clear();
+            _ownerConfirm?.GetComponent<OwnerFieldPulse>()?.Clear();
+            _ownerTermsRow?.GetComponent<OwnerConsentPulse>()?.Clear();
             _userWasGood = _passWasGood = _confirmWasGood = false;
         }
 
@@ -202,8 +243,11 @@ namespace TumbangPreso.UI
                                || lower.Contains("credential") || lower.Contains("not found")))
             {
                 _serverUserValue = _username.text ?? "";
+                _serverPassValue = _password.text ?? "";
+                _credentialPairFault = true;
                 _serverUserFault = "TUMP ID or password invalid.";
                 _faultUser.text = _serverUserFault;
+                PulseOwnerField(_username); PulseOwnerField(_password);
                 MenuSfx.Error();
                 return true;
             }
@@ -216,6 +260,7 @@ namespace TumbangPreso.UI
                 _serverUserFault = lower.Contains("taken") || lower.Contains("exists") || lower.Contains("in use")
                     ? "Username already taken." : message;
                 _faultUser.text = _serverUserFault;
+                PulseOwnerField(_username);
                 MenuSfx.Error();
                 return true;
             }
@@ -223,8 +268,11 @@ namespace TumbangPreso.UI
             if (lower.Contains("password"))
             {
                 _serverPassValue = _password.text ?? "";
-                _serverPassFault = message;
-                _faultPass.text = message;
+                _serverPassFault = _creating
+                    ? AccountRules.PasswordFault(_password.text) ?? "Password not accepted. Try a different one."
+                    : "TUMP ID or password invalid.";
+                _faultPass.text = _serverPassFault;
+                PulseOwnerField(_password);
                 MenuSfx.Error();
                 return true;
             }
@@ -301,22 +349,35 @@ namespace TumbangPreso.UI
             });
         }
 
-        private bool ValidateOwnerRegistration()
+        private static void PulseOwnerField(InputField field) => field?.GetComponent<OwnerFieldPulse>()?.Refuse();
+
+        private bool ValidateOwnerSubmission()
         {
-            if (!_creating) return true;
-            string fault = OwnerFieldFault(_username.text, false);
-            if (fault != null) { _faultUser.text = fault; _username.Select(); MenuSfx.Error(); return false; }
-            fault = OwnerFieldFault(_password.text, true);
-            if (fault != null) { _faultPass.text = fault; _password.Select(); MenuSfx.Error(); return false; }
-            fault = OwnerFieldFault(_ownerConfirm.text, true, _password.text);
-            if (fault != null || string.IsNullOrEmpty(_ownerConfirm.text))
+            // A deliberate retry replaces the last server verdict, but all local
+            // problems remain visible together until their own input is corrected.
+            _serverUserFault = _serverPassFault = null;
+            _credentialPairFault = false;
+            _ownerSubmitAttempted = true;
+            _error.text = "";
+            WatchOwnerFields();
+            InputField first = null;
+            if (!string.IsNullOrEmpty(_faultUser.text)) { PulseOwnerField(_username); first = _username; }
+            if (!string.IsNullOrEmpty(_faultPass.text)) { PulseOwnerField(_password); if (first == null) first = _password; }
+            if (_creating && !string.IsNullOrEmpty(_faultConfirm.text))
+            { PulseOwnerField(_ownerConfirm); if (first == null) first = _ownerConfirm; }
+            bool missingTerms = _creating && !_ownerTerms.isOn;
+            _ownerLocalRefusal = first != null || missingTerms;
+            RefreshOwnerRefusalSummary();
+            PlaceOwnerTermsForFeedback();
+            if (missingTerms) _ownerTermsRow.GetComponent<OwnerConsentPulse>()?.Refuse();
+            if (first != null)
             {
-                _faultConfirm.text = fault ?? "Passwords do not match.";
-                _ownerConfirm.Select(); MenuSfx.Error(); return false;
+                first.Select(); MenuSfx.Error(); return false;
             }
-            if (!_ownerTerms.isOn)
+            if (missingTerms)
             {
-                Fail("Read and accept the play and account guidelines to create an account.");
+                Fail("Read and accept the terms to create an account.");
+                _ownerTerms.Select();
                 return false;
             }
             return true;

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 15:14:34Z" end-time="2026-09-24 15:14:43Z" duration="9.2232001">
+  <test-suite type="TestSuite" id="1824" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="643" result="Passed" start-time="2026-09-24 15:14:34Z" end-time="2026-09-24 15:14:43Z" duration="9.223200" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1818" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="643" result="Passed" start-time="2026-09-24 15:14:34Z" end-time="2026-09-24 15:14:43Z" duration="9.201426" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14244" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1819" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="643" result="Passed" start-time="2026-09-24 15:14:34Z" end-time="2026-09-24 15:14:43Z" duration="9.184186" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1820" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="643" result="Passed" start-time="2026-09-24 15:14:34Z" end-time="2026-09-24 15:14:43Z" duration="9.166467" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1762" name="UltimateIntroductionProbe" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-24 15:14:34Z" end-time="2026-09-24 15:14:43Z" duration="9.142204" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1764" name="NemuKeepsBothCharactersFramedAcrossGrowthAndAspect" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe.NemuKeepsBothCharactersFramedAcrossGrowthAndAspect" methodname="NemuKeepsBothCharactersFramedAcrossGrowthAndAspect" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" seed="1154878115" result="Passed" start-time="2026-09-24 15:14:34Z" end-time="2026-09-24 15:14:43Z" duration="9.125697" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

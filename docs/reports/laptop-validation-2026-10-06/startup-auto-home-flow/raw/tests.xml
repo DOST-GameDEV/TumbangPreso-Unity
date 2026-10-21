@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 15:48:57Z" end-time="2026-10-06 15:49:52Z" duration="55.5958563">
+  <test-suite type="TestSuite" id="3403" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1953" result="Passed" start-time="2026-10-06 15:48:57Z" end-time="2026-10-06 15:49:52Z" duration="55.595856" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3395" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1953" result="Passed" start-time="2026-10-06 15:48:57Z" end-time="2026-10-06 15:49:52Z" duration="55.584318" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50716" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3396" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1953" result="Passed" start-time="2026-10-06 15:48:57Z" end-time="2026-10-06 15:49:52Z" duration="55.577571" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3399" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1951" result="Passed" start-time="2026-10-06 15:48:57Z" end-time="2026-10-06 15:49:52Z" duration="55.571538" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1790" name="HomeFlowTests" fullname="TumbangPreso.PlayTests.HomeFlowTests" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 15:48:57Z" end-time="2026-10-06 15:49:52Z" duration="55.449613" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1794" name="LoadingTipsStayInlineAndReadinessStillGatesTheTitle" fullname="TumbangPreso.PlayTests.HomeFlowTests.LoadingTipsStayInlineAndReadinessStillGatesTheTitle" methodname="LoadingTipsStayInlineAndReadinessStillGatesTheTitle" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" seed="1979485568" result="Passed" start-time="2026-10-06 15:48:57Z" end-time="2026-10-06 15:49:49Z" duration="52.305149" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Splash] no 'ShaderWarmup' variant collection, so shaders will compile at first use. Run TumbangPreso.EditorTools.ShaderWarmupCollection.RebuildForBuild.
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Splash] map asset warmup completed in 41.53 s.
+[Splash] preload retained 23067 assets in memory.
+[Splash] boot loading finished after 45.62 s (work-driven, no reading window).
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1791" name="LoadingTitleKeepsSuppliedPaintingAndHasNoContinueTarget" fullname="TumbangPreso.PlayTests.HomeFlowTests.LoadingTitleKeepsSuppliedPaintingAndHasNoContinueTarget" methodname="LoadingTitleKeepsSuppliedPaintingAndHasNoContinueTarget" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" seed="1057640202" result="Passed" start-time="2026-10-06 15:49:49Z" end-time="2026-10-06 15:49:50Z" duration="0.781720" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Title-clean-1080p cream source=252,211,159 pixel=248,199,143; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Title-clean-720p cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Title-clean-shortwide cream source=252,211,159 pixel=247,181,120; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1792" name="LoginArrivesAtHomeWhoseDoorsReachProfileAndLoadout" fullname="TumbangPreso.PlayTests.HomeFlowTests.LoginArrivesAtHomeWhoseDoorsReachProfileAndLoadout" methodname="LoginArrivesAtHomeWhoseDoorsReachProfileAndLoadout" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" seed="850072444" result="Passed" start-time="2026-10-06 15:49:50Z" end-time="2026-10-06 15:49:52Z" duration="2.350033" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Shot] wrote Logs/shots-runtime/Hub-loadout-from-home-v1.png
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

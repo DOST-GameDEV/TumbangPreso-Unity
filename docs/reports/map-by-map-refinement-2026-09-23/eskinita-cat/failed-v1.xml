@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 08:50:10Z" end-time="2026-09-24 08:50:21Z" duration="10.7941715">
+  <test-suite type="TestSuite" id="1800" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="623" result="Failed" site="Child" start-time="2026-09-24 08:50:10Z" end-time="2026-09-24 08:50:21Z" duration="10.794172" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1794" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="623" result="Failed" site="Child" start-time="2026-09-24 08:50:10Z" end-time="2026-09-24 08:50:21Z" duration="10.783182" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18420" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1795" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="623" result="Failed" site="Child" start-time="2026-09-24 08:50:10Z" end-time="2026-09-24 08:50:21Z" duration="10.781694" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1796" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="623" result="Failed" site="Child" start-time="2026-09-24 08:50:10Z" end-time="2026-09-24 08:50:21Z" duration="10.780597" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1029" name="AmbientLifeProbe" fullname="TumbangPreso.PlayTests.AmbientLifeProbe" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-24 08:50:10Z" end-time="2026-09-24 08:50:21Z" duration="10.757908" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1031" name="EskinitaTabbyInvestigatesWatchesAndRetreats" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.EskinitaTabbyInvestigatesWatchesAndRetreats" methodname="EskinitaTabbyInvestigatesWatchesAndRetreats" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="2042438141" result="Failed" start-time="2026-09-24 08:50:10Z" end-time="2026-09-24 08:50:21Z" duration="10.739861" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: String containing "panic=0.00"
+  But was:  "run|wait=2.22|panic=2.00|target=1|speed=0.69|near=True|yaw=308.8|peeing=False|peeCooldown=176.4|aerial=False|glide=False|legs=0|activity=Retreat|site=1|visits=1"
+]]></message>
+                <stack-trace><![CDATA[at NUnit.Framework.StringAssert.Contains (System.String expected, System.String actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at NUnit.Framework.StringAssert.Contains (System.String expected, System.String actual) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at TumbangPreso.PlayTests.AmbientLifeProbe+<EskinitaTabbyInvestigatesWatchesAndRetreats>d__11.MoveNext () [0x006bb] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\PlayMode\AmbientLifeProbe.cs:146
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/eskinita-cat-v1/Eskinita-cat-before.png
+[Play] wrote Logs/eskinita-cat-v1/Eskinita-cat-after.png
+[Play] wrote Logs/eskinita-cat-v1/Eskinita-cat-investigates.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

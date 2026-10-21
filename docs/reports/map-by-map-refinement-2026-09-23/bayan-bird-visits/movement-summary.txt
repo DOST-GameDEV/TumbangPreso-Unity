@@ -1,0 +1,6 @@
+maya before: farthest 5.00m; first hidden 2.054s
+maya after: farthest 36.93m; first hidden not hidden in recorded span
+kalapati before: farthest 5.00m; first hidden 2.306s
+kalapati after: farthest 35.24m; first hidden not hidden in recorded span
+fantail before: farthest 5.00m; first hidden 2.190s
+fantail after: farthest 37.30m; first hidden not hidden in recorded span

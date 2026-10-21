@@ -178,7 +178,10 @@ namespace TumbangPreso.PlayTests
             // run is the form floating on the wrong side with no column and no key art, which is
             // 🧑's screenshot exactly. `MenuKit.BuildCanvas` detaches now, so the same assertion
             // inverted is the regression guard.
-            var signInCanvas = Find("SignInCanvas");
+            // ⚠️ `OwnerSignInCanvas` IS THE ONE THE GAME BUILDS (`SignInScreen`), AND THIS
+            // LINE HELD THE NAME OF THE BUILDER UNDER IT. Both are accepted; the legacy
+            // builder is still compiled. § 124.11.
+            var signInCanvas = Find("OwnerSignInCanvas") ?? Find("SignInCanvas");
             Assert.IsNotNull(signInCanvas, "the sign-in screen built no canvas");
 
             Assert.IsTrue(signInCanvas.isRootCanvas,
@@ -189,7 +192,7 @@ namespace TumbangPreso.PlayTests
                 + "That is the build 🧑 opened on 2026-08-31. docs/TODO.md 111.2, and "
                 + "MenuKit.BuildCanvas is where the detach lives.");
 
-            var hubCanvas = Find("PlayerHubCanvas");
+            var hubCanvas = Find("OwnerPlayerHubCanvas") ?? Find("PlayerHubCanvas");
             if (hubCanvas != null)
                 Assert.IsTrue(hubCanvas.isRootCanvas,
                     "PlayerHubCanvas is nested, so the hub is laid out at the wrong scale too. "

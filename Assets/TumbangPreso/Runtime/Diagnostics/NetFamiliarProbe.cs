@@ -47,7 +47,7 @@ namespace TumbangPreso.Diagnostics
             probe._scenario=Argument("-tp-familiarcase")??"recall";
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(probe._path)));
             probe._writer=new StreamWriter(probe._path){AutoFlush=true};
-            probe._writer.WriteLine("time,elapsed,host,local,possessed,devouring,x,y,z,bodyX,bodyZ,fieldX,fieldZ,fieldCount,s2active,ultactive,s2charges,ultcharge,modelX,modelZ,sourceCharges,sourceX,sourceZ,stunLeft,mashPresses,tripPresses,petYaw");
+            probe._writer.WriteLine("time,elapsed,host,local,possessed,devouring,x,y,z,bodyX,bodyZ,fieldX,fieldZ,fieldCount,s2active,ultactive,s2charges,ultcharge,modelX,modelZ,sourceCharges,sourceX,sourceZ,stunLeft,mashPresses,tripPresses,petYaw,haunted0,haunted1,haunted2,haunted3,roundClock,ultPhase,drawX,drawZ");
         }
         private void Update()
         {
@@ -94,6 +94,14 @@ namespace TumbangPreso.Diagnostics
                 }
                 if(_scenario!="observe")_who.AbilitySystem.Kit.AddUltimateCharge(100);
                 if(_scenario!="observe" && (NetAuthority.IsHost || NetAuthority.LocalSlot==1))_who.Teleport(new Vector3(0,.12f,_scenario=="impact"?-2.6f:-8));
+                if(_scenario=="haunt" && NetAuthority.IsHost)
+                {
+                    // A dedicated transport fixture uses clear street positions.
+                    // Ordinary play and the older scenarios retain their spawn routes.
+                    round.PlayerAt(0)?.Teleport(new Vector3(2,.12f,-4));
+                    round.PlayerAt(2)?.Teleport(new Vector3(-2,.12f,-2));
+                    round.PlayerAt(3)?.Teleport(new Vector3(2,.12f,0));
+                }
                 Debug.Log($"[FamiliarProbe] prepared local={NetAuthority.LocalSlot} host={NetAuthority.IsHost} case={_scenario}");
             }
             var pet=_who.GetComponent<CharacterVisual>()?.Companion;
@@ -124,7 +132,7 @@ namespace TumbangPreso.Diagnostics
                     pet.SetPlayerInput(elapsed>=3.5f && elapsed<4.8f?Vector2.up*.6f:Vector2.zero);
                 }
             }
-            if(NetAuthority.LocalSlot==1 && _scenario=="staged")
+            if(NetAuthority.LocalSlot==1 && (_scenario=="staged" || _scenario=="haunt"))
                 _who.Intent.Set(Verb.Ultimate,elapsed>=5.5f && elapsed<5.68f);
             if(now>=_next)
             {
@@ -142,9 +150,14 @@ namespace TumbangPreso.Diagnostics
                     _who.AbilitySystem.Kit.Skill2.ChargesRemaining,F(_who.AbilitySystem.Kit.UltimateCharge),
                     F(_who.GetComponent<CharacterVisual>().ModelRoot.position.x),F(_who.GetComponent<CharacterVisual>().ModelRoot.position.z),
                     round.PlayerAt(0).AbilitySystem.Kit.Skill1.ChargesRemaining,
-                    F(round.PlayerAt(0).transform.position.x),F(round.PlayerAt(0).transform.position.z),F(_who.StunLeft),_who.StunMashPresses,_who.MashPresses,F(pet.transform.eulerAngles.y)}));
+                    F(round.PlayerAt(0).transform.position.x),F(round.PlayerAt(0).transform.position.z),F(_who.StunLeft),_who.StunMashPresses,_who.MashPresses,F(pet.transform.eulerAngles.y),
+                    F(round.PlayerAt(0)?.HauntedLeft??0),F(round.PlayerAt(1)?.HauntedLeft??0),
+                    F(round.PlayerAt(2)?.HauntedLeft??0),F(round.PlayerAt(3)?.HauntedLeft??0),
+                    F(round.TimeLeft),_who.AbilitySystem.Kit.Ultimate.AcceptedUltimatePhase,
+                    F(pet.transform.position.x),F(pet.transform.position.z)}));
             }
-            if(elapsed>(NetAuthority.IsHost?24:20)){_writer.Flush();Application.Quit();}
+            float finish=_scenario=="haunt"?(NetAuthority.IsHost?34:30):(NetAuthority.IsHost?24:20);
+            if(elapsed>finish){_writer.Flush();Application.Quit();}
         }
         private static string F(float value)=>value.ToString("F4",CultureInfo.InvariantCulture);
         private void OnDestroy(){_writer?.Dispose();}

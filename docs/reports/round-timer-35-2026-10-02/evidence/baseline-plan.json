@@ -1,0 +1,10 @@
+{
+  "head": "8bdffaa41e22927e86e5123751cd8005182306fc",
+  "expected_cases": 1,
+  "expected": "Actual ordinary break still reports5 rather than requested3.5; assertion fails before timing continuation",
+  "retry_count": 0,
+  "hashes": {
+    "Assets/TumbangPreso/Tests/PlayMode/ReplayRetentionTests.cs": "a35b3eec5fc16e41e34dec51de095b2538c6fb21b4f0035ab3b0170ce6ad3f0e",
+    "Assets/TumbangPreso/Tests/PlayMode/RoundBreakFreezeTests.cs": "ede821de2794839a839bfb01c79f1339610a149ab85e34fdd3f2996c7dc2fd8e"
+  }
+}

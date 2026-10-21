@@ -1,0 +1,26 @@
+{
+  "sourceRef": "4556ab376007b6a97a6a0457fc3cdfdef9c09e11",
+  "profile": "pc-humanlike-ai-all-map-live-matrix1006",
+  "filter": "TumbangPreso.PlayTests.AiDiagnosticProbe.OneClassicRoundAtRealSpeedIsFullyExplained;TumbangPreso.PlayTests.AiDiagnosticProbe.OneHeroRoundAtRealSpeedIsFullyExplained;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicBridgeLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroBridgeLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicKantoLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroKantoLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicCoveLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroCoveLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicEskinitaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroEskinitaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicPlazaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroPlazaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicRoofLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRoofLiveDecisions",
+  "expectedCases": 14,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-all-map-live-matrix1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiDiagnosticProbe.OneClassicRoundAtRealSpeedIsFullyExplained;TumbangPreso.PlayTests.AiDiagnosticProbe.OneHeroRoundAtRealSpeedIsFullyExplained;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicBridgeLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroBridgeLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicKantoLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroKantoLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicCoveLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroCoveLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicEskinitaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroEskinitaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicPlazaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroPlazaLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.ClassicRoofLiveDecisions;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRoofLiveDecisions",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\all-map-live-matrix\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\all-map-live-matrix\\editor.log"
+  ],
+  "pid": 45096
+}

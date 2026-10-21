@@ -1,0 +1,29 @@
+{
+  "pid": 43816,
+  "source": "8c48b58f077c6add0cca32ea543e49dd4ad2789e",
+  "packetKind": "candidate",
+  "expected": 3,
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\card-import-candidate1-direct1005",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.UiCardImportQualityTests",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\card-import-candidate1-direct1005\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\card-import-candidate1-direct1005\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}

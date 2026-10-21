@@ -1,0 +1,9 @@
+{
+  "source": "023c43c501f13f305d00b96861c46d26cf20cc0c",
+  "checks": {
+    "Assets/TumbangPreso/Tests/PlayMode/SessionRestartTests.cs": true,
+    "Assets/TumbangPreso/Runtime/Net/Matchmaker.cs": true
+  },
+  "retry": 0,
+  "scope": "Native Matchmaker lifecycle with faulted injected startup dependency; not Relay/WAN/actual-peer outage evidence"
+}

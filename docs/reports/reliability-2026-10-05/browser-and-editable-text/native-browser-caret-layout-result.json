@@ -1,0 +1,42 @@
+{
+  "sourceRef": "c526bcc5da2943cb2c897197a6364a193ddf40b3",
+  "profile": "pc-browser-caret-layout1005",
+  "filter": "TumbangPreso.PlayTests.UiBrowserFeedbackReview",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-browser-caret-layout1005",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.UiBrowserFeedbackReview",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-browser-caret-layout\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-browser-caret-layout\\editor.log"
+  ],
+  "pid": 22592,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.UiBrowserFeedbackReview.ActualJoinViewRefreshesQueryStatusAndKeepsCodeCaretInsideField",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19310,
+  "terminal": true
+}

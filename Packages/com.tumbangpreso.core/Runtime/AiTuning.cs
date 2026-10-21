@@ -157,6 +157,16 @@ namespace TumbangPreso.Core
     /// </summary>
     public static class AiTuning
     {
+        // Amihan (2026-09-25). Reaches derived from her kit rather than picked: the dash covers
+        // `AmihanRules.QuickDashDistance` and hits within `QuickDashHitRadius` of its line; the gale
+        // rolls `WhirlwindTravel` but a carrier more than 8 m out has time to see it and step off. (8 m was measured
+        // against the band 3.2 m wide; the whirlwind is `2 x WhirlwindRadius` wide, so stepping off it is further and
+        // the reach grows by the difference in half widths.)
+        public const float AmihanDashReach = AmihanRules.QuickDashDistance - 0.5f;
+        public const float AmihanGaleReach = 8.0f + (AmihanRules.WhirlwindRadius - 1.6f);
+        /// <summary>How close the taya has to be before Updraft is worth its 45 s.</summary>
+        public const float AmihanUpdraftThreat = 5.0f;
+
         public static readonly IReadOnlyDictionary<Difficulty, AiPersonality> Tiers =
             new Dictionary<Difficulty, AiPersonality>
             {
@@ -164,7 +174,7 @@ namespace TumbangPreso.Core
                     react: 0.55f, think: 0.34f, lead: 0.00f, aimError: 1.75f,
                     aimSettle: 99.0f, powerMargin: 1.04f, lanePatience: 0.0f, spacing: 0.15f,
                     fetchCaution: 0.0f, sabotage: 0.0f, intercept: 0.0f, camp: 0.0f,
-                    lungeRange: 1.9f, lungeCone: 55.0f, dodge: 0.0f, sprintReserve: 0.0f,
+                    lungeRange: Combat.LungeReach() - 0.4f, lungeCone: 55.0f, dodge: 0.0f, sprintReserve: 0.0f,
                     mistake: 0.30f,
                     // ⚠️ THE KID IS DISTRACTIBLE, NOT SOCIABLE. `Lapse` is the highest of the
                     // three because a lapse IS inattention and that is what this tier is. `Flair`
@@ -176,7 +186,7 @@ namespace TumbangPreso.Core
                     react: 0.30f, think: 0.24f, lead: 0.45f, aimError: 1.45f,
                     aimSettle: 1.40f, powerMargin: 1.18f, lanePatience: 1.1f, spacing: 0.60f,
                     fetchCaution: 3.2f, sabotage: 0.35f, intercept: 0.60f, camp: 0.45f,
-                    lungeRange: 2.6f, lungeCone: 34.0f, dodge: 0.55f, sprintReserve: 0.25f,
+                    lungeRange: Combat.LungeReach() + 0.3f, lungeCone: 34.0f, dodge: 0.55f, sprintReserve: 0.25f,
                     mistake: 0.10f,
                     // ⚠️⚠️ NORMAL IS THE MOST HUMAN TIER ON PURPOSE AND THESE THREE ROWS ARE
                     // WHERE THAT IS WRITTEN DOWN. 🧑 2026-08-28 asked for exactly that. It taunts
@@ -188,7 +198,7 @@ namespace TumbangPreso.Core
                     react: 0.14f, think: 0.16f, lead: 0.85f, aimError: 1.10f,
                     aimSettle: 0.80f, powerMargin: 1.32f, lanePatience: 2.2f, spacing: 1.00f,
                     fetchCaution: 5.0f, sabotage: 0.85f, intercept: 1.00f, camp: 1.00f,
-                    lungeRange: 3.1f, lungeCone: 28.0f, dodge: 1.00f, sprintReserve: 0.45f,
+                    lungeRange: Combat.LungeReach() + 0.8f, lungeCone: 28.0f, dodge: 1.00f, sprintReserve: 0.45f,
                     mistake: 0.02f,
                     // ⚠️ ASTIG STILL LAPSES AND STILL CELEBRATES, FOR THE REASON `Mistake` IS NOT
                     // ZERO HERE EITHER: a bot that never looks away and never plays to the crowd
@@ -1120,6 +1130,109 @@ namespace TumbangPreso.Core
         public const float HopChance = 0.55f;
 
         // -------------------------------------------------------------------
+        // § THE EDGE SENSE
+        //
+        // ⚠️⚠️ ONLY READ WHILE `AIController.EdgeSense` IS ON, which is the Arena map and nothing
+        // else (`docs/ARENA_MAP_BRIEF.md`, the design's point 5). A bot steers in a straight
+        // line on a flat plane, and that map is platforms with open edges over a pit, so the
+        // bot feels for floor in front of its feet before it presses a movement key.
+        //
+        // ⚠️ THE NUMBERS ARE SIZED AGAINST THE BODY AND THE STAGE, NOT PICKED FOR FEEL. The
+        // capsule is 0.35 m in radius and 1.6 m tall with a 0.3 m step and a 45 degree slope
+        // (`MatchInstaller.BuildSeat`), `Balance.Friction` is 30, and the narrowest ramp or
+        // bridge on the stage is 2.5 m wide.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The closest ground probe ahead of the body, in metres.
+        ///
+        /// ⚠️ IT EXISTS FOR THE TURN, NOT FOR THE WALK. A body walking forward has already swept
+        /// the ground between its feet and <see cref="EdgeProbeAhead"/> on earlier frames. A
+        /// heading it has just turned onto was never swept, so a notch in the first stride
+        /// would go unseen with the 0.9 m probe alone.
+        /// </summary>
+        public const float EdgeProbeNear = 0.45f;
+
+        /// <summary>
+        /// The probe that decides whether a heading may be walked, in metres ahead.
+        ///
+        /// ⚠️ 0.9 IS THE STOPPING DISTANCE, WITH ROOM. A walk is at most `DefenderWalkSpeed`
+        /// 3.75 m/s, which `Friction` 30 stops in 0.23 m, and the sprint is already off by the
+        /// time this probe fails because <see cref="EdgeProbeFar"/> failed first.
+        /// </summary>
+        public const float EdgeProbeAhead = 0.9f;
+
+        /// <summary>
+        /// The probe that takes the sprint key away, in metres ahead.
+        ///
+        /// ⚠️ IT NEVER TURNS THE BODY. `DefenderRunSpeed` 7.5 m/s needs 0.94 m to stop, which
+        /// is longer than <see cref="EdgeProbeAhead"/>, so a bot that could still be sprinting
+        /// when the near probe failed would slide off. 1.8 m leaves the run 0.9 m to become a
+        /// walk before the turn is asked for.
+        /// </summary>
+        public const float EdgeProbeFar = 1.8f;
+
+        /// <summary>How far to each side of the heading the floor is also asked for, at
+        /// <see cref="EdgeProbeAhead"/>. The capsule's radius, so a body turning onto a 2.5 m
+        /// bridge does it with its whole width on the bridge and not half of it.</summary>
+        public const float EdgeProbeHalfWidth = 0.35f;
+
+        /// <summary>How far above the feet a probe starts. ⚠️ THIS IS ALSO THE HIGHEST STEP
+        /// THAT COUNTS AS FLOOR: a ramp rising 0.9 m in the 0.9 m ahead and the top of a 1.2 m
+        /// dais are both under it, so neither is mistaken for a drop.</summary>
+        public const float EdgeProbeHeight = 1.5f;
+
+        /// <summary>How far below the feet ground still counts as floor. A 45 degree ramp
+        /// drops 0.9 m at the 0.9 m probe and a dais is 1.2 m, both inside it; the pit is at
+        /// least 3 m down and is not.</summary>
+        public const float EdgeDropMax = 1.3f;
+
+        /// <summary>How long a bot keeps turning the same way round a gap before it asks
+        /// whether that is getting it anywhere.</summary>
+        public const float EdgeSideSeconds = 1.5f;
+
+        /// <summary>
+        /// The longest a side is kept after it has been flipped.
+        ///
+        /// ⚠️ THE SPAN DOUBLES ON EVERY FLIP UP TO THIS. A bridge further along the edge than
+        /// one span's walk is otherwise never reached: the bot walks away from the goal for
+        /// 1.5 s, makes no progress by construction, turns back, and paces the same stretch
+        /// until the round ends.
+        /// </summary>
+        public const float EdgeSideSecondsMax = 6.0f;
+
+        /// <summary>How long after its last deflection a bot forgets which way it was
+        /// turning.</summary>
+        public const float EdgeSideForget = 0.6f;
+
+        /// <summary>How much closer to the goal a span has to end, in metres, for the side to
+        /// be kept.</summary>
+        public const float EdgeProgressMin = 0.5f;
+
+        /// <summary>The spacing of the probes that pull a goal with no floor under it back onto
+        /// the stage, and how many are tried along each line (6 m in all).</summary>
+        public const float EdgeGoalStep = 0.5f;
+        public const int EdgeGoalSteps = 12;
+
+        /// <summary>How far above and below the bot's own feet a GOAL may have its floor. Wider
+        /// than the walking probe on purpose: a goal on the next platform up or down is still
+        /// a place to stand, and the pit is still further down than this.</summary>
+        public const float EdgeGoalUp = 3.0f;
+        public const float EdgeGoalDown = 2.5f;
+
+        /// <summary>How long a pulled goal is reused before it is probed again, in seconds.
+        /// `Goto` runs every frame and the answer does not change that fast.</summary>
+        public const float EdgeGoalRefresh = 0.25f;
+
+        /// <summary>The spacing of the probes along a dash or a hop, in metres. Well under
+        /// the 2.5 m bridge, so a gap between two probes is not one a body falls into.</summary>
+        public const float EdgeLineStep = 0.6f;
+
+        /// <summary>How far past `Balance.LungeDistance` the floor is asked for before a
+        /// lunge is charged.</summary>
+        public const float EdgeLungeMargin = 0.5f;
+
+        // -------------------------------------------------------------------
         // § PLAYING TO THE CROWD
         //
         // ⚠️⚠️ 🧑 2026-08-28: *"make it randomly emote to taunt or when it does something
@@ -1168,12 +1281,10 @@ namespace TumbangPreso.Core
         /// <summary>
         /// How near a rival may be before an emote is refused outright, in metres.
         ///
-        /// ⚠️⚠️ IT IS SIZED OFF THE THING THAT PUNISHES IT, NOT PICKED. `Balance.LungeRange` is
-        /// what reaches a standing body, and `AiPersonality.LungeRange` tops out at 3.1 for
-        /// Astig; 6.0 is roughly twice that, so a taya has to cross a real distance before it can
-        /// answer a celebration, and the bot has the hold's own length to see it coming.
+        /// Preserve the previous 3.7m clearance beyond actual lunge reach. Longer
+        /// lunges must also move the safe celebration boundary outwards.
         /// </summary>
-        public const float EmoteSafeRadius = 6.0f;
+        public static readonly float EmoteSafeRadius = Combat.LungeReach() + 3.7f;
 
         /// <summary>
         /// The chance a bot celebrates something that just went its way, before the tier's

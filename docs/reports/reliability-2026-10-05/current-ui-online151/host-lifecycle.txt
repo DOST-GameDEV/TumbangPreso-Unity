@@ -1,0 +1,26 @@
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[NetApproval] peer=2 approved=True reason=
+[NetArrival] peer=2 seat=1 replaces=-1
+[NetDisconnect] peer=2 local=0 server=True connected=True
+[NetLifecycle] requested-stop server=True relay=True origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <e42256d10f4e4f86b90a766889d241c0>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.LeaveRoom () [0x00000] in <e42256d10f4e4f86b90a766889d241c0>:0 
+  at TumbangPreso.UI.Hub.HubLobby.Back () [0x00000] in <e42256d10f4e4f86b90a766889d241c0>:0 
+  at TumbangPreso.UI.Hub.TumpHub.Back () [0x00000] in <e42256d10f4e4f86b90a766889d241c0>:0 
+  at TumbangPreso.UI.Hub.HubKit+<>c__DisplayClass22_0.<Button>b__0 () [0x00000] in <e42256d10f4e4f86b90a766889d241c0>:0 
+  at UnityEngine.Events.InvokableCall.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.Events.UnityEvent.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.UI.Button.Press () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.UI.Button.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at TumbangPreso.UI.Hub.HubButton.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <e42256d10f4e4f86b90a766889d241c0>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute (UnityEngine.EventSystems.IPointerClickHandler handler, UnityEngine.EventSystems.BaseEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute[T] (UnityEngine.GameObject target, UnityEngine.EventSystems.BaseEventData eventData, UnityEngine.EventSystems.ExecuteEvents+EventFunction`1[T1] functor) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointerButton (UnityEngine.InputSystem.UI.PointerModel+ButtonState& button, UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointer (UnityEngine.InputSystem.UI.PointerModel& state) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.Process () [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.EventSystems.EventSystem.Update () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True

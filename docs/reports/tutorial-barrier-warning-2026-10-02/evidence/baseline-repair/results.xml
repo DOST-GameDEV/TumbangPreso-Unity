@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 16:57:48Z" end-time="2026-10-02 16:57:52Z" duration="4.5608825">
+  <test-suite type="TestSuite" id="2642" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1336" result="Failed" site="Child" start-time="2026-10-02 16:57:48Z" end-time="2026-10-02 16:57:52Z" duration="4.560883" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2636" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1336" result="Failed" site="Child" start-time="2026-10-02 16:57:48Z" end-time="2026-10-02 16:57:52Z" duration="4.540195" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="134383" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2637" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1336" result="Failed" site="Child" start-time="2026-10-02 16:57:48Z" end-time="2026-10-02 16:57:52Z" duration="4.526168" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2638" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1336" result="Failed" site="Child" start-time="2026-10-02 16:57:48Z" end-time="2026-10-02 16:57:52Z" duration="4.512442" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2515" name="TutorialLessonHonestyProbe" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-02 16:57:48Z" end-time="2026-10-02 16:57:52Z" duration="4.488251" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2516" name="HiddenPracticeCanDoesNotShowBarrierWarning" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe.HiddenPracticeCanDoesNotShowBarrierWarning" methodname="HiddenPracticeCanDoesNotShowBarrierWarning" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" seed="442376407" result="Failed" start-time="2026-10-02 16:57:48Z" end-time="2026-10-02 16:57:52Z" duration="4.475982" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The active offline hidden practice can cannot refuse an allowed throw, even with a cached warning.
+  Expected string length 0 but was 35. Strings differ at index 0.
+  Expected: <string.Empty>
+  But was:  "CANNOT THROW - WAIT FOR CAN BARRIER"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TutorialLessonHonestyProbe+<HiddenPracticeCanDoesNotShowBarrierWarning>d__8.MoveNext () [0x0023e] in /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs:131
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -33,8 +33,8 @@ namespace TumbangPreso
         /// <summary>
         /// The seat the PLAYER is driving, discovered rather than declared.
         ///
-        /// ⚠️ THE HUMAN'S UNIT IS EXACTLY THE ONE WITH NO AI ON IT, which this can read off the
-        /// seats directly and needs no cooperation from gameplay. `debug_player_switcher.gd`
+        /// The enabled input reader identifies the human even when a practice bot
+        /// is idle or possession adds temporary AI to the human body. `debug_player_switcher.gd`
         /// records what the hardcoded version cost there: a player who picked a different seat
         /// got, one frame into the match, their own character parked, the camera snapped
         /// elsewhere, and the unit they chose handed to a bot.
@@ -43,7 +43,14 @@ namespace TumbangPreso
         {
             get
             {
-                foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
+                var units = FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude);
+                foreach (var unit in units)
+                {
+                    var reader = unit.GetComponent<PlayerInputReader>();
+                    if (reader != null && reader.enabled) return unit.PlayerSlot;
+                }
+
+                foreach (var unit in units)
                 {
                     var ai = unit.GetComponent<AIController>();
                     if (ai == null || !ai.enabled) return unit.PlayerSlot;
@@ -63,8 +70,10 @@ namespace TumbangPreso
         /// gets the same guarantee without a deferred call.
         /// </summary>
         private bool _resolved;
+        private int _defaultSlot = FallbackSlot;
 
         private UI.DebugBar _bar;
+        private CameraSystem.SpectatorCamera _watcher;
 
         /// <summary>
         /// ⚠️⚠️ IT NO LONGER SELF-DESTRUCTS IN A RELEASE BUILD, AND THAT IS A DELIBERATE
@@ -101,27 +110,71 @@ namespace TumbangPreso
 
         private void Update()
         {
-            // ⚠️ NEVER IN A NETWORKED SESSION.
-            if (NetAuthority.IsNetworked) return;
+            // Seat shortcuts belong to gameplay, not a menu/rebinding dialog
+            // or a presentation that currently owns the controlled view.
+            if (NetAuthority.IsNetworked || UI.Panel.AnyOpen || PresentationClock.Held
+                || PresentationClock.BlocksInput) return;
 
             var kb = Keyboard.current;
             if (kb == null) return;
 
+            // These keys select POVs while watching. A solo debug handover must
+            // never turn that camera choice into control of a player's body.
+            if (GameLaunch.Spectator || (UI.Hud.Instance != null && UI.Hud.Instance.Spectating)) return;
+            bool seatKey = kb.f1Key.wasPressedThisFrame || kb.f2Key.wasPressedThisFrame
+                || kb.f3Key.wasPressedThisFrame || kb.f4Key.wasPressedThisFrame
+                || kb.f5Key.wasPressedThisFrame || kb.f6Key.wasPressedThisFrame;
+            if (!seatKey) return;
+            if (_watcher == null) _watcher = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+            if (_watcher != null && _watcher.isActiveAndEnabled) return;
+
             // The player's own seat, before any key is read, so a cycle starts from where they
             // actually are rather than from slot 0.
-            if (!_resolved) { DrivenSlot = DefaultSlot; _resolved = true; }
+            // A claimed bot has disabled AI too; discovery after handover cannot
+            // distinguish it from the original human. Retain the initial seat.
+            if (!_resolved) { _defaultSlot = DefaultSlot; DrivenSlot = _defaultSlot; _resolved = true; }
 
             if (kb.f1Key.wasPressedThisFrame) Assign(0);
             else if (kb.f2Key.wasPressedThisFrame) Assign(1);
             else if (kb.f3Key.wasPressedThisFrame) Assign(2);
             else if (kb.f4Key.wasPressedThisFrame) Assign(3);
-            else if (kb.f6Key.wasPressedThisFrame) Assign(DefaultSlot);
+            else if (kb.f6Key.wasPressedThisFrame) Assign(_defaultSlot);
             else if (kb.f5Key.wasPressedThisFrame) Cycle();
 
             // ⚠️ CYCLE MOVED OFF TAB ON 2026-08-23. Tab is the hold-to-read ability panel now
             // (`AbilityInfo` in the input map), and a debug tool must not sit on a key a player
             // presses in a real match: holding it to read a power would have silently handed
             // their body to a different seat. F5 is beside the four F-keys this already owns.
+
+            // ⚠️⚠️ TEMPORARY DEMO, CHANGED 2026-10-11, TO BE REMOVED (with `Visual/CloudDemo.cs` and the words
+            // "F12 cloud" in `DebugBar.KeysText`). F12 stands the bench's two columns of toon smoke on the
+            // ground six metres in front of the body being driven for about ten seconds, so the cloud can
+            // be seen in a match. It was put here to be seen under the game's ambient occlusion; the owner
+            // looked and said "i feel like an outline shader would work better instead of ao", so what it
+            // stands now is the cloud with its own line. Pressing again restarts it.
+            // It is a picture and nothing else: no rule reads it, nothing is sent, nobody is touched.
+            //
+            // ⚠️ THE KEY WAS THE ICE BLOOM'S UNTIL THEN (2026-10-10, owner: "try using this in some form of
+            // ability that i can see in game, just temporarily"). `Visual/IceBloomDemo.cs` is kept in the
+            // project, called by nothing, as the record of the first ice pass; to see it again, call
+            // `Visual.IceBloomDemo.PlayInFrontOf` here instead.
+            //
+            // ⚠️ F12, BECAUSE EVERY KEY BEFORE IT IS SPOKEN FOR. F8 is still written on the bar. F9 is
+            // the movement rework's switch on the prototype map. F10 is the key Windows gives to the
+            // editor's own menu bar, so in the editor, where this is played, a press would also wake the
+            // menu. F11 is `ToggleFullscreen` in the input map (`Resources/TumbangPreso.inputactions`),
+            // and a debug key on it would bloom every time a player changed their window.
+            //
+            // ⚠️ A LITERAL KEY OUTSIDE THE INPUT MAP, WITH NO PAD AND NO THUMB ANSWER, ON PURPOSE. It is
+            // a developer key in the same family as F1 to F7 here and in `Hud`, live only where they
+            // are: this component exists in a single-player match alone, the gate at the top of this
+            // method has already refused a networked session and an open menu, and
+            // `PracticeSandbox.Allowed` is F7's own condition.
+            if (kb.f12Key.wasPressedThisFrame && PracticeSandbox.Allowed)
+            {
+                var body = UnitAt(DrivenSlot);
+                if (body != null) Visual.CloudDemo.PlayInFrontOf(body.transform);
+            }
         }
 
         private void Cycle()
@@ -174,6 +227,9 @@ namespace TumbangPreso
                 if (ai != null) ai.enabled = !driven;
 
                 var reader = unit.GetComponent<PlayerInputReader>();
+                // Bot seats are constructed without a local reader. A solo handover
+                // must create that input owner before enabling control of the seat.
+                if (reader == null && driven) reader = unit.gameObject.AddComponent<PlayerInputReader>();
                 if (reader != null) reader.enabled = driven;
 
                 // ⚠️⚠️ THE NAME FOLLOWS THE BODY YOU ARE IN, AND THE PORT DROPPED THIS ENTIRELY.
@@ -238,7 +294,13 @@ namespace TumbangPreso
 
                 if (spectator != null) spectator.enabled = false;
 
-                UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.ExitSpectatorMode();
+                var hud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
+                hud?.Bind(claimed);
+                hud?.ExitSpectatorMode();
+                var pause = UnityEngine.Object.FindFirstObjectByType<PauseWatcher>();
+                if (pause != null) pause.Local = claimed;
+                var youCard = UnityEngine.Object.FindFirstObjectByType<UI.YouCard>();
+                if (youCard != null) { youCard.Bind(claimed); youCard.Refresh(); }
             }
         }
 

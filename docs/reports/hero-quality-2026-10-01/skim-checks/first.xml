@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 05:08:12Z" end-time="2026-10-01 05:08:35Z" duration="23.4130525">
+  <test-suite type="TestSuite" id="2346" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1089" result="Passed" start-time="2026-10-01 05:08:12Z" end-time="2026-10-01 05:08:35Z" duration="23.413053" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2340" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1089" result="Passed" start-time="2026-10-01 05:08:12Z" end-time="2026-10-01 05:08:35Z" duration="23.398405" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="233337" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2341" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1089" result="Passed" start-time="2026-10-01 05:08:12Z" end-time="2026-10-01 05:08:35Z" duration="23.389885" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2342" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1089" result="Passed" start-time="2026-10-01 05:08:12Z" end-time="2026-10-01 05:08:35Z" duration="23.381283" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1369" name="FrostbiteDeliveryTests" fullname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" classname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 05:08:12Z" end-time="2026-10-01 05:08:16Z" duration="3.383739" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1373" name="AnOrdinaryBodyBlockDoesNotFreeze" fullname="TumbangPreso.PlayTests.FrostbiteDeliveryTests.AnOrdinaryBodyBlockDoesNotFreeze" methodname="AnOrdinaryBodyBlockDoesNotFreeze" classname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" runstate="Runnable" seed="444322754" result="Passed" start-time="2026-10-01 05:08:12Z" end-time="2026-10-01 05:08:16Z" duration="3.369748" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1913" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-01 05:08:16Z" end-time="2026-10-01 05:08:35Z" duration="19.956516" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1920" name="SkimJoiningLoadRestoresOnceWithoutRecasting" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimJoiningLoadRestoresOnceWithoutRecasting" methodname="SkimJoiningLoadRestoresOnceWithoutRecasting" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1631810585" result="Passed" start-time="2026-10-01 05:08:16Z" end-time="2026-10-01 05:08:21Z" duration="5.088179" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1917" name="SkimLoadUsesHeldIdentityAndExpiresWithoutAnEmptyHandGrant" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimLoadUsesHeldIdentityAndExpiresWithoutAnEmptyHandGrant" methodname="SkimLoadUsesHeldIdentityAndExpiresWithoutAnEmptyHandGrant" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1327802693" result="Passed" start-time="2026-10-01 05:08:21Z" end-time="2026-10-01 05:08:26Z" duration="4.947856" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1918" name="SkimRealThrowContinuesTwoMetresThenBecomesNormallyLoose" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimRealThrowContinuesTwoMetresThenBecomesNormallyLoose" methodname="SkimRealThrowContinuesTwoMetresThenBecomesNormallyLoose" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1938823534" result="Passed" start-time="2026-10-01 05:08:26Z" end-time="2026-10-01 05:08:31Z" duration="4.980525" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1919" name="SkimStopsBeforeNewSolidCover" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimStopsBeforeNewSolidCover" methodname="SkimStopsBeforeNewSolidCover" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1056665914" result="Passed" start-time="2026-10-01 05:08:31Z" end-time="2026-10-01 05:08:35Z" duration="4.937415" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

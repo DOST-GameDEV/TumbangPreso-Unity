@@ -1,0 +1,61 @@
+{
+  "base": "1848e1dc3b8af5663358fa011a57339d53876996",
+  "native": {
+    "result": "Passed",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "0.239473",
+    "unity": "6000.5.8f1",
+    "platform": "WindowsEditor",
+    "requestedGraphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.SkillReceiptTests.VoodooBodyPrefixIsBoundedAndLeavesTheExistingAimTailIntact",
+      "result": "Passed",
+      "duration": "0.042843"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.SkillReceiptTests.VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot",
+      "result": "Passed",
+      "duration": "0.135823"
+    }
+  ],
+  "originalXmlSha256": "93AD098833BDE206A03B306DF2E177695F60188CFDC1072D2FEEDC70F7EF5FD7",
+  "minimumFreeBytes": 6754250752.0,
+  "frozenInputs": 206,
+  "nativeInputChurn": 0,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Voodoo.cs",
+      "sha256": "874AE15883C2CC96AF340091CD77059DCBF37B56CD04A4554889C56A9D8A8DB9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "B132D02C5D6C54F620CD56E7FD9BE348E63467A09CDA142422026C2E0BD501C8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "80E6A7C63F4EB7A89D85A6388A2DE95AC34F1E66D39088BD67D773DF7CE2495E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/VoodooBodySnapshot.cs",
+      "sha256": "6A64B355D5D962287FD92EBFD6D90D97A44BFA8F3DB94713CAE91DDD88802B3B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/VoodooBodySnapshot.cs.meta",
+      "sha256": "FFC122ADA31A4B4198D78471BBD25097B7C3839F3A82619E8FF4158F0FB135C7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "F70DA3BEFA49526F21C35DE62F7C4CE878EA438C2EBFC8119D1D1DF20E1C1ED3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "0F8E5001D17BBF97530234779FB80F36E738132D8856487FFAEBC9FC4C241567"
+    }
+  ]
+}

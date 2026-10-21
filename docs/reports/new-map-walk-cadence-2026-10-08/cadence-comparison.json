@@ -1,0 +1,242 @@
+[
+  {
+    "stage": "original",
+    "map": "IlalimNgTulay",
+    "seat": 0,
+    "samples": 525,
+    "rootMetres": 3.2243557918690064,
+    "animatedMetres": 4.766931328190001,
+    "maxFrameErrorMetres": 0.111284032,
+    "wholePathErrorMetres": 1.5425755363209945
+  },
+  {
+    "stage": "original",
+    "map": "IlalimNgTulay",
+    "seat": 1,
+    "samples": 526,
+    "rootMetres": 3.248525590833001,
+    "animatedMetres": 4.719719506909997,
+    "maxFrameErrorMetres": 0.126200467,
+    "wholePathErrorMetres": 1.471193916076996
+  },
+  {
+    "stage": "original",
+    "map": "IlalimNgTulay",
+    "seat": 2,
+    "samples": 526,
+    "rootMetres": 3.195834160796002,
+    "animatedMetres": 4.985540216240002,
+    "maxFrameErrorMetres": 0.151601329,
+    "wholePathErrorMetres": 1.7897060554440003
+  },
+  {
+    "stage": "original",
+    "map": "IlalimNgTulay",
+    "seat": 3,
+    "samples": 526,
+    "rootMetres": 3.2511812738982013,
+    "animatedMetres": 4.775146518190001,
+    "maxFrameErrorMetres": 0.1463582,
+    "wholePathErrorMetres": 1.5239652442917992
+  },
+  {
+    "stage": "original",
+    "map": "Kanto",
+    "seat": 0,
+    "samples": 592,
+    "rootMetres": 3.250328978217003,
+    "animatedMetres": 4.365164216740002,
+    "maxFrameErrorMetres": 0.00763888657,
+    "wholePathErrorMetres": 1.114835238522999
+  },
+  {
+    "stage": "original",
+    "map": "Kanto",
+    "seat": 1,
+    "samples": 592,
+    "rootMetres": 3.2528003690216973,
+    "animatedMetres": 4.3144960461299995,
+    "maxFrameErrorMetres": 0.008758606,
+    "wholePathErrorMetres": 1.0616956771083021
+  },
+  {
+    "stage": "original",
+    "map": "Kanto",
+    "seat": 2,
+    "samples": 593,
+    "rootMetres": 0.9987106325112302,
+    "animatedMetres": 4.564872956029998,
+    "maxFrameErrorMetres": 0.009251903,
+    "wholePathErrorMetres": 3.5661623235187676
+  },
+  {
+    "stage": "original",
+    "map": "Kanto",
+    "seat": 3,
+    "samples": 593,
+    "rootMetres": 3.2527055394171582,
+    "animatedMetres": 4.372231736450002,
+    "maxFrameErrorMetres": 0.008861465,
+    "wholePathErrorMetres": 1.1195261970328434
+  },
+  {
+    "stage": "original",
+    "map": "LagoonCove",
+    "seat": 0,
+    "samples": 876,
+    "rootMetres": 3.3037685335780025,
+    "animatedMetres": 6.469531674250002,
+    "maxFrameErrorMetres": 0.00779346,
+    "wholePathErrorMetres": 3.165763140672
+  },
+  {
+    "stage": "original",
+    "map": "LagoonCove",
+    "seat": 1,
+    "samples": 877,
+    "rootMetres": 3.305206791217802,
+    "animatedMetres": 6.402737966569999,
+    "maxFrameErrorMetres": 0.007653523,
+    "wholePathErrorMetres": 3.0975311753521972
+  },
+  {
+    "stage": "original",
+    "map": "LagoonCove",
+    "seat": 2,
+    "samples": 877,
+    "rootMetres": 2.496724131198403,
+    "animatedMetres": 6.763348427259996,
+    "maxFrameErrorMetres": 0.009428311,
+    "wholePathErrorMetres": 4.266624296061593
+  },
+  {
+    "stage": "original",
+    "map": "LagoonCove",
+    "seat": 3,
+    "samples": 878,
+    "rootMetres": 3.3052626956353706,
+    "animatedMetres": 6.486322856250003,
+    "maxFrameErrorMetres": 0.00850075949,
+    "wholePathErrorMetres": 3.1810601606146323
+  },
+  {
+    "stage": "candidate",
+    "map": "IlalimNgTulay",
+    "seat": 0,
+    "samples": 551,
+    "rootMetres": 3.2253629523249985,
+    "animatedMetres": 3.2253629515249993,
+    "maxFrameErrorMetres": 4.656613e-10,
+    "wholePathErrorMetres": 7.999991780138771e-10
+  },
+  {
+    "stage": "candidate",
+    "map": "IlalimNgTulay",
+    "seat": 1,
+    "samples": 552,
+    "rootMetres": 3.2488739181889974,
+    "animatedMetres": 3.2488738637099965,
+    "maxFrameErrorMetres": 9.81614e-07,
+    "wholePathErrorMetres": 5.447900086608115e-08
+  },
+  {
+    "stage": "candidate",
+    "map": "IlalimNgTulay",
+    "seat": 2,
+    "samples": 551,
+    "rootMetres": 3.1949195916340014,
+    "animatedMetres": 3.1949195209240004,
+    "maxFrameErrorMetres": 9.313226e-10,
+    "wholePathErrorMetres": 7.071000096559032e-08
+  },
+  {
+    "stage": "candidate",
+    "map": "IlalimNgTulay",
+    "seat": 3,
+    "samples": 534,
+    "rootMetres": 3.251096830111999,
+    "animatedMetres": 3.251096833022399,
+    "maxFrameErrorMetres": 9.81614e-07,
+    "wholePathErrorMetres": 2.9103999210633447e-09
+  },
+  {
+    "stage": "candidate",
+    "map": "Kanto",
+    "seat": 0,
+    "samples": 594,
+    "rootMetres": 3.2508718695169994,
+    "animatedMetres": 3.2508718700469994,
+    "maxFrameErrorMetres": 4.656613e-10,
+    "wholePathErrorMetres": 5.300000438523966e-10
+  },
+  {
+    "stage": "candidate",
+    "map": "Kanto",
+    "seat": 1,
+    "samples": 579,
+    "rootMetres": 3.2530802845544997,
+    "animatedMetres": 3.2530802236109,
+    "maxFrameErrorMetres": 1.36112794e-06,
+    "wholePathErrorMetres": 6.094359950026274e-08
+  },
+  {
+    "stage": "candidate",
+    "map": "Kanto",
+    "seat": 2,
+    "samples": 555,
+    "rootMetres": 0.9987945564989998,
+    "animatedMetres": 0.9987945327484992,
+    "maxFrameErrorMetres": 2.32830644e-10,
+    "wholePathErrorMetres": 2.3750500677266473e-08
+  },
+  {
+    "stage": "candidate",
+    "map": "Kanto",
+    "seat": 3,
+    "samples": 532,
+    "rootMetres": 3.2530068920511024,
+    "animatedMetres": 3.2530068888210004,
+    "maxFrameErrorMetres": 1.3615936e-06,
+    "wholePathErrorMetres": 3.230101963680454e-09
+  },
+  {
+    "stage": "candidate",
+    "map": "LagoonCove",
+    "seat": 0,
+    "samples": 774,
+    "rootMetres": 3.304121375748,
+    "animatedMetres": 3.3041213761940003,
+    "maxFrameErrorMetres": 4.656613e-10,
+    "wholePathErrorMetres": 4.4600012572004744e-10
+  },
+  {
+    "stage": "candidate",
+    "map": "LagoonCove",
+    "seat": 1,
+    "samples": 760,
+    "rootMetres": 3.3052943987872987,
+    "animatedMetres": 3.305294225528997,
+    "maxFrameErrorMetres": 1.879409e-06,
+    "wholePathErrorMetres": 1.732583014835143e-07
+  },
+  {
+    "stage": "candidate",
+    "map": "LagoonCove",
+    "seat": 2,
+    "samples": 738,
+    "rootMetres": 2.4967813473532985,
+    "animatedMetres": 2.496781287173399,
+    "maxFrameErrorMetres": 4.656613e-10,
+    "wholePathErrorMetres": 6.017989928608358e-08
+  },
+  {
+    "stage": "candidate",
+    "map": "LagoonCove",
+    "seat": 3,
+    "samples": 716,
+    "rootMetres": 3.3052840942820954,
+    "animatedMetres": 3.3052840956589957,
+    "maxFrameErrorMetres": 1.035165e-06,
+    "wholePathErrorMetres": 1.3769003714969585e-09
+  }
+]

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="18" result="Failed(Child)" total="18" passed="9" failed="9" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.0770276">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1284" result="Failed" site="Child" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.077028" total="18" passed="9" failed="9" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2577" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1284" result="Failed" site="Child" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.068530" total="18" passed="9" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20540" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2578" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1284" result="Failed" site="Child" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.066012" total="18" passed="9" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2579" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1284" result="Failed" site="Child" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.063837" total="18" passed="9" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1316" name="ClientMovementEffectPacketBoundsTests" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.050094" total="18" passed="9" failed="9" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1331" name="CompleteUnreadPayloadDecodesBeforeSeatRejection" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.033278" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1328" name="CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnImpactMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnImpactMsg&quot;)" methodname="CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="142051014" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.023182" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1329" name="CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnCarryMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnCarryMsg&quot;)" methodname="CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1708440357" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000813" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1330" name="CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnSyncFamiliarMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.CompleteUnreadPayloadDecodesBeforeSeatRejection(&quot;OnSyncFamiliarMsg&quot;)" methodname="CompleteUnreadPayloadDecodesBeforeSeatRejection" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="106330051" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000824" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1338" name="ForeignSenderAndHostLoopbackNeverDecode" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.003033" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1332" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,False)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,False)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="807186727" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000934" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1333" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,False)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,False)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1206137217" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000236" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1334" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,False)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,False)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1153899934" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000209" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1335" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,True)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnImpactMsg&quot;,True)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="393031905" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000185" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1336" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,True)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnCarryMsg&quot;,True)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="29475524" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000186" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1337" name="ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,True)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.ForeignSenderAndHostLoopbackNeverDecode(&quot;OnSyncFamiliarMsg&quot;,True)" methodname="ForeignSenderAndHostLoopbackNeverDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1092223167" result="Passed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000181" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1327" name="TrailingBytesAreRejectedBeforeDecode" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.006274" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1324" name="TrailingBytesAreRejectedBeforeDecode(&quot;OnImpactMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode(&quot;OnImpactMsg&quot;)" methodname="TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="678599541" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.004887" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 8
+  But was:  28
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode (System.String method) [0x00063] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:84
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1325" name="TrailingBytesAreRejectedBeforeDecode(&quot;OnCarryMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode(&quot;OnCarryMsg&quot;)" methodname="TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1913509421" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000404" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 8
+  But was:  32
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode (System.String method) [0x00063] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:84
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1326" name="TrailingBytesAreRejectedBeforeDecode(&quot;OnSyncFamiliarMsg&quot;)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode(&quot;OnSyncFamiliarMsg&quot;)" methodname="TrailingBytesAreRejectedBeforeDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="928543063" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000299" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 8
+  But was:  33
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TrailingBytesAreRejectedBeforeDecode (System.String method) [0x00063] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:84
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1323" name="TruncatedPayloadIsRejectedBeforePartialDecode" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.004172" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1317" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,8)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,8)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="395192945" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.001334" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnImpactMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000f4] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2281 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.Receive (System.String method, Unity.Netcode.FastBufferReader reader, System.UInt64 sender) [0x00018] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:46 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests+<>c__DisplayClass10_0.<TruncatedPayloadIsRejectedBeforePartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode (System.String method, System.Int32 length) [0x00075] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1318" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,27)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnImpactMsg&quot;,27)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="595066660" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000395" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnImpactMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000f4] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2281 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.Receive (System.String method, Unity.Netcode.FastBufferReader reader, System.UInt64 sender) [0x00018] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:46 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests+<>c__DisplayClass10_0.<TruncatedPayloadIsRejectedBeforePartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode (System.String method, System.Int32 length) [0x00075] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1319" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,8)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,8)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1664566947" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000353" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnCarryMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000b7] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2312 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.Receive (System.String method, Unity.Netcode.FastBufferReader reader, System.UInt64 sender) [0x00018] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:46 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests+<>c__DisplayClass10_0.<TruncatedPayloadIsRejectedBeforePartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode (System.String method, System.Int32 length) [0x00075] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1320" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,31)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnCarryMsg&quot;,31)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="469672676" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000492" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnCarryMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000b7] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2312 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.Receive (System.String method, Unity.Netcode.FastBufferReader reader, System.UInt64 sender) [0x00018] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:46 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests+<>c__DisplayClass10_0.<TruncatedPayloadIsRejectedBeforePartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode (System.String method, System.Int32 length) [0x00075] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1321" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,8)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,8)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1353749602" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000404" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSyncFamiliarMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000c2] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2254 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.Receive (System.String method, Unity.Netcode.FastBufferReader reader, System.UInt64 sender) [0x00018] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:46 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests+<>c__DisplayClass10_0.<TruncatedPayloadIsRejectedBeforePartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode (System.String method, System.Int32 length) [0x00075] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1322" name="TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,32)" fullname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode(&quot;OnSyncFamiliarMsg&quot;,32)" methodname="TruncatedPayloadIsRejectedBeforePartialDecode" classname="TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests" runstate="Runnable" seed="1882353406" result="Failed" start-time="2026-10-03 19:57:07Z" end-time="2026-10-03 19:57:07Z" duration="0.000335" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSyncFamiliarMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000c2] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2254 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.Receive (System.String method, Unity.Netcode.FastBufferReader reader, System.UInt64 sender) [0x00018] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:46 
+  at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests+<>c__DisplayClass10_0.<TruncatedPayloadIsRejectedBeforePartialDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ClientMovementEffectPacketBoundsTests.TruncatedPayloadIsRejectedBeforePartialDecode (System.String method, System.Int32 length) [0x00075] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ClientMovementEffectPacketBoundsTests.cs:72
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

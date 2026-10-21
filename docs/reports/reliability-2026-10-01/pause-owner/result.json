@@ -1,0 +1,10 @@
+{
+  "source": "9670e846ebde58081601af251ce703a94ad618b6",
+  "protocol": 126,
+  "baseline": "1 failure: current body not parked",
+  "final": "1/1 passed",
+  "inputCount": 752,
+  "inputDrift": [],
+  "toolingRepairs": 0,
+  "scope": "actual keyboard re-open after local seat rebind, current/former input state and online clock"
+}

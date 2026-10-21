@@ -1,0 +1,18 @@
+{
+  "name": "match-record",
+  "environment": "production",
+  "version": 6,
+  "published": "2026-10-04T07:31:24",
+  "codeSHA256": "365fbf99029e7212d587b88d2bb2da9f427758807c7da77f73c3f2be6bd0f2fe",
+  "canonicalSourceExact": true,
+  "parametersUnchanged": true,
+  "rollbackVersion": 5,
+  "versionsRetained": [
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ]
+}

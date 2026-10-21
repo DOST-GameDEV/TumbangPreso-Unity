@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 03:12:08Z" end-time="2026-09-27 03:12:17Z" duration="8.731889">
+  <test-suite type="TestSuite" id="1892" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="706" result="Passed" start-time="2026-09-27 03:12:08Z" end-time="2026-09-27 03:12:17Z" duration="8.731889" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1886" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="706" result="Passed" start-time="2026-09-27 03:12:08Z" end-time="2026-09-27 03:12:17Z" duration="8.723787" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55768" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1887" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="706" result="Passed" start-time="2026-09-27 03:12:08Z" end-time="2026-09-27 03:12:17Z" duration="8.721252" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1888" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="706" result="Passed" start-time="2026-09-27 03:12:08Z" end-time="2026-09-27 03:12:17Z" duration="8.718631" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1258" name="IceWorldSnapshotProbe" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-27 03:12:08Z" end-time="2026-09-27 03:12:17Z" duration="8.695263" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1260" name="RestoredPlantsBindTheirOwnersAndOneResetPreservesAnotherPlayersPlant" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.RestoredPlantsBindTheirOwnersAndOneResetPreservesAnotherPlayersPlant" methodname="RestoredPlantsBindTheirOwnersAndOneResetPreservesAnotherPlayersPlant" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="762296435" result="Passed" start-time="2026-09-27 03:12:08Z" end-time="2026-09-27 03:12:16Z" duration="7.215575" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1259" name="SnapshotReceiverRejectsPredictionsAndNewerEventsBeforeReplacingFields" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.SnapshotReceiverRejectsPredictionsAndNewerEventsBeforeReplacingFields" methodname="SnapshotReceiverRejectsPredictionsAndNewerEventsBeforeReplacingFields" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="58455012" result="Passed" start-time="2026-09-27 03:12:16Z" end-time="2026-09-27 03:12:17Z" duration="1.467191" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

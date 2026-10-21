@@ -1,0 +1,11 @@
+# Charged bot lunges check reachable travel before release
+
+A charged bot released at25degrees and3.5m because its eight-way aim cone accepts at least26degrees. The stationary target lies outside the actual1.3m tag corridor. The original actual input-consumer case spends the full2.5s cooldown despite that geometry: native38712 has1FAIL and3 passing aim/near-tag controls.
+
+The release now also predicts the short dash with the existing consumer friction, fixed-step decay, current body walking velocity and the planner's existing remembered target lead. It checks successive relative travel segments against the current target's actual tag radius. A blocked release retains the held input and keeps the existing corrective movement; an aligned reachable release still uses ordinary input and cooldown. Gameplay ranges, hit resolution, cooldowns, map rules and hero kits are unchanged. No direct input cancellation or motor manipulation is introduced.
+
+Candidate41292 passes4. Final40812 passes5, including a control where current rightward walking makes the same25degree target reachable beyond the static dash corridor. This avoids treating the impulse as the body's entire travel. The90degree hold, subsequent aligned release, fresh close punch and already committed close lunge remain checked through the real consumer. All21315 frozen inputs and preferences restore after every terminal run.
+
+Actual1x40second Eskinita diagnostics39504 pass Classic and Hero. Complete decision traces remain here. Classic records6 throws and2 completed lunges with1 counted hit; Hero counts are recorded in observed-counts.json. These are short unseeded regression observations, not a statistically established hit-rate improvement or all-kit/all-map qualification. The trace's victim association/reason classification is diagnostic, not authoritative accepted-contact identity. Target-loss releases and misses remain open, as do changing locomotion, slopes, obstacles and natural full-match quality.
+
+Current Desktop/sharedcb5 predates this source change. Distinct map openings/arrivals, all-map humanlike bot behavior and slipper reliability remain active goal requirements. No native/player/helper job remains after this unit. Raw original failures, candidate/final XML, source hashes and exact restoration receipts are retained under raw/.

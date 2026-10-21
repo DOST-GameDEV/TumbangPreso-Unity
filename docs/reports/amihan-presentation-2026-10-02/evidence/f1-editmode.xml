@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:40Z" duration="0.3480274">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="840" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:40Z" duration="0.348027" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2005" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-amihan1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="840" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:40Z" duration="0.337004" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23344" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2006" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="840" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:40Z" duration="0.335756" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2007" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="840" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:40Z" duration="0.334952" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1030" name="AmihanAirburstPresentationTests" fullname="TumbangPreso.Tests.AmihanAirburstPresentationTests" classname="TumbangPreso.Tests.AmihanAirburstPresentationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:40Z" duration="0.313078" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1032" name="TheBodyDrivesBothPalmsOnTheGameplayRelease" fullname="TumbangPreso.Tests.AmihanAirburstPresentationTests.TheBodyDrivesBothPalmsOnTheGameplayRelease" methodname="TheBodyDrivesBothPalmsOnTheGameplayRelease" classname="TumbangPreso.Tests.AmihanAirburstPresentationTests" runstate="Runnable" seed="1437363394" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:39Z" duration="0.030436" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="TheBodyStartsInTheCutscenesLastPose" fullname="TumbangPreso.Tests.AmihanAirburstPresentationTests.TheBodyStartsInTheCutscenesLastPose" methodname="TheBodyStartsInTheCutscenesLastPose" classname="TumbangPreso.Tests.AmihanAirburstPresentationTests" runstate="Runnable" seed="1772557495" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:39Z" duration="0.050760" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="TheCheckedClipIsTheOneHerRosterEntryShips" fullname="TumbangPreso.Tests.AmihanAirburstPresentationTests.TheCheckedClipIsTheOneHerRosterEntryShips" methodname="TheCheckedClipIsTheOneHerRosterEntryShips" classname="TumbangPreso.Tests.AmihanAirburstPresentationTests" runstate="Runnable" seed="802543276" result="Passed" start-time="2026-10-02 03:10:39Z" end-time="2026-10-02 03:10:40Z" duration="0.192798" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1034" name="TheFirstPersonHandsDriveOnTheGameplayRelease" fullname="TumbangPreso.Tests.AmihanAirburstPresentationTests.TheFirstPersonHandsDriveOnTheGameplayRelease" methodname="TheFirstPersonHandsDriveOnTheGameplayRelease" classname="TumbangPreso.Tests.AmihanAirburstPresentationTests" runstate="Runnable" seed="1612901672" result="Passed" start-time="2026-10-02 03:10:40Z" end-time="2026-10-02 03:10:40Z" duration="0.021244" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

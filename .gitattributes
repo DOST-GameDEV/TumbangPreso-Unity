@@ -8,8 +8,75 @@ docs/reports/improvement-2026-09-14/ui-deferred-source/*.patch -text -whitespace
 docs/reports/improvement-2026-09-14/zack-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/nemu-laptop-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/cheska-network-evidence/*.xml -text -whitespace
+docs/reports/map-preview-refresh-2026-10-18/raw/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/ice-rejoin-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-15-buff-rejoin/*.xml -text -whitespace
 docs/reports/pending-casts-2026-09-15/*.xml -text -whitespace
 docs/reports/fpp-shadow-version-2026-09-15/*.xml -text -whitespace
 docs/reports/movement-joining-2026-09-15/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/lan151-visible-rules/*-player.log -text -whitespace
+docs/reports/reliability-2026-10-05/relay-request-timeout/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/ui-source-quality/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/ui-text-quality/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/network-shutdown-origin/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/network-shutdown-origin/lifecycle-events.txt -text -whitespace
+
+docs/reports/reliability-2026-10-05/browser-and-editable-text/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/current-ui-online151/host-lifecycle.txt -text -whitespace
+
+# Paired host-loss receipts retain the exact independently verified native bytes.
+docs/reports/two-machine-host-loss-cb5f-2026-10-07/*.json -text -whitespace
+docs/reports/two-machine-host-loss-cb5f-2026-10-07/*.log -text -whitespace
+docs/reports/two-machine-host-loss-cb5f-2026-10-07/client-state.txt -text -whitespace
+
+docs/reports/bot-lunge-reach-2026-10-07/raw/*.json -text -whitespace
+docs/reports/bot-lunge-reach-2026-10-07/raw/*.xml -text -whitespace
+docs/reports/bot-lunge-reach-2026-10-07/*-trace.txt -text -whitespace
+
+docs/reports/paused-road-queries-2026-10-07/raw/*.json -text -whitespace
+docs/reports/paused-road-queries-2026-10-07/raw/*.xml -text -whitespace
+
+docs/reports/new-map-openings-2026-10-07/raw/*.json -text -whitespace
+docs/reports/new-map-openings-2026-10-07/raw/*.xml -text -whitespace
+docs/reports/new-map-openings-2026-10-07/*-composition.txt -text -whitespace
+docs/reports/new-map-openings-2026-10-07/*-flow.txt -text -whitespace
+
+docs/reports/new-openings-package-2026-10-07/* -text -whitespace
+
+docs/reports/bot-lunge-plan-lifetime-2026-10-07/* -text -whitespace
+
+docs/reports/bot-lunge-plan-lifetime-2026-10-07/cove-realclock/** -text -whitespace
+
+docs/reports/bot-lunge-obstacles-2026-10-07/** -text -whitespace
+
+docs/reports/natural-four-bot-decisions-2026-10-07/** -text -whitespace
+
+docs/reports/bot-lunge-consumer-power-2026-10-07/** -text -whitespace
+
+docs/reports/pc-local-replay-integration-2026-10-07/** -text -whitespace
+
+docs/reports/packaged-replay-probe-2026-10-07/** -text -whitespace
+
+docs/reports/packaged-replay-row-readiness-2026-10-07/** -text -whitespace
+
+docs/reports/combined-replay-desktop-2026-10-07/** -text -whitespace
+
+docs/reports/hero-bot-roster-2026-10-07/** -text -whitespace
+
+docs/reports/ai-skim-prethrow-2026-10-07/** -text -whitespace
+
+docs/reports/ai-skill-deliberation-2026-10-07/** -text -whitespace
+
+docs/reports/bot-lunge-motor-aim-2026-10-07/** -text -whitespace
+
+docs/reports/pc-map-clock-integration-2026-10-07/** -text -whitespace
+
+docs/reports/bot-lunge-charge-continuity-2026-10-07/** -text -whitespace
+
+docs/reports/bot-charge-ratio-units-2026-10-07/** -text -whitespace
+docs/reports/all-map-bot-baseline-2026-10-07/** -text -whitespace
+
+docs/reports/bot-lunge-observed-velocity-2026-10-07/** -text -whitespace

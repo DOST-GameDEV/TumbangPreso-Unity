@@ -1,0 +1,26 @@
+{
+  "sourceRef": "4236e99c3f7deeda97cad59ce7a38a2e05a28975",
+  "profile": "pc-server-notify-candidate1004",
+  "filter": "TumbangPreso.Tests.ServerQueryChangeNotificationTests",
+  "expectedCases": 4,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-nographics",
+    "-tp-profile",
+    "pc-server-notify-candidate1004",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.ServerQueryChangeNotificationTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\server-query-notify1004\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\server-query-notify1004\\candidate-native\\editor.log"
+  ],
+  "pid": 8108
+}

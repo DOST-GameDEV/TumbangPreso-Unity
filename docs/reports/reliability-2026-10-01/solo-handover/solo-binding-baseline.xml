@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 12:19:08Z" end-time="2026-10-01 12:19:09Z" duration="0.6651513">
+  <test-suite type="TestSuite" id="2451" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1186" result="Failed" site="Child" start-time="2026-10-01 12:19:08Z" end-time="2026-10-01 12:19:09Z" duration="0.665151" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2445" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1186" result="Failed" site="Child" start-time="2026-10-01 12:19:08Z" end-time="2026-10-01 12:19:09Z" duration="0.642571" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="35208" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2446" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1186" result="Failed" site="Child" start-time="2026-10-01 12:19:08Z" end-time="2026-10-01 12:19:09Z" duration="0.628789" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2447" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1186" result="Failed" site="Child" start-time="2026-10-01 12:19:08Z" end-time="2026-10-01 12:19:09Z" duration="0.615455" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1879" name="PauseOwnerRebindTests" fullname="TumbangPreso.PlayTests.PauseOwnerRebindTests" classname="TumbangPreso.PlayTests.PauseOwnerRebindTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 12:19:08Z" end-time="2026-10-01 12:19:09Z" duration="0.579923" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1880" name="SoloSeatKeyRetargetsPauseAndHudAlongWithControl" fullname="TumbangPreso.PlayTests.PauseOwnerRebindTests.SoloSeatKeyRetargetsPauseAndHudAlongWithControl" methodname="SoloSeatKeyRetargetsPauseAndHudAlongWithControl" classname="TumbangPreso.PlayTests.PauseOwnerRebindTests" runstate="Runnable" seed="838786204" result="Failed" start-time="2026-10-01 12:19:08Z" end-time="2026-10-01 12:19:09Z" duration="0.564444" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The pause menu kept the former local seat after an accepted F-key handover.
+  Expected: same as <Second seat (TumbangPreso.CharacterMotor)>
+  But was:  <First seat (TumbangPreso.CharacterMotor)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PauseOwnerRebindTests+<SoloSeatKeyRetargetsPauseAndHudAlongWithControl>d__2.MoveNext () [0x001bc] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PauseOwnerRebindTests.cs:36
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

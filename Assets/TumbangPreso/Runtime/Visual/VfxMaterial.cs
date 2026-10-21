@@ -83,6 +83,20 @@ namespace TumbangPreso.Visual
             m.EnableKeyword("_ALPHABLEND_ON");
             m.DisableKeyword("_ALPHAPREMULTIPLY_ON");
             m.renderQueue = (int)RenderQueue.Transparent;
+            // ⚠️⚠️ THE TAG, WHICH THE BLEND HALF ABOVE NEVER SET (owner, 2026-09-27: the ambient
+            // occlusion "suddenly flashes off randomly", "we've had flickers before", "could be ability
+            // related"). `Standard` has ONE SubShader and it is tagged `Opaque`; its inspector's Fade
+            // mode rewrites that tag with SetOverrideTag, and nothing runs an inspector in a player.
+            // Unity fills `_CameraDepthNormalsTexture` by redrawing the scene through a replacement
+            // shader keyed on this tag, so every faded hero effect cloned from this template (domes,
+            // bubbles, telegraphs round a player) was drawn SOLID into it. `WorldOutline`'s occlusion
+            // ignores depth-normals pixels nearer than NearFade.FadeStartMetres (1.8 m; LIGHT-3.6's
+            // pillar fix), so an effect round the camera filled the frame with "too near" and the
+            // occlusion vanished for as long as the effect lived. Measured before the fix with an
+            // [AO sample] readback: the frame's mean occlusion jumped from about 0.95 to 0.995 for
+            // 0.5 to 1.5 s with the camera standing still, clustered at the start of rounds.
+            // The same tag also stops these effects growing an ink outline in that texture.
+            m.SetOverrideTag("RenderType", "Transparent");
 
             // ⚠️ FLAT AND SELF-LIT, BECAUSE THE ARENA IS LIT FOR CHARACTERS AND NOT FOR THESE.
             // A frost sheet shaded by the scene's key light goes dark on the shadowed half of
@@ -577,6 +591,99 @@ namespace TumbangPreso.Visual
 
             // Tagged AND owned, exactly as `Solid` is: this material was built for this one
             // renderer, so it dies with it. See `VfxRenderTag.Own`.
+            VfxRenderTag.Own(renderer.gameObject, m);
+            return true;
+        }
+
+        private static Shader _beam;
+        private static bool _beamChecked;
+
+        /// <summary>
+        /// § THE RECALL BEAM'S SHADER, cached including the miss, for the reason
+        /// <see cref="VolcanicShader"/> records one property up: `Shader.Find` walks every loaded
+        /// shader, and a stripped build would pay for a failed search on every piece of the
+        /// column rather than one.
+        /// </summary>
+        private static Shader BeamShader
+        {
+            get
+            {
+                if (_beamChecked) return _beam;
+                _beamChecked = true;
+
+                // The same probe `Template` and `VolcanicShader` use. Written against the built-in
+                // pipeline, which is what this project actually renders on; under a scriptable one
+                // it would have no matching subshader and draw as the error material, so falling
+                // back to the flat painter is the correct answer there rather than a degraded one.
+                if (GraphicsSettings.currentRenderPipeline != null) return null;
+
+                _beam = Shader.Find("TumbangPreso/SlipperBeam");
+
+                if (_beam == null)
+                {
+                    Debug.LogWarning("[Vfx] TumbangPreso/SlipperBeam is missing; the recall beam " +
+                                     "falls back to a flat column. Check GameBuilder.EnsureRuntimeShaders.");
+                }
+
+                return _beam;
+            }
+        }
+
+        /// <summary>
+        /// Whether the beam shader is loadable here. `SlipperBeam` asks before it builds its
+        /// ribbon, because the ribbon is a quad the shader swings to face the camera and a flat
+        /// painter would draw it as a fixed card.
+        /// </summary>
+        internal static bool BeamAvailable => BeamShader != null;
+
+        /// <summary>
+        /// Paint a renderer as a line of light: a white-hot core in a soft coloured haze, rising
+        /// from the road and thinning into nothing, with slow sparkles climbing it.
+        ///
+        /// ⚠️⚠️ ITS MISS PATH IS A REGRESSION RATHER THAN AN ABSENCE, WHICH IS WORSE. It falls
+        /// back to <see cref="Ghost"/>, and a `Ghost` cylinder is precisely the flat alpha-blended
+        /// tube the owner rejected on 2026-09-20 when he asked for this to be a shader instead of
+        /// a model. So a build that strips the shader does not go magenta: it silently ships the
+        /// rejected look, in the player only, while the editor stays correct. The warning above is
+        /// the only thing that says so, which is why the shader is named in
+        /// `GameBuilder.EnsureRuntimeShaders` as well.
+        /// </summary>
+        /// <param name="pool">
+        /// The flat disc of light on the road rather than the column standing in it. Same shader,
+        /// same fade, `_Mode` 1: see the shader's own note for why the two are not two shaders.
+        /// </param>
+        /// <returns>Whether the real shader was used, so a caller can tell the two apart.</returns>
+        public static bool Beam(Renderer renderer, Color colour, float alpha, bool pool)
+        {
+            if (renderer == null) return false;
+
+            var shader = BeamShader;
+
+            if (shader == null)
+            {
+                Ghost(renderer, new Color(colour.r, colour.g, colour.b, alpha), 0.9f);
+                return false;
+            }
+
+            var m = new Material(shader) { name = pool ? "SlipperBeamPool" : "SlipperBeamColumn" };
+
+            m.SetColor("_Color", new Color(colour.r, colour.g, colour.b, 1.0f));
+            m.SetFloat("_Mode", pool ? 1.0f : 0.0f);
+            m.SetFloat("_Alpha", alpha);
+            m.SetFloat("_Strength", 1.0f);
+
+            renderer.sharedMaterial = m;
+
+            // ⚠️ NO SHADOWS, IN OR OUT. This is light rather than a thing: a column that casts a
+            // shadow across the road is a pillar, and one that receives the street's own shading
+            // has a dark side, which is the plastic-pipe look arriving through a second door.
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+
+            StripCollider(renderer.gameObject);
+
+            // Tagged AND owned, exactly as `Volcanic` and `Solid` are. The tag is also what keeps
+            // `Slipper.RefreshHighlight`'s rim pass off an effect parented to a prop.
             VfxRenderTag.Own(renderer.gameObject, m);
             return true;
         }

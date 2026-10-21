@@ -1,0 +1,1 @@
+LastShotReport was empty in the final native run. This is the existing shot-audit output, not human composition approval.

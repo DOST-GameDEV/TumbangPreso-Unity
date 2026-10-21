@@ -1,0 +1,10 @@
+{
+  "source": "ce36e32fa7d4b2539b5d2859d88210cf9bb55085",
+  "protocol": 126,
+  "baseline": "1 failure: F2 moved control but pause still referenced first seat",
+  "final": "1/1 passed: control, pause and HUD reference the second seat",
+  "inputCount": 753,
+  "inputDrift": [],
+  "toolingRepairs": 0,
+  "scope": "actual InputSystem F2 through normal DebugPlayerSwitcher.Update"
+}

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-15 06:01:02Z" end-time="2026-10-15 06:01:03Z" duration="0.9039023">
+  <test-suite type="TestSuite" id="3682" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2167" result="Failed" site="Child" start-time="2026-10-15 06:01:02Z" end-time="2026-10-15 06:01:03Z" duration="0.903902" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3674" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-10-15/pi/work/tump-network/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2167" result="Failed" site="Child" start-time="2026-10-15 06:01:02Z" end-time="2026-10-15 06:01:03Z" duration="0.859048" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27244" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3675" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2167" result="Failed" site="Child" start-time="2026-10-15 06:01:02Z" end-time="2026-10-15 06:01:03Z" duration="0.833397" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3678" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2165" result="Failed" site="Child" start-time="2026-10-15 06:01:02Z" end-time="2026-10-15 06:01:03Z" duration="0.810414" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2561" name="OwnerPoseFeedbackTests" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-15 06:01:02Z" end-time="2026-10-15 06:01:03Z" duration="0.761841" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2562" name="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="260542009" result="Failed" start-time="2026-10-15 06:01:02Z" end-time="2026-10-15 06:01:03Z" duration="0.274760" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual packet must be accepted, not rejected by the fixture.
+  Expected: 42.0f
+  But was:  250.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests.Deliver (UnityEngine.Vector3 oldPosition, System.Boolean correction, System.Int32 epoch, System.UInt64 serial) [0x0041e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:76
+at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<AcceptedEcho>d__10.MoveNext () [0x00076] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:85
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2563" name="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1484712824" result="Failed" start-time="2026-10-15 06:01:03Z" end-time="2026-10-15 06:01:03Z" duration="0.110262" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual packet must be accepted, not rejected by the fixture.
+  Expected: 42.0f
+  But was:  250.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests.Deliver (UnityEngine.Vector3 oldPosition, System.Boolean correction, System.Int32 epoch, System.UInt64 serial) [0x0041e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:76
+at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<AcceptedEcho>d__10.MoveNext () [0x00076] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:85
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2566" name="AcceptedOtherSeatPosesStillMoveTheObservedReplica" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedOtherSeatPosesStillMoveTheObservedReplica" methodname="AcceptedOtherSeatPosesStillMoveTheObservedReplica" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1597834186" result="Failed" start-time="2026-10-15 06:01:03Z" end-time="2026-10-15 06:01:03Z" duration="0.073285" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual packet must be accepted, not rejected by the fixture.
+  Expected: 42.0f
+  But was:  250.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests.Deliver (UnityEngine.Vector3 oldPosition, System.Boolean correction, System.Int32 epoch, System.UInt64 serial) [0x0041e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:76
+at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<AcceptedOtherSeatPosesStillMoveTheObservedReplica>d__15.MoveNext () [0x00072] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:115
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2565" name="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.ANewMovementEpochStillAppliesTheAuthoritativeTeleport" methodname="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1290920911" result="Failed" start-time="2026-10-15 06:01:03Z" end-time="2026-10-15 06:01:03Z" duration="0.080668" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual packet must be accepted, not rejected by the fixture.
+  Expected: 42.0f
+  But was:  250.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests.Deliver (UnityEngine.Vector3 oldPosition, System.Boolean correction, System.Int32 epoch, System.UInt64 serial) [0x0041e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:76
+at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<ANewMovementEpochStillAppliesTheAuthoritativeTeleport>d__14.MoveNext () [0x00040] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:104
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2564" name="AnExplicitHostCorrectionStillCorrectsTheOwner" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AnExplicitHostCorrectionStillCorrectsTheOwner" methodname="AnExplicitHostCorrectionStillCorrectsTheOwner" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1731059312" result="Failed" start-time="2026-10-15 06:01:03Z" end-time="2026-10-15 06:01:03Z" duration="0.082447" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual packet must be accepted, not rejected by the fixture.
+  Expected: 42.0f
+  But was:  250.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests.Deliver (UnityEngine.Vector3 oldPosition, System.Boolean correction, System.Int32 epoch, System.UInt64 serial) [0x0041e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:76
+at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<AnExplicitHostCorrectionStillCorrectsTheOwner>d__13.MoveNext () [0x0003d] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:97
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2567" name="DelayedEchoesPreserveContinuousPredictedRunning" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.DelayedEchoesPreserveContinuousPredictedRunning" methodname="DelayedEchoesPreserveContinuousPredictedRunning" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1038335509" result="Failed" start-time="2026-10-15 06:01:03Z" end-time="2026-10-15 06:01:03Z" duration="0.121488" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual packet must be accepted, not rejected by the fixture.
+  Expected: 42.0f
+  But was:  198.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests.Deliver (UnityEngine.Vector3 oldPosition, System.Boolean correction, System.Int32 epoch, System.UInt64 serial) [0x0041e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:76
+at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<DelayedEchoesPreserveContinuousPredictedRunning>d__16.MoveNext () [0x001a4] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:149
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

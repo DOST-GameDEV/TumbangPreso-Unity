@@ -1,0 +1,14 @@
+{
+  "tools/build_person_voxel.py": "a6dd297270b0b155412ba36be1e60a8331e8dbb533d48bc5d145ea34d2a72409",
+  "tools/build_iggy_voxel.py": "826486ae4cf024c2ff8f4d2d4c3d8a6f35975f55274438dcdb84af4e04a5886b",
+  "tools/build_bayan_voxel.py": "d2fd798964dfa16c7776e9456c2a64d13e7456c0d64234b09f1d644668176e85",
+  "tools/build_zack_voxel.py": "e545c8edac51dffef345f6120d4f2fb5a574d34c015230ae1be3931cf0d7d19a",
+  "tools/build_nemu_voxel.py": "b7916290991b582f353342a6746ae024aa3cdaab2c23cbf9a759ab85014b8bf9",
+  "tools/build_phaister_voxel.py": "09d6e29a523abb1741f859d4a8a6c71af893c6b5869f1e0de261155e063ea1a1",
+  "Assets/TumbangPreso/Art/characters/persons/team-sean.glb": "c74fceaf42eafc37eb6b3128cb51f645b43accdefed8e8cbe7cc7bd94c9f0e96",
+  "Assets/TumbangPreso/Art/characters/persons/team-cheska.glb": "6245716fceeb13e700a216769321741fa1c79e37c6e1c1495c5b6e9b0cfb0bc2",
+  "Assets/TumbangPreso/Art/characters/persons/team-dante.glb": "3522c71f75a8c460d8d3dc1c060921b3150587b53c929d86ffa8ac0e9705a713",
+  "Assets/TumbangPreso/Art/characters/persons/team-zack.glb": "3ab1c9d4df0d524d0bf6e734c04b994ab76acd199d6717ceed9a6448481398ec",
+  "Assets/TumbangPreso/Art/characters/persons/team-nemu.glb": "57d580aae44ae13ec5fecddeb1a762c0be61d1bf1a4a081cf6387502fc757730",
+  "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb": "3757285d650c74e7ed0fdd49d5c60c65b94e4168ea40596f7c773ee56b5ea8f7"
+}

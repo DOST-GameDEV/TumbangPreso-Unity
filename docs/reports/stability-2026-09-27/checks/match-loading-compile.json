@@ -1,0 +1,29 @@
+{
+  "base": "a6111f72b0c24909685a9f752b3b7e5d46d7f9bf",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; unchanged Core reused from a6111f72",
+  "correction": "First compiler rejected integer SceneHandle conversions; changed new code to retain and compare Scene values, then compiled successfully",
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "C7127C8A13CF52DE828D869957AEA4509F46A803484E10225E9E1922964E7823",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+      "sha256": "DF36671E129766069927DF74519A175C2F3F31931519278718CDEECE43A8CD88"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+      "sha256": "09CDECFDF56EF84F4B9DF05E64DB8E61E27BA6F5A44433C71CFF8CD78F349CE5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubLoading.cs",
+      "sha256": "96C851252F32088CF2989E84879D850AF340E82AB5B090D7E5A545B9DEB4BEFA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "9B7B860D3B8BE175F7C66764528A85B3842EEB643E40DC3BDB65ED35AFB306F5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs.meta",
+      "sha256": "22260FC29ADB98584126BA4BC676FE56F699BFD3E73A53E2945A96F53FF93146"
+    }
+  ]
+}

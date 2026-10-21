@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:21Z" duration="1.9293454">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="666" result="Failed" site="Child" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:21Z" duration="1.929345" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1776" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="666" result="Failed" site="Child" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:21Z" duration="1.918075" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17552" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1777" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="666" result="Failed" site="Child" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:21Z" duration="1.916606" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1778" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="666" result="Failed" site="Child" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:21Z" duration="1.915315" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1037" name="AuthoredAnimationBuildTests" fullname="TumbangPreso.Tests.AuthoredAnimationBuildTests" classname="TumbangPreso.Tests.AuthoredAnimationBuildTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:21Z" duration="1.864625" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1039" name="MissingEmptyAndDuplicateClipsRefuseButAnAuthoredCurveIsRetained" fullname="TumbangPreso.Tests.AuthoredAnimationBuildTests.MissingEmptyAndDuplicateClipsRefuseButAnAuthoredCurveIsRetained" methodname="MissingEmptyAndDuplicateClipsRefuseButAnAuthoredCurveIsRetained" classname="TumbangPreso.Tests.AuthoredAnimationBuildTests" runstate="Runnable" seed="1654791312" result="Failed" label="Error" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:19Z" duration="0.022460" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains more than one element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source) [0x00070] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.Tests.AuthoredAnimationBuildTests.MissingEmptyAndDuplicateClipsRefuseButAnAuthoredCurveIsRetained () [0x000cb] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AuthoredAnimationBuildTests.cs:41 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1038" name="NativeBuildPrerequisitesPreserveEveryRetainedAssetByte" fullname="TumbangPreso.Tests.AuthoredAnimationBuildTests.NativeBuildPrerequisitesPreserveEveryRetainedAssetByte" methodname="NativeBuildPrerequisitesPreserveEveryRetainedAssetByte" classname="TumbangPreso.Tests.AuthoredAnimationBuildTests" runstate="Runnable" seed="777272632" result="Failed" start-time="2026-09-30 08:12:19Z" end-time="2026-09-30 08:12:21Z" duration="1.824972" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Assets/TumbangPreso/Resources/SwimmingAnimations/team-amihan.asset: Expected one retained clip: swim
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AuthoredAnimationBuildTests.NativeBuildPrerequisitesPreserveEveryRetainedAssetByte () [0x00077] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AuthoredAnimationBuildTests.cs:23
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

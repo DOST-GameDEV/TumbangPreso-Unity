@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 03:44:08Z" end-time="2026-10-06 03:44:09Z" duration="1.2286804">
+  <test-suite type="TestSuite" id="3267" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 03:44:08Z" end-time="2026-10-06 03:44:09Z" duration="1.228680" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3259" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 03:44:08Z" end-time="2026-10-06 03:44:09Z" duration="1.195307" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9024" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3260" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 03:44:08Z" end-time="2026-10-06 03:44:09Z" duration="1.170686" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3263" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1845" result="Passed" start-time="2026-10-06 03:44:08Z" end-time="2026-10-06 03:44:09Z" duration="1.146425" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2872" name="SpectatorDebugBarCapture" fullname="TumbangPreso.PlayTests.SpectatorDebugBarCapture" classname="TumbangPreso.PlayTests.SpectatorDebugBarCapture" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 03:44:08Z" end-time="2026-10-06 03:44:09Z" duration="1.098549" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2873" name="NativeRoleTransitionsRetireTheGameplayDebugStrip" fullname="TumbangPreso.PlayTests.SpectatorDebugBarCapture.NativeRoleTransitionsRetireTheGameplayDebugStrip" methodname="NativeRoleTransitionsRetireTheGameplayDebugStrip" classname="TumbangPreso.PlayTests.SpectatorDebugBarCapture" runstate="Runnable" seed="153823063" result="Passed" start-time="2026-10-06 03:44:08Z" end-time="2026-10-06 03:44:09Z" duration="1.083952" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] debug-strip-gameplay cream source=252,211,159 pixel=0,0,0; isolated UI camera, no ColourGrade.
+[TumpUiCapture] debug-strip-watching cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

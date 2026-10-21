@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 04:42:04Z" end-time="2026-10-07 04:42:17Z" duration="12.3052867">
+  <test-suite type="TestSuite" id="3476" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2008" result="Passed" start-time="2026-10-07 04:42:04Z" end-time="2026-10-07 04:42:17Z" duration="12.305287" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3468" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2008" result="Passed" start-time="2026-10-07 04:42:04Z" end-time="2026-10-07 04:42:17Z" duration="12.291274" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="65360" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3469" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2008" result="Passed" start-time="2026-10-07 04:42:04Z" end-time="2026-10-07 04:42:17Z" duration="12.283521" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3472" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2006" result="Passed" start-time="2026-10-07 04:42:04Z" end-time="2026-10-07 04:42:17Z" duration="12.276017" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1995" name="LocalReplayTests" fullname="TumbangPreso.PlayTests.LocalReplayTests" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-07 04:42:04Z" end-time="2026-10-07 04:42:17Z" duration="12.218543" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1999" name="ActualHubMenuShowsReplayLibraryAndChangesTheSameSaveFolder" fullname="TumbangPreso.PlayTests.LocalReplayTests.ActualHubMenuShowsReplayLibraryAndChangesTheSameSaveFolder" methodname="ActualHubMenuShowsReplayLibraryAndChangesTheSameSaveFolder" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="1916170853" result="Passed" start-time="2026-10-07 04:42:04Z" end-time="2026-10-07 04:42:06Z" duration="1.769533" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] local-replay-library1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] local-replay-library720 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1998" name="RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" fullname="TumbangPreso.PlayTests.LocalReplayTests.RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" methodname="RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="1350815649" result="Passed" start-time="2026-10-07 04:42:06Z" end-time="2026-10-07 04:42:17Z" duration="10.438303" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] local-replay-toolbar1080 cream source=252,211,159 pixel=145,113,110; isolated UI camera, no ColourGrade.
+[TumpUiCapture] local-replay-toolbar720 cream source=252,211,159 pixel=140,110,107; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

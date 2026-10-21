@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 21:04:36Z" end-time="2026-09-21 21:04:50Z" duration="13.6495577">
+  <test-suite type="TestSuite" id="1679" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="511" result="Failed" site="Child" start-time="2026-09-21 21:04:36Z" end-time="2026-09-21 21:04:50Z" duration="13.649558" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1673" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="511" result="Failed" site="Child" start-time="2026-09-21 21:04:36Z" end-time="2026-09-21 21:04:50Z" duration="13.629036" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28336" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1674" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="511" result="Failed" site="Child" start-time="2026-09-21 21:04:36Z" end-time="2026-09-21 21:04:50Z" duration="13.618927" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1675" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="511" result="Failed" site="Child" start-time="2026-09-21 21:04:36Z" end-time="2026-09-21 21:04:50Z" duration="13.609011" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1389" name="PaperPurityProbe" fullname="TumbangPreso.PlayTests.PaperPurityProbe" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-21 21:04:36Z" end-time="2026-09-21 21:04:43Z" duration="7.087980" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1392" name="NothingOnTheInventoryDisappeared" fullname="TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared" methodname="NothingOnTheInventoryDisappeared" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" seed="1351598195" result="Passed" start-time="2026-09-21 21:04:36Z" end-time="2026-09-21 21:04:43Z" duration="7.068983" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 7DRW
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1513" name="SeanSkillTimingProbe" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-09-21 21:04:43Z" end-time="2026-09-21 21:04:50Z" duration="6.478157" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1514" name="ThrowConversionSkillsDoNotSpendAChargeWhileDefending" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe.ThrowConversionSkillsDoNotSpendAChargeWhileDefending" methodname="ThrowConversionSkillsDoNotSpendAChargeWhileDefending" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" seed="1097692350" result="Failed" start-time="2026-09-21 21:04:43Z" end-time="2026-09-21 21:04:50Z" duration="6.471800" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  sean.2.cannon armed an unusable defender throw
+  Expected: CannotAct
+  But was:  Cast
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SeanSkillTimingProbe+<ThrowConversionSkillsDoNotSpendAChargeWhileDefending>d__0.MoveNext () [0x001f3] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\SeanSkillTimingProbe.cs:34
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[DefenderThrowConversion] sean.2.cannon: Cast, charges 2->1
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

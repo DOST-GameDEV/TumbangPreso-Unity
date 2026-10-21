@@ -1,0 +1,12 @@
+{
+  "baseline": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1
+  },
+  "final": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0
+  }
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 10:21:03Z" end-time="2026-09-24 10:21:52Z" duration="48.9455204">
+  <test-suite type="TestSuite" id="1812" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="633" result="Failed" site="Child" start-time="2026-09-24 10:21:03Z" end-time="2026-09-24 10:21:52Z" duration="48.945520" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1806" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="633" result="Failed" site="Child" start-time="2026-09-24 10:21:03Z" end-time="2026-09-24 10:21:52Z" duration="48.934087" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1807" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="633" result="Failed" site="Child" start-time="2026-09-24 10:21:03Z" end-time="2026-09-24 10:21:52Z" duration="48.932440" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1808" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="633" result="Failed" site="Child" start-time="2026-09-24 10:21:03Z" end-time="2026-09-24 10:21:52Z" duration="48.931374" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1029" name="AmbientLifeProbe" fullname="TumbangPreso.PlayTests.AmbientLifeProbe" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-09-24 10:21:03Z" end-time="2026-09-24 10:21:52Z" duration="48.905010" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1031" name="BayanBirdsUseTheirOpenPlazaVisitSites" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.BayanBirdsUseTheirOpenPlazaVisitSites" methodname="BayanBirdsUseTheirOpenPlazaVisitSites" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="267711867" result="Failed" start-time="2026-09-24 10:21:03Z" end-time="2026-09-24 10:21:52Z" duration="48.886228" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  kalapati never settled on its alternative landing site
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmbientLifeProbe+<BayanBirdsUseTheirOpenPlazaVisitSites>d__1.MoveNext () [0x00a04] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\PlayMode\AmbientLifeProbe.BirdVisits.cs:171
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/bayan-bird-visits-v1/Bayan-maya-before-perch.png
+[Play] wrote Logs/bayan-bird-visits-v1/Bayan-maya-after-perch.png
+[Play] wrote Logs/bayan-bird-visits-v1/Bayan-kalapati-before-perch.png
+[Play] wrote Logs/bayan-bird-visits-v1/Bayan-kalapati-after-perch.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

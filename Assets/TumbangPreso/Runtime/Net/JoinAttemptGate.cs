@@ -6,6 +6,7 @@ namespace TumbangPreso.Net
     public sealed class JoinAttemptGate
     {
         private int _version;
+        public int Version => Volatile.Read(ref _version);
         public Attempt Begin(CancellationToken cancellation = default)
             => cancellation.IsCancellationRequested ? default : new Attempt(this, Interlocked.Increment(ref _version), cancellation);
         public void Invalidate() => Interlocked.Increment(ref _version);

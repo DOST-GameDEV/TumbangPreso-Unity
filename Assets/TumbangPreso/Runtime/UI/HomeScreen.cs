@@ -9,7 +9,6 @@ namespace TumbangPreso.UI
         private Canvas _canvas;
         private IllustratedBackdrop _illustration;
         private Transform _settings, _credits;
-        private Sprite _generatedMark;
         private bool _focused = true;
 
         public static void Install(ConvertedMainMenu owner, Transform settings, Transform credits)
@@ -58,13 +57,7 @@ namespace TumbangPreso.UI
             column.sizeDelta = new Vector2(500, 880);
             var mark = new GameObject("TumpMark", typeof(RectTransform), typeof(Image)).GetComponent<Image>();
             mark.transform.SetParent(column, false);
-            mark.sprite = Resources.Load<Sprite>("UI/brand/tump_logo");
-            if (mark.sprite == null)
-            {
-                var texture = Resources.Load<Texture2D>("UI/brand/tump_logo");
-                if (texture != null) mark.sprite = _generatedMark = Sprite.Create(texture,
-                    new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
-            }
+            mark.sprite = TumpUiFactory.Sprite("UI/brand/tump_logo");
             mark.preserveAspect = true; mark.raycastTarget = false;
             MenuKit.Place(mark.rectTransform, new Vector2(.5f, 1), new Vector2(0, -180), new Vector2(500, 329));
             var play = Item(column, "StartButton", "PLAY", 465, true, () => SceneFlow.Go(SceneFlow.ModeSelect));
@@ -106,6 +99,5 @@ namespace TumbangPreso.UI
             if (_illustration != null) _illustration.Animating = _focused && !overlay;
         }
         private void OnApplicationFocus(bool focused) => _focused = focused;
-        private void OnDestroy() { if (_generatedMark != null) Destroy(_generatedMark); }
     }
 }

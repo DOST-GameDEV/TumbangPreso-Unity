@@ -40,12 +40,82 @@ namespace TumbangPreso.PlayTests
         }
         private static void RestorePref(string key, bool existed, string value)
         { if (existed) PlayerPrefs.SetString(key, value); else PlayerPrefs.DeleteKey(key); }
+
+        [UnityTest]
+        public IEnumerator UnrecognisedControllerSwitchParticipatesInSaveAndDiscard()
+        {
+            const string key = "tumbangpreso.genericpad";
+            bool existed = PlayerPrefs.HasKey(key); int saved = PlayerPrefs.GetInt(key, 1);
+            Joystick joystick = null; TumpSettingsView view = null;
+            try
+            {
+                yield return Open(); view = Object.FindFirstObjectByType<TumpSettingsView>();
+                bool before = GenericPadBridge.Enabled;
+                int padsBefore = Gamepad.all.Count;
+                joystick = InputSystem.AddDevice<Joystick>("TumpSettingsUnrecognisedController");
+                yield return null; yield return null;
+                Assert.AreEqual(padsBefore + (before ? 1 : 0), Gamepad.all.Count,
+                    "Hotplug must create at most one fallback gamepad through the real reentrant callback.");
+                Assert.IsTrue(ControllerWatch.HasUnrecognised, "The real device-change path did not notice the synthetic joystick.");
+                var control = GameObject.Find("GenericControllerValue")?.GetComponent<Toggle>();
+                Assert.IsNotNull(control, "Controls lost the switch for unrecognised controllers.");
+                control.isOn = !before; yield return null;
+                Assert.AreEqual(!before, GenericPadBridge.Enabled);
+                Assert.IsTrue(view.Session.Dirty, "The backend switch must join the settings transaction.");
+                view.Session.Discard(); view.ShowSection(0); yield return null;
+                Assert.AreEqual(before, GenericPadBridge.Enabled);
+                GameObject.Find("GenericControllerValue").GetComponent<Toggle>().isOn = !before;
+                Press(Find("TumpSaveSettings")); yield return null;
+                Assert.IsFalse(view.Session.Dirty); Assert.AreEqual(!before, GenericPadBridge.Enabled);
+                GameObject.Find("GenericControllerValue").GetComponent<Toggle>().isOn = before;
+                Press(Find("TumpSettingsBack")); yield return null;
+                Press(Find("DiscardAndBack")); yield return null;
+                Assert.AreEqual(!before, GenericPadBridge.Enabled, "Discard must restore the most recent explicit save.");
+            }
+            finally
+            {
+                if (view != null) view.enabled = false;
+                if (joystick != null && joystick.added) InputSystem.RemoveDevice(joystick);
+                if (existed) PlayerPrefs.SetInt(key, saved); else PlayerPrefs.DeleteKey(key);
+                PlayerPrefs.Save(); GenericPadBridge.Sync();
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ValueChangesReuseRowsAndLargerTextStillReflowsThem()
+        {
+            yield return Open();
+            var view = Object.FindFirstObjectByType<TumpSettingsView>();
+            var canvas = PaintedScreens.Settings();
+            try
+            {
+                view.ShowSection(1); yield return null;
+                var scroll = canvas.GetComponentInChildren<ScrollRect>();
+                var rows = scroll.content.Cast<Transform>().Select(t => t.gameObject).ToArray();
+                var volume = canvas.GetComponentsInChildren<Slider>().First();
+                volume.value = volume.value > .5f ? .2f : .8f;
+                Assert.IsTrue(view.Session.Dirty); Assert.IsTrue(Find("TumpSaveSettings").interactable);
+                CollectionAssert.AreEqual(rows, scroll.content.Cast<Transform>().Select(t => t.gameObject).ToArray());
+                bool large = SettingsStore.Current.LargerText;
+                SettingsStore.Current.LargerText = !large; view.Session.Preview();
+                var row = scroll.content.Cast<Transform>().First(t => t.Find("Control") != null && t.Find("Label") != null);
+                Assert.AreEqual(!large ? 190 : 104, row.GetComponent<LayoutElement>().preferredHeight);
+                SettingsStore.Current.LargerText = large; view.Session.Preview();
+                Assert.AreEqual(large ? 190 : 104, row.GetComponent<LayoutElement>().preferredHeight);
+                view.ShowSection(0); yield return null;
+                Assert.IsNotEmpty(canvas.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Binding_")));
+                view.Session.Discard();
+                Assert.IsFalse(view.Session.Dirty); Assert.IsFalse(Find("TumpSaveSettings").interactable);
+            }
+            finally { if (view != null) { view.Session?.Discard(); view.enabled = false; } }
+        }
+
         [UnityTest]
         public IEnumerator NativeSettingsPagesAndFramePacingHaveTruthfulStates()
         {
             yield return Open();
             var view = Object.FindFirstObjectByType<TumpSettingsView>();
-            var canvas = GameObject.Find("OwnerSettingsCanvas").GetComponent<Canvas>();
+            var canvas = PaintedScreens.Settings();
             Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             for (int i = 0; i < TumpSettingsView.Sections.Length; i++)
             {
@@ -81,6 +151,43 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(before, SettingsStore.Current.FrameRateLimit);
             Assert.IsFalse(canvas.gameObject.activeSelf);
         }
+        // ⚠️ THE LIGHTING STYLE CARDS, PRESSED THROUGH A REAL RAYCAST. Three cards, pictures on the
+        // two real styles, the placeholder unreachable, a press that changes the live look weight
+        // and joins the save/discard transaction like every other row. Photographed at the Graphics
+        // tab's reference shape and at the owner's own short wide window.
+        [UnityTest]
+        public IEnumerator LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard()
+        {
+            yield return Open();
+            var view = Object.FindFirstObjectByType<TumpSettingsView>();
+            var canvas = PaintedScreens.Settings();
+            int saved = SettingsStore.Current.LightingLook;
+            try
+            {
+                view.ShowSection(2); yield return null;
+                var cards = Enumerable.Range(0, LightingStyles.All.Length).Select(i => Find("LightingStyle" + i)).ToArray();
+                Assert.AreEqual(3, cards.Length);
+                Assert.IsFalse(cards[LightingStyles.Placeholder].interactable, "The placeholder slot must not be pickable.");
+                for (int i = 0; i < cards.Length; i++)
+                    Assert.AreEqual(LightingStyles.All[i].Available, cards[i].GetComponentInChildren<RawImage>() != null,
+                        cards[i].name + ": a real style shows its thumbnail and only the placeholder is empty.");
+                foreach (var size in new[] { new Vector2Int(1920, 1080), TumpUiCapture.OwnerWindow })
+                    yield return TumpUiCapture.Capture("LightingStyleCards-" + size.x + "x" + size.y, canvas, size.x, size.y, false, checkActionBounds: true);
+                int other = saved == LightingStyles.Nostalgic ? LightingStyles.Standard : LightingStyles.Nostalgic;
+                Press(cards[other]); yield return null;
+                Assert.AreEqual(other, SettingsStore.Current.LightingLook);
+                Assert.AreEqual(LightingStyles.All[other].LookWeight, LightingStyles.LookWeight, "A card must change the live look.");
+                Assert.IsTrue(cards[other].transform.Find("Selected").GetComponent<Image>().enabled);
+                Assert.IsFalse(cards[saved].transform.Find("Selected").GetComponent<Image>().enabled);
+                Assert.IsTrue(view.Session.Dirty, "A style pick must join the settings transaction.");
+                yield return TumpUiCapture.Capture("LightingStyleCards-picked-" + LightingStyles.All[other].Label, canvas, 1920, 1080, false, checkActionBounds: true);
+                view.Session.Discard(); yield return null;
+                Assert.AreEqual(saved, SettingsStore.Current.LightingLook);
+                Assert.AreEqual(LightingStyles.All[saved].LookWeight, LightingStyles.LookWeight, "Discard must put the saved look back.");
+            }
+            finally { SettingsStore.Current.LightingLook = saved; LightingStyles.Apply(saved); }
+        }
+
         [UnityTest]
         public IEnumerator ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths()
         {
@@ -152,7 +259,7 @@ namespace TumbangPreso.PlayTests
             Press(Find("CancelTouchLayout")); yield return null;
             Assert.IsFalse(TouchButton.Customising);
             Assert.That(TouchLayoutStore.Scale, Is.EqualTo(scale).Within(.001f));
-            Assert.IsTrue(GameObject.Find("OwnerSettingsCanvas").activeSelf);
+            Assert.IsTrue(PaintedScreens.Settings().gameObject.activeSelf);
         }
         [UnityTest]
         public IEnumerator BindingOverridesBelongToTheSaveDiscardTransaction()
@@ -254,29 +361,16 @@ namespace TumbangPreso.PlayTests
                 actions.RemoveAllBindingOverrides(); actions.LoadBindingOverridesFromJson(original); Rebinding.Invalidate();
             }
         }
-        private static IEnumerator Open()
-        {
-            yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-            yield return new WaitForSecondsRealtime(.4f);
-            OpenSettingsPanel();
-            yield return null;
-        }
-
         /// <summary>
-        /// ⚠️⚠️ THE TITLE SCREEN LOST ITS SETTINGS PENNANT ON 2026-09-18 AND THIS FIXTURE IS
-        /// ABOUT THE PANEL, NOT ABOUT THE DOOR. 🧑 asked for a title screen with no buttons
-        /// (`HomeCourtView`) and for the four doors to be dropped until the next menu pass, so
-        /// there is no SettingsButton to press here any more. The panel is still the one
-        /// `ConvertedMainMenu` builds, opened the way that screen opens it: suspend the home,
-        /// activate the owner. ⚠️ The JOURNEY to settings is covered separately and through the
-        /// door a player actually has, `GameSettingsButton` on the lobby, in
-        /// `TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews`.
+        /// ⚠️⚠️ THIS FIXTURE'S THREE CASES ALL DIED IN THEIR OWN SETUP WITH A BARE
+        /// `NullReferenceException`, AND THE CAUSE WAS ONE CALL: `GameObject.Find`
+        /// ("NativeSettingsOwner"). **`GameObject.Find` only sees ACTIVE objects**, and
+        /// `ConvertedMainMenu.Wire` builds the settings owner switched OFF so the door can turn
+        /// it on. So the lookup returned null on a healthy main menu, every run, and the message
+        /// named neither the object nor the screen. The route lives in `PaintedScreens` now,
+        /// where the next fixture that needs it can reach it instead of copying it.
         /// </summary>
-        private static void OpenSettingsPanel()
-        {
-            Object.FindFirstObjectByType<TumpHomeView>()?.Suspend();
-            GameObject.Find("NativeSettingsOwner").SetActive(true);
-        }
+        private static IEnumerator Open() => PaintedScreens.OpenSettings();
 
         private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None).First(b => b.name == name && b.isActiveAndEnabled);
         private static void Press(Button button)

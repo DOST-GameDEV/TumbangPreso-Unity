@@ -46,6 +46,8 @@ except Exception:
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "Assets" / "TumbangPreso" / "Runtime" / "Net" / "MatchRpc.cs"
+CLOCK_SOURCE = ROOT / "Assets/TumbangPreso/Runtime/Visual/LataClockPresentation.cs"
+CLOCK_CALL = r"Visual\.LataClockPresentation\.For\([^)]*\)\?\.ApplySnapshot"
 
 NUMERIC = ("float", "double", "Vector3", "Quaternion", "Vector2")
 
@@ -54,6 +56,8 @@ NUMERIC = ("float", "double", "Vector3", "Quaternion", "Vector2")
 # starts disagreeing with itself. Each row is a method that validates every numeric argument it
 # is handed, and the reason it is trusted.
 DELEGATES = {
+    "ValidSkillReceipt": "validates the finite cooldown and shared timestamp before any refund or pose correction",
+    r"_worldFieldBatch\?\.Add": "WorldEffectSnapshot.Batch.Add validates every numeric member of its Field before storing it",
     # `AcceptMove` opens with `!Finite(position) || !Finite(yaw) || !Finite(velocity)` and then
     # spends the seat's movement budget, which refuses NaN a second time by construction.
     "AcceptMove": "validates position, yaw and velocity and then spends Core.MoveBudget",
@@ -99,6 +103,21 @@ def handlers(text):
     return found
 
 
+def call_arguments(body, name_pattern):
+    """Keep nested casts/constructors inside a validator's argument list."""
+    for match in re.finditer(r"\b" + name_pattern + r"\s*\(", body):
+        start = match.end()
+        depth = 1
+        for end in range(start, len(body)):
+            if body[end] == "(":
+                depth += 1
+            elif body[end] == ")":
+                depth -= 1
+                if depth == 0:
+                    yield body[start:end]
+                    break
+
+
 def main():
     if not SOURCE.exists():
         print(f"audit_wire_finite: {SOURCE} is missing.")
@@ -107,6 +126,16 @@ def main():
     text = strip_comments(SOURCE.read_text(encoding="utf-8", errors="replace"))
 
     findings = []
+    delegates = dict(DELEGATES)
+    # Trust only this concrete receiver, and only while its first operation still
+    # rejects both non-finite values. A generic ApplySnapshot exemption would hide
+    # unrelated unguarded readers; duplicating the check in gameplay is unnecessary.
+    clock = strip_comments(CLOCK_SOURCE.read_text(encoding="utf-8")) if CLOCK_SOURCE.exists() else ""
+    clock_guard = re.compile(
+        r"public\s+void\s+ApplySnapshot\(float\s+restore,\s*float\s+protection\)\s*\{\s*"
+        r"if\s*\(!float\.IsFinite\(restore\)\s*\|\|\s*!float\.IsFinite\(protection\)\)return;")
+    if clock_guard.search(clock):
+        delegates[CLOCK_CALL] = "first operation rejects non-finite restore and protection"
     checked = 0
     handler_count = 0
 
@@ -121,8 +150,8 @@ def main():
                 continue
             if re.search(r"PlausibleIntentPose\([^)]*\b" + re.escape(var) + r"\b", body):
                 continue
-            if any(re.search(r"\b" + d + r"\([^)]*\b" + re.escape(var) + r"\b", body)
-                   for d in DELEGATES):
+            if any(re.search(r"\b" + re.escape(var) + r"\b", arguments)
+                   for d in delegates for arguments in call_arguments(body, d)):
                 continue
 
             findings.append(

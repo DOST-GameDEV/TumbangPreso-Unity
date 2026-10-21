@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.1663455">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1220" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.166346" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2495" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1220" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.149400" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28132" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2496" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1220" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.139417" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2497" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1220" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.123445" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2397" name="TouchButtonPointerLifetimeTests" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.069528" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2401" name="AFreshPointerWorksAfterAllEarlierPointersRelease" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.AFreshPointerWorksAfterAllEarlierPointersRelease" methodname="AFreshPointerWorksAfterAllEarlierPointersRelease" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="851072186" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.052156" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2405" name="ALiftDuringCustomisationCannotRestoreAnotherOldPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.ALiftDuringCustomisationCannotRestoreAnotherOldPointer" methodname="ALiftDuringCustomisationCannotRestoreAnotherOldPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="127530185" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.000833" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2400" name="ASinglePointerStillReleasesItsAction" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.ASinglePointerStillReleasesItsAction" methodname="ASinglePointerStillReleasesItsAction" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1949285468" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.000420" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2404" name="CustomisationDoesNotRestoreAnOldPointerIntoANewHold" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.CustomisationDoesNotRestoreAnOldPointerIntoANewHold" methodname="CustomisationDoesNotRestoreAnOldPointerIntoANewHold" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1149136297" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.000405" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2403" name="DirectSetHeldReleaseAllowsAFreshPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.DirectSetHeldReleaseAllowsAFreshPointer" methodname="DirectSetHeldReleaseAllowsAFreshPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1806907092" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.000352" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2399" name="LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer" methodname="LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1548373802" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.000391" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2398" name="LiftingTheSecondPointerDoesNotReleaseTheFirstPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.LiftingTheSecondPointerDoesNotReleaseTheFirstPointer" methodname="LiftingTheSecondPointerDoesNotReleaseTheFirstPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="178929591" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.000364" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2402" name="TheDisableCallbackReleasesAndAllowsAFreshPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.TheDisableCallbackReleasesAndAllowsAFreshPointer" methodname="TheDisableCallbackReleasesAndAllowsAFreshPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1293836428" result="Passed" start-time="2026-10-03 14:52:00Z" end-time="2026-10-03 14:52:00Z" duration="0.000434" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

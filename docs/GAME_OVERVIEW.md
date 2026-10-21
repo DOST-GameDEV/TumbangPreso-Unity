@@ -1,8 +1,10 @@
 # Tumbang Preso: the whole game, in one file
 
-**What this is.** A complete reference to what the game IS: every mode, every rule, every verb,
-every number a player can feel, and all fifteen hero powers. Written 2026-08-26 from the code and
-from `Design.md`, not from memory.
+**What this is.** A broad reference originally written2026-08-26 from code and
+Design.md. Its dated roster,power counts and implementation examples are historical,
+not an exhaustive inventory of the current reworked game. Start with [VISION](VISION.md)
+and [current task routes](README.md); inspect live Core/kit source for current numbers.
+The earlier explanations remain here for context rather than being silently discarded.
 
 **What this is not.** It is not the balance source of truth. ⚠️ **`docs/Design.md` is**, and its
 opening line is the rule: *a number in the code must match a number here, or one of the two is a

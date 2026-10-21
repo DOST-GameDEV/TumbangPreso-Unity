@@ -50,7 +50,7 @@ namespace TumbangPreso.UI
                 OwnerUiLayout.Place(_detailTitle.rectTransform,175,137,1554,113);
                 _ownerDetailList=OwnerScrollColumn.Build(design,"ScorecardRows",new Rect(181,280,1535,570),out var scroll);
                 var layout=_ownerDetailList.GetComponent<VerticalLayoutGroup>();layout.spacing=10;layout.padding.bottom=12;
-                OwnerTextAction.Create(design,"CloseMatchDetail","CLOSE",()=>_detail.SetActive(false),685,887,550,74,34);
+                OwnerTextAction.Create(design,"CloseMatchDetail","CLOSE",CloseDetail,685,887,550,74,34);
                 InputLayer.ScreenFocus.Install(cover.gameObject);
             }
             foreach(Transform child in _ownerDetailList){child.gameObject.SetActive(false);Destroy(child.gameObject);}
@@ -72,6 +72,15 @@ namespace TumbangPreso.UI
             }
             _detail.SetActive(true);_detail.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             _ownerDetailList.GetComponentInParent<ScrollRect>().verticalNormalizedPosition=1;
+        }
+        private void CloseDetail()
+        {
+            if(_detail==null || !_detail.activeSelf)return;
+            var selected=UnityEngine.EventSystems.EventSystem.current?.currentSelectedGameObject;
+            bool returnFocus=selected!=null && selected.transform.IsChildOf(_detail.transform);
+            _detail.SetActive(false);
+            if(returnFocus && _canvas!=null && _canvas.gameObject.activeInHierarchy)
+                _canvas.GetComponent<InputLayer.ScreenFocus>()?.Rebuild();
         }
         private void DetailRow(string[] values,bool heading)
         {

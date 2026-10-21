@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 23:05:01Z" end-time="2026-09-30 23:05:04Z" duration="3.19466">
+  <test-suite type="TestSuite" id="2254" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-09-30 23:05:01Z" end-time="2026-09-30 23:05:04Z" duration="3.194660" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2248" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-09-30 23:05:01Z" end-time="2026-09-30 23:05:04Z" duration="3.183351" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="199038" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2249" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-09-30 23:05:01Z" end-time="2026-09-30 23:05:04Z" duration="3.179354" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2250" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-09-30 23:05:01Z" end-time="2026-09-30 23:05:04Z" duration="3.176083" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1250" name="DanteEarthboundTests" fullname="TumbangPreso.PlayTests.DanteEarthboundTests" classname="TumbangPreso.PlayTests.DanteEarthboundTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 23:05:01Z" end-time="2026-09-30 23:05:04Z" duration="3.151187" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1253" name="ClassicKeepsNeutralImpulseTravel" fullname="TumbangPreso.PlayTests.DanteEarthboundTests.ClassicKeepsNeutralImpulseTravel" methodname="ClassicKeepsNeutralImpulseTravel" classname="TumbangPreso.PlayTests.DanteEarthboundTests" runstate="Runnable" seed="1706232852" result="Passed" start-time="2026-09-30 23:05:01Z" end-time="2026-09-30 23:05:02Z" duration="0.962792" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1251" name="EarthboundHalvesActualImpulseTravel" fullname="TumbangPreso.PlayTests.DanteEarthboundTests.EarthboundHalvesActualImpulseTravel" methodname="EarthboundHalvesActualImpulseTravel" classname="TumbangPreso.PlayTests.DanteEarthboundTests" runstate="Runnable" seed="70784141" result="Failed" start-time="2026-09-30 23:05:02Z" end-time="2026-09-30 23:05:03Z" duration="0.940207" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: in range (0.43,0.57)
+  But was:  1.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteEarthboundTests+<EarthboundHalvesActualImpulseTravel>d__9.MoveNext () [0x00137] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteEarthboundTests.cs:44
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Earthbound] impulse dante=2.28 control=2.28
+]]></output>
+            </test-case>
+            <test-case id="1252" name="EarthboundHalvesHeldCarryAndItsTail" fullname="TumbangPreso.PlayTests.DanteEarthboundTests.EarthboundHalvesHeldCarryAndItsTail" methodname="EarthboundHalvesHeldCarryAndItsTail" classname="TumbangPreso.PlayTests.DanteEarthboundTests" runstate="Runnable" seed="377704838" result="Failed" start-time="2026-09-30 23:05:03Z" end-time="2026-09-30 23:05:04Z" duration="1.233787" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: in range (0.43,0.57)
+  But was:  1.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteEarthboundTests+<EarthboundHalvesHeldCarryAndItsTail>d__10.MoveNext () [0x00141] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteEarthboundTests.cs:53
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Earthbound] carry dante=5.699999 control=5.699999
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

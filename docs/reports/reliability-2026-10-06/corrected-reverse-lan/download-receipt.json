@@ -1,0 +1,21 @@
+{
+  "source": "917bca66c311fd2832cf571ede2f4b42336deb50",
+  "protocol": 152,
+  "files": 261,
+  "bytes": 2947171334,
+  "manifestSHA256": "3ac354c44b450e9ba0d8d9e07b9ae796ffc2577a0692d63c4113ddf5ef9ac313",
+  "allFilesVerified": true,
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\corrected-pc-917152-1006\\TumbangPreso.exe",
+  "identity": {
+    "sha": "917bca66c311fd2832cf571ede2f4b42336deb50",
+    "branch": "competition-laptop-integration",
+    "protocol": 152,
+    "target": "StandaloneWindows64",
+    "appVersion": "1.0.0",
+    "ugsProject": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+    "ugsEnvironment": "production",
+    "builtAt": "2026-10-06 02:54:12",
+    "dirty": true,
+    "treeState": "dirty"
+  }
+}

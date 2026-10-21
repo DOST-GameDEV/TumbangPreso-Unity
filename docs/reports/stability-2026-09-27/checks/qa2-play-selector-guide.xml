@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 22:04:12Z" end-time="2026-09-26 22:05:13Z" duration="61.4333529">
+  <test-suite type="TestSuite" id="1869" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:04:12Z" end-time="2026-09-26 22:05:13Z" duration="61.433353" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:04:12Z" end-time="2026-09-26 22:05:13Z" duration="61.422799" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31748" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:04:12Z" end-time="2026-09-26 22:05:13Z" duration="61.418948" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1865" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:04:12Z" end-time="2026-09-26 22:05:13Z" duration="61.415282" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1383" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-26 22:04:12Z" end-time="2026-09-26 22:05:11Z" duration="59.757232" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1384" name="CharacterSelectionExplainsItsKitWithoutPausingTheClock" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionExplainsItsKitWithoutPausingTheClock" methodname="CharacterSelectionExplainsItsKitWithoutPausingTheClock" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="650503656" result="Passed" start-time="2026-09-26 22:04:12Z" end-time="2026-09-26 22:05:02Z" duration="50.198178" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1385" name="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" methodname="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1856196026" result="Passed" start-time="2026-09-26 22:05:02Z" end-time="2026-09-26 22:05:04Z" duration="2.240367" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1386" name="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" methodname="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1696224025" result="Failed" start-time="2026-09-26 22:05:04Z" end-time="2026-09-26 22:05:11Z" duration="7.305749" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  No pressable 'Portrait3' on HubLobby
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HubFlowTests+<Press>d__6.MoveNext () [0x000c5] in C:\Users\Matthew\Documents\Codex\2026-09-27\read-agents-md-too-opus-5\work\stability-validation\Assets\TumbangPreso\Tests\PlayMode\HubFlowTests.cs:78
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code W556
+[TumpUiCapture] qa11-owned-hero cream source=252,211,159 pixel=94,80,65; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1421" name="ModelPreviewTests" fullname="TumbangPreso.PlayTests.ModelPreviewTests" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-26 22:05:11Z" end-time="2026-09-26 22:05:13Z" duration="1.613047" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1426" name="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" methodname="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="370000916" result="Passed" start-time="2026-09-26 22:05:11Z" end-time="2026-09-26 22:05:13Z" duration="1.609571" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] preparation-skills-defending-960x540/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] preparation-skills-defending-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

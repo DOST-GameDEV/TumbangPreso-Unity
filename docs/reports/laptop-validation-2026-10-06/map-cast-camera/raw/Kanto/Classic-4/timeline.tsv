@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.502	89.500	Quiet	QuietEstablish	the street	1	0
+1.004	89.000	Quiet	QuietEstablish	the street	1	0
+1.506	88.500	Quiet	QuietEstablish	the street	1	0
+2.006	88.000	Quiet	QuietEstablish	the street	1	0
+2.507	87.500	SlipperLanded	Objective	the can	2	0
+3.007	87.001	SlipperLanded	Objective	the can	2	0
+3.508	86.501	SlipperLanded	Objective	the can	2	0
+4.009	86.001	SlipperLanded	Objective	the can	2	0
+4.509	85.501	Retrieval	RetrievalTwoShot	retrieval · MANG KANOR	2	0
+5.400	84.781	Retrieval	Chase	retrieval · MANG KANOR	5	0
+5.900	84.281	Retrieval	Chase	retrieval · MANG KANOR	5	0
+6.401	83.781	Tag	Defender	tag · ATE GIRLIE	6	0
+6.901	83.281	Tag	Defender	tag · ATE GIRLIE	6	0
+7.404	82.781	Tag	Defender	tag · ATE GIRLIE	6	0
+7.905	82.281	Tag	Defender	tag · ATE GIRLIE	6	0
+8.406	81.781	Downed	Recovery	down · MARING	8	0
+8.908	81.261	Downed	Recovery	down · MARING	8	0
+9.410	80.762	Downed	Recovery	down · MARING	8	0
+9.910	80.262	Downed	Recovery	down · MARING	8	0
+10.411	79.762	Quiet	QuietEstablish	the street	9	0
+10.913	79.262	Quiet	QuietEstablish	the street	10	0
+11.414	78.822	Quiet	QuietEstablish	the street	10	0
+11.915	78.322	Quiet	QuietEstablish	the street	10	0
+12.415	77.822	Quiet	QuietEstablish	the street	10	0
+12.917	77.322	Tag	Defender	tag · ATE GIRLIE	11	0
+13.418	76.822	Tag	Defender	tag · ATE GIRLIE	11	0
+13.918	76.322	Tag	Defender	tag · ATE GIRLIE	11	0
+14.419	75.822	Downed	Recovery	down · MARING	12	0
+14.920	75.322	Downed	Recovery	down · MARING	12	0

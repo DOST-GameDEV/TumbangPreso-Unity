@@ -92,7 +92,7 @@ builder holds no typed-in heights at all: everything asks `IlalimNgTulayBuilder.
   the guideway lives here, which is how the box stays empty. The 0.212 m step up is the visual
   and tactile edge of the danger zone.
 - **The wall faces, |x| = 11.0.** Thin (0.4 m) and pushed OUT by their own half-thickness, so
-  the reachable edge is exactly 11.0. `MatchInstaller` reads `AIController.PlayableHalfX` from
+  the reachable edge is exactly 11.0. `MatchInstaller` once read the playable limits (now `AIController.PlayableMinX` and its siblings, per side) from
   the collider CENTRE, so a fat wall centred on the pavement edge would send bots at ground
   they cannot stand on.
 - **The shopfront apron, |x| 11.0 to 20.0.** Solid plate. It exists so no building in the

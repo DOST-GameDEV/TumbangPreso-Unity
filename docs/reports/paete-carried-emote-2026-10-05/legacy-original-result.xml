@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 21:02:06Z" end-time="2026-10-04 21:02:22Z" duration="16.5641393">
+  <test-suite type="TestSuite" id="3119" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1730" result="Failed" site="Child" start-time="2026-10-04 21:02:06Z" end-time="2026-10-04 21:02:22Z" duration="16.564139" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3111" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1730" result="Failed" site="Child" start-time="2026-10-04 21:02:06Z" end-time="2026-10-04 21:02:22Z" duration="16.555026" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="168022" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3112" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1730" result="Failed" site="Child" start-time="2026-10-04 21:02:06Z" end-time="2026-10-04 21:02:22Z" duration="16.552500" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3115" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1728" result="Failed" site="Child" start-time="2026-10-04 21:02:06Z" end-time="2026-10-04 21:02:22Z" duration="16.550482" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1235" name="CarryTests" fullname="TumbangPreso.PlayTests.CarryTests" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 21:02:06Z" end-time="2026-10-04 21:02:22Z" duration="16.500704" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1240" name="AHeldSlipperSitsOnTheHandNotFloatingAboveIt" fullname="TumbangPreso.PlayTests.CarryTests.AHeldSlipperSitsOnTheHandNotFloatingAboveIt" methodname="AHeldSlipperSitsOnTheHandNotFloatingAboveIt" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1734333131" result="Failed" start-time="2026-10-04 21:02:06Z" end-time="2026-10-04 21:02:21Z" duration="15.337702" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  the harness failed to put a slipper in hand
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarryTests+<AHeldSlipperSitsOnTheHandNotFloatingAboveIt>d__6.MoveNext () [0x0021e] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/CarryTests.cs:492
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1236" name="TheHandAnchorLandsOnTheHandAndRidesIt" fullname="TumbangPreso.PlayTests.CarryTests.TheHandAnchorLandsOnTheHandAndRidesIt" methodname="TheHandAnchorLandsOnTheHandAndRidesIt" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="2123614919" result="Failed" start-time="2026-10-04 21:02:21Z" end-time="2026-10-04 21:02:22Z" duration="1.149845" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The hand anchor has not moved in 40 frames of a live idle, so it is sitting at the bone's rest transform rather than tracking the animated pose.
+  Expected: greater than 0.000500000024f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarryTests+<TheHandAnchorLandsOnTheHandAndRidesIt>d__2.MoveNext () [0x00199] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/CarryTests.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

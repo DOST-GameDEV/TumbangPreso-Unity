@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "438fcac65dc977e463859599f08a39336899318d",
+  "previousQualifiedSource": "../arena-supported-shoes/raw/original-qualified-source.json plus candidate-source-delta.json",
+  "newInputs": {
+    "Assets/TumbangPreso/Tests/PlayMode/ArenaAiBetweenRampTests.cs": "363bc7b72658a10c021ddce1aae49c5fd4bb0bfeb6303c74fbac974d2c62b007",
+    "Assets/TumbangPreso/Tests/PlayMode/ArenaAiBetweenRampTests.cs.meta": "46666112407a79d0079177ff5694a3a377c36a033f00b13fdabec2a59f61fcfd"
+  },
+  "unchangedInputCount": 21192,
+  "base432To438InputsDiff": "M\tAssets/TumbangPreso/Runtime/Slipper.cs\nA\tAssets/TumbangPreso/Tests/PlayMode/ArenaAiObjectiveApproachTests.cs\nA\tAssets/TumbangPreso/Tests/PlayMode/ArenaAiObjectiveApproachTests.cs.meta\n",
+  "identity": {
+    "schemaVersion": 1,
+    "workerId": "qa-a-be075dcdfa07",
+    "validationOnly": true,
+    "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+    "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-qa-a-be075dcdfa07",
+    "editorVersion": "6000.5.8f1",
+    "guardVersion": 1,
+    "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+    "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+    "libraryPhysical": true,
+    "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+    "requiredProfile": "validation-qa-a-be075dcdfa07",
+    "shippingBuildsAllowed": false,
+    "warmupRequired": true,
+    "editorValidation": "not_run",
+    "state": "ready"
+  }
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.1220379">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1332" result="Failed" site="Child" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.122038" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2639" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1332" result="Failed" site="Child" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.072195" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26400" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2640" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1332" result="Failed" site="Child" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.064412" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2641" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1332" result="Failed" site="Child" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.056642" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2171" name="ReaderRestoreChargeOwnershipTests" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.041463" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2177" name="CurrentLocalReaderStillCancelsItsOwnReturn" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.CurrentLocalReaderStillCancelsItsOwnReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.031519" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2175" name="CurrentLocalReaderStillCancelsItsOwnReturn(False)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.CurrentLocalReaderStillCancelsItsOwnReturn(False)" methodname="CurrentLocalReaderStillCancelsItsOwnReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="1794925239" result="Passed" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.020506" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2176" name="CurrentLocalReaderStillCancelsItsOwnReturn(True)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.CurrentLocalReaderStillCancelsItsOwnReturn(True)" methodname="CurrentLocalReaderStillCancelsItsOwnReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="1185173302" result="Passed" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.000775" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2174" name="ObsoleteRemoteReaderKeepsTheReceivedReturn" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.006355" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2172" name="ObsoleteRemoteReaderKeepsTheReceivedReturn(False)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn(False)" methodname="ObsoleteRemoteReaderKeepsTheReceivedReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="752626055" result="Failed" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.004851" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An unowned reader erased another seat's received charge-return timer.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn (System.Boolean focus) [0x00007] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ReaderRestoreChargeOwnershipTests.cs:46
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2173" name="ObsoleteRemoteReaderKeepsTheReceivedReturn(True)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn(True)" methodname="ObsoleteRemoteReaderKeepsTheReceivedReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="292114224" result="Failed" start-time="2026-10-04 13:23:34Z" end-time="2026-10-04 13:23:34Z" duration="0.000574" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An unowned reader erased another seat's received charge-return timer.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn (System.Boolean focus) [0x00007] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ReaderRestoreChargeOwnershipTests.cs:46
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

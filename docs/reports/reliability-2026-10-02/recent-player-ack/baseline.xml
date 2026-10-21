@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.2786726">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="872" result="Failed" site="Child" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.278673" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2045" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="872" result="Failed" site="Child" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.255406" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24196" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2046" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="872" result="Failed" site="Child" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.243205" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2047" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="872" result="Failed" site="Child" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.231305" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1818" name="RecentPlayerActionTests" fullname="TumbangPreso.Tests.RecentPlayerActionTests" classname="TumbangPreso.Tests.RecentPlayerActionTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.211227" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1821" name="OfflineRecentActionNeverClaimsDelivery" fullname="TumbangPreso.Tests.RecentPlayerActionTests.OfflineRecentActionNeverClaimsDelivery" classname="TumbangPreso.Tests.RecentPlayerActionTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.205957" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1819" name="OfflineRecentActionNeverClaimsDelivery(&quot;AddRecentPlayer&quot;,&quot;REQUEST SENT&quot;,&quot;FriendRequestStatus&quot;)" fullname="TumbangPreso.Tests.RecentPlayerActionTests.OfflineRecentActionNeverClaimsDelivery(&quot;AddRecentPlayer&quot;,&quot;REQUEST SENT&quot;,&quot;FriendRequestStatus&quot;)" methodname="OfflineRecentActionNeverClaimsDelivery" classname="TumbangPreso.Tests.RecentPlayerActionTests" runstate="Runnable" seed="1723054825" result="Failed" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.188366" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An offline action claimed successful delivery.
+  Expected: not equal to "REQUEST SENT"
+  But was:  "REQUEST SENT"
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RecentPlayerActionTests.OfflineRecentActionNeverClaimsDelivery (System.String buttonName, System.String success, System.String feedbackName) [0x00020] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RecentPlayerActionTests.cs:116
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1820" name="OfflineRecentActionNeverClaimsDelivery(&quot;ReportRecentPlayer&quot;,&quot;REPORTED&quot;,&quot;ReportRequestStatus&quot;)" fullname="TumbangPreso.Tests.RecentPlayerActionTests.OfflineRecentActionNeverClaimsDelivery(&quot;ReportRecentPlayer&quot;,&quot;REPORTED&quot;,&quot;ReportRequestStatus&quot;)" methodname="OfflineRecentActionNeverClaimsDelivery" classname="TumbangPreso.Tests.RecentPlayerActionTests" runstate="Runnable" seed="1908530487" result="Failed" start-time="2026-10-02 03:22:36Z" end-time="2026-10-02 03:22:36Z" duration="0.004709" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An offline action claimed successful delivery.
+  Expected: not equal to "REPORTED"
+  But was:  "REPORTED"
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RecentPlayerActionTests.OfflineRecentActionNeverClaimsDelivery (System.String buttonName, System.String success, System.String feedbackName) [0x00020] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RecentPlayerActionTests.cs:116
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

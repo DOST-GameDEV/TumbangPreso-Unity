@@ -91,6 +91,10 @@ namespace TumbangPreso.UI
         private Text _error, _primaryLabel;
         private Button _signInTab, _createTab;
         private Button _guest, _back;
+        private Func<bool, string, string, System.Threading.Tasks.Task> _credentialDispatch;
+        private Func<bool, System.Threading.Tasks.Task> _googleDispatch;
+        private int _authViewRequest;
+        private bool _authOperationPending;
 
         /// <summary>
         /// True while this screen is the first thing the game showed, rather than something the
@@ -236,7 +240,11 @@ namespace TumbangPreso.UI
         /// </summary>
         public event Action<bool> Opened;
 
-        private void OnDestroy() => ScreenTakeover.Unregister(this);
+        private void OnDestroy()
+        {
+            ++_authViewRequest;
+            ScreenTakeover.Unregister(this);
+        }
 
         public void Install()
         {
@@ -1012,7 +1020,7 @@ namespace TumbangPreso.UI
             // and `CLAUDE.md` § 6.4: his art is the design system and it is not to be repainted.
             // This draws the file he actually drew, at `Color.white`, on the ground it was drawn
             // against.
-            var logo = Resources.Load<Texture2D>("UI/brand/tump_logo")
+            var logo = OwnerMenuArt.Texture("login3-logo")
                        ?? Resources.Load<Texture2D>("UI/main-menu/TUMP");
 
             if (logo == null)
@@ -1096,7 +1104,8 @@ namespace TumbangPreso.UI
             // `CLAUDE.md` § 5 is about: a number describing a file, kept beside the file, that
             // nobody updates when the file changes. He is iterating on this logo right now and
             // has sent two versions in one day. `logo.width / logo.height` cannot go stale.
-            float aspect = logo.height > 0 ? (float)logo.width / logo.height : 1.0f;
+            var logoUv = TumpUiFactory.LogoUv;
+            float aspect = logo.height > 0 ? logo.width * logoUv.width / (logo.height * logoUv.height) : 1.0f;
 
             var box = new GameObject("LogoBox", typeof(RectTransform));
             box.transform.SetParent(col, false);
@@ -1104,6 +1113,7 @@ namespace TumbangPreso.UI
                 new Vector2(0.0f, y), new Vector2(LogoMarkHeight * aspect, LogoMarkHeight));
 
             var image = Engraved(box.transform, logo, "Logo", 0.0f, Color.white);
+            image.uvRect = logoUv;
             image.raycastTarget = false;
         }
 
@@ -1535,6 +1545,7 @@ namespace TumbangPreso.UI
 
         public void Open()
         {
+            RetireAuthView();
             // ⚠️⚠️ THE FIELDS ARE CLEARED BEFORE THE MODE IS SET, NOT AFTER, AND THE FIRST
             // RENDER OF THIS SCREEN IS WHY. `SetMode` writes the line explaining what CREATE
             // ACTUALLY DOES ("keeps everything you have played on this machine"), and clearing
@@ -1634,6 +1645,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void OpenAtBoot()
         {
+            RetireAuthView();
             _username.text = "";
             _password.text = "";
             _error.text = "";
@@ -1703,11 +1715,29 @@ namespace TumbangPreso.UI
 
         private void Close()
         {
+            RetireAuthView();
             _root.SetActive(false);
             if(_nativeForm){_password.text="";_ownerConfirm.text="";ClearOwnerFaults();}
             Opened?.Invoke(false);
             Closed?.Invoke();
         }
+
+        private void RetireAuthView()
+        {
+            ++_authViewRequest;
+            NativeBusy(false);
+            // Keep browser/SDK authentication single-flight while a hidden view waits.
+            if (_authOperationPending)
+            {
+                if (_nativeSubmit != null) _nativeSubmit.interactable = false;
+                if (_googleButton != null) _googleButton.interactable = false;
+                if (_guest != null) _guest.interactable = false;
+            }
+        }
+
+        private bool AuthViewIsCurrent(int request, Net.PlayerAccount account)
+            => this != null && IsOpen && request == _authViewRequest
+               && ReferenceEquals(GameServices.Account, account);
 
         /// <summary>
         /// ⚠️⚠️ CREATE AND SIGN IN ARE DIFFERENT CALLS AND THE DIFFERENCE MATTERS TO THE PLAYER'S
@@ -1866,34 +1896,52 @@ namespace TumbangPreso.UI
         /// </summary>
         private async void Submit()
         {
-            if (_nativeBusy) return;
+            if (_nativeBusy || _authOperationPending || !IsOpen) return;
             string username = _username.text?.Trim() ?? "";
             string password = _password.text ?? "";
 
-            if (string.IsNullOrEmpty(username)) { Fail("Enter a username."); return; }
-            if (string.IsNullOrEmpty(password)) { Fail("Enter a password."); return; }
-            if(_nativeForm && !ValidateOwnerRegistration())return;
+            if (_nativeForm)
+            {
+                if (!ValidateOwnerSubmission()) return;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(username)) { Fail("Enter a username."); return; }
+                if (string.IsNullOrEmpty(password)) { Fail("Enter a password."); return; }
+            }
 
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }
 
+            int request = ++_authViewRequest;
+            _authOperationPending = true;
             NativeBusy(true);
             try
             {
                 _error.color = _nativeForm ? OwnerUiTheme.Current.EnteredInk : UiTheme.PaperInkSoft;
                 _error.text = _creating ? "Creating your account..." : "Signing in...";
 
-                if (_creating) await account.UpgradeAsync(username, password);
+                if (_credentialDispatch != null) await _credentialDispatch(_creating, username, password);
+                else if (_creating) await account.UpgradeAsync(username, password);
                 else await account.SignInAsync(username, password);
 
+                if (!AuthViewIsCurrent(request, account)) return;
                 RememberTheChoiceWasMade();
                 Close();
             }
             catch (Exception e)
             {
+                if (!AuthViewIsCurrent(request, account)) return;
                 Fail(e.Message);
             }
-            finally { NativeBusy(false); }
+            finally
+            {
+                if (this != null)
+                {
+                    _authOperationPending = false;
+                    NativeBusy(false);
+                }
+            }
         }
 
         /// <summary>
@@ -1910,11 +1958,13 @@ namespace TumbangPreso.UI
         /// </summary>
         private async void GooglePressed()
         {
-            if (_nativeBusy) return;
+            if (_nativeBusy || _authOperationPending || !IsOpen) return;
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }
 
             if (_googleButton != null) _googleButton.interactable = false;
+            int request = ++_authViewRequest;
+            _authOperationPending = true;
             NativeBusy(true);
 
             try
@@ -1922,25 +1972,33 @@ namespace TumbangPreso.UI
                 _error.color = _nativeForm ? OwnerUiTheme.Current.EnteredInk : UiTheme.PaperInkSoft;
                 _error.text = "Finish signing in on the browser window.";
 
-                if (_creating) await account.LinkGoogleAsync();
+                if (_googleDispatch != null) await _googleDispatch(_creating);
+                else if (_creating) await account.LinkGoogleAsync();
                 else await account.SignInWithGoogleAsync();
 
+                if (!AuthViewIsCurrent(request, account)) return;
                 RememberTheChoiceWasMade();
                 Close();
             }
             catch (Exception e)
             {
+                if (!AuthViewIsCurrent(request, account)) return;
                 Fail(e.Message);
             }
             finally
             {
-                NativeBusy(false);
-                if (_googleButton != null) _googleButton.interactable = true;
+                if (this != null)
+                {
+                    _authOperationPending = false;
+                    NativeBusy(false);
+                    if (_googleButton != null) _googleButton.interactable = true;
+                }
             }
         }
 
         private void GuestPressed()
         {
+            if (_authOperationPending) return;
             if (_atBoot) BootGuest();
             else Guest();
         }
@@ -1985,7 +2043,12 @@ namespace TumbangPreso.UI
             // password belongs there and not in the screen's one shared line. `RouteOwnerFault`
             // answers whether it found a home for it; everything left over is about the attempt
             // rather than about a field, and that is what the shared line is for.
-            if (RouteOwnerFault(message)) return;
+            if (RouteOwnerFault(message))
+            {
+                // A field verdict replaces the in-flight "Creating"/"Signing in" status.
+                _error.text = "";
+                return;
+            }
 
             // ⚠️ `MenuRed`, NOT `Danger`. `f80000` MEANS downed or out of bounds in the match,
             // and the sibling of `CLAUDE.md` § 6.4 is that a colour with a meaning is not a paint.

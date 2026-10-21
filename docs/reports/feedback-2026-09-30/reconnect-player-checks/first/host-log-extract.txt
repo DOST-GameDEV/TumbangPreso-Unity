@@ -1,0 +1,26 @@
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[NetReport] writing C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Logs\feedback-reconnect-player-1001\rejoin\host.txt after 110 s.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18917, join code E4UM
+[NetBoot] host requested on 18917 dedicated=False: listening
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[NetAuto] READY submitted with 2 playing peers.
+[Slice] round 1 begins, taya is seat 0
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[NetApproval] peer=2 approved=True reason=
+[NetArrival] peer=2 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[NetDisconnect] peer=2 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[Slice] round 2 begins, taya is seat 1
+[NetReport] wrote C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Logs\feedback-reconnect-player-1001\rejoin\host.txt
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.

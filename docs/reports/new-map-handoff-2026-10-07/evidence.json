@@ -1,0 +1,169 @@
+{
+  "sourceRef": "61214b696db423d80de58f8f849a77582235523d",
+  "qualifiedWipSourceHashes": {
+    "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.Direction.cs": "5f464878ed964c58937e6a20e53c2ee0f68a172e56d2ea91728075cd71c541c2",
+    "Assets/TumbangPreso/Tests/PlayMode/NewMapHandoffVisibilityTests.cs": "f787ca84bbb94082261e22867b914817108b1075724011019db1cd4ca5b32ab3",
+    "Assets/TumbangPreso/Tests/PlayMode/NewMapHandoffVisibilityTests.cs.meta": "a7f2ca9374a2f0c113c9b4e0b2baeedae47ce5fec8d9cbcb9ad0bea86c89a9f5",
+    "Assets/TumbangPreso/Tests/PlayMode/NewMapOpeningVisualCaptureTests.cs": "65b68ebdd2d7022ca3e4ed359025758f34a0a67049266fbe27c62f5705192233",
+    "Assets/TumbangPreso/Tests/PlayMode/NewMapOpeningVisualCaptureTests.cs.meta": "53f5de5f85a699a2f8f451549ec5ff71df15830ae235dc482f26215be208bbf8"
+  },
+  "runs": {
+    "handoff-original": {
+      "nativePid": 50808,
+      "exitCode": 2,
+      "protectedCount": 21385,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHandoff",
+          "result": "Failed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHumanRigHandoff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeMotionOff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeReduced",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveHandoff",
+          "result": "Failed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveMotionOff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveReduced",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoHandoff",
+          "result": "Failed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoMotionOff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoReduced",
+          "result": "Passed"
+        }
+      ]
+    },
+    "handoff-candidate": {
+      "nativePid": 49576,
+      "exitCode": 0,
+      "protectedCount": 21385,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHandoff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHumanRigHandoff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeMotionOff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeReduced",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveHandoff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveMotionOff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveReduced",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoHandoff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoMotionOff",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoReduced",
+          "result": "Passed"
+        }
+      ]
+    },
+    "handoff-wide-fixed1080": {
+      "nativePid": 47708,
+      "exitCode": 0,
+      "protectedCount": 21385,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests.BridgeHeldOpeningAt1080",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests.CoveHeldOpeningAt1080",
+          "result": "Passed"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests.KantoHeldOpeningAt1080",
+          "result": "Passed"
+        }
+      ]
+    }
+  },
+  "rawFiles": {
+    "handoff-original/result.json": "335ec8f4cb1c999576303a60eafe4698bf2b737413432f2df32ea2cf1f5157d0",
+    "handoff-original/results.xml": "81e8f85e62cb3c889f4271d04272229c448d6bf6d72e0fe3559dfaf97b861de0",
+    "handoff-original/source-restoration.json": "4f9cc0eb060d9b9ec545c4b7180490258bf8ad2d6e4f670d6f5ffac5470dedf9",
+    "handoff-original/frames/IlalimNgTulay-reducedFalse-motionFalse-botsTrue.csv": "c13e84d451ab8cb7fb166c7359e268ca0fd493d42ca483335404e87f2877511f",
+    "handoff-original/frames/IlalimNgTulay-reducedFalse-motionTrue-botsFalse.csv": "a81d04393d8c7ed75fb9ad7efd9b91a3d515d9c48935724a742c779e100b7a60",
+    "handoff-original/frames/IlalimNgTulay-reducedFalse-motionTrue-botsTrue.csv": "c1b7cf574f9ef1d7b94ff7a5b7222ef562ccef77669ef8570ac538ff893318c9",
+    "handoff-original/frames/IlalimNgTulay-reducedTrue-motionTrue-botsTrue.csv": "f65c147b8f8f0874e96cdcb2eeb72e740216f365aa587a4db17825e8f04540f2",
+    "handoff-original/frames/Kanto-reducedFalse-motionFalse-botsTrue.csv": "2b943594c1e8cc2eb221793f2ea53ff78d2ba6e6c21ffe4a1549ccdae67829a5",
+    "handoff-original/frames/Kanto-reducedFalse-motionTrue-botsTrue.csv": "1d9f513be99d821df754abe2433df0ad328b18f8e2a1bede0df36709f498bd65",
+    "handoff-original/frames/Kanto-reducedTrue-motionTrue-botsTrue.csv": "5e07bb0d432a12ab121a014be8bfd14c932094aa4f935856c9faa854f986d35b",
+    "handoff-original/frames/LagoonCove-reducedFalse-motionFalse-botsTrue.csv": "4daab2ac5290e7ca2f28a7562973c647b9a0e08df20092254b1c29c503d5b2a2",
+    "handoff-original/frames/LagoonCove-reducedFalse-motionTrue-botsTrue.csv": "ca5bd0e8c922629d400e8e79de4fb858a11a41e767d6ca3da7a614c2c927979f",
+    "handoff-original/frames/LagoonCove-reducedTrue-motionTrue-botsTrue.csv": "fa2a9216c419a8c018be5cddc6f717b84bbdd6a0405aa9565cd57668230420a9",
+    "handoff-candidate/result.json": "94e59b81e4309357338ed3a99a3ea4c7e206360b744b917212d7bf995e04d873",
+    "handoff-candidate/results.xml": "869e7ac6dcffa3f2771172a7e1288632930adca181637a07250ec4b4d2e43bdf",
+    "handoff-candidate/source-restoration.json": "4386d771e4240888686ff8e53f9dcdb5a1ca89e55215c9b1b696a67d41b91718",
+    "handoff-candidate/frames/IlalimNgTulay-reducedFalse-motionFalse-botsTrue.csv": "a7012ca6a71df257a58ffa8bac9b7341355666330ce30283369f1e2c88e1769f",
+    "handoff-candidate/frames/IlalimNgTulay-reducedFalse-motionTrue-botsFalse.csv": "d56f1afa90c0fb5e1cc89127423bdca0d7482ff828726833c67839375d175801",
+    "handoff-candidate/frames/IlalimNgTulay-reducedFalse-motionTrue-botsTrue.csv": "07b1bce30d479ae452d79e3d4c9ceba43397249026951daf7812957bd5cefb18",
+    "handoff-candidate/frames/IlalimNgTulay-reducedTrue-motionTrue-botsTrue.csv": "6069838db1e1fefc2fd6f0a086da58ba4ccb8193c7d7775667e5f65fd617fd1e",
+    "handoff-candidate/frames/Kanto-reducedFalse-motionFalse-botsTrue.csv": "b7af2533363ad544083db0eead262f1862e03ce2618c7ba599ef6ff1690e3952",
+    "handoff-candidate/frames/Kanto-reducedFalse-motionTrue-botsTrue.csv": "0bd8da3467f9c8191322b5606e24da4be4476dddc1d7b142e9c0a31c9a9ba3ca",
+    "handoff-candidate/frames/Kanto-reducedTrue-motionTrue-botsTrue.csv": "637617e4b458f4f9c1f64fdb4a6d32824800936c8a5a2fd388680408903aeebd",
+    "handoff-candidate/frames/LagoonCove-reducedFalse-motionFalse-botsTrue.csv": "68031af1d214fe60264de9b72ec2919e389e644c0340cf634ada6b0c3698789f",
+    "handoff-candidate/frames/LagoonCove-reducedFalse-motionTrue-botsTrue.csv": "e348e0e2f1ac5c7ccc1bdd5c9a0b7bec80e16c14d06d2062a4c148298eae1790",
+    "handoff-candidate/frames/LagoonCove-reducedTrue-motionTrue-botsTrue.csv": "233ebb8542a4809018bd006f8a57b1b2e827d5ba5b8c81731597e0f7638ffa35",
+    "handoff-wide-fixed1080/result.json": "22971a135759482be0bf7826f17f78a86a52919e726301fa071abb8db09d466b",
+    "handoff-wide-fixed1080/results.xml": "267baf7a3d1d22e6fba3a8278db326eca0d2fdcd50b1b531bdc9408e5cdc7910",
+    "handoff-wide-fixed1080/source-restoration.json": "b561d28707322f10765c0fef84cee4b0f91cc733d005d5689af0348d8acf5e1b",
+    "comparison/IlalimNgTulay-before.png": "775a7b2200c3557a6dbac9c5f854e920cb3525a9a18da182667be82278bb866a",
+    "comparison/IlalimNgTulay-before.txt": "a3b26ab2d588ba8e83b164caacb31da7d535e8b1be3753d6bb0cf5c998228d96",
+    "comparison/IlalimNgTulay-after.png": "4b5a41232ebe760de8df59dc26ee14d9f70ae35eca2e784ccc1b096cc199cba4",
+    "comparison/IlalimNgTulay-after.txt": "8404f8f5987d55673679b58c4e103188da8f5a709308d04ff60c829a99dce9fd",
+    "comparison/LagoonCove-before.png": "12b930eaa3c0fed9803bf3c081f48fb3dc3e03db090ad27f65162b351204a072",
+    "comparison/LagoonCove-before.txt": "a1bd380cf84490b20ac924bdf03ad0de162bf2fa94cc2d5e425713b0a39ad002",
+    "comparison/LagoonCove-after.png": "402470dd07e4127a05d7b539cc34e608bc96701138d10b5888fc165b03357690",
+    "comparison/LagoonCove-after.txt": "cbb9ff8d153cc12cd5f9a53f1d0d2bc01b75f463bcc3f605ea58e7a849134727",
+    "comparison/Kanto-before.png": "d1133f85fc6eadfdbfb3a6d57b59aaa6c6607a6ae0ddd22ade115fc92d48cf2d",
+    "comparison/Kanto-before.txt": "10c4917dab6228348757c5484dfb11294bf824a4ff7281205d0de63024ac9fb7",
+    "comparison/Kanto-after.png": "57811fddefa8f59e41c745ef045cd435a599885de1e099e19ea974d3b0ea0ba1",
+    "comparison/Kanto-after.txt": "4b10241287b05e526c3f35ca770d518717b3a7cccbec53f11fb1d5b2714f1406",
+    "visual-review.md": "572096244f9031bd55572788830d4e70bad1a91d21f0fffc90ecf4152108fdd9"
+  }
+}

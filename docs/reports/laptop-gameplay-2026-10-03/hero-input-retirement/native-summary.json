@@ -1,0 +1,183 @@
+{
+  "baseline": "75de684463693e18daa45c7c6a568b2cedca4533",
+  "input_level": "Native local TouchInput/reader/consumer and lifecycle callbacks in supplied minimal world; generic counting kit, no OS/device/actual peer claim",
+  "first_candidate": true,
+  "fixture_assertion_repair_count": 0,
+  "runs": {
+    "original": {
+      "result": "Failed(Child)",
+      "passed": 6,
+      "failed": 7,
+      "total": 13,
+      "cases": [
+        {
+          "name": "FocusLossCancelsPendingHeroAim",
+          "result": "Failed",
+          "failure": "  Producer retirement was interpreted as a hero release.\n  Expected: 0\n  But was:  1\n"
+        },
+        {
+          "name": "FocusLossDiscardsPendingHeroBuffer",
+          "result": "Failed",
+          "failure": "  A retired buffered hero press cast after recovery.\n  Expected: 0\n  But was:  1\n"
+        },
+        {
+          "name": "FocusLossPreservesAnActivatedAbilityAndResources",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "HeroComponentDisableDiscardsPendingHeroBuffer",
+          "result": "Failed",
+          "failure": "  A hero component retained its buffered press across disable/re-enable.\n  Expected: 0\n  But was:  1\n"
+        },
+        {
+          "name": "OrdinaryStunBufferSurvivesUntilTheActorCanAct",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "PracticeIdleCancelsPendingHeroAim",
+          "result": "Failed",
+          "failure": "  Producer retirement was interpreted as a hero release.\n  Expected: 0\n  But was:  1\n"
+        },
+        {
+          "name": "PracticeIdleDiscardsPendingHeroBuffer",
+          "result": "Failed",
+          "failure": "  A retired buffered hero press cast after recovery.\n  Expected: 0\n  But was:  1\n"
+        },
+        {
+          "name": "ReaderDisableCancelsPendingHeroAim",
+          "result": "Failed",
+          "failure": "  Producer retirement was interpreted as a hero release.\n  Expected: 0\n  But was:  1\n"
+        },
+        {
+          "name": "ReaderDisableDiscardsPendingHeroBuffer",
+          "result": "Failed",
+          "failure": "  A retired buffered hero press cast after recovery.\n  Expected: 0\n  But was:  1\n"
+        },
+        {
+          "name": "ReaderDisablePreservesAnActivatedAbilityAndResources",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "RemoteReaderDisablePreservesReceivedAimAndRenewal",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "RemoteReaderFocusLossPreservesReceivedAimAndRenewal",
+          "result": "Passed",
+          "failure": null
+        }
+      ],
+      "job_id": "e14c62a6c1494288a4484ca861b158ff",
+      "guardTerminal": true,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    },
+    "candidate": {
+      "result": "Passed",
+      "passed": 13,
+      "failed": 0,
+      "total": 13,
+      "cases": [
+        {
+          "name": "FocusLossCancelsPendingHeroAim",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "FocusLossDiscardsPendingHeroBuffer",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "FocusLossPreservesAnActivatedAbilityAndResources",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "HeroComponentDisableDiscardsPendingHeroBuffer",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "OrdinaryStunBufferSurvivesUntilTheActorCanAct",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "PracticeIdleCancelsPendingHeroAim",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "PracticeIdleDiscardsPendingHeroBuffer",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "ReaderDisableCancelsPendingHeroAim",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "ReaderDisableDiscardsPendingHeroBuffer",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "ReaderDisablePreservesAnActivatedAbilityAndResources",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "RemoteReaderDisablePreservesReceivedAimAndRenewal",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "RemoteReaderFocusLossPreservesReceivedAimAndRenewal",
+          "result": "Passed",
+          "failure": null
+        }
+      ],
+      "job_id": "f7023cb23c1d4f4885c777b126caa838",
+      "guardTerminal": true,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    }
+  },
+  "sources": {
+    "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": {
+      "original_worker_sha256": "782f2e831522851a51d0a1118150613253da33078991df953e2187958aab5536",
+      "original_matches_baseline_ignoring_line_endings": true,
+      "candidate_sha256": "19ad79886800c852dba12a715b34eddf3407ae2db460e4eb293dba6c7a0cab98",
+      "candidate_matches_primary": true
+    },
+    "Assets/TumbangPreso/Runtime/PracticeRange.cs": {
+      "original_worker_sha256": "3b49285be4c16b743bafdfd5adaa6f09ee62e1e354fedea5d3e514529ab4b115",
+      "original_matches_baseline_ignoring_line_endings": true,
+      "candidate_sha256": "63558d8da72addb35cb5c36fcf078972b2d9aae6692270f3b60c7bf1a95a44ca",
+      "candidate_matches_primary": true
+    },
+    "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.AimReplication.cs": {
+      "original_worker_sha256": "c8062a5a3aa6d1e6466586a70c7b20a4b0e34cd7397dab4a794a5e832f5536bf",
+      "original_matches_baseline_ignoring_line_endings": true,
+      "candidate_sha256": "d003d3bf48125f94b4369882f38f4a428c1d41ef6e57a4b8331d409d9dad34ec",
+      "candidate_matches_primary": true
+    }
+  },
+  "fixture_sha256": "7b4f34359f38546c3b2d41eb313db25463bda76dd95e89eec54fff6083001dea"
+}

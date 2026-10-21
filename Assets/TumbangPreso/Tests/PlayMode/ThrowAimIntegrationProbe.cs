@@ -89,7 +89,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator DirectionGuideStaysVisibleOnRealSurfacesWithoutGivingAwayMovingLanding()
+        public IEnumerator LandingCircleStaysVisibleOnRealSurfacesAndReleaseHidesIt()
         {
             string output=Environment.GetEnvironmentVariable("TUMP_AIM_GUIDE_REVIEW")??"Logs/aim-guide-surfaces-v2";Directory.CreateDirectory(output);
             foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong})
@@ -121,9 +121,9 @@ namespace TumbangPreso.PlayTests
                 Assert.True(guide.GetComponent<MeshRenderer>().enabled,"A disabled old bot component hid the local direction guide.");
                 var path=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",Private).GetValue(guide);
                 Assert.Greater(path.Count,3);
-                float shortLength=Vector3.Distance(path[0],path[path.Count-1]);
-                Assert.Greater(Vector3.Distance(path[path.Count-1],who.Intent.AimPoint),3f,
-                    "Moving aim must not disclose the actual landing position.");
+                Assert.That(guide.LandingPoint.y, Is.GreaterThan(-1f));
+                foreach (var vertex in guide.GetComponent<MeshFilter>().sharedMesh.vertices)
+                    Assert.That(vertex.y, Is.EqualTo(guide.LandingPoint.y).Within(.001f), "Only the landing circle belongs in the drawn mesh.");
                 foreach(var vertex in guide.GetComponent<MeshFilter>().sharedMesh.vertices)
                     Assert.False(float.IsNaN(vertex.x)||float.IsNaN(vertex.y)||float.IsNaN(vertex.z));
                 yield return GameplayShots.Render(rig.Camera,map+"-moving-guide",true,output);
@@ -131,8 +131,7 @@ namespace TumbangPreso.PlayTests
                 CaptureGuideDifference(rig.Camera,guide,output,map+"-moving");
                 Set(carrier,"_aimMovement",0f);
                 typeof(TrajectoryPreview).GetMethod("LateUpdate",Private).Invoke(guide,null);
-                float settledLength=Vector3.Distance(path[0],path[path.Count-1]);
-                Assert.Greater(settledLength,shortLength*1.5f,"Settling must give useful additional direction information.");
+                Assert.True(guide.LandingVisible, "Settled aim must retain its ground circle.");
                 yield return GameplayShots.Render(rig.Camera,map+"-settled-guide",true,output);
                 CaptureGuideDifference(rig.Camera,guide,output,map+"-settled");
                 who.Intent.Set(Verb.SpecialAbility,false);Step(carrier,.016f);

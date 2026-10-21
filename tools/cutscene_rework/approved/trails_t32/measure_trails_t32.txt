@@ -1,0 +1,125 @@
+RIBBON 1 shards (mean of 6 moments)
+  coverage px            ref     42232   ours     42189   x 1.00  
+  mean brightness        ref      0.71   ours      0.79   x 1.12  
+  p90 brightness         ref      0.98   ours      0.98   x 1.00  
+  core share             ref      0.28   ours      0.25   x 0.87  
+  body share             ref      0.51   ours      0.60   x 1.18 *
+  faint share            ref      0.21   ours      0.15   x 0.72 *
+  body hue               ref    283.53   ours    288.20   x 1.02  
+  hue spread 5-95        ref     25.67   ours     23.67   x 0.92  
+  body saturation        ref      0.54   ours      0.49   x 0.92  
+  mean width px          ref       105   ours       105   x 1.00  
+  max width px           ref       133   ours       133   x 1.00  
+  width foot third       ref     70.33   ours     74.28   x 1.06  
+  width mid third        ref    121.03   ours    118.81   x 0.98  
+  width tip third        ref    117.42   ours    117.28   x 1.00  
+  height reached         ref      1.09   ours      1.07   x 0.98  
+  solid px               ref     43680   ours     43485   x 1.00  
+  holes count            ref      6.33   ours      2.17   x 0.34 *
+  holes mean px          ref       149   ours       528   x 3.55 *
+  bright blobs count     ref      3.83   ours     16.17   x 4.22 *
+  bright blobs mean px   ref      5798   ours       648   x 0.11 *
+  core rgb               ref (233,180,242)   ours (245,196,248)
+  body rgb               ref (150, 82,175)   ours (183,102,201)
+  faint rgb              ref ( 93, 65,107)   ours (109, 84,124)
+  scroll lengths/s       ref      0.75   ours      0.75   x 1.00  
+RIBBON 2 smoke (mean of 6 moments)
+  coverage px            ref     32328   ours     31978   x 0.99  
+  mean brightness        ref      0.73   ours      0.77   x 1.06  
+  p90 brightness         ref      1.00   ours      0.99   x 0.99  
+  core share             ref      0.40   ours      0.36   x 0.91  
+  body share             ref      0.36   ours      0.36   x 1.01  
+  faint share            ref      0.25   ours      0.28   x 1.13  
+  body hue               ref    283.89   ours    284.79   x 1.00  
+  hue spread 5-95        ref     27.67   ours     30.67   x 1.11  
+  body saturation        ref      0.50   ours      0.47   x 0.93  
+  mean width px          ref        88   ours        85   x 0.97  
+  max width px           ref       132   ours       113   x 0.86  
+  width foot third       ref     51.14   ours     59.37   x 1.16 *
+  width mid third        ref    108.07   ours     98.40   x 0.91  
+  width tip third        ref     96.72   ours     91.57   x 0.95  
+  height reached         ref      1.03   ours      1.08   x 1.05  
+  solid px               ref     36169   ours     33287   x 0.92  
+  holes count            ref      7.67   ours     10.83   x 1.41 *
+  holes mean px          ref       495   ours        98   x 0.20 *
+  bright blobs count     ref      3.33   ours      2.67   x 0.80 *
+  bright blobs mean px   ref      4118   ours      4527   x 1.10  
+  core rgb               ref (239,196,246)   ours (247,215,251)
+  body rgb               ref (149, 86,172)   ours (176,105,199)
+  faint rgb              ref ( 97, 73,108)   ours (107, 84,121)
+  scroll lengths/s       ref      0.75   ours      0.83   x 1.10  
+RIBBON 3 ink (mean of 6 moments)
+  coverage px            ref     19468   ours     20588   x 1.06  
+  mean brightness        ref      0.68   ours      0.74   x 1.08  
+  p90 brightness         ref      1.00   ours      0.99   x 0.99  
+  core share             ref      0.31   ours      0.29   x 0.91  
+  body share             ref      0.30   ours      0.38   x 1.26 *
+  faint share            ref      0.39   ours      0.33   x 0.87  
+  body hue               ref    283.50   ours    282.58   x 1.00  
+  hue spread 5-95        ref     25.33   ours     25.67   x 1.01  
+  body saturation        ref      0.47   ours      0.47   x 0.98  
+  mean width px          ref        59   ours        61   x 1.04  
+  max width px           ref        95   ours        85   x 0.89  
+  width foot third       ref     40.29   ours     41.18   x 1.02  
+  width mid third        ref     65.05   ours     69.04   x 1.06  
+  width tip third        ref     69.38   ours     71.60   x 1.03  
+  height reached         ref      1.06   ours      1.09   x 1.02  
+  solid px               ref     23669   ours     21304   x 0.90  
+  holes count            ref     11.00   ours      6.50   x 0.59 *
+  holes mean px          ref       361   ours        81   x 0.22 *
+  bright blobs count     ref      3.67   ours      1.17   x 0.32 *
+  bright blobs mean px   ref      1728   ours      5417   x 3.14 *
+  core rgb               ref (238,198,246)   ours (245,208,250)
+  body rgb               ref (141, 85,162)   ours (170,102,194)
+  faint rgb              ref (112, 84,122)   ours (110, 87,125)
+  scroll lengths/s       ref      0.83   ours      0.90   x 1.09  
+RIBBON 4 squiggle (mean of 6 moments)
+  coverage px            ref     13939   ours     14030   x 1.01  
+  mean brightness        ref      0.64   ours      0.75   x 1.17 *
+  p90 brightness         ref      0.96   ours      1.00   x 1.04  
+  core share             ref      0.21   ours      0.31   x 1.43 *
+  body share             ref      0.31   ours      0.33   x 1.06  
+  faint share            ref      0.47   ours      0.36   x 0.77 *
+  body hue               ref    287.26   ours    285.81   x 0.99  
+  hue spread 5-95        ref     27.67   ours     27.67   x 1.00  
+  body saturation        ref      0.47   ours      0.47   x 1.01  
+  mean width px          ref        40   ours        38   x 0.96  
+  max width px           ref        74   ours        56   x 0.76 *
+  width foot third       ref     23.59   ours     22.58   x 0.96  
+  width mid third        ref     45.96   ours     44.37   x 0.97  
+  width tip third        ref     47.98   ours     46.24   x 0.96  
+  height reached         ref      1.01   ours      1.08   x 1.06  
+  solid px               ref     18209   ours     14626   x 0.80 *
+  holes count            ref      9.17   ours      4.00   x 0.44 *
+  holes mean px          ref       431   ours        92   x 0.21 *
+  bright blobs count     ref     10.83   ours      3.00   x 0.28 *
+  bright blobs mean px   ref       281   ours      1555   x 5.53 *
+  core rgb               ref (235,187,241)   ours (247,217,250)
+  body rgb               ref (145, 85,160)   ours (182,107,204)
+  faint rgb              ref (122, 90,130)   ours (117, 91,131)
+  scroll lengths/s       ref      0.75   ours      0.75   x 1.00  
+RIBBON 5 bands (mean of 6 moments)
+  coverage px            ref     27384   ours     28018   x 1.02  
+  mean brightness        ref      0.76   ours      0.81   x 1.07  
+  p90 brightness         ref      1.00   ours      0.99   x 0.99  
+  core share             ref      0.43   ours      0.42   x 0.97  
+  body share             ref      0.33   ours      0.36   x 1.11  
+  faint share            ref      0.24   ours      0.22   x 0.91  
+  body hue               ref    284.86   ours    286.85   x 1.01  
+  hue spread 5-95        ref     23.33   ours     25.00   x 1.07  
+  body saturation        ref      0.52   ours      0.47   x 0.91  
+  mean width px          ref        66   ours        68   x 1.03  
+  max width px           ref       102   ours       101   x 1.00  
+  width foot third       ref     47.80   ours     49.34   x 1.03  
+  width mid third        ref     73.24   ours     75.13   x 1.03  
+  width tip third        ref     74.24   ours     76.89   x 1.04  
+  height reached         ref      1.06   ours      1.06   x 1.00  
+  solid px               ref     28668   ours     28764   x 1.00  
+  holes count            ref      6.17   ours      8.00   x 1.30 *
+  holes mean px          ref       117   ours        53   x 0.45 *
+  bright blobs count     ref      1.83   ours      1.67   x 0.91  
+  bright blobs mean px   ref      7630   ours      8557   x 1.12  
+  core rgb               ref (239,200,246)   ours (247,206,250)
+  body rgb               ref (153, 85,177)   ours (187,108,207)
+  faint rgb              ref (108, 79,117)   ours (107, 84,120)
+  scroll lengths/s       ref      0.75   ours      0.75   x 1.00  

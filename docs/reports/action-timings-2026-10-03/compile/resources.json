@@ -1,0 +1,1 @@
+{"pid": 133326, "exitCode": 2, "peakTreeRss": 4765147136, "peakCgroupBytes": 8588795904, "guardReason": "cgroup-headroom", "terminatedEditors": [133328, 133715]}

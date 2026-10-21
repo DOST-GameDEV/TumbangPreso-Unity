@@ -1,0 +1,89 @@
+Mono path[0] = 'C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4050 Laptop GPU (ID=0x28a1)
+    Vendor:   NVIDIA
+    VRAM:     5936 MB
+    Driver:   31.0.15.4618
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.029 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 65 of 65 cues.
+UnloadTime: 0.787800 ms
+[Build] TUMBANG PRESO 1.0.0 | 9226f4f78ca2+dirty | protocol 150 | StandaloneWindows64
+[NetIdentity] Signed in to UGS as U6Imbctt2qRkPbvwV4RhVR4SYRUL on profile lpt-practice150-1005b. Relay and Lobby are available.
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/sharedassets0.resource
+[SplashShaders] shaders=76 variants=139 warmed=139 complete=True calls=139 frames=15 budget_ms=2.0 elapsed_ms=236.791 max_slice_ms=2.085
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/resources.resource
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Splash] preload retained 9508 assets in memory.
+Unloading 9 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.437100 ms
+Unloading 346 unused Assets to reduce memory usage. Loaded Objects now: 12750.
+Total: 7.231400 ms (FindLiveObjects: 0.613100 ms CreateObjectMapping: 1.626000 ms MarkObjects: 4.846100 ms  DeleteObjects: 0.145900 ms)
+
+[Splash] boot loading finished after 18.96 s (work-driven, no reading window).
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.176000 ms
+Unloading 32 unused Assets to reduce memory usage. Loaded Objects now: 12294.
+Total: 7.136500 ms (FindLiveObjects: 1.007800 ms CreateObjectMapping: 1.189100 ms MarkObjects: 4.860900 ms  DeleteObjects: 0.078500 ms)
+
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 8.383600 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'Main Camera' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Unloading 87 unused Assets to reduce memory usage. Loaded Objects now: 20750.
+Total: 9.197200 ms (FindLiveObjects: 1.047500 ms CreateObjectMapping: 3.013500 ms MarkObjects: 4.998600 ms  DeleteObjects: 0.137100 ms)
+
+[Slice] round 1 begins, taya is seat 0
+[ArenaPrewarm] drew 20 views in 0.34 s.
+[HubLoading] Eskinita ready after 1.36 s.
+[Net] offline
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 11.018700 ms
+Unloading 438 unused Assets to reduce memory usage. Loaded Objects now: 12414.
+Total: 9.028700 ms (FindLiveObjects: 1.206900 ms CreateObjectMapping: 1.718500 ms MarkObjects: 5.787500 ms  DeleteObjects: 0.315300 ms)
+
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/integration-9226f4f78-1004/TumbangPreso_Data/resources.resource
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.0816173">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1332" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.081617" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2639" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1332" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.068485" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2640" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1332" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.060671" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2641" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1332" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.053137" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2171" name="ReaderRestoreChargeOwnershipTests" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.037930" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2177" name="CurrentLocalReaderStillCancelsItsOwnReturn" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.CurrentLocalReaderStillCancelsItsOwnReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.027016" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2175" name="CurrentLocalReaderStillCancelsItsOwnReturn(False)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.CurrentLocalReaderStillCancelsItsOwnReturn(False)" methodname="CurrentLocalReaderStillCancelsItsOwnReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="647674427" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.018714" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2176" name="CurrentLocalReaderStillCancelsItsOwnReturn(True)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.CurrentLocalReaderStillCancelsItsOwnReturn(True)" methodname="CurrentLocalReaderStillCancelsItsOwnReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="20394669" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.000614" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2174" name="ObsoleteRemoteReaderKeepsTheReceivedReturn" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.007526" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2172" name="ObsoleteRemoteReaderKeepsTheReceivedReturn(False)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn(False)" methodname="ObsoleteRemoteReaderKeepsTheReceivedReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="1584413032" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.006120" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2173" name="ObsoleteRemoteReaderKeepsTheReceivedReturn(True)" fullname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests.ObsoleteRemoteReaderKeepsTheReceivedReturn(True)" methodname="ObsoleteRemoteReaderKeepsTheReceivedReturn" classname="TumbangPreso.Tests.ReaderRestoreChargeOwnershipTests" runstate="Runnable" seed="496863164" result="Passed" start-time="2026-10-04 13:27:05Z" end-time="2026-10-04 13:27:05Z" duration="0.000654" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

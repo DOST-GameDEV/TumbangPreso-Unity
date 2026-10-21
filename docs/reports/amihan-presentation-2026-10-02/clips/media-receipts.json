@@ -1,0 +1,74 @@
+{
+  "airburst_after_body_f3.mp4": {
+    "bytes": 2987458,
+    "sha256": "3291501a5ce6feaef3254deec3c06e7960b1bcf3b55e42c996d95726d9119931",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_after_effects_f3.mp4": {
+    "bytes": 3143663,
+    "sha256": "e80e0d018ba16c716b63ed293a14f59084ea99ee22196a8c716cb180f4b926c2",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_after_low_f3.mp4": {
+    "bytes": 2605970,
+    "sha256": "6c30eca584fa24ad4662b32433bc069f8fe60f1de19215bf19b78d8de8c0a37b",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_before_effects_v1.mp4": {
+    "bytes": 2072906,
+    "sha256": "0a25cc3ebe0093a152b5b4a71438b376f00bc32f259eaec2a53515c40eba3f0c",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_feel_effects_p2.mp4": {
+    "bytes": 3192914,
+    "sha256": "cc2028880b0c984747f12f4778df5a8d77238336f4acd0ac17e793ce53b23489",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_feel_body_p2.mp4": {
+    "bytes": 2958406,
+    "sha256": "b253be8c4a3d4a99b9ec0ae83ce6e28160622e7b69d0840887b878fe02d798b2",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_feel_low_p2.mp4": {
+    "bytes": 2614665,
+    "sha256": "ac43594439466e924457b6c0d8f8a08fa08492a16d6ce9890524484b80abe67d",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "amihan_light_body_p2.mp4": {
+    "bytes": 7001203,
+    "sha256": "89cc916787edb7f4a786f847bf794d241d97df7081197003978752ee969a5c07",
+    "duration_seconds": 30.033333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 1
+  }
+}

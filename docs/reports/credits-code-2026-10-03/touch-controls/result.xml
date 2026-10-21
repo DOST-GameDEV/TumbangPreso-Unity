@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 18:04:34Z" end-time="2026-10-03 18:04:35Z" duration="0.8023294">
+  <test-suite type="TestSuite" id="2796" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1460" result="Passed" start-time="2026-10-03 18:04:34Z" end-time="2026-10-03 18:04:35Z" duration="0.802329" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2790" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1460" result="Passed" start-time="2026-10-03 18:04:34Z" end-time="2026-10-03 18:04:35Z" duration="0.792057" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="142041" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2791" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1460" result="Passed" start-time="2026-10-03 18:04:34Z" end-time="2026-10-03 18:04:35Z" duration="0.788302" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2792" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1460" result="Passed" start-time="2026-10-03 18:04:34Z" end-time="2026-10-03 18:04:35Z" duration="0.784845" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1354" name="CreditsCodeInputTests" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-03 18:04:34Z" end-time="2026-10-03 18:04:35Z" duration="0.759420" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1362" name="AmbiguousTwoDirectionPressResetsPartialEntry" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.AmbiguousTwoDirectionPressResetsPartialEntry" methodname="AmbiguousTwoDirectionPressResetsPartialEntry" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="1402247921" result="Passed" start-time="2026-10-03 18:04:34Z" end-time="2026-10-03 18:04:35Z" duration="0.323120" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1358" name="ClosedCreditsIgnoreDirections" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.ClosedCreditsIgnoreDirections" methodname="ClosedCreditsIgnoreDirections" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="92985742" result="Passed" start-time="2026-10-03 18:04:35Z" end-time="2026-10-03 18:04:35Z" duration="0.053776" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1357" name="ClosingAndReopeningCannotCompleteAnOldPartialSequence" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.ClosingAndReopeningCannotCompleteAnOldPartialSequence" methodname="ClosingAndReopeningCannotCompleteAnOldPartialSequence" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="1200501194" result="Passed" start-time="2026-10-03 18:04:35Z" end-time="2026-10-03 18:04:35Z" duration="0.054691" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1356" name="DpadExactSequenceWorksAndRetryKeepsReceipt" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.DpadExactSequenceWorksAndRetryKeepsReceipt" methodname="DpadExactSequenceWorksAndRetryKeepsReceipt" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="1435929121" result="Passed" start-time="2026-10-03 18:04:35Z" end-time="2026-10-03 18:04:35Z" duration="0.062754" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1355" name="KeyboardExactSequenceRequestsRewardOnlyAtFinalDirection" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.KeyboardExactSequenceRequestsRewardOnlyAtFinalDirection" methodname="KeyboardExactSequenceRequestsRewardOnlyAtFinalDirection" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="1893934918" result="Passed" start-time="2026-10-03 18:04:35Z" end-time="2026-10-03 18:04:35Z" duration="0.060408" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1359" name="MouseDirectionalDragsRecognizeTheSameCode" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.MouseDirectionalDragsRecognizeTheSameCode" methodname="MouseDirectionalDragsRecognizeTheSameCode" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="3921284" result="Passed" start-time="2026-10-03 18:04:35Z" end-time="2026-10-03 18:04:35Z" duration="0.068864" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1361" name="TinyPointerDragsCannotBecomeASecretSequence" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.TinyPointerDragsCannotBecomeASecretSequence" methodname="TinyPointerDragsCannotBecomeASecretSequence" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="895923041" result="Passed" start-time="2026-10-03 18:04:35Z" end-time="2026-10-03 18:04:35Z" duration="0.057369" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1360" name="TouchDirectionalDragsRecognizeTheSameCode" fullname="TumbangPreso.PlayTests.CreditsCodeInputTests.TouchDirectionalDragsRecognizeTheSameCode" methodname="TouchDirectionalDragsRecognizeTheSameCode" classname="TumbangPreso.PlayTests.CreditsCodeInputTests" runstate="Runnable" seed="767286321" result="Passed" start-time="2026-10-03 18:04:35Z" end-time="2026-10-03 18:04:35Z" duration="0.064041" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

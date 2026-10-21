@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 14:43:53Z" end-time="2026-09-24 14:44:25Z" duration="32.0029462">
+  <test-suite type="TestSuite" id="1824" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:43:53Z" end-time="2026-09-24 14:44:25Z" duration="32.002946" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1818" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:43:53Z" end-time="2026-09-24 14:44:25Z" duration="31.981080" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8352" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1819" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:43:54Z" end-time="2026-09-24 14:44:25Z" duration="31.968863" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1820" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:43:54Z" end-time="2026-09-24 14:44:25Z" duration="31.956691" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1654" name="SharedUltimatePhaseTests" fullname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" classname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-24 14:43:54Z" end-time="2026-09-24 14:44:23Z" duration="29.336516" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1658" name="BlockedSceneShotFallsBackWithoutChangingTheSharedDuration" fullname="TumbangPreso.PlayTests.SharedUltimatePhaseTests.BlockedSceneShotFallsBackWithoutChangingTheSharedDuration" methodname="BlockedSceneShotFallsBackWithoutChangingTheSharedDuration" classname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" runstate="Runnable" seed="704690320" result="Failed" start-time="2026-09-24 14:43:54Z" end-time="2026-09-24 14:43:59Z" duration="5.361172" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Key index (238) is out of range [0, 238)'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.AnimationClip:SetCurve (string,System.Type,string,UnityEngine.AnimationCurve)
+TumbangPreso.Visual.HeroAbilityClips:GroundIntroduction (UnityEngine.AnimationClip,UnityEngine.Transform,string,bool,System.Func`2<single, single>) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.IntroductionGrounding.cs:109)
+TumbangPreso.Visual.HeroAbilityClips:BuildUltimateIntroduction (UnityEngine.Transform,string,bool) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Introductions.cs:57)
+TumbangPreso.Visual.UltimateIntroductionCache:WarmOne (TumbangPreso.CharacterMotor) (at Assets/TumbangPreso/Runtime/Visual/UltimateIntroductionCache.cs:37)
+TumbangPreso.SharedUltimatePhase:LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:159)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Key index (238) is out of range [0, 238)
+Key index (239) is out of range [0, 238)
+Key index (238) is out of range [0, 238)
+Key index (239) is out of range [0, 238)
+Key index (238) is out of range [0, 238)
+Key index (239) is out of range [0, 238)
+Key index (176) is out of range [0, 176)
+Key index (177) is out of range [0, 176)
+Key index (178) is out of range [0, 176)
+Key index (179) is out of range [0, 176)
+Key index (176) is out of range [0, 176)
+Key index (177) is out of range [0, 176)
+Key index (178) is out of range [0, 176)
+Key index (179) is out of range [0, 176)
+Key index (176) is out of range [0, 176)
+Key index (177) is out of range [0, 176)
+Key index (178) is out of range [0, 176)
+Key index (179) is out of range [0, 176)
+Key index (215) is out of range [0, 215)
+Key index (216) is out of range [0, 215)
+Key index (215) is out of range [0, 215)
+Key index (216) is out of range [0, 215)
+Key index (215) is out of range [0, 215)
+Key index (216) is out of range [0, 215)
+Key index (212) is out of range [0, 212)
+Key index (213) is out of range [0, 212)
+Key index (214) is out of range [0, 212)
+Key index (212) is out of range [0, 212)
+Key index (213) is out of range [0, 212)
+Key index (214) is out of range [0, 212)
+Key index (212) is out of range [0, 212)
+Key index (213) is out of range [0, 212)
+Key index (214) is out of range [0, 212)
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1659" name="FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState" fullname="TumbangPreso.PlayTests.SharedUltimatePhaseTests.FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState" methodname="FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState" classname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" runstate="Runnable" seed="947739546" result="Failed" start-time="2026-09-24 14:43:59Z" end-time="2026-09-24 14:44:02Z" duration="2.860600" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Key index (198) is out of range [0, 198)'. Use UnityEngine.TestTools.LogAssert.Expect
+TearDown : Unhandled log message: '[Assert] Key index (198) is out of range [0, 198)'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.AnimationClip:SetCurve (string,System.Type,string,UnityEngine.AnimationCurve)
+TumbangPreso.Visual.HeroAbilityClips:GroundIntroduction (UnityEngine.AnimationClip,UnityEngine.Transform,string,bool,System.Func`2<single, single>) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.IntroductionGrounding.cs:109)
+TumbangPreso.Visual.HeroAbilityClips:BuildUltimateIntroduction (UnityEngine.Transform,string,bool) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Introductions.cs:57)
+TumbangPreso.Visual.UltimateIntroductionCache:WarmOne (TumbangPreso.CharacterMotor) (at Assets/TumbangPreso/Runtime/Visual/UltimateIntroductionCache.cs:37)
+TumbangPreso.SharedUltimatePhase:LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:159)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Key index (198) is out of range [0, 198)
+Key index (199) is out of range [0, 198)
+Key index (200) is out of range [0, 198)
+Key index (198) is out of range [0, 198)
+Key index (199) is out of range [0, 198)
+Key index (200) is out of range [0, 198)
+Key index (198) is out of range [0, 198)
+Key index (199) is out of range [0, 198)
+Key index (200) is out of range [0, 198)
+Key index (198) is out of range [0, 198)
+Key index (199) is out of range [0, 198)
+Key index (200) is out of range [0, 198)
+Key index (198) is out of range [0, 198)
+Key index (199) is out of range [0, 198)
+Key index (200) is out of range [0, 198)
+Key index (198) is out of range [0, 198)
+Key index (199) is out of range [0, 198)
+Key index (200) is out of range [0, 198)
+]]></output>
+            </test-case>
+            <test-case id="1656" name="NemuDoesNotRepeatHisRevealedTransformation" fullname="TumbangPreso.PlayTests.SharedUltimatePhaseTests.NemuDoesNotRepeatHisRevealedTransformation" methodname="NemuDoesNotRepeatHisRevealedTransformation" classname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" runstate="Runnable" seed="198014853" result="Failed" start-time="2026-09-24 14:44:02Z" end-time="2026-09-24 14:44:04Z" duration="2.538437" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Key index (235) is out of range [0, 235)'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.AnimationClip:SetCurve (string,System.Type,string,UnityEngine.AnimationCurve)
+TumbangPreso.Visual.HeroAbilityClips:GroundIntroduction (UnityEngine.AnimationClip,UnityEngine.Transform,string,bool,System.Func`2<single, single>) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.IntroductionGrounding.cs:109)
+TumbangPreso.Visual.HeroAbilityClips:BuildUltimateIntroduction (UnityEngine.Transform,string,bool) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Introductions.cs:57)
+TumbangPreso.Visual.UltimateIntroductionCache:WarmOne (TumbangPreso.CharacterMotor) (at Assets/TumbangPreso/Runtime/Visual/UltimateIntroductionCache.cs:37)
+TumbangPreso.SharedUltimatePhase:LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:159)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Key index (235) is out of range [0, 235)
+Key index (236) is out of range [0, 235)
+Key index (237) is out of range [0, 235)
+Key index (238) is out of range [0, 235)
+Key index (235) is out of range [0, 235)
+Key index (236) is out of range [0, 235)
+Key index (237) is out of range [0, 235)
+Key index (238) is out of range [0, 235)
+Key index (235) is out of range [0, 235)
+Key index (236) is out of range [0, 235)
+Key index (237) is out of range [0, 235)
+Key index (238) is out of range [0, 235)
+]]></output>
+            </test-case>
+            <test-case id="1660" name="ReducedViewAndRoundCancellationReleaseOnlyTheirOwnClockHold" fullname="TumbangPreso.PlayTests.SharedUltimatePhaseTests.ReducedViewAndRoundCancellationReleaseOnlyTheirOwnClockHold" methodname="ReducedViewAndRoundCancellationReleaseOnlyTheirOwnClockHold" classname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" runstate="Runnable" seed="1310953388" result="Passed" start-time="2026-09-24 14:44:04Z" end-time="2026-09-24 14:44:07Z" duration="2.395144" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1655" name="SixDefaultUltimatesReservePresentAndResumeTheirActualAbility" fullname="TumbangPreso.PlayTests.SharedUltimatePhaseTests.SixDefaultUltimatesReservePresentAndResumeTheirActualAbility" methodname="SixDefaultUltimatesReservePresentAndResumeTheirActualAbility" classname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" runstate="Runnable" seed="1776628983" result="Failed" start-time="2026-09-24 14:44:07Z" end-time="2026-09-24 14:44:16Z" duration="9.065273" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Key index (268) is out of range [0, 268)'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.AnimationClip:SetCurve (string,System.Type,string,UnityEngine.AnimationCurve)
+TumbangPreso.Visual.HeroAbilityClips:GroundIntroduction (UnityEngine.AnimationClip,UnityEngine.Transform,string,bool,System.Func`2<single, single>) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.IntroductionGrounding.cs:109)
+TumbangPreso.Visual.HeroAbilityClips:BuildUltimateIntroduction (UnityEngine.Transform,string,bool) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Introductions.cs:57)
+TumbangPreso.Visual.UltimateIntroductionCache:WarmOne (TumbangPreso.CharacterMotor) (at Assets/TumbangPreso/Runtime/Visual/UltimateIntroductionCache.cs:37)
+TumbangPreso.SharedUltimatePhase:LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:159)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/shared-six-v1/sean-live-introduction.png
+[Play] wrote Logs/shared-six-v1/sean-live-execution.png
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Key index (268) is out of range [0, 268)
+Key index (268) is out of range [0, 268)
+Key index (268) is out of range [0, 268)
+]]></output>
+            </test-case>
+            <test-case id="1657" name="TwoAcceptedCastsShareOnePhaseAndPreserveTheFullLiveWarning" fullname="TumbangPreso.PlayTests.SharedUltimatePhaseTests.TwoAcceptedCastsShareOnePhaseAndPreserveTheFullLiveWarning" methodname="TwoAcceptedCastsShareOnePhaseAndPreserveTheFullLiveWarning" classname="TumbangPreso.PlayTests.SharedUltimatePhaseTests" runstate="Runnable" seed="750024621" result="Passed" start-time="2026-09-24 14:44:16Z" end-time="2026-09-24 14:44:23Z" duration="7.096044" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[SharedClock] input-to-accept=0.0292 hold=4.2043 activation-ms=67.120 observed=4.3070
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1762" name="UltimateIntroductionProbe" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-24 14:44:23Z" end-time="2026-09-24 14:44:25Z" duration="2.578229" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1763" name="SixDistinctRenderOnlyIntroductionPerformances" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe.SixDistinctRenderOnlyIntroductionPerformances" methodname="SixDistinctRenderOnlyIntroductionPerformances" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" seed="461484721" result="Failed" start-time="2026-09-24 14:44:23Z" end-time="2026-09-24 14:44:25Z" duration="2.576376" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Key index (176) is out of range [0, 176)'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.AnimationClip:SetCurve (string,System.Type,string,UnityEngine.AnimationCurve)
+TumbangPreso.Visual.HeroAbilityClips:GroundIntroduction (UnityEngine.AnimationClip,UnityEngine.Transform,string,bool,System.Func`2<single, single>) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.IntroductionGrounding.cs:109)
+TumbangPreso.Visual.HeroAbilityClips:BuildUltimateIntroduction (UnityEngine.Transform,string,bool) (at Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Introductions.cs:57)
+TumbangPreso.Visual.UltimateIntroductionCache:WarmOne (TumbangPreso.CharacterMotor) (at Assets/TumbangPreso/Runtime/Visual/UltimateIntroductionCache.cs:37)
+TumbangPreso.SharedUltimatePhase:LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:159)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Key index (176) is out of range [0, 176)
+Key index (177) is out of range [0, 176)
+Key index (178) is out of range [0, 176)
+Key index (179) is out of range [0, 176)
+Key index (176) is out of range [0, 176)
+Key index (177) is out of range [0, 176)
+Key index (178) is out of range [0, 176)
+Key index (179) is out of range [0, 176)
+Key index (176) is out of range [0, 176)
+Key index (177) is out of range [0, 176)
+Key index (178) is out of range [0, 176)
+Key index (179) is out of range [0, 176)
+Key index (212) is out of range [0, 212)
+Key index (213) is out of range [0, 212)
+Key index (214) is out of range [0, 212)
+Key index (212) is out of range [0, 212)
+Key index (213) is out of range [0, 212)
+Key index (214) is out of range [0, 212)
+Key index (212) is out of range [0, 212)
+Key index (213) is out of range [0, 212)
+Key index (214) is out of range [0, 212)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

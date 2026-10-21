@@ -1,0 +1,9 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: rafi did not retain its live exchange: Ability visual track incomplete for this window\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<RetainedHeroView>d__17.MoveNext () [0x00082] in <6ecf6ca26436415f9d3c5b783124fb94>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__40.MoveNext () [0x00054] in <6ecf6ca26436415f9d3c5b783124fb94>:0 ",
+    "stages": [
+        "real shared ultimate route, selected native actor profiles",
+        "rafi accepted introduction, return and live effect"
+    ],
+    "frameWindows": []
+}

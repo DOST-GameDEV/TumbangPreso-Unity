@@ -1,0 +1,29 @@
+{
+  "base": "6bae3bc45312e61de6af5da7a56792dda93b1257",
+  "overlay": {
+    "Assets/TumbangPreso/Resources/Shaders/WindRibbon.shader": "eac4cc72380af179212b8a8833ee19b15c35647d1796b01c4c0f7357321aa719",
+    "Assets/TumbangPreso/Runtime/Visual/AmihanVfx.cs": "d530205310e46ee596642e3c86e3a40cbad7cafae239b1f1a08501f0acba8db8",
+    "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.Amihan.cs": "349c1fd20c475bc54c1fdcd1c2bef69a040acb3af454b54f3443a664f254feb3",
+    "Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Amihan.cs": "12ce9283d560cb0fc3ed83b256895636509d606e9db8f88b1906258de4750f25",
+    "Assets/TumbangPreso/Editor/AmihanMotionAuthor.cs": "d1bcc819a47d2a313cd482b9b0a41b0b4d8fa930f63f84946d9848b26bac9454",
+    "tools/author_ultimate_intros.py": "25faa1fe1db76e927d832a1fb8fce4e181520311ff51200b59d31cb2d59f340e",
+    "Assets/TumbangPreso/Resources/UltimateIntros/amihan.txt": "2a4a844f57e015998e5ad3111e3bac57ab6422d127dd969b11d6bf5b57094af6",
+    "Assets/TumbangPreso/Runtime/Visual/GaitStyles.cs": "60ebfaef95ecf85420c93441f2335f945e0a9790c717e28c20be2617e4d7bbe7",
+    "Assets/TumbangPreso/Runtime/Visual/MotionFoley.cs": "55d19a1a3d819e0fe40c13646e74908bd729ab969db97f1340678c3fba5a94c3",
+    "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.LocomotionArms.cs": "baad5a64f2d95ad3e8760e5ab3dee6b07ece32358a2de98faeb13884289e4150",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.RunSway.cs": "a6f92ad730eb19f47e4c702bf50601e0e213a82e1dba2103719638b324d682ab",
+    "Assets/TumbangPreso/Runtime/Audio/AudioCues.cs": "40af89526b73e25f0c0c72805d7f09ef76b4a8fc10b96d9dd0d5d617e080c306",
+    "Assets/TumbangPreso/Runtime/Visual/AmihanAirStep.cs": "4dff310dcfd71257c7516fa123eb42deab2c44031fd185f6c532379f7e7d3777",
+    "Assets/TumbangPreso/Runtime/Visual/AmihanAirStep.cs.meta": "2afff4f59e954be972b44eef3a7c82e24e36aaf62256803a9b445e01c654a36d",
+    "Assets/TumbangPreso/Resources/Sfx/step_amihan.wav": "faedda9179e5cba1e3999d52a5190718f5b47b09cc19f78764abb38ef889c7d1",
+    "Assets/TumbangPreso/Resources/Sfx/step_amihan.wav.meta": "7da9f7ac0f13bcb49d9706615a62b6f11aae6f760fa0f354539dc9d32e6b082f",
+    "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.LightBodyFilm.cs": "fc37d6b1b89dda13ee3bab554c2634f40427f46480ee4d405ac2d9852ad3973d",
+    "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.LightBodyFilm.cs.meta": "05f2f28cd74e7505f60a24603fa975019002dfd0d99a48ba601370b48cb71e78",
+    "tools/build_amihan_steps.py": "a2d59795f2810f6874739a4986c193c03ad02288fbcab106f1926fd0549e3ab8"
+  },
+  "revisions": [
+    "r2: HeroAbilityClips.Amihan.cs follow-through arm pitch -92/-90 after E1 found the held drive dipping 1.44 deg past 1.5 s",
+    "r3: release pose H (palms forward 0.49/0.42 m) after P1 body films found the wide pose pointing sideways; follow-through opens the hands",
+    "r3: light-body fixture re-timed to the stamina budget after P1 charged from an exhausted, grounded body (fixture repair 1 of 1)"
+  ]
+}

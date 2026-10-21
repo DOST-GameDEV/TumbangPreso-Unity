@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 03:59:37Z" end-time="2026-10-08 03:59:39Z" duration="1.915097">
+  <test-suite type="TestSuite" id="3661" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2153" result="Passed" start-time="2026-10-08 03:59:37Z" end-time="2026-10-08 03:59:39Z" duration="1.915097" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3653" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2153" result="Passed" start-time="2026-10-08 03:59:37Z" end-time="2026-10-08 03:59:39Z" duration="1.869594" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="39376" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3654" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2153" result="Passed" start-time="2026-10-08 03:59:37Z" end-time="2026-10-08 03:59:39Z" duration="1.837117" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3657" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2151" result="Passed" start-time="2026-10-08 03:59:37Z" end-time="2026-10-08 03:59:39Z" duration="1.803677" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2920" name="RenderCopyAnimationSamplingTests" fullname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests" classname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 03:59:37Z" end-time="2026-10-08 03:59:39Z" duration="1.704485" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2921" name="CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents" fullname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests.CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents" methodname="CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents" classname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests" runstate="Runnable" seed="1342533478" result="Passed" start-time="2026-10-08 03:59:37Z" end-time="2026-10-08 03:59:39Z" duration="1.684472" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RenderCopySampling] currentRigs=9 sampledClips=36 automaticPoseChanges=0 gameplayComponents=0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

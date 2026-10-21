@@ -1,0 +1,9 @@
+# Map preview keeps working after an invalid selection
+
+Original native Unity50076 reproduces an invalid destination parking the valid current scene and disabling its camera. Showing that same current map again short-circuits, stranding the preview. Reject an unavailable uncached destination in Show before queuing, freezing or parking anything. Valid cached maps and normal cold loading retain their existing behavior; warning text is unchanged.
+
+Same two-case fixture: original1PASS/1FAIL, candidate Unity55884 2PASS/0FAIL exit0. The correction is7 added lines replacing8 later validation lines. The failure is controlled invalid input, not proof that the normal current dropdown emits an invalid map ID.
+
+The control reads actual64x36 GPU-target pixels while a cold Eskinita-to-Kanto replacement is pending. The completed image remains identical through32 original/30 candidate frame checks. Initial, replaced and cached-return targets contain multiple colours rather than a blank clear. Observed original cold2.6622s/cached0.0103s; candidate cold1.0500s/cached0.0095s. Different warm/disk/GPU cache conditions prevent treating those cold timings as a causal load-speed improvement. This closes actual pixel-retention coverage for these two local map targets, not universal material correctness or human visual acceptance.
+
+Both jobs restore21220 frozen inputs,13 existing editor preferences and four original named-profile files after preserving279 native deltas. Native source is the retained770e base with checked startup/map overlays; concurrent desktop UI51d80/9dd82 was not in these frozen inputs. Exact runtime/identical-fixture hashes, XML, launch/restoration receipts and timings are retained under SHA256.json. All other artwork, map geometry, framing and release profiles remain unchanged. Packaged cold first-preview and physical map selection remain open.

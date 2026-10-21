@@ -1,0 +1,36 @@
+{
+  "base": "c90f7ef864adf4e33b315154e5d62c46cee3fa79",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; unchanged Core reused",
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "6F4B0220D8FB190CC413D7F6866568FB0095C28D9432704F814748452FC4793F",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PaeteHazards.cs",
+      "sha256": "A2DDF59358E5FE591E4671F56B06A6A74E1A2E20AA4572A212F3A2D0BC4D7461"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.NetworkStamina.cs",
+      "sha256": "21E30B825C396B5AFFAD282C333736D6E6D26D2884AB96EFBDBF9A3B919506B1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Status.cs",
+      "sha256": "E5F03B3674AAE15DFEB39318CB0E41CE1D05FC2DA729944BB4E01A8804B63344"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "3D3707594372F80397893ED2E2D6B5169E4E7374B19112E17B2BA5BC47F1DCFF"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "EAB613B253FF3083B4E2991BFD5C5828B7010D1F78957B92196FAE885936FE19"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "13A779FED84EC2712D5AF0B1043C0DB6B22314752B10FB4BC96C730C42477E1E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "B6CD193436AA1870493CB5B5EA30D1A6A1A900A2ECBA9CF73EDFB35D86FFD871"
+    }
+  ]
+}

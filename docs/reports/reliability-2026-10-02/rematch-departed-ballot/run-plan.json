@@ -1,0 +1,10 @@
+{
+  "retryCount": 0,
+  "stoppingCondition": "Fresh fourcase nativeXML and terminal guarded process; no broader suite",
+  "expectedCases": 4,
+  "profile": "rematch-map-owner1002",
+  "filter": "TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt",
+  "source": "frozen MatchResult.baseline.cs",
+  "fixture": "frozen RuntimeLayerTests.candidate.cs",
+  "question": "Does a map ballot survive lobby departure and choose the next rematch court?"
+}

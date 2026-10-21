@@ -1,0 +1,109 @@
+Mono path[0] = 'C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-61a650049-1005/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-61a650049-1005/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-61a650049-1005/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4050 Laptop GPU (ID=0x28a1)
+    Vendor:   NVIDIA
+    VRAM:     5936 MB
+    Driver:   31.0.15.4618
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.028 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 65 of 65 cues.
+UnloadTime: 0.840700 ms
+[Build] TUMBANG PRESO 1.0.0 | 61a650049b49+dirty | protocol 151 | StandaloneWindows64
+[NetIdentity] Signed in to UGS as cebLyJ66qUwFkHJRJhnfpFJt5rVb on profile lpt-lobby151-host1005. Relay and Lobby are available.
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-61a650049-1005/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-61a650049-1005/TumbangPreso_Data/sharedassets0.resource
+[SplashShaders] shaders=76 variants=139 warmed=139 complete=True calls=139 frames=14 budget_ms=2.0 elapsed_ms=219.961 max_slice_ms=1.999
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-61a650049-1005/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-61a650049-1005/TumbangPreso_Data/resources.resource
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Splash] map asset warmup completed in 1.96 s.
+[Splash] preload retained 9510 assets in memory.
+Unloading 9 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.410600 ms
+Unloading 346 unused Assets to reduce memory usage. Loaded Objects now: 12752.
+Total: 6.238400 ms (FindLiveObjects: 0.512900 ms CreateObjectMapping: 1.193700 ms MarkObjects: 4.427900 ms  DeleteObjects: 0.103600 ms)
+
+[Splash] boot loading finished after 18.75 s (work-driven, no reading window).
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.099200 ms
+Unloading 32 unused Assets to reduce memory usage. Loaded Objects now: 12296.
+Total: 7.982300 ms (FindLiveObjects: 1.149100 ms CreateObjectMapping: 1.232000 ms MarkObjects: 5.516300 ms  DeleteObjects: 0.084600 ms)
+
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby PEABks3iqoBipMpqs2YyL5 with JoinCode XYUU
+[Net] relay hosting active, code XYUU (relay KLKCNK)
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Link] Good at 50 ms round trip (host, worst peer).
+[Net] 2 connected, seat 1
+[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Net] 1 connected
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[NetApproval] peer=2 approved=True reason=
+[NetArrival] peer=2 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[Link] Good at 101 ms round trip (host, worst peer).
+[NetLifecycle] requested-stop server=True relay=True origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <3fe131e62e3d40bea523be13f44a0375>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.LeaveRoom () [0x00000] in <3fe131e62e3d40bea523be13f44a0375>:0 
+  at TumbangPreso.UI.Hub.HubLobby.Back () [0x00000] in <3fe131e62e3d40bea523be13f44a0375>:0 
+  at TumbangPreso.UI.Hub.TumpHub.Back () [0x00000] in <3fe131e62e3d40bea523be13f44a0375>:0 
+  at TumbangPreso.UI.Hub.HubKit+<>c__DisplayClass22_0.<Button>b__0 () [0x00000] in <3fe131e62e3d40bea523be13f44a0375>:0 
+  at UnityEngine.Events.InvokableCall.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.Events.UnityEvent.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.UI.Button.Press () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.UI.Button.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at TumbangPreso.UI.Hub.HubButton.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <3fe131e62e3d40bea523be13f44a0375>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute (UnityEngine.EventSystems.IPointerClickHandler handler, UnityEngine.EventSystems.BaseEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute[T] (UnityEngine.GameObject target, UnityEngine.EventSystems.BaseEventData eventData, UnityEngine.EventSystems.ExecuteEvents+EventFunction`1[T1] functor) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointerButton (UnityEngine.InputSystem.UI.PointerModel+ButtonState& button, UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointer (UnityEngine.InputSystem.UI.PointerModel& state) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.Process () [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.EventSystems.EventSystem.Update () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+[Net] offline
+[NetDisconnect] peer=2 local=0 server=True connected=True
+[Net] 0 connected
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Query] Deleted UGS Lobby PEABks3iqoBipMpqs2YyL5
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 02:09:56Z" end-time="2026-10-01 02:09:57Z" duration="1.0194446">
+  <test-suite type="TestSuite" id="2312" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1061" result="Passed" start-time="2026-10-01 02:09:56Z" end-time="2026-10-01 02:09:57Z" duration="1.019445" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2306" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1061" result="Passed" start-time="2026-10-01 02:09:56Z" end-time="2026-10-01 02:09:57Z" duration="1.000521" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2307" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1061" result="Passed" start-time="2026-10-01 02:09:56Z" end-time="2026-10-01 02:09:57Z" duration="0.990449" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2308" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1061" result="Passed" start-time="2026-10-01 02:09:56Z" end-time="2026-10-01 02:09:57Z" duration="0.980661" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1678" name="NemuHauntContractTests" fullname="TumbangPreso.PlayTests.NemuHauntContractTests" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 02:09:56Z" end-time="2026-10-01 02:09:57Z" duration="0.822633" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1682" name="ADefendersFamiliarCanReachAnAttackerOutsideTheConfinementBox" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.ADefendersFamiliarCanReachAnAttackerOutsideTheConfinementBox" methodname="ADefendersFamiliarCanReachAnAttackerOutsideTheConfinementBox" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="720813856" result="Passed" start-time="2026-10-01 02:09:56Z" end-time="2026-10-01 02:09:57Z" duration="0.640260" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1679" name="HauntChasesOnePlayerAtATimeAndReturnsAfterEveryoneIncludingCaster" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.HauntChasesOnePlayerAtATimeAndReturnsAfterEveryoneIncludingCaster" methodname="HauntChasesOnePlayerAtATimeAndReturnsAfterEveryoneIncludingCaster" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="706003840" result="Passed" start-time="2026-10-01 02:09:57Z" end-time="2026-10-01 02:09:57Z" duration="0.059365" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1681" name="ObserversCannotResolveContactsAndRoundResetReleasesTheMonster" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.ObserversCannotResolveContactsAndRoundResetReleasesTheMonster" methodname="ObserversCannotResolveContactsAndRoundResetReleasesTheMonster" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="950219933" result="Passed" start-time="2026-10-01 02:09:57Z" end-time="2026-10-01 02:09:57Z" duration="0.051515" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1680" name="OccludedPlayersAreNotHitAndTheChaseOutlivesTheRetiredSevenSecondField" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.OccludedPlayersAreNotHitAndTheChaseOutlivesTheRetiredSevenSecondField" methodname="OccludedPlayersAreNotHitAndTheChaseOutlivesTheRetiredSevenSecondField" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="1297789133" result="Passed" start-time="2026-10-01 02:09:57Z" end-time="2026-10-01 02:09:57Z" duration="0.055047" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2049" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-01 02:09:57Z" end-time="2026-10-01 02:09:57Z" duration="0.097078" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2051" name="FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime" fullname="TumbangPreso.PlayTests.SkillReceiptTests.FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime" methodname="FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1494144948" result="Passed" start-time="2026-10-01 02:09:57Z" end-time="2026-10-01 02:09:57Z" duration="0.087798" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

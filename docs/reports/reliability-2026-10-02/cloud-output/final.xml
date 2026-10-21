@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.1136574">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.113657" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1941" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.102742" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9836" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1942" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.101059" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1943" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.099606" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="33" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.064334" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1082" name="CloudOutputKeepsCallerOwnedPayloadShape" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.050816" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1078" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:{\&quot;ok\&quot;:true}}&quot;,&quot;{\&quot;ok\&quot;:true}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:{\&quot;ok\&quot;:true}}&quot;,&quot;{\&quot;ok\&quot;:true}&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="370511329" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.033790" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1079" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:[1,2]}&quot;,&quot;[1,2]&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:[1,2]}&quot;,&quot;[1,2]&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="828375827" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.002846" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1080" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:false}&quot;,&quot;false&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:false}&quot;,&quot;false&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1529348335" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.000218" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1081" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:0}&quot;,&quot;0&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:0}&quot;,&quot;0&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1823284983" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.000085" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1077" name="MissingCloudOutputCannotReportSuccessfulDelivery" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.005181" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1073" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1395403605" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.003407" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1074" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;null&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;null&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="681714378" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.000261" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1075" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;other\&quot;:{}}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;other\&quot;:{}}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="488330417" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.000122" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1076" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;output\&quot;:null}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;output\&quot;:null}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1617280279" result="Passed" start-time="2026-10-01 19:13:34Z" end-time="2026-10-01 19:13:34Z" duration="0.000245" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

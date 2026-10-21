@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.3125212">
+  <test-suite type="TestSuite" id="2501" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1228" result="Failed" site="Child" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.312521" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2495" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1228" result="Failed" site="Child" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.285741" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1776" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2496" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1228" result="Failed" site="Child" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.267907" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2497" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1228" result="Failed" site="Child" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.250270" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2158" name="SessionRestartTests" fullname="TumbangPreso.PlayTests.SessionRestartTests" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" testcasecount="25" result="Failed" site="Child" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.165495" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2173" name="FailedHostStartupReturnsToSearchingWithoutFaulting" fullname="TumbangPreso.PlayTests.SessionRestartTests.FailedHostStartupReturnsToSearchingWithoutFaulting" methodname="FailedHostStartupReturnsToSearchingWithoutFaulting" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="77455024" result="Failed" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.105874" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The startup dependency exception escaped the queue and its async-void caller.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SessionRestartTests+<QueueStartupFault>d__28.MoveNext () [0x0021b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SessionRestartTests.cs:425
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2174" name="FailedJoinStartupReturnsToSearchingWithoutFaulting" fullname="TumbangPreso.PlayTests.SessionRestartTests.FailedJoinStartupReturnsToSearchingWithoutFaulting" methodname="FailedJoinStartupReturnsToSearchingWithoutFaulting" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="2120889232" result="Failed" start-time="2026-10-01 18:36:27Z" end-time="2026-10-01 18:36:27Z" duration="0.038954" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The startup dependency exception escaped the queue and its async-void caller.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SessionRestartTests+<QueueStartupFault>d__28.MoveNext () [0x0021b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SessionRestartTests.cs:425
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.2958656">
+  <test-suite type="TestSuite" id="2497" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.295866" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2491" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.264182" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17684" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2492" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.248332" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2493" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.232775" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2013" name="RecordedEffectsTests" fullname="TumbangPreso.PlayTests.RecordedEffectsTests" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.159228" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2014" name="FlightCapturePreservesTrailDataAcrossObjectLifecycle" fullname="TumbangPreso.PlayTests.RecordedEffectsTests.FlightCapturePreservesTrailDataAcrossObjectLifecycle" methodname="FlightCapturePreservesTrailDataAcrossObjectLifecycle" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" seed="572423418" result="Passed" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.099811" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2015" name="IdleFlightCaptureDoesNotAllocateUnusedTrailStorage" fullname="TumbangPreso.PlayTests.RecordedEffectsTests.IdleFlightCaptureDoesNotAllocateUnusedTrailStorage" methodname="IdleFlightCaptureDoesNotAllocateUnusedTrailStorage" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" seed="468277743" result="Passed" start-time="2026-10-01 18:16:56Z" end-time="2026-10-01 18:16:56Z" duration="0.042394" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

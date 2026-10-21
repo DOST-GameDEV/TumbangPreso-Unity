@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.1322084">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="977" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.132208" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2183" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="977" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.119856" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22684" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2184" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="977" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.116670" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2185" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="977" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.113719" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1212" name="ChatPacketTests" fullname="TumbangPreso.Tests.ChatPacketTests" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.062776" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1217" name="RoleAndSenderGuardsStillRefuseMalformedChat" fullname="TumbangPreso.Tests.ChatPacketTests.RoleAndSenderGuardsStillRefuseMalformedChat" methodname="RoleAndSenderGuardsStillRefuseMalformedChat" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="159931197" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.031447" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1214" name="TruncatedClientBroadcastCannotThrowOrPublishPartialChat" fullname="TumbangPreso.Tests.ChatPacketTests.TruncatedClientBroadcastCannotThrowOrPublishPartialChat" methodname="TruncatedClientBroadcastCannotThrowOrPublishPartialChat" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="2135727629" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.003143" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1213" name="TruncatedHostChatCannotThrowPublishOrConsumeRateAllowance" fullname="TumbangPreso.Tests.ChatPacketTests.TruncatedHostChatCannotThrowPublishOrConsumeRateAllowance" methodname="TruncatedHostChatCannotThrowPublishOrConsumeRateAllowance" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="1185765427" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.000762" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1216" name="ValidClientBroadcastPreservesBothUnicodeFields" fullname="TumbangPreso.Tests.ChatPacketTests.ValidClientBroadcastPreservesBothUnicodeFields" methodname="ValidClientBroadcastPreservesBothUnicodeFields" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="1831791253" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.001199" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1215" name="ValidHostMessageRetainsUnicodeAndExistingLineLimits" fullname="TumbangPreso.Tests.ChatPacketTests.ValidHostMessageRetainsUnicodeAndExistingLineLimits" methodname="ValidHostMessageRetainsUnicodeAndExistingLineLimits" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="1492848090" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.009743" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1659" name="MatchRecordPacketTests" fullname="TumbangPreso.Tests.MatchRecordPacketTests" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.009705" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1661" name="InvalidJsonAndTrailingBytesCannotPublishAResult" fullname="TumbangPreso.Tests.MatchRecordPacketTests.InvalidJsonAndTrailingBytesCannotPublishAResult" methodname="InvalidJsonAndTrailingBytesCannotPublishAResult" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="1955946065" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.003337" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1663" name="NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" fullname="TumbangPreso.Tests.MatchRecordPacketTests.NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" methodname="NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="1624913456" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.000477" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1660" name="TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" fullname="TumbangPreso.Tests.MatchRecordPacketTests.TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" methodname="TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="1318891216" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.000555" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1662" name="ValidHostRecordPreservesUnicodeAndExistingNormalisation" fullname="TumbangPreso.Tests.MatchRecordPacketTests.ValidHostRecordPreservesUnicodeAndExistingNormalisation" methodname="ValidHostRecordPreservesUnicodeAndExistingNormalisation" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="91695465" result="Passed" start-time="2026-10-02 20:12:34Z" end-time="2026-10-02 20:12:34Z" duration="0.003369" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,22 @@
+Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.
+[sean] bake space: already scaled (renderer box 2.018 m, baked spans 2.018 and 4.803; rest pose sits at 0.100 m against a floor at 0)
+sean: clearance -0.00026 to 0.00099 metres
+sean: maximum held-shoe vertices inside rigid head surfaces: 0
+[phaister] bake space: already scaled (renderer box 2.397 m, baked spans 2.380 and 5.664; rest pose sits at 0.117 m against a floor at 0)
+phaister: clearance -0.00015 to 0.00194 metres
+phaister: maximum held-shoe vertices inside rigid head surfaces: 0
+[zack] bake space: already scaled (renderer box 1.883 m, baked spans 1.880 and 4.475; rest pose sits at 0.103 m against a floor at 0)
+zack: clearance -0.00027 to 0.00009 metres
+zack: maximum held-shoe vertices inside rigid head surfaces: 0
+[nemu] bake space: already scaled (renderer box 1.423 m, baked spans 1.423 and 3.387; rest pose sits at 0.100 m against a floor at 0)
+nemu: clearance -0.00087 to 0.00004 metres
+nemu: maximum held-shoe vertices inside rigid head surfaces: 0
+[dante] bake space: already scaled (renderer box 1.868 m, baked spans 1.868 and 4.447; rest pose sits at 0.100 m against a floor at 0)
+dante: clearance -0.00068 to 0.00055 metres
+dante: maximum held-shoe vertices inside rigid head surfaces: 0
+[cheska] bake space: already scaled (renderer box 1.890 m, baked spans 1.885 and 4.486; rest pose sits at 0.105 m against a floor at 0)
+cheska: clearance 0.00000 to 0.00000 metres
+cheska: maximum held-shoe vertices inside rigid head surfaces: 0
+[rafi] bake space: already scaled (renderer box 1.875 m, baked spans 1.875 and 4.464; rest pose sits at 0.100 m against a floor at 0)
+rafi: clearance -0.00185 to 0.00285 metres
+rafi: maximum held-shoe vertices inside rigid head surfaces: 0

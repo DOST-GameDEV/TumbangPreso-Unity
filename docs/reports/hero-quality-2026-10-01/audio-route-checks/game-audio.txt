@@ -1,0 +1,9 @@
+Actual game output, no microphone.
+rate=48000
+channels=2
+samples=143360
+seconds=1.493333
+dsp_start=27495.146667
+first_callback_real=3.283193
+peak=0.058779
+rms=0.003304

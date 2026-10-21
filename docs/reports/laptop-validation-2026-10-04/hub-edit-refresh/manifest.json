@@ -1,0 +1,58 @@
+{
+  "originalSource": "53d6b7e09bd2a2077446269334d7873bb89052d1",
+  "rawFiles": {
+    "raw/original/tests.xml": "b6cf6f75f0ddf728c6d65e5c12751dff5cb430591ea66c68668e8360c995f4af",
+    "raw/original/job-receipt.json": "956a9730b0986e1ed6ec46178b1daad95cd19bfebc3d05ad3a631875fb5f6cd6",
+    "raw/original/qualified-source.json": "89794c994d152615bc79f70cfd845dae70b93176cb001786a925e9bfdba12e59",
+    "raw/original/post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+    "raw/original/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/original/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/original/PlayerHub.cs": "9688d80db65d0996c0d90f7605674a4a1e1c27f1949770db005f6643d0b1099d",
+    "raw/original/PlayerHub.OwnerPainted.cs": "44d80e5190fcfe7303e976b40806e8e522e80452466c0b91fede7fec50bed2e9",
+    "raw/original/PlayerHubEditRefreshTests.cs": "aa78d9cbb86bdddb69393148a7a15dbeefc7e9244ab411d85c91fed69bdc3e62",
+    "raw/original/PlayerHubEditRefreshTests.cs.meta": "5a6aaca8421156939ba2fd87fc020329010bbb2abb1cbe27e59648def5715012",
+    "raw/candidate/job-receipt.json": "bd9074943a2982dd912ed31a72195e965e0a87adf71027482f431a9ba06be42d",
+    "raw/candidate/qualified-source.json": "1c6fea3923c8ac4209fb5c59b15ad6d9a224b5271f4d2417f1b6bc998da8e5ed",
+    "raw/candidate/post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+    "raw/candidate/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/candidate/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/candidate/tests.xml": "9c188ef113a17861411afc592d7eb42291c08947a1fe363c83aa2d579cfea713",
+    "raw/controls/job-receipt.json": "b0e8d68b0211c39afe498d631127448090d606c63f8972d9de5205f504b6fc2c",
+    "raw/controls/qualified-source.json": "474e34b17b64aa8d2f5a67eaf9a1108aaf40ff048265e6d0140017b4a85ca494",
+    "raw/controls/post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+    "raw/controls/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/controls/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/controls/tests.xml": "8cf6b01aa52a3b9629827dc0e656a83d14f22a6a62c1a129711d17b49c4c5d71",
+    "raw/compile-incident/compiler-errors.txt": "d0a668b88b695b7009925295baf8beecd1cc40e4ac86fb8a153f90d6a6fc05f3",
+    "raw/compile-incident/job-receipt.json": "afaa0652d68e8efe2f6bc04175e4f7b4da7512d7280f2d522437ae24986ba8c0",
+    "raw/compile-incident/qualified-source.json": "772749451e5fe8a0f793364450119b3b13b973f4c176d4d8f3064a132ee80c2e",
+    "raw/compile-incident/post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+    "raw/compile-incident/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/compile-incident/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/candidate/PlayerHub.OwnerPainted.cs": "b713992f7f384a9daab276c6b387e400d746dff9e1af178b4f93606462efc164",
+    "raw/candidate/PlayerHub.cs": "f561f76c159e49eb6d5e899ff90a394b84dfc2584f4f0438dfa78d82866bbc4d",
+    "raw/controls/PlayerHubDeferredRefreshControlTests.cs": "bd7b7b00be0d028eb41a8220c04f1feac4b020bfe75871bdcbbf1dce6823df2d",
+    "raw/compile-incident/PlayerHubDeferredRefreshControlTests.cs": "d6c77e06016d383522fa1c7d6a766ca878e83a3f22655768aa92805d3ce4c04d",
+    "raw/controls/PlayerHubDeferredRefreshControlTests.cs.meta": "238dcb4c382a109570ad52607ed68cc05b1ecbbe78cf97a081e5750b4e4599cc",
+    "raw/compile-incident/PlayerHubDeferredRefreshControlTests.cs.meta": "238dcb4c382a109570ad52607ed68cc05b1ecbbe78cf97a081e5750b4e4599cc"
+  },
+  "candidateSource": "754aaef3ddaa01a7129f0a966b2dfce6c6321c75",
+  "checkedCases": {
+    "original": {
+      "passed": 2,
+      "failed": 2
+    },
+    "candidate": {
+      "passed": 4,
+      "failed": 0
+    },
+    "additionalControls": {
+      "passed": 3,
+      "failed": 0
+    },
+    "compileIncident": {
+      "executedTests": 0,
+      "fixtureRepairs": 1
+    }
+  }
+}

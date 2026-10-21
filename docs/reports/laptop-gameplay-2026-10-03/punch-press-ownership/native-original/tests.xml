@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.1889629">
+  <test-suite type="TestSuite" id="2842" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1499" result="Failed" site="Child" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.188963" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2836" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1499" result="Failed" site="Child" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.173593" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24256" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2837" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1499" result="Failed" site="Child" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.165251" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2838" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1499" result="Failed" site="Child" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.157007" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2179" name="PunchPressOwnershipTests" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.136595" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2183" name="ACooldownBlockedInitialEdgeIsStillAvailableBeforePrediction" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.ACooldownBlockedInitialEdgeIsStillAvailableBeforePrediction" methodname="ACooldownBlockedInitialEdgeIsStillAvailableBeforePrediction" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="1600433700" result="Passed" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.058956" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2181" name="CommittingAHeldPressPreventsARepeatedPunchAfterRefusal" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.CommittingAHeldPressPreventsARepeatedPunchAfterRefusal" methodname="CommittingAHeldPressPreventsARepeatedPunchAfterRefusal" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="329323121" result="Passed" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.020155" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2180" name="RefusalCannotReuseTheAlreadyPredictedPunchEdgeBeforeCommit" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.RefusalCannotReuseTheAlreadyPredictedPunchEdgeBeforeCommit" methodname="RefusalCannotReuseTheAlreadyPredictedPunchEdgeBeforeCommit" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="678922567" result="Failed" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.024022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The same already-predicted punch edge committed again after refusal.
+  Expected: 0
+  But was:  0.899999976f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PunchPressOwnershipTests.RefusalCannotReuseTheAlreadyPredictedPunchEdgeBeforeCommit () [0x00028] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PunchPressOwnershipTests.cs:77
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2182" name="ReleaseCommitAndFreshPressCanPredictAnotherPunch" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.ReleaseCommitAndFreshPressCanPredictAnotherPunch" methodname="ReleaseCommitAndFreshPressCanPredictAnotherPunch" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="468032714" result="Passed" start-time="2026-10-03 09:23:27Z" end-time="2026-10-03 09:23:27Z" duration="0.021453" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

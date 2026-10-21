@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c61becc3-5a5a-4f21-bbb6-4c7856c84aec" name="@5dbb90ac801b 2026-10-02 10:55:09" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T10:55:09.6082912+08:00" queuing="2026-10-02T10:55:09.6082913+08:00" start="2026-10-02T10:55:08.9926193+08:00" finish="2026-10-02T10:55:09.6132263+08:00" />
+  <TestSettings name="default" id="ba2f5812-da06-410e-b940-976c2496899b">
+    <Deployment runDeploymentRoot="_5dbb90ac801b_2026-10-02_10_55_09" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d04b92b1-24ca-464e-87df-97add34cdc58" testId="6b48ccfb-af45-1f84-d21f-60afebb1764c" testName="TumbangPreso.Core.Tests.SeanGateRulesTests.InvalidSamplesCannotCreateContact" computerName="5dbb90ac801b" duration="00:00:00.0021254" startTime="2026-10-02T10:55:09.4962910+08:00" endTime="2026-10-02T10:55:09.4962910+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d04b92b1-24ca-464e-87df-97add34cdc58" />
+    <UnitTestResult executionId="0dd05c6d-59fa-4210-bc6d-635e597c01af" testId="8dcf7ef2-d49b-681f-6c1a-ee90f5e89d56" testName="TumbangPreso.Core.Tests.SeanGateRulesTests.CrossingsReturnTheApproachSide(before: -1, after: 1, expected: -1)" computerName="5dbb90ac801b" duration="00:00:00.0002308" startTime="2026-10-02T10:55:09.4966682+08:00" endTime="2026-10-02T10:55:09.4966682+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0dd05c6d-59fa-4210-bc6d-635e597c01af" />
+    <UnitTestResult executionId="89bbafb9-ce50-4998-ae7f-1b3527a0fac2" testId="5b5f099d-eaa1-6234-4dc5-53364719e4aa" testName="TumbangPreso.Core.Tests.SeanGateRulesTests.CrossingsReturnTheApproachSide(before: 1, after: -1, expected: 1)" computerName="5dbb90ac801b" duration="00:00:00.0000707" startTime="2026-10-02T10:55:09.4966403+08:00" endTime="2026-10-02T10:55:09.4966403+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89bbafb9-ce50-4998-ae7f-1b3527a0fac2" />
+    <UnitTestResult executionId="4614f3a5-4c9a-41f0-a983-dd5bd49fdf6b" testId="9ff2f8a2-7b4f-57a2-9528-5c48ee45443b" testName="TumbangPreso.Core.Tests.SeanGateRulesTests.FiniteEndsIncludeTheRealBodyFootprintWithoutAnInfinitePlane" computerName="5dbb90ac801b" duration="00:00:00.0000742" startTime="2026-10-02T10:55:09.4967277+08:00" endTime="2026-10-02T10:55:09.4967277+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4614f3a5-4c9a-41f0-a983-dd5bd49fdf6b" />
+    <UnitTestResult executionId="f37c816f-a3aa-412f-bb40-1033dfa1c299" testId="4e02f07d-f4cd-f05f-9191-5ef425c6ce01" testName="TumbangPreso.Core.Tests.SeanGateRulesTests.OneWarningPrecedesTheThreeSecondArmedWindow" computerName="5dbb90ac801b" duration="00:00:00.0048081" startTime="2026-10-02T10:55:09.4932573+08:00" endTime="2026-10-02T10:55:09.4932696+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f37c816f-a3aa-412f-bb40-1033dfa1c299" />
+    <UnitTestResult executionId="89f5b6df-c8e3-46d4-a300-2b02a24a16f0" testId="2a0c3745-6e71-a9ba-4ead-bb86b53e4a9e" testName="TumbangPreso.Core.Tests.SeanGateRulesTests.TouchingThenReturningDoesNotConsumeButContinuingAcrossDoes" computerName="5dbb90ac801b" duration="00:00:00.0001218" startTime="2026-10-02T10:55:09.4967530+08:00" endTime="2026-10-02T10:55:09.4967530+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89f5b6df-c8e3-46d4-a300-2b02a24a16f0" />
+    <UnitTestResult executionId="887f53b6-0437-4418-8d2c-aa9494ed546b" testId="d2b19792-1050-0275-d5f6-7aff0b298ddc" testName="TumbangPreso.Core.Tests.SeanGateRulesTests.EarliestCrossingCanBeSelectedIndependentlyOfPlayerEnumeration" computerName="5dbb90ac801b" duration="00:00:00.0001388" startTime="2026-10-02T10:55:09.4966099+08:00" endTime="2026-10-02T10:55:09.4966100+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="887f53b6-0437-4418-8d2c-aa9494ed546b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.SeanGateRulesTests.TouchingThenReturningDoesNotConsumeButContinuingAcrossDoes" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="2a0c3745-6e71-a9ba-4ead-bb86b53e4a9e">
+      <Execution id="89f5b6df-c8e3-46d4-a300-2b02a24a16f0" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.SeanGateRulesTests" name="TouchingThenReturningDoesNotConsumeButContinuingAcrossDoes" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.SeanGateRulesTests.CrossingsReturnTheApproachSide(before: -1, after: 1, expected: -1)" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="8dcf7ef2-d49b-681f-6c1a-ee90f5e89d56">
+      <Execution id="0dd05c6d-59fa-4210-bc6d-635e597c01af" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.SeanGateRulesTests" name="CrossingsReturnTheApproachSide" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.SeanGateRulesTests.CrossingsReturnTheApproachSide(before: 1, after: -1, expected: 1)" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="5b5f099d-eaa1-6234-4dc5-53364719e4aa">
+      <Execution id="89bbafb9-ce50-4998-ae7f-1b3527a0fac2" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.SeanGateRulesTests" name="CrossingsReturnTheApproachSide" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.SeanGateRulesTests.OneWarningPrecedesTheThreeSecondArmedWindow" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="4e02f07d-f4cd-f05f-9191-5ef425c6ce01">
+      <Execution id="f37c816f-a3aa-412f-bb40-1033dfa1c299" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.SeanGateRulesTests" name="OneWarningPrecedesTheThreeSecondArmedWindow" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.SeanGateRulesTests.EarliestCrossingCanBeSelectedIndependentlyOfPlayerEnumeration" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="d2b19792-1050-0275-d5f6-7aff0b298ddc">
+      <Execution id="887f53b6-0437-4418-8d2c-aa9494ed546b" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.SeanGateRulesTests" name="EarliestCrossingCanBeSelectedIndependentlyOfPlayerEnumeration" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.SeanGateRulesTests.FiniteEndsIncludeTheRealBodyFootprintWithoutAnInfinitePlane" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="9ff2f8a2-7b4f-57a2-9528-5c48ee45443b">
+      <Execution id="4614f3a5-4c9a-41f0-a983-dd5bd49fdf6b" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.SeanGateRulesTests" name="FiniteEndsIncludeTheRealBodyFootprintWithoutAnInfinitePlane" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.SeanGateRulesTests.InvalidSamplesCannotCreateContact" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="6b48ccfb-af45-1f84-d21f-60afebb1764c">
+      <Execution id="d04b92b1-24ca-464e-87df-97add34cdc58" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.SeanGateRulesTests" name="InvalidSamplesCannotCreateContact" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6b48ccfb-af45-1f84-d21f-60afebb1764c" executionId="d04b92b1-24ca-464e-87df-97add34cdc58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8dcf7ef2-d49b-681f-6c1a-ee90f5e89d56" executionId="0dd05c6d-59fa-4210-bc6d-635e597c01af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b5f099d-eaa1-6234-4dc5-53364719e4aa" executionId="89bbafb9-ce50-4998-ae7f-1b3527a0fac2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9ff2f8a2-7b4f-57a2-9528-5c48ee45443b" executionId="4614f3a5-4c9a-41f0-a983-dd5bd49fdf6b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e02f07d-f4cd-f05f-9191-5ef425c6ce01" executionId="f37c816f-a3aa-412f-bb40-1033dfa1c299" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a0c3745-6e71-a9ba-4ead-bb86b53e4a9e" executionId="89f5b6df-c8e3-46d4-a300-2b02a24a16f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2b19792-1050-0275-d5f6-7aff0b298ddc" executionId="887f53b6-0437-4418-8d2c-aa9494ed546b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="7" executed="7" passed="7" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.20)
+[xUnit.net 00:00:00.05]   Discovering: TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.14]   Discovered:  TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.15]   Starting:    TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.19]   Finished:    TumbangPreso.Core.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

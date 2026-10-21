@@ -1,0 +1,29 @@
+{
+  "pid": 34292,
+  "source": "1d40158032414d9f442c43b64bc5bc91da4f8cbf",
+  "packetKind": "candidate",
+  "expected": 13,
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\hero-consumer-candidate1-direct1004",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.HeroQuickTapTests",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\hero-consumer-candidate1-direct1004\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\hero-consumer-candidate1-direct1004\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}

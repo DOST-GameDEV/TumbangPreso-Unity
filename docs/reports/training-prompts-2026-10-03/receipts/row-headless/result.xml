@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.2257265">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1084" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.225727" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2323" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1084" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.204882" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="73720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2324" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1084" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.193435" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2325" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1084" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.174901" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2264" name="TrainingPromptRenderingTests" fullname="TumbangPreso.Tests.TrainingPromptRenderingTests" classname="TumbangPreso.Tests.TrainingPromptRenderingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.157906" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2267" name="ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator" fullname="TumbangPreso.Tests.TrainingPromptRenderingTests.ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator" classname="TumbangPreso.Tests.TrainingPromptRenderingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.153506" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2265" name="ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator(True)" fullname="TumbangPreso.Tests.TrainingPromptRenderingTests.ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator(True)" methodname="ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator" classname="TumbangPreso.Tests.TrainingPromptRenderingTests" runstate="Runnable" seed="1846458788" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.135614" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2266" name="ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator(False)" fullname="TumbangPreso.Tests.TrainingPromptRenderingTests.ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator(False)" methodname="ActualTutorialKeyRowUsesSharedGlyphsWithoutCurveSeparator" classname="TumbangPreso.Tests.TrainingPromptRenderingTests" runstate="Runnable" seed="1719461909" result="Passed" start-time="2026-10-03 09:49:19Z" end-time="2026-10-03 09:49:19Z" duration="0.008035" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

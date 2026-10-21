@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:44:01Z" end-time="2026-10-03 16:44:02Z" duration="0.7767573">
+  <test-suite type="TestSuite" id="2777" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:44:01Z" end-time="2026-10-03 16:44:02Z" duration="0.776757" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2771" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:44:01Z" end-time="2026-10-03 16:44:02Z" duration="0.755748" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="129541" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2772" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:44:01Z" end-time="2026-10-03 16:44:02Z" duration="0.741769" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2773" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:44:01Z" end-time="2026-10-03 16:44:02Z" duration="0.726920" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2505" name="TemporaryReadingFontTests" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 16:44:01Z" end-time="2026-10-03 16:44:02Z" duration="0.701562" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2508" name="ActualTutorialParagraphsUseNunitoAndExpandWithoutClipping" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests.ActualTutorialParagraphsUseNunitoAndExpandWithoutClipping" methodname="ActualTutorialParagraphsUseNunitoAndExpandWithoutClipping" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" seed="1628553036" result="Passed" start-time="2026-10-03 16:44:01Z" end-time="2026-10-03 16:44:02Z" duration="0.612290" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Temporary-Nunito-smaller-tutorial cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="2507" name="MissingThemeReferenceAlsoFallsBackToNunito" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests.MissingThemeReferenceAlsoFallsBackToNunito" methodname="MissingThemeReferenceAlsoFallsBackToNunito" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" seed="596808142" result="Passed" start-time="2026-10-03 16:44:02Z" end-time="2026-10-03 16:44:02Z" duration="0.036660" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2506" name="SerializedThemeAndLoadingTipsUseTheSameRealBoldFace" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests.SerializedThemeAndLoadingTipsUseTheSameRealBoldFace" methodname="SerializedThemeAndLoadingTipsUseTheSameRealBoldFace" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" seed="750374899" result="Passed" start-time="2026-10-03 16:44:02Z" end-time="2026-10-03 16:44:02Z" duration="0.038788" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.2271393">
+  <test-suite type="TestSuite" id="2509" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.227139" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2503" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.215521" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="828" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2504" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.212357" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2505" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1234" result="Failed" site="Child" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.209561" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1118" name="BotCompanionObservationTests" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.172291" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1133" name="InactiveCompanionsStopSupplyingLiveBotObservations" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.166820" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1131" name="InactiveCompanionsStopSupplyingLiveBotObservations(Classic)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations(Classic)" methodname="InactiveCompanionsStopSupplyingLiveBotObservations" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1893397938" result="Failed" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.118052" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An inactive companion remained in the bot's live target view.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations (TumbangPreso.Core.GameMode mode) [0x0009d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:139
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1132" name="InactiveCompanionsStopSupplyingLiveBotObservations(HeroStrike)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations(HeroStrike)" methodname="InactiveCompanionsStopSupplyingLiveBotObservations" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1889297767" result="Failed" start-time="2026-10-02 01:31:23Z" end-time="2026-10-02 01:31:23Z" duration="0.035105" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An inactive companion remained in the bot's live target view.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.InactiveCompanionsStopSupplyingLiveBotObservations (TumbangPreso.Core.GameMode mode) [0x0009d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:139
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

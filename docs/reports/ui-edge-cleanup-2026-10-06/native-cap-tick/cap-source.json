@@ -1,0 +1,22 @@
+{
+  "originalSha256": "d866ca11668ccceb925f080c53815f1b8c04364e446c11a1d342790330cdaa6a",
+  "beforeSha256": "c2e3b8d99653153c25a81a6f9b515701344838c8de21f85c2ea4d567088fb89b",
+  "candidateSha256": "33e4cc49c7ac88a313999a018a9d980c6090a631a0e7b334d168384e59ec276c",
+  "originalSize": [
+    187,
+    63
+  ],
+  "exportSize": [
+    748,
+    252
+  ],
+  "retainedSourceX": [
+    0,
+    160
+  ],
+  "correctedSourceX": [
+    160,
+    187
+  ],
+  "method": "Original green paint mask excludes crimson track matte; spline trace changes only damaged right cap. No rectangle template, palette/layout/font change."
+}

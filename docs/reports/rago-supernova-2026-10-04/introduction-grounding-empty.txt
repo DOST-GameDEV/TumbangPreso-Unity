@@ -1,0 +1,5 @@
+Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.
+[sean] bake space: already scaled (renderer box 2.018 m, baked spans 2.018 and 4.803; rest pose sits at 0.000 m against a floor at 0)
+[sean] visual-only study; retained theme started=False. No audio acceptance.
+sean: clearance -0.00054 to 0.00142 metres
+sean: maximum held-shoe vertices inside rigid head surfaces: 0

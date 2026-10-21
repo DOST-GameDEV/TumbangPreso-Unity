@@ -1,0 +1,12 @@
+{
+  "merged_lighting_head": "50f1fc255",
+  "integration_head": "241e13bb586b16261498fb1a605faf5710d7de6a",
+  "tests": {
+    "total": "2",
+    "passed": "2",
+    "failed": "0",
+    "duration": "61.3840988"
+  },
+  "scope": "Existing five-map Stage and toon ramp cases; native Unity Editor rendering, not standalone performance or final queue completion",
+  "pending": "Lighting lane preview1.8 and performance1.9; remaining map refinement"
+}

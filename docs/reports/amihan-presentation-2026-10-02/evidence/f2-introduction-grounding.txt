@@ -1,0 +1,5 @@
+Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.
+[amihan] bake space: already scaled (renderer box 1.871 m, baked spans 1.871 and 4.452; rest pose sits at 0.100 m against a floor at 0)
+[amihan] visual-only study; retained theme started=False. No audio acceptance.
+amihan: clearance -0.00020 to 0.00006 metres
+amihan: maximum held-shoe vertices inside rigid head surfaces: 86

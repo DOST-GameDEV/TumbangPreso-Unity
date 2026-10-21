@@ -1,0 +1,18 @@
+[
+  {
+    "cue": "step_rubber",
+    "samples": 4671,
+    "rate": 44100,
+    "mean": 7.193289127729608e-06,
+    "peak": 0.3599853515625,
+    "sha256": "06d012bcf032fc98958dbacff59db53850381310105668086fe4fddf763f1c8d"
+  },
+  {
+    "cue": "slide_scrape",
+    "samples": 14994,
+    "rate": 44100,
+    "mean": -0.00033292939571662,
+    "peak": 0.5799560546875,
+    "sha256": "838ea1c3fdc77c2714ed8a4967dc0465cad767031d06e07be8803de52e79e855"
+  }
+]

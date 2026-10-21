@@ -1,0 +1,9 @@
+{
+  "runtime": 0,
+  "tests": 0,
+  "scope": "Compile only;7cases nativepending",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Net/ServerQuery.cs": "9f2e7f543f68d766be86bfad43549071e78b33f96b3c366aa78f8cfee44862f0",
+    "Assets/TumbangPreso/Tests/HostedLobbyLifetimeTests.cs": "67e307143f0e9825a91a9d60d9ec061c16d7164fa67f4f731abfaa02c010bc4e"
+  }
+}

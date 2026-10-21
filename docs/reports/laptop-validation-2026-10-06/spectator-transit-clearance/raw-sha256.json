@@ -1,0 +1,9 @@
+{
+  "raw/probe-launch.json": "b56f06d217c24c395661f8b64aa9c8d9716c95595a1c2cbf66a304610ba33d98",
+  "raw/probe-classified-result.json": "f896efb77efcc862e39e4a2dc30da894fb56429fbba519919e2298c065809190",
+  "raw/probe-tests.xml": "c79f79085f8691eeb3fc2beb99f4d0146baf8fe797d5c5c390bbf50cc14a4c32",
+  "raw/candidate-launch.json": "9b6c91831dc0c894d1e4119427829c95381cf4f6e02dc73c74f4e5111901d0e1",
+  "raw/candidate-classified-result.json": "76d0d81a63f562195dd0bc9673b36e4be35d65b855e4498a914caa1cfcabba4c",
+  "raw/candidate-tests.xml": "41de20dbc0ae9f4a56ba4c6e25640c88f7a723044b7376cc4b07b700fc6f37c6",
+  "raw/original-fixture.cs": "d0ff99be9ab8b04063288ec1e072b1bdd1277b7a6f3458500abaeb159e34f097"
+}

@@ -1,0 +1,7 @@
+{
+  "repairs": 1,
+  "sourceCommit": "f163882cc9ea65d6b4fb2411f2781deb2e885a1b",
+  "finalXML": "final-tests.xml",
+  "qualifiedSourceScope": "published SceneFlow cleanup before follow-up host-loss helper/test edits",
+  "initialFixtureManifestScope": "manifest.json describes original pre-repair preparation"
+}

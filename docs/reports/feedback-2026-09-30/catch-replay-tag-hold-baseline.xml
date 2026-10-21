@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 11:55:24Z" end-time="2026-09-30 11:55:25Z" duration="1.3784597">
+  <test-suite type="TestSuite" id="2131" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:55:24Z" end-time="2026-09-30 11:55:25Z" duration="1.378460" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2125" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:55:24Z" end-time="2026-09-30 11:55:25Z" duration="1.367480" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="99548" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2126" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:55:24Z" end-time="2026-09-30 11:55:25Z" duration="1.365099" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2127" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:55:24Z" end-time="2026-09-30 11:55:25Z" duration="1.360814" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1119" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-09-30 11:55:24Z" end-time="2026-09-30 11:55:25Z" duration="1.339616" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1127" name="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" methodname="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="31249853" result="Failed" start-time="2026-09-30 11:55:24Z" end-time="2026-09-30 11:55:25Z" duration="1.327345" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Play 2.5 seconds, hold 1.25 seconds, then fade for .18 seconds.
+  Expected: in range (3.9,3.94)
+  But was:  3.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay>d__13.MoveNext () [0x001a7] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs:324
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

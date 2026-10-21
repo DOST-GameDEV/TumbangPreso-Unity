@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 19:15:37Z" end-time="2026-09-26 19:15:52Z" duration="14.5510138">
+  <test-suite type="TestSuite" id="1859" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:15:37Z" end-time="2026-09-26 19:15:52Z" duration="14.551014" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1853" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:15:37Z" end-time="2026-09-26 19:15:52Z" duration="14.538767" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1854" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:15:37Z" end-time="2026-09-26 19:15:52Z" duration="14.532704" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1855" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:15:37Z" end-time="2026-09-26 19:15:52Z" duration="14.524613" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1740" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-26 19:15:37Z" end-time="2026-09-26 19:15:52Z" duration="14.512582" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1743" name="RootedPromptTracksLiveBindingsDevicesAndHeldProgress" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RootedPromptTracksLiveBindingsDevicesAndHeldProgress" methodname="RootedPromptTracksLiveBindingsDevicesAndHeldProgress" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1859685792" result="Passed" start-time="2026-09-26 19:15:37Z" end-time="2026-09-26 19:15:52Z" duration="14.502191" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[RootedInput] device=True key=True action=True/True reader=True intent=True parked=False locked=False held=False local=True rooted=True progress=0.057
+[TumpGeometry] CourtHud-rooted-keyboard/Power0: vertices=659, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/PowerIcon: vertices=4, cull=False, alpha=1, depth=106, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/Power1: vertices=659, cull=False, alpha=1, depth=111, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/PowerIcon: vertices=4, cull=False, alpha=1, depth=112, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/Power2: vertices=418, cull=False, alpha=1, depth=117, material=1
+[TumpGeometry] CourtHud-rooted-keyboard/PowerIcon: vertices=4, cull=False, alpha=1, depth=118, material=1
+[TumpUiCapture] CourtHud-rooted-keyboard cream source=252,211,159 pixel=236,234,229; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-rooted-pad/Power0: vertices=659, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] CourtHud-rooted-pad/PowerIcon: vertices=4, cull=False, alpha=1, depth=106, material=1
+[TumpGeometry] CourtHud-rooted-pad/Power1: vertices=659, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-rooted-pad/PowerIcon: vertices=4, cull=False, alpha=1, depth=111, material=1
+[TumpGeometry] CourtHud-rooted-pad/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-rooted-pad/PowerIcon: vertices=4, cull=False, alpha=1, depth=116, material=1
+[TumpUiCapture] CourtHud-rooted-pad cream source=252,211,159 pixel=235,234,230; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-rooted-touch/Power0: vertices=659, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] CourtHud-rooted-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=106, material=1
+[TumpGeometry] CourtHud-rooted-touch/Power1: vertices=659, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-rooted-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=111, material=1
+[TumpGeometry] CourtHud-rooted-touch/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-rooted-touch/PowerIcon: vertices=4, cull=False, alpha=1, depth=116, material=1
+[TumpUiCapture] CourtHud-rooted-touch cream source=252,211,159 pixel=236,234,228; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

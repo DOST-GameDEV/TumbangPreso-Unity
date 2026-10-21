@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "errors": [],
+  "profiles": {
+    "host": {
+      "name": "completed-arrival-host-dc1ee203c7",
+      "root": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8a16a274099855b5d6965687d31b6e7d17757e13d677d53ced53dea23c85ad3e",
+      "seedSha256": "67e73c9fa49747a16d6735cda2d3353b63d62536891d62c3ea299b643f1ccba6"
+    },
+    "client": {
+      "name": "completed-arrival-client-dc1ee203c7",
+      "root": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\1c32c4e04cdb7b8c85deb63c1a7c93092c2e36f8bf11dfe6d528586bab40aa7d",
+      "seedSha256": "15a2a47d5ca8e70470a855e4344063d434777b2626899690f0f7d05b99506895"
+    }
+  },
+  "rules": {
+    "manual": true,
+    "wire": "1|0|1|30|0|3|0|1|0|1",
+    "rounds": 1,
+    "seconds": 30
+  },
+  "runtimeSha256": "421af2276ca14c6a304890062fefacfe22974ef83bc3d4b397b8c0e32d444755",
+  "sourceCommit": "248836d1e1ccf367a76abdb7d45df0474d8ccb11",
+  "buildReceipt": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002g\\artifact-receipt.json",
+  "scope": "Short custom 1-round/30-second direct-peer cold completed arrival; MAIN MENU gives up the prior seat, so no retained-seat/full-default-match/physical-input claim.",
+  "admission": {
+    "availableMb": 8190,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T07:51:54Z"
+  },
+  "hostPid": 18264,
+  "clientPid": 24636,
+  "inputRestored": true,
+  "profileSeedsRestored": true,
+  "runtimeUnchanged": true,
+  "retiredPids": [
+    18264,
+    24636
+  ]
+}

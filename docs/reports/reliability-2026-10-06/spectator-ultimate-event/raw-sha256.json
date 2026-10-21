@@ -1,0 +1,18 @@
+{
+  "raw/final-fixture.cs": "3f2a7f5506c60f62d644b7ce810221d5d3fb0f32bc1c0508f8a44ef7737c5d60",
+  "raw/original-fixture.cs": "cda03a77438202f4ae9fb2f08ad42c2c24bf0c35b334d2edb38758d31a751ec6",
+  "raw/SpectatorInterest-candidate.cs": "02a75c1f6ea7d473f4d0e4e492ae477935e01a566905e7b0844802007752f721",
+  "raw/SpectatorInterest-original.cs": "c6b1583fc812f5fb840a7f561369898b29dd3695036e62720546a044b88bb562",
+  "raw/candidate-native/classification.json": "30da6172d5d47296b31baba7b1ea1e9c196e12e2f57b5ad5484f338c07a4aa39",
+  "raw/candidate-native/launch.json": "943499ec878969eab9f6d483e5e12a337fea73789ca6fc687f8d9e888062649e",
+  "raw/candidate-native/results.xml": "55c96f6dc2be510364231baa520682a247c54993e903b18fd1f41bdc8b16b76f",
+  "raw/controls-native/classification.json": "30da6172d5d47296b31baba7b1ea1e9c196e12e2f57b5ad5484f338c07a4aa39",
+  "raw/controls-native/launch.json": "3c205fffc25a17d8fc07224eebfc9af7a1d888e28cde774f9522171ce022e16a",
+  "raw/controls-native/results.xml": "af030ee6608cfe96b25dc85d5a096b4fdfc54167233340d6b64a3e4fa4bf5810",
+  "raw/exchange-original-native/classification.json": "30da6172d5d47296b31baba7b1ea1e9c196e12e2f57b5ad5484f338c07a4aa39",
+  "raw/exchange-original-native/launch.json": "d0ebb138f206fa8a2bf885f2025a313abd156189c786b37b886da06730519f95",
+  "raw/exchange-original-native/results.xml": "a5d650453471d57e94e800d12f58dac8d70904c7490719e56fe23465955a5a5f",
+  "raw/original-native/classification.json": "30da6172d5d47296b31baba7b1ea1e9c196e12e2f57b5ad5484f338c07a4aa39",
+  "raw/original-native/launch.json": "0dcdbce35cd88aa183b90a63c5c607164d65cc212de606f80dda282d0d23a1ee",
+  "raw/original-native/results.xml": "2fb82969a8de90e17a0380c2d5c3dd47d29c55d19de8b01574daf4c3ff7d2b65"
+}

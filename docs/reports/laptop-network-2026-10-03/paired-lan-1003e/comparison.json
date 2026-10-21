@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "sourceCommit": "14dfe9e416f5a98698844d9da34ab3c34b849a17",
+  "protocol": 134,
+  "artifact": "1003e",
+  "matchIdSha256": "3d6b47a6df93c82259fc211d5290c3493cf1ea560ea2f6f8dd2d588f7f3770eb",
+  "scores": [
+    130,
+    0,
+    0,
+    150
+  ],
+  "client": {
+    "exitCode": 0,
+    "terminal": true,
+    "leaseHeld": false,
+    "saved": {
+      "historyCount": 1,
+      "queueCount": 1,
+      "witnessCount": 1,
+      "matchIdSha256": "3d6b47a6df93c82259fc211d5290c3493cf1ea560ea2f6f8dd2d588f7f3770eb",
+      "scores": [
+        130,
+        0,
+        0,
+        150
+      ],
+      "ownHumanLine": true,
+      "twoHumanOrigins": true,
+      "markerCleared": true
+    },
+    "profileSeedsRestored": true,
+    "inputRestored": true,
+    "runtimeUnchanged": true
+  },
+  "hostConfirmedBy": "PC owner chat terminal receipt, received October3 after owned host05 exited",
+  "host": {
+    "exitCode": 0,
+    "terminal": true,
+    "leaseHeld": false,
+    "saved": {
+      "historyCount": 1,
+      "queueCount": 1,
+      "witnessCount": 1,
+      "matchIdSha256": "3d6b47a6df93c82259fc211d5290c3493cf1ea560ea2f6f8dd2d588f7f3770eb",
+      "scores": [
+        130,
+        0,
+        0,
+        150
+      ],
+      "ownHumanLine": true,
+      "twoHumanOrigins": true,
+      "markerCleared": true
+    },
+    "profileSeedsRestored": true,
+    "inputRestored": true,
+    "runtimeUnchanged": true
+  },
+  "scope": "Actual paired LAN admission/readiness/natural Hero1/30 completion and matching saved results; excludes newer source fixes, physical controls, recovery and Relay."
+}

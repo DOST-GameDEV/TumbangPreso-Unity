@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.40366">
+  <test-suite type="TestSuite" id="1932" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="741" result="Passed" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.403660" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1926" name="TumbangPreso.PlayTests.dll" fullname="VALIDATION_PROJECT/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="741" result="Passed" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.393876" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61516" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1927" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="741" result="Passed" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.389189" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1928" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="741" result="Passed" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.384084" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1509" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.359060" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1513" name="OutlineCacheRejectsForeignIdentityAndDoesNotCacheUnfinishedMeshes" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineCacheRejectsForeignIdentityAndDoesNotCacheUnfinishedMeshes" methodname="OutlineCacheRejectsForeignIdentityAndDoesNotCacheUnfinishedMeshes" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1442840412" result="Passed" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.069293" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1514" name="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" methodname="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="107920841" result="Passed" start-time="2026-09-27 12:18:10Z" end-time="2026-09-27 12:18:10Z" duration="0.277925" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OutlineWarmupCheck] meshes=2 vertices=13785 coldMs=2.818 maxStepMs=1.822 reusedMs=0.046
+Saving results to: ISOLATED_PROFILE\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

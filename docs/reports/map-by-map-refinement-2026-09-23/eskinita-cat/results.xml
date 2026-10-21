@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 08:52:17Z" end-time="2026-09-24 08:52:49Z" duration="32.072296">
+  <test-suite type="TestSuite" id="1800" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="623" result="Passed" start-time="2026-09-24 08:52:17Z" end-time="2026-09-24 08:52:49Z" duration="32.072296" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1794" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="623" result="Passed" start-time="2026-09-24 08:52:17Z" end-time="2026-09-24 08:52:49Z" duration="32.061647" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9572" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1795" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="623" result="Passed" start-time="2026-09-24 08:52:17Z" end-time="2026-09-24 08:52:49Z" duration="32.060008" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1796" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="623" result="Passed" start-time="2026-09-24 08:52:17Z" end-time="2026-09-24 08:52:49Z" duration="32.058617" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1029" name="AmbientLifeProbe" fullname="TumbangPreso.PlayTests.AmbientLifeProbe" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-24 08:52:17Z" end-time="2026-09-24 08:52:49Z" duration="32.029264" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1031" name="EskinitaTabbyInvestigatesWatchesAndRetreats" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.EskinitaTabbyInvestigatesWatchesAndRetreats" methodname="EskinitaTabbyInvestigatesWatchesAndRetreats" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="1525466982" result="Passed" start-time="2026-09-24 08:52:17Z" end-time="2026-09-24 08:52:49Z" duration="32.010708" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/eskinita-cat-v2/Eskinita-cat-before.png
+[Play] wrote Logs/eskinita-cat-v2/Eskinita-cat-after.png
+[Play] wrote Logs/eskinita-cat-v2/Eskinita-cat-investigates.png
+[Play] wrote Logs/eskinita-cat-v2/Eskinita-cat-watches.png
+[Eskinita cat] activity departure, stationary observer, intrusion retreat/recovery and pause passed; travel=5.49
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

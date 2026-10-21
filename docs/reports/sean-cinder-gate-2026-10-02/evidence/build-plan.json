@@ -1,0 +1,14 @@
+{
+  "source": "f296ee5584c896403b75e6aebaee29016a113371 plus explicit uncommitted Cinder paths",
+  "candidate_base": "9590f4bd with reconciled incoming assets/runtime, all current runtime/Core CS hashes equal source",
+  "candidate_only": "Linux build adapter; fixed-simulation record helper; three earlier UI capture patches; imported metadata/RosterArms deltas retained, not source publication",
+  "question": "Does the regular twelve-scene GameBuilder compile a matching protocol130 Linux player for real host/owner/observer Cinder qualification?",
+  "outputs": "Builds/cinder-gate130/TumbangPreso.x86_64 and Logs/cinder-gate-20261002/build",
+  "stopping": "Owned build exit and actual player/Managed runtime artifacts; no feature/pass claim from build alone",
+  "retry": 1,
+  "memory_recovery": "40 verified orphaned compiler/root processes signalled, memory reduced1.39GB; no active Unity and only own candidate processes touched",
+  "tooling_repair": "Prelaunch Python wrapper failed because candidate retained old playerprefs_guard lacking identity_component. Copy exact current source dependency; no Unity launched or product/test input mutated.",
+  "admission_diagnosis": "Pool refused two lowercase unity CLI/broker processes, verified executable paths /home/agent/.local/bin/unity and extracted Hub/resources/unity. Neither is installed Unity Editor. Both preserved. Cloud adapter excludes exactly these executables only; memory/profile/lease/external Editor exclusivity remains. Shared contributor pool source unchanged. No actual build has launched yet.",
+  "disk_recovery": "Memory-bounded full build finished serialization but disk exhausted while copying Managed assemblies, exit1 guardnull225s. No completed player. Preserved logs and hashes of every incomplete generated output; removed only exact buildgraph-owned incomplete files. Candidate-only Linux LZ4HC build option now compresses player data; same12scenes, preflight and runtimecode, sourceGameBuilder unchanged. One configuration-specific retry; no performance equivalence claim.",
+  "compression_reference": "https://docs.unity3d.com/6000.0/Documentation/ScriptReference/BuildOptions.CompressWithLz4HC.html"
+}

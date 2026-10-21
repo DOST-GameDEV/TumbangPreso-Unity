@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 10:44:39Z" end-time="2026-09-27 10:44:42Z" duration="2.8702726">
+  <test-suite type="TestSuite" id="1925" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="734" result="Passed" start-time="2026-09-27 10:44:39Z" end-time="2026-09-27 10:44:42Z" duration="2.870273" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1919" name="TumbangPreso.PlayTests.dll" fullname="Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="734" result="Passed" start-time="2026-09-27 10:44:39Z" end-time="2026-09-27 10:44:42Z" duration="2.857925" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="59720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1920" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="734" result="Passed" start-time="2026-09-27 10:44:39Z" end-time="2026-09-27 10:44:42Z" duration="2.851658" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1921" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="734" result="Passed" start-time="2026-09-27 10:44:39Z" end-time="2026-09-27 10:44:42Z" duration="2.845650" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1220" name="GeneratedMotionAssetsTests" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-27 10:44:39Z" end-time="2026-09-27 10:44:40Z" duration="0.904376" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1221" name="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" methodname="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" seed="169100469" result="Passed" start-time="2026-09-27 10:44:39Z" end-time="2026-09-27 10:44:40Z" duration="0.892895" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1415" name="MatchLoadingReadinessTests" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-27 10:44:40Z" end-time="2026-09-27 10:44:41Z" duration="0.309161" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1416" name="OldRoundOrOldSceneCannotCompleteANewLoadingCurtain" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests.OldRoundOrOldSceneCannotCompleteANewLoadingCurtain" methodname="OldRoundOrOldSceneCannotCompleteANewLoadingCurtain" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" seed="1309207366" result="Passed" start-time="2026-09-27 10:44:40Z" end-time="2026-09-27 10:44:41Z" duration="0.307135" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HubLoading] Eskinita: The match could not be prepared.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1729" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-09-27 10:44:41Z" end-time="2026-09-27 10:44:42Z" duration="1.512753" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1730" name="PlantRemovalNamesItsLifetimeAndCannotResurrectAfterLateInstallation" fullname="TumbangPreso.PlayTests.SkillReceiptTests.PlantRemovalNamesItsLifetimeAndCannotResurrectAfterLateInstallation" methodname="PlantRemovalNamesItsLifetimeAndCannotResurrectAfterLateInstallation" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="363636179" result="Passed" start-time="2026-09-27 10:44:41Z" end-time="2026-09-27 10:44:41Z" duration="0.174243" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1733" name="ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw" methodname="ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1417619991" result="Passed" start-time="2026-09-27 10:44:41Z" end-time="2026-09-27 10:44:42Z" duration="1.187136" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1732" name="ReceivedRootsOwnTheirRestraintWithoutASentryAndAcceptLateFacingOnce" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ReceivedRootsOwnTheirRestraintWithoutASentryAndAcceptLateFacingOnce" methodname="ReceivedRootsOwnTheirRestraintWithoutASentryAndAcceptLateFacingOnce" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="850041238" result="Passed" start-time="2026-09-27 10:44:42Z" end-time="2026-09-27 10:44:42Z" duration="0.053678" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1736" name="RemoteInteractionHoldsNeedHostTimeAndExpireWithInputOrEpoch" fullname="TumbangPreso.PlayTests.SkillReceiptTests.RemoteInteractionHoldsNeedHostTimeAndExpireWithInputOrEpoch" methodname="RemoteInteractionHoldsNeedHostTimeAndExpireWithInputOrEpoch" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="346932563" result="Passed" start-time="2026-09-27 10:44:42Z" end-time="2026-09-27 10:44:42Z" duration="0.032171" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1731" name="ScopedUltimateImpactReachesOnlyTheVictimsCameraWithoutGameplayMutation" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ScopedUltimateImpactReachesOnlyTheVictimsCameraWithoutGameplayMutation" methodname="ScopedUltimateImpactReachesOnlyTheVictimsCameraWithoutGameplayMutation" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="427646797" result="Passed" start-time="2026-09-27 10:44:42Z" end-time="2026-09-27 10:44:42Z" duration="0.059992" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output>Saving results to: isolated test output</output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

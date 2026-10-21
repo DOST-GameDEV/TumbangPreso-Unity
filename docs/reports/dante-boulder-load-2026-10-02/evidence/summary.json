@@ -1,0 +1,98 @@
+[
+  {
+    "run": "baseline-1",
+    "cases": [
+      {
+        "name": "NormalAffinityLeavesTheShoeUntouched",
+        "result": "Passed",
+        "duration": "0.397929"
+      }
+    ],
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 60.024626254002214
+    },
+    "peak_total_GiB": 8.0
+  },
+  {
+    "run": "baseline-2",
+    "cases": [
+      {
+        "name": "AcceptedLoadSurvivesDropAndRetiresOnClear",
+        "result": "Failed",
+        "duration": "0.298210"
+      }
+    ],
+    "exit": {
+      "exit_code": 2,
+      "guard_reason": null,
+      "seconds": 30.003193433003617
+    },
+    "peak_total_GiB": 6.375
+  },
+  {
+    "run": "candidate-1",
+    "cases": [
+      {
+        "name": "NormalAffinityLeavesTheShoeUntouched",
+        "result": "Passed",
+        "duration": "0.395181"
+      }
+    ],
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 55.00529574400571
+    },
+    "peak_total_GiB": 7.92
+  },
+  {
+    "run": "candidate-2",
+    "cases": [
+      {
+        "name": "AcceptedLoadSurvivesDropAndRetiresOnClear",
+        "result": "Passed",
+        "duration": "0.333847"
+      }
+    ],
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.002636762990733
+    },
+    "peak_total_GiB": 6.339
+  },
+  {
+    "run": "candidate-3",
+    "cases": [
+      {
+        "name": "SnapshotAffinityAndDisableFollowTheShoe",
+        "result": "Passed",
+        "duration": "0.243172"
+      }
+    ],
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.002754091998213
+    },
+    "peak_total_GiB": 6.376
+  },
+  {
+    "run": "candidate-4",
+    "cases": [
+      {
+        "name": "OwnerMeshKeepsItsSurfacesAndClearsThePayload",
+        "result": "Passed",
+        "duration": "0.335480"
+      }
+    ],
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.004088164001587
+    },
+    "peak_total_GiB": 6.336
+  }
+]

@@ -14,7 +14,8 @@ namespace TumbangPreso.EditorTools
     {
         private const string Folder="Assets/TumbangPreso/Resources/SwimmingAnimations";
         public static void Run()=>EditorApplication.Exit(Execute()?0:1);
-        public static bool Execute()
+        public static bool EnsureMissing() => Execute(true);
+        public static bool Execute(bool onlyMissing = false)
         {
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
             var book=RosterBook.Load();if(book==null)return false;
@@ -27,6 +28,7 @@ namespace TumbangPreso.EditorTools
                 string id=DanceClip.ResourceName(root);
                 if(string.IsNullOrEmpty(id))throw new InvalidOperationException("Missing swim rig identity: "+entry.Id);
                 if(!authored.Add(id))continue;
+                if(onlyMissing && AssetDatabase.LoadAssetAtPath<GeneratedAnimationSet>(Folder+"/"+id+".asset")!=null)continue;
                 var bones=root.GetComponentsInChildren<Transform>(true);
                 var hold=entry.Clips?.FirstOrDefault(c=>c!=null&&c.name=="holding-right");
                 var clips=new List<AnimationClip>();

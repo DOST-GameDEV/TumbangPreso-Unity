@@ -1,0 +1,2 @@
+Native player world-camera baseline1920x1080 HDR, four parked players. Not worst-case combat FPS. Ambient life stays active.
+Apple M5 / Metal / Apple M5

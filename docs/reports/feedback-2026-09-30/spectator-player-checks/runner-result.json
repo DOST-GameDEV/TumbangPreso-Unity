@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "seconds": 301.1881194114685,
+  "stopped": "300-second four-round player-check deadline",
+  "review": {
+    "botmatch": null,
+    "traceExists": true
+  },
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "5909562",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "5909562",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "runtimeSha256": "25dfe9880cfa410aa85ef1eed61f17c2590a07589e31c51debd7825bf8020663"
+}

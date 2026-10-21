@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.1532948">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1310" result="Failed" site="Child" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.153295" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2609" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1310" result="Failed" site="Child" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.138066" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10464" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2610" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1310" result="Failed" site="Child" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.128542" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2611" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1310" result="Failed" site="Child" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.119101" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2445" name="SocialRefreshOrderingTests" fullname="TumbangPreso.Tests.SocialRefreshOrderingTests" classname="TumbangPreso.Tests.SocialRefreshOrderingTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.103878" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2451" name="FailedWriteAndOlderLoadKeepCacheAndScheduleFreshRead" fullname="TumbangPreso.Tests.SocialRefreshOrderingTests.FailedWriteAndOlderLoadKeepCacheAndScheduleFreshRead" methodname="FailedWriteAndOlderLoadKeepCacheAndScheduleFreshRead" classname="TumbangPreso.Tests.SocialRefreshOrderingTests" runstate="Runnable" seed="1109673931" result="Failed" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.037445" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SocialRefreshOrderingTests.FailedWriteAndOlderLoadKeepCacheAndScheduleFreshRead () [0x00171] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SocialRefreshOrderingTests.cs:111
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Social] write failed: Controlled write failure
+]]></output>
+            </test-case>
+            <test-case id="2446" name="OlderRefreshCannotEraseAcknowledgedFriend" fullname="TumbangPreso.Tests.SocialRefreshOrderingTests.OlderRefreshCannotEraseAcknowledgedFriend" methodname="OlderRefreshCannotEraseAcknowledgedFriend" classname="TumbangPreso.Tests.SocialRefreshOrderingTests" runstate="Runnable" seed="273241244" result="Failed" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.015356" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SocialRefreshOrderingTests.OlderRefreshCannotEraseAcknowledgedFriend () [0x00147] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SocialRefreshOrderingTests.cs:73
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2447" name="OlderRefreshCannotRestoreRemovedFriend" fullname="TumbangPreso.Tests.SocialRefreshOrderingTests.OlderRefreshCannotRestoreRemovedFriend" methodname="OlderRefreshCannotRestoreRemovedFriend" classname="TumbangPreso.Tests.SocialRefreshOrderingTests" runstate="Runnable" seed="970450460" result="Failed" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.020066" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SocialRefreshOrderingTests.OlderRefreshCannotRestoreRemovedFriend () [0x00175] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SocialRefreshOrderingTests.cs:82
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2448" name="OrdinaryRefreshStillAdoptsServerList" fullname="TumbangPreso.Tests.SocialRefreshOrderingTests.OrdinaryRefreshStillAdoptsServerList" methodname="OrdinaryRefreshStillAdoptsServerList" classname="TumbangPreso.Tests.SocialRefreshOrderingTests" runstate="Runnable" seed="489555647" result="Passed" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.004280" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2449" name="OrdinaryWriteStillAdoptsAcknowledgement" fullname="TumbangPreso.Tests.SocialRefreshOrderingTests.OrdinaryWriteStillAdoptsAcknowledgement" methodname="OrdinaryWriteStillAdoptsAcknowledgement" classname="TumbangPreso.Tests.SocialRefreshOrderingTests" runstate="Runnable" seed="1396572214" result="Passed" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.004226" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2450" name="RefreshDuringWriteIsDeferredWithoutDispatch" fullname="TumbangPreso.Tests.SocialRefreshOrderingTests.RefreshDuringWriteIsDeferredWithoutDispatch" methodname="RefreshDuringWriteIsDeferredWithoutDispatch" classname="TumbangPreso.Tests.SocialRefreshOrderingTests" runstate="Runnable" seed="1502532259" result="Failed" start-time="2026-10-04 08:08:12Z" end-time="2026-10-04 08:08:12Z" duration="0.011500" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SocialRefreshOrderingTests.RefreshDuringWriteIsDeferredWithoutDispatch () [0x0014a] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SocialRefreshOrderingTests.cs:100
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

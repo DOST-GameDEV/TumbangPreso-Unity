@@ -1,0 +1,3 @@
+# Obsolete build cleanup
+
+The owner authorized regular pruning of obsolete task-owned outputs and requested the rule in user-wide and repository AGENTS.md. Six obsolete internal builds totaling12587618074bytes were inventoried with absolute Builds boundaries, no live process and no reparse points. Automatic approval review rejected both the verified batch and an explicit literal single-folder recursive deletion with the stated reason blocked by policy. No folder was deleted. Active1003e/1003g, Desktop release, source/private work, profiles/saves and essential evidence remain protected. No shell/tool workaround was used to bypass the rejection.

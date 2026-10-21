@@ -20,6 +20,46 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class LobbyAndSettingsTests
     {
+        [Test]
+        public void HubRoomKeepsReservedSeatAndConnectionAdmissionSeparateFromVisiblePlayerCount()
+        {
+            var entry = new LanEntry
+            {
+                HostName = "Room", Address = "192.0.2.1", Port = 8910,
+                Players = 2, MaxPlayers = 4, Occupied = 4, Connections = 2, MaxConnections = 12
+            };
+            var room = UI.Hub.HubRoom.FromLan(entry);
+            Assert.AreEqual(2, room.Players);
+            Assert.IsFalse(room.IsJoinable, "Reserved seats must not be offered to new players.");
+            entry.Occupied = 2; entry.Connections = 12;
+            Assert.IsFalse(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
+            entry.Connections = 2;
+            Assert.IsTrue(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
+            entry.InProgress = true;
+            Assert.IsFalse(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
+        }
+
+        [Test]
+        public void EveryVisibleHubRoomFieldInvalidatesItsPreviousListing()
+        {
+            var room = new UI.Hub.HubRoom
+            {
+                Key = "ABCD", Name = "First", Map = "LAN", Players = 2,
+                Capacity = 4, InProgress = false, IsJoinable = true
+            };
+            Assert.IsTrue(room.SameListing(room));
+            foreach (var field in typeof(UI.Hub.HubRoom).GetFields(BindingFlags.Instance | BindingFlags.Public))
+            {
+                object changed = room;
+                object value = field.GetValue(room);
+                if (value is string text) field.SetValue(changed, text + " changed");
+                else if (value is int number) field.SetValue(changed, number + 1);
+                else if (value is bool flag) field.SetValue(changed, !flag);
+                else Assert.Fail("Add a changed sample for " + field.Name);
+                Assert.IsFalse(room.SameListing((UI.Hub.HubRoom)changed), field.Name + " left a stale row.");
+            }
+        }
+
         private static LobbySession NewLobby(bool dedicated = false)
         {
             var lobby = new LobbySession { IsDedicated = dedicated };
@@ -605,12 +645,97 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
+        public void RoomTitleKeepsAll24CharactersAndDistinctSuffixesInLanDiscovery()
+        {
+            const string title = "ROOM|1234567890123456789";
+            string changed = title.Substring(0, title.Length - 1) + "X";
+            string previous = NetSession.RoomTitle;
+            try
+            {
+                Assert.AreEqual(Settings.GameSettings.RoomTitleMax, title.Length);
+                Assert.AreEqual(title.Substring(0, 14), changed.Substring(0, 14));
+                NetSession.RoomTitle = title;
+                Assert.AreEqual(title, NetSession.RoomTitle);
+                string payload = LanBeacon.BuildPayload(8910, 1, 4, false, "K7X9", NetSession.RoomTitle);
+                Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+                Assert.AreEqual(title, entry.HostName);
+
+                NetSession.RoomTitle = changed;
+                payload = LanBeacon.BuildPayload(8910, 1, 4, false, "K7X9", NetSession.RoomTitle);
+                Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out entry));
+                Assert.AreEqual(changed, entry.HostName,
+                    "A changed suffix after the player-name limit disappeared from LAN discovery.");
+            }
+            finally { NetSession.RoomTitle = previous; }
+        }
+
+        [Test]
+        public void RoomTitleRemainsSingleLineBoundedAndLiteralWithoutChangingNicknameRules()
+        {
+            const string prefix = "<b>ROOM</b>|OPEN";
+            string raw = " \r\n" + prefix + "\u2028" + new string('Q', 30) + "\0";
+            string expected = prefix + new string('Q', 8);
+            string previous = NetSession.RoomTitle;
+            try
+            {
+                Assert.AreEqual(Settings.GameSettings.RoomTitleMax, expected.Length);
+                Assert.AreEqual("", Settings.GameSettings.SanitiseRoomTitle(null));
+                Assert.AreEqual("", Settings.GameSettings.SanitiseRoomTitle(" \t\r\n "));
+                NetSession.RoomTitle = raw;
+                Assert.AreEqual(expected, NetSession.RoomTitle,
+                    "Control/newline input must not escape the one-line 24-character room title.");
+                string payload = LanBeacon.BuildPayload(8910, 1, 4, false, "K7X9", raw);
+                Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+                Assert.AreEqual(expected, entry.HostName,
+                    "The parser must keep markup literal and apply the same title rule to an untrusted beacon.");
+                NetSession.RoomTitle = null;
+                Assert.AreEqual("", NetSession.RoomTitle);
+                Assert.AreEqual(new string('N', Balance.PlayerNameMax),
+                    Settings.GameSettings.SanitiseName(new string('N', Settings.GameSettings.RoomTitleMax)));
+            }
+            finally { NetSession.RoomTitle = previous; }
+        }
+
+        [Test]
         public void LanBeaconRejectsMalformedPayloads()
         {
             Assert.IsFalse(LanBeacon.TryParsePayload(null, "127.0.0.1", out _));
             Assert.IsFalse(LanBeacon.TryParsePayload("", "127.0.0.1", out _));
             Assert.IsFalse(LanBeacon.TryParsePayload("wrong-magic|8910|1|4|0|K7X9|Host", "127.0.0.1", out _));
             Assert.IsFalse(LanBeacon.TryParsePayload("tumbang-preso-lan|invalid_port|1|4|0|K7X9|Host", "127.0.0.1", out _));
+        }
+
+        [TestCase(65536, false)]
+        [TestCase(65537, false)]
+        [TestCase(int.MaxValue, false)]
+        [TestCase(65536, true)]
+        [TestCase(65537, true)]
+        [TestCase(int.MaxValue, true)]
+        public void LanBeaconRejectsPortsThatWouldWrapInTheTransport(int port, bool currentVersion)
+        {
+            string payload = currentVersion
+                ? LanBeacon.BuildPayload(port, 1, 4, false, "K7X9", "Boundary room", 1, 1, 12, "boundary-host")
+                : $"{LanBeacon.Magic}|{port}|1|4|0|K7X9|Boundary room";
+            Assert.IsFalse(LanBeacon.TryParsePayload(payload, "192.0.2.1", out _),
+                "An advertised endpoint must fit the transport's UDP port without truncation.");
+        }
+
+        [TestCase(1, false)]
+        [TestCase(8910, false)]
+        [TestCase(65535, false)]
+        [TestCase(1, true)]
+        [TestCase(8910, true)]
+        [TestCase(65535, true)]
+        public void LanBeaconPreservesValidPortBoundariesAndDefaultPort(int port, bool currentVersion)
+        {
+            string payload = currentVersion
+                ? LanBeacon.BuildPayload(port, 1, 4, false, "K7X9", "Boundary room", 1, 1, 12, "boundary-host")
+                : $"{LanBeacon.Magic}|{port}|1|4|0|K7X9|Boundary room";
+            Assert.IsTrue(LanBeacon.TryParsePayload(payload, "192.0.2.1", out var entry));
+            Assert.AreEqual(port, entry.Port);
+            Assert.AreEqual("K7X9", entry.JoinCode);
+            Assert.AreEqual("Boundary room", entry.HostName);
+            Assert.IsTrue(entry.IsJoinable);
         }
 
         [Test]
@@ -796,9 +921,9 @@ namespace TumbangPreso.Tests
 
         /// <summary>
         /// ⚠️ THE VERSION IS FIELD 0, NOT THE FIELD COUNT, and this is the case that decides it.
-        /// A v1 host whose player typed one separator into their name produces eleven fields,
+        /// A v1 host whose room title contains one separator produces eleven fields,
         /// which is exactly the length of a v2 payload. Discriminating on the count would read
-        /// that player's name as a beacon id and shift the whole name one field left.
+        /// that room title as a beacon id and shift the whole title one field left.
         /// </summary>
         [Test]
         public void AV1NameWithASeparatorIsNotMistakenForAV2BeaconId()
@@ -808,12 +933,12 @@ namespace TumbangPreso.Tests
 
             Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
             Assert.AreEqual("", entry.BeaconId);
-            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
+            Assert.AreEqual(Settings.GameSettings.SanitiseRoomTitle("Ma|te"), entry.HostName);
         }
 
         /// <summary>
-        /// ⚠️ A PLAYER NAME IS THE ONLY VALUE ON THIS WIRE A PERSON TYPES, so the parser takes it
-        /// as everything from its index onwards. A name containing the separator truncates rather
+        /// ⚠️ A ROOM TITLE IS THE ONLY FREE-FORM VALUE ON THIS WIRE, so the parser takes it
+        /// as everything from its index onwards. A title containing the separator truncates rather
         /// than corrupting the fields after it, which is what reading one field would have done.
         /// </summary>
         [Test]
@@ -825,7 +950,7 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(2, entry.Players);
             Assert.AreEqual(5, entry.Connections);
             Assert.AreEqual(12, entry.MaxConnections);
-            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
+            Assert.AreEqual(Settings.GameSettings.SanitiseRoomTitle("Ma|te"), entry.HostName);
         }
 
         // -------------------------------------------------------------------
@@ -1529,6 +1654,7 @@ namespace TumbangPreso.Tests
             var p4 = lobby.Admit(104, "token-dave", "Dave");
 
             lobby.SetPicks(102, 2, 1, 3); // Bob's picks
+            p2.Rating = 1650;
 
             Assert.AreEqual(0, p1.Seat);
             Assert.AreEqual(1, p2.Seat);
@@ -1555,9 +1681,47 @@ namespace TumbangPreso.Tests
                 var bobReconnected = lobby.Admit(newPeerId, "token-bob", "Bob");
                 Assert.AreEqual(1, bobReconnected.Seat, $"Cycle {cycle}: Bob must be restored to seat 1");
                 Assert.IsFalse(bobReconnected.Spectator, $"Cycle {cycle}: Bob must not be marked spectator");
+                Assert.AreEqual(2, bobReconnected.CharacterPick, $"Cycle {cycle}: retained character was lost");
+                Assert.AreEqual(1, bobReconnected.CanPick);
+                Assert.AreEqual(3, bobReconnected.SlipperPick);
+                Assert.AreEqual(1650, bobReconnected.Rating, "A later bot takeover must retain the original skill hint");
             }
         }
 
+        [Test] public void HeldPicksAreSnapshotsAndAccountProofIsNotInherited()
+        {
+            var lobby=NewLobby();var peer=lobby.Admit(1,"held-owner","Owner");
+            lobby.SetPicks(1,2,1,3);peer.Rating=1650;peer.AccountPlayerId="old-account-proof";
+            lobby.StartMatch();var departed=lobby.Depart(1);
+            departed.CharacterPick=0;departed.CanPick=0;departed.SlipperPick=0;departed.Rating=0;
+            var returning=lobby.Admit(2,"held-owner","Owner");
+            Assert.AreEqual(2,returning.CharacterPick);Assert.AreEqual(1,returning.CanPick);
+            Assert.AreEqual(3,returning.SlipperPick);Assert.AreEqual(1650,returning.Rating);
+            Assert.IsEmpty(returning.AccountPlayerId);Assert.AreEqual(AccountRules.HandleCheck.NotAsked,returning.HandleTrust);
+        }
+        [Test] public void AForeignTokenCannotBorrowHeldPicksOrTakeoverRating()
+        {
+            var lobby=NewLobby();lobby.Admit(1,"first-owner","First");
+            var owner=lobby.Admit(2,"held-owner","Owner");lobby.SetPicks(2,2,1,3);owner.Rating=1650;
+            lobby.StartMatch();lobby.Depart(2);
+            var stranger=lobby.Admit(3,"different-owner","Stranger");
+            Assert.AreNotEqual(1,stranger.Seat);Assert.AreEqual(-1,stranger.CharacterPick);Assert.AreEqual(0,stranger.Rating);
+            var returning=lobby.Admit(4,"held-owner","Owner");
+            Assert.AreEqual(1,returning.Seat);Assert.AreEqual(2,returning.CharacterPick);Assert.AreEqual(1650,returning.Rating);
+        }
+        [Test] public void MatchAndSessionBoundariesDiscardHeldPicks()
+        {
+            for(int boundary=0;boundary<4;boundary++)
+            {
+                var lobby=NewLobby();var peer=lobby.Admit(1,"held-owner","Owner");
+                lobby.SetPicks(1,2,1,3);peer.Rating=1650;lobby.StartMatch();lobby.Depart(1);
+                if(boundary==0)lobby.Reset();else if(boundary==1)lobby.StartMatch();
+                else if(boundary==2)lobby.ReturnToLobby();else lobby.EndMatch();
+                var arrival=lobby.Admit(2,"held-owner","Owner");
+                Assert.AreEqual(-1,arrival.CharacterPick,$"Boundary {boundary} retained the old character");
+                Assert.AreEqual(-1,arrival.CanPick);Assert.AreEqual(-1,arrival.SlipperPick);Assert.AreEqual(0,arrival.Rating);
+            }
+        }
         [Test]
         public void MidMatchArrivalRulingsExhaustiveBranchMatrix()
         {

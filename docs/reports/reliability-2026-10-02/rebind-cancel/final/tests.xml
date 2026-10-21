@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.30518">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="876" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.305180" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2050" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="876" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.291047" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4828" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2051" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="876" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.286918" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2052" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="876" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.283029" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1219" name="ControllerSupportTests" fullname="TumbangPreso.Tests.ControllerSupportTests" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.260670" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1224" name="SettingsRebindOnlyCancellationConsumesTheMenuBackPress" fullname="TumbangPreso.Tests.ControllerSupportTests.SettingsRebindOnlyCancellationConsumesTheMenuBackPress" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.254571" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1220" name="SettingsRebindOnlyCancellationConsumesTheMenuBackPress(KeyboardMouse,&quot;cancel&quot;)" fullname="TumbangPreso.Tests.ControllerSupportTests.SettingsRebindOnlyCancellationConsumesTheMenuBackPress(KeyboardMouse,&quot;cancel&quot;)" methodname="SettingsRebindOnlyCancellationConsumesTheMenuBackPress" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1983445942" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.118704" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1221" name="SettingsRebindOnlyCancellationConsumesTheMenuBackPress(Gamepad,&quot;cancel&quot;)" fullname="TumbangPreso.Tests.ControllerSupportTests.SettingsRebindOnlyCancellationConsumesTheMenuBackPress(Gamepad,&quot;cancel&quot;)" methodname="SettingsRebindOnlyCancellationConsumesTheMenuBackPress" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1059008945" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.003367" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1222" name="SettingsRebindOnlyCancellationConsumesTheMenuBackPress(KeyboardMouse,&quot;bound&quot;)" fullname="TumbangPreso.Tests.ControllerSupportTests.SettingsRebindOnlyCancellationConsumesTheMenuBackPress(KeyboardMouse,&quot;bound&quot;)" methodname="SettingsRebindOnlyCancellationConsumesTheMenuBackPress" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1769230362" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.115885" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1223" name="SettingsRebindOnlyCancellationConsumesTheMenuBackPress(KeyboardMouse,&quot;dispose&quot;)" fullname="TumbangPreso.Tests.ControllerSupportTests.SettingsRebindOnlyCancellationConsumesTheMenuBackPress(KeyboardMouse,&quot;dispose&quot;)" methodname="SettingsRebindOnlyCancellationConsumesTheMenuBackPress" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="416898070" result="Passed" start-time="2026-10-02 03:30:01Z" end-time="2026-10-02 03:30:01Z" duration="0.003486" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

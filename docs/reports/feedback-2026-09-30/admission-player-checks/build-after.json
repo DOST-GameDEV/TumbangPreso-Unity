@@ -1,0 +1,13 @@
+{
+  "source": "80de6e7fa01ec9fe2b3179e68342d4da45def275",
+  "ownedOverlay": {
+    "Assets/TumbangPreso/Runtime/Net/NetBootstrap.cs": "5bf37146d1a917fdde9f5761ecc83b6eb407852a6851dbffa3b09ac375a6f912"
+  },
+  "protocol": 114,
+  "buildExit": 0,
+  "inputCount": 15422,
+  "changedInputs": [],
+  "codeDrift": [],
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-admission-player-1001\\TumbangPreso.exe",
+  "runtimeSha256": "d561c1f18851597d192f6e3a68f8bc35450c841b788e01a5a14966c59b67fd57"
+}

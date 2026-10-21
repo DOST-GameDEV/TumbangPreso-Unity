@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 05:10:52Z" end-time="2026-10-01 05:11:09Z" duration="16.7458331">
+  <test-suite type="TestSuite" id="2348" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1091" result="Failed" site="Child" start-time="2026-10-01 05:10:52Z" end-time="2026-10-01 05:11:09Z" duration="16.745833" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2342" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1091" result="Failed" site="Child" start-time="2026-10-01 05:10:52Z" end-time="2026-10-01 05:11:09Z" duration="16.719699" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="234250" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2343" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1091" result="Failed" site="Child" start-time="2026-10-01 05:10:52Z" end-time="2026-10-01 05:11:09Z" duration="16.708560" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2344" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1091" result="Failed" site="Child" start-time="2026-10-01 05:10:52Z" end-time="2026-10-01 05:11:09Z" duration="16.686114" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1913" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-01 05:10:52Z" end-time="2026-10-01 05:11:09Z" duration="16.590781" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1922" name="SkimBodyContactConsumesThePayloadNormally" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimBodyContactConsumesThePayloadNormally" methodname="SkimBodyContactConsumesThePayloadNormally" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="110181819" result="Passed" start-time="2026-10-01 05:10:52Z" end-time="2026-10-01 05:10:59Z" duration="6.724820" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1920" name="SkimJoiningLoadRestoresOnceWithoutRecasting" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimJoiningLoadRestoresOnceWithoutRecasting" methodname="SkimJoiningLoadRestoresOnceWithoutRecasting" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="366902518" result="Passed" start-time="2026-10-01 05:10:59Z" end-time="2026-10-01 05:11:04Z" duration="4.933209" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1921" name="SkimStaysInsideCourtAndStopsWhenTheRoundEnds" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimStaysInsideCourtAndStopsWhenTheRoundEnds" methodname="SkimStaysInsideCourtAndStopsWhenTheRoundEnds" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1360127454" result="Failed" start-time="2026-10-01 05:11:04Z" end-time="2026-10-01 05:11:09Z" duration="4.918122" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: Loose
+  But was:  InFlight
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RafiExpansionProbe+<SkimStaysInsideCourtAndStopsWhenTheRoundEnds>d__18.MoveNext () [0x00205] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs:232
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,17 @@
+{
+  "source": "ASTRAReworks HEAD3b4fb19c plus owned expansion/Rafi refinement; not a clean-source release",
+  "paths": {
+    "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb": "716afcc4145cf77a83be7dacb9ee3e1334687c673ff9c6945e8382231e48807e",
+    "MapSource/materials_persons/person_team-rafi.tres": "fb42604c9fddf4bf1661bf72fa7dc1f91564c394b801828f0ad75d310909fc15",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "0587344ea2e0b752fc2e4d7a8bac3e88deb29bed7cf28218de10984126c5aa4e",
+    "Assets/TumbangPreso/Runtime/Visual/RafiWaterVisual.cs": "70a91128f017bcc22b0f7e7320b137b9e39799f8053d635bddc3c2eaccb15b0e",
+    "Assets/TumbangPreso/Resources/Shaders/RafiWater.shader": "db74d61991a9ec32817c6a5207018afe9f07c034c85546aa4ae5ea6081793df1",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Variants.cs": "944e168988ff0f73da818ee54620c55777a579a177b07088a8ba7433ce934fd9",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_left.asset": "d550c86746e0b8aafcbf9850ebc39a05d717ffe5a2966c602a4c4415b528e5b1",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_right.asset": "0ae0f8e5216524c3296a45fd56637ed878479c62f9ba7284cd19cf723c60da53"
+  },
+  "runtimeSha256": "e205b9a6e3eb91d48b507913c344ebd5b6ca73b65807073833d39b6fb429934c",
+  "ownerCases": 8,
+  "observerCases": 8,
+  "scope": "Actual source arm identity, staged accepted casts, real charge/release, native cloth/skin/cord geometry, body views. No human acceptance or listening claim."
+}

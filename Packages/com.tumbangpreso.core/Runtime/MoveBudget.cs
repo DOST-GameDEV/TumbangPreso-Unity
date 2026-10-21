@@ -61,11 +61,12 @@ namespace TumbangPreso.Core
         ///
         /// ⚠️ IT IS `MatchRpc.MoveMaxMetresPerSecond`'S NUMBER, MOVED HERE RATHER THAN COPIED.
         /// `Balance.Speed` is 3.6 and every impulse in the game is derived from `Friction`; the
-        /// fastest single thing a body does is a lunge at `LungeSpeed` 7.746 m/s, and this is
-        /// roughly three and a half times that so a legitimate client is never near it. The
+        /// ordinary lunge impulse is about 13.416 m/s after the requested 3m retune.
+        /// The ceiling remains above twice that without widening packet allowance. The
         /// number was always generous; what was wrong was that it was not the only term.
         /// </summary>
-        public const float MetresPerSecond = 28.0f;
+        // Keep the existing >2x impulse margin after the owner increased lunge travel.
+        public const float MetresPerSecond = 30.0f;
 
         /// <summary>
         /// The burst a seat may hold, which is the term that used to renew per packet.

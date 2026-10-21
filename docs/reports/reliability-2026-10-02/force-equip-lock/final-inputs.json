@@ -1,0 +1,42 @@
+{
+  "phase": "final",
+  "preparedUtc": "2026-10-02T05:30:54.6707556Z",
+  "expectedCases": 7,
+  "testFilter": "TumbangPreso.Tests.WalletCacheRecoveryTests;TumbangPreso.Tests.SlipperHandoverTests.OnlyForcedRoundHandoverClearsTheSameShoesPickupLock",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/WalletStore.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\wallet-cache-recovery1002\\frozen\\WalletStore.candidate.cs",
+      "sha256": "9FE39202F078FBE42D97CC627BDBA09F18E554B59D60470D25B552457AB8F45B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/WalletCacheRecoveryTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\wallet-cache-recovery1002\\frozen\\WalletCacheRecoveryTests.cs",
+      "sha256": "855744368C4019900AEEBC15207A6AC59084BDAA25116ABBF7093AA1A21EE324"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/WalletCacheRecoveryTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\wallet-cache-recovery1002\\frozen\\WalletCacheRecoveryTests.cs.meta",
+      "sha256": "27267E754A818E63B823F857F59C50A97D63E2592EBD7B557F7302DCA72A4FA8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Carrier.cs",
+      "variant": "final",
+      "sha256": "266c5f537f1ad16ddf77b415b5fd88667de1f570231a021dbb6574ee213d6799",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Carrier.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Slipper.cs",
+      "variant": "final",
+      "sha256": "01b301c5c28c883b1e8396cbaf12828a00fbbc67cf257ee539c0f9a130ead173",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\Slipper.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlipperHandoverTests.cs",
+      "variant": "final",
+      "sha256": "f7c7df4e4323da2d5d15e045fb6951c510f81bc12fdc086a1f58d4fbd3ca04a0",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\force-equip-lock1002-inputs\\SlipperHandoverTests.cs.final.txt"
+    }
+  ],
+  "protectedCount": 1285
+}

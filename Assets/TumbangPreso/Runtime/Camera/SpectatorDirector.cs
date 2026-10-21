@@ -1,4 +1,6 @@
 using TumbangPreso.Core;
+using TumbangPreso.Visual;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
@@ -183,7 +185,7 @@ namespace TumbangPreso.CameraSystem
         /// <summary>
         /// How far from the playable box the camera may stand, in metres.
         ///
-        /// ⚠️ `AIController.PlayableHalfX/Z` ARE MEASURED OFF THE MAP'S OWN BOUNDS AT LOAD and
+        /// ⚠️ `AIController.PlayableMinX` AND ITS THREE SIBLINGS ARE MEASURED OFF THE MAP'S OWN BOUNDS AT LOAD and
         /// are the same numbers the bots are held to. The margin is what lets a wide shot stand
         /// outside the chalk; past it, both maps are solid.
         /// </summary>
@@ -318,7 +320,12 @@ namespace TumbangPreso.CameraSystem
 
         private void Awake() => _camera = GetComponent<SpectatorCamera>();
 
-        private void OnDisable() => _interest.Unhook();
+        private void OnDisable()
+        {
+            _interest.Unhook();
+            _bodyModels.Clear();
+            _bodyRendererFrame = -1;
+        }
 
         /// <summary>
         /// ⚠️ `LateUpdate`, NOT `Update`, AND THE ORDER IS THE POINT. `SpectatorCamera.Update`
@@ -328,8 +335,9 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void LateUpdate()
         {
+            if (PresentationClock.Held) return;
             if (!_engaged || _camera == null) return;
-            if (UI.Panel.AnyOpen) return;
+            if (UI.Panel.AnyOpen || UI.ScreenTakeover.AnyOpenOutside(_camera.transform)) return;
 
             float dt = Time.unscaledDeltaTime;
             if (dt <= 0.0f) return;
@@ -565,9 +573,20 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            transform.position = Vector3.SmoothDamp(transform.position, wantPos,
-                                                    ref _posVelocity, PositionSmoothTime,
-                                                    Mathf.Infinity, dt);
+            Vector3 nextPosition = Vector3.SmoothDamp(transform.position, wantPos,
+                                                     ref _posVelocity, PositionSmoothTime,
+                                                     Mathf.Infinity, dt);
+            if (!TransitIsClear(transform.position, nextPosition)
+                || !BodyLensIsClear(nextPosition))
+            {
+                // A clear destination does not make the glide through scenery safe.
+                // Cut to a freshly validated shot instead of rendering that crossing.
+                _validatedAt = float.NegativeInfinity;
+                CutNow();
+                Cuts++;
+                return;
+            }
+            transform.position = nextPosition;
 
             _yawDeg = Mathf.SmoothDampAngle(_yawDeg, wantYaw, ref _yawVelocity, AimSmoothTime,
                                             Mathf.Infinity, dt);
@@ -827,10 +846,11 @@ namespace TumbangPreso.CameraSystem
             // camera allowed to solve for a bearing that puts it outside them spends the shot
             // looking at the inside face of a wall, and on a broadcast that is indistinguishable
             // from the stream having broken.
-            float halfX = AIController.PlayableHalfX + BoundsMargin;
-            float halfZ = AIController.PlayableHalfZ + BoundsMargin;
-            position.x = Mathf.Clamp(position.x, -halfX, halfX);
-            position.z = Mathf.Clamp(position.z, -halfZ, halfZ);
+            //
+            // ⚠️ PER SIDE since 2026-09-27: the margin goes out past each wall on its own side.
+            // A negative inset is the margin outward; on a symmetric arena `Min - m` and
+            // `Max + m` are the old `-(half + m)` and `half + m` to the bit.
+            position = AIController.ClampToPlayable(position, -BoundsMargin);
         }
 
         // -------------------------------------------------------------------
@@ -848,14 +868,126 @@ namespace TumbangPreso.CameraSystem
         // camera that cut every time somebody walked past would cut constantly.
         // -------------------------------------------------------------------
 
-        private static readonly Collider[] Overlap = new Collider[8];
+        private static Collider[] Overlap = new Collider[8];
+        private static RaycastHit[] TransitHits = new RaycastHit[8];
+        private sealed class BodyModel
+        {
+            public GameObject Model;
+            public int Version;
+            public readonly List<Renderer> Renderers = new List<Renderer>();
+        }
+        private readonly Dictionary<CharacterVisual, BodyModel> _bodyModels =
+            new Dictionary<CharacterVisual, BodyModel>();
+        private readonly List<CharacterVisual> _retiredBodyVisuals = new List<CharacterVisual>();
+        private readonly List<Renderer> _modelRenderers = new List<Renderer>();
+        private CharacterVisual[] _standaloneBodyVisuals;
+        private RoundDirector _bodyRound;
+        private int _bodyRendererFrame = -1;
+
+        private bool BodyLensIsClear(Vector3 position)
+        {
+            var round = GameServices.Round;
+            if (_bodyRound != round)
+            {
+                _bodyRound = round;
+                _bodyModels.Clear();
+                _bodyRendererFrame = -1;
+            }
+            if (_bodyRendererFrame != Time.frameCount)
+            {
+                _bodyRendererFrame = Time.frameCount;
+                _retiredBodyVisuals.Clear();
+                foreach (var entry in _bodyModels)
+                    if (entry.Key == null) _retiredBodyVisuals.Add(entry.Key);
+                foreach (var visual in _retiredBodyVisuals) _bodyModels.Remove(visual);
+                // Standalone/editor scenes have no registered round. Live matches use the
+                // existing body registry, avoiding a scene search allocation each frame.
+                if (round == null)
+                    _standaloneBodyVisuals = FindObjectsByType<CharacterVisual>(FindObjectsSortMode.None);
+            }
+            if (round != null)
+            {
+                var bodies = round.Bodies;
+                for (int i = 0; i < bodies.Count; i++)
+                    if (bodies[i] != null && !ModelLensIsClear(bodies[i].GetComponent<CharacterVisual>(), position))
+                        return false;
+            }
+            else
+            {
+                foreach (var visual in _standaloneBodyVisuals)
+                    if (!ModelLensIsClear(visual, position)) return false;
+            }
+            return true;
+        }
+
+        private bool ModelLensIsClear(CharacterVisual visual, Vector3 position)
+        {
+            if (visual == null || !visual.gameObject.activeInHierarchy
+                || visual.GetComponent<CharacterMotor>() == null || visual.Model == null) return true;
+            if (!_bodyModels.TryGetValue(visual, out var body))
+            {
+                body = new BodyModel();
+                _bodyModels.Add(visual, body);
+            }
+            if (body.Model != visual.Model || body.Version != visual.ModelVersion)
+            {
+                body.Model = visual.Model;
+                body.Version = visual.ModelVersion;
+                body.Renderers.Clear();
+                _modelRenderers.Clear();
+                // Include inactive meshes so activation needs no model rebuild. Visibility
+                // and live bounds are checked below, on every pose, including within a frame.
+                visual.Model.GetComponentsInChildren(true, _modelRenderers);
+                foreach (var renderer in _modelRenderers)
+                    if (renderer is MeshRenderer || renderer is SkinnedMeshRenderer)
+                        body.Renderers.Add(renderer);
+            }
+            foreach (var renderer in body.Renderers)
+            {
+                if (renderer == null || !renderer.enabled || renderer.forceRenderingOff
+                    || !renderer.gameObject.activeInHierarchy
+                    || renderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly) continue;
+                // A conservative enclosure keeps the eye out of the rendered body even when
+                // that body extends beyond its gameplay capsule. Sightline crossings remain
+                // eligible: this does not treat the whole actor as opaque scenery.
+                if (renderer.bounds.Contains(position)) return false;
+            }
+            return true;
+        }
+
+        private static bool TransitIsClear(Vector3 from, Vector3 to)
+        {
+            Vector3 delta = to - from;
+            float length = delta.magnitude;
+            if (length < .0001f) return true;
+            int hits;
+            while (true)
+            {
+                hits = Physics.SphereCastNonAlloc(from, ClearanceRadius, delta / length,
+                    TransitHits, length, ~0, QueryTriggerInteraction.Ignore);
+                if (hits < TransitHits.Length) break;
+                System.Array.Resize(ref TransitHits, TransitHits.Length * 2);
+            }
+            for (int i = 0; i < hits; i++)
+                if (!IsSceneryFree(TransitHits[i].collider)) return false;
+            return true;
+        }
 
         private bool ValidatePose(Vector3 position, Vector3 focus,
                                   bool requireSecondary = true)
         {
+            if (!BodyLensIsClear(position)) return false;
             // Inside a wall, a building, a pillar, a vehicle or a prop?
-            int hits = Physics.OverlapSphereNonAlloc(position, ClearanceRadius, Overlap, ~0,
+            int hits;
+            while (true)
+            {
+                hits = Physics.OverlapSphereNonAlloc(position, ClearanceRadius, Overlap, ~0,
                                                      QueryTriggerInteraction.Ignore);
+                // A full buffer may omit scenery behind ignored body/can/shoe colliders.
+                // Complete the query before deciding that this pose is clear.
+                if (hits < Overlap.Length) break;
+                System.Array.Resize(ref Overlap, Overlap.Length * 2);
+            }
 
             for (int i = 0; i < hits; i++)
             {
@@ -925,7 +1057,7 @@ namespace TumbangPreso.CameraSystem
             // Pulled back a little along Z so the shot is a raked overhead rather than a plan
             // view, which reads as a security camera.
             pose.z -= 5.0f;
-            pose.z = Mathf.Clamp(pose.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            pose.z = AIController.ClampPlayableZ(pose.z);
 
             return pose;
         }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 07:39:33Z" end-time="2026-09-30 07:39:35Z" duration="1.6505513">
+  <test-suite type="TestSuite" id="2090" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="875" result="Failed" site="Child" start-time="2026-09-30 07:39:33Z" end-time="2026-09-30 07:39:35Z" duration="1.650551" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2084" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="875" result="Failed" site="Child" start-time="2026-09-30 07:39:33Z" end-time="2026-09-30 07:39:35Z" duration="1.642087" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="59333" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2085" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="875" result="Failed" site="Child" start-time="2026-09-30 07:39:33Z" end-time="2026-09-30 07:39:35Z" duration="1.640251" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2086" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="875" result="Failed" site="Child" start-time="2026-09-30 07:39:33Z" end-time="2026-09-30 07:39:35Z" duration="1.638723" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1111" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-09-30 07:39:33Z" end-time="2026-09-30 07:39:35Z" duration="1.619574" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1117" name="FarAcceptedTagHasVisibleHandContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.FarAcceptedTagHasVisibleHandContact" methodname="FarAcceptedTagHasVisibleHandContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="190205675" result="Failed" start-time="2026-09-30 07:39:33Z" end-time="2026-09-30 07:39:35Z" duration="1.602398" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual recorded reaching hand must reach the accepted victim's visible body bounds.
+  Expected: less than 0.0799999982f
+  But was:  0.477713108f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__10.MoveNext () [0x006dc] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs:175
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[distance=1.65 selectedSide=1 handSide=0.4224246 cameraSide=2.9 hand=(0.42, 0.66, -3.28) targetRoot=(0.00, 0.00, -2.20) targetBoundsGap=0.4777131 palmLocal=(0.28, 0.06, 0.03) tagAlong=(1.00, 0.00, 0.00) axisDot=0.9693296
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

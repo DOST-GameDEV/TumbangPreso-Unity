@@ -1,0 +1,7 @@
+{
+  "reason": "Owner requested exclusive PC slot for Claude animation fix",
+  "pid": 10232,
+  "naturalEightRoundCompletionObserved": true,
+  "scheduledTerminalReportNotYetWritten": true,
+  "acceptanceScope": "Natural completion and saved record only; terminal report interrupted by owner priority"
+}

@@ -1,0 +1,3 @@
+captures=500
+trails=0
+allocationEvents=1000

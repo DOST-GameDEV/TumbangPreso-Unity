@@ -34,6 +34,15 @@ namespace TumbangPreso
 
         public bool Running { get; private set; }
 
+        private void OnEnable()
+        {
+            // A cold client can receive the completed match before a ready countdown
+            // ever calls Begin. Its actors still need the normal end-of-match freeze.
+            if (GameServices.Match == null) return;
+            GameServices.Match.MatchEnded -= OnMatchEnded;
+            GameServices.Match.MatchEnded += OnMatchEnded;
+        }
+
         private void Start()
         {
             if (AutoStart) Begin();
@@ -55,7 +64,7 @@ namespace TumbangPreso
 
             Subscribe();
 
-            if (TimeScale > 1.0f) Time.timeScale = TimeScale;
+            if (TimeScale > 1.0f) PresentationClock.RequestScale(TimeScale);
 
             Running = true;
 
@@ -99,6 +108,7 @@ namespace TumbangPreso
         private void Subscribe()
         {
             Unsubscribe();
+            if (GameServices.Match == null) return;
 
             GameServices.Match.RoundStarted += OnRoundStarted;
             GameServices.Match.IntermissionStarted += OnIntermission;
@@ -129,6 +139,18 @@ namespace TumbangPreso
 
         private void OnRoundStarted(int roundNumber, int defenderSlot)
         {
+            // ⚠️ THE ARENA'S FLOOR MOVES BETWEEN ROUNDS, and both things `ResetWorld` does read
+            // it: `Lata.HostRestore` puts the can on a mark that was snapped once in Start, and
+            // `MatchHost.SeatOnFloor` casts for the floor under each spawn. So the stage takes
+            // this round's colliders first and the can's mark is snapped again, in that order,
+            // before either runs. Every other map has no stage and skips this whole block.
+            var stage = Map.ArenaStage.Instance;
+            if (stage != null)
+            {
+                stage.ApplyForRound(roundNumber);
+                if (Lata != null) Lata.HostResnapMark();
+            }
+
             ResetWorld(defenderSlot);
             GameServices.Round.BeginRound();
 
@@ -285,11 +307,11 @@ namespace TumbangPreso
 
         private void OnIntermission(int nextRound, int nextDefenderSlot)
         {
+            CancelInvoke(nameof(Advance));
+            if (HalftimePresentation.Playing) return;
             ResetWorld(nextDefenderSlot);
             EquipOwnedSlippers(nextDefenderSlot);
-
-            CancelInvoke(nameof(Advance));
-            Invoke(nameof(Advance), Balance.WarmupBufferDuration);
+            // HalftimePresentation owns the authoritative unscaled deadline.
         }
 
         private void Advance() => GameServices.Match.AdvanceRound();
@@ -334,7 +356,7 @@ namespace TumbangPreso
             // ⚠️ END THE FREEZE BEFORE RESTORING THE SCALE, or the restore writes 1.0 and the
             // freeze's own restore then writes 0.05 back over it a few frames later.
             Hitstop.End();
-            Time.timeScale = 1.0f;
+            PresentationClock.RequestScale(1.0f);
 
             var m = GameServices.Match;
             Debug.Log($"[Slice] match over. scores: " +
@@ -356,6 +378,10 @@ namespace TumbangPreso
 
                 m.IsDefender = slot == defenderSlot;
                 m.HoldingSlipper = false;
+                // Teleport clears elemental statuses, not the independent tagged/
+                // stun and trip recovery stacks. A new round retires those too.
+                m.ClearStun();
+                m.ClearTrip();
                 m.Stamina.RefillAndClearFatigue();
 
                 // ⚠️ THE MATCH-END PARK IS LIFTED HERE, and it is the other half of the freeze
@@ -374,9 +400,7 @@ namespace TumbangPreso
                 // ⚠️ THE SPAWN IS RECORDED, NOT JUST USED. The kill plane returns whoever falls
                 // off the world to their OWN spawn, and it has no other way to know where that
                 // is. Written every round because the mark moves when roles rotate.
-                Vector3 mark = m.IsDefender
-                    ? DefenderMark()
-                    : AttackerSpawn(AttackerRoleFor(slot, defenderSlot));
+                Vector3 mark = SpawnPointFor(slot, defenderSlot);
                 m.SpawnPosition = mark;
                 m.Teleport(mark);
 
@@ -406,11 +430,9 @@ namespace TumbangPreso
                 if (plate != null) { plate.ApplySizing(); plate.Refresh(); }
             }
 
-            // ⚠️ THE HAZARD MAP IS EMPTIED WITH THE ROUND. Hazard objects are destroyed at a
-            // round boundary and each unregisters itself in OnDisable, but a teardown that skips
-            // OnDisable would leave the bots steering around patches of empty road for the rest
-            // of the match. Clearing here costs nothing and cannot go stale.
-            Abilities.HazardMap.Clear();
+            // Round retirement disables temporary ability fields. Authored map
+            // obstacles remain active and must remain in the bots' avoidance map.
+            Abilities.HazardMap.PruneInactive();
 
             if (Lata != null)
             {
@@ -433,9 +455,13 @@ namespace TumbangPreso
                 // the rule in ONE place rather than two that have to agree.
                 if (!Slippers[slot].gameObject.activeSelf) Slippers[slot].gameObject.SetActive(true);
 
+                Slippers[slot].Affinity = SlipperAffinity.Normal;
                 Slippers[slot].transform.position = SlipperHome(slot);
             }
         }
+
+        internal static Vector3 SpawnPointFor(int slot, int defenderSlot) => slot == defenderSlot
+            ? DefenderMark() : AttackerSpawn(AttackerRoleFor(slot, defenderSlot));
 
         private static Vector3 DefenderMark() =>
             new Vector3(0.0f, 0.0f, -Balance.DefenderStartOffset);

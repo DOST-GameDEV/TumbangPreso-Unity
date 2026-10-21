@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:12:57Z" end-time="2026-10-03 03:13:16Z" duration="18.8271108">
+  <test-suite type="TestSuite" id="2659" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 03:12:57Z" end-time="2026-10-03 03:13:16Z" duration="18.827111" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2653" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 03:12:57Z" end-time="2026-10-03 03:13:16Z" duration="18.817215" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15989" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2654" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 03:12:57Z" end-time="2026-10-03 03:13:16Z" duration="18.813329" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2655" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1350" result="Passed" start-time="2026-10-03 03:12:57Z" end-time="2026-10-03 03:13:16Z" duration="18.809876" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1349" name="DanteDriftPresentationTests" fullname="TumbangPreso.PlayTests.DanteDriftPresentationTests" classname="TumbangPreso.PlayTests.DanteDriftPresentationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 03:12:57Z" end-time="2026-10-03 03:13:16Z" duration="18.784275" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1353" name="ActualCourtOwnerAndObserverSeeTheForwardFracture" fullname="TumbangPreso.PlayTests.DanteDriftPresentationTests.ActualCourtOwnerAndObserverSeeTheForwardFracture" methodname="ActualCourtOwnerAndObserverSeeTheForwardFracture" classname="TumbangPreso.PlayTests.DanteDriftPresentationTests" runstate="Runnable" seed="1620346129" result="Passed" start-time="2026-10-03 03:12:57Z" end-time="2026-10-03 03:13:16Z" duration="18.772153" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-000.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-000.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-001.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-001.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-002.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-002.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-003.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-003.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-004.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-004.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-005.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-005.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-006.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-006.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-007.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-007.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-008.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-008.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-009.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-009.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-010.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-010.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-011.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-011.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-012.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-012.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-013.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-013.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-014.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-014.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-015.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-015.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-016.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-016.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-017.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-017.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-018.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-018.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-019.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-019.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-020.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-020.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-021.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-021.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-022.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-022.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-023.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-023.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-024.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-024.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-025.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-025.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-026.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-026.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-027.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-027.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-028.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-028.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-029.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-029.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-030.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-030.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-031.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-031.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-032.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-032.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-033.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-033.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-034.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-034.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/observer-035.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/owner-035.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/drift-fractures-1003/court/frames/four-wave-overlap.png
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

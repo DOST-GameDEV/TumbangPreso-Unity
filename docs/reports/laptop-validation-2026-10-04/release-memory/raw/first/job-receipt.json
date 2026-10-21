@@ -1,0 +1,51 @@
+{
+  "job": {
+    "id": "aaedf66357794c00b9ed7df8ce555ac5",
+    "ownerPid": 25052,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-04T03:56:32Z",
+    "kind": "build",
+    "memoryMb": 4096,
+    "reserveMb": 1536,
+    "project": "c:\\users\\matthew\\dev\\tump-laptop-player1003i",
+    "library": "c:\\users\\matthew\\dev\\tump-laptop-player1003i\\library",
+    "profile": "laptop-release144-focus-core-lowmem-build1004",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-04T03:56:32Z",
+  "status": "interrupted_guard_completed",
+  "exitCode": 125,
+  "admission": {
+    "availableMb": 6321,
+    "activeJobsBefore": 0,
+    "outsideEditors": [],
+    "outsideReserveMb": 0,
+    "acquiredUtc": "2026-10-04T03:56:32Z"
+  },
+  "startedUtc": "2026-10-04T03:56:32Z",
+  "guardPid": 27052,
+  "interruptionReason": "Physical memory below runtime reserve: 1220 MB available, 1536 MB required",
+  "guardExitCode": 124,
+  "unityPids": [
+    30988,
+    32772
+  ],
+  "stoppedUnityPids": [
+    30988,
+    32772
+  ],
+  "reason": "Only verified owned Editors may be stopped; the guard was not terminated. A pending guard retains its lease.",
+  "endedUtc": "2026-10-04T03:58:03Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 4760,
+  "leaseHeld": false
+}

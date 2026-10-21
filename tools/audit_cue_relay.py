@@ -64,7 +64,7 @@ GATE = re.compile(r"(?:ShouldResolve\(\)|NetAuthority\.IsHost)")
 WRAPPED = [
     "using (NetCue.SuppressRelay()) Kit.Tick(_context, dt);",
     "using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, _context);",
-    "using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);",
+    "using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context,refundResources);",
 ]
 
 # ⚠️⚠️ THE FOURTH CORRECT SHAPE, AND IT IS THE ONE THIS TOOL CANNOT SEE FOR ITSELF.

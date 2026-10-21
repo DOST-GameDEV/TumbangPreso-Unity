@@ -1,0 +1,23 @@
+{
+  "scope": "Only empty protected keys of the two newly-created/deleted Friends test accounts",
+  "accounts": [
+    {
+      "label": "A",
+      "removedKeys": [
+        "accountProfile",
+        "handleProof",
+        "socialList"
+      ],
+      "verifiedEmpty": true
+    },
+    {
+      "label": "B",
+      "removedKeys": [
+        "accountProfile",
+        "handleProof",
+        "socialList"
+      ],
+      "verifiedEmpty": true
+    }
+  ]
+}

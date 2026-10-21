@@ -1,0 +1,21 @@
+{
+  "rawGitRef": "4ffdc376047d2904f597af006aa21add7399d61c",
+  "rawFilesVerified": 20,
+  "nativeOriginal": {
+    "passed": 2,
+    "failed": 4
+  },
+  "nativeCandidate": {
+    "passed": 6,
+    "failed": 0
+  },
+  "runtimeFixtureMetaMatchWorkingCandidate": true,
+  "neutralWrapper": {
+    "base": "b263ff1dde14b2eef5a8bc047e9fdf48454317a0",
+    "reverseExtractionExact": true,
+    "originalNormalizedSHA256": "c507306543c04ca085cc9e5e1725e9cdc182dbeda3569c38ae8ead5e8f774458",
+    "shippingRESTWrappers": "Refresh/Post delegate directly to the existing CloudCode.CallAsync; only private dispatch extraction reversed",
+    "behavioralFixInOriginal": false
+  },
+  "generatedChange": "ProjectAuditor script reference only; strict all-input preservation false; both terminal/prefs/quality restored"
+}

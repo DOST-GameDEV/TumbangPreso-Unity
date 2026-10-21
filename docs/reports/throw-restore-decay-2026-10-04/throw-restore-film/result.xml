@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="17" result="Failed(Child)" total="17" passed="9" failed="8" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 09:39:33Z" end-time="2026-10-04 09:39:39Z" duration="5.4229405">
+  <test-suite type="TestSuite" id="3016" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1638" result="Failed" site="Child" start-time="2026-10-04 09:39:33Z" end-time="2026-10-04 09:39:39Z" duration="5.422941" total="17" passed="9" failed="8" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3010" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1638" result="Failed" site="Child" start-time="2026-10-04 09:39:33Z" end-time="2026-10-04 09:39:39Z" duration="5.404593" total="17" passed="9" failed="8" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="63239" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3011" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1638" result="Failed" site="Child" start-time="2026-10-04 09:39:33Z" end-time="2026-10-04 09:39:39Z" duration="5.393860" total="17" passed="9" failed="8" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3012" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1638" result="Failed" site="Child" start-time="2026-10-04 09:39:33Z" end-time="2026-10-04 09:39:39Z" duration="5.382870" total="17" passed="9" failed="8" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1203" name="CarrierDisableLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests" classname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.226168" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1206" name="EnabledBodyStillChargesAndThrowsOnItsActualRelease" fullname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests.EnabledBodyStillChargesAndThrowsOnItsActualRelease" methodname="EnabledBodyStillChargesAndThrowsOnItsActualRelease" classname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests" runstate="Runnable" seed="560440501" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.138190" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1204" name="RetiredBodyCannotResumeAnOldChargeOrThrowOnReactivation" fullname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests.RetiredBodyCannotResumeAnOldChargeOrThrowOnReactivation" methodname="RetiredBodyCannotResumeAnOldChargeOrThrowOnReactivation" classname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests" runstate="Runnable" seed="2052619779" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.037151" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1205" name="RetiredBodyCannotReuseThePreviousObservedThrowTellOrSpin" fullname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests.RetiredBodyCannotReuseThePreviousObservedThrowTellOrSpin" methodname="RetiredBodyCannotReuseThePreviousObservedThrowTellOrSpin" classname="TumbangPreso.PlayTests.CarrierDisableLifetimeTests" runstate="Runnable" seed="652756755" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.032972" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1217" name="CarrierRoleInputLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.214650" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1219" name="BecomingAttackerRetiresTheOldDefenderResetChannel" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingAttackerRetiresTheOldDefenderResetChannel" methodname="BecomingAttackerRetiresTheOldDefenderResetChannel" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1926810473" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.068654" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1218" name="BecomingDefenderRetiresTheOldAttackerThrowCharge" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingDefenderRetiresTheOldAttackerThrowCharge" methodname="BecomingDefenderRetiresTheOldAttackerThrowCharge" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1985461560" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.035633" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1222" name="OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" methodname="OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1435857606" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.035493" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1220" name="SameAttackerSnapshotPreservesTheHeldThrowCharge" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.SameAttackerSnapshotPreservesTheHeldThrowCharge" methodname="SameAttackerSnapshotPreservesTheHeldThrowCharge" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="562655117" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.031171" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1221" name="SameDefenderSnapshotPreservesTheHeldResetChannel" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.SameDefenderSnapshotPreservesTheHeldResetChannel" methodname="SameDefenderSnapshotPreservesTheHeldResetChannel" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1953212636" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.040958" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2717" name="ThrowChargeDurationTests" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.275057" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2720" name="FullPowerIsReadyAfterOneAndAQuarterSeconds" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.FullPowerIsReadyAfterOneAndAQuarterSeconds" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.076419" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2718" name="FullPowerIsReadyAfterOneAndAQuarterSeconds(Classic)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.FullPowerIsReadyAfterOneAndAQuarterSeconds(Classic)" methodname="FullPowerIsReadyAfterOneAndAQuarterSeconds" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="377896750" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.039175" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1.0f +/- 9.99999975E-05f
+  But was:  0.833333313f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.FullPowerIsReadyAfterOneAndAQuarterSeconds (TumbangPreso.Core.GameMode mode) [0x0000c] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2719" name="FullPowerIsReadyAfterOneAndAQuarterSeconds(HeroStrike)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.FullPowerIsReadyAfterOneAndAQuarterSeconds(HeroStrike)" methodname="FullPowerIsReadyAfterOneAndAQuarterSeconds" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="1080532570" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.035763" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1.0f +/- 9.99999975E-05f
+  But was:  0.833333313f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.FullPowerIsReadyAfterOneAndAQuarterSeconds (TumbangPreso.Core.GameMode mode) [0x0000c] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2723" name="HalfChargeAndLongHoldsStayBounded" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.HalfChargeAndLongHoldsStayBounded" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.064319" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2721" name="HalfChargeAndLongHoldsStayBounded(Classic)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.HalfChargeAndLongHoldsStayBounded(Classic)" methodname="HalfChargeAndLongHoldsStayBounded" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="476443661" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.030963" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.5f +/- 9.99999975E-05f
+  But was:  0.416666657f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.HalfChargeAndLongHoldsStayBounded (TumbangPreso.Core.GameMode mode) [0x0000c] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:78
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2722" name="HalfChargeAndLongHoldsStayBounded(HeroStrike)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.HalfChargeAndLongHoldsStayBounded(HeroStrike)" methodname="HalfChargeAndLongHoldsStayBounded" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="935333889" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.031551" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.5f +/- 9.99999975E-05f
+  But was:  0.416666657f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.HalfChargeAndLongHoldsStayBounded (TumbangPreso.Core.GameMode mode) [0x0000c] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:78
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2729" name="ObservedChargeUsesTheSameNewDuration" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.ObservedChargeUsesTheSameNewDuration" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.063424" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2727" name="ObservedChargeUsesTheSameNewDuration(Classic)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.ObservedChargeUsesTheSameNewDuration(Classic)" methodname="ObservedChargeUsesTheSameNewDuration" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="1228823829" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.030274" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.5f +/- 9.99999975E-05f
+  But was:  0.416666657f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.ObservedChargeUsesTheSameNewDuration (TumbangPreso.Core.GameMode mode) [0x00022] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:103
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2728" name="ObservedChargeUsesTheSameNewDuration(HeroStrike)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.ObservedChargeUsesTheSameNewDuration(HeroStrike)" methodname="ObservedChargeUsesTheSameNewDuration" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="189439740" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.031572" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.5f +/- 9.99999975E-05f
+  But was:  0.416666657f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.ObservedChargeUsesTheSameNewDuration (TumbangPreso.Core.GameMode mode) [0x00022] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:103
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2726" name="ReleaseUsesTheDisplayedFullPowerAndClearsWindup" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.ReleaseUsesTheDisplayedFullPowerAndClearsWindup" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.068432" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2724" name="ReleaseUsesTheDisplayedFullPowerAndClearsWindup(Classic)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.ReleaseUsesTheDisplayedFullPowerAndClearsWindup(Classic)" methodname="ReleaseUsesTheDisplayedFullPowerAndClearsWindup" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="2091127642" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.033667" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1.0f
+  But was:  0.833333313f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.ReleaseUsesTheDisplayedFullPowerAndClearsWindup (TumbangPreso.Core.GameMode mode) [0x0000c] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:87
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2725" name="ReleaseUsesTheDisplayedFullPowerAndClearsWindup(HeroStrike)" fullname="TumbangPreso.PlayTests.ThrowChargeDurationTests.ReleaseUsesTheDisplayedFullPowerAndClearsWindup(HeroStrike)" methodname="ReleaseUsesTheDisplayedFullPowerAndClearsWindup" classname="TumbangPreso.PlayTests.ThrowChargeDurationTests" runstate="Runnable" seed="2108950920" result="Failed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:34Z" duration="0.033274" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1.0f
+  But was:  0.833333313f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ThrowChargeDurationTests.ReleaseUsesTheDisplayedFullPowerAndClearsWindup (TumbangPreso.Core.GameMode mode) [0x0000c] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs:87
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2730" name="ThrowChargeUiTests" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:39Z" duration="4.572749" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2739" name="RestoreDecayHasNativeBodyAndOwnerHandEvidence" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests.RestoreDecayHasNativeBodyAndOwnerHandEvidence" methodname="RestoreDecayHasNativeBodyAndOwnerHandEvidence" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" seed="698041831" result="Passed" start-time="2026-10-04 09:39:34Z" end-time="2026-10-04 09:39:39Z" duration="4.569701" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'Charge owner camera' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

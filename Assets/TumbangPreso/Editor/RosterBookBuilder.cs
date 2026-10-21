@@ -47,26 +47,42 @@ namespace TumbangPreso.EditorTools
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
             // Classic roster. Unity retains the network-stable "bayan" id for BERTO.
-            { "bayan",       "characters/persons/character-male-f.glb" },
-            { "maring",      "characters/persons/character-female-f.glb" },
-            { "totoy",       "characters/persons/character-male-a.glb" },
-            { "inday",       "characters/persons/character-female-a.glb" },
-            { "kuya_boy",    "characters/persons/character-male-b.glb" },
-            { "ate_girlie",  "characters/persons/character-female-b.glb" },
-            { "tikboy",      "characters/persons/character-male-c.glb" },
-            { "bebang",      "characters/persons/character-female-c.glb" },
-            { "jun_jun",     "characters/persons/character-male-d.glb" },
-            { "lola_pacing", "characters/persons/character-female-d.glb" },
-            { "mang_kanor",  "characters/persons/character-male-e.glb" },
-            { "aling_nena",  "characters/persons/character-female-e.glb" },
+            // ⚠️⚠️ THE TWELVE CLASSIC CHARACTERS ON THEIR REDESIGNS, 2026-10-06. Each was redrawn as if they were one
+            // of the nine heroes (docs/CHARACTER_REDESIGN_DANTE.md section 15.9 D and G), and the owner said of the
+            // twelve together: "they all look good". The old shared rigs (`characters/persons/character-<sex>-<a..f>.glb`,
+            // recoloured by each person's palette) are untouched on disk; putting a row back and rebuilding the
+            // roster book undoes it. DO NOT MERGE THIS BLOCK without the owner's word.
+            { "bayan",       "CharacterRedesign/bayan/bayan-redesign.glb" },
+            { "maring",      "CharacterRedesign/maring/maring-redesign.glb" },
+            { "totoy",       "CharacterRedesign/totoy/totoy-redesign.glb" },
+            { "inday",       "CharacterRedesign/inday/inday-redesign.glb" },
+            { "kuya_boy",    "CharacterRedesign/kuya_boy/kuya_boy-redesign.glb" },
+            { "ate_girlie",  "CharacterRedesign/ate_girlie/ate_girlie-redesign.glb" },
+            { "tikboy",      "CharacterRedesign/tikboy/tikboy-redesign.glb" },
+            { "bebang",      "CharacterRedesign/bebang/bebang-redesign.glb" },
+            { "jun_jun",     "CharacterRedesign/jun_jun/jun_jun-redesign.glb" },
+            { "lola_pacing", "CharacterRedesign/lola_pacing/lola_pacing-redesign.glb" },
+            { "mang_kanor",  "CharacterRedesign/mang_kanor/mang_kanor-redesign.glb" },
+            { "aling_nena",  "CharacterRedesign/aling_nena/aling_nena-redesign.glb" },
 
             // Hero Strike Roster (6 action heroes)
-            { "dante",       "characters/persons/team-dante.glb" },
-            { "cheska",      "characters/persons/team-cheska.glb" },
-            { "sean",        "characters/persons/team-sean.glb" },
-            { "zack",        "characters/persons/team-zack.glb" },
-            { "nemu",        "characters/persons/team-nemu.glb" },
-            { "phaister",    "characters/persons/team-phaister.glb" },
+            // ⚠️⚠️ PROTOTYPE SWAP, THIS BRANCH ONLY, 2026-10-05. The owner asked to SEE the character
+            // redesign in the game (docs/CHARACTER_REDESIGN_DANTE.md). Seven heroes point at their
+            // redesign prototypes so an internal build can be played. The real `team-<id>.glb`
+            // files are untouched; putting a row back to `characters/persons/team-<id>.glb` and
+            // rebuilding the roster book undoes it. DO NOT MERGE THIS BLOCK without the owner's word.
+            // ⚠️ ALL NINE SINCE LATER THE SAME DAY. Owner: "should probably work on a paete and phaister
+            // rework", then "we'll be using the character redesigns from now on instead of the older
+            // models". Phaister and Paete now point at their redesigns too.
+            { "dante",       "CharacterRedesign/dante/dante-redesign.glb" },
+            { "cheska",      "CharacterRedesign/cheska/cheska-redesign.glb" },
+            { "sean",        "CharacterRedesign/sean/sean-redesign.glb" },
+            { "zack",        "CharacterRedesign/zack/zack-redesign.glb" },
+            { "nemu",        "CharacterRedesign/nemu/nemu-redesign.glb" },
+            { "phaister",    "CharacterRedesign/phaister/phaister-redesign.glb" },
+            { "rafi",        "CharacterRedesign/rafi/rafi-redesign.glb" },
+            { "amihan",      "CharacterRedesign/amihan/amihan-redesign.glb" },
+            { "paete",       "CharacterRedesign/paete/paete-redesign.glb" },
             { "custom",      "characters/persons/team-custom.glb" },
 
             // ⚠️⚠️ THE CHARACTER MAKER'S BASE RIG, AND IT IS A NEW ROW RATHER THAN A CHANGE TO
@@ -81,6 +97,21 @@ namespace TumbangPreso.EditorTools
             // ones"*. Adding an id costs nothing; repointing one would have changed what an
             // existing asset resolves to. `docs/TODO.md` § 112.
             { "custom_base", "characters/persons/team-custom-base.glb" },
+        };
+
+        /// <summary>
+        /// ⚠️ WHOSE FIRST-PERSON ARMS ARE STILL CUT FROM THE OLD MODEL (owner, 2026-10-05, of Paete's hands in
+        /// first person after his redesign went into the roster: "now paete's hands are weird..", then "for now
+        /// lets just use the old paete model for the fpv"). The arms a player sees are their own meshes
+        /// (`ViewmodelArmAuthor` cuts them from a model by its `arm-<side>` bone) and are not the body others
+        /// see. A redesign has an elbow, so that bone is only the upper arm and the cut left out the forearm
+        /// and the hand. Until the cut follows the elbow, a hero listed here keeps the arms of the old model.
+        /// </summary>
+        private static readonly Dictionary<string, string> FirstPersonArmModels = new Dictionary<string, string>
+        {
+            // (Paete was here, on `characters/persons/team-paete.glb`, from 2026-10-05 to 2026-10-06. The cut follows
+            // the elbow now (`ViewmodelArmAuthor.Extract`), and the owner asked for his new model arms: "we need to
+            // fix paete's new model arms for fpv".)
         };
 
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
@@ -106,6 +137,9 @@ namespace TumbangPreso.EditorTools
             { "zack",        "person_team-zack.tres" },
             { "nemu",        "person_team-nemu.tres" },
             { "phaister",    "person_team-phaister.tres" },
+            { "rafi",        "person_team-rafi.tres" },
+            { "amihan",      "person_team-amihan.tres" },
+            { "paete",       "person_team-paete.tres" },
             { "custom",      "person_team-custom.tres" },
 
             // ⚠️ WRITTEN BY `tools/build_base_voxel.py`, NOT CARRIED OVER FROM GODOT. The
@@ -143,7 +177,7 @@ namespace TumbangPreso.EditorTools
             { "tsinelas", "models/tsinelas_tsinelas.glb" },
             { "crocs",    "models/tsinelas_crocs.glb" },
             { "pantulog", "models/tsinelas_pantulog.glb" },
-            { "sike",     "models/tsinelas_sike.obj" },
+            { "sike",     "models/tsinelas_sike.glb" },   // 2026-10-18: the remodelled set (tools/build_slippers.py); the .obj moved out
             { "spartan",   "models/tsinelas_spartan.glb" },
             { "alpombra",  "models/tsinelas_alpombra.glb" },
             { "pambahay",  "models/tsinelas_pambahay.glb" },
@@ -156,6 +190,51 @@ namespace TumbangPreso.EditorTools
         public static void BuildFromMenu() => Execute();
 
         public static void Build() => EditorApplication.Exit(Execute() ? 0 : 1);
+
+        // Command line: -executeMethod TumbangPreso.EditorTools.RosterBookBuilder.RefreshPersonFromCommandLine -person <id>
+        public static void RefreshPersonFromCommandLine()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            int at = System.Array.IndexOf(args, "-person");
+            bool ok = at >= 0 && at + 1 < args.Length && RefreshPerson(args[at + 1]);
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        // Art iteration on one existing hero must not rewrite the rest of the roster.
+        //
+        // ⚠️ A HERO NEW TO THE ROSTER IS INSERTED HERE TOO, at the place a full `Build` would put
+        // it (just after the roster row before it), rather than asking for a full rebuild. The full
+        // rebuild re-bakes every other person's first-person arms and clips, which is exactly the
+        // churn this method exists to avoid. Paete was the first hero added this way (HERO-9).
+        public static bool RefreshPerson(string id)
+        {
+            var book = AssetDatabase.LoadAssetAtPath<RosterBook>(BookPath);
+            int truthIndex = -1;
+            for (int i = 0; i < Roster.People.Count; i++) if (Roster.People[i].Id == id) { truthIndex = i; break; }
+            bool present = book != null && book.People.Find(entry => entry != null && entry.Id == id) != null;
+            if (book == null || !PersonModels.ContainsKey(id) || (!present && truthIndex < 0))
+            {
+                Debug.LogError("[RosterBook] Cannot refresh an unregistered person: " + id);
+                return false;
+            }
+            bool ok = true;
+            var built = BuildSingleEntry(id, PersonModels, "person", ref ok);
+            if (!ok) return false;
+            if (!present)
+            {
+                int at = book.People.Count;
+                for (int i = truthIndex - 1; i >= 0; i--)
+                {
+                    int previous = book.People.FindIndex(entry => entry != null && entry.Id == Roster.People[i].Id);
+                    if (previous >= 0) { at = previous + 1; break; }
+                }
+                book.People.Insert(at, built);
+                EditorUtility.SetDirty(book);
+            }
+            ViewmodelArmAuthor.Bake(book, id);
+            AssetDatabase.SaveAssets();
+            return true;
+        }
 
         private static bool Execute()
         {
@@ -307,6 +386,10 @@ namespace TumbangPreso.EditorTools
                 asset.Tint = Color.white;
                 asset.Palette = ReadPalette(entry.Id, ref ok);
 
+                // The first-person arms' own model, where a hero has one (`FirstPersonArmModels`).
+                asset.ArmModel = FirstPersonArmModels.TryGetValue(entry.Id, out var armRel)
+                    ? AssetDatabase.LoadAssetAtPath<GameObject>($"{ArtRoot}/{armRel}") : null;
+
                 if (models.TryGetValue(entry.Id, out var rel))
                 {
                     string full = $"{ArtRoot}/{rel}";
@@ -331,6 +414,16 @@ namespace TumbangPreso.EditorTools
                             clips.Add(clip);
                     }
 
+                    if(kind=="person"&&entry.Id=="rafi"&&asset.Model!=null)
+                        clips.AddRange(RafiMotionAuthor.Bake(asset.Model));
+                    if(kind=="person"&&entry.Id=="amihan"&&asset.Model!=null)
+                        clips.AddRange(AmihanMotionAuthor.Bake(asset.Model));
+                    if(kind=="person"&&entry.Id=="paete"&&asset.Model!=null)
+                        clips.AddRange(PaeteMotionAuthor.Bake(asset.Model));
+                    if(kind=="person"&&entry.Id=="phaister"&&asset.Model!=null)
+                        clips.AddRange(PhaisterMotionAuthor.Bake(asset.Model));
+                    if(kind=="person"&&entry.Id=="nemu"&&asset.Model!=null)
+                        clips.AddRange(NemuMotionAuthor.Bake(asset.Model));
                     asset.Clips = clips.ToArray();
 
                     if (clips.Count == 0 && kind == "person")
@@ -407,6 +500,16 @@ namespace TumbangPreso.EditorTools
                         clips.Add(clip);
                 }
 
+                if(kind=="person"&&id=="rafi"&&asset.Model!=null)
+                    clips.AddRange(RafiMotionAuthor.Bake(asset.Model));
+                if(kind=="person"&&id=="amihan"&&asset.Model!=null)
+                    clips.AddRange(AmihanMotionAuthor.Bake(asset.Model));
+                if(kind=="person"&&id=="paete"&&asset.Model!=null)
+                    clips.AddRange(PaeteMotionAuthor.Bake(asset.Model));
+                if(kind=="person"&&id=="phaister"&&asset.Model!=null)
+                    clips.AddRange(PhaisterMotionAuthor.Bake(asset.Model));
+                if(kind=="person"&&id=="nemu"&&asset.Model!=null)
+                    clips.AddRange(NemuMotionAuthor.Bake(asset.Model));
                 asset.Clips = clips.ToArray();
 
                 if (clips.Count == 0 && kind == "person")

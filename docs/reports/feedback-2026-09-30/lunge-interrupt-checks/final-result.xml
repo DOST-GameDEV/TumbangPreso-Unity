@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 19:13:36Z" end-time="2026-09-30 19:13:40Z" duration="4.1317766">
+  <test-suite type="TestSuite" id="2194" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-09-30 19:13:36Z" end-time="2026-09-30 19:13:40Z" duration="4.131777" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2188" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-09-30 19:13:36Z" end-time="2026-09-30 19:13:40Z" duration="4.122106" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="161606" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2189" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-09-30 19:13:36Z" end-time="2026-09-30 19:13:40Z" duration="4.118252" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2190" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-09-30 19:13:36Z" end-time="2026-09-30 19:13:40Z" duration="4.115113" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1213" name="DefenderLungeTravelTests" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-30 19:13:36Z" end-time="2026-09-30 19:13:40Z" duration="4.052743" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1220" name="EndedRoundCannotResumeAnOldLunge" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.EndedRoundCannotResumeAnOldLunge" methodname="EndedRoundCannotResumeAnOldLunge" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="1690815123" result="Passed" start-time="2026-09-30 19:13:36Z" end-time="2026-09-30 19:13:37Z" duration="1.425659" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1218" name="PresentationPausePreservesTheLiveLunge" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.PresentationPausePreservesTheLiveLunge" methodname="PresentationPausePreservesTheLiveLunge" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="623668499" result="Passed" start-time="2026-09-30 19:13:37Z" end-time="2026-09-30 19:13:38Z" duration="1.226468" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1219" name="StaggeredLungeCannotTagAfterRecovery" fullname="TumbangPreso.PlayTests.DefenderLungeTravelTests.StaggeredLungeCannotTagAfterRecovery" methodname="StaggeredLungeCannotTagAfterRecovery" classname="TumbangPreso.PlayTests.DefenderLungeTravelTests" runstate="Runnable" seed="1179122693" result="Passed" start-time="2026-09-30 19:13:38Z" end-time="2026-09-30 19:13:40Z" duration="1.384519" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

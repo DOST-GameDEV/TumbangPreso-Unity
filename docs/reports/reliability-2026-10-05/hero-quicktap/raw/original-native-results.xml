@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.4757822">
+  <test-suite type="TestSuite" id="3078" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1695" result="Failed" site="Child" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.475782" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3072" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1695" result="Failed" site="Child" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.457834" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14260" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3073" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1695" result="Failed" site="Child" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.448431" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3074" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1695" result="Failed" site="Child" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.439618" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1624" name="HeroQuickTapTests" fullname="TumbangPreso.PlayTests.HeroQuickTapTests" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.394563" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1629" name="AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" methodname="AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="746511136" result="Passed" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.226369" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1628" name="OrdinaryHeldSignatureStillProducesOneEdge" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryHeldSignatureStillProducesOneEdge" methodname="OrdinaryHeldSignatureStillProducesOneEdge" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="795845299" result="Passed" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.034243" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1626" name="RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" methodname="RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1246452821" result="Failed" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.044351" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A real press and release in one Input System update vanished before gameplay consumed it.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroQuickTapTests+<QuickTap>d__11.MoveNext () [0x0005b] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\HeroQuickTapTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1625" name="SignatureQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.SignatureQuickTapSurvivesUntilGameplayConsumesIt" methodname="SignatureQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="863031108" result="Failed" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.035716" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A real press and release in one Input System update vanished before gameplay consumed it.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroQuickTapTests+<QuickTap>d__11.MoveNext () [0x0005b] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\HeroQuickTapTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1627" name="UltimateQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.UltimateQuickTapSurvivesUntilGameplayConsumesIt" methodname="UltimateQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="532224528" result="Failed" start-time="2026-10-04 17:36:57Z" end-time="2026-10-04 17:36:57Z" duration="0.037588" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A real press and release in one Input System update vanished before gameplay consumed it.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroQuickTapTests+<QuickTap>d__11.MoveNext () [0x0005b] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\HeroQuickTapTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,22 @@
+{
+  "sevenExportsSameDimensionsAndRgbaPixels": {
+    "tump_logo.png": true,
+    "tsinelas_mark.png": true,
+    "tsinelas_hit.png": true,
+    "tump_wordmark_ink.png": true,
+    "tump_wordmark_login.png": true,
+    "tump_wordmark_lobby.png": true,
+    "tump_wordmark_stage.png": true
+  },
+  "encodedPngByteEquality": {
+    "tump_logo.png": false,
+    "tsinelas_mark.png": false,
+    "tsinelas_hit.png": false,
+    "tump_wordmark_ink.png": false,
+    "tump_wordmark_login.png": false,
+    "tump_wordmark_lobby.png": false,
+    "tump_wordmark_stage.png": false
+  },
+  "initialCheck": "Encoded-byte expectation failed because Pillow re-encodes Cairo PNG. Actual dimensions and every RGBA pixel compared independently.",
+  "actualGameAssetsWritten": false
+}

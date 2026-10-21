@@ -1,0 +1,126 @@
+{
+  "runs": {
+    "texture-identity-candidate2": {
+      "pid": 51496,
+      "exitCode": 2,
+      "protectedCount": 21411,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.BuiltinScalarHashesSurviveSerializationWithoutBuiltinObjectReferences",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.NullTextureHasTheExistingEmptyIdentity",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.PreparedLookupUsesExactReferenceEvenWhenNameAndDimensionsMatch",
+          "result": "Failed",
+          "message": "System.InvalidOperationException : Invalid scenery texture identity table."
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.ReadableDynamicPixelMutationChangesIdentity",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.UnpreparedNonReadableTextureDoesNotDegradeToNameOrDimensions",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "copiedRawSha256": {
+        "result.json": "d121a77e90894987678a679fe80db40f599ff1e7cb42aba9058a3eff62a7922d",
+        "source-restoration.json": "e719738ec0feab3415fb03a4138a60a0f99120730925b70c662679c1b32d1994",
+        "results.xml": "3454e9d5f06170f1719e88b1f30875ba6b2e2e82cd97301aadaad9b0cff23d7e"
+      }
+    },
+    "texture-identity-prepare": {
+      "pid": 2460,
+      "exitCode": 0,
+      "protectedCount": 21411,
+      "cases": [],
+      "copiedRawSha256": {
+        "result.json": "a615a232b082a9dac69233b915fa3d7fef01337a6415083a59b6c70b23f4a4cf",
+        "source-restoration.json": "81a4fdd3ec8ffacedb82a4d0bfa024faaefb581af8d51b18ac270508c65fd6d8"
+      }
+    },
+    "texture-identity-candidate3": {
+      "pid": 61436,
+      "exitCode": 0,
+      "protectedCount": 21411,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.BuiltinScalarHashesSurviveSerializationWithoutBuiltinObjectReferences",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.NullTextureHasTheExistingEmptyIdentity",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.PreparedLookupUsesExactReferenceEvenWhenNameAndDimensionsMatch",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.ReadableDynamicPixelMutationChangesIdentity",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SceneryTextureIdentityTests.UnpreparedNonReadableTextureDoesNotDegradeToNameOrDimensions",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "copiedRawSha256": {
+        "result.json": "35013e7405149883ce06ed8bc923643e62c135b5d3ca5528fccc5f9750df744e",
+        "source-restoration.json": "f7e79034b9bfdb8dcf9740e2ff334da9b413f2111282d9b58a17c7d986ae548a",
+        "results.xml": "7f125c379374ba32a43b8aabf2da3f0fc0bf80b63d74e073ac9824443fc13d62"
+      },
+      "sourceHashes": {
+        "Assets/TumbangPreso/Runtime/Camera/SceneryTextureIdentities.cs": "ec62ae38bffd5f1382be3a87784bde5e31057d923afee2d10f11af9d70141e7b",
+        "Assets/TumbangPreso/Editor/SceneryTextureIdentityBuild.cs": "ee76cbdb0c96ee63c380bd628d8f68dc52835a20df8d390d9735484e381fecae",
+        "Assets/TumbangPreso/Tests/PlayMode/SceneryTextureIdentityTests.cs": "5bd3bd604d5453339adac55d78e2ba2303bc772c59e321eb4b0e96161f390bc9",
+        "Assets/TumbangPreso/Resources/SceneryTextureIdentities.asset": "3e1a0324318405726527d545a56f5fd41373d5e9b8731979cc9a32dd0cb4d1bf",
+        "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneryState.cs": "2f172e2fe842ae1461edbbf6f7ab31dc1725855f5042985d140e977b33bc2a3f"
+      }
+    }
+  },
+  "generatedCatalog": {
+    "sha256": "3e1a0324318405726527d545a56f5fd41373d5e9b8731979cc9a32dd0cb4d1bf",
+    "builtinScalarHashes": {
+      "WhiteHash": "06f1823c819835032fb367776dd33816",
+      "BlackHash": "42a284fb2547d1067b345d5858d8bcfc",
+      "GrayHash": "b9373118c30f4ea6d643a7f87a47ba17",
+      "NormalHash": "c192349631ecae12d5acf59e4b47c4dc"
+    },
+    "importedReferenceCount": 0,
+    "scope": "Currentauthoredanimal/drone modelsvertexcoloured; futureimportedtextures scannedbyprebuild callback. Actualnewplayer stillpending."
+  }
+}

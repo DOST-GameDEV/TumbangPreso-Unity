@@ -1,0 +1,24 @@
+{
+  "source": "25fab6cabe67ba6bacf956b6f9bcedf913c40a2a",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Camera/RecordedFlightStroke.cs": "774b7dc3154f999425962e434dbbdc9e19d80a40166ce652f9fc7d11b1e51451",
+    "Assets/TumbangPreso/Runtime/Map/SidewalkLife.cs": "05d70b459d4b2d16f104c77c7866b791b4786052376c6bf84166f68ec9cfc0c9",
+    "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": "0a9fdaa5503c5afcae83efda253357755607f75df20fb01fe2c2c0e8ff8f9a86",
+    "Assets/TumbangPreso/Runtime/Net/CloudCode.cs": "a162db81df86c3369fcc8e49dc950d2eb015272aade3d57edf1fc70aab541db7",
+    "Assets/TumbangPreso/Runtime/Net/Matchmaker.cs": "bd79ead4a99030d6c415f6a40372cf81995fe4c6d049f995e8c624578c6603ef",
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "72b95baab14939c6ab13327545bdad6e0159533089ce2df795e0f162b11d3422",
+    "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity": "dfc16fa01455919c383f43e5b3849b76069a25171d6faa221334fb0719d207a6",
+    "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs": "aa62cbd25469c1f49297555bff032f0dcda9b8381705421306c01ab546d4e7df",
+    "Assets/TumbangPreso/Tests/PlayMode/CloudRequestTimeoutTests.cs": "93ae5eb097f230f4153941754b78abb3bd518ed0a2f1195c27001e7b86a04549",
+    "Assets/TumbangPreso/Tests/PlayMode/CloudRequestTimeoutTests.cs.meta": "96eb1ebb3fc45cd1cd092df81ea4272a68c9b4dd9de0be0eadbc751cf8d8a50d",
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedEffectsTests.cs": "f7b391a9c5d3819de9dfbfc98c93a3ad83baf9c9e85c7015f12c1145578e692b",
+    "Assets/TumbangPreso/Tests/PlayMode/RemadeMapPreviewTests.cs": "3e888fdf8fd91686fbf5cf0892db6a711b10323846169a516f76535f914f7831",
+    "Assets/TumbangPreso/Tests/PlayMode/SessionRestartTests.cs": "f1fe091b8a88c82644c419e99a6ee79b640d1c1b98597219e3b34716ea041148",
+    "ProjectSettings/EditorBuildSettings.asset": "c3f932e9343b0d29d0d65dbb9175a58a4e2a6f906e8eb49c0f27c3a7296688ea"
+  },
+  "inheritedInputs": "Logs/readiness129-1002/build-inputs.json",
+  "question": "Fresh Windows integration candidate includes all later service/queue/career/preview/replay fixes",
+  "stoppingCondition": "One guarded internal12sceneWindows build, then one supported current runtime scenario; no repeated unchanged matrix/Desktop replacement",
+  "retry": 0,
+  "scope": "Committed overlays in imported isolated checkout; critical/changed hashes, unchanged asset evidence reused, not pristine certification"
+}

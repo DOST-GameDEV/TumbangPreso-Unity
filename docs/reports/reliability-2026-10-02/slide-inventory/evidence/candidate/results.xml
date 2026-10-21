@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 13:59:58Z" end-time="2026-10-02 14:00:03Z" duration="4.4115991">
+  <test-suite type="TestSuite" id="2599" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1302" result="Passed" start-time="2026-10-02 13:59:58Z" end-time="2026-10-02 14:00:03Z" duration="4.411599" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2593" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1302" result="Passed" start-time="2026-10-02 13:59:59Z" end-time="2026-10-02 14:00:03Z" duration="4.386074" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23820" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2594" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1302" result="Passed" start-time="2026-10-02 13:59:59Z" end-time="2026-10-02 14:00:03Z" duration="4.369307" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2595" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1302" result="Passed" start-time="2026-10-02 13:59:59Z" end-time="2026-10-02 14:00:03Z" duration="4.353067" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2116" name="RetrievalSlideTests" fullname="TumbangPreso.PlayTests.RetrievalSlideTests" classname="TumbangPreso.PlayTests.RetrievalSlideTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-02 13:59:59Z" end-time="2026-10-02 14:00:03Z" duration="4.090020" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2119" name="ASlideCannotCollectThroughAWall" fullname="TumbangPreso.PlayTests.RetrievalSlideTests.ASlideCannotCollectThroughAWall" methodname="ASlideCannotCollectThroughAWall" classname="TumbangPreso.PlayTests.RetrievalSlideTests" runstate="Runnable" seed="1924037087" result="Passed" start-time="2026-10-02 13:59:59Z" end-time="2026-10-02 14:00:00Z" duration="0.871312" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2117" name="ASlideCollectsATsinelasAWalkUpCouldNotReachYet" fullname="TumbangPreso.PlayTests.RetrievalSlideTests.ASlideCollectsATsinelasAWalkUpCouldNotReachYet" methodname="ASlideCollectsATsinelasAWalkUpCouldNotReachYet" classname="TumbangPreso.PlayTests.RetrievalSlideTests" runstate="Runnable" seed="1758790019" result="Passed" start-time="2026-10-02 14:00:00Z" end-time="2026-10-02 14:00:01Z" duration="0.872236" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2123" name="ASlideWithNothingToFetchCostsNothingAndDoesNotMove" fullname="TumbangPreso.PlayTests.RetrievalSlideTests.ASlideWithNothingToFetchCostsNothingAndDoesNotMove" methodname="ASlideWithNothingToFetchCostsNothingAndDoesNotMove" classname="TumbangPreso.PlayTests.RetrievalSlideTests" runstate="Runnable" seed="1124218884" result="Passed" start-time="2026-10-02 14:00:01Z" end-time="2026-10-02 14:00:01Z" duration="0.513206" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2133" name="RepeatedSlidePredictionReportsItsNativeCost" fullname="TumbangPreso.PlayTests.RetrievalSlideTests.RepeatedSlidePredictionReportsItsNativeCost" methodname="RepeatedSlidePredictionReportsItsNativeCost" classname="TumbangPreso.PlayTests.RetrievalSlideTests" runstate="Runnable" seed="2047999712" result="Passed" start-time="2026-10-02 14:00:01Z" end-time="2026-10-02 14:00:02Z" duration="0.713736" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[calls=35000
+medianMicroseconds=9.416780000000001
+medianHeapGrowthBytesPerCall=1363.968
+nonShrinkingHeapBatches=15
+
+]]></output>
+            </test-case>
+            <test-case id="2134" name="SlidePredictionTracksLiveSlipperEligibilityAndLifecycle" fullname="TumbangPreso.PlayTests.RetrievalSlideTests.SlidePredictionTracksLiveSlipperEligibilityAndLifecycle" methodname="SlidePredictionTracksLiveSlipperEligibilityAndLifecycle" classname="TumbangPreso.PlayTests.RetrievalSlideTests" runstate="Runnable" seed="1396397831" result="Passed" start-time="2026-10-02 14:00:02Z" end-time="2026-10-02 14:00:02Z" duration="0.236133" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2121" name="TwoTsinelasAheadOfOneSlideCollectsOne" fullname="TumbangPreso.PlayTests.RetrievalSlideTests.TwoTsinelasAheadOfOneSlideCollectsOne" methodname="TwoTsinelasAheadOfOneSlideCollectsOne" classname="TumbangPreso.PlayTests.RetrievalSlideTests" runstate="Runnable" seed="1211084928" result="Passed" start-time="2026-10-02 14:00:02Z" end-time="2026-10-02 14:00:03Z" duration="0.859522" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 16:42:35Z" end-time="2026-10-02 16:42:40Z" duration="4.7812022">
+  <test-suite type="TestSuite" id="2641" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1335" result="Failed" site="Child" start-time="2026-10-02 16:42:35Z" end-time="2026-10-02 16:42:40Z" duration="4.781202" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2635" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1335" result="Failed" site="Child" start-time="2026-10-02 16:42:35Z" end-time="2026-10-02 16:42:40Z" duration="4.770925" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="131520" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2636" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1335" result="Failed" site="Child" start-time="2026-10-02 16:42:35Z" end-time="2026-10-02 16:42:40Z" duration="4.767026" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2637" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1335" result="Failed" site="Child" start-time="2026-10-02 16:42:35Z" end-time="2026-10-02 16:42:40Z" duration="4.763507" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1333" name="DanteBastionMotionTests" fullname="TumbangPreso.PlayTests.DanteBastionMotionTests" classname="TumbangPreso.PlayTests.DanteBastionMotionTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-02 16:42:35Z" end-time="2026-10-02 16:42:40Z" duration="4.738165" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1334" name="BastionHasItsOwnForwardBarrierBrace" fullname="TumbangPreso.PlayTests.DanteBastionMotionTests.BastionHasItsOwnForwardBarrierBrace" methodname="BastionHasItsOwnForwardBarrierBrace" classname="TumbangPreso.PlayTests.DanteBastionMotionTests" runstate="Runnable" seed="115412445" result="Failed" start-time="2026-10-02 16:42:35Z" end-time="2026-10-02 16:42:40Z" duration="4.724815" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Bastion still borrows the personal Unstoppable roar.
+  Expected string length 18 but was 15. Strings differ at index 11.
+  Expected: "hero-dante-bastion"
+  But was:  "hero-dante-roar"
+  ----------------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteBastionMotionTests+<BastionHasItsOwnForwardBarrierBrace>d__16.MoveNext () [0x0033c] in /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Tests/PlayMode/DanteBastionMotionTests.cs:77
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

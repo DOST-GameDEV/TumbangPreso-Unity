@@ -1,0 +1,22 @@
+{
+  "historyCount": 1,
+  "queueCount": 1,
+  "queueWitnessCount": 1,
+  "rounds": 1,
+  "mode": "HeroStrike",
+  "online": true,
+  "scores": [
+    20,
+    0,
+    0,
+    150
+  ],
+  "humanSlots": [
+    0,
+    1
+  ],
+  "matchIdSha256": "a91454978b05b8b4bb8b7509f8affd33fbd762170a87f78eef303d29415cac1d",
+  "recordCanonicalSha256": "93f6f20341711ee86b763e4f11b6560108992f491a63d4046f539c3d72662168",
+  "markerCleared": true,
+  "scope": "Saved during running player; terminal/profile/artifact restoration still pending."
+}

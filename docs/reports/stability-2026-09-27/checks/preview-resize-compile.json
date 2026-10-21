@@ -1,0 +1,16 @@
+{
+  "base": "b93d2a4a9af927cedecc71e675803dea331bedc6",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; unchanged Core reused",
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "DB893630E8AED2A282A3BF55C42A7AC2884ACB75952ECEE6F5BA37E07924A1F9",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ModelPreview.cs",
+      "sha256": "4A51AE7D57D018228DD3D474C912035579F9D92C44E7871E808F6B707FC2C05F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ModelPreviewPixelTests.cs",
+      "sha256": "EC9B3BDEF2622A85F093A4416532BFA2DFBB8DA493AC804773254D644F1B7156"
+    }
+  ]
+}

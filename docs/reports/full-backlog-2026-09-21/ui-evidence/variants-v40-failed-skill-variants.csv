@@ -1,0 +1,7 @@
+hero,slot,variant,role,view,expected,observed,charges_before,charges_after,actor_travel,target_travel,target_stun_samples,seconds,body_action,fpp_action
+sean,1,sean.1.rush,attacker,owner,cast,cast,0,0,4.586,3.854,56,5.00,hero-sean-dash,thrust-fire
+sean,1,sean.1.rush,defender,owner,cast,cast,0,0,4.586,3.854,51,5.00,hero-sean-dash,thrust-fire
+sean,1,sean.1.afterburn,attacker,owner,cast,cast,0,0,4.586,3.855,51,5.00,hero-sean-dash,thrust-fire
+sean,1,sean.1.afterburn,defender,owner,cast,cast,0,0,4.586,3.854,45,5.00,hero-sean-dash,thrust-fire
+sean,2,sean.2.cannon,attacker,owner,cast,cast,2,1,0.000,0.000,0,11.00,hero-sean-ignite,ignite
+sean,2,sean.2.cannon,defender,owner,refuse,none,2,2,0.000,0.000,0,2.00,hero-sean-ignite,ignite

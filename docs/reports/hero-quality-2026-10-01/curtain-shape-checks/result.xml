@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 06:15:01Z" end-time="2026-10-01 06:15:09Z" duration="8.3876191">
+  <test-suite type="TestSuite" id="2361" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1104" result="Passed" start-time="2026-10-01 06:15:01Z" end-time="2026-10-01 06:15:09Z" duration="8.387619" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2355" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1104" result="Passed" start-time="2026-10-01 06:15:01Z" end-time="2026-10-01 06:15:09Z" duration="8.371174" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="244174" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2356" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1104" result="Passed" start-time="2026-10-01 06:15:01Z" end-time="2026-10-01 06:15:09Z" duration="8.361136" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2357" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1104" result="Passed" start-time="2026-10-01 06:15:01Z" end-time="2026-10-01 06:15:09Z" duration="8.351932" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1923" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-01 06:15:01Z" end-time="2026-10-01 06:15:09Z" duration="8.329278" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1935" name="WaterwallRecoveryIsRenderOnlyWithNativeCourtViews" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.WaterwallRecoveryIsRenderOnlyWithNativeCourtViews" methodname="WaterwallRecoveryIsRenderOnlyWithNativeCourtViews" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1058301384" result="Passed" start-time="2026-10-01 06:15:01Z" end-time="2026-10-01 06:15:09Z" duration="8.314752" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] Waterwall-active-960x540/Power0: vertices=659, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] Waterwall-active-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] Waterwall-active-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] Waterwall-active-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] Waterwall-active-960x540/Power2: vertices=418, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] Waterwall-active-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=117, material=1
+[TumpUiCapture] Waterwall-active-960x540 cream source=252,211,159 pixel=180,189,233; isolated UI camera, no ColourGrade.
+[TumpGeometry] Waterwall-broken-960x540/Power0: vertices=659, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] Waterwall-broken-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] Waterwall-broken-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] Waterwall-broken-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] Waterwall-broken-960x540/Power2: vertices=418, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] Waterwall-broken-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=117, material=1
+[TumpUiCapture] Waterwall-broken-960x540 cream source=252,211,159 pixel=180,189,233; isolated UI camera, no ColourGrade.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.1795123">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="981" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.179512" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2188" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="981" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.157528" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5784" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2189" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="981" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.144639" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2190" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="981" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.132123" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1940" name="ReplayPropBindingTests" fullname="TumbangPreso.Tests.ReplayPropBindingTests" classname="TumbangPreso.Tests.ReplayPropBindingTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.109801" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1944" name="MeasureWarmedBindingManagedAllocationAndCost" fullname="TumbangPreso.Tests.ReplayPropBindingTests.MeasureWarmedBindingManagedAllocationAndCost" methodname="MeasureWarmedBindingManagedAllocationAndCost" classname="TumbangPreso.Tests.ReplayPropBindingTests" runstate="Runnable" seed="1312902119" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.079125" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1943" name="RemovedAndReturningCanCannotReuseTheDiscardedTrack" fullname="TumbangPreso.Tests.ReplayPropBindingTests.RemovedAndReturningCanCannotReuseTheDiscardedTrack" methodname="RemovedAndReturningCanCannotReuseTheDiscardedTrack" classname="TumbangPreso.Tests.ReplayPropBindingTests" runstate="Runnable" seed="144340534" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.004693" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1942" name="ReplacingVisualModelStartsANewTrackAndRefusesOldWindow" fullname="TumbangPreso.Tests.ReplayPropBindingTests.ReplacingVisualModelStartsANewTrackAndRefusesOldWindow" methodname="ReplacingVisualModelStartsANewTrackAndRefusesOldWindow" classname="TumbangPreso.Tests.ReplayPropBindingTests" runstate="Runnable" seed="443419244" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.001210" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1941" name="StableBindingPreservesRecordedTrackAndSafeWindow" fullname="TumbangPreso.Tests.ReplayPropBindingTests.StableBindingPreservesRecordedTrackAndSafeWindow" methodname="StableBindingPreservesRecordedTrackAndSafeWindow" classname="TumbangPreso.Tests.ReplayPropBindingTests" runstate="Runnable" seed="979045573" result="Passed" start-time="2026-10-02 20:50:27Z" end-time="2026-10-02 20:50:27Z" duration="0.007926" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

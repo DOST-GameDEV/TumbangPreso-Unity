@@ -1,0 +1,2 @@
+[link] :8987 -> 127.0.0.1:8986  delay=150.0ms jitter=30.0ms loss=5.0% outage=0.0s for 0.0s seed=151
+[link] client 127.0.0.1:53859 attached

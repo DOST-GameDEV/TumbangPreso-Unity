@@ -1,0 +1,42 @@
+{
+  "unity": "6000.5.8f1",
+  "checkout": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "profile": "friend-handler1002",
+  "filter": "TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests",
+  "baseline": {
+    "source": "ece6ee930 PlayerHub.cs and HubCustom.cs with current qualification dependencies",
+    "total": 2,
+    "passed": 0,
+    "failed": 2,
+    "failures": "Both actual friend actions dispatched zero times",
+    "durationSeconds": 11.8585465
+  },
+  "final": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "durationSeconds": 8.2682857
+  },
+  "fixtureRepairs": 0,
+  "nativeScope": "Actual production handler and existing panel dispatch/refusal/cancel with isolated delayed connection boundary",
+  "notCovered": [
+    "physical friend button click",
+    "button layout",
+    "service join",
+    "remote peers"
+  ],
+  "terminalGuardSessions": [
+    48464,
+    70278
+  ],
+  "retiredUnityPids": [
+    8708,
+    22152
+  ],
+  "guardSnapshots": [
+    "profile-preservation-eb09d26ea5c4",
+    "profile-preservation-bed08844d8fc"
+  ],
+  "protectedHashesUnchanged": true,
+  "finalInputsUnchanged": true
+}

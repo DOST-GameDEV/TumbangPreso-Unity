@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Passed" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:05Z" duration="1.5211092">
+  <test-suite type="TestSuite" id="2713" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1394" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:05Z" duration="1.521109" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2707" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1394" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:05Z" duration="1.508200" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7472" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2708" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1394" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:05Z" duration="1.500247" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2709" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1394" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:05Z" duration="1.492387" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1948" name="OwnerPasswordLifetimeTests" fullname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests" classname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:04Z" duration="0.436043" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1950" name="ACancelledFormsLateFailureLeavesDestroyedControlsAlone" fullname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests.ACancelledFormsLateFailureLeavesDestroyedControlsAlone" methodname="ACancelledFormsLateFailureLeavesDestroyedControlsAlone" classname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests" runstate="Runnable" seed="1801925344" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:04Z" duration="0.307601" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1949" name="ACancelledFormsLateSuccessLeavesDestroyedControlsAlone" fullname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests.ACancelledFormsLateSuccessLeavesDestroyedControlsAlone" methodname="ACancelledFormsLateSuccessLeavesDestroyedControlsAlone" classname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests" runstate="Runnable" seed="1048857481" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:04Z" duration="0.038484" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1952" name="CurrentFormFailureKeepsItsFieldFaultAndAllowsRetry" fullname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests.CurrentFormFailureKeepsItsFieldFaultAndAllowsRetry" methodname="CurrentFormFailureKeepsItsFieldFaultAndAllowsRetry" classname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests" runstate="Runnable" seed="1990973765" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:04Z" duration="0.038215" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1951" name="CurrentFormSuccessStillAcknowledgesAndClosesOnce" fullname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests.CurrentFormSuccessStillAcknowledgesAndClosesOnce" methodname="CurrentFormSuccessStillAcknowledgesAndClosesOnce" classname="TumbangPreso.PlayTests.OwnerPasswordLifetimeTests" runstate="Runnable" seed="997875108" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:04Z" duration="0.039531" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2057" name="PlayerHubProfileSaveLifetimeTests" fullname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" classname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:05Z" duration="0.685230" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2059" name="AnOldSaveCompletionCannotClearTheCurrentGuestDraft" fullname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests.AnOldSaveCompletionCannotClearTheCurrentGuestDraft" methodname="AnOldSaveCompletionCannotClearTheCurrentGuestDraft" classname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" runstate="Runnable" seed="1511544010" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:04Z" duration="0.248954" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2062" name="AProfileWithoutAnAccountStillSavesItsLocalName" fullname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests.AProfileWithoutAnAccountStillSavesItsLocalName" methodname="AProfileWithoutAnAccountStillSavesItsLocalName" classname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" runstate="Runnable" seed="2124184785" result="Passed" start-time="2026-10-03 05:15:04Z" end-time="2026-10-03 05:15:05Z" duration="0.092305" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2063" name="ChangingAccountIdentityRetiresThePreviousDeleteConfirmation" fullname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests.ChangingAccountIdentityRetiresThePreviousDeleteConfirmation" methodname="ChangingAccountIdentityRetiresThePreviousDeleteConfirmation" classname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" runstate="Runnable" seed="1309895969" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.101829" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2058" name="ChangingToAGuestReleasesThePreviousOwnersSaveControls" fullname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests.ChangingToAGuestReleasesThePreviousOwnersSaveControls" methodname="ChangingToAGuestReleasesThePreviousOwnersSaveControls" classname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" runstate="Runnable" seed="1310693853" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.056084" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2060" name="ClosingAndReopeningAllowsANewSaveWhoseBusyStateSurvivesTheOldCompletion" fullname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests.ClosingAndReopeningAllowsANewSaveWhoseBusyStateSurvivesTheOldCompletion" methodname="ClosingAndReopeningAllowsANewSaveWhoseBusyStateSurvivesTheOldCompletion" classname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" runstate="Runnable" seed="1477560638" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.086737" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+            <test-case id="2061" name="TheCurrentSaveStillClearsItsOwnDraftAndReleasesControlsAfterAccountNotification" fullname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests.TheCurrentSaveStillClearsItsOwnDraftAndReleasesControlsAfterAccountNotification" methodname="TheCurrentSaveStillClearsItsOwnDraftAndReleasesControlsAfterAccountNotification" classname="TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests" runstate="Runnable" seed="57467881" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.096938" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2356" name="SignInViewLifetimeTests" fullname="TumbangPreso.PlayTests.SignInViewLifetimeTests" classname="TumbangPreso.PlayTests.SignInViewLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.317077" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2359" name="AHiddenCredentialsFailureCannotMarkTheReopenedCredentialsAsWrong" fullname="TumbangPreso.PlayTests.SignInViewLifetimeTests.AHiddenCredentialsFailureCannotMarkTheReopenedCredentialsAsWrong" methodname="AHiddenCredentialsFailureCannotMarkTheReopenedCredentialsAsWrong" classname="TumbangPreso.PlayTests.SignInViewLifetimeTests" runstate="Runnable" seed="732767472" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.068048" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2358" name="AHiddenCredentialsSuccessCannotCloseTheReopenedForm" fullname="TumbangPreso.PlayTests.SignInViewLifetimeTests.AHiddenCredentialsSuccessCannotCloseTheReopenedForm" methodname="AHiddenCredentialsSuccessCannotCloseTheReopenedForm" classname="TumbangPreso.PlayTests.SignInViewLifetimeTests" runstate="Runnable" seed="369712414" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.045088" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2360" name="AHiddenGoogleSuccessCannotCloseTheReopenedFormOrStartAnotherBrowserFlow" fullname="TumbangPreso.PlayTests.SignInViewLifetimeTests.AHiddenGoogleSuccessCannotCloseTheReopenedFormOrStartAnotherBrowserFlow" methodname="AHiddenGoogleSuccessCannotCloseTheReopenedFormOrStartAnotherBrowserFlow" classname="TumbangPreso.PlayTests.SignInViewLifetimeTests" runstate="Runnable" seed="2122070598" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.044237" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2357" name="AReopenedFormAllowsEditingAndExitWithoutStartingAnotherPendingAuthentication" fullname="TumbangPreso.PlayTests.SignInViewLifetimeTests.AReopenedFormAllowsEditingAndExitWithoutStartingAnotherPendingAuthentication" methodname="AReopenedFormAllowsEditingAndExitWithoutStartingAnotherPendingAuthentication" classname="TumbangPreso.PlayTests.SignInViewLifetimeTests" runstate="Runnable" seed="1286408556" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.048305" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2362" name="TheCurrentCredentialFailureStillDisplaysItsFaultAndAllowsRetry" fullname="TumbangPreso.PlayTests.SignInViewLifetimeTests.TheCurrentCredentialFailureStillDisplaysItsFaultAndAllowsRetry" methodname="TheCurrentCredentialFailureStillDisplaysItsFaultAndAllowsRetry" classname="TumbangPreso.PlayTests.SignInViewLifetimeTests" runstate="Runnable" seed="850875972" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.047069" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2361" name="TheCurrentSignInStillClosesAfterItsAccountIdentityChanges" fullname="TumbangPreso.PlayTests.SignInViewLifetimeTests.TheCurrentSignInStillClosesAfterItsAccountIdentityChanges" methodname="TheCurrentSignInStillClosesAfterItsAccountIdentityChanges" classname="TumbangPreso.PlayTests.SignInViewLifetimeTests" runstate="Runnable" seed="2081200363" result="Passed" start-time="2026-10-03 05:15:05Z" end-time="2026-10-03 05:15:05Z" duration="0.060244" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

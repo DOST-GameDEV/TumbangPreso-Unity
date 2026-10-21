@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:32Z" duration="1.2964258">
+  <test-suite type="TestSuite" id="3141" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1747" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:32Z" duration="1.296426" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3133" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1747" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:32Z" duration="1.271141" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6288" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3134" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1747" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:32Z" duration="1.254984" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3137" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1745" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:32Z" duration="1.238208" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2115" name="OfflineMenuPauseTests" fullname="TumbangPreso.PlayTests.OfflineMenuPauseTests" classname="TumbangPreso.PlayTests.OfflineMenuPauseTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:32Z" duration="0.940025" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2116" name="ClosingMenuPreservesAnAlreadyParkedBody" fullname="TumbangPreso.PlayTests.OfflineMenuPauseTests.ClosingMenuPreservesAnAlreadyParkedBody" methodname="ClosingMenuPreservesAnAlreadyParkedBody" classname="TumbangPreso.PlayTests.OfflineMenuPauseTests" runstate="Runnable" seed="1183577283" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:31Z" duration="0.393027" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2118" name="CompletedMatchNoticeDoesNotClaimTheGameIsStillPlaying" fullname="TumbangPreso.PlayTests.OfflineMenuPauseTests.CompletedMatchNoticeDoesNotClaimTheGameIsStillPlaying" methodname="CompletedMatchNoticeDoesNotClaimTheGameIsStillPlaying" classname="TumbangPreso.PlayTests.OfflineMenuPauseTests" runstate="Runnable" seed="687071272" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:31Z" duration="0.078149" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2117" name="MatchEndingWhileMenuIsOpenKeepsBodyParkedOnClose" fullname="TumbangPreso.PlayTests.OfflineMenuPauseTests.MatchEndingWhileMenuIsOpenKeepsBodyParkedOnClose" methodname="MatchEndingWhileMenuIsOpenKeepsBodyParkedOnClose" classname="TumbangPreso.PlayTests.OfflineMenuPauseTests" runstate="Runnable" seed="438770163" result="Passed" start-time="2026-10-05 09:28:31Z" end-time="2026-10-05 09:28:32Z" duration="0.048094" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2122" name="NetworkMatchMenuNeverStopsTime" fullname="TumbangPreso.PlayTests.OfflineMenuPauseTests.NetworkMatchMenuNeverStopsTime" methodname="NetworkMatchMenuNeverStopsTime" classname="TumbangPreso.PlayTests.OfflineMenuPauseTests" runstate="Runnable" seed="634390280" result="Passed" start-time="2026-10-05 09:28:32Z" end-time="2026-10-05 09:28:32Z" duration="0.049494" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2119" name="OfflineMenuStopsScaledTimeAndPhysicsThenResumeRestartsThem" fullname="TumbangPreso.PlayTests.OfflineMenuPauseTests.OfflineMenuStopsScaledTimeAndPhysicsThenResumeRestartsThem" methodname="OfflineMenuStopsScaledTimeAndPhysicsThenResumeRestartsThem" classname="TumbangPreso.PlayTests.OfflineMenuPauseTests" runstate="Runnable" seed="1106506202" result="Passed" start-time="2026-10-05 09:28:32Z" end-time="2026-10-05 09:28:32Z" duration="0.350627" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.1494819">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1323" result="Failed" site="Child" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.149482" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2626" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1323" result="Failed" site="Child" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.117809" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19308" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2627" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1323" result="Failed" site="Child" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.098426" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2628" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1323" result="Failed" site="Child" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.079699" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2426" name="ServerQueryChangeNotificationTests" fullname="TumbangPreso.Tests.ServerQueryChangeNotificationTests" classname="TumbangPreso.Tests.ServerQueryChangeNotificationTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.049143" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2430" name="ExistingCountUpdateStillReachesSubscribers" fullname="TumbangPreso.Tests.ServerQueryChangeNotificationTests.ExistingCountUpdateStillReachesSubscribers" methodname="ExistingCountUpdateStillReachesSubscribers" classname="TumbangPreso.Tests.ServerQueryChangeNotificationTests" runstate="Runnable" seed="1025704998" result="Passed" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.024366" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2427" name="MapOnlyUpdateReachesSubscribers" fullname="TumbangPreso.Tests.ServerQueryChangeNotificationTests.MapOnlyUpdateReachesSubscribers" methodname="MapOnlyUpdateReachesSubscribers" classname="TumbangPreso.Tests.ServerQueryChangeNotificationTests" runstate="Runnable" seed="1513190968" result="Failed" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.007441" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.ServerQueryChangeNotificationTests.MapOnlyUpdateReachesSubscribers () [0x00016] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\ServerQueryChangeNotificationTests.cs:35
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2429" name="RepeatedIdenticalRoomDoesNotRedraw" fullname="TumbangPreso.Tests.ServerQueryChangeNotificationTests.RepeatedIdenticalRoomDoesNotRedraw" methodname="RepeatedIdenticalRoomDoesNotRedraw" classname="TumbangPreso.Tests.ServerQueryChangeNotificationTests" runstate="Runnable" seed="1015593229" result="Passed" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.000378" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2428" name="VisibilityOnlyUpdateReachesSubscribers" fullname="TumbangPreso.Tests.ServerQueryChangeNotificationTests.VisibilityOnlyUpdateReachesSubscribers" methodname="VisibilityOnlyUpdateReachesSubscribers" classname="TumbangPreso.Tests.ServerQueryChangeNotificationTests" runstate="Runnable" seed="1659315730" result="Failed" start-time="2026-10-04 11:27:59Z" end-time="2026-10-04 11:27:59Z" duration="0.000472" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.ServerQueryChangeNotificationTests.VisibilityOnlyUpdateReachesSubscribers () [0x00012] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\ServerQueryChangeNotificationTests.cs:39
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

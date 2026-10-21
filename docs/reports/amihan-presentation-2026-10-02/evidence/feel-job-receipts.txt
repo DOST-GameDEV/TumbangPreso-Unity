@@ -1,0 +1,6 @@
+bake waiting None admittedFreeMb None None
+bake2 completed 0 admittedFreeMb 4748 2026-10-02T15:24:29Z
+bake3 completed 0 admittedFreeMb 4702 2026-10-02T15:29:42Z
+edit failed 2 admittedFreeMb 4620 2026-10-02T15:27:56Z
+edit2 completed 0 admittedFreeMb 4695 2026-10-02T15:31:57Z
+bake: stopped by this session before admission (4000+2048 MB claim exceeded about 4.7 GB free); no Unity started

@@ -52,6 +52,7 @@ namespace TumbangPreso.Diagnostics
         private string _path;
         private float _left;
         private float _elapsed;
+        private bool _visibleHubLobbySeen, _arrivalSeen, _automaticCountdownSeen;
 
         private readonly float[] _travelled = new float[Balance.PlayerCount];
         private readonly Vector3[] _lastPosition = new Vector3[Balance.PlayerCount];
@@ -111,6 +112,15 @@ namespace TumbangPreso.Diagnostics
         {
             float dt = Time.unscaledDeltaTime;
             _elapsed += dt;
+
+            var hub = UI.Hub.TumpHub.Current;
+            _visibleHubLobbySeen |= hub != null && hub.Canvas.enabled && hub.Top is UI.Hub.HubLobby;
+            if (GameServices.Round == null || !GameServices.Round.RoundActive)
+            {
+                _arrivalSeen |= FindFirstObjectByType<MatchArrivalPresentation>() != null;
+                var ready = FindFirstObjectByType<ReadyGate>();
+                _automaticCountdownSeen |= !UI.SceneFlow.SelectedRules.ManualReady && ready != null && ready.CountingDown;
+            }
 
             Sample();
 
@@ -224,6 +234,7 @@ namespace TumbangPreso.Diagnostics
             sb.AppendLine($"local slot      : {NetAuthority.LocalSlot}");
             sb.AppendLine($"protocol        : {Net.NetSession.ProtocolVersion}");
             sb.AppendLine($"mode            : {UI.SceneFlow.SelectedMode}");
+            sb.AppendLine($"selected rules  : {Core.CustomGameRules.ToWire(UI.SceneFlow.SelectedRules)}");
             sb.AppendLine($"map             : {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
             sb.AppendLine($"sampled         : {_elapsed:F1} s");
             sb.AppendLine($"graphics        : {Settings.GraphicsProfiles.Of(Settings.GraphicsProfiles.Current).Label}; {Screen.width}x{Screen.height}; vsync={QualitySettings.vSyncCount}; target={Application.targetFrameRate}");
@@ -234,9 +245,14 @@ namespace TumbangPreso.Diagnostics
                     "live frame rate : frames={0}; seconds={1:F3}; avg={2:F2}; p50={3:F2}; p5={4:F2}; p1={5:F2}; max_ms={6:F2}",
                     frames.Frames,frames.Seconds,frames.AverageFps,frames.LowFps(50),frames.LowFps(5),frames.LowFps(1),frames.MaxSeconds*1000));
             else sb.AppendLine("live frame rate : unavailable (no live sample or collection disabled)");
+            if (frames != null && frames.Frames > 0)
+                sb.AppendLine("max frame context: " + (GameServices.Stats.SlowestFrameContext ?? "unavailable for this sample"));
             sb.AppendLine($"round           : {(match != null ? match.RoundNumber : -1)}");
             sb.AppendLine($"defender        : {(match != null ? match.DefenderSlot : -1)}");
             sb.AppendLine($"round active    : {(round != null && round.RoundActive)}");
+            sb.AppendLine($"hub lobby seen  : {_visibleHubLobbySeen}");
+            sb.AppendLine($"arrival seen    : {_arrivalSeen}");
+            sb.AppendLine($"auto count seen : {_automaticCountdownSeen}");
             sb.AppendLine($"lata upright    : {_lastLataUpright}   flips: {_lataFlips}");
 
             // ⚠️⚠️ THE PRESET, NOT MERELY "A MATCH HAPPENED". `docs/TODO.md` § 145.8: the recorded

@@ -1,13 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso
 {
     /// <summary>
-    /// PC Express Overclock Turbo Pad: Gives characters an instant 1.5x speed surge
-    /// and stamina refill when stepped on.
+    /// PC Express Overclock Turbo Pad: Gives characters a timed 1.5x speed surge when stepped on
+    /// (`CharacterMotor.BeginSpeedBoost`). Each peer boosts only the motors it simulates; the
+    /// motor refuses the rest, so nothing is on the wire.
     /// </summary>
     [RequireComponent(typeof(Collider))]
     public sealed class OverclockBoostPad : MonoBehaviour
@@ -51,34 +51,15 @@ namespace TumbangPreso
             if (_cooldowns.TryGetValue(motor, out float nextAllowed) && Time.time < nextAllowed)
                 return;
 
-            _cooldowns[motor] = Time.time + Cooldown;
+            // Refused on a peer that does not simulate this body: no cooldown and no cue there.
+            if (!motor.BeginSpeedBoost(SpeedMultiplier, BoostDuration)) return;
 
-            // Apply speed boost coroutine
-            StartCoroutine(ApplyBoostRoutine(motor));
+            _cooldowns[motor] = Time.time + Cooldown;
 
             // Audio & visual cues
             GameServices.Audio?.PlayAtVaried("sfx_super_ready", motor.transform.position, 1.1f, 1.3f, 0.9f);
             ComicPopup.Spawn(motor.transform.position + Vector3.up * 1.0f, "OVERCLOCKED!", UI.UiTheme.Highlight, 1.2f);
             ImpactBurst.SpawnAt(motor.transform.position);
-        }
-
-        private IEnumerator ApplyBoostRoutine(CharacterMotor motor)
-        {
-            if (motor == null) yield break;
-
-            motor.EnterSpeedZone(SpeedMultiplier);
-
-            float elapsed = 0.0f;
-            while (elapsed < BoostDuration && motor != null)
-            {
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-
-            if (motor != null)
-            {
-                motor.ExitSpeedZone(SpeedMultiplier);
-            }
         }
     }
 }

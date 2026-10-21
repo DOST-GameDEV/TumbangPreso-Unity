@@ -1,0 +1,19 @@
+{
+  "terminalPlayers": [
+    66940,
+    28080,
+    53308
+  ],
+  "desktopMutated": false,
+  "obsoleteBuildDeletion": "Previously blocked by automatic review; no bypass or deletion attempted in this unit.",
+  "unusedOwnedProcesses": [],
+  "buildsCreated": 0,
+  "tabsOpened": 0,
+  "preferencesRestoredForAllRuns": true,
+  "currentInternalBuild": "Builds/release-ui-perf1008g",
+  "sessions": [
+    73874,
+    68601,
+    28888
+  ]
+}

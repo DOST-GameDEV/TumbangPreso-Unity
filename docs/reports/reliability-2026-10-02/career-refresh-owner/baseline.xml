@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.0959914">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="799" result="Failed" site="Child" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.095991" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1947" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="799" result="Failed" site="Child" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.085180" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7712" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1948" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="799" result="Failed" site="Child" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.083635" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1949" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="799" result="Failed" site="Child" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.082385" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="37" result="Failed" site="Child" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.063797" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1088" name="CareerRefreshResponseCannotReplaceAnotherAccountCache" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CareerRefreshResponseCannotReplaceAnotherAccountCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.056729" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1086" name="CareerRefreshResponseCannotReplaceAnotherAccountCache(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CareerRefreshResponseCannotReplaceAnotherAccountCache(False)" methodname="CareerRefreshResponseCannotReplaceAnotherAccountCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1194393584" result="Passed" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.034047" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1087" name="CareerRefreshResponseCannotReplaceAnotherAccountCache(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CareerRefreshResponseCannotReplaceAnotherAccountCache(True)" methodname="CareerRefreshResponseCannotReplaceAnotherAccountCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1048287562" result="Failed" start-time="2026-10-01 20:18:23Z" end-time="2026-10-01 20:18:23Z" duration="0.009902" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An older account response overwrote the active career.
+  Expected: 77
+  But was:  420
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.CareerRefreshResponseCannotReplaceAnotherAccountCache (System.Boolean replaceAccountCache) [0x000eb] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:165
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="5" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:44:24Z" end-time="2026-10-03 14:44:25Z" duration="0.1459336">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-03 14:44:24Z" end-time="2026-10-03 14:44:25Z" duration="0.145934" total="8" passed="5" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2495" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-03 14:44:24Z" end-time="2026-10-03 14:44:25Z" duration="0.127931" total="8" passed="5" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2496" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-03 14:44:24Z" end-time="2026-10-03 14:44:25Z" duration="0.114901" total="8" passed="5" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2497" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-03 14:44:24Z" end-time="2026-10-03 14:44:25Z" duration="0.072552" total="8" passed="5" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2397" name="TouchButtonPointerLifetimeTests" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-03 14:44:24Z" end-time="2026-10-03 14:44:25Z" duration="0.055024" total="8" passed="5" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2401" name="AFreshPointerWorksAfterAllEarlierPointersRelease" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.AFreshPointerWorksAfterAllEarlierPointersRelease" methodname="AFreshPointerWorksAfterAllEarlierPointersRelease" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1407696626" result="Passed" start-time="2026-10-03 14:44:24Z" end-time="2026-10-03 14:44:25Z" duration="0.033428" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2405" name="ALiftDuringCustomisationCannotRestoreAnotherOldPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.ALiftDuringCustomisationCannotRestoreAnotherOldPointer" methodname="ALiftDuringCustomisationCannotRestoreAnotherOldPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="131582757" result="Passed" start-time="2026-10-03 14:44:25Z" end-time="2026-10-03 14:44:25Z" duration="0.000657" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2400" name="ASinglePointerStillReleasesItsAction" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.ASinglePointerStillReleasesItsAction" methodname="ASinglePointerStillReleasesItsAction" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="18245439" result="Passed" start-time="2026-10-03 14:44:25Z" end-time="2026-10-03 14:44:25Z" duration="0.000402" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2404" name="CustomisationDoesNotRestoreAnOldPointerIntoANewHold" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.CustomisationDoesNotRestoreAnOldPointerIntoANewHold" methodname="CustomisationDoesNotRestoreAnOldPointerIntoANewHold" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1986166347" result="Passed" start-time="2026-10-03 14:44:25Z" end-time="2026-10-03 14:44:25Z" duration="0.000379" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2403" name="DirectSetHeldReleaseAllowsAFreshPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.DirectSetHeldReleaseAllowsAFreshPointer" methodname="DirectSetHeldReleaseAllowsAFreshPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1373431187" result="Passed" start-time="2026-10-03 14:44:25Z" end-time="2026-10-03 14:44:25Z" duration="0.000391" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2399" name="LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer" methodname="LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="1268183781" result="Failed" start-time="2026-10-03 14:44:25Z" end-time="2026-10-03 14:44:25Z" duration="0.004919" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The action released while another captured finger remained down.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.TouchButtonPointerLifetimeTests.LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer () [0x0003f] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\TouchButtonPointerLifetimeTests.cs:60
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2398" name="LiftingTheSecondPointerDoesNotReleaseTheFirstPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.LiftingTheSecondPointerDoesNotReleaseTheFirstPointer" methodname="LiftingTheSecondPointerDoesNotReleaseTheFirstPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="130975582" result="Failed" start-time="2026-10-03 14:44:25Z" end-time="2026-10-03 14:44:25Z" duration="0.000733" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A second finger's lift released the first finger's held action.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.TouchButtonPointerLifetimeTests.LiftingTheSecondPointerDoesNotReleaseTheFirstPointer () [0x00045] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\TouchButtonPointerLifetimeTests.cs:52
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2402" name="TheDisableCallbackReleasesAndAllowsAFreshPointer" fullname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests.TheDisableCallbackReleasesAndAllowsAFreshPointer" methodname="TheDisableCallbackReleasesAndAllowsAFreshPointer" classname="TumbangPreso.Tests.TouchButtonPointerLifetimeTests" runstate="Runnable" seed="2029922701" result="Failed" start-time="2026-10-03 14:44:25Z" end-time="2026-10-03 14:44:25Z" duration="0.002403" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Assert] Assertion failed on expression: 'ShouldRunBehaviour()''. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Component:SendMessage (string)
+TumbangPreso.Tests.TouchButtonPointerLifetimeTests:TheDisableCallbackReleasesAndAllowsAFreshPointer () (at Assets/TumbangPreso/Tests/TouchButtonPointerLifetimeTests.cs:78)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Assertion failed on expression: 'ShouldRunBehaviour()'
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

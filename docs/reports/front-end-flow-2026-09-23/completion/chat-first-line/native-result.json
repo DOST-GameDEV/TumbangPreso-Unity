@@ -1,0 +1,9 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "first match-chat line at enlarged HUD size",
+        "native first message fully rendered at both enlarged-HUD sizes"
+    ],
+    "frameWindows": []
+}

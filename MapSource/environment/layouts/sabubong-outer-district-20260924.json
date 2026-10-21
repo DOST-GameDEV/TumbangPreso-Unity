@@ -1,0 +1,369 @@
+{
+  "retainedHalfExtent": 180,
+  "groundHalfExtent": 1500,
+  "baseY": -26.049,
+  "blockPitch": 52,
+  "blockHalfExtent": 22,
+  "blocks": [
+    {
+      "x": -260,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": -156,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": -104,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": -52,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": 0,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": 52,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": 104,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": 156,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": -260,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": -156,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": -104,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": -52,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": 0,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": 52,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": 104,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": 156,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": -208,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": -156,
+      "z": -260,
+      "garden": true
+    },
+    {
+      "x": -156,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": -156,
+      "z": 208,
+      "garden": true
+    },
+    {
+      "x": -156,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": -104,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": -104,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": -104,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": -104,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": -52,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": -52,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": -52,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": -52,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": 0,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": 0,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": 0,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": 0,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": 52,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": 52,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": 52,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": 52,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": 104,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": 104,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": 104,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": 104,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": 156,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": 156,
+      "z": -208,
+      "garden": true
+    },
+    {
+      "x": 156,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": 156,
+      "z": 260,
+      "garden": true
+    },
+    {
+      "x": 208,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": -156,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": -104,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": -52,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": 0,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": 52,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": 104,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": 156,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": 208,
+      "z": 260,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": -260,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": -208,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": -156,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": -104,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": -52,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": 0,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": 52,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": 104,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": 156,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": 208,
+      "garden": false
+    },
+    {
+      "x": 260,
+      "z": 260,
+      "garden": false
+    }
+  ]
+}

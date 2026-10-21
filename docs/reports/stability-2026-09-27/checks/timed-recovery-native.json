@@ -1,0 +1,50 @@
+{
+  "base": "6f1d73d4164bec237b7974992a18256cf2c26416",
+  "protocol": 84,
+  "scope": "Bounded timed recovery codec and scoped ordered application",
+  "result": "Passed",
+  "total": 2,
+  "duration": 0.1856602,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/TimedKitState.cs",
+      "sha256": "F1B20212DFD01048AF5DE613DE17DD6AF8586194B8159950AC26D28381919025"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/TimedKitState.cs.meta",
+      "sha256": "FB2F781BF84F2FB950A0C6BBF4262282655C2B5BC5BEF75E08915F023D49D594"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.TimedKits.cs",
+      "sha256": "0AD712563165A5C9F8B07C4BB7B0D76BE7CAA56E90D0CB92C6D721652F6A1939"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.TimedKits.cs.meta",
+      "sha256": "2CD2C0EC18BE5D566B732C90B01CDE1813FA15799A2195727AA5D29FB23D773D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "A5EB08414D4FF87F46595149AE42651762E4BEAADA3E578574938F6A10B83330"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "27997B9270E6D51859EB1702E118F554BA2330AD0D9686DBFCB557D4B0294F72"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/ITimedKitReplication.cs",
+      "sha256": "AC1CAA41DD3231BD51B2D778C598612640AF3D20464E97C43ED80A3BAA657793"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "292485BAC41E1F2D23A751FCDCE4AFA3EA9050C1E4F7C68788F60C6CA7A22BAE"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6308581376,
+  "retryCount": 0,
+  "unverified": [
+    "Actual sockets, ranked or reconnect",
+    "Server-time callback",
+    "Specialized flight gameplay"
+  ]
+}

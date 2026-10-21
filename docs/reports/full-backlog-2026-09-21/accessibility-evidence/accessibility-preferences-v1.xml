@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.0789134">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.078913" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1691" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.067260" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24652" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1692" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.066445" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1693" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.066082" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1002" name="AccessibilityPreferenceTests" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.049509" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1013" name="HudScaleCannotInvalidateCanvasGeometry" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.HudScaleCannotInvalidateCanvasGeometry" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.035103" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1009" name="HudScaleCannotInvalidateCanvasGeometry(float.NaN,1.0f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.HudScaleCannotInvalidateCanvasGeometry(float.NaN,1.0f)" methodname="HudScaleCannotInvalidateCanvasGeometry" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="1169859809" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.025648" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1010" name="HudScaleCannotInvalidateCanvasGeometry(float.PositiveInfinity,1.0f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.HudScaleCannotInvalidateCanvasGeometry(float.PositiveInfinity,1.0f)" methodname="HudScaleCannotInvalidateCanvasGeometry" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="1926494575" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.000181" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1011" name="HudScaleCannotInvalidateCanvasGeometry(-100.0f,1.0f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.HudScaleCannotInvalidateCanvasGeometry(-100.0f,1.0f)" methodname="HudScaleCannotInvalidateCanvasGeometry" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="1202206729" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.000115" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="HudScaleCannotInvalidateCanvasGeometry(300.0f,1.2f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.HudScaleCannotInvalidateCanvasGeometry(300.0f,1.2f)" methodname="HudScaleCannotInvalidateCanvasGeometry" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="202933555" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.000073" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1008" name="LensPreferenceAlwaysRemainsFiniteAndBounded" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.LensPreferenceAlwaysRemainsFiniteAndBounded" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.001779" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1004" name="LensPreferenceAlwaysRemainsFiniteAndBounded(float.NaN,95.0f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.LensPreferenceAlwaysRemainsFiniteAndBounded(float.NaN,95.0f)" methodname="LensPreferenceAlwaysRemainsFiniteAndBounded" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="272498420" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.000343" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="LensPreferenceAlwaysRemainsFiniteAndBounded(float.PositiveInfinity,95.0f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.LensPreferenceAlwaysRemainsFiniteAndBounded(float.PositiveInfinity,95.0f)" methodname="LensPreferenceAlwaysRemainsFiniteAndBounded" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="1176524440" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.000138" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="LensPreferenceAlwaysRemainsFiniteAndBounded(-100.0f,75.0f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.LensPreferenceAlwaysRemainsFiniteAndBounded(-100.0f,75.0f)" methodname="LensPreferenceAlwaysRemainsFiniteAndBounded" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="66142700" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.000090" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="LensPreferenceAlwaysRemainsFiniteAndBounded(300.0f,110.0f)" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.LensPreferenceAlwaysRemainsFiniteAndBounded(300.0f,110.0f)" methodname="LensPreferenceAlwaysRemainsFiniteAndBounded" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="103441704" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.000068" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1003" name="OldProfilesKeepTheOriginalLensAndHoldControls" fullname="TumbangPreso.Tests.AccessibilityPreferenceTests.OldProfilesKeepTheOriginalLensAndHoldControls" methodname="OldProfilesKeepTheOriginalLensAndHoldControls" classname="TumbangPreso.Tests.AccessibilityPreferenceTests" runstate="Runnable" seed="718961031" result="Passed" start-time="2026-09-22 10:02:29Z" end-time="2026-09-22 10:02:29Z" duration="0.001067" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

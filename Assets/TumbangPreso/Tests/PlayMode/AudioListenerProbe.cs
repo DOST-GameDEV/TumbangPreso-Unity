@@ -34,6 +34,43 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class AudioListenerProbe
     {
+        [UnityTest]
+        public IEnumerator NativeOutputCaptureContainsTheExistingUiCue()
+        {
+            string folder=System.Environment.GetEnvironmentVariable("TUMP_AUDIO_OUTPUT");
+            if(string.IsNullOrEmpty(folder))Assert.Ignore("Opt-in native output route check, not a silent CI gate.");
+            yield return LoadTheStreet();
+            var settings=Settings.SettingsStore.Current;
+            float master=settings.MasterVolume,sfx=settings.SfxVolume;
+            int captureRate=Time.captureFramerate;bool recording=false;
+            var capture=Ears().gameObject.AddComponent<Diagnostics.ReviewAudioCapture>();
+            try
+            {
+                settings.MasterVolume=1;settings.SfxVolume=1;
+                Assert.AreEqual(AudioSpeakerMode.Stereo,AudioSettings.speakerMode,"This bounded route checks stereo output");
+                Time.captureFramerate=30;
+                recording=AudioRenderer.Start();Assert.IsTrue(recording,"Audio output is already being recorded");
+                capture.Begin(4);
+                GameServices.Audio.PlayUiVaried("score_award",1,1);
+                for(int frame=0;frame<45;frame++)
+                {
+                    yield return null;
+                    int samples=AudioRenderer.GetSampleCountForCaptureFrame();
+                    Assert.Greater(samples,0);
+                    using(var buffer=new Unity.Collections.NativeArray<float>(samples*2,Unity.Collections.Allocator.Temp))
+                        Assert.IsTrue(AudioRenderer.Render(buffer));
+                }
+                capture.Save(folder);
+                var bytes=System.IO.File.ReadAllBytes(System.IO.Path.Combine(folder,"game-audio.wav"));
+                Assert.Greater(bytes.Length,44,"Actual engine samples, not a header-only file");
+                int peak=0;
+                for(int i=44;i+1<bytes.Length;i+=2)peak=System.Math.Max(peak,System.Math.Abs((int)System.BitConverter.ToInt16(bytes,i)));
+                Assert.Greater(peak,0,"The route emitted silence, not audible sample data");
+            }
+            finally
+            {if(recording)AudioRenderer.Stop();Time.captureFramerate=captureRate;settings.MasterVolume=master;settings.SfxVolume=sfx;Object.Destroy(capture);}
+        }
+
         /// <summary>
         /// The pair that makes a full-suite result mean anything. `docs/TODO.md` § 126.8 and
         /// `PlayModeWorld.Reset`.

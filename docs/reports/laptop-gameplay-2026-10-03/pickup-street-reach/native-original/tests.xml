@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.2378971">
+  <test-suite type="TestSuite" id="2769" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1440" result="Failed" site="Child" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.237897" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2763" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1440" result="Failed" site="Child" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.224558" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22804" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2764" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1440" result="Failed" site="Child" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.216655" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2765" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1440" result="Failed" site="Child" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.208924" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2073" name="PickupStreetReachTests" fullname="TumbangPreso.PlayTests.PickupStreetReachTests" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.189950" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2078" name="ALowKerbDoesNotBlockTheManualReach" fullname="TumbangPreso.PlayTests.PickupStreetReachTests.ALowKerbDoesNotBlockTheManualReach" methodname="ALowKerbDoesNotBlockTheManualReach" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" seed="765560177" result="Passed" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.057473" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2076" name="AManualPickupCannotReachThroughATallSolidWall" fullname="TumbangPreso.PlayTests.PickupStreetReachTests.AManualPickupCannotReachThroughATallSolidWall" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.057187" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2074" name="AManualPickupCannotReachThroughATallSolidWall(False)" fullname="TumbangPreso.PlayTests.PickupStreetReachTests.AManualPickupCannotReachThroughATallSolidWall(False)" methodname="AManualPickupCannotReachThroughATallSolidWall" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" seed="190911597" result="Failed" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.031596" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The pickup prompt offers a shoe through a tall solid wall.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.PickupStreetReachTests.AManualPickupCannotReachThroughATallSolidWall (System.Boolean bodyBeforeWall) [0x000df] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\PickupStreetReachTests.cs:100
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2075" name="AManualPickupCannotReachThroughATallSolidWall(True)" fullname="TumbangPreso.PlayTests.PickupStreetReachTests.AManualPickupCannotReachThroughATallSolidWall(True)" methodname="AManualPickupCannotReachThroughATallSolidWall" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" seed="915200802" result="Failed" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.023448" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The pickup prompt offers a shoe through a tall solid wall.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.PickupStreetReachTests.AManualPickupCannotReachThroughATallSolidWall (System.Boolean bodyBeforeWall) [0x000df] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\PickupStreetReachTests.cs:100
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="2079" name="AnotherPlayerDoesNotBlockAnOtherwiseClearManualReach" fullname="TumbangPreso.PlayTests.PickupStreetReachTests.AnotherPlayerDoesNotBlockAnOtherwiseClearManualReach" methodname="AnotherPlayerDoesNotBlockAnOtherwiseClearManualReach" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" seed="1729018063" result="Passed" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.021697" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2077" name="AnUnobstructedManualPickupStillConnects" fullname="TumbangPreso.PlayTests.PickupStreetReachTests.AnUnobstructedManualPickupStillConnects" methodname="AnUnobstructedManualPickupStillConnects" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" seed="1878566324" result="Passed" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.021855" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2080" name="ATriggerCurtainDoesNotBlockTheManualReach" fullname="TumbangPreso.PlayTests.PickupStreetReachTests.ATriggerCurtainDoesNotBlockTheManualReach" methodname="ATriggerCurtainDoesNotBlockTheManualReach" classname="TumbangPreso.PlayTests.PickupStreetReachTests" runstate="Runnable" seed="1705849930" result="Passed" start-time="2026-10-03 06:44:56Z" end-time="2026-10-03 06:44:56Z" duration="0.021983" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

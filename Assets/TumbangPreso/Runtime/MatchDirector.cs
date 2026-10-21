@@ -14,14 +14,18 @@ namespace TumbangPreso
     /// function cannot be created on a client at all. When Phase 5 adds netcode, this method
     /// gets a server guard and NOT a second client-side path.
     /// </summary>
-    public sealed class MatchDirector : MonoBehaviour
+    public sealed partial class MatchDirector : MonoBehaviour
     {
         public event Action<int, int> RoundStarted;        // (roundNumber, defenderSlot)
         public event Action<int, int> IntermissionStarted; // (nextRound, nextDefenderSlot)
         public event Action<int> MatchEnded;               // (winningSlot, or -1 for a draw)
         public event Action<int, ScoreEvent> Scored;
+        /// <summary>A COMPANION's point (its seat, the event), raised after `Scored` has paid its owner, on every peer: what the body
+        /// that scored shows over its head (`Visual.VoodooDollPresence`, plan 9.7). Never a second payment.</summary>
+        public event Action<int, ScoreEvent> CompanionScored;
 
         private readonly Scoreboard _scores = new Scoreboard();
+        private bool _snapshotEndReported;
 
         public int RoundNumber { get; private set; }
         public int DefenderSlot => MatchRules.DefenderSlotFor(RoundNumber);
@@ -68,7 +72,17 @@ namespace TumbangPreso
             return CustomGameRules.ScoreTargetReached(scores, target);
         }
         public bool MatchInProgress { get; private set; }
+        public bool HasCompleted { get; private set; }
+        public int CompletedTotalRounds { get; private set; }
         public bool IsWarmupBuffer { get; set; }
+
+        private void ReportMatchEnded()
+        {
+            // Room teardown may restore local rules before departure is classified.
+            HasCompleted = true;
+            CompletedTotalRounds = TotalRounds;
+            MatchEnded?.Invoke(_scores.WinningSlot());
+        }
 
         public int ScoreFor(int slot) => _scores[slot];
 
@@ -110,8 +124,16 @@ namespace TumbangPreso
             if (IsWarmupBuffer) return;
             if (!NetAuthority.ShouldResolve()) return;
 
+            // ⚠️ A COMPANION'S POINTS ARE ITS OWNER'S (the owner: *"The doll gives points gained to Phaister"*). Mapped here, the
+            // one function that makes a point, so nothing that awards one has to know companions exist (plan 9.12).
+            int body = slot;
+            if (CompanionSeats.IsCompanion(slot)) slot = CompanionSeats.OwnerOf(slot);
+
+            int previousLeader = _scores.WinningSlot();
             _scores.Add(slot, e);
             Scored?.Invoke(slot, e);
+            if (body != slot) CompanionScored?.Invoke(body, e);
+            HostScoreMoment(slot, e, previousLeader);
 
             // ⚠️⚠️ THE AWARD IS ANNOUNCED, NOT ONLY RECORDED, AND THAT IS THE HALF THAT WAS
             // MISSING FROM EVERY CLIENT. The SCORE reaches a peer inside `SyncWorld` and the
@@ -129,7 +151,7 @@ namespace TumbangPreso
             // announcement cannot be made anywhere a point cannot be created. See this class's
             // header: a point that can only be created in one function cannot be created on a
             // client at all, and the same is now true of the noise it makes.
-            Net.MatchRpc.Instance?.BroadcastScore(slot, e);
+            Net.MatchRpc.Instance?.BroadcastScore(slot, e, body);
 
             // A first point is the first durable result the game can honestly call worth
             // keeping today. PlayerAccount records the offer for the next menu rather than
@@ -147,7 +169,11 @@ namespace TumbangPreso
         /// matter because a client cannot see the host's distance checks. This raises the EVENT
         /// and nothing else.
         /// </summary>
-        public void ApplyNetworkScoreEvent(int slot, ScoreEvent e) => Scored?.Invoke(slot, e);
+        public void ApplyNetworkScoreEvent(int slot, ScoreEvent e, int body = -1)
+        {
+            Scored?.Invoke(slot, e);
+            if (CompanionSeats.IsCompanion(body) && CompanionSeats.OwnerOf(body) == slot) CompanionScored?.Invoke(body, e);
+        }
 
         /// <summary>
         /// The replicated match, as the host last described it.
@@ -166,9 +192,9 @@ namespace TumbangPreso
         /// § 1) was unreachable for anyone but the host: a client had no button to press, and
         /// `RematchTally` and `BeginRematch` arrived at a screen that was never raised.
         ///
-        /// ⚠️ ONLY THE TRUE-TO-FALSE EDGE, AND ONLY HERE. A joining client is told `false` before
-        /// the match starts and `false` again after it ends, so raising the event on the VALUE
-        /// would show the result board to somebody who has just walked into a lobby.
+        /// Normally only the confirmed true-to-false edge raises the event. A cold join after
+        /// completion has no live edge, so the installed arena receiver can explicitly admit a
+        /// validated terminal round. A plain false lobby snapshot still raises nothing.
         ///
         /// ⚠️⚠️ AND `RoundStarted` AND `IntermissionStarted` ARE DELIBERATELY NOT RAISED HERE,
         /// WHICH IS THE HALF THAT LOOKS LIKE AN OVERSIGHT AND IS NOT. Both are wired to
@@ -185,11 +211,18 @@ namespace TumbangPreso
         /// by construction: it passes the host its own `MatchInProgress` back, so the edge cannot
         /// fire.
         /// </summary>
-        public void ApplySnapshot(int[] scores, int roundNumber, bool inProgress)
+        public void ApplySnapshot(int[] scores, int roundNumber, bool inProgress,
+                                  bool completedArrival = false)
         {
             bool wasInProgress = MatchInProgress;
 
-            if (inProgress) HostConfirmedInProgress = true;
+            if (inProgress)
+            {
+                HostConfirmedInProgress = true;
+                _snapshotEndReported = false;
+                HasCompleted = false;
+                CompletedTotalRounds = 0;
+            }
 
             _scores.SetAll(scores);
             RoundNumber = roundNumber;
@@ -198,9 +231,22 @@ namespace TumbangPreso
             // ⚠️ THE EDGE NEEDS THE HOST TO HAVE CONFIRMED THIS MATCH FIRST. See
             // `IsPreStartSnapshot`: without that clause the falling edge also fires on a packet
             // the host wrote BEFORE it started, which is the whole of § 82.
-            if (wasInProgress && !inProgress && HostConfirmedInProgress)
-                MatchEnded?.Invoke(_scores.WinningSlot());
+            bool completed = completedArrival && IsCompletedSnapshot(scores, roundNumber);
+            if (!_snapshotEndReported && !inProgress &&
+                ((wasInProgress && HostConfirmedInProgress) || completed))
+            {
+                _snapshotEndReported = true;
+                ReportMatchEnded();
+            }
         }
+
+        // A fresh joiner may never see a live packet. Only the installed arena
+        // receiver opts into this terminal state, never an ordinary lobby snapshot.
+        internal bool IsCompletedSnapshot(int[] scores, int roundNumber)
+            => scores != null && scores.Length == Balance.PlayerCount && roundNumber > 0
+               && roundNumber <= TotalRounds + 1
+               && (roundNumber >= TotalRounds ||
+                   CustomGameRules.ScoreTargetReached(scores, UI.SceneFlow.SelectedRules.ScoreTarget));
 
         /// <summary>
         /// Whether the host has described THIS match as running at least once on this peer.
@@ -245,6 +291,9 @@ namespace TumbangPreso
 
         public void StartMatch()
         {
+            SharedUltimatePhase.Instance?.Cancel();
+            BeginPresentationMatch();
+            HalftimePresentation.Ensure();
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = true;
@@ -262,22 +311,31 @@ namespace TumbangPreso
             // standing from the PREVIOUS match would let the stale packet through second time
             // round. See `IsPreStartSnapshot`.
             HostConfirmedInProgress = false;
+            _snapshotEndReported = false;
+            HasCompleted = false;
+            CompletedTotalRounds = 0;
 
             AdvanceRound();
         }
 
         public void ResetForNewMatch()
         {
+            SharedUltimatePhase.Instance?.Cancel();
+            ResetHostChains();
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = false;
             IsWarmupBuffer = false;
             HostConfirmedInProgress = false;
+            _snapshotEndReported = false;
+            HasCompleted = false;
+            CompletedTotalRounds = 0;
         }
 
         public void AdvanceRound()
         {
             RoundNumber++;
+            ResetHostChains();
             IsWarmupBuffer = false;
 
             // ⚠️⚠️ THE TARGET IS ASKED BESIDE THE ROUND COUNT, NEVER INSTEAD OF IT. Both
@@ -288,7 +346,7 @@ namespace TumbangPreso
             if (RoundNumber > TotalRounds || ScoreTargetReached())
             {
                 MatchInProgress = false;
-                MatchEnded?.Invoke(_scores.WinningSlot());
+                ReportMatchEnded();
                 return;
             }
 
@@ -307,12 +365,13 @@ namespace TumbangPreso
             {
                 MatchInProgress = false;
                 IsWarmupBuffer = false;
-                MatchEnded?.Invoke(_scores.WinningSlot());
+                ReportMatchEnded();
                 return;
             }
 
             IsWarmupBuffer = true;
             SkipRequested = false;
+            HalftimePresentation.Ensure()?.BeginHost(next, MatchRules.DefenderSlotFor(next));
             IntermissionStarted?.Invoke(next, MatchRules.DefenderSlotFor(next));
         }
 
@@ -344,7 +403,7 @@ namespace TumbangPreso
 
         public void SkipBuffer()
         {
-            if (!IsWarmupBuffer || SkipRequested) return;
+            if (!IsWarmupBuffer || SkipRequested || HalftimePresentation.Playing) return;
 
             SkipRequested = true;
             BufferSkipRequested?.Invoke();

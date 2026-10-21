@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 03:43:02Z" end-time="2026-09-30 03:43:18Z" duration="16.1731549">
+  <test-suite type="TestSuite" id="1988" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="794" result="Failed" site="Child" start-time="2026-09-30 03:43:02Z" end-time="2026-09-30 03:43:18Z" duration="16.173155" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1982" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="794" result="Failed" site="Child" start-time="2026-09-30 03:43:02Z" end-time="2026-09-30 03:43:18Z" duration="16.150081" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4716" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1983" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="794" result="Failed" site="Child" start-time="2026-09-30 03:43:02Z" end-time="2026-09-30 03:43:18Z" duration="16.136404" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1984" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="794" result="Failed" site="Child" start-time="2026-09-30 03:43:02Z" end-time="2026-09-30 03:43:18Z" duration="16.122958" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1890" name="TutorialLessonHonestyProbe" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-30 03:43:02Z" end-time="2026-09-30 03:43:18Z" duration="16.074379" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1891" name="ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe.ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen" methodname="ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" seed="60218616" result="Passed" start-time="2026-09-30 03:43:02Z" end-time="2026-09-30 03:43:16Z" duration="14.501108" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Feedback0930-tutorial-three-jumps cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1892" name="TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe.TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction" methodname="TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" seed="1067446322" result="Failed" start-time="2026-09-30 03:43:16Z" end-time="2026-09-30 03:43:18Z" duration="1.557102" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The held kit reference did not compact the tutorial.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TutorialLessonHonestyProbe+<TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction>d__10.MoveNext () [0x00194] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\TutorialLessonHonestyProbe.cs:165
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

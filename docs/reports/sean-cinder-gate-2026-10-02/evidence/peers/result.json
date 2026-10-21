@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 364,
+      "live_samples": 50,
+      "spent_samples": 35,
+      "identities": [
+        1.0
+      ],
+      "final_target_z": -2.653565,
+      "minimum_target_velocity_z": 0.0,
+      "final_cooldown": 23.34383,
+      "final_gates": 0.0
+    },
+    "owner": {
+      "samples": 371,
+      "live_samples": 50,
+      "spent_samples": 35,
+      "identities": [
+        1.0
+      ],
+      "final_target_z": -2.653565,
+      "minimum_target_velocity_z": 0.0,
+      "final_cooldown": 23.34875,
+      "final_gates": 0.0
+    },
+    "observer": {
+      "samples": 371,
+      "live_samples": 50,
+      "spent_samples": 35,
+      "identities": [
+        1.0
+      ],
+      "final_target_z": -2.653565,
+      "minimum_target_velocity_z": -5.128203,
+      "final_cooldown": 23.36048,
+      "final_gates": 0.0
+    }
+  },
+  "observer_reconnected": false,
+  "owner_reconnected": false,
+  "rejoined_seat": null,
+  "delay_one_way_ms": 0,
+  "exe_sha256": "78fd4776b65e70e3e0ac9e2daf7af26b8c94372247ceaf0dd4edf8b1bb4d4096",
+  "runtime_sha256": "43431cd948ed9a3195768e539243e8808a2dc4c56fc1d4c01731f3234975b5ca"
+}

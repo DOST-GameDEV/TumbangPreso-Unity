@@ -1,0 +1,42 @@
+{
+  "sourceRef": "f198637b824362b55eab785b490e77326e2baf30",
+  "profile": "pc-ui-glyph-quality1005",
+  "filter": "TumbangPreso.PlayTests.UiEdgeQualityReview",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-ui-glyph-quality1005",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.UiEdgeQualityReview",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-glyph-visual\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-glyph-visual\\editor.log"
+  ],
+  "pid": 1640,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.UiEdgeQualityReview.ActualHomeControlsRenderAt1080pQhdAnd4k",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19298,
+  "terminal": true
+}

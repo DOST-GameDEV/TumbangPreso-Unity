@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 17:01:56Z" end-time="2026-10-07 17:02:54Z" duration="58.6743461">
+  <test-suite type="TestSuite" id="3635" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2133" result="Failed" site="Child" start-time="2026-10-07 17:01:56Z" end-time="2026-10-07 17:02:54Z" duration="58.674346" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3627" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2133" result="Failed" site="Child" start-time="2026-10-07 17:01:56Z" end-time="2026-10-07 17:02:54Z" duration="58.636025" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="59752" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3628" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2133" result="Failed" site="Child" start-time="2026-10-07 17:01:56Z" end-time="2026-10-07 17:02:54Z" duration="58.606625" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3631" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2131" result="Failed" site="Child" start-time="2026-10-07 17:01:56Z" end-time="2026-10-07 17:02:54Z" duration="58.578213" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2863" name="RecordedSceneryTests" fullname="TumbangPreso.PlayTests.RecordedSceneryTests" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-07 17:01:56Z" end-time="2026-10-07 17:02:54Z" duration="58.382142" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2869" name="ExistingSavedSceneryReopensWithValidSkinnedBindingsAndSeeks" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.ExistingSavedSceneryReopensWithValidSkinnedBindingsAndSeeks" methodname="ExistingSavedSceneryReopensWithValidSkinnedBindingsAndSeeks" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="344262786" result="Failed" start-time="2026-10-07 17:01:56Z" end-time="2026-10-07 17:02:08Z" duration="12.171881" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Exception] InvalidOperationException: Recorded scenery art content changed.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[TumbangPreso.CameraSystem.RecordedSceneryView.Create (TumbangPreso.CameraSystem.LocalReplaySceneryRoot root) (at Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs:123)
+TumbangPreso.CameraSystem.RecordedSceneryView.Draw (TumbangPreso.CameraSystem.LocalReplaySceneryFrame frame) (at Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs:32)
+TumbangPreso.CameraSystem.RecordedWorldView.Draw (System.Single time, System.Boolean audible) (at Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs:394)
+TumbangPreso.CameraSystem.LocalReplayPlayback.Update () (at Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs:316)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+InvalidOperationException: Recorded scenery art content changed.
+TumbangPreso.CameraSystem.RecordedSceneryView.Create (TumbangPreso.CameraSystem.LocalReplaySceneryRoot root) (at Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs:123)
+TumbangPreso.CameraSystem.RecordedSceneryView.Draw (TumbangPreso.CameraSystem.LocalReplaySceneryFrame frame) (at Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs:32)
+TumbangPreso.CameraSystem.RecordedWorldView.Draw (System.Single time, System.Boolean audible) (at Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs:394)
+TumbangPreso.CameraSystem.LocalReplayPlayback.Update () (at Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs:316)
+
+]]></output>
+            </test-case>
+            <test-case id="2867" name="SavedAnimalSurvivesSiblingInsertionAndRejectsAmbiguousOrChangedArt" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalSurvivesSiblingInsertionAndRejectsAmbiguousOrChangedArt" methodname="SavedAnimalSurvivesSiblingInsertionAndRejectsAmbiguousOrChangedArt" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="1442175099" result="Failed" start-time="2026-10-07 17:02:08Z" end-time="2026-10-07 17:02:54Z" duration="46.191622" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedSceneryTests+<Load>d__6.MoveNext () [0x000b8] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs:30
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[LocalReplay] Object reference not set to an instance of an object
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

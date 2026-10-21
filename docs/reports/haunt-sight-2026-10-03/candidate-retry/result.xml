@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 08:24:01Z" end-time="2026-10-03 08:24:02Z" duration="0.9168637">
+  <test-suite type="TestSuite" id="2739" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-03 08:24:01Z" end-time="2026-10-03 08:24:02Z" duration="0.916864" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2733" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-03 08:24:01Z" end-time="2026-10-03 08:24:02Z" duration="0.906062" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="60346" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2734" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-03 08:24:01Z" end-time="2026-10-03 08:24:02Z" duration="0.901563" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2735" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-03 08:24:01Z" end-time="2026-10-03 08:24:02Z" duration="0.897224" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1500" name="HauntedRuntimeTests" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 08:24:01Z" end-time="2026-10-03 08:24:02Z" duration="0.656710" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1505" name="ActualVictimCameraRendersPurpleAndClearsWithStatus" fullname="TumbangPreso.PlayTests.HauntedRuntimeTests.ActualVictimCameraRendersPurpleAndClearsWithStatus" methodname="ActualVictimCameraRendersPurpleAndClearsWithStatus" classname="TumbangPreso.PlayTests.HauntedRuntimeTests" runstate="Runnable" seed="805640641" result="Passed" start-time="2026-10-03 08:24:01Z" end-time="2026-10-03 08:24:02Z" duration="0.644097" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1507" name="HauntedSightVisualTests" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 08:24:02Z" end-time="2026-10-03 08:24:02Z" duration="0.193447" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1510" name="SameDepthPlaneHasRadialPurpleFalloff" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 08:24:02Z" end-time="2026-10-03 08:24:02Z" duration="0.187259" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1508" name="SameDepthPlaneHasRadialPurpleFalloff(1.777778f)" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff(1.777778f)" methodname="SameDepthPlaneHasRadialPurpleFalloff" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" seed="1664126007" result="Passed" start-time="2026-10-03 08:24:02Z" end-time="2026-10-03 08:24:02Z" duration="0.176580" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1509" name="SameDepthPlaneHasRadialPurpleFalloff(1.333333f)" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff(1.333333f)" methodname="SameDepthPlaneHasRadialPurpleFalloff" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" seed="1584490739" result="Passed" start-time="2026-10-03 08:24:02Z" end-time="2026-10-03 08:24:02Z" duration="0.009631" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1511" name="UnhauntedImageRemainsUniform" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.UnhauntedImageRemainsUniform" methodname="UnhauntedImageRemainsUniform" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" seed="1230117176" result="Passed" start-time="2026-10-03 08:24:02Z" end-time="2026-10-03 08:24:02Z" duration="0.004171" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.1532593">
+  <test-suite type="TestSuite" id="2845" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.153259" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2839" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.138537" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4168" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2840" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.129459" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2841" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.120326" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2184" name="PunchPressReleaseRecoveryTests" fullname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" classname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.098906" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2185" name="AReleaseObservedDuringStunAllowsAFreshPunchAfterRecovery" fullname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests.AReleaseObservedDuringStunAllowsAFreshPunchAfterRecovery" methodname="AReleaseObservedDuringStunAllowsAFreshPunchAfterRecovery" classname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" runstate="Runnable" seed="904891715" result="Passed" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.064874" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2186" name="AReleaseObservedInTheAttackerRoleAllowsAFreshDefenderPunch" fullname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests.AReleaseObservedInTheAttackerRoleAllowsAFreshDefenderPunch" methodname="AReleaseObservedInTheAttackerRoleAllowsAFreshDefenderPunch" classname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" runstate="Runnable" seed="1436853165" result="Passed" start-time="2026-10-03 09:28:36Z" end-time="2026-10-03 09:28:36Z" duration="0.023635" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

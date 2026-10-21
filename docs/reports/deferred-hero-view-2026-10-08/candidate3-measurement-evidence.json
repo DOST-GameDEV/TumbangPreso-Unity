@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "cf9afad38dc43bc332c68a1354fa03d3dbc9ad3b",
+  "runtimeSha256": "df1e584be1a844c2f13c027a07d54a1bfa7885a5333b42c9083ac20b23909035",
+  "buildReplaced": "Builds/release-ui-perf1008g only",
+  "newBuildDirectories": 0,
+  "desktopChanged": false,
+  "playerPid": 43760,
+  "playerWindows": 14,
+  "passed": true,
+  "firstHeroWallMaxMs": 36.96770095825195,
+  "firstHeroCpuMaxMs": 36.8833,
+  "firstHeroFramesOver50Ms": 0,
+  "firstHeroFramesOver33Ms": 1,
+  "ordinaryReleaseMeasured": false,
+  "tournamentSmoothnessAccepted": false,
+  "cpuScope": "Main thread in the worst measured Hero CPU frame. Export retains samples >=0.05ms plus depth<2; JIT sum covers retained rows. Nested inclusive samples are not additive. Diagnostic overhead is included.",
+  "rawSha256": {
+    "candidate3-build-restoration.json": "718052b961766221ebc53dbc20540892bb41db56ac82290ec9cc5a3b09c4a611",
+    "candidate3-export-restoration.json": "0cf9e28d3971ba9fcb8a11d1ae3f4c709e54db8dcf1bbee553117f4cdce4d688",
+    "candidate3-export-result.json": "635ac187faa2dd040aa6c08d4b65d7e1fc2ebeaeca5d12657d11ccc588223f1d",
+    "candidate3-player-cpu-worst.json": "a6875233d9c253fc3d473fdb0c6f02b7eda64cecb5b88b61fc0dbe6604f1090e",
+    "candidate3-player-result.json": "a04e3a06631ac97a6fbc3ffff9fd26d9eb7cef9a5072dad2283a0bd2dc811813"
+  }
+}

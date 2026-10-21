@@ -75,25 +75,47 @@ namespace TumbangPreso.PlayTests
         /// looks fine. Every name here was on the screen before this pass and has to be on it
         /// after.
         /// </summary>
+        /// <remarks>
+        /// ⚠️⚠️ SEVEN OF THESE NAMES ARE THE OWNER-PAINTED LOBBY'S AND WERE THE CONVERTED
+        /// LOBBY'S, AND THE RENAMES ARE WHY THIS CASE WENT RED. Nothing was lost; every
+        /// capability on the old list is still one press away, under the name
+        /// `OwnerPreparationView` builds it with. The mapping, once, so the next reader does not
+        /// have to re-derive it from two files:
+        ///
+        /// | § 119.3 | the painted lobby |
+        /// |---|---|
+        /// | `PracticeTab` | `PracticeRoute` |
+        /// | `RankedTab` | `RankedRoute` |
+        /// | `CustomTab` | `CustomGameButton` |
+        /// | `CharacterButton` | `LoadoutButton`, which was already on this list beside it |
+        /// | `SettingsDrawerToggle` | `SettingsButton` |
+        /// | `RoomCodeButton` | `CopyRoomCode` |
+        /// | `JoinChip` | `JoinRoomButton` |
+        /// | `ChatChip` | `ChatButton` |
+        /// | `StatusLabel` | `PreparationStatus` |
+        ///
+        /// ⚠️ THE LIST STILL MEANS WHAT IT MEANT. It is an inventory of what the lobby owes a
+        /// player, not a record of what some pass happened to name things, so a redesign that
+        /// drops a capability fails here exactly as before.
+        /// </remarks>
         private static readonly string[] LobbyControls =
         {
             "BackButton",
-            "PracticeTab",
-            "RankedTab",
-            "CustomTab",
+            "PracticeRoute",
+            "RankedRoute",
+            "CustomGameButton",
             "ProfileButton",
-            "CharacterButton",
             "LoadoutButton",
-            "SettingsDrawerToggle",
-            "RoomCodeButton",
+            "SettingsButton",
+            "CopyRoomCode",
             // ⚠️ `PlayerNameEdit` IS NOT HERE ANY MORE. It lives in `PlayerHub`'s PROFILE tab,
             // which is built when the tab is shown, so a probe that looked for it on a lobby
             // nobody had opened the account screen on would be asserting the absence of a control
             // rather than its presence. `UiRuntimeShots.TheLobbyDraws` presses the door and checks
             // it there, which is the state a player is in when they use it.
-            "JoinChip",
-            "ChatChip",
-            "StatusLabel",
+            "JoinRoomButton",
+            "ChatButton",
+            "PreparationStatus",
         };
 
         /// <summary>The two action buttons, of which exactly one is live at a time. ⚠️ They are
@@ -202,7 +224,7 @@ namespace TumbangPreso.PlayTests
             // ⚠️⚠️ EVERY DRAWER IS OPENED BEFORE THE WALK, WHICH IS THE POINT OF DOING THIS IN A
             // PROBE RATHER THAN IN A RENDER. A shut drawer is invisible to a camera and its
             // contents are exactly where a leftover survives a review.
-            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            foreach (string chip in new[] { "SettingsButton", "JoinRoomButton", "ChatButton" })
             {
                 var button = Find(chip)?.GetComponent<Button>();
                 if (button == null) continue;
@@ -224,7 +246,7 @@ namespace TumbangPreso.PlayTests
             // `UiRuntimeShots.TheLobbyDoorsDraw` records: everything on them is drawn off a
             // selection change, and a panel switched on without one is a panel nobody has selected
             // anything in.
-            foreach (string door in new[] { "CharacterButton", "ProfileButton" })
+            foreach (string door in new[] { "LoadoutButton", "ProfileButton" })
             {
                 var open = Find(door)?.GetComponent<Button>();
                 if (open == null) continue;
@@ -257,6 +279,22 @@ namespace TumbangPreso.PlayTests
             // ⚠️ THE IN-MATCH HUD AND THE MAIN MENU ARE SKIPPED BY NAME. They are still wooden on
             // purpose and 🧑 scoped both out twice: *"dont touch main menu and inngame ui"*.
             if (t.name == "HudCanvas" || t.name == "MainMenuRoot") return;
+
+            // ⚠️⚠️ A SUBTREE THAT IS SWITCHED OFF IS NOT A LEFTOVER, AND THE OWNER-PAINTED PASS
+            // IS WHY THIS LINE HAD TO BE WRITTEN. `ConvertedMatchSetup.WireOwnerPreparation`
+            // opens with `foreach (Transform child in transform) child.gameObject.SetActive(false)`
+            // and then builds `OwnerPreparationView` beside it, and
+            // `ConvertedCharacterSelect.Awake` does the same: **the whole authored Godot lobby
+            // is retained, deliberately, as an inactive reference**, which is what let the
+            // painted screens be written without deleting the conversion they replaced. This
+            // walk was reporting every plank of it — `ConfigPanel`, `SeatPanel`, `SeatButton0`
+            // to `3`, `CharacterButton` — as wood surviving on the lobby.
+            //
+            // ⚠️ IT LOSES NOTHING THIS PROBE EXISTS FOR, because the caller OPENS every drawer
+            // before it walks: a shut drawer is active by the time this runs, and a surface
+            // hidden UNDER another surface is active too. **The one thing no longer asked is
+            // whether a wholly disabled subtree is wooden, and a player cannot see one.**
+            if (!t.gameObject.activeInHierarchy) return;
 
             // ⚠️⚠️ THE ACTION SLOT IS EXEMPT WHOLESALE AND THAT IS THE DESIGN, NOT A HOLE IN THE
             // TEST. Its three occupants are the one primary this screen has, and 🧑 chose their
@@ -565,176 +603,23 @@ namespace TumbangPreso.PlayTests
             var found = new SortedSet<string>(System.StringComparer.Ordinal);
 
             // ---- MainMenu: the settings panel and the login screen ----
-            var menu = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
-            yield return ProbeWait.Done(menu, "MainMenu load");
-            for (int i = 0; i < SettleFrames; i++) yield return null;
-
-            var settings = Find("SettingsPanel");
-            if (settings != null)
-            {
-                settings.SetActive(true);
-                for (int i = 0; i < SettleFrames; i++) yield return null;
-                Canvas.ForceUpdateCanvases();
-
-                // ⚠️⚠️ EVERY TAB, NOT THE ONE IT OPENS ON. A settings screen is a tabbed screen
-                // and the rows of a tab nobody pressed are not built, so a walk of the default
-                // tab is an inventory of about a fifth of the controls. This is the drawer rule
-                // from `NoWoodenSurfaceSurvivesOnTheLobby` one level up.
-                foreach (var tab in settings.GetComponentsInChildren<Button>(true))
-                {
-                    var skin = tab.GetComponent<GodotButton>();
-                    bool isTab = skin != null && skin.Variation != null
-                                 && skin.Variation.Contains("Tab");
-                    if (!isTab) continue;
-
-                    tab.onClick.Invoke();
-                    for (int i = 0; i < 20; i++) yield return null;
-                    Canvas.ForceUpdateCanvases();
-                    CatalogueScene("settings", found);
-                }
-
-                CatalogueScene("settings", found);
-                settings.SetActive(false);
-            }
-
-            var owner = Object.FindFirstObjectByType<ConvertedMainMenu>();
-            if (owner != null)
-            {
-                var signIn = owner.GetComponent<SignInScreen>();
-                if (signIn == null) signIn = owner.gameObject.AddComponent<SignInScreen>();
-                signIn.Install();
-
-                // ⚠️⚠️ ALL THREE STATES, WHICH IS `CLAUDE.md` § 6.2b'S FIRST ROW AS A LOOP.
-                // *"The sign-in screen was shot only as Open(). It ships as OpenAtBoot() too,
-                // which hides BACK, renames a button and has no hub behind it."* A control that
-                // only exists in the boot state is exactly the kind a rebuild drops silently.
-                signIn.Open();
-                for (int i = 0; i < 20; i++) yield return null;
-                CatalogueScene("login", found);
-
-                signIn.OpenForUpgrade();
-                for (int i = 0; i < 20; i++) yield return null;
-                CatalogueScene("login", found);
-
-                signIn.OpenAtBoot();
-                for (int i = 0; i < 20; i++) yield return null;
-                CatalogueScene("login", found);
-            }
-
-            // ---- MatchSetup: the lobby and everything it opens ----
             bool previousNetworked = SceneFlow.Networked;
-            SceneFlow.Networked = true;
-
-            var lobby = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            yield return ProbeWait.Done(lobby, "MatchSetup load");
-            for (int i = 0; i < SettleFrames; i++) yield return null;
-            Canvas.ForceUpdateCanvases();
-
-            CatalogueScene("lobby", found);
-
-            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            try { yield return FrontEndControlWalk.Capture(found); }
+            finally
             {
-                var button = Find(chip)?.GetComponent<Button>();
-                if (button == null) continue;
-
-                button.onClick.Invoke();
-                for (int i = 0; i < 10; i++) yield return null;
-                Canvas.ForceUpdateCanvases();
-                CatalogueScene("lobby", found);
+                SceneFlow.Networked = previousNetworked;
+                if (Net.NetSession.Instance != null) Net.NetSession.Instance.Stop();
+                System.IO.Directory.CreateDirectory("Logs");
+                System.IO.File.WriteAllLines(InventoryLog, found);
             }
-
-            foreach (string door in new[] { "CharacterButton", "LoadoutButton", "ProfileButton" })
-            {
-                var open = Find(door)?.GetComponent<Button>();
-                if (open == null) continue;
-
-                open.onClick.Invoke();
-                for (int i = 0; i < 40; i++) yield return null;
-                Canvas.ForceUpdateCanvases();
-                CatalogueScene(door == "ProfileButton" ? "profile" : "character", found);
-            }
-
-            SceneFlow.Networked = previousNetworked;
-            var session = Net.NetSession.Instance;
-            if (session != null) session.Stop();
 
             System.IO.Directory.CreateDirectory("Logs");
             System.IO.File.WriteAllLines(InventoryLog, found);
 
-            if (!System.IO.File.Exists(BaselinePath))
-            {
-                System.IO.File.WriteAllLines(BaselinePath, found);
-                Assert.Ignore(
-                    $"no inventory baseline existed, so this run WROTE one with {found.Count} "
-                    + $"controls to {BaselinePath}. Commit it: from here on it is the gate that "
-                    + "says a rebuild did not lose a button. docs/TODO.md § 133.5.");
-                yield break;
-            }
-
-            var baseline = new SortedSet<string>(System.IO.File.ReadAllLines(BaselinePath),
-                                                 System.StringComparer.Ordinal);
-
-            var lost = new List<string>();
-            foreach (string row in baseline)
-            {
-                if (found.Contains(row)) continue;
-
-                // ⚠️ A CONTROL THAT KEPT ITS NODE AND CHANGED ITS WORD IS REPORTED SEPARATELY
-                // RATHER THAN AS A LOSS. Renaming CONTINUE to NEXT is a design decision somebody
-                // made on purpose; deleting the button is not, and a gate that cannot tell them
-                // apart gets its output skimmed, which is § 124.11's lesson.
-                var parts = row.Split('\t');
-                if (parts.Length >= 3)
-                {
-                    // Explicit scope changes, not a replacement baseline. The maker
-                    // is withdrawn; the tutorial now lives on the rules screen and
-                    // HomeFlowTests follows that door. Equipment keeps the same jobs.
-                    if (parts[2] == "CustomDoor") continue;
-                    if (parts[2] == "TutorialButton" && (parts[0] == "settings" || parts[0] == "login")) continue;
-                    if (parts[2] == "Button_LATA") parts[2] = "Button_CAN";
-                    if (parts[2] == "Button_TSINELAS") parts[2] = "Button_SLIPPER";
-                }
-                string stem = parts.Length >= 3
-                    ? $"{parts[0]}\t{parts[1]}\t{parts[2]}\t"
-                    : row;
-
-                bool nodeSurvived = false;
-                foreach (string live in found)
-                    if (live.StartsWith(stem, System.StringComparison.Ordinal))
-                        nodeSurvived = true;
-
-                if (!nodeSurvived) lost.Add(row.Replace("\t", "  |  "));
-            }
-
-            Assert.IsEmpty(lost,
-                "these front-end controls were on the screens before this pass and are not on "
-                + "them now, so the rebuild lost them. 🧑 asked for this by name: \"it should have "
-                + "all the functions of old ui, make sure ntohing in old ui as functions get "
-                + "lost\". docs/TODO.md § 133.5, and " + InventoryLog + " is the full live walk:\n  "
-                + string.Join("\n  ", lost));
+            Assert.IsTrue(System.IO.File.Exists(BaselinePath), "The historical inventory must never be silently regenerated.");
+            FrontEndControlWalk.VerifyMigration(System.IO.File.ReadAllLines(BaselinePath), found);
         }
 
-        /// <summary>
-        /// No label in the front end is faking a weight the face does not have.
-        ///
-        /// ⚠️⚠️ THIS IS THE REGRESSION GATE FOR THE WHOLE OF `docs/TODO.md` § 133, and it exists
-        /// because the fault it guards is INVISIBLE in a code review and nearly invisible in a
-        /// screenshot. Legacy `Text` given `FontStyle.Bold` on a face that ships one weight does
-        /// not fail and does not warn: it draws every glyph twice at an offset. § 132.8 chased
-        /// that through a stale capture, a wrapping row, a clipped box and a soft render before
-        /// anybody thought to ask what the font actually contained.
-        ///
-        /// ⚠️ IT ASKS ABOUT THE FONT, NOT ABOUT THE SOURCE. A grep for `FontStyle.Bold` would
-        /// pass a screen that set it through a converted `.tscn`, and those are most of this front
-        /// end. What is asserted here is the only thing that matters at the pixel: a label is
-        /// either in a file that HAS this weight, or it is not asking for one.
-        ///
-        /// ⚠️ AND THE IN-MATCH LAYER IS OUT OF SCOPE, so it is skipped by canvas name exactly as
-        /// <see cref="Walk"/> skips it. `Hud`, `AbilityInspectPanel` and `ComicPopup` still carry
-        /// synthetic bolds on purpose: § 133.4 draws the line at "is it drawn while a round is
-        /// live", and moving them in this pass would put a font change and a readability contract
-        /// in one commit with no way to tell which broke what.
-        /// </summary>
         [UnityTest]
         public IEnumerator NoLabelFakesItsWeight()
         {
@@ -749,7 +634,7 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < SettleFrames; i++) yield return null;
 
-            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            foreach (string chip in new[] { "SettingsButton", "JoinRoomButton", "ChatButton" })
             {
                 var button = Find(chip)?.GetComponent<Button>();
                 if (button == null) continue;
@@ -757,7 +642,7 @@ namespace TumbangPreso.PlayTests
                 for (int i = 0; i < 6; i++) yield return null;
             }
 
-            foreach (string door in new[] { "CharacterButton", "ProfileButton" })
+            foreach (string door in new[] { "LoadoutButton", "ProfileButton" })
             {
                 var open = Find(door)?.GetComponent<Button>();
                 if (open == null) continue;
@@ -841,7 +726,7 @@ namespace TumbangPreso.PlayTests
             yield return ProbeWait.Done(lobby, "MatchSetup load");
             for (int i = 0; i < SettleFrames; i++) yield return null;
 
-            foreach (string chip in new[] { "JoinChip", "ChatChip" })
+            foreach (string chip in new[] { "JoinRoomButton", "ChatButton" })
             {
                 var button = Find(chip)?.GetComponent<Button>();
                 if (button == null) continue;

@@ -1,0 +1,32 @@
+{
+  "sourceRef": "5f72ff8844f9caa00018583958a47de44f46f9f7",
+  "pid": 23460,
+  "profile": "pc-look-orig1005",
+  "filter": "TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDiscardsLateTouchLookInItsFrame;TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDefersHeldStickLookForOnlyItsFrame;TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryTouchLookStillReachesGameplay",
+  "expectedCases": 3,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDefersHeldStickLookForOnlyItsFrame",
+      "result": "Failed",
+      "message": "  Held menu navigation leaked into gameplay look before the frame ended.\n  Expected: (0.00, 0.00)\n  But was:  (0.22, 0.00)\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDiscardsLateTouchLookInItsFrame",
+      "result": "Failed",
+      "message": "  A menu's final pointer/drag movement rotated the gameplay camera.\n  Expected: (0.00, 0.00)\n  But was:  (40.00, -15.00)\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryTouchLookStillReachesGameplay",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "terminal": true,
+  "protectedCount": 19284
+}

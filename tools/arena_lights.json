@@ -1,0 +1,2033 @@
+{
+ "roof": {
+  "frame": "metres, Blender axes: x east, y north, z up; the can is the origin. Unity: x = x, y = z, z = y.",
+  "note": "Beams through haze are not geometry of this kit. Each floodlight bank is a lamp face 9.5 m wide by 1.9 m tall whose normal is `direction`; put the light and the beam's near end at `position`.",
+  "floodlight_banks": [
+   {
+    "name": "flood_north_1",
+    "canopy": "north",
+    "bearing_deg": 333.0,
+    "position": [
+     -68.69,
+     134.81,
+     66.75
+    ],
+    "aim_point": [
+     -6.36,
+     12.47,
+     0.5
+    ],
+    "direction": [
+     0.4089,
+     -0.8025,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_north_2",
+    "canopy": "north",
+    "bearing_deg": 343.0,
+    "position": [
+     -44.24,
+     144.69,
+     66.75
+    ],
+    "aim_point": [
+     -4.09,
+     13.39,
+     0.5
+    ],
+    "direction": [
+     0.2633,
+     -0.8613,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_north_3",
+    "canopy": "north",
+    "bearing_deg": 352.875,
+    "position": [
+     -18.77,
+     150.13,
+     66.75
+    ],
+    "aim_point": [
+     -1.74,
+     13.89,
+     0.5
+    ],
+    "direction": [
+     0.1117,
+     -0.8937,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_north_4",
+    "canopy": "north",
+    "bearing_deg": 7.125,
+    "position": [
+     18.77,
+     150.13,
+     66.75
+    ],
+    "aim_point": [
+     1.74,
+     13.89,
+     0.5
+    ],
+    "direction": [
+     -0.1117,
+     -0.8937,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_north_5",
+    "canopy": "north",
+    "bearing_deg": 17.0,
+    "position": [
+     44.24,
+     144.69,
+     66.75
+    ],
+    "aim_point": [
+     4.09,
+     13.39,
+     0.5
+    ],
+    "direction": [
+     -0.2633,
+     -0.8613,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_north_6",
+    "canopy": "north",
+    "bearing_deg": 27.0,
+    "position": [
+     68.69,
+     134.81,
+     66.75
+    ],
+    "aim_point": [
+     6.36,
+     12.47,
+     0.5
+    ],
+    "direction": [
+     -0.4089,
+     -0.8025,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_east_1",
+    "canopy": "east",
+    "bearing_deg": 63.0,
+    "position": [
+     134.81,
+     68.69,
+     66.75
+    ],
+    "aim_point": [
+     12.47,
+     6.36,
+     0.5
+    ],
+    "direction": [
+     -0.8025,
+     -0.4089,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_east_2",
+    "canopy": "east",
+    "bearing_deg": 73.0,
+    "position": [
+     144.69,
+     44.24,
+     66.75
+    ],
+    "aim_point": [
+     13.39,
+     4.09,
+     0.5
+    ],
+    "direction": [
+     -0.8613,
+     -0.2633,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_east_3",
+    "canopy": "east",
+    "bearing_deg": 82.875,
+    "position": [
+     150.13,
+     18.77,
+     66.75
+    ],
+    "aim_point": [
+     13.89,
+     1.74,
+     0.5
+    ],
+    "direction": [
+     -0.8937,
+     -0.1117,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_east_4",
+    "canopy": "east",
+    "bearing_deg": 97.125,
+    "position": [
+     150.13,
+     -18.77,
+     66.75
+    ],
+    "aim_point": [
+     13.89,
+     -1.74,
+     0.5
+    ],
+    "direction": [
+     -0.8937,
+     0.1117,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_east_5",
+    "canopy": "east",
+    "bearing_deg": 107.0,
+    "position": [
+     144.69,
+     -44.24,
+     66.75
+    ],
+    "aim_point": [
+     13.39,
+     -4.09,
+     0.5
+    ],
+    "direction": [
+     -0.8613,
+     0.2633,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_east_6",
+    "canopy": "east",
+    "bearing_deg": 117.0,
+    "position": [
+     134.81,
+     -68.69,
+     66.75
+    ],
+    "aim_point": [
+     12.47,
+     -6.36,
+     0.5
+    ],
+    "direction": [
+     -0.8025,
+     0.4089,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_south_1",
+    "canopy": "south",
+    "bearing_deg": 153.0,
+    "position": [
+     68.69,
+     -134.81,
+     66.75
+    ],
+    "aim_point": [
+     6.36,
+     -12.47,
+     0.5
+    ],
+    "direction": [
+     -0.4089,
+     0.8025,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_south_2",
+    "canopy": "south",
+    "bearing_deg": 163.0,
+    "position": [
+     44.24,
+     -144.69,
+     66.75
+    ],
+    "aim_point": [
+     4.09,
+     -13.39,
+     0.5
+    ],
+    "direction": [
+     -0.2633,
+     0.8613,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_south_3",
+    "canopy": "south",
+    "bearing_deg": 172.875,
+    "position": [
+     18.77,
+     -150.13,
+     66.75
+    ],
+    "aim_point": [
+     1.74,
+     -13.89,
+     0.5
+    ],
+    "direction": [
+     -0.1117,
+     0.8937,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_south_4",
+    "canopy": "south",
+    "bearing_deg": 187.125,
+    "position": [
+     -18.77,
+     -150.13,
+     66.75
+    ],
+    "aim_point": [
+     -1.74,
+     -13.89,
+     0.5
+    ],
+    "direction": [
+     0.1117,
+     0.8937,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_south_5",
+    "canopy": "south",
+    "bearing_deg": 197.0,
+    "position": [
+     -44.24,
+     -144.69,
+     66.75
+    ],
+    "aim_point": [
+     -4.09,
+     -13.39,
+     0.5
+    ],
+    "direction": [
+     0.2633,
+     0.8613,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_south_6",
+    "canopy": "south",
+    "bearing_deg": 207.0,
+    "position": [
+     -68.69,
+     -134.81,
+     66.75
+    ],
+    "aim_point": [
+     -6.36,
+     -12.47,
+     0.5
+    ],
+    "direction": [
+     0.4089,
+     0.8025,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_west_1",
+    "canopy": "west",
+    "bearing_deg": 243.0,
+    "position": [
+     -134.81,
+     -68.69,
+     66.75
+    ],
+    "aim_point": [
+     -12.47,
+     -6.36,
+     0.5
+    ],
+    "direction": [
+     0.8025,
+     0.4089,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_west_2",
+    "canopy": "west",
+    "bearing_deg": 253.0,
+    "position": [
+     -144.69,
+     -44.24,
+     66.75
+    ],
+    "aim_point": [
+     -13.39,
+     -4.09,
+     0.5
+    ],
+    "direction": [
+     0.8613,
+     0.2633,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_west_3",
+    "canopy": "west",
+    "bearing_deg": 262.875,
+    "position": [
+     -150.13,
+     -18.77,
+     66.75
+    ],
+    "aim_point": [
+     -13.89,
+     -1.74,
+     0.5
+    ],
+    "direction": [
+     0.8937,
+     0.1117,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_west_4",
+    "canopy": "west",
+    "bearing_deg": 277.125,
+    "position": [
+     -150.13,
+     18.77,
+     66.75
+    ],
+    "aim_point": [
+     -13.89,
+     1.74,
+     0.5
+    ],
+    "direction": [
+     0.8937,
+     -0.1117,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_west_5",
+    "canopy": "west",
+    "bearing_deg": 287.0,
+    "position": [
+     -144.69,
+     44.24,
+     66.75
+    ],
+    "aim_point": [
+     -13.39,
+     4.09,
+     0.5
+    ],
+    "direction": [
+     0.8613,
+     -0.2633,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   },
+   {
+    "name": "flood_west_6",
+    "canopy": "west",
+    "bearing_deg": 297.0,
+    "position": [
+     -134.81,
+     68.69,
+     66.75
+    ],
+    "aim_point": [
+     -12.47,
+     6.36,
+     0.5
+    ],
+    "direction": [
+     0.8025,
+     -0.4089,
+     -0.4346
+    ],
+    "face_width_m": 9.5,
+    "face_height_m": 1.9,
+    "lamps": 20,
+    "colour": "cool white #eef5ff",
+    "beam": "a wide flat fan, 9.5 m across at the source"
+   }
+  ],
+  "house_lights": [
+   {
+    "name": "house_north_1",
+    "position": [
+     -81.25,
+     143.61,
+     66.4
+    ],
+    "aim_point": [
+     -58.11,
+     102.7,
+     20.0
+    ],
+    "direction": [
+     0.3504,
+     -0.6193,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_2",
+    "position": [
+     -68.42,
+     150.14,
+     66.4
+    ],
+    "aim_point": [
+     -48.93,
+     107.38,
+     20.0
+    ],
+    "direction": [
+     0.2951,
+     -0.6475,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_3",
+    "position": [
+     -55.08,
+     155.54,
+     66.4
+    ],
+    "aim_point": [
+     -39.39,
+     111.23,
+     20.0
+    ],
+    "direction": [
+     0.2375,
+     -0.6708,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_4",
+    "position": [
+     -41.31,
+     159.74,
+     66.4
+    ],
+    "aim_point": [
+     -29.54,
+     114.24,
+     20.0
+    ],
+    "direction": [
+     0.1782,
+     -0.6889,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_5",
+    "position": [
+     -27.23,
+     162.74,
+     66.4
+    ],
+    "aim_point": [
+     -19.48,
+     116.38,
+     20.0
+    ],
+    "direction": [
+     0.1174,
+     -0.7018,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_6",
+    "position": [
+     -13.66,
+     164.43,
+     66.4
+    ],
+    "aim_point": [
+     -9.77,
+     117.59,
+     20.0
+    ],
+    "direction": [
+     0.0589,
+     -0.7092,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_7",
+    "position": [
+     0.0,
+     165.0,
+     66.4
+    ],
+    "aim_point": [
+     0.0,
+     118.0,
+     20.0
+    ],
+    "direction": [
+     0.0,
+     -0.7116,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_8",
+    "position": [
+     13.66,
+     164.43,
+     66.4
+    ],
+    "aim_point": [
+     9.77,
+     117.59,
+     20.0
+    ],
+    "direction": [
+     -0.0589,
+     -0.7092,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_9",
+    "position": [
+     27.23,
+     162.74,
+     66.4
+    ],
+    "aim_point": [
+     19.48,
+     116.38,
+     20.0
+    ],
+    "direction": [
+     -0.1174,
+     -0.7018,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_10",
+    "position": [
+     41.31,
+     159.74,
+     66.4
+    ],
+    "aim_point": [
+     29.54,
+     114.24,
+     20.0
+    ],
+    "direction": [
+     -0.1782,
+     -0.6889,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_11",
+    "position": [
+     55.08,
+     155.54,
+     66.4
+    ],
+    "aim_point": [
+     39.39,
+     111.23,
+     20.0
+    ],
+    "direction": [
+     -0.2375,
+     -0.6708,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_12",
+    "position": [
+     68.42,
+     150.14,
+     66.4
+    ],
+    "aim_point": [
+     48.93,
+     107.38,
+     20.0
+    ],
+    "direction": [
+     -0.2951,
+     -0.6475,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_north_13",
+    "position": [
+     81.25,
+     143.61,
+     66.4
+    ],
+    "aim_point": [
+     58.11,
+     102.7,
+     20.0
+    ],
+    "direction": [
+     -0.3504,
+     -0.6193,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_1",
+    "position": [
+     143.61,
+     81.25,
+     66.4
+    ],
+    "aim_point": [
+     102.7,
+     58.11,
+     20.0
+    ],
+    "direction": [
+     -0.6193,
+     -0.3504,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_2",
+    "position": [
+     150.14,
+     68.42,
+     66.4
+    ],
+    "aim_point": [
+     107.38,
+     48.93,
+     20.0
+    ],
+    "direction": [
+     -0.6475,
+     -0.2951,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_3",
+    "position": [
+     155.54,
+     55.08,
+     66.4
+    ],
+    "aim_point": [
+     111.23,
+     39.39,
+     20.0
+    ],
+    "direction": [
+     -0.6708,
+     -0.2375,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_4",
+    "position": [
+     159.74,
+     41.31,
+     66.4
+    ],
+    "aim_point": [
+     114.24,
+     29.54,
+     20.0
+    ],
+    "direction": [
+     -0.6889,
+     -0.1782,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_5",
+    "position": [
+     162.74,
+     27.23,
+     66.4
+    ],
+    "aim_point": [
+     116.38,
+     19.48,
+     20.0
+    ],
+    "direction": [
+     -0.7018,
+     -0.1174,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_6",
+    "position": [
+     164.43,
+     13.66,
+     66.4
+    ],
+    "aim_point": [
+     117.59,
+     9.77,
+     20.0
+    ],
+    "direction": [
+     -0.7092,
+     -0.0589,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_7",
+    "position": [
+     165.0,
+     0.0,
+     66.4
+    ],
+    "aim_point": [
+     118.0,
+     0.0,
+     20.0
+    ],
+    "direction": [
+     -0.7116,
+     -0.0,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_8",
+    "position": [
+     164.43,
+     -13.66,
+     66.4
+    ],
+    "aim_point": [
+     117.59,
+     -9.77,
+     20.0
+    ],
+    "direction": [
+     -0.7092,
+     0.0589,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_9",
+    "position": [
+     162.74,
+     -27.23,
+     66.4
+    ],
+    "aim_point": [
+     116.38,
+     -19.48,
+     20.0
+    ],
+    "direction": [
+     -0.7018,
+     0.1174,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_10",
+    "position": [
+     159.74,
+     -41.31,
+     66.4
+    ],
+    "aim_point": [
+     114.24,
+     -29.54,
+     20.0
+    ],
+    "direction": [
+     -0.6889,
+     0.1782,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_11",
+    "position": [
+     155.54,
+     -55.08,
+     66.4
+    ],
+    "aim_point": [
+     111.23,
+     -39.39,
+     20.0
+    ],
+    "direction": [
+     -0.6708,
+     0.2375,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_12",
+    "position": [
+     150.14,
+     -68.42,
+     66.4
+    ],
+    "aim_point": [
+     107.38,
+     -48.93,
+     20.0
+    ],
+    "direction": [
+     -0.6475,
+     0.2951,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_east_13",
+    "position": [
+     143.61,
+     -81.25,
+     66.4
+    ],
+    "aim_point": [
+     102.7,
+     -58.11,
+     20.0
+    ],
+    "direction": [
+     -0.6193,
+     0.3504,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_1",
+    "position": [
+     81.25,
+     -143.61,
+     66.4
+    ],
+    "aim_point": [
+     58.11,
+     -102.7,
+     20.0
+    ],
+    "direction": [
+     -0.3504,
+     0.6193,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_2",
+    "position": [
+     68.42,
+     -150.14,
+     66.4
+    ],
+    "aim_point": [
+     48.93,
+     -107.38,
+     20.0
+    ],
+    "direction": [
+     -0.2951,
+     0.6475,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_3",
+    "position": [
+     55.08,
+     -155.54,
+     66.4
+    ],
+    "aim_point": [
+     39.39,
+     -111.23,
+     20.0
+    ],
+    "direction": [
+     -0.2375,
+     0.6708,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_4",
+    "position": [
+     41.31,
+     -159.74,
+     66.4
+    ],
+    "aim_point": [
+     29.54,
+     -114.24,
+     20.0
+    ],
+    "direction": [
+     -0.1782,
+     0.6889,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_5",
+    "position": [
+     27.23,
+     -162.74,
+     66.4
+    ],
+    "aim_point": [
+     19.48,
+     -116.38,
+     20.0
+    ],
+    "direction": [
+     -0.1174,
+     0.7018,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_6",
+    "position": [
+     13.66,
+     -164.43,
+     66.4
+    ],
+    "aim_point": [
+     9.77,
+     -117.59,
+     20.0
+    ],
+    "direction": [
+     -0.0589,
+     0.7092,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_7",
+    "position": [
+     0.0,
+     -165.0,
+     66.4
+    ],
+    "aim_point": [
+     0.0,
+     -118.0,
+     20.0
+    ],
+    "direction": [
+     -0.0,
+     0.7116,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_8",
+    "position": [
+     -13.66,
+     -164.43,
+     66.4
+    ],
+    "aim_point": [
+     -9.77,
+     -117.59,
+     20.0
+    ],
+    "direction": [
+     0.0589,
+     0.7092,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_9",
+    "position": [
+     -27.23,
+     -162.74,
+     66.4
+    ],
+    "aim_point": [
+     -19.48,
+     -116.38,
+     20.0
+    ],
+    "direction": [
+     0.1174,
+     0.7018,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_10",
+    "position": [
+     -41.31,
+     -159.74,
+     66.4
+    ],
+    "aim_point": [
+     -29.54,
+     -114.24,
+     20.0
+    ],
+    "direction": [
+     0.1782,
+     0.6889,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_11",
+    "position": [
+     -55.08,
+     -155.54,
+     66.4
+    ],
+    "aim_point": [
+     -39.39,
+     -111.23,
+     20.0
+    ],
+    "direction": [
+     0.2375,
+     0.6708,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_12",
+    "position": [
+     -68.42,
+     -150.14,
+     66.4
+    ],
+    "aim_point": [
+     -48.93,
+     -107.38,
+     20.0
+    ],
+    "direction": [
+     0.2951,
+     0.6475,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_south_13",
+    "position": [
+     -81.25,
+     -143.61,
+     66.4
+    ],
+    "aim_point": [
+     -58.11,
+     -102.7,
+     20.0
+    ],
+    "direction": [
+     0.3504,
+     0.6193,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_1",
+    "position": [
+     -143.61,
+     -81.25,
+     66.4
+    ],
+    "aim_point": [
+     -102.7,
+     -58.11,
+     20.0
+    ],
+    "direction": [
+     0.6193,
+     0.3504,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_2",
+    "position": [
+     -150.14,
+     -68.42,
+     66.4
+    ],
+    "aim_point": [
+     -107.38,
+     -48.93,
+     20.0
+    ],
+    "direction": [
+     0.6475,
+     0.2951,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_3",
+    "position": [
+     -155.54,
+     -55.08,
+     66.4
+    ],
+    "aim_point": [
+     -111.23,
+     -39.39,
+     20.0
+    ],
+    "direction": [
+     0.6708,
+     0.2375,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_4",
+    "position": [
+     -159.74,
+     -41.31,
+     66.4
+    ],
+    "aim_point": [
+     -114.24,
+     -29.54,
+     20.0
+    ],
+    "direction": [
+     0.6889,
+     0.1782,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_5",
+    "position": [
+     -162.74,
+     -27.23,
+     66.4
+    ],
+    "aim_point": [
+     -116.38,
+     -19.48,
+     20.0
+    ],
+    "direction": [
+     0.7018,
+     0.1174,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_6",
+    "position": [
+     -164.43,
+     -13.66,
+     66.4
+    ],
+    "aim_point": [
+     -117.59,
+     -9.77,
+     20.0
+    ],
+    "direction": [
+     0.7092,
+     0.0589,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_7",
+    "position": [
+     -165.0,
+     -0.0,
+     66.4
+    ],
+    "aim_point": [
+     -118.0,
+     -0.0,
+     20.0
+    ],
+    "direction": [
+     0.7116,
+     0.0,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_8",
+    "position": [
+     -164.43,
+     13.66,
+     66.4
+    ],
+    "aim_point": [
+     -117.59,
+     9.77,
+     20.0
+    ],
+    "direction": [
+     0.7092,
+     -0.0589,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_9",
+    "position": [
+     -162.74,
+     27.23,
+     66.4
+    ],
+    "aim_point": [
+     -116.38,
+     19.48,
+     20.0
+    ],
+    "direction": [
+     0.7018,
+     -0.1174,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_10",
+    "position": [
+     -159.74,
+     41.31,
+     66.4
+    ],
+    "aim_point": [
+     -114.24,
+     29.54,
+     20.0
+    ],
+    "direction": [
+     0.6889,
+     -0.1782,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_11",
+    "position": [
+     -155.54,
+     55.08,
+     66.4
+    ],
+    "aim_point": [
+     -111.23,
+     39.39,
+     20.0
+    ],
+    "direction": [
+     0.6708,
+     -0.2375,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_12",
+    "position": [
+     -150.14,
+     68.42,
+     66.4
+    ],
+    "aim_point": [
+     -107.38,
+     48.93,
+     20.0
+    ],
+    "direction": [
+     0.6475,
+     -0.2951,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   },
+   {
+    "name": "house_west_13",
+    "position": [
+     -143.61,
+     81.25,
+     66.4
+    ],
+    "aim_point": [
+     -102.7,
+     58.11,
+     20.0
+    ],
+    "direction": [
+     0.6193,
+     -0.3504,
+     -0.7026
+    ],
+    "face_m": 0.95,
+    "colour": "cool white #eef5ff, dim"
+   }
+  ],
+  "booth_lights": [
+   {
+    "name": "booth_light_1",
+    "position": [
+     -9.0,
+     131.99,
+     31.15
+    ],
+    "aim_point": [
+     -0.68,
+     9.98,
+     1.0
+    ],
+    "direction": [
+     0.066,
+     -0.9687,
+     -0.2394
+    ],
+    "face_width_m": 1.71,
+    "face_height_m": 0.57,
+    "colour": "warm white #ffe6c0"
+   },
+   {
+    "name": "booth_light_2",
+    "position": [
+     9.0,
+     131.99,
+     31.15
+    ],
+    "aim_point": [
+     0.68,
+     9.98,
+     1.0
+    ],
+    "direction": [
+     -0.066,
+     -0.9687,
+     -0.2394
+    ],
+    "face_width_m": 1.71,
+    "face_height_m": 0.57,
+    "colour": "warm white #ffe6c0"
+   }
+  ],
+  "mast_beacons": [
+   {
+    "name": "beacon_north_1",
+    "position": [
+     -90.85,
+     160.58,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_north_2",
+    "position": [
+     -61.59,
+     173.92,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_north_3",
+    "position": [
+     -30.45,
+     181.97,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_north_4",
+    "position": [
+     30.45,
+     181.97,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_north_5",
+    "position": [
+     61.59,
+     173.92,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_north_6",
+    "position": [
+     90.85,
+     160.58,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_east_1",
+    "position": [
+     160.58,
+     90.85,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_east_2",
+    "position": [
+     173.92,
+     61.59,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_east_3",
+    "position": [
+     181.97,
+     30.45,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_east_4",
+    "position": [
+     181.97,
+     -30.45,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_east_5",
+    "position": [
+     173.92,
+     -61.59,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_east_6",
+    "position": [
+     160.58,
+     -90.85,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_south_1",
+    "position": [
+     90.85,
+     -160.58,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_south_2",
+    "position": [
+     61.59,
+     -173.92,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_south_3",
+    "position": [
+     30.45,
+     -181.97,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_south_4",
+    "position": [
+     -30.45,
+     -181.97,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_south_5",
+    "position": [
+     -61.59,
+     -173.92,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_south_6",
+    "position": [
+     -90.85,
+     -160.58,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_west_1",
+    "position": [
+     -160.58,
+     -90.85,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_west_2",
+    "position": [
+     -173.92,
+     -61.59,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_west_3",
+    "position": [
+     -181.97,
+     -30.45,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_west_4",
+    "position": [
+     -181.97,
+     30.45,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_west_5",
+    "position": [
+     -173.92,
+     61.59,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_west_6",
+    "position": [
+     -160.58,
+     90.85,
+     90.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_ne_a",
+    "position": [
+     99.45,
+     117.84,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_ne_b",
+    "position": [
+     117.84,
+     99.45,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_se_a",
+    "position": [
+     117.84,
+     -99.45,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_se_b",
+    "position": [
+     99.45,
+     -117.84,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_sw_a",
+    "position": [
+     -99.45,
+     -117.84,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_sw_b",
+    "position": [
+     -117.84,
+     -99.45,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_nw_a",
+    "position": [
+     -117.84,
+     99.45,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   },
+   {
+    "name": "beacon_screen_nw_b",
+    "position": [
+     -99.45,
+     117.84,
+     60.95
+    ],
+    "colour": "white, small, slow blink"
+   }
+  ],
+  "led_strips": [
+   {
+    "name": "canopy front edge",
+    "where": "r 150.0, z 68.6 to 69.3, on every canopy",
+    "colour": "deep blue #0a1a9a and white, alternating by bay"
+   },
+   {
+    "name": "canopy rear edge",
+    "where": "r 190.0, z 67.0 to 67.5, on every canopy",
+    "colour": "deep blue #0a1a9a"
+   },
+   {
+    "name": "scoreboard top ribbon",
+    "where": "r 9.4, z 50.9 to 51.6",
+    "colour": "white"
+   },
+   {
+    "name": "scoreboard bottom ribbon",
+    "where": "r 7.6, z 43.4 to 44.1",
+    "colour": "deep blue #0a1a9a"
+   },
+   {
+    "name": "scoreboard soffit ring",
+    "where": "r 5.8 to 6.2, z 42.6",
+    "colour": "white"
+   },
+   {
+    "name": "booth eave",
+    "where": "r 131.7 to 132.4, z 29.7, bearings -5 to 5",
+    "colour": "gold #ffc860"
+   }
+  ],
+  "other": [
+   {
+    "name": "scoreboard_emitter",
+    "position": [
+     0.0,
+     0.0,
+     42.9
+    ],
+    "direction": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "colour": "cyan #3fe0f0",
+    "note": "a ring r 2.3 to 4.3 under the scoreboard; a soft cone down onto the can, no hard beam"
+   }
+  ]
+ }
+}

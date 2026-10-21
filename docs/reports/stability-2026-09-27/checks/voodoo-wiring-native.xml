@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 13:06:53Z" end-time="2026-09-27 13:06:53Z" duration="0.2753341">
+  <test-suite type="TestSuite" id="1938" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="746" result="Passed" start-time="2026-09-27 13:06:53Z" end-time="2026-09-27 13:06:53Z" duration="0.275334" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1932" name="TumbangPreso.PlayTests.dll" fullname="VALIDATION_PROJECT/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="746" result="Passed" start-time="2026-09-27 13:06:53Z" end-time="2026-09-27 13:06:53Z" duration="0.263750" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30664" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1933" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="746" result="Passed" start-time="2026-09-27 13:06:53Z" end-time="2026-09-27 13:06:53Z" duration="0.257457" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1934" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="746" result="Passed" start-time="2026-09-27 13:06:53Z" end-time="2026-09-27 13:06:53Z" duration="0.251432" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1734" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-09-27 13:06:53Z" end-time="2026-09-27 13:06:53Z" duration="0.236720" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1741" name="ReceivedVoodooClocksExpireButOnlyTheHostResolvesWaitingCurses" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ReceivedVoodooClocksExpireButOnlyTheHostResolvesWaitingCurses" methodname="ReceivedVoodooClocksExpireButOnlyTheHostResolvesWaitingCurses" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1005994105" result="Passed" start-time="2026-09-27 13:06:53Z" end-time="2026-09-27 13:06:53Z" duration="0.224658" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: ISOLATED_PROFILE\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

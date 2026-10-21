@@ -1,0 +1,10 @@
+{
+  "source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Builds\\accessibility-v57",
+  "copy": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Builds\\shutdown-diagnosis-v57-20260924",
+  "scope": "Exact historical v57 copy for shutdown diagnosis, not a new build or current-source qualification",
+  "files": {
+    "TumbangPreso.exe": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+    "UnityPlayer.dll": "5dcd2af9e14f6416d73c361369559666c31263e4863822e1241cbdbc00c2f667",
+    "TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll": "987fd1092ae377fb315e7d3283d9bf39637999eae280cf781a3c9fbf5cc0858a"
+  }
+}

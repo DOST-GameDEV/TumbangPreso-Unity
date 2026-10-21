@@ -1,0 +1,5 @@
+1858c1e399ea61907786202fe4d51e10b10129c3cbcdcb75e7a4f93cd938c842 *Assets/TumbangPreso/Art/characters/amihan-motion/hero-amihan-storm.anim
+fd70da14cfe82ed0f778dd60698ff2453de2938e03b9dca427b18489fba3fbf4 *Assets/TumbangPreso/Art/characters/amihan-motion/hero-amihan-storm.anim.meta
+after:
+b7bf8475f0c33fe4e3568f4a64890151feea5349057aa3c33db35d2889da5e63 *Assets/TumbangPreso/Art/characters/amihan-motion/hero-amihan-storm.anim
+fd70da14cfe82ed0f778dd60698ff2453de2938e03b9dca427b18489fba3fbf4 *Assets/TumbangPreso/Art/characters/amihan-motion/hero-amihan-storm.anim.meta

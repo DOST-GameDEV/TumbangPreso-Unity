@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs": "4258a48572b4c36bdb43366df264b9ea516cfcb1d10fbd99e2b02e7a10184bf4",
+  "Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs": "4e0aebd9603fb5e5f8ef37e06ce9b98fa83951a67221a2b67643aa0bb75429f2",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.TagBody.cs": "3fdfdc9756f27b3bbd06a480844d2e841576f684da4166d97f8be855d2d69987",
+  "Assets/TumbangPreso/Tests/CatchReplayCompositionTests.cs": "af29df6e1fd9c89baf3ed1472f8b6096df93781f870da3c11dd0b011e8618d59",
+  "Assets/TumbangPreso/Tests/CatchReplayCompositionTests.cs.meta": "5daf5afad5d44fcd6f2944856811eea7a8ce03e5db2533bdf33a54fa7daba331",
+  "Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs": "f0a8014b75db981a74857a7980efd1268d763241b3bd73f8a36aa78cd2b1193d"
+}

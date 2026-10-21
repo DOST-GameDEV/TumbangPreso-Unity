@@ -1,0 +1,14 @@
+{
+  ".gitattributes": "85e48d232edc7b02f6cecf8fbbf905f3b126c467b594d8dd16c4f8fa283a8320",
+  "candidate-native-classification.json": "7871897b7a3eb2f0d5cb481642ac15d723f880f4a678ba34f5238da8f139d4d9",
+  "candidate-native-launch.json": "f2ce11f1d66bc51aaa3aff2921d5bf814ca2ea2a7c33e47fa955068576a08488",
+  "candidate-native-result.json": "5d0cb7dce0e34ad423dc3664473d00f0ccd39ff404760e53a47d029be1956074",
+  "candidate-native-results.xml": "aae7602d405feeea2e759404e85e1cc89739ad5720225837f4f468088a0883db",
+  "HeroQuickTapTests.cs": "caa7c07c5e30782589ff819be2707f04b5c9d240a68e24335fa6011de986e733",
+  "original-native-classification.json": "235c05656a8f618255b50a39e5066171c72ad93529a4726d6208f9af7807e1fb",
+  "original-native-launch.json": "7f87d2c6ff2358ffcd532a135b9002494d32329a1052fb099215f13c6fc6df87",
+  "original-native-result.json": "72c3e51b0bf699b7925a11cb1b22a7a418ac3fc0da8a1538ab7ae0e5d4ac5cce",
+  "original-native-results.xml": "1bdd1e2a6db6a1d9df25a2474eed6b5dbb44dd0df30fbf184dd3fc1cc3cf2072",
+  "PlayerInputReader.candidate.cs": "ce5ff8ba10d63b4ec3d0a7e1c5b2840557e9c1b3b8f29ecda2bc0a879cda93bb",
+  "PlayerInputReader.original.cs": "29ff0f736a696ec7f6bd31042abd0b74c2fa00f18d85a47818fefa4bee5bd541"
+}

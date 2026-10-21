@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 11:54:29Z" end-time="2026-10-03 11:54:29Z" duration="0.1537627">
+  <test-suite type="TestSuite" id="2885" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1533" result="Failed" site="Child" start-time="2026-10-03 11:54:29Z" end-time="2026-10-03 11:54:29Z" duration="0.153763" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2879" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1533" result="Failed" site="Child" start-time="2026-10-03 11:54:29Z" end-time="2026-10-03 11:54:29Z" duration="0.139306" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18700" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2880" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1533" result="Failed" site="Child" start-time="2026-10-03 11:54:29Z" end-time="2026-10-03 11:54:29Z" duration="0.130001" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2881" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1533" result="Failed" site="Child" start-time="2026-10-03 11:54:29Z" end-time="2026-10-03 11:54:29Z" duration="0.121250" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2274" name="ReaderSeatSelfEchoControlTests" fullname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests" classname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-03 11:54:29Z" end-time="2026-10-03 11:54:29Z" duration="0.098774" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2275" name="OwnedSnapshotSelfApplyDoesNotTurnItsOldLocalTellIntoAReceivedRefresh" fullname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests.OwnedSnapshotSelfApplyDoesNotTurnItsOldLocalTellIntoAReceivedRefresh" methodname="OwnedSnapshotSelfApplyDoesNotTurnItsOldLocalTellIntoAReceivedRefresh" classname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests" runstate="Runnable" seed="1973594896" result="Failed" start-time="2026-10-03 11:54:29Z" end-time="2026-10-03 11:54:29Z" duration="0.087378" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A host snapshot echo reclassified the old local tell as a new received refresh.
+  Expected: -1
+  But was:  0.0246228017f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests.OwnedSnapshotSelfApplyDoesNotTurnItsOldLocalTellIntoAReceivedRefresh () [0x00109] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\ReaderSeatSelfEchoControlTests.cs:43
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

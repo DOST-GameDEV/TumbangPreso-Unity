@@ -1,0 +1,14 @@
+frame cap probe, built player
+requested cap        30 fps
+vSyncCount           0
+fixedDeltaTime       0.02000 s
+measured frame rate  3.4 fps  (3699 frames in 1100.2 s)
+map                  Eskinita
+
+throws          165
+skill uses      26
+ultimate uses   6
+lata knocks     46
+tags            116
+idle penalties  0
+kits seen       True

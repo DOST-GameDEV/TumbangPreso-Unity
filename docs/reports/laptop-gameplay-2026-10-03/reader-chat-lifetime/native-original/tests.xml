@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.5505556">
+  <test-suite type="TestSuite" id="2722" name="TumpWorker-qa-b-be075dcdfa07" fullname="TumpWorker-qa-b-be075dcdfa07" runstate="Runnable" testcasecount="1401" result="Failed" site="Child" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.550556" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2716" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-b/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1401" result="Failed" site="Child" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.521663" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5544" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2717" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1401" result="Failed" site="Child" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.507042" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2718" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1401" result="Failed" site="Child" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.492897" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2140" name="ReaderChatLifetimeTests" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.446298" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2143" name="AHeldChatButtonCannotBeginAThrowWhenTypingCloses" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.AHeldChatButtonCannotBeginAThrowWhenTypingCloses" methodname="AHeldChatButtonCannotBeginAThrowWhenTypingCloses" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="510588557" result="Failed" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.197615" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A button held in chat entered gameplay without release.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderChatLifetimeTests+<AHeldChatButtonCannotBeginAThrowWhenTypingCloses>d__30.MoveNext () [0x0009a] in C:\Users\Matthew\dev\tump-workers1003\qa-b\Assets\TumbangPreso\Tests\PlayMode\ReaderChatLifetimeTests.cs:105
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2145" name="AReleasedChatButtonAllowsAFreshGameplayThrowPress" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.AReleasedChatButtonAllowsAFreshGameplayThrowPress" methodname="AReleasedChatButtonAllowsAFreshGameplayThrowPress" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="1897258368" result="Passed" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.068894" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2142" name="EnteringChatCancelsThePendingLungeBeforeConsumersSeeARelease" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatCancelsThePendingLungeBeforeConsumersSeeARelease" methodname="EnteringChatCancelsThePendingLungeBeforeConsumersSeeARelease" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="1097651630" result="Failed" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.057213" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Entering chat spent a lunge cooldown.
+  Expected: 0
+  But was:  1.5f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatCancelsThePendingLungeBeforeConsumersSeeARelease () [0x00023] in C:\Users\Matthew\dev\tump-workers1003\qa-b\Assets\TumbangPreso\Tests\PlayMode\ReaderChatLifetimeTests.cs:96
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2141" name="EnteringChatCancelsThePendingThrowBeforeConsumersSeeARelease" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatCancelsThePendingThrowBeforeConsumersSeeARelease" methodname="EnteringChatCancelsThePendingThrowBeforeConsumersSeeARelease" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="1174326822" result="Failed" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.055231" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Entering chat launched the pending throw.
+  Expected: same as <Chat lifetime owned shoe (TumbangPreso.Slipper)>
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatCancelsThePendingThrowBeforeConsumersSeeARelease () [0x00023] in C:\Users\Matthew\dev\tump-workers1003\qa-b\Assets\TumbangPreso\Tests\PlayMode\ReaderChatLifetimeTests.cs:89
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2144" name="EnteringChatPreservesAnAlreadyCommittedLungeAndItsCooldown" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatPreservesAnAlreadyCommittedLungeAndItsCooldown" methodname="EnteringChatPreservesAnAlreadyCommittedLungeAndItsCooldown" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="1162061508" result="Passed" start-time="2026-10-03 06:09:18Z" end-time="2026-10-03 06:09:18Z" duration="0.045352" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-b-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

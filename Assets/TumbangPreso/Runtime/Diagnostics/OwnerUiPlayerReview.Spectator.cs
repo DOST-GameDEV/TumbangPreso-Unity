@@ -72,11 +72,17 @@ namespace TumbangPreso.Diagnostics
                     throw new InvalidOperationException("Manual flight did not take over from autopilot");
                 yield return Shot("spectator-manual-flight");
                 Stage("real spectator POV of seat " + watched.PlayerSlot);
+                // Other bots may disarm this stationary target during the manual-flight
+                // setup. Re-establish the held-item precondition before testing visibility.
+                if (watched.GetComponent<Carrier>().Held != held && !held.HostForceEquip(watched))
+                    throw new InvalidOperationException("Could not restore the spectator fixture's held slipper");
                 yield return Tap(new[] { Key.F1, Key.F2, Key.F3, Key.F4 }[watched.PlayerSlot]);
                 var follow = typeof(SpectatorCamera).GetField("_follow", fields).GetValue(spectator) as CharacterMotor;
                 bool pov = (bool)typeof(SpectatorCamera).GetField("_pov", fields).GetValue(spectator);
                 if (follow != watched || !pov) throw new InvalidOperationException("The real function-key POV cut selected the wrong target");
                 yield return Shot("spectator-pov-held");
+                if (watched.GetComponent<Carrier>().Held != held)
+                    throw new InvalidOperationException("Another actor disarmed the POV fixture before its held-item assertion");
                 if (renderers.Any(r => r != null && r.enabled && r.shadowCastingMode != ShadowCastingMode.ShadowsOnly))
                     throw new InvalidOperationException("Spectator POV still renders the world-held slipper alongside its viewmodel");
                 Stage("spectator held-item release and replacement visibility");

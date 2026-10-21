@@ -1,0 +1,51 @@
+{
+  "rawFiles": {
+    "raw/first/job-receipt.json": "174149273641e6037ff11970919da116ff2227ea5964275e614eee39a702cb84",
+    "raw/first/qualified-source.json": "431866dc6d8ef0d21d67439b18fe26c5c2ebbdcdd403c2f4ce74a2eb9eb214bc",
+    "raw/first/post-input-audit.json": "c1107bfc5b731184a3df1f002302175f5cc87be4ae0aa0739aafcc1dd41d8677",
+    "raw/first/resource-samples.jsonl": "587555b2a25875ec49af7769412908380071d8e119936e24dbf25499253c8608",
+    "raw/first/resource-summary.json": "c570c814d29cee3698aa09be8a8138e95e96134a0d44cb93bd752b6bed631bac",
+    "raw/first/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/first/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/serial/job-receipt.json": "5907e140622fcdb6b1a946558799d3044ecfa456d1672ad04745df538944ebb5",
+    "raw/serial/qualified-source.json": "bea9d21efaabc07e93f5e789f0678ffa0bcc991a848735685d6791af83b99043",
+    "raw/serial/post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+    "raw/serial/resource-samples.jsonl": "1be95e45a257b49bac380587ba863652f7551e08b64e8cb3c1d189b95aa1c960",
+    "raw/serial/resource-summary.json": "15b5dc1c8d5cf58bcd0b70251f70b417a4a2ed550f0bb78a4592251d99280ddc",
+    "raw/serial/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/serial/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/serial/prejob-EditorUserSettings.asset": "c6cec812e6f9daf82459d7e8f4ad721f999cd2b44dd60a5de598e128d221c1db",
+    "raw/serial/serial-EditorUserSettings.asset": "78498d48b9954cc62a3d48424fd34a36dce2e722fa40cd6237722e3d9a35acfd",
+    "raw/serial/post-EditorUserSettings.asset": "78498d48b9954cc62a3d48424fd34a36dce2e722fa40cd6237722e3d9a35acfd",
+    "raw/first-derived-settings/GraphicsSettings.asset": "ebbf9d77aa04069f663fd8c8312fb0c3160c61ca0ca6a5893911ba4190b77800",
+    "raw/first-derived-settings/ProjectSettings.asset": "f5cfb1b8f70592e0498d32c87be7d847a2079f94ccf683291c59871b8515c677"
+  },
+  "summaries": {
+    "first": {
+      "exitCode": 125,
+      "elapsedSeconds": 149.73,
+      "sampledMinimumAvailableMiB": 1256,
+      "sampledPeakJobTreeWorkingMiB": 4849.06,
+      "samples": 91,
+      "guardTerminal": true,
+      "leaseHeld": false,
+      "inputChanges": 2,
+      "qualityRestoredByteExact": true,
+      "artifactExists": false,
+      "scope": "One-second sampled aggregate working sets and available physical memory, not peak private commit or performance acceptance"
+    },
+    "serial": {
+      "exitCode": 125,
+      "elapsedSeconds": 47.28,
+      "sampledMinimumAvailableMiB": 1394,
+      "sampledPeakJobTreeWorkingMiB": 4265.21,
+      "samples": 41,
+      "guardTerminal": true,
+      "leaseHeld": false,
+      "inputChanges": 0,
+      "qualityRestoredByteExact": true,
+      "artifactExists": false,
+      "scope": "One-second sampled aggregate working sets and available physical memory, not peak private commit or performance acceptance"
+    }
+  }
+}

@@ -26,8 +26,11 @@ def evaluate(folder,rejoin,overlap_tag=False):
         maximum=max(r['mash'] for r in records)
         holding=[r for r in records if r['time']>returned[0]['time'] and r['holding']]
         if not 9.7<=gap<=10.6:errors.append(name+f' shoe delay was {gap:.3f}s')
-        if not 0<down<5:errors.append(name+f' recovery took {down:.3f}s; auto-recovery is not mash evidence')
-        if maximum<8:errors.append(name+' did not observe enough accepted mash presses')
+        # Rooftop catch(.30s) + authored fall(2.5s); an independent tag can outlast it.
+        expected_down=4.0 if overlap_tag else 2.8
+        if not expected_down-.25<=down<=expected_down+.4:
+            errors.append(name+f' timed recovery took {down:.3f}s instead of {expected_down:.1f}s')
+        if maximum!=0:errors.append(name+' accepted retired mash presses')
         if len(holding)<4:errors.append(name+' never observed the returned shoe being picked up')
         if name in ['host','owner'] and min(r['y'] for r in records)>-.35:errors.append(name+' recorded no real descent')
         measurements[name]={'shoeDelay':gap,'downSeconds':down,'acceptedPresses':maximum,'postReturnHeldSamples':len(holding),'minimumY':min(r['y'] for r in records)}

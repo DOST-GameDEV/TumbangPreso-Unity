@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.2465538">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-b-be075dcdfa07" fullname="TumpWorker-qa-b-be075dcdfa07" runstate="Runnable" testcasecount="1075" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.246554" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2308" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-b/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1075" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.218473" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7040" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2309" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1075" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.205387" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2310" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1075" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.194616" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1734" name="MatchmakingOwnerLifetimeTests" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.171476" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1742" name="ACurrentOwnersProfileRefreshPreservesTheirPendingCasualTicket" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.ACurrentOwnersProfileRefreshPreservesTheirPendingCasualTicket" methodname="ACurrentOwnersProfileRefreshPreservesTheirPendingCasualTicket" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="1827877156" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.099667" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1741" name="AGuestCannotEnterRankedUsingThePrimarySessionsSignedInFlag" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.AGuestCannotEnterRankedUsingThePrimarySessionsSignedInFlag" methodname="AGuestCannotEnterRankedUsingThePrimarySessionsSignedInFlag" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="1969518377" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.005043" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1739" name="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.027807" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1735" name="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(False,False)" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(False,False)" methodname="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="187466181" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.008438" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1736" name="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(False,True)" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(False,True)" methodname="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="1544138654" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.006547" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1737" name="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(True,False)" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(True,False)" methodname="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="538244787" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.005869" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1738" name="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(True,True)" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns(True,True)" methodname="AGuestHandoverRetiresThePendingTicketEvenWhenThePrimaryReturns" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="1718606379" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.001897" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1740" name="LosingSignedInEligibilityRetiresTheSameOwnersRankedTicket" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.LosingSignedInEligibilityRetiresTheSameOwnersRankedTicket" methodname="LosingSignedInEligibilityRetiresTheSameOwnersRankedTicket" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="1361492520" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.003860" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1745" name="TheCurrentOwnerStillCompletesTheirConnection" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.TheCurrentOwnerStillCompletesTheirConnection" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.008975" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1743" name="TheCurrentOwnerStillCompletesTheirConnection(False)" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.TheCurrentOwnerStillCompletesTheirConnection(False)" methodname="TheCurrentOwnerStillCompletesTheirConnection" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="1638320350" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.004459" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1744" name="TheCurrentOwnerStillCompletesTheirConnection(True)" fullname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests.TheCurrentOwnerStillCompletesTheirConnection(True)" methodname="TheCurrentOwnerStillCompletesTheirConnection" classname="TumbangPreso.Tests.MatchmakingOwnerLifetimeTests" runstate="Runnable" seed="397041455" result="Passed" start-time="2026-10-03 04:40:20Z" end-time="2026-10-03 04:40:20Z" duration="0.002461" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-b-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

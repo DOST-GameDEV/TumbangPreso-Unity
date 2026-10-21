@@ -178,11 +178,12 @@ namespace TumbangPreso.CameraSystem
 
         /// <summary>Why the director chose this. Written to the capture log, never to the screen.</summary>
         public readonly string Reason;
+        public readonly Slipper RetrievalShoe;
 
         public SpectatorInterest(SpectatorBeat beat, CharacterMotor main, CharacterMotor secondary,
                                  Vector3 objective, bool hasObjective, ShotType shot,
                                  float startedAt, float expectedSeconds, float commitSeconds,
-                                 string reason)
+                                 string reason, Slipper retrievalShoe = null)
         {
             Beat = beat;
             Main = main;
@@ -194,6 +195,7 @@ namespace TumbangPreso.CameraSystem
             ExpectedSeconds = expectedSeconds;
             CommitSeconds = commitSeconds;
             Reason = reason;
+            RetrievalShoe = retrievalShoe;
         }
 
         public bool Valid => Main != null;
@@ -333,6 +335,7 @@ namespace TumbangPreso.CameraSystem
         private float _tagAt = -99.0f;
         private CharacterMotor _tagDefender;
         private CharacterMotor _tagVictim;
+        private Vector3 _tagPoint;
 
         private float _slipperAt = -99.0f;
         private Vector3 _slipperPoint;
@@ -340,6 +343,10 @@ namespace TumbangPreso.CameraSystem
         private float _ultimateAt = -99.0f;
         private CharacterMotor _ultimateCaster;
         private Abilities.HeroAbility _ultimateAbility;
+        private Abilities.HeroKit _ultimateKit;
+        private RoundDirector _ultimateRound;
+        private MatchDirector _ultimateMatch;
+        private int _ultimateRoundNumber;
 
         private RoundDirector _hookedRound;
         private MatchDirector _hookedMatch;
@@ -386,6 +393,8 @@ namespace TumbangPreso.CameraSystem
 
             Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateStarted;
             Abilities.HeroAbilitySystem.UltimateStarted += OnUltimateStarted;
+            Visual.MatchFlair.Presented -= OnPublicFlair;
+            Visual.MatchFlair.Presented += OnPublicFlair;
         }
 
         public void Unhook()
@@ -395,9 +404,16 @@ namespace TumbangPreso.CameraSystem
             if (_hookedLata != null) _hookedLata.UprightChanged -= OnLataUpright;
             Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateStarted;
 
+            Visual.MatchFlair.Presented -= OnPublicFlair;
             _hookedRound = null;
             _hookedMatch = null;
             _hookedLata = null;
+            _ultimateAt = -99.0f;
+            _ultimateCaster = null;
+            _ultimateAbility = null;
+            _ultimateKit = null;
+            _ultimateRound = null;
+            _ultimateMatch = null;
         }
 
         // -------------------------------------------------------------------
@@ -435,6 +451,13 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
+        private void OnPublicFlair(Visual.MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
+        {
+            if(kind!=Visual.MatchFlair.Kind.Tag)return;
+            var round=GameServices.Round;if(round==null)return;
+            _tagAt=Time.unscaledTime;_tagDefender=SeatOf(round,actor);_tagVictim=SeatOf(round,subject);_tagPoint=at;
+        }
+
         private void OnTagged(int defenderSlot, int attackerSlot)
         {
             var round = GameServices.Round;
@@ -451,6 +474,10 @@ namespace TumbangPreso.CameraSystem
             _ultimateAt = Time.unscaledTime;
             _ultimateCaster = caster;
             _ultimateAbility = ultimate;
+            _ultimateKit = kit;
+            _ultimateRound = GameServices.Round;
+            _ultimateMatch = GameServices.Match;
+            _ultimateRoundNumber = _ultimateMatch != null ? _ultimateMatch.RoundNumber : -1;
         }
 
         // -------------------------------------------------------------------
@@ -527,6 +554,15 @@ namespace TumbangPreso.CameraSystem
             switch (interest.Beat)
             {
                 case SpectatorBeat.Retrieval:
+                    // A caught body has already been sent home. Follow the live
+                    // consequence, never drag the broadcast camera to that teleport.
+                    if(interest.Main.IsStunned||interest.Main.IsTripped)return false;
+                    if(interest.RetrievalShoe!=null)
+                        return interest.Secondary!=null&&interest.Secondary.CanAct()
+                            &&!interest.Main.HoldingSlipper&&interest.RetrievalShoe.State==SlipperState.Loose
+                            &&interest.RetrievalShoe.OwnerSlot==interest.Main.PlayerSlot
+                            &&Flat(interest.Main.transform.position,interest.RetrievalShoe.transform.position)<7;
+                    if(round.Lata==null||!round.Lata.IsUpright||interest.Secondary==null||!interest.Secondary.CanAct())return false;
                     return interest.Main.IsTaggable() || interest.Age < OutcomeGrace;
 
                 case SpectatorBeat.Ultimate:
@@ -570,6 +606,7 @@ namespace TumbangPreso.CameraSystem
         {
             float now = Time.unscaledTime;
             var taya = DefenderOf(round);
+            ScanSlippers(now);
 
             // ---- 1. a retrieval with the taya closing ---------------------------------
             CharacterMotor bestRetriever = null;
@@ -578,7 +615,8 @@ namespace TumbangPreso.CameraSystem
             foreach (var unit in round.Players)
             {
                 if (unit == null || !unit.RoundActive || unit == taya) continue;
-                if (!unit.IsTaggable()) continue;
+                if (!unit.IsTaggable() || unit.IsStunned || unit.IsTripped || round.Lata==null || !round.Lata.IsUpright
+                    || taya==null || !taya.CanAct()) continue;
 
                 float gap = taya != null
                     ? Flat(unit.transform.position, taya.transform.position)
@@ -609,7 +647,30 @@ namespace TumbangPreso.CameraSystem
             }
 
             // ---- 2. an ultimate ---------------------------------------------------------
+            // Show a real own-shoe recovery near the taya's reset. Can restore
+            // protection prevents another knockdown, not a tag on a shoe holder;
+            // legal chases above still take priority during that protection.
+            if(round.Lata!=null&&(!round.Lata.IsUpright||round.Lata.IsProtected)&&taya!=null&&taya.CanAct()
+                &&Flat(taya.transform.position,LataPoint(round))<=NearLata&&_slippers!=null)
+            {
+                Slipper nearest=null;CharacterMotor retriever=null;float gap=6;
+                foreach(var shoe in _slippers)
+                {
+                    if(shoe==null||shoe.State!=SlipperState.Loose||shoe.OwnerSlot<0)continue;
+                    var owner=SeatOf(round,shoe.OwnerSlot);
+                    if(owner==null||owner==taya||owner.HoldingSlipper||owner.IsStunned||owner.IsTripped)continue;
+                    float distance=Flat(owner.transform.position,shoe.transform.position);
+                    if(distance>=gap)continue;gap=distance;nearest=shoe;retriever=owner;
+                }
+                if(nearest!=null)return new SpectatorInterest(SpectatorBeat.Retrieval,retriever,taya,nearest.transform.position,true,
+                    ShotType.RetrievalTwoShot,now,RetrievalSeconds,MinCommit,"own tsinelas recovery while the taya returns to the can",nearest);
+            }
+
             var casting = LiveUltimate(round);
+            // Instant abilities can finish between director decisions. Cover the
+            // presentation event for its original bounded window, never restart it.
+            bool fromPulse = casting == null && RecentUltimate(round, now);
+            if (fromPulse) casting = _ultimateCaster;
             if (casting != null)
             {
                 // ⚠️⚠️ THE HERO SHOT AND THE WIDE SHOT ARE CHOSEN BY THE ULTIMATE'S FOOTPRINT,
@@ -620,12 +681,19 @@ namespace TumbangPreso.CameraSystem
                 var kit = casting.AbilitySystem != null ? casting.AbilitySystem.Kit : null;
                 var ult = kit != null ? kit.Ultimate : null;
                 float footprint = ult != null && ult.HasTelegraph ? ult.TelegraphRadius : 0.0f;
+                // No circle is drawn for the global freeze or the court-wide
+                // wave/fan. Their affected space still needs the wide composition.
+                bool courtEffect = kit is Abilities.CheskaHeroKit || kit is Abilities.DanteHeroKit
+                    || kit is Abilities.AmihanHeroKit;
+                if (courtEffect)
+                    footprint = Mathf.Max(AIController.PlayableMaxX - AIController.PlayableMinX,
+                        AIController.PlayableMaxZ - AIController.PlayableMinZ) * .5f;
 
                 return new SpectatorInterest(
                     SpectatorBeat.Ultimate, casting, NearestOther(round, casting),
                     casting.transform.position, true,
-                    footprint >= 3.0f ? ShotType.UltimateWide : ShotType.UltimateHero,
-                    now, UltimateSeconds, MinCommit,
+                    courtEffect || footprint >= 3.0f ? ShotType.UltimateWide : ShotType.UltimateHero,
+                    fromPulse ? _ultimateAt : now, UltimateSeconds, MinCommit,
                     $"ultimate {(ult != null ? ult.Name : "?")}, footprint {footprint:0.0} m");
             }
 
@@ -645,10 +713,9 @@ namespace TumbangPreso.CameraSystem
             if (now - _tagAt < TagSeconds && _tagDefender != null)
             {
                 return new SpectatorInterest(
-                    SpectatorBeat.Tag, _tagVictim != null ? _tagVictim : _tagDefender,
-                    _tagDefender, LataPoint(round), round.Lata != null,
-                    ShotType.Recovery, _tagAt, TagSeconds, MinCommit,
-                    "tag landed");
+                    SpectatorBeat.Tag, _tagDefender, null, _tagPoint, true,
+                    ShotType.Defender, _tagAt, TagSeconds, MinCommit,
+                    "catch landed; the taya continues");
             }
 
             if (taya != null && LungeCharging(taya))
@@ -779,6 +846,24 @@ namespace TumbangPreso.CameraSystem
             }
 
             return null;
+        }
+
+        private bool RecentUltimate(RoundDirector round, float now)
+        {
+            var match = GameServices.Match;
+            if (_ultimateCaster == null || !_ultimateCaster.RoundActive
+                || !_ultimateCaster.gameObject.activeInHierarchy
+                || now < _ultimateAt || now - _ultimateAt >= UltimateSeconds
+                || round != _ultimateRound || match != _ultimateMatch
+                || match == null || match.RoundNumber != _ultimateRoundNumber)
+                return false;
+            var kit = _ultimateCaster.AbilitySystem != null
+                ? _ultimateCaster.AbilitySystem.Kit : null;
+            if (kit != _ultimateKit || kit == null || kit.Ultimate != _ultimateAbility)
+                return false;
+            foreach (var player in round.Players)
+                if (player == _ultimateCaster) return true;
+            return false;
         }
 
         private static bool LungeCharging(CharacterMotor taya)

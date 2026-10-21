@@ -1,0 +1,11 @@
+# Bot charged releases require a clear body path to contact
+
+Native39196 reproduces a charged bot releasing at an attacker3.5m away despite a solid wall1.2m ahead, spending2.5seconds of cooldown. Walls behind the target and behind the defender pass. Original1FAIL/2PASS is retained.
+
+The existing dash/reaction prediction now also checks the actual CharacterController capsule's short travel segments against world obstacles. It stops the check at the first possible tag-radius contact, so an obstacle beyond contact cannot forbid a legal release. Queries ignore actors and match props, walkable floor normals and terrain below the capsule's legal step height. They use the existing bounded query buffer with a complete fallback if full. No actual motor, dash, hit/cooldown rule or hero kit is changed.
+
+Candidate41260 passes10 of13 but fails three older aim controls. Those fixtures created the default2m capsule centred on their claimed feet, intersecting the floor. Native43680 explicitly verifies that floor overlap and the real installed1.6m/.35m/.8m capsule's clearance. The aim fixtures now use those actual MatchInstaller dimensions; all prior assertions remain unchanged. All14 cases pass, including legal aimed/moving releases, existing targetless-plan lifetime and real reset cancellation.
+
+Final45336 passes6 obstacle controls: wall ahead blocks; walls behind the target or defender allow; a narrow20cm post at38cm lateral offset blocks the body even though the centre ray misses; a15cm kerb permits release; the independent legacy/game floor-shape check passes. Product source is unchanged between43680 and45336; only new physical controls and explicit obstacle dimensions were added. These are scoped consumer/physics checks, not all-map navigation, performance, human-feel, natural hit-rate or full tournament acceptance.
+
+All21327 frozen inputs and isolated preferences restore exactly after each terminal native and preservation job. Original and candidate failures remain with raw SHA receipts. No native/player/helper remains. Desktopcb5 and internal120d predate this fix; combined release is pending laptop preview/replay qualification. No LAN, paid service, worker, foreground controls or authored old-map change was used.

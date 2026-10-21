@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: py_land_flooded_far
+  m_Shader: {fileID: 4800000, guid: a86999f1f1ed03f4c8459d15b110d0a8, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _SURFACE_FLOODED
+  m_InvalidKeywords:
+  - _VERTEXCOLOUR_ON
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: PayoFar
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ColourTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FloodTex:
+        m_Texture: {fileID: 2800000, guid: 7dffbeb3fbdf1ca408667fd00e814d61, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GrassTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HeightTex:
+        m_Texture: {fileID: 2800000, guid: 262433aed7e4ea04581d96e8ffda555f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MacroTex:
+        m_Texture: {fileID: 2800000, guid: 711232c448cc207428f12a822e6cc20f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RowsTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ShadeTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ValueTex:
+        m_Texture: {fileID: 2800000, guid: 958dd81a88995e1478fefb1dde4e05ae, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AntiTileRotate: 1
+    - _EmissionStrength: 0
+    - _Feather: 0.08
+    - _Glossiness: 0
+    - _GrassMetres: 20
+    - _HueOn: 1
+    - _MacroMetres: 96
+    - _Relief: 0.025
+    - _Step: 5
+    - _Surface: 5
+    - _VertexColour: 1
+    - _WallLum: 0.25
+    m_Colors:
+    - _AT0: {r: 37, g: 0.61, b: 0.37, a: 0.71}
+    - _AT0Mask: {r: 0.35, g: 0, b: 0, a: 0}
+    - _AT1: {r: -71, g: 1.43, b: 0.13, a: 0.52}
+    - _AT1Mask: {r: 0.23, g: 11.3, b: 5.7, a: 0}
+    - _BaseColour: {r: 0.56, g: 0.74, b: 0.82, a: 1}
+    - _BlenderOrigin: {r: 0, g: 0, b: 0, a: 0}
+    - _FarFade: {r: 120, g: 320, b: 0, a: 0}
+    - _FloodBounds: {r: -1159, g: -225, b: 214, a: 2554}
+    - _HueCool: {r: 0.97, g: 1, b: 1.04, a: 0}
+    - _HueFields: {r: 70, g: 45, b: 0.3, a: 0.35}
+    - _HueWarm: {r: 1.02, g: 1, b: 0.96, a: 0}
+    - _RowsBounds: {r: -1179, g: -245, b: 234, a: 2574}
+    - _RowsFade: {r: 35, g: 110, b: 0, a: 0}
+    - _RowsShape: {r: 1.2, g: 0.08, b: 130, a: 0.05}
+    - _TileMetres: {r: 14, g: 14, b: 14, a: 0}
+    - _WallMean: {r: 0.5878, g: 0.5704, b: 0.537, a: 0.9416}
+    - _WaterBody: {r: 0.29999998, g: 0.26999995, b: 0.18999997, a: 1}
+    - _WaterFresnel: {r: 0.6, g: 3, b: 0, a: 0}
+    - _WaterMud: {r: 0.37999994, g: 0.31999996, b: 0.21999997, a: 1}
+    - _WaterShape: {r: 2.6, g: 0.06, b: 1.25, a: 0.14}
+    - _WaterSprout: {r: 0.52, g: 0.7, b: 0.25999996, a: 1}
+    - _WaterSun: {r: 1, g: 0.1, b: 0.55, a: 0}
+    - _WaterTint: {r: 0.56, g: 0.74, b: 0.82, a: 0.35}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

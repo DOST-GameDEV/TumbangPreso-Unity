@@ -25,11 +25,12 @@ namespace TumbangPreso.Audio
             new Dictionary<string, string>
             {
                 { "hit_body",       "bump" },
-                { "bump_swing",     "dash" },
                 { "can_knockdown",  "lata_knockdown" },
                 { "reset_complete", "reset_channel_complete" },
                 { "pickup",         "grab" },
                 { "throw_release",  "throw_whoosh" },
+                { "court_escape",   "throw_whoosh" },
+                { "court_skid",     "slide_scrape" },
             };
 
         /// <summary>
@@ -48,9 +49,6 @@ namespace TumbangPreso.Audio
                 // somebody who has been watching that patch of ground and must never compete
                 // with whatever is being cast at the same moment. A cast and its own ending at
                 // the same trim would make a spent zone sound like a second ability.
-                { "sfx_ice_thaw",   -11.0f },
-                { "sfx_magma_cool", -11.0f },
-                { "sfx_void_close",  -9.0f },
 
                 // The three that replaced borrowed cues keep the weight of what they are: a
                 // wall landing and a wall failing are both events a player has to act on, and
@@ -59,11 +57,9 @@ namespace TumbangPreso.Audio
                 // A bell is the one cue in the game that is meant to be HEARD OVER the fight
                 // rather than located in it, and it is also the longest at 2.2 s. Lower than the
                 // other casts so a 2 s tail does not sit on top of everything that follows it.
-                { "sfx_eclipse_toll", -6.0f },
 
                 // The affliction fires per victim per hex, so it is mixed as a status rather
                 // than as an event: four people standing in one circle must not stack into a wall.
-                { "sfx_hex_afflict", -10.0f },
 
                 // ⚠️⚠️ THE TRAIN IS ONE CUE NOW AND IT IS A REAL RECORDING, NOT A SYNTH.
                 // 🧑 2026-08-27: *"i keep reporting its broken and i give up on it ... replace
@@ -76,7 +72,19 @@ namespace TumbangPreso.Audio
                 // with NO row, fell back to 0.0 dB, and was reported off the build as *"a loud
                 // wind soudn that plays randomly"*. A long sound is mixed as a background
                 // whatever it is called.
-                { "sfx_lrt_pass", -16.0f },
+                //
+                // ⚠️ -8, UP FROM -16 (2026-10-01). 🧑, on the rebuilt Ilalim: *"does the train/lrt
+                // move and have a loud LRT sfx?"*, then "proceed" on making it louder. The -16 was
+                // set while the clip still played for the whole traverse from 70 m; the source now
+                // reaches only 44 m (`LrtTrainFlyby.RumbleMaxDistance`), so it arrives with the
+                // warning toast and leaves with the consist, and a louder pass no longer reads as
+                // random wind. The deck hides the consist from every place a player can stand,
+                // so this recording and the shake ARE the train.
+                //
+                // ⚠️ 0, UP AGAIN (2026-10-04): "the actual train sfx still isnt audible". Since the
+                // -8, the pass moved to the Ambience slider times `AmbientGainScale` 0.75, and the
+                // recording is quiet in itself (RMS 0.10), so -8 came out near 0.2 of full scale.
+                { "sfx_lrt_pass", 0.0f },
 
                 // ⚠️⚠️ THE SIX ULTIMATE THEMES ARE BEDS, NOT EVENTS, AND ARE MIXED AS BEDS.
                 // The train row above records what happens to a sustained cue with no row:
@@ -89,13 +97,72 @@ namespace TumbangPreso.Audio
                 // during the BUILD, before the payload arrives, so for its first second and a
                 // half it is not competing with anything: it is the only thing saying an
                 // ultimate is coming. The other five start on the same frame as their blast.
-                { "sfx_coven_summon",   -12.0f },
-                { "sfx_ult_theme_zack",   -14.0f },
-                { "sfx_ult_theme_cheska", -14.0f },
-                { "sfx_ult_theme_sean",   -14.0f },
-                { "sfx_ult_theme_dante",  -14.0f },
-                { "sfx_ult_theme_nemu",   -14.0f },
-                { "sfx_hex_cast",     -4.0f },
+                { "sfx_step_deck", -8.0f }, { "sfx_swim_stroke", -9.0f }, { "sfx_lagoon_lap", -12.0f },
+                // The Arena's show (owner 2026-10-05, `tools/synth_arena_show_sfx.py`). The reveal's boom is the
+                // loudest moment of the break and the lock is its percussion, so those two are mixed as events.
+                // The alarm is 2.3 s of sustained tone and the roar 3.6 s of crowd: beds, mixed as beds (the
+                // train's row above records what a sustained cue with no trim does). The thruster fires once
+                // per moving platform inside a quarter second, so it is mixed like a status.
+                { "sfx_arena_alarm", -9.0f }, { "sfx_arena_undock", -4.0f }, { "sfx_arena_thruster", -11.0f },
+                { "sfx_arena_lock", -3.0f }, { "sfx_arena_reveal", -2.0f }, { "sfx_arena_crowd_roar", -10.0f },
+                { "sfx_arena_pyro", -7.0f }, { "sfx_arena_drone_ping", -7.0f }, { "sfx_arena_drone_set", -5.0f },
+                // The stage's furniture (owner 2026-10-05, `tools/synth_arena_pad_sfx.py`): events a player causes, mixed as events.
+                { "sfx_arena_pad_jump", 0.0f }, { "sfx_arena_pad_speed", 0.0f }, { "sfx_arena_boost", -1.0f }, { "sfx_arena_stamina", 0.0f },
+                // Paete's LIANA LEAP, reworked from real recordings (owner 2026-10-07, `tools/install_paete_skill_sfx.py`): a cast
+                // a player makes, mixed as an event.
+                { "sfx_cast_paete_vine", -1.0f }, { "sfx_paete_vine_catch", -1.0f }, { "sfx_paete_vine_land", -2.0f },
+                // Paete's ultimate cutscene, one 9.0 s track of real recordings (owner 2026-10-08, `tools/build_paete_ult_sfx.py` b).
+                { "sfx_ult_theme_paete", 0.0f },
+                // The rescue drone's toy voice (2026-10-05). Its hum is struck again every half second of a
+                // carry and up to four carries can run at once, so it is mixed as a bed; the rising whistle of
+                // the haul and the zip away are one each per carry and sit under the lock-on and the ding.
+                { "sfx_arena_drone_hum", -14.0f }, { "sfx_arena_drone_beam", -9.0f }, { "sfx_arena_drone_zip", -9.0f },
+                // The Arena's slipper balloon (`tools/synth_arena_balloon_sfx.py`). The pop is a once-a-match
+                // event and is mixed as one; a squeak and the boing sound together on a hit, so each sits under
+                // an event; the creak and the hiss are beds.
+                { "sfx_arena_balloon_fly", -8.0f }, { "sfx_arena_balloon_squeak_a", -6.0f }, { "sfx_arena_balloon_squeak_b", -6.0f },
+                { "sfx_arena_balloon_squeak_c", -6.0f }, { "sfx_arena_balloon_boing", -5.0f }, { "sfx_arena_balloon_creak", -10.0f },
+                { "sfx_arena_balloon_pop", -1.0f }, { "sfx_arena_balloon_hiss", -8.0f }, { "sfx_arena_slipper_return", -7.0f },
+                // The Arena's crowd and its public address (owner 2026-10-05: "there should be reverbey crowd cheers,
+                // chants, and an announcer"). `Map.ArenaCrowdAudio` plays every one on its own sources: the crowd on the
+                // Ambience slider, the PA's stings on the Announcer's.
+                //
+                // ⚠️ THE CROWD IS REAL RECORDINGS SINCE 2026-10-05 (`tools/build_arena_crowd_from_recordings.py`, sources in
+                // `Resources/Sfx/ARENA_CROWD_SOURCES.md`), AND THESE ROWS WERE RESET WITH IT. The owner on the synthesised
+                // crowd: "i dont hear ... reactions to certain happenings in the game". Measured against these rows, that
+                // was the mix: a block's cheer and a throw's gasp played 10 to 16 dB under a murmur at -3. So the murmur is
+                // at -6 and gives way further as the stands rise, and a reaction sits 0 to 4 dB under an event.
+                // The five beds are loops levelled by RMS (0.13 to 0.17), so these rows ARE their loudness. A reaction is
+                // levelled by the RMS of its loudest 0.4 s (0.20 to 0.27; peak under 0.85), not by its peak: a roar and a
+                // clap of the same peak are 10 dB apart to an ear. A reaction's takes (`_2`, `_3`) share its row's value.
+                // NOBODY HAS HEARD THESE YET: they are the knobs for that session.
+                // The resting bed far under the reactions (owner, 2026-10-05: "the crowd doesnt react.. its just the same cheer ambience all
+                // throughout"). The real cause was the layers' mix (`ArenaCrowdAudio.Ramp`): the roar never fell under half. With that mended the calm bed is 10 dB under an eruption.
+                { "sfx_arena_crowd_bed_calm", -10.0f }, { "sfx_arena_crowd_bed_lively", -5.0f }, { "sfx_arena_crowd_bed_roar", -1.0f },
+                { "sfx_arena_crowd_bed_tension", -5.0f }, { "sfx_arena_crowd_bed_applause", -3.0f },
+                { "sfx_arena_crowd_erupt", 0.0f }, { "sfx_arena_crowd_erupt_2", 0.0f }, { "sfx_arena_crowd_erupt_3", 0.0f },
+                { "sfx_arena_crowd_cheer", -1.0f }, { "sfx_arena_crowd_cheer_2", -1.0f }, { "sfx_arena_crowd_cheer_3", -1.0f },
+                { "sfx_arena_crowd_ooh", -1.0f }, { "sfx_arena_crowd_ooh_2", -1.0f }, { "sfx_arena_crowd_ooh_3", -1.0f },
+                { "sfx_arena_crowd_aww", -2.0f }, { "sfx_arena_crowd_aww_2", -2.0f }, { "sfx_arena_crowd_aww_3", -2.0f },
+                { "sfx_arena_crowd_gasp", -4.0f }, { "sfx_arena_crowd_gasp_2", -4.0f },
+                { "sfx_arena_crowd_laugh", -2.0f }, { "sfx_arena_crowd_laugh_2", -2.0f }, { "sfx_arena_crowd_save", 0.0f },
+                { "sfx_arena_chant_stomp", -3.0f }, { "sfx_arena_chant_claps", -3.0f }, { "sfx_arena_chant_claps_fast", -3.0f },
+                { "sfx_arena_chant_ooh_hey", -3.0f }, { "sfx_arena_chant_drums", -3.0f }, { "sfx_arena_chant_horns", -5.0f },
+                { "sfx_arena_pa_chime", -5.0f }, { "sfx_arena_pa_organ", -6.0f }, { "sfx_arena_pa_horn", -5.0f }, { "sfx_arena_pa_fanfare", -5.0f },
+                // Amihan (2026-09-25, `tools/build_amihan_audio.py`). The gather is a sustained
+                // pressure rise under 2.5 s of telegraph and is mixed as a bed; the release is the
+                // loudest moment of her kit and is mixed as an ultimate payload.
+                // The two new statuses sound on the victim, mixed like `sfx_hex_afflict`: several
+                // can land inside a second.
+                // Paete (HERO-9, `tools/build_paete_audio.py`). The sentry burst is his biggest
+                // moment and is mixed as an ultimate payload; the command sits under the seedling's
+                // own fire; the roots on a victim are a status, three can land inside a second.
+                // v5 (direction.md 5.14): each haul of the guardian crawling out of the court, three per cast, under the burst.
+                // The roster rework (ABILITY-2, `tools/build_rework_audio.py`): one recipe per ability and status.
+                // PHAISTER, THE WITCH (HERO-10, 2026-09-27, `tools/build_phaister_audio.py`): the swarm's arrival, the doll's
+                // three fates, the moonlight's two ends.
+                // v3, the voodoo kit (plan 9.5): the two locks, the mark and the snap, DRAIN's wring, HEX's stab; the two
+                // statuses sound on the victim like the others.
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
                 // `sfx_hex_afflict` is: this is a 1-vs-3 game and a nova can hold three people
@@ -111,22 +178,10 @@ namespace TumbangPreso.Audio
                 // that announced itself would be somebody else's ultimate.
                 // The maw is an event and carries a full mix; the flight home is punctuation on
                 // an animation the player is already watching, so it sits well under it.
-                { "sfx_kuro_unbound", -4.0f },
-                { "sfx_kuro_return", -10.0f },
 
-                { "sfx_sky_storm",     -9.0f },
-                { "sfx_sky_eclipse",  -11.0f },
-                { "sfx_sky_dustveil", -11.0f },
-                { "sfx_sky_emberfall", -12.0f },
-                { "sfx_sky_whiteout", -13.0f },
-                { "sfx_sky_seance",   -14.0f },
 
                 { "sfx_stun_break",  -9.0f },
-                { "sfx_blink_arrive", -4.0f },
 
-                { "sfx_ice_form",    -5.0f },
-                { "sfx_barricade_raise", -3.0f },
-                { "sfx_ice_shatter", -3.0f },
 
                 { "ui_hover",       -8.0f },
                 // ⚠️ THREE OF THE FOUR NEW CUES FIRE WHILE SOMEBODY IS TYPING, so they sit at
@@ -139,6 +194,10 @@ namespace TumbangPreso.Audio
                 { "ui_start",       -3.0f },
                 { "land",           -6.0f },
                 { "step_rubber",   -11.0f },
+                // Amihan's own light step (owner 2026-10-02, `tools/build_amihan_steps.py`): quieter than the rubber slap.
+                { "step_amihan",   -14.0f },
+                // ⚠️ Amihan's reworked skill sounds (her Airburst theme and release, Featherfall's three) were taken out again on the
+                // owner's instruction (2026-10-03: *"i meant remove all sfx"*). `tools/build_amihan_ult_audio.py` keeps the recipes.
                 { "slide_scrape",   -6.0f },
                 { "grab",           -6.0f },
                 { "throw_charge",   -5.0f },
@@ -148,6 +207,7 @@ namespace TumbangPreso.Audio
                 { "ui_click",       -3.0f },
                 { "slipper_land",   -3.0f },
                 { "dash",           -3.0f },
+                { "bump_swing",     -6.0f },
                 { "lata_impact",     0.0f },
                 { "lata_seal",       0.0f },
                 { "match_win",       0.0f },
@@ -206,14 +266,17 @@ namespace TumbangPreso.Audio
 
             // Bodies.
             "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
-            "step_rubber", "slide_scrape",
+            "step_rubber", "step_amihan", "slide_scrape",
             "stamina_empty",
 
-            // Hero Abilities & Special Effects.
-            "ability_bagsak_bomb", "ability_bakya_bash", "ability_flick_dash",
-            "ability_shatter_trap", "ability_spin_guard",
-            "sfx_explosion_heavy", "sfx_lightning_strike", "sfx_ice_freeze",
-            "sfx_fire_whoosh", "sfx_ghost_teleport", "sfx_hitmarker", "sfx_super_ready",
+            // ⚠️⚠️ EVERY HERO SKILL SOUND IS DELETED (2026-09-29), ON THE OWNER'S INSTRUCTION. 🧑: *"also all ur skill sfx
+            // suck shit what is that HAHAHA even paete's"*, *"dont put sfx for all skills for now"*, *"will rework them at a lter
+            // date"*, then *"can we delete all skill abilities sfx ty haha"*. 149 files went: every cast, loadout variant, status,
+            // payload, zone, ultimate theme and ultimate weather cue of every hero (the list is `IsSkillSfx`). Their call sites
+            // stay and play nothing (`Audible`), so the rework registers new files under the same names and they are heard again.
+            // The generators that made them (`tools/generate_*_audio.py`, `tools/build_*_audio.py`) are kept for that rework;
+            // do not rerun them into `Resources/Sfx` until the owner asks for skill sounds back.
+            "sfx_hitmarker", "sfx_super_ready",
 
             // ⚠️ THE MAP EVENT. `LrtTrainFlyby` called `ui_move` for two months and there has
             // never been a `ui_move.wav`, so every pass wrote `[Audio] no cue registered` to the
@@ -225,39 +288,6 @@ namespace TumbangPreso.Audio
             // transform. See `LrtTrainFlyby` § THE PASS for why a moving emitter is the whole
             // point and why `sfx_lrt_rumble` no longer exists.
             "sfx_lrt_pass",
-
-            // ⚠️⚠️ THE PAYLOADS, WHICH ARE NOT THE CASTS. Every kit already fired its own
-            // element on the CAST and then shared two leftovers for what actually happened:
-            // `CreateExplosion` played `ability_bagsak_bomb` for a 2.2 m stomp, a 4.5 m
-            // fissure, a 4.8 m supernova AND a thrown slipper, and `CreateThunderstrike`
-            // played `ability_flick_dash`, which is a dash. Both of those are in
-            // `DeletedAbilityCues` below: the biggest moments in the game were carried by
-            // sounds written for a system that no longer exists. `tools/generate_ability_audio.py`
-            // makes these six and says what each one is shaped like and why.
-            "sfx_quake_slam", "sfx_thunder_impact", "sfx_frost_nova",
-            "sfx_possess_enter", "sfx_possess_exit", "sfx_slipper_burst",
-
-            // ⚠️⚠️ THE ZONE LIFECYCLE SET, AND REGISTERING IT IS THE HALF THAT IS EASY TO MISS.
-            // A .wav on disk is not a cue: `AudioDirector.PlayAtVaried` looks the id up in this
-            // registry and warns `no cue registered` if it is absent, which is a WARNING and not
-            // an exception, so the ability simply plays nothing and the game carries on. The
-            // note on `sfx_lrt_pass` above records the same thing costing two months of silence
-            // on the one recurring event on Ilalim ng Tulay. The PlayMode run is what caught
-            // these six, one line per cast.
-            //
-            // ⚠️ WHAT THEY REPLACE: `SpawnIceBarricade` and `SpawnIceSheet` BOTH opened on
-            // `ability_shatter_trap`, which is a cue for something BREAKING fired at the moment
-            // something is BUILT, and `IceBarricadeComponent.Shatter` played `slipper_land`, a
-            // rubber sandal hitting the road, for a wall of ice failing. The other three are
-            // endings: every hazard in `HeroHazards` ticked down and called `Destroy` in
-            // silence. `docs/TODO.md` § 20.
-            "sfx_ice_form", "sfx_barricade_raise", "sfx_ice_shatter",
-            "sfx_ice_thaw", "sfx_void_close", "sfx_magma_cool",
-
-            // ⚠️⚠️ PHAISTER'S ULTIMATE, WHICH ARRIVED CALLING `sfx_ghost_appear`: A CUE WITH NO
-            // FILE AND NO REGISTRATION. It is the same silent-cue fault `sfx_lrt_pass` above
-            // records, on the biggest moment in the newest kit. `docs/TODO.md` § 21.
-            "sfx_eclipse_toll", "sfx_hex_cast", "sfx_hex_afflict",
 
             // ⚠️⚠️ `sfx_lrt_rumble` IS DELETED, AND THE ENTRY ABOVE IT USED TO SAY "THE TRAIN IS
             // TWO CUES, NOT ONE". It was: a distant synthesised one-shot for the warning and a
@@ -280,35 +310,7 @@ namespace TumbangPreso.Audio
             //  * `sfx_stun_break`: `docs/TODO.md` § 23 built a whole mash-out system and ended it
             //    in silence. The pips are on a card the player is not looking at while three
             //    people run at them.
-            "sfx_blink_arrive", "sfx_stun_break",
-
-            // ⚠️ ONE THEME PER HERO, ADDED 2026-08-27. 🧑: *"they dont have enough auditory
-            // effects too. give everyone their own theme and dont generate it the same way bcz
-            // its gonna sound the same way"*. `tools/generate_ability_audio.py` carries the six
-            // and the block above them explains why each uses a DIFFERENT synthesis method:
-            // Karplus-Strong, granular, subtractive, an impulse train, ring modulation and an
-            // additive rising drone. Recolouring one recipe six times is the audio version of
-            // `docs/TODO.md` § 19's *"the same logic and code was used to generate all of them"*.
-            "sfx_coven_summon",
-            "sfx_ult_theme_zack", "sfx_ult_theme_cheska", "sfx_ult_theme_sean",
-            "sfx_ult_theme_dante", "sfx_ult_theme_nemu",
-
-            // ⚠️ ONE WEATHER CUE PER ULTIMATE. 🧑 2026-08-26: *"add thunder shit and under sfx
-            // when they ult and the sky changes to their theme"*, then *"add personalized sfx to
-            // all ULTs"*. `Visual.SkyEvent` plays these and the kits keep their own payload cues;
-            // these are the bed underneath, which is why every one of them is mixed well down.
-            //
-            // ⚠️ THEY ARE SIX SOUNDS AND NOT ONE WITH SIX PITCHES, for the same reason the six
-            // LOOKS are six profiles: `docs/TODO.md` § 26. A shared cue would put every hero's
-            // biggest moment through one recording, which is § 8 item 3's fault in the mix
-            // instead of in the geometry.
-            "sfx_sky_eclipse", "sfx_sky_storm", "sfx_sky_whiteout",
-            "sfx_sky_emberfall", "sfx_sky_dustveil", "sfx_sky_seance",
-
-            // ⚠️ NEMU'S ULTIMATE IS HER PET NOW, so it needed a sound that is not a teleport.
-            // It called `sfx_ghost_teleport`, which is the blink she shares with Phaister, for
-            // the biggest moment in her kit. `docs/TODO.md` § 28.
-            "sfx_kuro_unbound", "sfx_kuro_return",
+            "sfx_stun_break",
 
             // Hero Vocal Shouts & Grunts.
             "hero_dante_ult", "hero_dante_grunt",
@@ -329,52 +331,59 @@ namespace TumbangPreso.Audio
             // least able to afford it.
             "hero_phaister_ult", "hero_phaister_grunt",
 
-            // ⚠️⚠️ ONE CAST SOUND PER ABILITY, AND ONE PER LOADOUT ALTERNATE. Thirty cues, added
-            // 2026-09-02. 🧑: *"as well as add sfx for each skill, for all character as well as
-            // the ones in loadout"*, *"make it unique throughout each character (dont generate
-            // them the same way bcz theyll end up sounding the same huhu)"*, *"make sure the sfx
-            // matches wat the skill really does"*.
-            //
-            // ⚠️ WHAT THEY REPLACE, MEASURED BY READING THE SIX KITS: Sean's FLAME RUSH,
-            // IGNITION CANNON and SUPERNOVA all opened on `sfx_fire_whoosh`; Zack's three all on
-            // `sfx_lightning_strike`; two of Cheska's on `sfx_ice_freeze`; two of Nemu's on
-            // `sfx_ghost_teleport`; two of Dante's on `sfx_explosion_heavy`. **Eighteen powers
-            // with six voices**, so the cast told you which hero and never which power.
-            //
-            // ⚠️ THE ELEMENT CUES ARE KEPT AND ARE STILL PLAYED BY THE PAYLOADS. A hex still
-            // sounds like `sfx_hex_cast` when the ward lands and a nova still rings
-            // `sfx_frost_nova`; what changed is that the PRESS no longer plays the element too.
-            // Deleting them would have taken the sound off the hazards as well.
-            //
-            // ⚠️ `tools/generate_skill_audio.py` IS A THIRD GENERATOR AND ITS HEADER SAYS WHY.
-            // The voices are unseeded and rewrite themselves every run; the payloads are seeded;
-            // these are seeded separately, so a rebuild of any one set cannot touch the other
-            // two. Every synth in it names its own method, because § 19's *"the same logic and
-            // code was used to generate all of them"* is the fault this whole pass is about.
-            "sfx_cast_dante_stomp", "sfx_cast_dante_carapace", "sfx_cast_dante_fissure",
-            "sfx_cast_cheska_sheet", "sfx_cast_cheska_barricade", "sfx_cast_cheska_nova",
-            "sfx_cast_sean_rush", "sfx_cast_sean_cannon", "sfx_cast_sean_supernova",
-            "sfx_cast_zack_sprint", "sfx_cast_zack_magnet", "sfx_cast_zack_summon",
-            "sfx_cast_nemu_veil", "sfx_cast_nemu_hijack", "sfx_cast_nemu_seance",
-            "sfx_cast_phaister_hex", "sfx_cast_phaister_blink", "sfx_cast_phaister_coven",
+            // The lagoon deck (Lagoon Cove): footsteps on the boards, a swimmer's stroke, the water at the piles.
+            "sfx_step_deck", "sfx_swim_stroke", "sfx_lagoon_lap",
 
-            // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
-            // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing
-            // bodies and its cue is a horizontal sweep with no slam in it. Exactly one of the
-            // two ever plays; see `HeroAbility.VariantCastCue`.
-            "sfx_var_dante_tremor", "sfx_var_dante_plating",
-            "sfx_var_cheska_blackice", "sfx_var_cheska_spires",
-            "sfx_var_sean_afterburn", "sfx_var_sean_flare",
-            "sfx_var_zack_arcline", "sfx_var_zack_discharge",
-            "sfx_var_nemu_fade", "sfx_var_nemu_leash",
-            "sfx_var_phaister_brand", "sfx_var_phaister_stride",
+            // The Arena (ARENA-1, owner 2026-10-05: "map transformation is so dull, theres no emphasis on it",
+            // "more vfx overall in the map, including the drone stuff"). The stage's transformation between
+            // rounds in its three beats (the alarm, the undock, a thruster and a lock per platform, the
+            // reveal), the stands' roar, the pyro, and the rescue drone's lock-on, hover, haul, set-down and exit. Every one is
+            // played by each peer for itself from state it already has (`Map.ArenaShow`, `ArenaDrone`,
+            // `ArenaAmbience`), never through `NetCue`: nothing about them is on the wire.
+            "sfx_arena_alarm", "sfx_arena_undock", "sfx_arena_thruster", "sfx_arena_lock", "sfx_arena_reveal",
+            "sfx_arena_crowd_roar", "sfx_arena_pyro", "sfx_arena_drone_ping", "sfx_arena_drone_set",
+            "sfx_arena_pad_jump", "sfx_arena_pad_speed", "sfx_arena_boost", "sfx_arena_stamina",
+            // Paete's reworked LIANA LEAP: the cast goes the way every cast cue goes; the catch and the landing are played
+            // by each peer for itself from its own vine (`Visual.PaeteVineReach`), never through `NetCue`.
+            "sfx_cast_paete_vine", "sfx_paete_vine_catch", "sfx_paete_vine_land",
+            // Paete's ultimate cutscene (`HeroIntroductionScene.StartSound` plays it on the phase's own clock, never through `NetCue`).
+            "sfx_ult_theme_paete",
+            "sfx_arena_drone_hum", "sfx_arena_drone_beam", "sfx_arena_drone_zip",
+            // The Arena's slipper balloon and a slipper set back on the stage (`Map.ArenaBalloon`,
+            // `Map.ArenaFallRecovery`): each peer plays them for itself, never through `NetCue`.
+            "sfx_arena_balloon_fly", "sfx_arena_balloon_squeak_a", "sfx_arena_balloon_squeak_b", "sfx_arena_balloon_squeak_c",
+            "sfx_arena_balloon_boing", "sfx_arena_balloon_creak", "sfx_arena_balloon_pop", "sfx_arena_balloon_hiss",
+            "sfx_arena_slipper_return",
+            // The Arena's crowd and public address (`Map.ArenaCrowdAudio`): five seamless beds, six reactions in two or
+            // three takes each (`_2`, `_3`: one is drawn each time), a self-save's roar, six chants and four PA stings.
+            // The crowd is cut from CC0 recordings (`tools/build_arena_crowd_from_recordings.py`); the stings are
+            // `tools/synth_arena_crowd_sfx.py --no-vo --only pa`. Each peer plays them for itself from events it already
+            // has, never through `NetCue`. The announcer's own takes as the stadium plays them are not cues: they are
+            // `Resources/ArenaPa/pa_<take>`, found by the take's name.
+            // ⚠️ THREE NAMES ARE DELIBERATELY ABSENT: `sfx_arena_chant_tumbang_preso`, `sfx_arena_chant_taya` and
+            // `sfx_arena_chant_tumba`. The game's own word chants cannot be cut from another crowd, and the synthesised
+            // ones were rejected and deleted. `ArenaCrowdAudio.Recorded` plays a clapping or drumming pattern in their
+            // place. When the team records one, put the .wav in `Resources/Sfx` and its name back in this list (and a
+            // row in `TrimDb`, about -3): nothing else has to change.
+            "sfx_arena_crowd_bed_calm", "sfx_arena_crowd_bed_lively", "sfx_arena_crowd_bed_roar", "sfx_arena_crowd_bed_tension",
+            "sfx_arena_crowd_bed_applause",
+            "sfx_arena_crowd_erupt", "sfx_arena_crowd_erupt_2", "sfx_arena_crowd_erupt_3",
+            "sfx_arena_crowd_cheer", "sfx_arena_crowd_cheer_2", "sfx_arena_crowd_cheer_3",
+            "sfx_arena_crowd_ooh", "sfx_arena_crowd_ooh_2", "sfx_arena_crowd_ooh_3",
+            "sfx_arena_crowd_aww", "sfx_arena_crowd_aww_2", "sfx_arena_crowd_aww_3",
+            "sfx_arena_crowd_gasp", "sfx_arena_crowd_gasp_2", "sfx_arena_crowd_laugh", "sfx_arena_crowd_laugh_2",
+            "sfx_arena_crowd_save",
+            "sfx_arena_chant_stomp", "sfx_arena_chant_claps", "sfx_arena_chant_claps_fast",
+            "sfx_arena_chant_ooh_hey", "sfx_arena_chant_drums", "sfx_arena_chant_horns",
+            "sfx_arena_pa_chime", "sfx_arena_pa_organ", "sfx_arena_pa_horn", "sfx_arena_pa_fanfare",
 
-            // The shove and the block, via aliases.
+            // The shove has a dedicated cloth/rubber cue; body contact retains its alias.
             "hit_body", "bump_swing",
 
             // The slipper.
             "throw_whoosh", "throw_charge", "slipper_land", "slipper_bounce", "grab",
             "can_knockdown", "reset_complete", "pickup", "throw_release",
+            "court_escape", "court_skid",
 
             // Match state.
             "countdown_tick", "countdown_go", "round_win", "round_lose", "match_win",
@@ -403,6 +412,7 @@ namespace TumbangPreso.Audio
             {
                 { "menu",  "ost_menu.mp3" },
                 { "match", "ost_match.mp3" },
+                { "tutorial", "ost_tutorial.wav" },
             };
 
         public const float MusicCrossfadeTime = 1.5f;
@@ -453,6 +463,71 @@ namespace TumbangPreso.Audio
             foreach (var kv in Music) set.Add(kv.Key);
             return set;
         }
+
+        // -------------------------------------------------------------------
+        // § HERO SKILL SOUNDS ARE DELETED (2026-09-29)
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ EVERY HERO SKILL SOUND IS DELETED, ON THE OWNER'S INSTRUCTION, UNTIL THEY ARE REWORKED. 🧑 2026-09-29: *"also all
+        /// ur skill sfx suck shit what is that HAHAHA even paete's"*, *"dont put sfx for all skills for now"*, *"will rework them at
+        /// a lter date"*, *"can we delete all skill abilities sfx ty haha"*. Every cast, variant, status, payload, zone, ultimate
+        /// theme and ultimate weather cue (`IsSkillSfx`) has no file and no registration; the base game's sounds (the can, the
+        /// slipper, bodies, tags, footsteps, the map, UI, music) and the heroes' voices are untouched. The kits still NAME their
+        /// cues, and `AudioDirector` and `HeroIntroductionScene` ask <see cref="Audible"/> first, so a skill cue plays nothing,
+        /// warns nothing and reaches no film, replay or relay listener. The rework registers new files under those names and sets
+        /// this true.
+        /// </summary>
+        public static bool SkillSfxOn = false;
+
+        private static readonly string[] SkillSfxPrefixes =
+        {
+            "sfx_cast_", "sfx_var_", "sfx_ult_theme_", "sfx_sky_", "sfx_status_", "ability_",
+            "sfx_phaister_", "sfx_paete_", "sfx_amihan_", "sfx_nemu_", "sfx_cheska_", "sfx_dante_", "sfx_kuro_", "sfx_rafi_",
+        };
+
+        /// <summary>The element and payload cues the kits and their hazards play (`HeroHazards`, the kits' payloads).</summary>
+        private static readonly HashSet<string> SkillSfxCues = new HashSet<string>
+        {
+            "sfx_explosion_heavy", "sfx_lightning_strike", "sfx_ice_freeze", "sfx_fire_whoosh", "sfx_ghost_teleport",
+            "sfx_quake_slam", "sfx_thunder_impact", "sfx_frost_nova", "sfx_possess_enter", "sfx_possess_exit", "sfx_slipper_burst",
+            "sfx_ice_form", "sfx_barricade_raise", "sfx_ice_shatter", "sfx_ice_thaw", "sfx_void_close", "sfx_magma_cool",
+            "sfx_eclipse_toll", "sfx_hex_cast", "sfx_hex_afflict", "sfx_blink_arrive", "sfx_coven_summon",
+        };
+
+        /// <summary>A hero skill's sound (a cast, a variant, a status, a payload, an ultimate's theme or weather).</summary>
+        public static bool IsSkillSfx(string cue)
+        {
+            if (string.IsNullOrEmpty(cue)) return false;
+            if (SkillSfxCues.Contains(cue)) return true;
+            foreach (var prefix in SkillSfxPrefixes)
+                if (cue.StartsWith(prefix, System.StringComparison.Ordinal)) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// ⚠️ THE REWORKED SKILL SOUNDS, released from the switch one by one as each is rebuilt. AIRBURST v3 (2026-10-03,
+        /// `docs/reports/amihan-presentation-2026-10-02/airburst-v3.md`, `tools/build_amihan_ult_audio.py`): Amihan's ultimate
+        /// only. Every other hero's skill sounds, and her other skills, stay off.
+        /// </summary>
+        private static readonly HashSet<string> ReworkedSkillSfx = new HashSet<string>
+        {
+            // Amihan's were removed on the owner's instruction (2026-10-03, *"i meant remove all sfx"*).
+            // ⚠️ THE REWORK BEGINS WITH PAETE, ONE ABILITY AT A TIME, EACH PICKED BY THE OWNER'S EAR FROM DRAFTS FIRST. LIANA
+            // LEAP, 2026-10-07: *"lets try option E"* (real CC0 recordings, `tools/build_paete_skill_sfx.py`, the sources
+            // in `tools/paete_sfx_sources.json`). Nothing else of his, and no other hero, is audible yet.
+            "sfx_cast_paete_vine", "sfx_paete_vine_catch", "sfx_paete_vine_land",
+            // MAKILING'S EMBRACE's cutscene, 2026-10-08: of three soundtracks drafted over the 9 s film he said *"B but the trunk
+            // going up sound feels so light"* (b is the physical sounds with a voice for her: a singing bowl, a choir's held
+            // note, chimes, a gong; its heaves were then given a rumble, a heavy log and a bass drum under them). One track,
+            // `tools/build_paete_ult_sfx.py`; its times are the cutscene's (`HeroIntroductionScene.Paete.cs`, `PaeteRealAt`).
+            "sfx_ult_theme_paete",
+        };
+
+        public static bool IsReworkedSkillSfx(string cue) => !string.IsNullOrEmpty(cue) && ReworkedSkillSfx.Contains(cue);
+
+        /// <summary>False for a skill sound while they are switched off (<see cref="SkillSfxOn"/>), unless it was reworked.</summary>
+        public static bool Audible(string cue) => SkillSfxOn || !IsSkillSfx(cue) || IsReworkedSkillSfx(cue);
 
         public static bool IsKnown(string cue) => !string.IsNullOrEmpty(cue) && KnownNames.Contains(cue);
 

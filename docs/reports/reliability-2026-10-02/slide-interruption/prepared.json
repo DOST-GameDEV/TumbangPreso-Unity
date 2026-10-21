@@ -1,0 +1,11 @@
+{
+  "prepared": true,
+  "qualification": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "protectedCount": 1472,
+  "owned": [
+    "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+    "Assets/TumbangPreso/Tests/SlideInterruptionTests.cs",
+    "Assets/TumbangPreso/Tests/SlideInterruptionTests.cs.meta"
+  ],
+  "baselineInstalled": true
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:48Z" duration="0.4725173">
+  <test-suite type="TestSuite" id="2538" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1258" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:48Z" duration="0.472517" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2532" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1258" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:48Z" duration="0.456843" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="84384" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2533" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1258" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:48Z" duration="0.448265" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2534" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1258" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:48Z" duration="0.439865" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2002" name="RafiBackwashProbe" fullname="TumbangPreso.PlayTests.RafiBackwashProbe" classname="TumbangPreso.PlayTests.RafiBackwashProbe" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:48Z" duration="0.416887" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2005" name="InitialEquipAndUnthrownDropStayNeutral" fullname="TumbangPreso.PlayTests.RafiBackwashProbe.InitialEquipAndUnthrownDropStayNeutral" methodname="InitialEquipAndUnthrownDropStayNeutral" classname="TumbangPreso.PlayTests.RafiBackwashProbe" runstate="Runnable" seed="2079581097" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:47Z" duration="0.165473" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2004" name="NewThrowKeepsOriginalMovementWindowAndResetRetiresIt" fullname="TumbangPreso.PlayTests.RafiBackwashProbe.NewThrowKeepsOriginalMovementWindowAndResetRetiresIt" methodname="NewThrowKeepsOriginalMovementWindowAndResetRetiresIt" classname="TumbangPreso.PlayTests.RafiBackwashProbe" runstate="Runnable" seed="2122748428" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:47Z" duration="0.069474" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2003" name="RealRetrievalBoostsActualMovementThenExpiresWithoutDropRefresh" fullname="TumbangPreso.PlayTests.RafiBackwashProbe.RealRetrievalBoostsActualMovementThenExpiresWithoutDropRefresh" methodname="RealRetrievalBoostsActualMovementThenExpiresWithoutDropRefresh" classname="TumbangPreso.PlayTests.RafiBackwashProbe" runstate="Runnable" seed="1112496591" result="Passed" start-time="2026-10-02 06:17:47Z" end-time="2026-10-02 06:17:48Z" duration="0.120261" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2006" name="ScopedPassiveUpdatesSurviveSettledSkimWithoutReplayingTheLoad" fullname="TumbangPreso.PlayTests.RafiBackwashProbe.ScopedPassiveUpdatesSurviveSettledSkimWithoutReplayingTheLoad" methodname="ScopedPassiveUpdatesSurviveSettledSkimWithoutReplayingTheLoad" classname="TumbangPreso.PlayTests.RafiBackwashProbe" runstate="Runnable" seed="900378461" result="Passed" start-time="2026-10-02 06:17:48Z" end-time="2026-10-02 06:17:48Z" duration="0.048920" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

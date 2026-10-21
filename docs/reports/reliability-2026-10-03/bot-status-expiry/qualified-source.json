@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/AIController.cs",
+    "sha256": "c61a2679b95cb3feb9b1e8ed6fa1cebe3686ea5045a705cc51343a0220b97c1a"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/CharacterMotor.cs",
+    "sha256": "35aae77f6a72a4610c665958ab6072f31d15679ada1cb8676a1d083a428bd759"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Status.cs",
+    "sha256": "c3fa511fb2fe267a748f10e8a7eca3eaaf234fbdda38cd7c327f9f67f019869d"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/BotStatusExpiryProbe.cs",
+    "sha256": "4b6e99ab4f4241b43eb53b49510447e8d3d565c593c84b322ed854da302cefa2"
+  }
+]

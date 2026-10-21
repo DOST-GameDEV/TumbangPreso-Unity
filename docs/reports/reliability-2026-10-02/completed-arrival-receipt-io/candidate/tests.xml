@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.1225821">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.122582" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2161" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.110607" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23704" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2162" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.107780" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2163" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.105352" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1225" name="CompletedArrivalReceiptIoTests" fullname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests" classname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.088436" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1226" name="LockedReceiptCannotThrowOutOfTheMatchEndObserverAndLaterSaveRecovers" fullname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests.LockedReceiptCannotThrowOutOfTheMatchEndObserverAndLaterSaveRecovers" methodname="LockedReceiptCannotThrowOutOfTheMatchEndObserverAndLaterSaveRecovers" classname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests" runstate="Runnable" seed="1860811400" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.048389" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[CompletedArrival] receipt not written: Sharing violation on path C:\Users\matth\AppData\Local\Temp\tp-completed-receipt-ec6c5d57f11e403c8243ce86234fdf48\client.json
+]]></output>
+            </test-case>
+            <test-case id="1228" name="OrdinaryObserverWritesPublishTheirLatestCount" fullname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests.OrdinaryObserverWritesPublishTheirLatestCount" methodname="OrdinaryObserverWritesPublishTheirLatestCount" classname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests" runstate="Runnable" seed="1541194503" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.016172" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1227" name="ReceiptReadAllowsAnExistingSharedWriter" fullname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests.ReceiptReadAllowsAnExistingSharedWriter" methodname="ReceiptReadAllowsAnExistingSharedWriter" classname="TumbangPreso.Tests.CompletedArrivalReceiptIoTests" runstate="Runnable" seed="126677764" result="Passed" start-time="2026-10-02 10:36:20Z" end-time="2026-10-02 10:36:20Z" duration="0.007013" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

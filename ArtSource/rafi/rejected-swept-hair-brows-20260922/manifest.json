@@ -1,0 +1,10 @@
+[
+  {
+    "path": "tools/build_rafi_voxel.py",
+    "sha256": "3b6e50e4466c2617370550b377dfc204a0b5cdacd8cf16e5747066661d70bb8b"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb",
+    "sha256": "ec1b0c32e4784d28f488a6ce7fdb52d05666001d85cfc44155d4c04994b9b593"
+  }
+]

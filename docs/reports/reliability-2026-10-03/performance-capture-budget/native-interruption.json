@@ -1,0 +1,53 @@
+{
+  "job": {
+    "id": "2828c8424dbb469e9a04e80a2904441a",
+    "ownerPid": 13668,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T13:27:57Z",
+    "kind": "cpu",
+    "memoryMb": 768,
+    "reserveMb": 1024,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-codex-slot1003",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-codex-slot1003\\library",
+    "profile": "validation-codex-slot1003",
+    "prefHive": "software\\unity\\unityeditor\\bh studios validation\\tumpworker-codex-slot1003",
+    "ports": [],
+    "worker": true,
+    "allowParallel": true,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": false,
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-codex-slot1003",
+    "coexistEditorProject": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks",
+    "coexistReserveMb": 1024
+  },
+  "requestedUtc": "2026-10-03T13:27:57Z",
+  "status": "interrupted_guard_completed",
+  "exitCode": 125,
+  "admission": {
+    "availableMb": 5169,
+    "activeJobsBefore": 0,
+    "outsideEditors": [],
+    "outsideReserveMb": 0,
+    "acquiredUtc": "2026-10-03T13:27:57Z"
+  },
+  "startedUtc": "2026-10-03T13:27:57Z",
+  "guardPid": 17744,
+  "interruptionReason": "Physical memory below runtime reserve: 1002 MB available, 1024 MB required",
+  "guardExitCode": 124,
+  "unityPids": [
+    19552,
+    1960
+  ],
+  "stoppedUnityPids": [
+    19552,
+    1960
+  ],
+  "reason": "Only verified owned Editors may be stopped; the guard was not terminated. A pending guard retains its lease.",
+  "endedUtc": "2026-10-03T13:29:16Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 3763,
+  "leaseHeld": false
+}

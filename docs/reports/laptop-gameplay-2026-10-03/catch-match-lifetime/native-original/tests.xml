@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:45:57Z" end-time="2026-10-03 06:46:12Z" duration="15.3501594">
+  <test-suite type="TestSuite" id="2766" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1438" result="Failed" site="Child" start-time="2026-10-03 06:45:57Z" end-time="2026-10-03 06:46:12Z" duration="15.350159" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2760" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1438" result="Failed" site="Child" start-time="2026-10-03 06:45:57Z" end-time="2026-10-03 06:46:12Z" duration="15.342640" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24456" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2761" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1438" result="Failed" site="Child" start-time="2026-10-03 06:45:57Z" end-time="2026-10-03 06:46:12Z" duration="15.339820" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2762" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1438" result="Failed" site="Child" start-time="2026-10-03 06:45:57Z" end-time="2026-10-03 06:46:12Z" duration="15.338045" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1215" name="CatchMatchLifetimeTests" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-03 06:45:57Z" end-time="2026-10-03 06:46:12Z" duration="15.318058" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1219" name="AnOldPlayingCatchCannotSuppressANewMatchTagEvent" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.AnOldPlayingCatchCannotSuppressANewMatchTagEvent" methodname="AnOldPlayingCatchCannotSuppressANewMatchTagEvent" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="1671080616" result="Failed" start-time="2026-10-03 06:45:57Z" end-time="2026-10-03 06:46:04Z" duration="7.694171" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The old view must retire before the same-victim duplicate shortcut.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchMatchLifetimeTests+<AnOldPlayingCatchCannotSuppressANewMatchTagEvent>d__20.MoveNext () [0x00056] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CatchMatchLifetimeTests.cs:120
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1217" name="FreshSameRoundIdentityCannotUseAPendingOldContactForLaterState" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.FreshSameRoundIdentityCannotUseAPendingOldContactForLaterState" methodname="FreshSameRoundIdentityCannotUseAPendingOldContactForLaterState" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="898393637" result="Passed" start-time="2026-10-03 06:46:04Z" end-time="2026-10-03 06:46:07Z" duration="2.537478" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1216" name="FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives" methodname="FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="1789933839" result="Failed" start-time="2026-10-03 06:46:07Z" end-time="2026-10-03 06:46:09Z" duration="2.547745" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A previous match's detached catch survived a fresh identity at the same round.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchMatchLifetimeTests+<FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives>d__17.MoveNext () [0x00046] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CatchMatchLifetimeTests.cs:92
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1218" name="SameIdentityKeepsAnAlreadyAcceptedCatchAndRecovery" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.SameIdentityKeepsAnAlreadyAcceptedCatchAndRecovery" methodname="SameIdentityKeepsAnAlreadyAcceptedCatchAndRecovery" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="1864920483" result="Passed" start-time="2026-10-03 06:46:09Z" end-time="2026-10-03 06:46:12Z" duration="2.528343" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

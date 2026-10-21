@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 22:12:22Z" end-time="2026-09-26 22:12:35Z" duration="12.6580111">
+  <test-suite type="TestSuite" id="1869" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:12:22Z" end-time="2026-09-26 22:12:35Z" duration="12.658011" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:12:22Z" end-time="2026-09-26 22:12:35Z" duration="12.645769" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51872" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:12:22Z" end-time="2026-09-26 22:12:35Z" duration="12.641024" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1865" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:12:22Z" end-time="2026-09-26 22:12:35Z" duration="12.636828" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1499" name="OwnerPreparationTests" fullname="TumbangPreso.PlayTests.OwnerPreparationTests" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-26 22:12:22Z" end-time="2026-09-26 22:12:35Z" duration="12.623460" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1503" name="FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" methodname="FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="401605825" result="Passed" start-time="2026-09-26 22:12:22Z" end-time="2026-09-26 22:12:35Z" duration="12.613053" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18658, join code AM4J
+[TumpUiCapture] CourtPreparation-friends-960x540 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] CourtPreparation-friends-1280x720 cream source=252,211,159 pixel=96,81,65; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-1366x768 cream source=252,211,159 pixel=96,81,65; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-1920x1080 cream source=252,211,159 pixel=95,81,65; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-1920x1200 cream source=252,211,159 pixel=96,81,67; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-1280x960 cream source=252,211,159 pixel=94,82,66; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-2560x1440 cream source=252,211,159 pixel=94,79,63; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-3440x1440 cream source=252,211,159 pixel=82,65,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-3840x1080 cream source=252,211,159 pixel=91,64,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtPreparation-friends-3840x2160 cream source=252,211,159 pixel=94,80,65; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-960x540 cream source=252,211,159 pixel=93,80,63; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-1280x720 cream source=252,211,159 pixel=95,79,63; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-1366x768 cream source=252,211,159 pixel=96,79,63; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-1920x1080 cream source=252,211,159 pixel=95,77,63; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-1920x1200 cream source=252,211,159 pixel=95,81,66; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-1280x960 cream source=252,211,159 pixel=95,80,66; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-2560x1440 cream source=252,211,159 pixel=94,75,61; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-3440x1440 cream source=252,211,159 pixel=92,65,42; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-3840x1080 cream source=252,211,159 pixel=84,66,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-3840x2160 cream source=252,211,159 pixel=94,75,61; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-compact-1600x680 cream source=252,211,159 pixel=84,77,61; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-960x540 cream source=252,211,159 pixel=96,77,63; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-1280x720 cream source=252,211,159 pixel=95,77,62; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-1366x768 cream source=252,211,159 pixel=95,77,62; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-1920x1080 cream source=252,211,159 pixel=94,76,62; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-1920x1200 cream source=252,211,159 pixel=94,81,65; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-1280x960 cream source=252,211,159 pixel=96,82,67; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-2560x1440 cream source=252,211,159 pixel=94,75,61; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-3440x1440 cream source=252,211,159 pixel=89,62,43; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-3840x1080 cream source=252,211,159 pixel=84,66,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-3840x2160 cream source=252,211,159 pixel=94,75,61; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-history-1600x680 cream source=252,211,159 pixel=89,65,45; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-large-compact-960x540 cream source=252,211,159 pixel=94,79,63; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-large-compact-1600x680 cream source=252,211,159 pixel=85,62,46; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-large-history-960x540 cream source=252,211,159 pixel=92,80,64; isolated UI camera, no ColourGrade.
+[TumpUiCapture] RoomChat-large-history-1600x680 cream source=252,211,159 pixel=84,60,45; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] offline
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

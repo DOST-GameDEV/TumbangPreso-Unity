@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.6730996">
+  <test-suite type="TestSuite" id="2543" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.673100" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2537" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.650300" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2538" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.636200" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2539" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.622369" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2044" name="RecordChoiceFocusTests" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.589375" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2046" name="CancellingAnActiveChoiceReturnsFocusToItsOpener" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.CancellingAnActiveChoiceReturnsFocusToItsOpener" methodname="CancellingAnActiveChoiceReturnsFocusToItsOpener" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="395775330" result="Failed" label="Error" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.298868" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at UnityEngine.UI.Dropdown.AlphaFadeList (System.Single duration, System.Single start, System.Single end) [0x00048] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:1076 
+  at UnityEngine.UI.Dropdown.Show () [0x0059b] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:885 
+  at UnityEngine.UI.Dropdown.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:706 
+  at TumbangPreso.PlayTests.RecordChoiceFocusTests.OpenActualList (TumbangPreso.UI.RecordChoice choice) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordChoiceFocusTests.cs:44 
+  at TumbangPreso.PlayTests.RecordChoiceFocusTests+<CancellingAnActiveChoiceReturnsFocusToItsOpener>d__13.MoveNext () [0x00055] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordChoiceFocusTests.cs:82 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2045" name="CareerModeRefreshDoesNotReselectItsRetiredChoice" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.CareerModeRefreshDoesNotReselectItsRetiredChoice" methodname="CareerModeRefreshDoesNotReselectItsRetiredChoice" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="298483522" result="Failed" label="Error" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.233956" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at UnityEngine.UI.Dropdown.AlphaFadeList (System.Single duration, System.Single start, System.Single end) [0x00048] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:1076 
+  at UnityEngine.UI.Dropdown.Show () [0x0059b] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:885 
+  at UnityEngine.UI.Dropdown.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:706 
+  at TumbangPreso.PlayTests.RecordChoiceFocusTests.OpenActualList (TumbangPreso.UI.RecordChoice choice) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordChoiceFocusTests.cs:44 
+  at TumbangPreso.PlayTests.RecordChoiceFocusTests+<CareerModeRefreshDoesNotReselectItsRetiredChoice>d__12.MoveNext () [0x000a4] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordChoiceFocusTests.cs:65 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2047" name="SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" methodname="SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="1767390740" result="Failed" label="Error" start-time="2026-10-02 07:03:22Z" end-time="2026-10-02 07:03:22Z" duration="0.040881" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at UnityEngine.UI.Dropdown.AlphaFadeList (System.Single duration, System.Single start, System.Single end) [0x00048] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:1076 
+  at UnityEngine.UI.Dropdown.Show () [0x0059b] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:885 
+  at UnityEngine.UI.Dropdown.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in .\Library\PackageCache\com.unity.ugui@1c4864518158\Runtime\UGUI\UI\Core\Dropdown.cs:706 
+  at TumbangPreso.PlayTests.RecordChoiceFocusTests.OpenActualList (TumbangPreso.UI.RecordChoice choice) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordChoiceFocusTests.cs:44 
+  at TumbangPreso.PlayTests.RecordChoiceFocusTests+<SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus>d__14.MoveNext () [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordChoiceFocusTests.cs:91 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -17,7 +17,7 @@ namespace TumbangPreso.CameraSystem
     /// a future reader can check the arithmetic instead of trusting that somebody nudged the
     /// values until they looked right.
     /// </summary>
-    public sealed class ViewmodelArms : MonoBehaviour
+    public sealed partial class ViewmodelArms : MonoBehaviour
     {
         /// <summary>
         /// The right arm's baked basis and origin, straight out of the .tscn:
@@ -313,10 +313,15 @@ namespace TumbangPreso.CameraSystem
 
             // The mesh changed, so the length-normalising scale has to be recomputed.
             NormaliseHeldSize();
+            Visual.DanteBoulderStone.MatchOwner(filter, held);
             if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                 Visual.SeanIgnitionVisual.Ensure(filter, held, sean);
             else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
                 Visual.ZackMagnetCharge.Ensure(filter, held, zack);
+            else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.RafiHeroKit rafi)
+                Visual.RafiSkimCoating.Ensure(filter, held, rafi);
+            else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.CheskaHeroKit cheska)
+                Visual.CheskaFrostbiteCoating.Ensure(filter, held, cheska);
 
             // ⚠️⚠️⚠️ AND THE PLACEHOLDER TINT IS CLEARED OFF THE RENDERER, WHICH IS THE WHOLE
             // "EVERY TSINELAS IS BROWN IN FIRST PERSON" BUG AND IT SURVIVED THREE FIXES ABOVE.
@@ -654,6 +659,15 @@ namespace TumbangPreso.CameraSystem
             new Key(0.580f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        private static readonly Key[] CinderDrawClip =
+        {
+            new Key(0f,0,0,0,0,0,0),
+            new Key(.12f,.28f,.16f,-.12f,.12f,-.10f,.08f),
+            new Key(.35f,.55f,-.24f,.16f,.18f,.12f,-.08f,true),
+            new Key(.46f,.47f,-.22f,.12f,.14f,.10f,-.06f),
+            new Key(.75f,0,0,0,0,0,0),
+        };
+
         private static readonly Key[] IgniteClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -674,13 +688,15 @@ namespace TumbangPreso.CameraSystem
             new Key(1.550f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // Quick Circuit: one gather/release at the tell, then settle. No repeated skate pumps.
         private static readonly Key[] SprintElectricClip =
         {
-            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.160f, 0.300f, 0.420f, -0.220f, -0.300f, -0.300f, 0.180f),
-            new Key(0.320f, -0.300f, 0.200f, 0.120f, 0.260f, -0.400f, -0.160f),
-            new Key(0.480f, 0.280f, 0.360f, -0.180f, -0.240f, -0.260f, 0.140f),
-            new Key(0.640f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.000f, 0, 0, 0, 0, 0, 0),
+            new Key(0.080f, -.12f, .08f, -.04f, -.10f, -.08f, .04f),
+            new Key(0.150f, .26f, .22f, -.12f, -.24f, -.18f, .10f, true),
+            new Key(0.280f, .20f, .16f, -.09f, -.18f, -.13f, .07f),
+            new Key(0.460f, .08f, .06f, -.03f, -.07f, -.05f, .02f),
+            new Key(0.640f, 0, 0, 0, 0, 0, 0),
         };
 
         private static readonly Key[] OverchargeClip =
@@ -704,6 +720,17 @@ namespace TumbangPreso.CameraSystem
             new Key(0.820f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // Take the shoe's weight through the carrying shoulder, then steady it.
+        private static readonly Key[] BoulderLoadClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.14f, .22f, .06f, -.08f, -.10f, -.05f, -.08f),
+            new Key(.32f, -.28f, .04f, -.12f, .14f, -.08f, -.12f, true),
+            new Key(.43f, -.20f, .04f, -.10f, .12f, -.07f, -.10f),
+            new Key(.60f, .10f, .02f, -.04f, .04f, -.02f, -.04f),
+            new Key(.88f, 0, 0, 0, 0, 0, 0),
+        };
+
         private static readonly Key[] StompHeavyClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -711,6 +738,17 @@ namespace TumbangPreso.CameraSystem
             new Key(Abilities.DanteHeroKit.StompContactSeconds, -0.800f, -0.100f, 0.060f, -0.700f, 0.120f, -0.060f, true),
             new Key(0.420f, -0.270f, -0.040f, 0.030f, -0.230f, 0.050f, -0.030f),
             new Key(0.580f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+        };
+
+        // Set the following field ahead with the shoulders, then return to ready.
+        private static readonly Key[] BastionBraceClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.12f, .12f, -.12f, .06f, .08f, .10f, -.04f),
+            new Key(.28f, -.25f, .05f, -.08f, -.18f, -.06f, .06f, true),
+            new Key(.39f, -.22f, .05f, -.07f, -.16f, -.05f, .05f),
+            new Key(.58f, -.08f, .02f, -.03f, -.06f, -.02f, .02f),
+            new Key(.80f, 0, 0, 0, 0, 0, 0),
         };
 
         private static readonly Key[] CarapaceGuardClip =
@@ -731,6 +769,17 @@ namespace TumbangPreso.CameraSystem
             new Key(0.540f, -0.420f, -0.060f, 0.020f, -0.200f, 0.080f, -0.020f),
             new Key(0.700f, -0.160f, -0.030f, 0.000f, -0.080f, 0.040f, 0.000f),
             new Key(1.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+        };
+
+        // The carried shoe stays presented while the free hand seals its frost.
+        private static readonly Key[] FrostLoadClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.12f, .12f, .08f, -.06f, .18f, -.08f, .08f),
+            new Key(.30f, .16f, .10f, -.08f, .42f, -.18f, .18f, true),
+            new Key(.44f, .16f, .10f, -.08f, .40f, -.17f, .17f),
+            new Key(.58f, .08f, .05f, -.04f, .18f, -.08f, .08f),
+            new Key(.76f, 0, 0, 0, 0, 0, 0),
         };
 
         private static readonly Key[] FrostSweepClip =
@@ -770,6 +819,17 @@ namespace TumbangPreso.CameraSystem
             new Key(0.550f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // KURO: CATCH. Keep the carrying wrist quiet while the free hand gives the command.
+        private static readonly Key[] KuroGuardClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.10f, 0, -.01f, 0, -.10f, .04f, -.05f),
+            new Key(.22f, .02f, -.02f, 0, -.32f, .08f, -.10f),
+            new Key(.38f, .02f, -.02f, 0, -.31f, .08f, -.10f),
+            new Key(.54f, .01f, -.01f, 0, -.16f, .04f, -.05f),
+            new Key(.76f, 0, 0, 0, 0, 0, 0),
+        };
+
         private static readonly Key[] ProjectSpiritClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -777,6 +837,41 @@ namespace TumbangPreso.CameraSystem
             new Key(0.140f, -0.550f, 0.100f, -0.140f, 0.400f, 0.260f, -0.180f, true),
             new Key(0.320f, -0.500f, 0.090f, -0.120f, 0.300f, 0.180f, -0.130f),
             new Key(0.600f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+        };
+
+        // NEMU'S GHOSTS (owner 2026-10-15), her marionette language: drift in, SNAP, hang, melt back.
+        // DON'T LOOK: the off hand comes up to her lips (the hush, held), then slaps down at the court.
+        private static readonly Key[] DontLookHushClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.20f, .02f, -.02f, 0, -.42f, .16f, -.14f),
+            new Key(.34f, .02f, -.02f, 0, -.44f, .17f, -.15f),
+            new Key(.42f, .04f, -.03f, 0, .50f, .06f, .12f, true),
+            new Key(.62f, .02f, -.02f, 0, .20f, .04f, .04f),
+            new Key(.95f, 0, 0, 0, 0, 0, 0),
+        };
+
+        // SKITTER: the right hand drawn back across, then flicked out at the slipper, fingers wiggling "that one, go".
+        private static readonly Key[] SkitterFlickClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.12f, .24f, -.18f, .12f, .06f, .04f, -.03f),
+            new Key(.18f, -.58f, .14f, -.16f, .14f, .06f, -.05f, true),
+            new Key(.30f, -.52f, .10f, -.10f, .12f, .05f, -.04f),
+            new Key(.39f, -.46f, .12f, -.20f, .12f, .05f, -.04f),
+            new Key(.48f, -.52f, .10f, -.08f, .12f, .05f, -.04f),
+            new Key(.75f, 0, 0, 0, 0, 0, 0),
+        };
+
+        // LOOKOUT: both hands cupped low, lifted to her face, then sprung open and up: the little lantern ghost let go.
+        private static readonly Key[] LookoutReleaseClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.18f, -.30f, .18f, .16f, -.30f, -.18f, -.16f),
+            new Key(.36f, -.52f, .20f, .18f, -.52f, -.20f, -.18f),
+            new Key(.46f, .46f, -.22f, -.20f, .46f, .22f, .20f, true),
+            new Key(.66f, .22f, -.12f, -.10f, .22f, .12f, .10f),
+            new Key(.95f, 0, 0, 0, 0, 0, 0),
         };
 
         private static readonly Key[] SeanceChannelClip =
@@ -846,15 +941,20 @@ namespace TumbangPreso.CameraSystem
         /// from0.82 to1.22seconds, before the1.55second ritual release, which is what makes the
         /// throw land.
         /// </summary>
+        // ⚠️ RETIMED 2026-09-24 (SKILL-FX-1) to the rebuilt body cast (`author_hero_action.py`
+        // `hero-phaister-eclipse`): point at 0.36, the drawing sweep to 1.04, both hands up at
+        // 1.26, the clench on the ritual's close at 1.55. `CastGesture` carries the hand PATH
+        // (`CovenPath`); these keys only turn the forearms with it.
         private static readonly Key[] CovenEclipseClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.200f, 0.350f, 0.200f, 0.120f, 0.250f, -0.200f, -0.120f),
-            new Key(0.500f, 0.380f, 0.220f, -0.160f, 0.700f, -0.100f, 0.100f),
-            new Key(0.820f, 0.420f, 0.160f, -0.160f, 0.680f, -0.050f, 0.080f),
-            new Key(1.220f, 0.460f, 0.020f, -0.120f, 0.730f, 0.100f, 0.050f),
+            new Key(0.360f, -0.250f, 0.120f, 0.100f, 0.300f, -0.150f, -0.100f),
+            new Key(0.560f, -0.220f, 0.300f, 0.120f, 0.300f, -0.120f, -0.080f),
+            new Key(0.800f, -0.200f, 0.000f, 0.100f, 0.280f, -0.100f, -0.060f),
+            new Key(1.040f, -0.220f, -0.300f, 0.080f, 0.300f, -0.120f, -0.080f),
+            new Key(1.260f, 0.460f, 0.020f, -0.120f, 0.730f, 0.100f, 0.050f),
             new Key(1.550f, -0.750f, -0.300f, 0.350f, -0.600f, 0.380f, -0.300f, true),
-            new Key(1.740f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
+            new Key(1.760f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
             new Key(2.120f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
@@ -941,10 +1041,15 @@ namespace TumbangPreso.CameraSystem
 
         public void SetCharge(float power, float spin=0)
         {
+            if(_charge<0 && power>=0)_chargeBegan=Time.time;
+            // A refused/cancelled wind-up keeps the real held shoe and unwinds.
+            // A subsequent accepted action clears this return in PlayAction.
+            if (_charge >= 0 && power < 0 && _carrying && _clip == null && !_heroAction)
+                BeginActionReturn(Visual.ThrowGesture.CancelSeconds);
             _charge = power < 0.0f ? -1.0f : Mathf.Clamp01(power);
             _chargeSpin=_charge>=0 ? Mathf.Clamp(spin,-1,1) : 0;
 
-            if (_charge >= 0.0f && !_heroAction) _clip = null;
+            if (_charge >= 0.0f && !_heroAction) { _clip = null; _actionReturnLeft = 0; }
         }
 
         /// <summary>Pose the held placement gesture without starting or paying for a cast.</summary>
@@ -954,13 +1059,117 @@ namespace TumbangPreso.CameraSystem
             : action == "raise-barricade" ? RaiseBarricadeClip
             : action == "summon-lightning" ? SummonLightningClip
             : action == "cast-hex" ? CastHexClip
-            : action == "blink" ? BlinkClip : null;
+            : action == "blink" ? BlinkClip
+            : action == "swarm-burst" ? SwarmBurstClip
+            : action == "manika-prick" ? ManikaPrickClip
+            : action == "pin-stab" ? PinStabClip
+            : action == "reach-drain" ? ReachDrainClip
+            : action == "reach-hex" ? ReachHexClip : null;
 
         /// <summary>
         /// Play `throw`, `grab`, `slam`, `cast`, or bespoke hero actions on the viewmodel arm.
         /// </summary>
+        // Off-hand cut, opposing shoulder feint, then a low-to-side water release.
+        private static readonly Key[] CurrentCutClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.09f,-.08f,.03f,0,-.35f,-.32f,.25f,true),
+            new Key(.18f,-.10f,-.03f,0,-.70f,.55f,.42f,true), new Key(.33f,-.05f,0,0,-.32f,.48f,.18f,true),
+            new Key(.58f,0,0,0,0,0,0,true) };
+        private static readonly Key[] WaterwallLiftClip = {
+            new Key(0,0,0,0,0,0,0,true),
+            new Key(.08f,.12f,.03f,-.06f,.10f,-.03f,.06f,true),
+            new Key(.18f,-.24f,.06f,-.14f,-.28f,-.06f,.14f,true),
+            new Key(.25f,-.45f,.10f,-.20f,-.55f,-.10f,.20f,true),
+            new Key(.36f,-.43f,.10f,-.19f,-.51f,-.10f,.19f,true),
+            new Key(.52f,-.18f,.04f,-.10f,-.23f,-.04f,.10f,true),
+            new Key(.78f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SkimCoatClip = {
+            new Key(0,0,0,0,0,0,0,true),
+            new Key(.10f,-.12f,-.14f,.16f,-.20f,.10f,.18f,true),
+            new Key(.22f,-.18f,-.22f,.26f,-.38f,.32f,.28f,true),
+            new Key(.36f,-.18f,-.22f,.26f,-.34f,.55f,.16f,true),
+            new Key(.46f,-.13f,-.16f,.18f,-.22f,.40f,.12f,true),
+            new Key(.60f,-.05f,-.06f,.06f,-.10f,.14f,.05f,true),
+            new Key(.72f,0,0,0,0,0,0,true) };
+        private static readonly Key[] MirrorFeintClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.14f,-.25f,-.16f,-.08f,-.18f,.28f,.12f,true),
+            new Key(.30f,-.12f,.20f,.04f,-.28f,-.18f,.20f,true), new Key(.47f,-.05f,.08f,0,-.10f,-.06f,.08f,true),
+            new Key(.66f,0,0,0,0,0,0,true) };
+        private static readonly Key[] BreakwaterReleaseClip = {
+            new Key(0,-.12f,-.18f,-.10f,-.18f,-.24f,.20f,true),
+            new Key(.26f,-.32f,-.06f,-.16f,-.65f,-.12f,.30f,true),
+            new Key(.55f,-.24f,.25f,-.12f,-.55f,.60f,.62f,true),
+            new Key(.76f,-.10f,.12f,-.05f,-.26f,.42f,.28f,true),new Key(1.05f,0,0,0,0,0,0,true) };
+
+        // AMIHAN (2026-09-25): the spiral in first person. Every gesture turns across the frame
+        // rather than punching down its middle: the dash leads with the off hand swinging out, the
+        // lift presses down and throws both hands up, the gale sweeps right to left, the storm
+        // braces both palms forward, trembles, and shoves (timed to the 2.5 s wind-up).
+        private static readonly Key[] GustDashClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.08f,.22f,.14f,.04f,.28f,-.12f,-.06f,true),
+            new Key(.13f,-.14f,-.12f,-.06f,-.62f,.38f,.30f,true), new Key(.30f,-.12f,-.10f,-.05f,-.56f,.34f,.28f,true),
+            new Key(.62f,0,0,0,0,0,0,true) };
+        private static readonly Key[] UpdraftLiftClip = {
+            new Key(0,.08f,.02f,.02f,.12f,-.03f,-.03f,true), new Key(.10f,.26f,.08f,.04f,.32f,-.08f,-.05f,true),
+            new Key(.20f,.42f,.12f,.08f,.50f,-.14f,-.10f,true), new Key(.43f,.16f,.10f,.06f,.21f,-.12f,-.08f,true),
+            new Key(.68f,0,0,0,0,0,0,true) };
+        private static readonly Key[] GaleSweepClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.20f,-.18f,.40f,.08f,-.10f,.36f,.12f,true),
+            new Key(.32f,-.40f,-.46f,-.10f,-.46f,-.40f,-.08f,true), new Key(.52f,-.36f,-.52f,-.10f,-.40f,-.46f,-.10f,true),
+            new Key(.90f,0,0,0,0,0,0,true) };
+        // AIRBURST v3.2: the release is in the cutscene; first person only follows through from the drive (key 0) to rest.
+        private static readonly Key[] StormCallClip = {
+            new Key(0,-.58f,.00f,.02f,-.62f,.00f,-.02f,true), new Key(.18f,-.40f,.10f,.10f,-.44f,-.10f,-.10f,true),
+            new Key(.5f,0,0,0,0,0,0,true) };
+
+        // PAETE (2026-09-25): the growth in first person. The vine reach is both hands thrown out
+        // together and held while he is reeled (owner: *"his arms in tpp/fpp view both extend in
+        // sync"*); the seed is an underhand lob off the right hand; the thorns are both palms
+        // driven down at the ground; the ultimate is his hands on the court (`GroundCallClip`).
+        // ⚠️ PAETE'S FIRST-PERSON HANDS (HERO-9, 2026-09-26: *"i want each of his skill to have their
+        // own animation"*). Each clip is the same beat as his body cast (`HeroAbilityClips.Paete.cs`):
+        // the vine reach ends by DRAWING BOTH HANDS BACK as the vines reel into the forearms; the
+        // seed toss is an underhand lob with the left hand opening after it; the command is a snap
+        // point, not a second lob; the thorn stamp slams both palms down and then RIPS THEM BACK on
+        // the yank (0.25 s hold, 0.5 s yank); the ultimate keeps both hands on the court and ends
+        // crossing them, the embrace in the ultimate's name (`GroundCallClip` below says why).
+        private static readonly Key[] VineReachClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.10f,.24f,.10f,.04f,.26f,-.10f,-.04f,true),
+            new Key(.16f,-.64f,.04f,.06f,-.68f,-.04f,-.06f,true), new Key(.52f,-.60f,.02f,.05f,-.64f,-.02f,-.05f,true),
+            new Key(.68f,.18f,.08f,.02f,.18f,-.08f,-.02f,true), new Key(.95f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SeedTossClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.14f,.34f,-.12f,.02f,.16f,.08f,-.03f,true),
+            new Key(.28f,-.52f,.12f,.06f,-.14f,-.05f,.02f,true), new Key(.62f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SeedCommandClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.06f,.12f,.04f,0,.08f,-.04f,0,true),
+            new Key(.12f,-.58f,-.06f,.02f,.20f,-.06f,-.02f,true), new Key(.26f,-.54f,-.05f,.02f,.18f,-.05f,-.02f,true),
+            new Key(.48f,0,0,0,0,0,0,true) };
+        private static readonly Key[] ThornStampClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.12f,.30f,.06f,.10f,.30f,-.06f,-.10f,true),
+            new Key(.22f,-.34f,.28f,.12f,-.34f,-.28f,-.12f,true), new Key(.44f,-.40f,.10f,.06f,-.40f,-.10f,-.06f,true),
+            new Key(.56f,.30f,.04f,.08f,.30f,-.04f,-.08f,true), new Key(.80f,.24f,.03f,.06f,.24f,-.03f,-.06f,true),
+            new Key(1.05f,0,0,0,0,0,0,true) };
+        // ⚠️⚠️ MAKILING'S EMBRACE, v5: NOTHING IS THROWN (owner, 2026-09-26 night: *"i also dont like that paete just throws seeds in
+        // his ult"*). The v4 `sentry-throw` wound the right hand back and threw it forward with the palm light on it, and that was
+        // the seed he saw (film r13, his own screen). His screen comes back from the cutscene with him still DOWN ON HIS KNEE and his
+        // hands ON THE COURT (the view is lowered by `CameraRig.ApplyFpp` from `PaeteGroundCall`), so the hands start pressed down
+        // in front of him: a push as his roots leave for the spot, the channel held, the grip as the tree's claws take them (0.75),
+        // a pull up on each of the tree's three hauls (0.85, 1.25, 1.65), the hands torn up out of the court as he stands (2.1),
+        // and the arms crossed as the tree closes on its captives (the embrace in the ultimate's name). direction.md 5.14.
+        private static readonly Key[] GroundCallClip = {
+            new Key(0, -.52f, .20f, .10f, -.52f, -.20f, -.10f, true), new Key(.05f, -.60f, .22f, .12f, -.60f, -.22f, -.12f, true),
+            new Key(.20f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true), new Key(.70f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true),
+            new Key(.76f, -.62f, .16f, .14f, -.62f, -.16f, -.14f, true), new Key(.85f, -.44f, .18f, .08f, -.44f, -.18f, -.08f, true),
+            new Key(1.05f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true), new Key(1.25f, -.42f, .18f, .08f, -.42f, -.18f, -.08f, true),
+            new Key(1.45f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true), new Key(1.65f, -.40f, .18f, .08f, -.40f, -.18f, -.08f, true),
+            new Key(1.90f, -.52f, .20f, .10f, -.52f, -.20f, -.10f, true), new Key(2.10f, .10f, .10f, .04f, .10f, -.10f, -.04f, true),
+            new Key(2.30f, -.50f, -.26f, .04f, -.50f, .26f, -.04f, true), new Key(2.60f, -.46f, -.22f, .04f, -.46f, .22f, -.04f, true),
+            new Key(3.00f, 0, 0, 0, 0, 0, 0, true) };
+
         public bool PlayAction(string clip)
         {
+            // While the can is being raised the hands hold the raise pose (`ViewmodelArms.RaiseCan`);
+            // the reset's repeated reach would dip them out of it every 0.4 s.
+            if (clip == "grab" && RaisingCan) return true;
             _clipFromRight = _rightArm != null ? _rightArm.localRotation : Quaternion.identity;
             _clipFromLeft = _leftArm != null ? _leftArm.localRotation : Quaternion.identity;
             _actionName = clip;
@@ -997,25 +1206,57 @@ namespace TumbangPreso.CameraSystem
                   : clip == "slide" ? SlideClip
                   : clip == "shove" ? ShoveClip
                   : clip == "slam" ? SlamClip
+                  : clip == "closed-circuit" ? ClosedCircuitClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : clip == "thrust-fire" ? ThrustFireClip
+                  : clip == "cinder-draw" ? CinderDrawClip
                   : clip == "ignite" ? IgniteClip
                   : clip == "supernova-slam" ? SupernovaSlamClip
                   : clip == "sprint-electric" ? SprintElectricClip
+                  : clip == "bank-load" ? BankLoadClip
                   : clip == "overcharge" ? OverchargeClip
                   : clip == "summon-lightning" ? SummonLightningClip
+                  : clip == "boulder-load" ? BoulderLoadClip
                   : clip == "stomp-heavy" || clip == "stomp" ? StompHeavyClip
+                  : clip == "bastion-brace" ? BastionBraceClip
                   : clip == "carapace-guard" ? CarapaceGuardClip
                   : clip == "fissure-slam" ? FissureSlamClip
+                  : clip == "frost-load" ? FrostLoadClip
                   : clip == "frost-sweep" ? FrostSweepClip
                   : clip == "raise-barricade" ? RaiseBarricadeClip
                   : clip == "nova-burst" ? NovaBurstClip
                   : clip == "ghost-step" ? GhostStepClip
+                  : clip == "kuro-guard" ? KuroGuardClip
                   : clip == "project-spirit" ? ProjectSpiritClip
+                  : clip == "dontlook-hush" ? DontLookHushClip
+                  : clip == "skitter-flick" ? SkitterFlickClip
+                  : clip == "lookout-release" ? LookoutReleaseClip
                   : clip == "seance-channel" ? SeanceChannelClip
                   : clip == "cast-hex" ? CastHexClip
                   : clip == "blink" ? BlinkClip
+                  : clip == "skim-coat" ? SkimCoatClip
+                  : clip == "waterwall-lift" ? WaterwallLiftClip
+                  : clip == "current-cut" ? CurrentCutClip
+                  : clip == "mirror-feint" ? MirrorFeintClip
+                  : clip == "breakwater-release" ? BreakwaterReleaseClip
+                  : clip == "gust-dash" ? GustDashClip
+                  : clip == "updraft-lift" ? UpdraftLiftClip
+                  : clip == "gale-sweep" ? GaleSweepClip
+                  : clip == "storm-call" ? StormCallClip
+                  : clip == "vine-reach" ? VineReachClip
+                  : clip == "seed-toss" ? SeedTossClip
+                  : clip == "seed-command" ? SeedCommandClip
+                  : clip == "thorn-stamp" ? ThornStampClip
+                  : clip == "ground-call" ? GroundCallClip
                   : clip == "coven-eclipse" ? CovenEclipseClip
+                  : clip == "swarm-burst" ? SwarmBurstClip
+                  : clip == "manika-prick" ? ManikaPrickClip
+                  : clip == "pin-stab" ? PinStabClip
+                  : clip == "omen-rise" ? OmenRiseClip
+                  : clip == "reach-drain" ? ReachDrainClip
+                  : clip == "reach-hex" ? ReachHexClip
+                  : clip == "hex-stab" ? HexStabClip
+                  : clip == "wring" ? WringClip
                   : null;
 
             // A held gesture has already paid its preparation visually. Continue
@@ -1046,9 +1287,17 @@ namespace TumbangPreso.CameraSystem
                              -godotEuler.y * Mathf.Rad2Deg,
                               godotEuler.z * Mathf.Rad2Deg);
 
-        private Quaternion ChargeArmRotation => _carrying
-            ? Visual.ThrowGesture.HandPreparation(_charge,_chargeSpin)
-            : Quaternion.Euler(WindupCarry*WindupRad*_charge*Mathf.Rad2Deg,0,0);
+        private Quaternion ChargeArmRotation
+        {
+            get
+            {
+                var prepare=_carrying?Visual.ThrowGesture.HandPreparation(_charge,_chargeSpin)
+                    :Quaternion.Euler(WindupCarry*WindupRad*_charge*Mathf.Rad2Deg,0,0);
+                // A small wrist set lives inside the existing charge window.
+                // The accepted release can interrupt it immediately, at any age.
+                return prepare*Quaternion.Euler(-5*ChargeAnticipation,0,2*ChargeAnticipation);
+            }
+        }
 
         private void StepAction(float dt)
         {
@@ -1107,6 +1356,13 @@ namespace TumbangPreso.CameraSystem
             {
                 _clip = null;
                 _heroAction = false;
+                // ⚠️ A LOCK THAT ENDS ON ITS OWN HOLD (Phaister's reach) HANDS STRAIGHT TO IT: snapping to rest first put the arm
+                // down for a frame and back up on every reach. The hold settles from where the clip left it.
+                if (AimClip(_aimPreview) != null && _aimPreview == _actionName)
+                {
+                    if (HeldCastPaths.Contains(_aimPreview)) { _heldPathBlend = 1.0f; _heldPath = _aimPreview; }
+                    return;
+                }
                 _rightArm.localRotation = Quaternion.identity;
                 if (_leftArm != null) _leftArm.localRotation = Quaternion.identity;
                 return;
@@ -1160,7 +1416,7 @@ namespace TumbangPreso.CameraSystem
         private void Build()
         {
             _swimApplied=false;_swimBlend=0;
-            var armMesh = Resources.Load<Mesh>("Models/viewmodel_arm");
+            var armMesh = ViewmodelMeshAssets.Load("Models/viewmodel_arm");
 
             _rightPivot = BuildArm("RightPivot", RightBasisX, RightBasisY, RightBasisZ,
                 RightOrigin, armMesh, out _rightArm, out _rightArmRenderer);
@@ -1177,7 +1433,7 @@ namespace TumbangPreso.CameraSystem
             _heldSlipper.SetParent(_rightArm, false);
             _heldSlipper.localPosition = HeldSlipperLocal;
 
-            var slipperMesh = Resources.Load<Mesh>("Models/tsinelas_classic");
+            var slipperMesh = ViewmodelMeshAssets.Load("Models/tsinelas_classic");
             if (slipperMesh != null)
             {
                 var mf = slipperGo.AddComponent<MeshFilter>();
@@ -1246,6 +1502,10 @@ namespace TumbangPreso.CameraSystem
                 case "cheska": return SkinCheska;
                 case "nemu": return SkinNemu;
                 case "phaister": return SkinPhaister;
+                case "rafi": return new Color32(178,118,74,255);
+                case "amihan": return new Color32(213,154,110,255);
+                // Paete is bark: the model's slot 13.
+                case "paete": return new Color32(140,100,64,255);
 
                 // Classic Characters
                 case "bayan": return SkinBayan;
@@ -1289,6 +1549,12 @@ namespace TumbangPreso.CameraSystem
                 case "phaister":
                 case "witch":
                     return "phaister";
+                case "rafi":
+                    return "rafi";
+                case "amihan":
+                    return "amihan";
+                case "paete":
+                    return "paete";
 
                 case "bayan":
                 case "berto":
@@ -1366,8 +1632,15 @@ namespace TumbangPreso.CameraSystem
 
             var actual=character.GetComponent<Visual.CharacterVisual>();
             if(actual!=null&&actual.SourceModel!=null)
-                foreach(var candidate in RosterBook.Load().People)
-                    if(candidate.Model==actual.SourceModel){charId=candidate.Id;break;}
+            {
+                var book = RosterBook.Load();
+                // A missing catalog keeps the mode/index identity fallback above.
+                // Unassigned art rows must not prevent attaching the owner camera.
+                if (book != null && book.People != null)
+                    foreach (var candidate in book.People)
+                        if (candidate != null && candidate.Model == actual.SourceModel)
+                        { charId = candidate.Id; break; }
+            }
             SetCharacter(charId);
         }
 
@@ -1389,16 +1662,135 @@ namespace TumbangPreso.CameraSystem
             ApplyCharacterStyle(characterId);
         }
 
+        /// <summary>
+        /// ⚠️ Paete's first-person arms are widened on purpose (owner, 2026-09-26, *"make his fpp arms loook
+        /// BULKIER"*). `RosterArmAuditTests` caps every other hero at the clean reference hand's 0.36 m
+        /// cross-section and gives him exactly this factor over it, so the allowance cannot drift apart from
+        /// the scale that is actually applied.
+        /// </summary>
+        public const float PaeteArmBulk = 1.45f;
+        /// <summary>Paete's NEW braids in first person (the natural arms): how much wider and longer than they are cut.</summary>
+        /// ⚠️ BACK AT HIS OLD BULK. They were tried at 2.0 across and a fifth longer (owner: "paetes needs to be bigger
+        /// yea"), and of that, seen in play: "can we also revert the size change for paete, the previous size worked
+        /// better" (2026-10-06). So 1.45 across, his own length.
+        public const float PaeteNaturalBulk = PaeteArmBulk, PaeteNaturalLength = 1.0f;
+
+        /// <summary>
+        /// ⚠️⚠️ THE NATURAL ARMS: A HERO'S OWN ARMS, CUT FROM THE LIVE MODEL AND NOT SQUEEZED, HELD WIDE AND LOW.
+        /// Owner, 2026-10-06, of the first-person hands after the character redesign: *"we need something that looks more
+        /// natural, like how minecraft does it"*, *"i think we should just take it directly from the live model"*, *"the
+        /// squeeze looks bad"*, and of the old placement with those arms *"too close to each other and the screen, making
+        /// it look big and taking up space"*. He then chose a placement from rendered sheets
+        /// (`Logs/character-redesign-dante/fpvcut04_placement_tilt_variants.png`, tile T2): fists about a fifth of the
+        /// screen high in the bottom corners, a third of the width apart, the forearms swung outward so they run up the
+        /// screen instead of leaning in. The numbers below are that tile's, in the pivots' own local space.
+        ///
+        /// A hero listed in `NaturalArmHeroes` gets both: the cut arm at its own proportions (`UseRosterArms` with
+        /// `natural`) and this rest placement. Everyone else keeps the shared block arm where it has always been.
+        /// ⚠️ DANTE FIRST, AS THE TRIAL. Every throw, cast and grab is posed from the OLD rest, and has not been checked
+        /// from this one; add a hero here only after looking at theirs.
+        /// </summary>
+        // Paete with him since the same day (owner: "we need to fix paete's new model arms for fpv"): his braids are cut
+        // from his redesign, elbow and all, at their own proportions, so the old 1.45 bulk is not applied to them.
+        // ⚠️ ALL NINE HEROES since the owner saw Dante's and Paete's in a real render (2026-10-06: "roll the arms rework to
+        // the other heroes"). The Classic cast keeps the block arm: their bodies are not redesigned.
+        // ⚠️ AND THE CLASSIC TWELVE since 2026-10-07 (owner, of the first-person hands once their bodies were redesigned
+        // too: "u should also fix the fpv hands btw"). Their arms are cut from their redesigns when the roster book is
+        // rebuilt (`ViewmodelArmAuthor.Bake`); until it is, `UseRosterArms` finds no cut arm of theirs and they keep the
+        // block arm, as before.
+        private static readonly string[] NaturalArmHeroes =
+        {
+            "sean", "zack", "dante", "cheska", "nemu", "phaister", "rafi", "amihan", "paete",
+            "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie", "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena",
+        };
+        private static readonly Vector3 NaturalRightPosition = new Vector3(1.0820f, -0.8561f, 0.3384f);
+        private static readonly Vector3 NaturalRightUp = new Vector3(-0.06305f, 0.39908f, 0.91474f);
+        private static readonly Vector3 NaturalRightForward = new Vector3(-0.64607f, 0.68227f, -0.34220f);
+        private Vector3 _builtRightPos, _builtLeftPos;
+        private Quaternion _builtRightRot, _builtLeftRot;
+        private bool _builtPlacementKept;
+        /// <summary>True while the natural arms and their placement are on (diagnostics and probes).</summary>
+        public bool NaturalArms { get; private set; }
+
+        /// <summary>Puts both pivots at the natural rest or back at the built one, and makes that the idle's rest.</summary>
+        private void SetRestPlacement(bool natural)
+        {
+            if (_rightPivot == null || _leftPivot == null) return;
+            if (!_builtPlacementKept)
+            {
+                _builtRightPos = _rightRestPos; _builtRightRot = _rightRest;
+                _builtLeftPos = _leftPivot.localPosition; _builtLeftRot = _leftRest;
+                _builtPlacementKept = true;
+            }
+            if (natural == NaturalArms) return;
+            NaturalArms = natural;
+            if (natural)
+            {
+                // The left is the right mirrored across the view's middle.
+                var mirror = new Vector3(-1f, 1f, 1f);
+                _rightPivot.localPosition = NaturalRightPosition;
+                _rightPivot.localRotation = Quaternion.LookRotation(NaturalRightForward, NaturalRightUp);
+                _leftPivot.localPosition = Vector3.Scale(NaturalRightPosition, mirror);
+                _leftPivot.localRotation = Quaternion.LookRotation(Vector3.Scale(NaturalRightForward, mirror), Vector3.Scale(NaturalRightUp, mirror));
+            }
+            else
+            {
+                _rightPivot.localPosition = _builtRightPos; _rightPivot.localRotation = _builtRightRot;
+                _leftPivot.localPosition = _builtLeftPos; _leftPivot.localRotation = _builtLeftRot;
+            }
+            _rightRest = _rightPivot.localRotation; _leftRest = _leftPivot.localRotation;
+            _rightRestPos = _rightPivot.localPosition;
+        }
+
         private void ApplyCharacterStyle(string characterId)
         {
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
+            // Every character starts from the rig's own scale; the early returns below (Inday, Rafi, Amihan)
+            // would otherwise keep the last hero's, and Paete's are 1.45 across.
+            if(_rightArm!=null)_rightArm.localScale=Vector3.one;
+            if(_leftArm!=null)_leftArm.localScale=Vector3.one;
+            // The natural arms and their placement, for the heroes on them; the built placement for everyone else.
+            bool natural = System.Array.IndexOf(NaturalArmHeroes, characterId) >= 0 && UseRosterArms(characterId, true);
+            SetRestPlacement(natural);
+            if(natural)
+            {
+                // ⚠️ PAETE'S BRAIDS ARE LONG AND THIN ON HIS BODY, so at their own proportions they came out about half as
+                // wide as the other heroes' arms (0.36 across against Dante's 0.58) and read small in the corners (owner,
+                // 2026-10-06: "fix paete's arm size"). His old first-person bulk went back on them, and of that he said
+                // "paetes needs to be bigger yea": so `PaeteNaturalBulk` across and a fifth longer, the whole arm bigger.
+                if(characterId=="paete")
+                {
+                    var bulk=new Vector3(PaeteNaturalBulk,PaeteNaturalLength,PaeteNaturalBulk);
+                    if(_rightArm!=null)_rightArm.localScale=bulk;
+                    if(_leftArm!=null)_leftArm.localScale=bulk;
+                }
+                return;
+            }
             if(characterId=="inday" && UseIndaySourceArms())return;
+            // Rafi has simple source hands/sleeves. Keep their exact palette and
+            // geometry instead of giving this new hero the generic wrist kit.
+            if(characterId=="rafi" && UseRosterArms(characterId))return;
+            // ⚠️ AMIHAN IS ON THE SHARED BLOCK ARM NOW (owner, 2026-10-03: *"why does amihan's fyp arms look so diff from everyone
+            // else"*). Her arms were cut from her body mesh and squeezed to 0.34 m across, so they read as long thin tubes beside
+            // everyone's solid block hands. Like Cheska (the reference), the shared arm wears her own sleeve boxes
+            // (`BuildAmihanAccessories`, transcribed from `tools/build_amihan_voxel.py` ARM_LEFT).
+            // Paete's arms are bark and tangled vines ending in points; the generic wrist kit would hide them.
+            // ⚠️ AND THEY ARE BULKY (owner, 2026-09-26: *"make his fpp arms loook BULKIER bcz he is QUITE bulky as
+            // a character"*). This early return skipped the thickness below, so his arms were never widened
+            // (and could keep whatever scale the previous hero left on the rig): 1.45 across, length unchanged.
+            if(characterId=="paete" && UseRosterArms(characterId))
+            {
+                var bulk=new Vector3(PaeteArmBulk,1.0f,PaeteArmBulk);
+                if(_rightArm!=null)_rightArm.localScale=bulk;
+                if(_leftArm!=null)_leftArm.localScale=bulk;
+                return;
+            }
             // Use the retained solid block-hand frame with character-specific
             // sleeves and skin. Extracting every body gauntlet/prop into this
             // close view created the rejected fragmented hands. All action
             // pivots, reach and timing remain on the established hand rig.
-            var fallback = Resources.Load<Mesh>("Models/viewmodel_arm");
+            var fallback = ViewmodelMeshAssets.Load("Models/viewmodel_arm");
             _rightArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
             _leftArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
 
@@ -1461,8 +1853,8 @@ namespace TumbangPreso.CameraSystem
 
         private bool UseIndaySourceArms()
         {
-            var right=Resources.Load<Mesh>("Models/FppDetails/inday_right_arm");
-            var left=Resources.Load<Mesh>("Models/FppDetails/inday_left_arm");
+            var right=ViewmodelMeshAssets.Load("Models/FppDetails/inday_right_arm");
+            var left=ViewmodelMeshAssets.Load("Models/FppDetails/inday_left_arm");
             var entry=RosterBook.Load().FindPersonArt("inday");
             if(right==null||left==null||entry?.Model==null)return false;
             Material source=null;
@@ -1474,24 +1866,29 @@ namespace TumbangPreso.CameraSystem
             return true;
         }
 
-        private bool UseRosterArms(string characterId)
+        private bool UseRosterArms(string characterId, bool natural = false)
         {
             var actual = _characterMotor != null ? _characterMotor.GetComponent<Visual.CharacterVisual>() : null;
             if (actual != null && actual.SourceModel != null)
             {
-                foreach (var candidate in RosterBook.Load().People)
-                    if (candidate.Model == actual.SourceModel) { characterId=candidate.Id; break; }
+                var book = RosterBook.Load();
+                if (book != null && book.People != null)
+                    foreach (var candidate in book.People)
+                        if (candidate != null && candidate.Model == actual.SourceModel)
+                        { characterId = candidate.Id; break; }
             }
-            var right = Resources.Load<Mesh>("Models/RosterArms/" + characterId + "_right");
-            var left = Resources.Load<Mesh>("Models/RosterArms/" + characterId + "_left");
+            var right = ViewmodelMeshAssets.Load("Models/RosterArms/" + characterId + "_right");
+            var left = ViewmodelMeshAssets.Load("Models/RosterArms/" + characterId + "_left");
             var entry = RosterBook.Load()?.FindPersonArt(characterId);
             if (right == null || left == null || entry == null || entry.Model == null) return false;
-            var source = entry.Model.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            // The arms wear the material of the model they were cut from (`RosterEntryAsset.ArmModel`, else the body's).
+            var source = (entry.ArmModel != null ? entry.ArmModel : entry.Model).GetComponentInChildren<SkinnedMeshRenderer>(true);
             var palette = _characterMotor != null
                 ? _characterMotor.GetComponent<Visual.CharacterVisual>()?.AppliedPalette : null;
             if (palette == null || palette.Length == 0) palette = entry.Palette;
-            ApplyRosterArm(_rightArm, _rightArmRenderer, right, source.sharedMaterial, palette);
-            ApplyRosterArm(_leftArm, _leftArmRenderer, left, source.sharedMaterial, palette);
+            // `natural` keeps the cut arm's own proportions: no squeeze to the block hand's width.
+            ApplyRosterArm(_rightArm, _rightArmRenderer, right, source.sharedMaterial, palette, natural);
+            ApplyRosterArm(_leftArm, _leftArmRenderer, left, source.sharedMaterial, palette, natural);
             return true;
         }
 
@@ -1505,10 +1902,17 @@ namespace TumbangPreso.CameraSystem
             arm.localScale = preserveProportions?Vector3.one:new Vector3(width,1f,width);
             renderer.enabled = true;
             renderer.GetComponent<MeshFilter>().sharedMesh = mesh;
-            renderer.sharedMaterial = source;
+            // ⚠️ EVERY SLOT, NOT THE FIRST. The shared block arm this renderer wore a moment ago has more material slots
+            // than a cut arm has submeshes, and `sharedMaterial = source` replaces only slot 0: the leftover slot then
+            // draws the whole cut arm AGAIN in the block arm's plain white, over its own paint (found 2026-10-06 with
+            // `FpvNaturalArmProbe`: Dante's, Paete's and Rafi's arms came out white with the atlas correctly bound).
+            var slots = new Material[Mathf.Max(1, mesh.subMeshCount)];
+            for (int i = 0; i < slots.Length; i++) slots[i] = source;
+            renderer.sharedMaterials = slots;
             renderer.SetPropertyBlock(null);
             // The close camera needs the same cloth and hand geometry with a finer
-            // contour than a two-metre body. Imported meshes are shared, never destroyed.
+            // contour than a two-metre body. The mesh cache owns these shared working copies;
+            // individual arm renderers never destroy them.
             Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PersonOutlineWidth * .45f, palette);
         }
 
@@ -1583,6 +1987,9 @@ namespace TumbangPreso.CameraSystem
                 case "cheska":
                     BuildCheskaAccessories(arm, isRight);
                     break;
+                case "amihan":
+                    BuildAmihanAccessories(arm, isRight);
+                    break;
                 case "nemu":
                     BuildNemuAccessories(arm, isRight, parent);
                     break;
@@ -1603,7 +2010,7 @@ namespace TumbangPreso.CameraSystem
                     BuildTotoyAccessories(arm, isRight);
                     break;
                 case "inday":
-                    BuildIndayAccessories(arm, isRight, parent);
+                    // Owner-selected plain brown arms, including the fallback.
                     break;
                 case "kuya_boy":
                     BuildKuyaBoyAccessories(arm, isRight);
@@ -1991,6 +2398,35 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
+        private static void BuildAmihanAccessories(Transform arm, bool isRight)
+        {
+            // `tools/build_amihan_voxel.py` ARM_LEFT, v6: a wide teal sleeve (CAPE 2E8C86) to past the elbow, a gold edge (E8B64A),
+            // a cream abel cuff (F1E4C8) proud of the sleeve, bare forearm and hand (skin D59A6E). Wider than Cheska's short sleeve:
+            // hers is a wrap robe's, and it is the piece of her a player looks at longest.
+            var teal = new Color32(0x2E, 0x8C, 0x86, 255);
+            var tealShade = new Color32(0x1F, 0x62, 0x5E, 255);
+            var gold = new Color32(0xE8, 0xB6, 0x4A, 255);
+            var cream = new Color32(0xF1, 0xE4, 0xC8, 255);
+            var rust = new Color32(0xA8, 0x50, 0x2E, 255);
+            // Film v3.3: with the sleeve stopping near the shoulder (as on the body) first person only showed a bare forearm. Her
+            // robe's wide sleeve reaches the wrist here, flaring, so the gold edge and the cream cuff sit in view over the hand.
+            AddBoxAccessory(arm, "AmihanTealSleeve", new Vector3(0.36f, 0.50f, 0.36f),
+                new Vector3(0.0f, 0.25f, 0.0f), Quaternion.identity, teal);
+            AddBoxAccessory(arm, "AmihanSleeveFlare", new Vector3(0.42f, 0.10f, 0.42f),
+                new Vector3(0.0f, 0.47f, 0.0f), Quaternion.identity, teal);
+            // The sleeve's inner shade along its underside, so it reads as cloth and not a block.
+            AddBoxAccessory(arm, "AmihanSleeveShade", new Vector3(0.365f, 0.44f, 0.06f),
+                new Vector3(0.0f, 0.24f, 0.155f), Quaternion.identity, tealShade);
+            AddBoxAccessory(arm, "AmihanCuffGold", new Vector3(0.435f, 0.03f, 0.435f),
+                new Vector3(0.0f, 0.535f, 0.0f), Quaternion.identity, gold);
+            AddBoxAccessory(arm, "AmihanCuffCream", new Vector3(0.44f, 0.06f, 0.44f),
+                new Vector3(0.0f, 0.58f, 0.0f), Quaternion.identity, cream);
+            // Her sash's rust thread on the right wrist only (the slipper hand), a small asymmetry like Cheska's band.
+            if (isRight)
+                AddBoxAccessory(arm, "AmihanWristThread", new Vector3(0.315f, 0.03f, 0.31f),
+                    new Vector3(0.0f, 0.64f, 0.0f), Quaternion.identity, rust);
+        }
+
         private static void BuildNemuAccessories(Transform arm, bool isRight, ViewmodelArms parent = null)
         {
             // Exact color transcription from Nemu's 3D roster palette (tools/build_nemu_voxel.py & person_team-nemu.tres)
@@ -2199,26 +2635,6 @@ namespace TumbangPreso.CameraSystem
             // character-male-a.glb has matching green short sleeves and bare arms.
             AddBoxAccessory(arm, "GreenShortSleeve", new Vector3(0.30f, 0.35f, 0.30f),
                 new Vector3(0.0f, 0.175f, 0.0f), Quaternion.identity, darkGreenShirt);
-        }
-
-        private static void BuildIndayAccessories(Transform arm, bool isRight, ViewmodelArms parent)
-        {
-            var yellow = new Color(0.878f, 0.706f, 0.235f, 1.0f);
-
-            // character-female-a.glb uses a yellow short sleeve and the same chunky
-            // coral gauntlet with a plum centre strap on both arms.
-            AddBoxAccessory(arm, "YellowShortSleeve", new Vector3(0.30f, 0.51f, 0.30f),
-                new Vector3(0.0f, 0.255f, 0.0f), Quaternion.identity, yellow);
-            var mesh=Resources.Load<Mesh>("Models/FppDetails/inday_"+(isRight?"right":"left")+"_guard");
-            if(mesh==null)return;
-            var detail=new GameObject(AccessoryPrefix+"RestoredCoralGuard");detail.transform.SetParent(arm,false);
-            // Accessories own their meshes: character changes dispose this copy.
-            detail.AddComponent<MeshFilter>().sharedMesh=Object.Instantiate(mesh);
-            var renderer=detail.AddComponent<MeshRenderer>();var entry=RosterBook.Load().FindPersonArt("inday");
-            foreach(var surface in entry.Model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-                if(surface.name=="body-mesh"){renderer.sharedMaterial=surface.sharedMaterial;break;}
-            var palette=parent?._characterMotor?.GetComponent<Visual.CharacterVisual>()?.AppliedPalette ?? entry.Palette;
-            Visual.ToonSkin.Apply(renderer,Visual.ToonSkin.PersonOutlineWidth*.18f,palette);
         }
 
         private static void BuildKuyaBoyAccessories(Transform arm, bool isRight)
@@ -2579,7 +2995,7 @@ namespace TumbangPreso.CameraSystem
         /// The idle breathe. Two arms, slightly different swings and the same period, so they
         /// move together without moving identically.
         /// </summary>
-        private void LateUpdate() => StepVisuals(Time.deltaTime);
+        private void LateUpdate() { StepVisuals(Time.deltaTime); StepWorldShade(Time.deltaTime); }
 
         private Visual.CharacterAnimator _swimAnimator;
         private bool _swimApplied;
@@ -2587,6 +3003,7 @@ namespace TumbangPreso.CameraSystem
         private float _swimForwardBlend;
         private Quaternion _swimLeftBase,_swimRightBase;
         private Vector3 _swimLeftPosition,_swimRightPosition;
+        private float _edgeHandsBlend,_edgeHandsPull,_edgeHandsReach;
 
         private void RestoreSwimming()
         {
@@ -2598,6 +3015,27 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplySwimming(float dt)
         {
+            bool climbing=_characterMotor!=null&&_characterMotor.IsEdgeRecovering;
+            _edgeHandsBlend=Mathf.MoveTowards(_edgeHandsBlend,climbing?1:0,Mathf.Max(0,dt)*8);
+            if(_edgeHandsBlend>0&&_leftPivot!=null&&_rightPivot!=null)
+            {
+                if(climbing)
+                {
+                    _edgeHandsPull=_characterMotor.EdgePhase==2?_characterMotor.EdgePhaseRatio:0;
+                    _edgeHandsReach=_characterMotor.EdgePhase==0?Mathf.SmoothStep(0,1,_characterMotor.EdgePhaseRatio):1;
+                }
+                _swimBlend=0;_swimApplied=true;
+                _swimLeftBase=_leftPivot.localRotation;_swimRightBase=_rightPivot.localRotation;
+                _swimLeftPosition=_leftPivot.localPosition;_swimRightPosition=_rightPivot.localPosition;
+                float grip=_edgeHandsBlend*_edgeHandsReach;
+                float pitch=Mathf.Lerp(-44,18,_edgeHandsPull);
+                float climbEffort=climbing&&_characterMotor.EdgePhase==1?Mathf.Sin(Time.time*7)*.009f:0;
+                var offset=new Vector3(0,.19f-_edgeHandsPull*.27f+climbEffort,.11f-_edgeHandsPull*.10f)*grip;
+                _leftPivot.localPosition+=offset;_rightPivot.localPosition+=offset;
+                _leftPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,Quaternion.Euler(pitch,10,12),grip);
+                _rightPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,Quaternion.Euler(pitch,-10,-12),grip);
+                return;
+            }
             bool active=_characterMotor!=null&&_characterMotor.IsSwimming&&_charge<0&&_clip==null&&_actionReturnLeft<=0&&string.IsNullOrEmpty(_aimPreview);
             _swimBlend=Mathf.MoveTowards(_swimBlend,active?1:0,Mathf.Max(0,dt)*6);
             if(_swimBlend<=0||_leftPivot==null||_rightPivot==null||_characterMotor==null)return;
@@ -2626,6 +3064,16 @@ namespace TumbangPreso.CameraSystem
 
         public void StepVisuals(float dt, bool snap = false)
         {
+            RestoreHandLife();
+            RestoreReleaseSweep();
+            RestoreThrowReach();
+            RestoreTagReach();
+            RestoreCastGesture();
+            RestoreRaiseCan();
+            RestoreAirMotion();
+            RestoreRunSway();
+            RestoreFeatherfall();
+            RestoreHeldProp();
             RestoreSwimming();
             _phase += dt;
 
@@ -2663,6 +3111,15 @@ namespace TumbangPreso.CameraSystem
                                _rightRestScale, dt);
                 }
                 ApplySwimming(dt);
+                ApplyFeatherfall();
+                ApplyHeldProp();
+                ApplyRunSway(dt);
+                ApplyAirMotion(dt);
+                ApplyRaiseCan(dt);
+                ApplyTagReach();
+                ApplyCastGesture();
+                ApplyReleaseSweep();
+                StepHandLife(dt);
                 return;
             }
 
@@ -2703,6 +3160,15 @@ namespace TumbangPreso.CameraSystem
                 StepToward(elbow, Quaternion.LookRotation(forward, dir), Vector3.one * CarryScale, dt);
             }
             ApplySwimming(dt);
+            ApplyFeatherfall();
+            ApplyHeldProp();
+            ApplyRunSway(dt);
+            ApplyAirMotion(dt);
+            ApplyThrowReach();
+            ApplyTagReach();
+            ApplyCastGesture();
+            ApplyReleaseSweep();
+            StepHandLife(dt);
         }
 
         private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale, float dt)

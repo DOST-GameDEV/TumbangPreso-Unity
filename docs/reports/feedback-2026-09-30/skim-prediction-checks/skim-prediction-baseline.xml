@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 09:02:21Z" end-time="2026-10-01 09:02:21Z" duration="0.2352368">
+  <test-suite type="TestSuite" id="2395" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1135" result="Failed" site="Child" start-time="2026-10-01 09:02:21Z" end-time="2026-10-01 09:02:21Z" duration="0.235237" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2389" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1135" result="Failed" site="Child" start-time="2026-10-01 09:02:21Z" end-time="2026-10-01 09:02:21Z" duration="0.220696" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="32928" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2390" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1135" result="Failed" site="Child" start-time="2026-10-01 09:02:21Z" end-time="2026-10-01 09:02:21Z" duration="0.217199" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2391" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1135" result="Failed" site="Child" start-time="2026-10-01 09:02:21Z" end-time="2026-10-01 09:02:21Z" duration="0.213956" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1132" name="BotLandingPredictionTests" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-01 09:02:21Z" end-time="2026-10-01 09:02:21Z" duration="0.163506" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1139" name="ALoadedSkimPredictionIncludesItsRealGroundContinuation" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.ALoadedSkimPredictionIncludesItsRealGroundContinuation" methodname="ALoadedSkimPredictionIncludesItsRealGroundContinuation" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1637159540" result="Failed" start-time="2026-10-01 09:02:21Z" end-time="2026-10-01 09:02:21Z" duration="0.141001" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Prediction stopped at first ground contact instead of the complete Skim.
+  Expected: less than 0.119999997f
+  But was:  2.00000048f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotLandingPredictionTests.ALoadedSkimPredictionIncludesItsRealGroundContinuation () [0x001bc] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotLandingPredictionTests.cs:146
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, -1.40) actual=(0.00, 0.02, 0.60)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

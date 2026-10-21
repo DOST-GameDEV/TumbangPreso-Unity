@@ -1,0 +1,17 @@
+{
+  "operation": "Advisory eviction of clean pages from idle task-owned validation inputs, Library and installed tool files only; no files deleted or modified.",
+  "before": {
+    "current": 4752990208,
+    "file": 3337330688,
+    "inactive_file": 1584336896
+  },
+  "after": {
+    "current": 3394109440,
+    "file": 2025816064,
+    "inactive_file": 1126621184
+  },
+  "fileCount": 123406,
+  "bytesAdvised": 16283865111,
+  "allObservedFileDataUnchanged": true,
+  "errors": []
+}

@@ -6,6 +6,21 @@ namespace TumbangPreso.UI
     public sealed class OwnerPaintedAction : UnityEngine.UI.Button
     {
         private OwnerUiMotion _motion;
+
+        /// <summary>The same rising edge, the same reasons, as
+        /// <see cref="OwnerTextAction.DoStateTransition"/>. Her painted plates are the loudest
+        /// controls on any of these screens and were the quietest.</summary>
+        private float _quietUntil;
+
+        private bool _wasOver;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            _quietUntil = Time.unscaledTime + .3f;
+            _wasOver = false;
+        }
+
         public static OwnerPaintedAction Create(Transform parent,string name,string words,Action click,bool orange=false,int fontSize=54,Sprite artwork=null)
         {
             var root=OwnerUiLayout.Rect(parent,name);root.sizeDelta=new Vector2(413,91);
@@ -29,9 +44,12 @@ namespace TumbangPreso.UI
         }
         protected override void DoStateTransition(SelectionState state,bool instant)
         {
+            bool over=state==SelectionState.Highlighted || state==SelectionState.Selected;
+            if(over && !_wasOver && interactable && Application.isPlaying
+               && Time.unscaledTime>=_quietUntil)MenuSfx.Hover();
+            _wasOver=over;
             if(_motion==null)_motion=GetComponentInChildren<OwnerUiMotion>();
-            _motion?.SetState(state==SelectionState.Highlighted || state==SelectionState.Selected,
-                state==SelectionState.Pressed,state==SelectionState.Disabled);
+            _motion?.SetState(over,state==SelectionState.Pressed,state==SelectionState.Disabled);
         }
     }
 }

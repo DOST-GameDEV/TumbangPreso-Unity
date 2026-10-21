@@ -5,6 +5,7 @@ Shader "TumbangPreso/FrostSurface"
         _Color ("Frost", Color) = (0.48, 0.80, 0.88, 0.18)
         _Growth ("Formation Radius", Float) = 1.12
         _Opacity ("Life Opacity", Range(0,1)) = 1
+        _Thaw ("Spatial Thaw", Range(0,1)) = 0
         _Glass ("Ice Sheen", Range(0,1)) = 0
         _Trail ("Wave Trail Width", Float) = 2
     }
@@ -33,7 +34,19 @@ Shader "TumbangPreso/FrostSurface"
                 UNITY_FOG_COORDS(3)
             };
             float4 _Color;
-            float _Growth, _Opacity, _Glass, _Trail;
+            float _Growth, _Opacity, _Glass, _Trail, _Thaw;
+            float MeltCell(float2 cell)
+            {
+                return frac(sin(dot(cell,float2(12.9898,78.233)))*43758.5453);
+            }
+            float MeltPattern(float2 uv)
+            {
+                float2 cell=floor(uv*5), f=frac(uv*5);
+                f=f*f*(3-2*f);
+                float a=lerp(MeltCell(cell),MeltCell(cell+float2(1,0)),f.x);
+                float b=lerp(MeltCell(cell+float2(0,1)),MeltCell(cell+float2(1,1)),f.x);
+                return lerp(a,b,f.y);
+            }
             v2f vert(appdata v)
             {
                 v2f o;
@@ -56,7 +69,15 @@ Shader "TumbangPreso/FrostSurface"
                 fixed4 color = _Color;
                 color.rgb = lerp(color.rgb, float3(.82,.94,1), _Glass*(glint*.5+grazing*.12));
                 color.a = min(.75,color.a + _Glass*(grazing*.10+glint*.12));
-                color.a *= reveal*_Opacity;
+                float thaw=1;
+                if (_Thaw>0)
+                {
+                    // Broad uneven retreat exposes the original street between islands.
+                    // The separate danger edge keeps _Thaw zero for its whole lifetime.
+                    float lastFrozen=1-saturate(radius*.58+MeltPattern(i.uv)*.42);
+                    thaw=smoothstep(_Thaw-.055,_Thaw+.055,lastFrozen);
+                }
+                color.a *= reveal*_Opacity*thaw;
                 UNITY_APPLY_FOG(i.fogCoord,color);
                 return color;
             }

@@ -1,0 +1,19 @@
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:11:    Version:  Direct3D 11.0 [level 11.1]
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:12:    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:29:[NetBoot] tournament preset applied: Classic, 8 rounds
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:30:[NetBoot] lobby requested, port=9140 join='' chat=''
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:67:[Slice] round 1 begins, taya is seat 0
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:68:[Slice] round 2 begins, taya is seat 1
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:69:[Slice] round 3 begins, taya is seat 2
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:70:[Slice] round 4 begins, taya is seat 3
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:71:[Slice] round 5 begins, taya is seat 0
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:72:[Slice] round 6 begins, taya is seat 1
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:73:[Slice] round 7 begins, taya is seat 2
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:74:[Slice] round 8 begins, taya is seat 3
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\host.log:75:[Slice] match over. scores: 40 / 240 / 3530 / 3300. seat 2 wins
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\client.log:11:    Version:  Direct3D 11.0 [level 11.1]
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\client.log:12:    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\client.log:29:[NetBoot] tournament preset applied: Classic, 8 rounds
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\client.log:30:[NetBoot] lobby requested, port=9141 join='127.0.0.1:9140' chat=''
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\client.log:68:[Slice] round 1 begins, taya is seat 0
+C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002m\default-classic\client.log:70:[Slice] match over. scores: 40 / 240 / 3530 / 3300. seat 2 wins

@@ -127,12 +127,11 @@ namespace TumbangPreso.PlayTests
             yield return ProbeWait.Done(SceneManager.LoadSceneAsync("MatchSetup",LoadSceneMode.Single),"scene load");
             for(int i=0;i<SettleFrames;i++)yield return null;
             Assert.IsNull(FindByName("FormatRow"),"The removed RULES shortcut is still installed");
-            var toggle=FindByName("SettingsDrawerToggle").GetComponent<Button>();
-            toggle.onClick.Invoke();
-            for(int i=0;i<10;i++)yield return null;
-            var buttons=Object.FindObjectsByType<Button>(FindObjectsSortMode.None);
-            var door=buttons.FirstOrDefault(b=>b.transform.parent.parent.GetComponentsInChildren<Text>()
-                .Any(t=>t.text=="CUSTOM GAME"));
+
+            // UX-1 moves the same rules editor into the hamburger; assert its real visible door.
+            yield return HubFlowTests.Press("MenuButton");
+            var door = Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .FirstOrDefault(b => b.name == "MenuMATCHRULES" && b.isActiveAndEnabled);
             Assert.IsNotNull(door,"Existing advanced rules editor has no live door");
             Assert.IsTrue(door.interactable);
             var pointer=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)

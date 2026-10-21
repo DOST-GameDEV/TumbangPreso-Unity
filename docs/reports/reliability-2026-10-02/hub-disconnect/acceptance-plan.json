@@ -1,0 +1,14 @@
+{
+  "baselineExpected": {
+    "total": 3,
+    "causalFailures": 3
+  },
+  "finalExpected": {
+    "total": 3,
+    "passed": 3
+  },
+  "filter": "TumbangPreso.Tests.HubDisconnectCancellationTests",
+  "repairsUsed": 0,
+  "repairLimit": 1,
+  "scope": "Actual disconnect callback/native join boundary and queue cancellation with controlled dormant UI and delayed completions; no transport, SDK or rendered-layout acceptance."
+}

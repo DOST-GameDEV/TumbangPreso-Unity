@@ -155,10 +155,10 @@ namespace TumbangPreso.InputLayer
                 Verb.SpecialAbility, "SpecialAbility", "<Gamepad>/rightTrigger",
                 TouchZone.ActionCluster, 0, TouchSize.Large, "THROW", UI.VerbGlyph.ThrowSlipper),
 
-            // ⚠️ GRAB IS CONTEXTUAL AND STAYS ONE CONTROL. Tap picks up, tap with nothing in
-            // reach shoves, hold as the taya runs the lata reset. `PlayerInputReader`'s note is
-            // why that is resolved downstream: one key, one action, several jobs decided by the
-            // world. A second touch button per job would be three controls for one verb.
+            // ⚠️ GRAB IS CONTEXTUAL AND STAYS ONE CONTROL. Tap picks up, hold as the taya runs the
+            // lata reset. The shove left it on 2026-09-27 for the LUNGE control (the owner's Shove /
+            // Lunge), on every device, so an attacker shoves with the other trigger and the button
+            // beside THROW. A second touch button per job would be more controls for one verb.
             Verb.Grab => new VerbInput(
                 Verb.Grab, "Grab", "<Gamepad>/buttonWest",
                 TouchZone.ActionCluster, 1, TouchSize.Medium, "GRAB", UI.VerbGlyph.Hand),
@@ -190,6 +190,25 @@ namespace TumbangPreso.InputLayer
             Verb.EmoteWheel => new VerbInput(
                 Verb.EmoteWheel, "EmoteWheel", "<Gamepad>/dpad/up",
                 TouchZone.UtilityChip, 0, TouchSize.Small, "EMOTE", UI.VerbGlyph.Emote),
+
+            // ⚠️ INTERACT (2026-09-25): pull out a plant, break out of roots. The pad's free control
+            // is the right stick's press: B is `ReadyUp` in the same context, and every face and
+            // shoulder is a verb. On a phone it rides beside the MOVE stick, because the two things
+            // it does both happen with the left thumb idle (a rooted body cannot walk; a player
+            // pulling a plant stands still), and the right thumb's cluster keeps its layout.
+            Verb.Interact => new VerbInput(
+                Verb.Interact, "Interact", "<Gamepad>/rightStickPress",
+                TouchZone.MoveStick, 1, TouchSize.Medium, "INTERACT", UI.VerbGlyph.Interact),
+
+            // ⚠️ CROUCH (2026-10-09), and the slide it becomes at a sprint. THE PAD HAS NO FREE CONTROL, so it takes B
+            // and SHARES it with `ReadyUp`: the ready only exists while the ready window or the skip vote is on screen,
+            // before a round, and the reader gives the press to the ready then and to nothing else
+            // (`PlayerInputReader.ConsumeReadyControl`, the arrangement F already has for Interact). B is also where
+            // every shooter on a console puts it. ON A PHONE IT IS THE RIGHT THUMB'S, low and left of THROW: a slide
+            // is entered while RUNNING, so the left thumb is on the stick and cannot be the one to press it.
+            Verb.Crouch => new VerbInput(
+                Verb.Crouch, "Crouch", "<Gamepad>/buttonEast",
+                TouchZone.ActionCluster, 4, TouchSize.Medium, "CROUCH", UI.VerbGlyph.Crouch),
         };
 
         /// <summary>Every verb's entry, in enum order.</summary>

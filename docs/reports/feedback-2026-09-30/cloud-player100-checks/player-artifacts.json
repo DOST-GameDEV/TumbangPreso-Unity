@@ -1,0 +1,14 @@
+{
+  "TumbangPreso.x86_64": {
+    "bytes": 4672,
+    "sha256": "78fd4776b65e70e3e0ac9e2daf7af26b8c94372247ceaf0dd4edf8b1bb4d4096"
+  },
+  "UnityPlayer.so": {
+    "bytes": 42411704,
+    "sha256": "d49fc1adab51b480351b714ce46c5f45fec86fb4a95fef33f3de3b2fd5127a7d"
+  },
+  "TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll": {
+    "bytes": 3606528,
+    "sha256": "9a26a51d8042b962ef48bc549f0b8653a9bf25d78a64d872a5ae2d7b5d641e3d"
+  }
+}

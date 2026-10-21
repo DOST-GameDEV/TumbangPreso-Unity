@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 08:12:39Z" end-time="2026-10-02 08:12:43Z" duration="4.0032111">
+  <test-suite type="TestSuite" id="2562" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1274" result="Failed" site="Child" start-time="2026-10-02 08:12:39Z" end-time="2026-10-02 08:12:43Z" duration="4.003211" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2556" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1274" result="Failed" site="Child" start-time="2026-10-02 08:12:39Z" end-time="2026-10-02 08:12:43Z" duration="3.976203" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10316" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2557" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1274" result="Failed" site="Child" start-time="2026-10-02 08:12:39Z" end-time="2026-10-02 08:12:43Z" duration="3.957895" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2558" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1274" result="Failed" site="Child" start-time="2026-10-02 08:12:39Z" end-time="2026-10-02 08:12:43Z" duration="3.939364" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2365" name="TrainingPauseTransitionTests" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 08:12:39Z" end-time="2026-10-02 08:12:43Z" duration="3.904168" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2366" name="PauseDuringCompletionBeatKeepsTheLessonUntilResume" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests.PauseDuringCompletionBeatKeepsTheLessonUntilResume" methodname="PauseDuringCompletionBeatKeepsTheLessonUntilResume" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" seed="1394957847" result="Failed" start-time="2026-10-02 08:12:39Z" end-time="2026-10-02 08:12:41Z" duration="1.414399" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The completion coroutine entered another lesson behind the paused menu.
+  Expected: Ready
+  But was:  Look
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TrainingPauseTransitionTests+<PauseDuringCompletionBeatKeepsTheLessonUntilResume>d__7.MoveNext () [0x000aa] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\TrainingPauseTransitionTests.cs:52
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2368" name="RepeatedSkipDuringTheBeatAdvancesExactlyOneLesson" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests.RepeatedSkipDuringTheBeatAdvancesExactlyOneLesson" methodname="RepeatedSkipDuringTheBeatAdvancesExactlyOneLesson" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" seed="873704324" result="Passed" start-time="2026-10-02 08:12:41Z" end-time="2026-10-02 08:12:43Z" duration="1.735768" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2367" name="UnpausedCompletionKeepsItsExistingBeatAndAdvances" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests.UnpausedCompletionKeepsItsExistingBeatAndAdvances" methodname="UnpausedCompletionKeepsItsExistingBeatAndAdvances" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" seed="1531403523" result="Passed" start-time="2026-10-02 08:12:43Z" end-time="2026-10-02 08:12:43Z" duration="0.738458" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

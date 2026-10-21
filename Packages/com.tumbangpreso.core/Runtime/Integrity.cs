@@ -295,7 +295,7 @@ namespace TumbangPreso.Core
 
                 // ⚠️ SPRINT SPEED TIMES THE WHOLE MATCH, DOUBLED. Nobody moves in a straight line
                 // for eight rounds, so this only catches a teleport.
-                if (p.DistanceTravelled > (Balance.Speed * Balance.SprintScale) * defenceCeiling * 2.0f)
+                if (p.DistanceTravelled > Balance.DefenderRunSpeed * defenceCeiling * 2.0f)
                     return SanityFault.ImpossibleTravel;
             }
 

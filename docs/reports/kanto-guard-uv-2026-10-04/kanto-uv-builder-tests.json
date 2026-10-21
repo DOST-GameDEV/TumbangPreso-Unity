@@ -1,0 +1,17 @@
+[
+  {
+    "mode": "keep",
+    "selected": false,
+    "pass": true
+  },
+  {
+    "mode": "keep",
+    "selected": true,
+    "pass": true
+  },
+  {
+    "mode": "default",
+    "selected": false,
+    "pass": true
+  }
+]

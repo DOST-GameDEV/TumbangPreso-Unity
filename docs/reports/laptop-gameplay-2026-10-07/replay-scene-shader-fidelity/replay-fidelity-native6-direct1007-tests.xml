@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:45:42Z" duration="70.4220032">
+  <test-suite type="TestSuite" id="3517" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2038" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:45:42Z" duration="70.422003" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3509" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2038" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:45:42Z" duration="70.404797" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33512" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3510" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2038" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:45:42Z" duration="70.393045" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3513" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2036" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:45:42Z" duration="70.381183" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2019" name="LocalReplaySceneStateTests" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:44:31Z" duration="0.084448" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2022" name="RoadWrapIsAnEdgeAndSignalSlotsRestoreTheirActualOverrides" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RoadWrapIsAnEdgeAndSignalSlotsRestoreTheirActualOverrides" methodname="RoadWrapIsAnEdgeAndSignalSlotsRestoreTheirActualOverrides" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="1841519414" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:44:31Z" duration="0.074761" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2122" name="MapPreviewFreshnessTests" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:45:39Z" duration="67.140121" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2124" name="ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests.ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges" methodname="ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" seed="259863558" result="Passed" start-time="2026-10-07 06:44:31Z" end-time="2026-10-07 06:45:39Z" duration="67.138614" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2768" name="RecordedShaderClockTests" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 06:45:39Z" end-time="2026-10-07 06:45:42Z" duration="3.018827" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2770" name="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests.AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" methodname="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" seed="344902173" result="Passed" start-time="2026-10-07 06:45:39Z" end-time="2026-10-07 06:45:40Z" duration="1.048804" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ShaderClockGPU] cpu=0.7941365 level=0.7941365 real=69.60899 editor=118.9096906 global=(0.00, 0.00, 0.00, 0.00) gpu=RGBA(0.040, 0.794, 1.588, 2.382)
+[RecordedShaderClock] animation=0.3552348 rewind=0
+]]></output>
+            </test-case>
+            <test-case id="2769" name="EveryUpdatedAuthoredShaderKeepsItsOrdinaryRender" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests.EveryUpdatedAuthoredShaderKeepsItsOrdinaryRender" methodname="EveryUpdatedAuthoredShaderKeepsItsOrdinaryRender" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" seed="1034416028" result="Passed" start-time="2026-10-07 06:45:40Z" end-time="2026-10-07 06:45:42Z" duration="1.968607" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/RoofPoolWater.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SpiritGhost.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooGhost.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooThread.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooWisp.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/ArenaHologram.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/LagoonCoveWater.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/SlipperBeam.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/Toon.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/VolcanicRock.shader delta=0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

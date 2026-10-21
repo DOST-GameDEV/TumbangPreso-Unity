@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/AIController.cs": "b2e76a38d485057c2105a571029fa8583e69ee7ee112713d44e9cc4e79294213",
+  "Assets/TumbangPreso/Runtime/Carrier.cs": "e701893e0a071821172fd5d35eea18b9acc6d4b87b5700a96bb81fa5e3c14d07",
+  "Assets/TumbangPreso/Runtime/InputIntent.cs": "a46576471cf7a8fa85b2953a1bf480fb26fb7196aafa720b5375e3ac57c79b79",
+  "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "8491f40782dbbcf8c38817f0d014597f4a134f10a814f41ddcd4f950cb4f036b",
+  "Assets/TumbangPreso/Tests/PlayMode/TimedRecoveryTests.cs": "5f9e175112546200071f6298535eae02b9bf95a18d484b997047d912af004dc7"
+}

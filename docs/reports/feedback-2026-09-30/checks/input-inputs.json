@@ -1,0 +1,109 @@
+{
+  "base": "aecc0ee2c",
+  "sourceEquivalent": "625af762b plus input edits",
+  "question": "New defaults have no unintended collisions and earlier saved Grab binding still loads",
+  "expectedCases": 2,
+  "retry": 0,
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Resources/TumbangPreso.inputactions",
+      "sha256": "29C49737883C0E62006C04A319859F8A80F60BD4993145F19C457B2B32A88358"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+      "sha256": "AD4E7EA444C2B50EB50127104CEAD5C19448019CEC8854050DFDDE10F97680B0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs",
+      "sha256": "98E4CD8DCA0DA3EF738F41DCB5308ABC0C8C8A4B9C28D9F27C95F350342BBB02"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs",
+      "sha256": "67E9198CE05FE41276E0A614AC2F7917136C39A9B3EFFF2E54096BA85E018DD8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/GuidedTraining.cs",
+      "sha256": "C382869F5FC67E9C62C2E2C315A34A62F1AF28A876C27ECC163274AF7B15D5F4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+      "sha256": "AF4EDD0224BC45B9C13FE925434062E7766EBE886691127B94DAC9C75FEB658F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Settings/Rebinding.cs",
+      "sha256": "1120033BE710EA09D3285501C06E602B754A136970A6EEFEC6EAB4D8F69932F1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/GuidedTrainingHud.OwnerPainted.cs",
+      "sha256": "93E9EF5FB7929929EEAC7CAA925984472E2E17ABA4CBD32C5365A36D3C45F2CC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubTasks.cs",
+      "sha256": "2B168E9ACB7619C4621CA915DD5BE7C45E94ECCE206C600D1166A6C3BD7D6413"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hud.cs",
+      "sha256": "32C7F965BC79B060B98352B1C5D89346BD7444B1CF50857475EAF28FB3A231D0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/RoleSwapCard.cs",
+      "sha256": "218987ACB81FA6E999B5C79426FDC2565983D8B18391E1F92E168E090C0B6C10"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs",
+      "sha256": "CC954B72B2F34EB076A2F21B804FA99ACA54B8775B79910BE7665F34F89EBFE6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs",
+      "sha256": "2DFE8B6E2CFEDE366CA7CA5938335E8ACF75A422D117397076CAA2DC1C68C4ED"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpRoundSwapView.CourtBreak.cs",
+      "sha256": "142AA643D9467B619D67916A884C46DED1F69B3A9A311157D65934C3D3032248"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpRoundSwapView.cs",
+      "sha256": "07933E5D7F605C6C3E5AA65687D3E8E71438917EB9CF6FA8F5EBFC5DD718D379"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/DeadFeatureAudit.cs",
+      "sha256": "21E1D7D696372372389FDAE151E6386011C04610E2B30EBD6EBCCC0866435D0B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/InputMapAndAbilityTests.cs",
+      "sha256": "1B9C175B04ED96D2BA4A2596CDC8BAF39C3A0A53BFA8C90F6AC0F81353511848"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs",
+      "sha256": "3C0D9C18DF60DE2BEA0C23973E6C30410F6F6D8029C3F86722D8A456CA73DBF5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs.meta",
+      "sha256": "C4C48FF4FF67D747A8716F91E2C561E7FBBCBD2108A8C19CB4A213E0FA56634F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HubFlowTests.cs",
+      "sha256": "12342F14EB1D4AEBB77F5AE4088F10474E0A6BDBCE182D82A38EADADB2E6B543"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/InputReaderTests.cs",
+      "sha256": "789C9638373A547118587641D41E004DC3127026BD76B7C9FD8A341D31FD4F96"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs",
+      "sha256": "EB265BA40BFA1494724DC6F62AE5D0725D014216457768F5090E3DF662A18AC6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TutorialDefenderProbe.cs",
+      "sha256": "75F0DB98E289E6588E72D7D8A22668A91CDB8910846A955507A9CEC3EE31979F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs",
+      "sha256": "E954C7AB02C385F2777316596E2A038CB5847079E8131EDBBFA661958133423E"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs",
+      "sha256": "6D8267B0E814DEB04B3C579982AE8A0AD08A5D1E932BAB9309B1FF0E797049ED"
+    }
+  ]
+}

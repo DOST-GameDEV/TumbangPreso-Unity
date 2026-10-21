@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:37:11Z" end-time="2026-10-03 09:37:16Z" duration="5.0001856">
+  <test-suite type="TestSuite" id="2841" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1498" result="Passed" start-time="2026-10-03 09:37:11Z" end-time="2026-10-03 09:37:16Z" duration="5.000186" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2835" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1498" result="Passed" start-time="2026-10-03 09:37:11Z" end-time="2026-10-03 09:37:16Z" duration="4.985833" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22580" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2836" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1498" result="Passed" start-time="2026-10-03 09:37:11Z" end-time="2026-10-03 09:37:16Z" duration="4.977261" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2837" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1498" result="Passed" start-time="2026-10-03 09:37:11Z" end-time="2026-10-03 09:37:16Z" duration="4.968672" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2262" name="RecordedFrameCompositionTests" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 09:37:11Z" end-time="2026-10-03 09:37:16Z" duration="4.948845" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2265" name="OpaqueCameraInputAndIntentionalUiFadeStillCompose" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests.OpaqueCameraInputAndIntentionalUiFadeStillCompose" methodname="OpaqueCameraInputAndIntentionalUiFadeStillCompose" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" seed="1450740200" result="Passed" start-time="2026-10-03 09:37:11Z" end-time="2026-10-03 09:37:14Z" duration="2.375138" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+camera alpha=1; full=RGBA(0.000, 0.000, 1.000, 1.000)
+intentional UI fade=RGBA(0.733, 0.000, 0.737, 1.000)
+]]></output>
+            </test-case>
+            <test-case id="2264" name="PartialCameraAlphaCannotMixTheLiveViewIntoPlayback" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests.PartialCameraAlphaCannotMixTheLiveViewIntoPlayback" methodname="PartialCameraAlphaCannotMixTheLiveViewIntoPlayback" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" seed="779473738" result="Passed" start-time="2026-10-03 09:37:14Z" end-time="2026-10-03 09:37:15Z" duration="1.282618" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+camera alpha=0.25; full=RGBA(0.000, 0.000, 1.000, 1.000)
+intentional UI fade=RGBA(0.733, 0.000, 0.737, 1.000)
+]]></output>
+            </test-case>
+            <test-case id="2263" name="TransparentCameraAlphaCannotRevealTheLiveView" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests.TransparentCameraAlphaCannotRevealTheLiveView" methodname="TransparentCameraAlphaCannotRevealTheLiveView" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" seed="826500955" result="Passed" start-time="2026-10-03 09:37:15Z" end-time="2026-10-03 09:37:16Z" duration="1.280305" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+camera alpha=0; full=RGBA(0.000, 0.000, 1.000, 1.000)
+intentional UI fade=RGBA(0.733, 0.000, 0.737, 1.000)
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

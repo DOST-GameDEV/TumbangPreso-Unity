@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.369124">
+  <test-suite type="TestSuite" id="2958" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1592" result="Failed" site="Child" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.369124" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2952" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1592" result="Failed" site="Child" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.352217" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25368" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2953" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1592" result="Failed" site="Child" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.341278" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2954" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1592" result="Failed" site="Child" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.330388" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2638" name="SoloDefaultSeatLifetimeTests" fullname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" classname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.308564" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2643" name="ANetworkedShortcutDoesNotChangeTheCurrentSeat" fullname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests.ANetworkedShortcutDoesNotChangeTheCurrentSeat" methodname="ANetworkedShortcutDoesNotChangeTheCurrentSeat" classname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" runstate="Runnable" seed="1079700943" result="Passed" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.141147" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2641" name="F6BeforeAnyHandoverKeepsTheOriginalSeat" fullname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests.F6BeforeAnyHandoverKeepsTheOriginalSeat" methodname="F6BeforeAnyHandoverKeepsTheOriginalSeat" classname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" runstate="Runnable" seed="637276138" result="Passed" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.029539" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2639" name="F6ReturnsToTheOriginalHumanAfterClaimingTheEarlierBot" fullname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests.F6ReturnsToTheOriginalHumanAfterClaimingTheEarlierBot" methodname="F6ReturnsToTheOriginalHumanAfterClaimingTheEarlierBot" classname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" runstate="Runnable" seed="2036509414" result="Failed" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.035417" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  F6 rediscovered the claimed bot's disabled AI as the default instead of returning to the original P2 human.
+  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests.F6ReturnsToTheOriginalHumanAfterClaimingTheEarlierBot () [0x0004c] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\SoloDefaultSeatLifetimeTests.cs:104
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2640" name="F6StillReturnsAfterClaimingAHigherCreatedBot" fullname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests.F6StillReturnsAfterClaimingAHigherCreatedBot" methodname="F6StillReturnsAfterClaimingAHigherCreatedBot" classname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" runstate="Runnable" seed="2084694304" result="Passed" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.029946" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2644" name="F6WithoutActorsRetainsTheExistingFallback" fullname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests.F6WithoutActorsRetainsTheExistingFallback" methodname="F6WithoutActorsRetainsTheExistingFallback" classname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" runstate="Runnable" seed="1647873561" result="Passed" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.028544" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2642" name="OrdinaryF2StillClaimsTheHumanAfterF1Handover" fullname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests.OrdinaryF2StillClaimsTheHumanAfterF1Handover" methodname="OrdinaryF2StillClaimsTheHumanAfterF1Handover" classname="TumbangPreso.PlayTests.SoloDefaultSeatLifetimeTests" runstate="Runnable" seed="949832785" result="Passed" start-time="2026-10-03 22:53:48Z" end-time="2026-10-03 22:53:48Z" duration="0.032856" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

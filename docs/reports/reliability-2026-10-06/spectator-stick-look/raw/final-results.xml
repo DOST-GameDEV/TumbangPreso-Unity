@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 02:21:39Z" end-time="2026-10-06 02:21:40Z" duration="0.9085984">
+  <test-suite type="TestSuite" id="3239" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1824" result="Passed" start-time="2026-10-06 02:21:39Z" end-time="2026-10-06 02:21:40Z" duration="0.908598" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3231" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1824" result="Passed" start-time="2026-10-06 02:21:39Z" end-time="2026-10-06 02:21:40Z" duration="0.875293" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14756" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3232" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1824" result="Passed" start-time="2026-10-06 02:21:39Z" end-time="2026-10-06 02:21:40Z" duration="0.850613" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3235" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1822" result="Passed" start-time="2026-10-06 02:21:39Z" end-time="2026-10-06 02:21:40Z" duration="0.826397" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2871" name="SpectatorPadControlsTests" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-06 02:21:39Z" end-time="2026-10-06 02:21:40Z" duration="0.779369" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2874" name="CenteredStickDoesNotRequestTakeoverOrRotate" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.CenteredStickDoesNotRequestTakeoverOrRotate" methodname="CenteredStickDoesNotRequestTakeoverOrRotate" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="719851940" result="Passed" start-time="2026-10-06 02:21:39Z" end-time="2026-10-06 02:21:40Z" duration="0.499643" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2878" name="ExistingPadTargetCycleWithAKeyboardStillWorks" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.ExistingPadTargetCycleWithAKeyboardStillWorks" methodname="ExistingPadTargetCycleWithAKeyboardStillWorks" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="573746013" result="Passed" start-time="2026-10-06 02:21:40Z" end-time="2026-10-06 02:21:40Z" duration="0.047828" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2876" name="PadFreeFlightWorksWithoutAKeyboard" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.PadFreeFlightWorksWithoutAKeyboard" methodname="PadFreeFlightWorksWithoutAKeyboard" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="1363079051" result="Passed" start-time="2026-10-06 02:21:40Z" end-time="2026-10-06 02:21:40Z" duration="0.040229" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2877" name="PadPovToggleWorksWithoutAKeyboard" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.PadPovToggleWorksWithoutAKeyboard" methodname="PadPovToggleWorksWithoutAKeyboard" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="939824017" result="Passed" start-time="2026-10-06 02:21:40Z" end-time="2026-10-06 02:21:40Z" duration="0.039107" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2875" name="PadTargetCycleWorksWithoutAKeyboard" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.PadTargetCycleWorksWithoutAKeyboard" methodname="PadTargetCycleWorksWithoutAKeyboard" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="921755093" result="Passed" start-time="2026-10-06 02:21:40Z" end-time="2026-10-06 02:21:40Z" duration="0.042748" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2873" name="RightStickRotatesTheSpectatorDuringARequestedPause" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.RightStickRotatesTheSpectatorDuringARequestedPause" methodname="RightStickRotatesTheSpectatorDuringARequestedPause" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="706109350" result="Passed" start-time="2026-10-06 02:21:40Z" end-time="2026-10-06 02:21:40Z" duration="0.048813" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2872" name="RightStickTakesTheDirectorWheelWithoutMouseMovement" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.RightStickTakesTheDirectorWheelWithoutMouseMovement" methodname="RightStickTakesTheDirectorWheelWithoutMouseMovement" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="1170561575" result="Passed" start-time="2026-10-06 02:21:40Z" end-time="2026-10-06 02:21:40Z" duration="0.044224" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

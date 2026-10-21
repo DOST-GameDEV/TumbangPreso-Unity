@@ -1,0 +1,4 @@
+calls=35000
+medianMicroseconds=9.416780000000001
+medianHeapGrowthBytesPerCall=1363.968
+nonShrinkingHeapBatches=15

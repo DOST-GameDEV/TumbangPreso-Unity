@@ -14,7 +14,7 @@ namespace TumbangPreso.Visual
                 var left = new Vector3(-.26f, -.3f, -.12f);
                 var right = new Vector3(.26f, -.5f, -.08f);
                 var back = new Vector3(.1f, -.2f, .2f);
-                _shape = new Mesh { name = "Sean fractured ember", hideFlags = HideFlags.DontSave };
+                _shape = new Mesh { name = "Rago fractured ember", hideFlags = HideFlags.DontSave };
                 _shape.vertices = new[] { tip, left, right, tip, right, back,
                     tip, back, left, left, back, right };
                 _shape.triangles = new[] { 0, 2, 1, 3, 5, 4, 6, 8, 7, 9, 11, 10 };

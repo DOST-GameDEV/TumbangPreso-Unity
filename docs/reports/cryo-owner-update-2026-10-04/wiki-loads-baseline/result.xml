@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:23Z" duration="15.7387188">
+  <test-suite type="TestSuite" id="3032" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1654" result="Failed" site="Child" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:23Z" duration="15.738719" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3026" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1654" result="Failed" site="Child" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:23Z" duration="15.729709" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="82498" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3027" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1654" result="Failed" site="Child" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:23Z" duration="15.727247" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3028" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1654" result="Failed" site="Child" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:23Z" duration="15.725251" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1283" name="CheskaFrostbiteLoadTests" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:08Z" duration="0.257949" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1289" name="WikiFrostbiteLoadLastsFifteenSeconds" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.WikiFrostbiteLoadLastsFifteenSeconds" methodname="WikiFrostbiteLoadLastsFifteenSeconds" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="147927815" result="Failed" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:08Z" duration="0.245254" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The new Wiki load must survive the former ten-second limit.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaFrostbiteLoadTests+<WikiFrostbiteLoadLastsFifteenSeconds>d__21.MoveNext () [0x0004d] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/CheskaFrostbiteLoadTests.cs:119
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1419" name="DanteBoulderLoadTests" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:23Z" duration="15.425037" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1424" name="WikiBoulderLoadExpiresOnItsDroppedShoe" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.WikiBoulderLoadExpiresOnItsDroppedShoe" methodname="WikiBoulderLoadExpiresOnItsDroppedShoe" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="223180854" result="Failed" start-time="2026-10-04 11:25:08Z" end-time="2026-10-04 11:25:23Z" duration="15.423225" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Boulder must stop being armed after fifteen seconds, even on the ground.
+  Expected: Normal
+  But was:  Concussed
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteBoulderLoadTests+<WikiBoulderLoadExpiresOnItsDroppedShoe>d__20.MoveNext () [0x000cf] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/DanteBoulderLoadTests.cs:104
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

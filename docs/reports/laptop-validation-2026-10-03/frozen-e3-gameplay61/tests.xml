@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="61" result="Passed" total="61" passed="61" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:36:24Z" end-time="2026-10-03 06:36:49Z" duration="24.4273904">
+  <test-suite type="TestSuite" id="2761" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 06:36:24Z" end-time="2026-10-03 06:36:49Z" duration="24.427390" total="61" passed="61" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2755" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 06:36:24Z" end-time="2026-10-03 06:36:49Z" duration="24.416727" total="61" passed="61" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13704" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2756" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 06:36:24Z" end-time="2026-10-03 06:36:49Z" duration="24.411579" total="61" passed="61" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2757" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 06:36:24Z" end-time="2026-10-03 06:36:49Z" duration="24.406931" total="61" passed="61" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1154" name="BotProducerLifetimeTests" fullname="TumbangPreso.PlayTests.BotProducerLifetimeTests" classname="TumbangPreso.PlayTests.BotProducerLifetimeTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 06:36:25Z" end-time="2026-10-03 06:36:38Z" duration="13.261808" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1155" name="DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput" fullname="TumbangPreso.PlayTests.BotProducerLifetimeTests.DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput" methodname="DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput" classname="TumbangPreso.PlayTests.BotProducerLifetimeTests" runstate="Runnable" seed="1244307639" result="Passed" start-time="2026-10-03 06:36:25Z" end-time="2026-10-03 06:36:38Z" duration="13.252152" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1197" name="CarrierPickupPressLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.095367" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1200" name="ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" methodname="ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="6623037" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.032770" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1199" name="AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" methodname="AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="658670790" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.028914" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1198" name="ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" methodname="ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="503331272" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.030926" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1201" name="CarrierPossessionLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.164794" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1202" name="DisarmAndImmediateReequipRetireTheOldThrowCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.DisarmAndImmediateReequipRetireTheOldThrowCharge" methodname="DisarmAndImmediateReequipRetireTheOldThrowCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="1445413284" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.032916" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1204" name="DisarmRetiresAnObservedTellWithoutALocalCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.DisarmRetiresAnObservedTellWithoutALocalCharge" methodname="DisarmRetiresAnObservedTellWithoutALocalCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="521942082" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.026470" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1206" name="EmptyHandNotificationsPreserveAnUnrelatedDefenderResetChannel" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.EmptyHandNotificationsPreserveAnUnrelatedDefenderResetChannel" methodname="EmptyHandNotificationsPreserveAnUnrelatedDefenderResetChannel" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="2020304116" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.045013" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1203" name="ForceEquippingAReplacementRetiresTheDisplacedShoeCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.ForceEquippingAReplacementRetiresTheDisplacedShoeCharge" methodname="ForceEquippingAReplacementRetiresTheDisplacedShoeCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="339445334" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.027994" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1205" name="SameHeldNotificationsPreserveTheExistingCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.SameHeldNotificationsPreserveTheExistingCharge" methodname="SameHeldNotificationsPreserveTheExistingCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="807525497" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.028942" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1516" name="HeroInputRetirementTests" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:39Z" duration="0.471883" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1517" name="FocusLossCancelsPendingHeroAim" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossCancelsPendingHeroAim" methodname="FocusLossCancelsPendingHeroAim" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1246901258" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.041560" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1520" name="FocusLossDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossDiscardsPendingHeroBuffer" methodname="FocusLossDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="321816205" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.030818" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1526" name="FocusLossPreservesAnActivatedAbilityAndResources" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossPreservesAnActivatedAbilityAndResources" methodname="FocusLossPreservesAnActivatedAbilityAndResources" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="273152763" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.030957" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1523" name="HeroComponentDisableDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.HeroComponentDisableDiscardsPendingHeroBuffer" methodname="HeroComponentDisableDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1870828762" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.029517" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1525" name="OrdinaryStunBufferSurvivesUntilTheActorCanAct" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.OrdinaryStunBufferSurvivesUntilTheActorCanAct" methodname="OrdinaryStunBufferSurvivesUntilTheActorCanAct" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="422095930" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:38Z" duration="0.078905" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1524" name="OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge" methodname="OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1130659472" result="Passed" start-time="2026-10-03 06:36:38Z" end-time="2026-10-03 06:36:39Z" duration="0.045225" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1519" name="PracticeIdleCancelsPendingHeroAim" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.PracticeIdleCancelsPendingHeroAim" methodname="PracticeIdleCancelsPendingHeroAim" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1203414414" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.029870" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1522" name="PracticeIdleDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.PracticeIdleDiscardsPendingHeroBuffer" methodname="PracticeIdleDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1710216284" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.031039" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1518" name="ReaderDisableCancelsPendingHeroAim" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisableCancelsPendingHeroAim" methodname="ReaderDisableCancelsPendingHeroAim" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="418111830" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028962" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1521" name="ReaderDisableDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisableDiscardsPendingHeroBuffer" methodname="ReaderDisableDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="951643946" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.029862" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1527" name="ReaderDisablePreservesAnActivatedAbilityAndResources" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisablePreservesAnActivatedAbilityAndResources" methodname="ReaderDisablePreservesAnActivatedAbilityAndResources" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="910705188" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.027775" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1529" name="RemoteReaderDisablePreservesReceivedAimAndRenewal" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.RemoteReaderDisablePreservesReceivedAimAndRenewal" methodname="RemoteReaderDisablePreservesReceivedAimAndRenewal" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="737561933" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.032200" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1528" name="RemoteReaderFocusLossPreservesReceivedAimAndRenewal" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.RemoteReaderFocusLossPreservesReceivedAimAndRenewal" methodname="RemoteReaderFocusLossPreservesReceivedAimAndRenewal" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1853167752" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.029082" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1603" name="InputProducerCancellationTests" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.354950" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1612" name="ActualLungeReleaseStillSpendsCooldownAndOpensContact" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ActualLungeReleaseStillSpendsCooldownAndOpensContact" methodname="ActualLungeReleaseStillSpendsCooldownAndOpensContact" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="388259914" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.031124" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1611" name="ActualThrowReleaseStillLaunchesTheOwnedShoe" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ActualThrowReleaseStillLaunchesTheOwnedShoe" methodname="ActualThrowReleaseStillLaunchesTheOwnedShoe" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1283013066" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.032403" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1605" name="FocusLossCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossCancelsPendingLunge" methodname="FocusLossCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1913481500" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.030261" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1604" name="FocusLossCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossCancelsPendingThrow" methodname="FocusLossCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1120126465" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028124" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1613" name="FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" methodname="FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="301714635" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028451" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1609" name="FocusLossRequiresAFreshInteractPress" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossRequiresAFreshInteractPress" methodname="FocusLossRequiresAFreshInteractPress" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="571377084" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028448" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1615" name="PracticeIdleCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.PracticeIdleCancelsPendingLunge" methodname="PracticeIdleCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1180589246" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.029302" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1614" name="PracticeIdleCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.PracticeIdleCancelsPendingThrow" methodname="PracticeIdleCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1546992104" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.030725" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1607" name="ReaderDisableCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderDisableCancelsPendingLunge" methodname="ReaderDisableCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1730603441" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028814" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1606" name="ReaderDisableCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderDisableCancelsPendingThrow" methodname="ReaderDisableCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="951833609" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028119" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1610" name="ReaderReenableRequiresAFreshInteractPress" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderReenableRequiresAFreshInteractPress" methodname="ReaderReenableRequiresAFreshInteractPress" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="250735622" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028029" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1608" name="ReaderReenableRequiresReleaseBeforeASecondThrowWindup" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderReenableRequiresReleaseBeforeASecondThrowWindup" methodname="ReaderReenableRequiresReleaseBeforeASecondThrowWindup" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="196644404" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.028435" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1951" name="OnlinePauseActionLifetimeTests" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.221410" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1955" name="OfflineMenuRestoresTheRequestedSpeedOnClose" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OfflineMenuRestoresTheRequestedSpeedOnClose" methodname="OfflineMenuRestoresTheRequestedSpeedOnClose" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1435943505" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.043811" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1953" name="OnlineMenuCancelsPendingLungeBeforeParking" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuCancelsPendingLungeBeforeParking" methodname="OnlineMenuCancelsPendingLungeBeforeParking" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1624675971" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.039066" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1952" name="OnlineMenuCancelsPendingThrowBeforeParking" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuCancelsPendingThrowBeforeParking" methodname="OnlineMenuCancelsPendingThrowBeforeParking" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1180411737" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.033073" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1954" name="OnlineMenuPreservesCommittedLungeAndCooldown" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuPreservesCommittedLungeAndCooldown" methodname="OnlineMenuPreservesCommittedLungeAndCooldown" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="925208553" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.033013" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1956" name="OnlineMenuRetiresPendingHeroAimWithoutSpendingCharges" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuRetiresPendingHeroAimWithoutSpendingCharges" methodname="OnlineMenuRetiresPendingHeroAimWithoutSpendingCharges" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1712345179" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.034693" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1957" name="StaleRemoteMenuOwnerPreservesReceivedHeroAimRenewal" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.StaleRemoteMenuOwnerPreservesReceivedHeroAimRenewal" methodname="StaleRemoteMenuOwnerPreservesReceivedHeroAimRenewal" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1293713819" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:39Z" duration="0.033281" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2112" name="PracticeBotOperatorTests" fullname="TumbangPreso.PlayTests.PracticeBotOperatorTests" classname="TumbangPreso.PlayTests.PracticeBotOperatorTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:42Z" duration="2.653005" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2113" name="ClassicPointerMenuRestoresChosenBotAsAttackerAndDefender" fullname="TumbangPreso.PlayTests.PracticeBotOperatorTests.ClassicPointerMenuRestoresChosenBotAsAttackerAndDefender" methodname="ClassicPointerMenuRestoresChosenBotAsAttackerAndDefender" classname="TumbangPreso.PlayTests.PracticeBotOperatorTests" runstate="Runnable" seed="632085377" result="Passed" start-time="2026-10-03 06:36:39Z" end-time="2026-10-03 06:36:40Z" duration="1.177341" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2114" name="HeroSubmitMenuRestoresChosenBotAsAttackerAndDefender" fullname="TumbangPreso.PlayTests.PracticeBotOperatorTests.HeroSubmitMenuRestoresChosenBotAsAttackerAndDefender" methodname="HeroSubmitMenuRestoresChosenBotAsAttackerAndDefender" classname="TumbangPreso.PlayTests.PracticeBotOperatorTests" runstate="Runnable" seed="1386151325" result="Passed" start-time="2026-10-03 06:36:40Z" end-time="2026-10-03 06:36:42Z" duration="1.473781" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2118" name="PracticeResetCombatLifetimeTests" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.253024" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2123" name="InvalidDefenderChoiceLeavesTheExistingContactUntouched" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.InvalidDefenderChoiceLeavesTheExistingContactUntouched" methodname="InvalidDefenderChoiceLeavesTheExistingContactUntouched" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="1410026142" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.031982" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2122" name="OrdinaryPausePreservesTheCommittedContactAndCooldown" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.OrdinaryPausePreservesTheCommittedContactAndCooldown" methodname="OrdinaryPausePreservesTheCommittedContactAndCooldown" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="339997930" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.129196" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2121" name="ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" methodname="ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="39218908" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.030138" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2119" name="ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" methodname="ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="503439803" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.030249" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2120" name="SetDefenderRetiresThePreviousRoleContact" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.SetDefenderRetiresThePreviousRoleContact" methodname="SetDefenderRetiresThePreviousRoleContact" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="494323807" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.028540" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2179" name="ReaderChatLifetimeTests" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.146068" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2182" name="AHeldChatButtonCannotBeginAThrowWhenTypingCloses" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.AHeldChatButtonCannotBeginAThrowWhenTypingCloses" methodname="AHeldChatButtonCannotBeginAThrowWhenTypingCloses" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="716073551" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.029557" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2184" name="AReleasedChatButtonAllowsAFreshGameplayThrowPress" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.AReleasedChatButtonAllowsAFreshGameplayThrowPress" methodname="AReleasedChatButtonAllowsAFreshGameplayThrowPress" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="1037288159" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.028809" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2181" name="EnteringChatCancelsThePendingLungeBeforeConsumersSeeARelease" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatCancelsThePendingLungeBeforeConsumersSeeARelease" methodname="EnteringChatCancelsThePendingLungeBeforeConsumersSeeARelease" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="1045242958" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.027501" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2180" name="EnteringChatCancelsThePendingThrowBeforeConsumersSeeARelease" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatCancelsThePendingThrowBeforeConsumersSeeARelease" methodname="EnteringChatCancelsThePendingThrowBeforeConsumersSeeARelease" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="579523959" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.027718" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2183" name="EnteringChatPreservesAnAlreadyCommittedLungeAndItsCooldown" fullname="TumbangPreso.PlayTests.ReaderChatLifetimeTests.EnteringChatPreservesAnAlreadyCommittedLungeAndItsCooldown" methodname="EnteringChatPreservesAnAlreadyCommittedLungeAndItsCooldown" classname="TumbangPreso.PlayTests.ReaderChatLifetimeTests" runstate="Runnable" seed="12382532" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:42Z" duration="0.028755" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2204" name="RecordedSlipperHighlightTests" fullname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" classname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:47Z" duration="5.043003" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2206" name="CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper" fullname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper" methodname="CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper" classname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" runstate="Runnable" seed="255497493" result="Passed" start-time="2026-10-03 06:36:42Z" end-time="2026-10-03 06:36:44Z" duration="1.711495" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2205" name="CurrentLandingHighlightCannotPaintHistoricalHeldSlipper" fullname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalHeldSlipper" methodname="CurrentLandingHighlightCannotPaintHistoricalHeldSlipper" classname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" runstate="Runnable" seed="69450591" result="Passed" start-time="2026-10-03 06:36:44Z" end-time="2026-10-03 06:36:46Z" duration="1.658100" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2207" name="HistoricalLooseRestoresInitialHighlightAfterHeldAndFlightFrames" fullname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests.HistoricalLooseRestoresInitialHighlightAfterHeldAndFlightFrames" methodname="HistoricalLooseRestoresInitialHighlightAfterHeldAndFlightFrames" classname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" runstate="Runnable" seed="777102813" result="Passed" start-time="2026-10-03 06:36:46Z" end-time="2026-10-03 06:36:47Z" duration="1.671466" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2208" name="RecordedWorldOwnerSpaceTests" fullname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests" classname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 06:36:47Z" end-time="2026-10-03 06:36:49Z" duration="1.295763" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2209" name="TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses" fullname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests.TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses" methodname="TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses" classname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests" runstate="Runnable" seed="1294692348" result="Passed" start-time="2026-10-03 06:36:47Z" end-time="2026-10-03 06:36:49Z" duration="1.294647" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2546" name="TouchMovementRetirementTests" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 06:36:49Z" end-time="2026-10-03 06:36:49Z" duration="0.176366" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2550" name="ANewTouchAxisAfterFocusRecoveryStillReachesTheReader" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.ANewTouchAxisAfterFocusRecoveryStillReachesTheReader" methodname="ANewTouchAxisAfterFocusRecoveryStillReachesTheReader" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="481542732" result="Passed" start-time="2026-10-03 06:36:49Z" end-time="2026-10-03 06:36:49Z" duration="0.039819" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2547" name="FocusLossRetiresTheCachedTouchAxis" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.FocusLossRetiresTheCachedTouchAxis" methodname="FocusLossRetiresTheCachedTouchAxis" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="1671797389" result="Passed" start-time="2026-10-03 06:36:49Z" end-time="2026-10-03 06:36:49Z" duration="0.032386" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2549" name="OrdinarySustainedTouchMovementStaysHeld" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.OrdinarySustainedTouchMovementStaysHeld" methodname="OrdinarySustainedTouchMovementStaysHeld" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="238677170" result="Passed" start-time="2026-10-03 06:36:49Z" end-time="2026-10-03 06:36:49Z" duration="0.022135" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2548" name="ReaderReenableCannotReuseTheCachedTouchAxis" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.ReaderReenableCannotReuseTheCachedTouchAxis" methodname="ReaderReenableCannotReuseTheCachedTouchAxis" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="742298536" result="Passed" start-time="2026-10-03 06:36:49Z" end-time="2026-10-03 06:36:49Z" duration="0.045710" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2551" name="RemoteReaderRetirementPreservesTheLocalTouchAxis" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.RemoteReaderRetirementPreservesTheLocalTouchAxis" methodname="RemoteReaderRetirementPreservesTheLocalTouchAxis" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="1149863936" result="Passed" start-time="2026-10-03 06:36:49Z" end-time="2026-10-03 06:36:49Z" duration="0.033407" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

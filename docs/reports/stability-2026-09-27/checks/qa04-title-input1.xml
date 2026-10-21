@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 23:33:02Z" end-time="2026-09-26 23:33:17Z" duration="14.8595396">
+  <test-suite type="TestSuite" id="1874" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="688" result="Passed" start-time="2026-09-26 23:33:02Z" end-time="2026-09-26 23:33:17Z" duration="14.859540" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1868" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="688" result="Passed" start-time="2026-09-26 23:33:02Z" end-time="2026-09-26 23:33:17Z" duration="14.847178" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31208" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1869" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="688" result="Passed" start-time="2026-09-26 23:33:02Z" end-time="2026-09-26 23:33:17Z" duration="14.840695" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1870" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="688" result="Passed" start-time="2026-09-26 23:33:02Z" end-time="2026-09-26 23:33:17Z" duration="14.834912" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1304" name="LobbyTypingProbe" fullname="TumbangPreso.PlayTests.LobbyTypingProbe" classname="TumbangPreso.PlayTests.LobbyTypingProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 23:33:02Z" end-time="2026-09-26 23:33:17Z" duration="14.655911" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1306" name="HostRoomNameRaycastsEditsAndCreatesTheTypedLanTitle" fullname="TumbangPreso.PlayTests.LobbyTypingProbe.HostRoomNameRaycastsEditsAndCreatesTheTypedLanTitle" methodname="HostRoomNameRaycastsEditsAndCreatesTheTypedLanTitle" classname="TumbangPreso.PlayTests.LobbyTypingProbe" runstate="Runnable" seed="1155859542" result="Passed" start-time="2026-09-26 23:33:02Z" end-time="2026-09-26 23:33:16Z" duration="14.646300" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] qa04-host-name-edited-960x540 cream source=252,211,159 pixel=78,65,51; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code QGTM
+[TumpUiCapture] qa04-host-name-created-960x540 cream source=252,211,159 pixel=95,81,64; isolated UI camera, no ColourGrade.
+[Net] offline
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1755" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-26 23:33:17Z" end-time="2026-09-26 23:33:17Z" duration="0.131970" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1760" name="AnUnsolicitedDisconnectClearsTheSessionOwnedTitle" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.AnUnsolicitedDisconnectClearsTheSessionOwnedTitle" methodname="AnUnsolicitedDisconnectClearsTheSessionOwnedTitle" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="928520614" result="Passed" start-time="2026-09-26 23:33:17Z" end-time="2026-09-26 23:33:17Z" duration="0.028939" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="10000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1759" name="JoinedTitleUsesOnlyTheCurrentListedRoomAndItsSeatedCode" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.JoinedTitleUsesOnlyTheCurrentListedRoomAndItsSeatedCode" methodname="JoinedTitleUsesOnlyTheCurrentListedRoomAndItsSeatedCode" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1035360932" result="Passed" start-time="2026-09-26 23:33:17Z" end-time="2026-09-26 23:33:17Z" duration="0.049256" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1761" name="RestartingAListeningClientKeepsOnlyTheNewTitleOperation" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.RestartingAListeningClientKeepsOnlyTheNewTitleOperation" methodname="RestartingAListeningClientKeepsOnlyTheNewTitleOperation" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="705105878" result="Passed" start-time="2026-09-26 23:33:17Z" end-time="2026-09-26 23:33:17Z" duration="0.050835" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:18679
+[Net] offline
+[Net] connecting to 127.0.0.1:18680
+[Net] offline
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

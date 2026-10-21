@@ -95,6 +95,12 @@ Shader "TumbangPreso/Toon"
         _RimColor ("Rim Colour", Color) = (1, 0.87, 0.72, 1)
         _RimStrength ("Rim Strength", Range(0, 1)) = 0
         _RimPower ("Rim Power", Range(0.5, 8)) = 3
+        _DepthReadability ("World distance readability", Range(0, 1)) = 0
+        _ViewmodelRimStrength ("Held slipper edge", Range(0, .3)) = 0
+        _WorldBody ("Body floor, height and eligibility", Vector) = (0,1.6,0,0)
+        _WorldMetalAxis ("Metal cap axis and eligibility", Vector) = (0,1,0,0)
+        _TayaCue ("Camera-only catchable rim", Range(0, 1)) = 0
+        _CueHeight ("Catchable body height", Vector) = (0,1.6,0,0)
 
         // The two-band ramp. `_ShadowBand` is how bright the unlit half is and `_BandEdge` is
         // how hard the step between them is. Godot's `diffuse_toon` is a hard step; a little
@@ -176,10 +182,46 @@ Shader "TumbangPreso/Toon"
             // `ToonSkin.SetOutlinesSuppressed` is the only writer.
             float _OutlineSuppress;
 
+            // ⚠️⚠️ § THE BRIGHT LOOK'S EDGE. Under a map's world look the hull stops being black
+            // ink and becomes a thinner line in a deeper shade of whatever colour it frames: the
+            // orange shirt gets a rust edge, the teal hair a deep teal one. PEAK draws its cast
+            // with no ink at all; a competitive 1v3 still needs a silhouette, and a self-coloured
+            // line keeps it without reading as a black stroke. Globals rather than properties for
+            // § THE RENDER STYLE's reason, and `WorldLookPresentation` scopes them per camera, so
+            // menu portraits and lineups keep the black ink exactly as before.
+            //
+            // ⚠️ A DELIBERATELY COLOURED OUTLINE IS LEFT ALONE. `Slipper.RefreshHighlight` writes
+            // the landed-slipper highlight colour into `_OutlineColor`; that is a gameplay signal
+            // chosen in settings, so only an ink-dark outline is replaced.
+            half _WorldLookWeight;
+            float4 _WorldSoftLight;
+
+            // ⚠️ THE HULL'S LUMINANCE FLOOR, AND 0 IS TODAY'S HULL. pow 1.6 deepens each channel by
+            // a ratio that shrinks as the channel darkens, which is what saturates orange into rust,
+            // and it is also what takes dark brown skin to near ink: the native Ilalim first-person
+            // arms sample (32,23,22) at the edge against (151,90,51) skin (docs/TODO.md LIGHT-1.6).
+            // A floor above 0 scales the whole deepened colour up, hue kept, until it is at least
+            // that fraction of the colour's own luminance, so only colours whose hull falls below
+            // it move. The value is the owner's call; `WorldLookProfile.CastInkFloor` ships at 0.
+            //
+            // ⚠️ IT IS ONE RULE FOR EVERY COLOUR, AND A LUMINANCE FADE WAS TRIED AND REMOVED. True
+            // black keeps its ink anyway (a share of nothing is nothing), and a fade meant to spare
+            // near-black also spared the arms it exists for: `ViewmodelArms.SkinMangKanor`
+            // (49,36,29) sits at luminance 0.020, level with dark hair, and the brown arms it was
+            // tested on sit inside any band that excludes them. The other pixels the floor moves
+            // are coloured parts, such as a blue strap taking a deep blue line.
+            half _WorldCastInkFloor;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            fixed4 _Color;
+            half _UsePalette;
+            fixed4 _Palette[16];
+
             struct appdata_outline
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
+                float2 texcoord : TEXCOORD0;
 
                 // ⚠️⚠️ THE WELDED NORMAL, NOT A REAL TANGENT. `OutlineNormals.Weld` averages every
                 // normal sharing a position and parks the result here, because a hull inflated
@@ -198,8 +240,23 @@ Shader "TumbangPreso/Toon"
             struct v2f_outline
             {
                 float4 pos : SV_POSITION;
+                fixed4 colour : COLOR;
                 UNITY_FOG_COORDS(0)
             };
+
+            // The same palette remap the lit pass runs, at the vertex. See § THE ROW TEST below.
+            fixed3 OutlineAlbedo (float2 uv)
+            {
+                fixed3 base = tex2Dlod(_MainTex, float4(TRANSFORM_TEX(uv, _MainTex), 0.0, 0.0)).rgb;
+                if (_UsePalette > 0.5)
+                {
+                    float2 cell = floor(clamp(uv, 0.0, 0.9999) * 16.0);
+                    int col = (int)cell.x;
+                    int row = (int)cell.y;
+                    if (row <= 7) base = _Palette[(col / 2) + (row <= 3 ? 8 : 0)].rgb;
+                }
+                return base * _Color.rgb;
+            }
 
             v2f_outline vert (appdata_outline v)
             {
@@ -216,7 +273,19 @@ Shader "TumbangPreso/Toon"
                 float3 welded = dot(v.tangent.xyz, v.tangent.xyz) > 1e-8 ? v.tangent.xyz : v.normal;
 
                 // See § THE RENDER STYLE above. 0 leaves the authored width exactly as it was.
-                float width = _OutlineWidth * (1.0 - saturate(_OutlineSuppress));
+                float look = saturate(_WorldLookWeight);
+                float width = _OutlineWidth * (1.0 - saturate(_OutlineSuppress))
+                            * lerp(1.0, _WorldSoftLight.w, look);
+
+                // § THE BRIGHT LOOK'S EDGE. pow 1.6 then 0.42 deepens and saturates: white
+                // lands on a mid grey, orange on rust, and black stays black. The floor above
+                // then lifts only a hull darker than that share of its own colour.
+                half inkish = 1.0h - smoothstep(0.08h, 0.2h, max(_OutlineColor.r, max(_OutlineColor.g, _OutlineColor.b)));
+                fixed3 albedo = OutlineAlbedo(v.texcoord);
+                fixed3 self = pow(albedo, 1.6) * 0.42;
+                const half3 luma = half3(0.2126h, 0.7152h, 0.0722h);
+                self = self * max(1.0h, _WorldCastInkFloor * dot(albedo, luma) / max(dot(self, luma), 1e-4h)) + 0.012;
+                o.colour = fixed4(lerp(_OutlineColor.rgb, self, look * saturate(_WorldSoftLight.z) * inkish), 1.0);
 
                 // ⚠️⚠️ A ZERO WIDTH IS COLLAPSED TO A DEGENERATE TRIANGLE RATHER THAN DRAWN, AND
                 // THAT IS NOT AN OPTIMISATION. `Cull Front` means this pass draws BACK faces; at
@@ -251,7 +320,7 @@ Shader "TumbangPreso/Toon"
 
             fixed4 frag (v2f_outline i) : SV_Target
             {
-                fixed4 c = _OutlineColor;
+                fixed4 c = i.colour;
 
                 // ⚠️ FOGGED LIKE EVERYTHING ELSE. Both arenas run linear fog from 14 m, and an
                 // un-fogged outline draws a hard black edge around a building that has already
@@ -266,6 +335,7 @@ Shader "TumbangPreso/Toon"
         // PASS 2 — the flat toon face.
         // -------------------------------------------------------------------
         CGPROGRAM
+        #include "../Resources/Shaders/RecordedShaderTime.cginc"
         #pragma surface surf Toon fullforwardshadows
         #pragma target 3.0
 
@@ -315,8 +385,28 @@ Shader "TumbangPreso/Toon"
         fixed4 _RimColor;
         half _RimStrength;
         half _RimPower;
+        half _DepthReadability, _TayaCue, _ViewmodelRimStrength;
+        float4 _CueHeight;
+        float4 _WorldBody,_WorldMetalAxis;
+        // Global map data, deliberately not material properties: no asset tint
+        // mutation, and the world camera scope restores a preview's own look.
+        sampler2D _WorldToonRamp;
+        half _WorldLookWeight;
+        float4 _WorldLookShape,_WorldKeyDirection,_WorldSoftLight;
         half _ShadowBand;
         half _BandEdge;
+        // ⚠️⚠️ § SMOOTH SHADING. A GLOBAL, deliberately absent from `Properties` for
+        // § THE RENDER STYLE's reason; 0 (unset) is the old two-band look. Owner,
+        // 2026-10-05, looking at the character redesign in the editor: *"i think we have a
+        // celshader set on for the character shading in game, can we use regular shading + AO"*.
+        // The redesigned cast has soft, rounded forms, and on those the hard band draws straight
+        // lines and dark facets wherever a surface turns. At 1 the light falls off smoothly
+        // (a wrapped Lambert between `_ShadowBand` and full light) with no step at all.
+        // ⚠️ THE GAME'S LOOK SINCE 2026-10-05 (owner: yes, for characters). `ToonSkin` sets it to 1
+        // when the game starts; the editor's Character Redesign menu can still flip it to compare.
+        // It reaches everything drawn with this shader: the cast, their first-person arms, and
+        // what they summon. The map is drawn with other shaders and is untouched.
+        half _CharacterSmoothShade;
 
         // --- The tonemap, and why a shader is carrying one -------------------------------
         //
@@ -371,16 +461,41 @@ Shader "TumbangPreso/Toon"
         /// multiplied down into mud.
         half4 LightingToon (SurfaceOutput s, half3 lightDir, half atten)
         {
-            half shade = dot(s.Normal, lightDir) * atten;
+            half ndl = dot(s.Normal, lightDir);
+            half shade = ndl * atten;
             half band = smoothstep(0.0h, _BandEdge, shade);
             half level = lerp(_ShadowBand, 1.0h, band);
+
+            // ⚠️⚠️ § THE SOFT TERMINATOR, the world look's replacement for the two-band step.
+            // PEAK's cast reads like soft toys: light turns to shade over a wide, wrapped band
+            // rather than at a hard line. The step starts `Wrap` past the geometric terminator
+            // and spans `Softness` of N.L, and the ramp it samples carries the map's coloured
+            // shade and a faint warm band (see `WorldLookPresentation.Build`). This is the cast
+            // and hero props only: the world keeps its own shaders, per the 2026-07-29 revert.
+            //
+            // ⚠️ SHADOW, NOT DISTANCE. A directional light's `atten` is its shadow term and folds
+            // into the band, so a body standing in a building's shadow lands on the same shade
+            // colour as its own back. A positional light's `atten` is range falloff and is
+            // applied once, below, rather than twice.
+            half soft = max(0.02h, _WorldSoftLight.x);
+            half wrap = _WorldSoftLight.y;
+            half shadowed = lerp(atten, 1.0h, _WorldSpaceLightPos0.w);
+            half softBand = smoothstep(-wrap, soft - wrap, ndl) * shadowed;
 
             half4 c;
             // Preserve the authored directional-light toon shadow band. Positional
             // lights must still fade with range: a near-range-edge point retained
             // most of its color contribution and washed the cast in nearby colors.
             half falloff = lerp(1.0h, atten, _WorldSpaceLightPos0.w);
-            c.rgb = s.Albedo * _LightColor0.rgb * level * falloff;
+            // This generated lookup has no mipmaps. Sample its authored level directly;
+            // implicit screen derivatives produced invalid cloud/Mesa lighting samples.
+            half3 ramp = tex2Dlod(_WorldToonRamp, float4(softBand, .5, 0, 0)).rgb;
+            half3 lit = lerp(level.xxx,ramp,_WorldLookWeight);
+            // § SMOOTH SHADING: a wrapped Lambert, so the terminator is a gradient and the side
+            // turned from the sun still reads. Shadows fold in the same way as the band's.
+            half smoothLevel = lerp(_ShadowBand, 1.0h, saturate(ndl * 0.6h + 0.4h) * lerp(0.35h, 1.0h, shadowed));
+            lit = lerp(lit, smoothLevel.xxx, _CharacterSmoothShade);
+            c.rgb = s.Albedo * _LightColor0.rgb * lit * falloff;
             c.a = s.Alpha;
             return c;
         }
@@ -421,11 +536,51 @@ Shader "TumbangPreso/Toon"
 
             base *= _Color.rgb;
 
-            if (_RimStrength > 0.0)
+            half depth = saturate((distance(_WorldSpaceCameraPos,IN.worldPos)-5.0h)/9.0h)*_DepthReadability;
+            // ⚠️ NO BRIGHT FINISH UNDER THE WORLD LOOK (owner 2026-09-25: "the character glows",
+            // "remove the bright finish on all characters"). The distance lift and its cream rim
+            // were tuned against the authored, darker lighting; under the look they stacked on
+            // an already lit body and read as a glow round every player past five metres. The
+            // look's own haze starts past the court, so a far player stays readable without it.
+            // Classic (weight 0) keeps the cue exactly as it was.
+            depth *= 1.0h - saturate(_WorldLookWeight);
+            // A small value lift preserves the painted palette. Only registered
+            // cast/lata renderers opt in; map materials and viewmodels stay unchanged.
+            base = lerp(base,base*1.12h+0.025h,depth);
+            if (_RimStrength > 0.0 || depth > 0.0)
             {
-                half rim = pow(1.0h - saturate(dot(normalize(IN.viewDir),
-                                                   normalize(IN.worldNormal))), _RimPower);
-                base = lerp(base, _RimColor.rgb, rim * _RimStrength);
+                half grazing=1.0h-saturate(dot(normalize(IN.viewDir),normalize(IN.worldNormal)));
+                if(_TayaCue>0 || depth>0)grazing=1.0h-saturate(dot(normalize(_WorldSpaceCameraPos-IN.worldPos),normalize(IN.worldNormal)));
+                half rim=pow(grazing,lerp(_RimPower,max(1.5h,_RimPower-0.8h),depth));
+                half upper=smoothstep(0.25h,0.70h,(IN.worldPos.y-_CueHeight.x)/max(.1h,_CueHeight.y));
+                half facing=lerp(.58h,1.0h,saturate(IN.worldNormal.y*.5h+.5h));
+                half mask=lerp(1.0h,upper*facing,_TayaCue);
+                half strength=max(_RimStrength,depth*.13h);
+                half3 colour=_RimStrength>0?_RimColor.rgb:half3(1,.94,.82);
+                base=lerp(base,colour,saturate(rim*strength*mask));
+            }
+
+            if(_WorldLookWeight>0)
+            {
+                half3 normal=normalize(IN.worldNormal);
+                half3 view=normalize(_WorldSpaceCameraPos-IN.worldPos);
+                half relativeHeight=(IN.worldPos.y-_WorldBody.x)/max(.1h,_WorldBody.y);
+                base*=1-_WorldLookShape.z*(1-saturate(relativeHeight/.6h))*_WorldBody.z*_WorldLookWeight;
+                half cap=pow(abs(dot(normal,normalize(_WorldMetalAxis.xyz))),8.0h)*_WorldMetalAxis.w;
+                half upper=max(smoothstep(.35h,.75h,relativeHeight)*_WorldBody.z,cap);
+                half away=1-saturate(dot(normal,normalize(_WorldKeyDirection.xyz)));
+                half edge=pow(1-saturate(dot(view,normal)),2.0h);
+                half rim=edge*upper*away*_WorldLookShape.y*_WorldLookWeight*(1-saturate(_RimStrength))*(1-_TayaCue);
+                base=lerp(base,half3(.98,.94,.84),rim);
+                half specular=saturate(dot(normal,normalize(view+normalize(_WorldKeyDirection.xyz))));
+                half metal=(step(.80h,specular)*.45h+step(.94h,specular)*.55h)*cap*_WorldLookShape.w*_WorldLookWeight;
+                base=lerp(base,half3(1,.97,.88),metal);
+            }
+
+            if(_ViewmodelRimStrength>0)
+            {
+                half edge=pow(1.0h-saturate(dot(normalize(_WorldSpaceCameraPos-IN.worldPos),normalize(IN.worldNormal))),2.4h);
+                base=lerp(base,half3(1,.94,.82),edge*_ViewmodelRimStrength);
             }
 
             // § THE STUN FROST. Applied AFTER the palette so it reads as ice ON the character
@@ -496,7 +651,7 @@ Shader "TumbangPreso/Toon"
                 // is a scan rather than a snowfall: it says the seat is locked and being held,
                 // and it is a different construction rather than the same one recoloured.
                 // `docs/VISION.md` § 2 rule 3: how a thing is BUILT is the channel.
-                half band = saturate(1.0h - abs(frac(IN.worldPos.y * 1.6h - _Time.y * 0.5h) - 0.5h) * 4.0h);
+                half band = saturate(1.0h - abs(frac(IN.worldPos.y * 1.6h - TumpShaderTime() * 0.5h) - 0.5h) * 4.0h);
 
                 // The taya's colour, on the silhouette. The two-band toon ramp flattens the
                 // interior, so an edge term is what keeps a desaturated body from dissolving

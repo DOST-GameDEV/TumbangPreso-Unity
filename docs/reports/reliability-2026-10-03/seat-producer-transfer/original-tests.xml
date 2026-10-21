@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:45Z" duration="0.8277225">
+  <test-suite type="TestSuite" id="2668" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1358" result="Failed" site="Child" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:45Z" duration="0.827723" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2662" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1358" result="Failed" site="Child" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:45Z" duration="0.801883" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25240" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2663" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1358" result="Failed" site="Child" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:45Z" duration="0.784172" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2664" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1358" result="Failed" site="Child" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:45Z" duration="0.767012" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2269" name="SeatProducerTransferLifetimeTests" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:45Z" duration="0.730024" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2270" name="ClientPlayerWatchPlayerKeepsItsFinalReader" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.ClientPlayerWatchPlayerKeepsItsFinalReader" methodname="ClientPlayerWatchPlayerKeepsItsFinalReader" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="1523046634" result="Failed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:44Z" duration="0.378588" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final player reused a reader already queued for destruction
+  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests+<ReaderReturns>d__18.MoveNext () [0x0009a] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PlayMode\SeatProducerTransferLifetimeTests.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2276" name="DisabledBotStillRetainsTheHostsExistingSimulationOwnership" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.DisabledBotStillRetainsTheHostsExistingSimulationOwnership" methodname="DisabledBotStillRetainsTheHostsExistingSimulationOwnership" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="1801223825" result="Passed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:44Z" duration="0.044248" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2275" name="FinalWatchRetiresEveryReaderFromRapidRoleChanges" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.FinalWatchRetiresEveryReaderFromRapidRoleChanges" methodname="FinalWatchRetiresEveryReaderFromRapidRoleChanges" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="936294701" result="Passed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:44Z" duration="0.040888" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2272" name="HostBotPlayerWatchKeepsTheFinalBotAndSimulation" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.HostBotPlayerWatchKeepsTheFinalBotAndSimulation" methodname="HostBotPlayerWatchKeepsTheFinalBotAndSimulation" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="831452887" result="Failed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:44Z" duration="0.039959" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Returning to watch skipped the replacement bot because the doomed one still existed
+  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests+<HostBotPlayerWatchKeepsTheFinalBotAndSimulation>d__21.MoveNext () [0x00084] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PlayMode\SeatProducerTransferLifetimeTests.cs:98
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2271" name="HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation" methodname="HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="183220821" result="Failed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:44Z" duration="0.050840" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final player reused a reader already queued for destruction
+  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests+<ReaderReturns>d__18.MoveNext () [0x0009a] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PlayMode\SeatProducerTransferLifetimeTests.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2277" name="OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover" methodname="OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="343877895" result="Failed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:44Z" duration="0.047233" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests+<OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover>d__26.MoveNext () [0x00106] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PlayMode\SeatProducerTransferLifetimeTests.cs:143
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2273" name="RepeatingTheCurrentPlayerSeatKeepsOneExistingReader" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.RepeatingTheCurrentPlayerSeatKeepsOneExistingReader" methodname="RepeatingTheCurrentPlayerSeatKeepsOneExistingReader" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="716884983" result="Passed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:44Z" duration="0.042885" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2274" name="RepeatingWatchKeepsOneHostBot" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.RepeatingWatchKeepsOneHostBot" methodname="RepeatingWatchKeepsOneHostBot" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="287011660" result="Passed" start-time="2026-10-03 07:12:44Z" end-time="2026-10-03 07:12:45Z" duration="0.065578" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

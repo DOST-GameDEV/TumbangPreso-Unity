@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.1471979">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1133" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.147198" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2383" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1133" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.127696" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="127923" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2384" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1133" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.114176" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2385" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1133" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.102026" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2367" name="ZackBankLoadMotionTests" fullname="TumbangPreso.Tests.ZackBankLoadMotionTests" classname="TumbangPreso.Tests.ZackBankLoadMotionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.085587" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2368" name="BankLoadHasItsOwnActionsAndKeepsImmediateEightSecondMechanics" fullname="TumbangPreso.Tests.ZackBankLoadMotionTests.BankLoadHasItsOwnActionsAndKeepsImmediateEightSecondMechanics" methodname="BankLoadHasItsOwnActionsAndKeepsImmediateEightSecondMechanics" classname="TumbangPreso.Tests.ZackBankLoadMotionTests" runstate="Runnable" seed="697350804" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.012607" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2370" name="OwnerLoadUsesItsOwnClipAndTwoHandPathInsteadOfRecall" fullname="TumbangPreso.Tests.ZackBankLoadMotionTests.OwnerLoadUsesItsOwnClipAndTwoHandPathInsteadOfRecall" methodname="OwnerLoadUsesItsOwnClipAndTwoHandPathInsteadOfRecall" classname="TumbangPreso.Tests.ZackBankLoadMotionTests" runstate="Runnable" seed="855397639" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.020404" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2369" name="ShippingRosterContainsTheLoadAndRetainsTheOldClips" fullname="TumbangPreso.Tests.ZackBankLoadMotionTests.ShippingRosterContainsTheLoadAndRetainsTheOldClips" methodname="ShippingRosterContainsTheLoadAndRetainsTheOldClips" classname="TumbangPreso.Tests.ZackBankLoadMotionTests" runstate="Runnable" seed="1551385229" result="Passed" start-time="2026-10-03 16:37:26Z" end-time="2026-10-03 16:37:26Z" duration="0.040640" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

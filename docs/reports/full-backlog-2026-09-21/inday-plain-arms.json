@@ -1,0 +1,20 @@
+[
+  {
+    "model": "character-female-a.glb",
+    "removed_vertices": 476,
+    "retained_hand_vertices": 128,
+    "animation_sha256": "46c7921d3937b14cf6ebf9c8c714de9660e11d75ae729046bf5c799aa4b71050",
+    "animations": 33,
+    "before_sha256": "def3382d97428fe64ae01ab4e8db8ecd82753c1b50ed51f24f890add72347a87",
+    "after_sha256": "5aabeb01c55a15f5742ded86065866ff08cd0662831a75d593a1c78906031ffe"
+  },
+  {
+    "model": "team-inday.glb",
+    "removed_vertices": 720,
+    "retained_hand_vertices": 240,
+    "animation_sha256": "2adf51035f083b006f6b395f6fab558e4b0dfc2aae4ec8fc3f8c4b6543eddcda",
+    "animations": 32,
+    "before_sha256": "bab46bf8410d64c220cddb1c107b8602e52f092cf02f8dde8b9c75382b94cd71",
+    "after_sha256": "c908c3e6f5385ff15ad3714f78e77cca5d6bd6b6f62f4190178def6d5eb1d247"
+  }
+]

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:41:33Z" end-time="2026-10-03 07:41:37Z" duration="3.3691003">
+  <test-suite type="TestSuite" id="2731" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1409" result="Failed" site="Child" start-time="2026-10-03 07:41:33Z" end-time="2026-10-03 07:41:37Z" duration="3.369100" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2725" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1409" result="Failed" site="Child" start-time="2026-10-03 07:41:33Z" end-time="2026-10-03 07:41:37Z" duration="3.355694" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="52713" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2726" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1409" result="Failed" site="Child" start-time="2026-10-03 07:41:33Z" end-time="2026-10-03 07:41:37Z" duration="3.348226" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2727" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1409" result="Failed" site="Child" start-time="2026-10-03 07:41:33Z" end-time="2026-10-03 07:41:37Z" duration="3.341517" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1821" name="MovementRuntimeTests" fullname="TumbangPreso.PlayTests.MovementRuntimeTests" classname="TumbangPreso.PlayTests.MovementRuntimeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-03 07:41:33Z" end-time="2026-10-03 07:41:37Z" duration="3.317762" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1823" name="ActualFlatGroundJumpMatchesHeightAndAirTime" fullname="TumbangPreso.PlayTests.MovementRuntimeTests.ActualFlatGroundJumpMatchesHeightAndAirTime" methodname="ActualFlatGroundJumpMatchesHeightAndAirTime" classname="TumbangPreso.PlayTests.MovementRuntimeTests" runstate="Runnable" seed="693332502" result="Passed" start-time="2026-10-03 07:41:33Z" end-time="2026-10-03 07:41:34Z" duration="0.875847" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Actual jump height 1.0539 m, airborne 0.7600 s.
+]]></output>
+            </test-case>
+            <test-case id="1822" name="ActualMotorUsesExplicitSpeedsInBothModesAndRoles" fullname="TumbangPreso.PlayTests.MovementRuntimeTests.ActualMotorUsesExplicitSpeedsInBothModesAndRoles" methodname="ActualMotorUsesExplicitSpeedsInBothModesAndRoles" classname="TumbangPreso.PlayTests.MovementRuntimeTests" runstate="Runnable" seed="989013004" result="Failed" start-time="2026-10-03 07:41:34Z" end-time="2026-10-03 07:41:36Z" duration="1.591660" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 5.0d +/- 0.079999998211860657d
+  But was:  3.7500002384185791d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MovementRuntimeTests+<ActualMotorUsesExplicitSpeedsInBothModesAndRoles>d__15.MoveNext () [0x00254] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/MovementRuntimeTests.cs:76
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Classic, defender=False, run=False: measured 3.7500 m/s, expected 3.7500
+Classic, defender=False, run=True: measured 5.6250 m/s, expected 5.6250
+Classic, defender=True, run=False: measured 3.7500 m/s, expected 5.0000
+]]></output>
+            </test-case>
+            <test-case id="1824" name="FatigueKeepsWalkSpeedWithoutSprintOrRegeneration" fullname="TumbangPreso.PlayTests.MovementRuntimeTests.FatigueKeepsWalkSpeedWithoutSprintOrRegeneration" methodname="FatigueKeepsWalkSpeedWithoutSprintOrRegeneration" classname="TumbangPreso.PlayTests.MovementRuntimeTests" runstate="Runnable" seed="1451292666" result="Passed" start-time="2026-10-03 07:41:36Z" end-time="2026-10-03 07:41:36Z" duration="0.499670" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1825" name="RealLungeInputUsesTapAndFullHoldCooldowns" fullname="TumbangPreso.PlayTests.MovementRuntimeTests.RealLungeInputUsesTapAndFullHoldCooldowns" methodname="RealLungeInputUsesTapAndFullHoldCooldowns" classname="TumbangPreso.PlayTests.MovementRuntimeTests" runstate="Runnable" seed="583349219" result="Failed" start-time="2026-10-03 07:41:36Z" end-time="2026-10-03 07:41:37Z" duration="0.337779" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: in range (0.38,0.51)
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MovementRuntimeTests+<RealLungeInputUsesTapAndFullHoldCooldowns>d__18.MoveNext () [0x000df] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/MovementRuntimeTests.cs:109
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

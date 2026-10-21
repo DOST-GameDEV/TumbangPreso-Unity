@@ -1,3 +1,4 @@
+using System.Collections;
 using TumbangPreso.InputLayer;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,6 +32,7 @@ namespace TumbangPreso.UI
         private int _revision = -1;
         private InputDeviceKind _kind = (InputDeviceKind)(-1);
         private float _born;
+        private bool _leaving;
 
         private void Awake()
         {
@@ -39,6 +41,36 @@ namespace TumbangPreso.UI
         }
 
         private void OnEnable() => _born = Time.unscaledTime;
+
+        public void ContinueToHome()
+        {
+            if (_leaving || !isActiveAndEnabled) return;
+            _leaving = true;
+            if (Press != null) Press.interactable = false;
+            MenuSfx.Start();
+            StartCoroutine(LeaveAfterSubmit());
+        }
+
+        private IEnumerator LeaveAfterSubmit()
+        {
+            // Home selects PLAY on entry. A held title Submit can be performed again
+            // when its new UI action map enables, so keep that press on this screen.
+            // Ordinary non-Submit keys and pointer clicks need only the frame boundary.
+            while (MenuNav.SubmitHeld) yield return null;
+            yield return null;
+            if(!Settings.SettingsStore.Current.ReducedUiMotion)
+            {
+                var canvas=GetComponentInParent<Canvas>();
+                if(canvas!=null)
+                {
+                    var group=canvas.GetComponent<CanvasGroup>();
+                    if(group==null)group=canvas.gameObject.AddComponent<CanvasGroup>();
+                    for(float t=0;t<.18f;t+=Time.unscaledDeltaTime)
+                    {group.alpha=1-Mathf.SmoothStep(0,1,t/.18f);yield return null;}
+                }
+            }
+            SceneFlow.GoHome();
+        }
 
         private void Update()
         {
@@ -54,12 +86,21 @@ namespace TumbangPreso.UI
             // read here through `MenuNav`, the one place allowed to read a pad.
             // The mouse and the thumb are served by the full-screen press target
             // itself, which is why neither has a branch in this method.
-            if (Press != null && Press.isActiveAndEnabled && Press.interactable
-                && LastInputDevice.Current == InputDeviceKind.Gamepad && MenuNav.PadAnyPressed)
+            //
+            // ⚠️ AND ANY KEYBOARD KEY BUT ESCAPE, owner 2026-09-26: "should also continue when
+            // pressing any key". The words stay hers ("Click anywhere to continue."); a key is a
+            // shortcut to the same press, not a new instruction.
+            // ⚠️ NOT IN THE FIRST QUARTER SECOND. The Enter or Space that finished the screen before
+            // this one (a sign-in form, the splash) can still read as pressed on this screen's first
+            // frame, and would skip a title the player never saw. The caption itself only starts
+            // arriving at 0.45 s, so the guard is invisible.
+            float age = Time.unscaledTime - _born;
+            if (Press != null && Press.isActiveAndEnabled && Press.IsInteractable() && age > .25f
+                && ((LastInputDevice.Current == InputDeviceKind.Gamepad && MenuNav.PadAnyPressed)
+                    || MenuNav.KeyboardAnyPressed))
                 Press.onClick.Invoke();
 
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
-            float age = Time.unscaledTime - _born;
             // The caption arrives a beat after the street, so the first thing seen
             // is her painting and the instruction settles onto it.
             float entry = reduced ? 1 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((age - .45f) / .7f));
@@ -77,9 +118,9 @@ namespace TumbangPreso.UI
         /// </summary>
         private static string Words(InputDeviceKind kind) => kind switch
         {
-            InputDeviceKind.Touch => "Tap anywhere to continue.",
-            InputDeviceKind.Gamepad => "Press any button to continue.",
-            _ => "Click anywhere to continue.",
+            InputDeviceKind.Touch => "Tap to continue.",
+            InputDeviceKind.Gamepad => "Press a button to continue.",
+            _ => "Click to continue.",
         };
     }
 }

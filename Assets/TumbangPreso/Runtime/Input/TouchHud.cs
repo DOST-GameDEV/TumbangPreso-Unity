@@ -118,6 +118,9 @@ namespace TumbangPreso.InputLayer
         // The arcs, in degrees from the +x axis. 90 is straight up, 180 is straight left.
         private const float InnerArcFrom = 60.0f;
         private const float InnerArcTo = 160.0f;
+        /// <summary>How many controls the inner arc spreads, and how far past its low end each later one sits. See `ClusterOffset`.</summary>
+        private const int InnerArcSlots = 3;
+        private const float InnerArcBelowStep = 47.0f;
         private const float OuterArcFrom = 75.0f;
         private const float OuterArcTo = 149.0f;
 
@@ -255,7 +258,8 @@ namespace TumbangPreso.InputLayer
 
         private void OnDestroy()
         {
-            if (Instance == this) Instance = null;
+            if (Instance != this) return;
+            Instance = null;
 
             // ⚠️ THE STATIC OUTLIVES THE OBJECT. A verb held when the layer is torn down between
             // scenes stays held in `TouchInput` for ever, and the next match starts with the
@@ -264,10 +268,12 @@ namespace TumbangPreso.InputLayer
             TouchInput.Active = false;
         }
 
-        private void OnEnable() => TouchInput.Active = true;
+        private void OnEnable() { Instance = this; TouchInput.Active = true; }
 
         private void OnDisable()
         {
+            if (Instance != this) return;
+            Instance = null;
             TouchInput.ReleaseAll();
             TouchInput.Active = false;
         }
@@ -400,7 +406,7 @@ namespace TumbangPreso.InputLayer
         {
             if (_sandboxRoot == null) return;
 
-            bool allowed = PracticeSandbox.Allowed;
+            bool allowed = PracticeSandbox.Allowed && !SpectatorMode;
             if (_sandboxRoot.activeSelf != allowed) _sandboxRoot.SetActive(allowed);
 
             if (!allowed || _sandboxLabel == null) return;
@@ -520,7 +526,7 @@ namespace TumbangPreso.InputLayer
 
                 // ⚠️ HIDDEN MEANS HIDDEN AND RELEASED. A control switched off while held would
                 // otherwise leave its verb pressed for ever, which is `OnDisable`'s note again.
-                bool visible = !tweak.Hidden && VisibleInMode(button.Entry);
+                bool visible = !tweak.Hidden && (VisibleInMode(button.Entry) || StreetInteractShown(button.Entry));
                 button.gameObject.SetActive(visible);
                 if (!visible) TouchInput.Set(button.Entry.Verb, false);
             }
@@ -591,9 +597,33 @@ namespace TumbangPreso.InputLayer
             rt.anchoredPosition += new Vector2(clampedX - local.x, clampedY - local.y);
         }
 
+        // ⚠️ INTERACT IS HERO STRIKE ONLY, LIKE THE SKILL RAIL: everything it does today (pull out a
+        // plant, break out of roots) is a hero power, and Classic has none (VISION § 1.1).
         private bool VisibleInMode(VerbInput entry)
-            => TouchButton.Customising || entry.Zone != TouchZone.SkillRail
-               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike;
+            => TouchButton.Customising || (!SpectatorMode &&
+               ((entry.Zone != TouchZone.SkillRail && entry.Verb != Verb.Interact)
+               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike));
+
+        // ⚠️ AND WHILE A STREET CHARACTER OFFERS SOMETHING (`StreetInteractions`, the Ilalim
+        // rebuild's beggar), in Classic too: the offer is taken with INTERACT on every device, so a
+        // phone needs the control for exactly as long as the prompt stands. No offer (every other
+        // map) leaves the Classic layer exactly as it was.
+        private bool _streetInteract;
+        private bool StreetInteractShown(VerbInput entry) => _streetInteract && entry.Verb == Verb.Interact;
+
+        private void RefreshStreetInteract()
+        {
+            bool offered = StreetInteractions.Offered;
+            if (offered == _streetInteract) return;
+            _streetInteract = offered;
+            foreach (var button in _buttons)
+            {
+                if (button == null || button.Entry.Verb != Verb.Interact) continue;
+                bool visible = !TouchLayoutStore.TweakFor(Verb.Interact).Hidden && (VisibleInMode(button.Entry) || StreetInteractShown(button.Entry));
+                button.gameObject.SetActive(visible);
+                if (!visible) TouchInput.Set(Verb.Interact, false);
+            }
+        }
 
         private int _layoutRevision = -1;
         private Vector2 _lastCanvasSize;
@@ -605,7 +635,11 @@ namespace TumbangPreso.InputLayer
         /// ⚠️ THE SAME CALL `Hud.Bind` TAKES, from the same line of `MatchInstaller`, so the two
         /// cannot disagree about who the local player is.
         /// </summary>
-        public void Bind(CharacterMotor local) => _local = local;
+        public void Bind(CharacterMotor local)
+        {
+            if (_local != local) TouchInput.ReleaseAll();
+            _local = local;
+        }
 
         /// <summary>
         /// Ask the control for <paramref name="verb"/> to draw attention to itself this frame.
@@ -650,10 +684,11 @@ namespace TumbangPreso.InputLayer
         /// layer with no match running, and both say so explicitly.
         /// </summary>
         public bool ShouldBeOnScreen
-            => ForceVisible || (_local != null && !_local.Intent.Parked);
+            => ForceVisible || (SpectatorMode ? SpectatorCanOperate : (_local != null && !_local.Intent.Parked));
 
         private void Update()
         {
+            RefreshSpectatorControls();
             // ⚠️ THE CANVAS IS DISABLED, NOT THE OBJECT. Disabling the GameObject would run
             // `OnDisable` and release every held verb, which is right for a teardown and wrong
             // for a pause: a player who was sprinting when they opened the menu should still be
@@ -671,6 +706,7 @@ namespace TumbangPreso.InputLayer
             // switch that stopped repainting on those frames would show a stale ON in the first
             // frames of a networked match, which is the one state it must never show.
             RefreshSandbox();
+            RefreshStreetInteract();
 
             Verb? hint = _hintVerb;
             _hintVerb = null;
@@ -849,7 +885,14 @@ namespace TumbangPreso.InputLayer
         {
             if (slot == 0) return Vector2.zero;
 
-            int others = Mathf.Max(1, InputCatalogue.InZone(TouchZone.ActionCluster).Count - 1);
+            // ⚠️ THE ARC HOLDS THREE AND NO MORE. Four medium controls across its hundred degrees are 144 units apart
+            // centre to centre and 173 wide: they overlap. So the first three slots keep the spacing they have always
+            // had, and a later one (CROUCH, slot 4, 2026-10-09) goes BELOW the arc's low end, left of and under the
+            // thumb's rest, `InnerArcBelowStep` degrees on for each: 199 units from its neighbour at the arc's end
+            // and 52 clear of THROW.
+            if (slot > InnerArcSlots) return OnArc(InnerRadius, InnerArcTo + InnerArcBelowStep * (slot - InnerArcSlots));
+
+            int others = Mathf.Max(1, Mathf.Min(InnerArcSlots, InputCatalogue.InZone(TouchZone.ActionCluster).Count - 1));
             return OnArc(InnerRadius, Spread(slot - 1, others, InnerArcFrom, InnerArcTo));
         }
 

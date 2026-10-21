@@ -92,9 +92,16 @@ namespace TumbangPreso.PlayTests
             var hud = Object.FindFirstObjectByType<UI.Hud>();
             Assert.IsNotNull(hud, "no HUD in the arena");
 
+            // ⚠️⚠️ `PowerSeals`, AND IT IS NOT UNDER THE HUD. `TumpPowerReadout` draws the deck
+            // now and `Hud.BuildHeroDeck`'s `HeroDeck` is the builder underneath it; both are
+            // looked for, and both live on `OwnerMatchCanvas`, which `OwnerUiLayout.Canvas`
+            // builds at the SCENE ROOT and binds to the Hud through `CanvasLifetime` rather
+            // than parenting (§ 111.2). Asking the Hud for a descendant found neither.
             RectTransform deck = null;
-            foreach (var rt in hud.GetComponentsInChildren<RectTransform>(true))
-                if (rt.name == "HeroDeck") { deck = rt; break; }
+
+            foreach (var canvas in HudCanvases(hud))
+                foreach (var rt in canvas.GetComponentsInChildren<RectTransform>(true))
+                    if (rt.name == "PowerSeals" || rt.name == "HeroDeck") { deck = rt; break; }
 
             Assert.IsNotNull(deck, "the HUD built no hero ability deck.");
 
@@ -112,6 +119,21 @@ namespace TumbangPreso.PlayTests
             {
                 var card = (RectTransform)child;
                 if (!card.gameObject.activeInHierarchy) continue;
+
+                // ⚠️ THE THREE ABILITY DIALS ARE THE CARDS. The painted deck hangs a binding
+                // label and a keycap beside each dial rather than inside it, so counting every
+                // child counts nine things and then asserts three. `Power0` to `Power2` are the
+                // controls this case is about; everything else on the row is chrome that the
+                // corner checks below still cover.
+                // ⚠️ `Power0` TO `Power2` EXACTLY, NOT EVERYTHING STARTING WITH "Power".
+                // `PowerInfoBinding` is the inspect hint that sits to the LEFT of the row by
+                // design, and a prefix match pulled it in and then reported it as running 70
+                // units past the deck's left edge, which is a correct measurement of the wrong
+                // object.
+                bool dial = card.name.Length == 6 && card.name.StartsWith("Power")
+                            && char.IsDigit(card.name[5]);
+
+                if (!dial && !card.name.StartsWith("Card")) continue;
 
                 cards++;
                 used += card.rect.width;
@@ -139,8 +161,13 @@ namespace TumbangPreso.PlayTests
 
             Assert.AreEqual(3, cards, "the deck should carry exactly E, Q and F.");
 
+            // ⚠️ THE PAINTED DECK PLACES ITS DIALS RATHER THAN LAYING THEM OUT, so there is no
+            // `HorizontalLayoutGroup` to read a padding off. Its chrome is zero and the width
+            // check below is then the plain one: three dials have to fit the row they sit in.
             var group = deck.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
-            float chrome = group.padding.left + group.padding.right + group.spacing * (cards - 1);
+            float chrome = group == null
+                ? 0.0f
+                : group.padding.left + group.padding.right + group.spacing * (cards - 1);
 
             Assert.LessOrEqual(used + chrome, deckRect.width + 0.5f,
                 $"the deck is {deckRect.width:F0} units wide and its contents need " +
@@ -182,7 +209,14 @@ namespace TumbangPreso.PlayTests
             // The HUD and the YOU card build a canvas each, and both are being compared against
             // the same .tscn space.
             var canvases = new List<Canvas>();
-            canvases.AddRange(hud.GetComponentsInChildren<Canvas>(true));
+            // ⚠️⚠️ THE HUD'S CANVAS IS A SCENE-ROOT SIBLING OF THE HUD, NOT A CHILD OF IT, AND
+            // THAT IS THE WHOLE OF WHY THIS MEASURED ZERO ELEMENTS. `Hud.BuildNative` hands
+            // `TumpMatchReadout` the Hud's transform as its OWNER, and
+            // `OwnerUiLayout.Canvas` builds `OwnerMatchCanvas` with `Rect(null, name)` and moves
+            // it into the scene, binding lifetime through `CanvasLifetime` rather than
+            // parentage: § 111.2, a canvas nested inside another canvas ignores its own
+            // `CanvasScaler`. The HUD was there and drawing the whole time.
+            canvases.AddRange(HudCanvases(hud));
 
             var youCard = Object.FindFirstObjectByType<UI.YouCard>();
             if (youCard != null) canvases.AddRange(youCard.GetComponentsInChildren<Canvas>(true));
@@ -237,6 +271,24 @@ namespace TumbangPreso.PlayTests
         /// needed. That is the whole reason this measures through the canvas rather than off
         /// screen pixels: the answer does not depend on the resolution the runner opened at.
         /// </summary>
+        /// <summary>
+        /// Every canvas the HUD owns, whether it is parented under it or bound to it from the
+        /// scene root. See the note at the call site.
+        /// </summary>
+        private static List<Canvas> HudCanvases(UI.Hud hud)
+        {
+            var found = new List<Canvas>(hud.GetComponentsInChildren<Canvas>(true));
+
+            foreach (var canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,
+                                                                     FindObjectsSortMode.None))
+                if (canvas != null && !found.Contains(canvas)
+                    && (canvas.name == "OwnerMatchCanvas" || canvas.name == "TumpMatchCanvas"
+                        || canvas.name == "HudCanvas"))
+                    found.Add(canvas);
+
+            return found;
+        }
+
         private static Rect CanvasRect(RectTransform rect, Canvas canvas)
         {
             var corners = new Vector3[4];

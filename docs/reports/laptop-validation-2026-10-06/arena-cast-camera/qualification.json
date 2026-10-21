@@ -1,0 +1,193 @@
+{
+  "source": "bf1393b78b3a35a1ff31c07af1f79a21d63433c9",
+  "manifestSha256": "8e27c6e221fe0c286db4a1aacf316db05c3b38f22c32ed28145e94c688a0cc41",
+  "result": {
+    "pid": 9068,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 8,
+    "failed": 0,
+    "inputCount": 21150,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  },
+  "groups": {
+    "Classic-0": {
+      "ids": [
+        "maring",
+        "bayan",
+        "tikboy",
+        "lola_pacing"
+      ],
+      "samples": 30,
+      "clockLast": 75.322,
+      "cutsLast": 4,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "Classic-1": {
+      "ids": [
+        "totoy",
+        "maring",
+        "bebang",
+        "mang_kanor"
+      ],
+      "samples": 30,
+      "clockLast": 75.402,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "Classic-2": {
+      "ids": [
+        "inday",
+        "totoy",
+        "jun_jun",
+        "aling_nena"
+      ],
+      "samples": 30,
+      "clockLast": 75.422,
+      "cutsLast": 4,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "Classic-4": {
+      "ids": [
+        "ate_girlie",
+        "kuya_boy",
+        "mang_kanor",
+        "maring"
+      ],
+      "samples": 30,
+      "clockLast": 75.402,
+      "cutsLast": 5,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "HeroStrike-0": {
+      "ids": [
+        "cheska",
+        "dante",
+        "rafi",
+        "cheska"
+      ],
+      "samples": 30,
+      "clockLast": 75.442,
+      "cutsLast": 5,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "HeroStrike-1": {
+      "ids": [
+        "sean",
+        "cheska",
+        "amihan",
+        "sean"
+      ],
+      "samples": 30,
+      "clockLast": 75.322,
+      "cutsLast": 7,
+      "fallbacksLast": 2,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "HeroStrike-2": {
+      "ids": [
+        "zack",
+        "sean",
+        "paete",
+        "zack"
+      ],
+      "samples": 30,
+      "clockLast": 75.342,
+      "cutsLast": 2,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Tag"
+      ]
+    },
+    "HeroStrike-4": {
+      "ids": [
+        "phaister",
+        "nemu",
+        "cheska",
+        "phaister"
+      ],
+      "samples": 30,
+      "clockLast": 75.322,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    }
+  },
+  "installedUnion": {
+    "Classic": [
+      "aling_nena",
+      "ate_girlie",
+      "bayan",
+      "bebang",
+      "inday",
+      "jun_jun",
+      "kuya_boy",
+      "lola_pacing",
+      "mang_kanor",
+      "maring",
+      "tikboy",
+      "totoy"
+    ],
+    "HeroStrike": [
+      "amihan",
+      "cheska",
+      "dante",
+      "nemu",
+      "paete",
+      "phaister",
+      "rafi",
+      "sean",
+      "zack"
+    ]
+  }
+}

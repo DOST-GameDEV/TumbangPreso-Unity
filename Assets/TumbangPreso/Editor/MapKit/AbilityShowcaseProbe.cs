@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v56";
+        private const string Version = "v64";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -134,9 +134,6 @@ namespace TumbangPreso.EditorTools.MapKit
                 Solo(spawned, "ice_sheet",
                      () => HeroHazards.SpawnIceSheet(Vector3.zero, 2.3f, 60.0f, 2));
 
-                Solo(spawned, "seance_void",
-                     () => HeroHazards.SpawnSeanceVoid(Vector3.zero, 2.8f, 60.0f, 3));
-
                 Solo(spawned, "barricade",
                      () => HeroHazards.SpawnIceBarricade(Vector3.zero, Vector3.forward, 60.0f));
 
@@ -176,8 +173,8 @@ namespace TumbangPreso.EditorTools.MapKit
                      () => HeroHazards.SpawnGrandCovenEclipse(Vector3.zero, 5.0f, 60.0f));
 
                 // ⚠️⚠️ NEMU'S ULTIMATE IS HER PET NOW (`docs/TODO.md` § 28) AND IT HAD NEVER BEEN
-                // PHOTOGRAPHED IN ANY FORM. The old Seance Void was captured through
-                // `SpawnSeanceVoid` above; this is a different object with different geometry, and
+                // PHOTOGRAPHED IN ANY FORM. The retired floor vortex is no longer included;
+                // the current familiar is a different object with different geometry, and
                 // the thing these two frames have to answer is whether a rim around NOTHING reads
                 // as a hole rather than as a dark disc, which is § 27.5's whole claim.
                 // ⚠️⚠️ `fromPet: false`, AND THE FLAG CHANGES WHAT IS IN THE FRAME. With a pet
@@ -242,7 +239,6 @@ namespace TumbangPreso.EditorTools.MapKit
                 Clear(spawned);
                 spawned.Add(HeroHazards.SpawnIceSheet(new Vector3(-3.4f, 0.0f, 2.2f), 2.3f, 60.0f, 2));
                 spawned.Add(HeroHazards.SpawnCrackedLavaDecal(new Vector3(3.2f, 0.0f, 2.6f), 2.2f, 60.0f));
-                spawned.Add(HeroHazards.SpawnSeanceVoid(new Vector3(3.6f, 0.0f, -3.0f), 2.8f, 60.0f, 3));
                 spawned.Add(HeroHazards.SpawnIceBarricade(new Vector3(-2.6f, 0.0f, -2.4f), Vector3.forward, 60.0f));
 
                 for (int i = 0; i < 6; i++)
@@ -275,6 +271,9 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 Transient("blast_fire", () => HeroHazards.CreateExplosionVisual(
                     Vector3.zero, 4.8f, null, HeroHazards.ExplosionStyle.Fire));
+
+                Transient("blast_ignition", () => HeroHazards.CreateExplosionVisual(
+                    Vector3.zero, 2.6f, null, HeroHazards.ExplosionStyle.Ignition));
 
                 Transient("blast_quake", () => HeroHazards.CreateExplosionVisual(
                     Vector3.zero, 4.5f, null, HeroHazards.ExplosionStyle.Quake, Vector3.forward));

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.4371072">
+  <test-suite type="TestSuite" id="2476" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1208" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.437107" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2470" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1208" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.426855" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="315123" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2471" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1208" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.422800" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2472" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1208" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.419108" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1365" name="EmpoweredThrowTests" fullname="TumbangPreso.PlayTests.EmpoweredThrowTests" classname="TumbangPreso.PlayTests.EmpoweredThrowTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.396135" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1367" name="ActualThrowConsumesExactLoadWithoutSpeedMultiplier" fullname="TumbangPreso.PlayTests.EmpoweredThrowTests.ActualThrowConsumesExactLoadWithoutSpeedMultiplier" methodname="ActualThrowConsumesExactLoadWithoutSpeedMultiplier" classname="TumbangPreso.PlayTests.EmpoweredThrowTests" runstate="Runnable" seed="665479576" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.134185" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1369" name="BurstIsCompactOnceOnlyAndDoesNotStaggerOrLift" fullname="TumbangPreso.PlayTests.EmpoweredThrowTests.BurstIsCompactOnceOnlyAndDoesNotStaggerOrLift" methodname="BurstIsCompactOnceOnlyAndDoesNotStaggerOrLift" classname="TumbangPreso.PlayTests.EmpoweredThrowTests" runstate="Runnable" seed="703798972" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.068236" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1368" name="DropReplacementAndExpiryDoNotRetainAnEmber" fullname="TumbangPreso.PlayTests.EmpoweredThrowTests.DropReplacementAndExpiryDoNotRetainAnEmber" methodname="DropReplacementAndExpiryDoNotRetainAnEmber" classname="TumbangPreso.PlayTests.EmpoweredThrowTests" runstate="Runnable" seed="138508628" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.042350" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1366" name="LoadHasFreeHeldRefusalAndExplicitCooldown" fullname="TumbangPreso.PlayTests.EmpoweredThrowTests.LoadHasFreeHeldRefusalAndExplicitCooldown" methodname="LoadHasFreeHeldRefusalAndExplicitCooldown" classname="TumbangPreso.PlayTests.EmpoweredThrowTests" runstate="Runnable" seed="700879489" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.043773" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1371" name="RecoveryOnlyRecognizesTheMarkedHeldObject" fullname="TumbangPreso.PlayTests.EmpoweredThrowTests.RecoveryOnlyRecognizesTheMarkedHeldObject" methodname="RecoveryOnlyRecognizesTheMarkedHeldObject" classname="TumbangPreso.PlayTests.EmpoweredThrowTests" runstate="Runnable" seed="1316061732" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.042292" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1370" name="SolidCoverStopsThePressure" fullname="TumbangPreso.PlayTests.EmpoweredThrowTests.SolidCoverStopsThePressure" methodname="SolidCoverStopsThePressure" classname="TumbangPreso.PlayTests.EmpoweredThrowTests" runstate="Runnable" seed="1859178613" result="Passed" start-time="2026-10-01 13:45:05Z" end-time="2026-10-01 13:45:05Z" duration="0.049460" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

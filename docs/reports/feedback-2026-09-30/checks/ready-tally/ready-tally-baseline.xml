@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="25" result="Failed(Child)" total="25" passed="9" failed="16" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 14:41:26Z" end-time="2026-09-30 14:41:27Z" duration="0.2609513">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="716" result="Failed" site="Child" start-time="2026-09-30 14:41:26Z" end-time="2026-09-30 14:41:27Z" duration="0.260951" total="25" passed="9" failed="16" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1837" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="716" result="Failed" site="Child" start-time="2026-09-30 14:41:26Z" end-time="2026-09-30 14:41:27Z" duration="0.230939" total="25" passed="9" failed="16" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24788" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1838" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="716" result="Failed" site="Child" start-time="2026-09-30 14:41:26Z" end-time="2026-09-30 14:41:27Z" duration="0.215158" total="25" passed="9" failed="16" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1839" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="716" result="Failed" site="Child" start-time="2026-09-30 14:41:26Z" end-time="2026-09-30 14:41:27Z" duration="0.169109" total="25" passed="9" failed="16" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1623" name="ReadyTallyPacketTests" fullname="TumbangPreso.Tests.ReadyTallyPacketTests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="25" result="Failed" site="Child" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.087695" total="25" passed="9" failed="16" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1652" name="HostLoopbackDoesNotDuplicateTheLocallyPublishedTally" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.HostLoopbackDoesNotDuplicateTheLocallyPublishedTally" methodname="HostLoopbackDoesNotDuplicateTheLocallyPublishedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1770830835" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.037569" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1641" name="ImpossibleCountsCannotReachTheLobby" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.015021" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1635" name="ImpossibleCountsCannotReachTheLobby(-1,3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(-1,3)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1777585547" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.008790" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby (System.Int32 ready, System.Int32 expected) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1636" name="ImpossibleCountsCannotReachTheLobby(0,-1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(0,-1)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="431482459" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000602" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby (System.Int32 ready, System.Int32 expected) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1637" name="ImpossibleCountsCannotReachTheLobby(4,3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(4,3)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="282101776" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000451" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby (System.Int32 ready, System.Int32 expected) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1638" name="ImpossibleCountsCannotReachTheLobby(0,5)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(0,5)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="347636190" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000450" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby (System.Int32 ready, System.Int32 expected) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1639" name="ImpossibleCountsCannotReachTheLobby(int.MaxValue,4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(int.MaxValue,4)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1431304686" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000445" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby (System.Int32 ready, System.Int32 expected) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1640" name="ImpossibleCountsCannotReachTheLobby(0,int.MaxValue)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby(0,int.MaxValue)" methodname="ImpossibleCountsCannotReachTheLobby" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1867967229" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000423" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.ImpossibleCountsCannotReachTheLobby (System.Int32 ready, System.Int32 expected) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1634" name="MalformedLengthCannotThrowOrPublishATally" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.010743" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1624" name="MalformedLengthCannotThrowOrPublishATally(0)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(0)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1278681121" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.002760" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1625" name="MalformedLengthCannotThrowOrPublishATally(1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(1)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="887667469" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000735" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1626" name="MalformedLengthCannotThrowOrPublishATally(2)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(2)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1403952141" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000625" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1627" name="MalformedLengthCannotThrowOrPublishATally(3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(3)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1582224951" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000610" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1628" name="MalformedLengthCannotThrowOrPublishATally(4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(4)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1664794056" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000599" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1629" name="MalformedLengthCannotThrowOrPublishATally(5)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(5)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="781705130" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000590" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1630" name="MalformedLengthCannotThrowOrPublishATally(6)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(6)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1647089229" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000616" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1631" name="MalformedLengthCannotThrowOrPublishATally(7)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(7)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="740843511" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000634" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReadyTallyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1296 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ReadyTallyPacketTests+<>c__DisplayClass12_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.Receive (System.UInt64 sender, System.Int32 length, System.Int32 ready, System.Int32 expected) [0x00059] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:53
+at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1632" name="MalformedLengthCannotThrowOrPublishATally(9)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(9)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1400555278" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000451" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:60
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1633" name="MalformedLengthCannotThrowOrPublishATally(12)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally(12)" methodname="MalformedLengthCannotThrowOrPublishATally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="180783873" result="Failed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000427" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyTallyPacketTests.MalformedLengthCannotThrowOrPublishATally (System.Int32 length) [0x0000b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyTallyPacketTests.cs:60
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1651" name="NonHostCannotPublishEvenAMalformedTally" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.NonHostCannotPublishEvenAMalformedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.002007" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1649" name="NonHostCannotPublishEvenAMalformedTally(0)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.NonHostCannotPublishEvenAMalformedTally(0)" methodname="NonHostCannotPublishEvenAMalformedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1150711031" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000574" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1650" name="NonHostCannotPublishEvenAMalformedTally(8)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.NonHostCannotPublishEvenAMalformedTally(8)" methodname="NonHostCannotPublishEvenAMalformedTally" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1939247138" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000306" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1648" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.003563" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1642" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,0)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,0)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1923471727" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000641" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1643" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,1)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1746968264" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000287" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1644" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(1,1)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(1,1)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="333042238" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000263" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1645" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(2,3)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(2,3)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="410377935" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000273" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1646" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(0,4)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="2093559874" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000266" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1647" name="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(4,4)" fullname="TumbangPreso.Tests.ReadyTallyPacketTests.ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests(4,4)" methodname="ValidHostCountsIncludeTheEmptyLobbyAndFourSeatedGuests" classname="TumbangPreso.Tests.ReadyTallyPacketTests" runstate="Runnable" seed="1886597954" result="Passed" start-time="2026-09-30 14:41:27Z" end-time="2026-09-30 14:41:27Z" duration="0.000275" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

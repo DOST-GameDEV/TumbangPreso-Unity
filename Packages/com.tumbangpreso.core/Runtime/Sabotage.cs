@@ -190,7 +190,7 @@ namespace TumbangPreso.Core
         /// ⚠️ THE LUNGE AT FULL COMMITMENT, OR THE PUNCH, WHICHEVER REACHES FURTHER. The taya
         /// has two tag verbs (`Balance`'s note: *"they answer different problems"*), so the
         /// reach a victim has to be pushed inside is the better of the two rather than either
-        /// one alone. `Combat.LungeReach` is 2.30 and `Balance.PunchRange` is 1.70.
+        /// one alone. Both are read from current tuning rather than duplicated here.
         /// </summary>
         public static float ActionableReach
         {
@@ -226,7 +226,7 @@ namespace TumbangPreso.Core
         /// </summary>
         public static float DangerRadius =>
             ActionableReach
-            + Balance.Speed * Balance.DefenderSpeedScale
+            + Balance.DefenderWalkSpeed
               * Balance.ShoveStun * TayaResponseShare;
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace TumbangPreso.Core
         /// and a pursuit with no clock is a tail however good its entry condition is.
         /// </summary>
         public static float MaxPursuitSeconds =>
-            MaxApproachRange / (Balance.Speed * Balance.AttackerSpeedScale) * 1.5f;
+            MaxApproachRange / (Balance.AttackerWalkSpeed) * 1.5f;
 
         /// <summary>
         /// How long a bot leaves a failed victim alone: 3.00 s.

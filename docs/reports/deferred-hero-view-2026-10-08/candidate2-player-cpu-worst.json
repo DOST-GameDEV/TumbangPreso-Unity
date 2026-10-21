@@ -1,0 +1,134 @@
+{
+  "frame": "23",
+  "cpuMs": 50.3018,
+  "jitCalls": 74,
+  "jitMsSum": 18.2555999793,
+  "top": [
+    {
+      "sample": "0",
+      "parent": "-1",
+      "depth": "0",
+      "name": "Main Thread",
+      "ms": 50.3018
+    },
+    {
+      "sample": "1",
+      "parent": "0",
+      "depth": "1",
+      "name": "PlayerLoop",
+      "ms": 50.2741
+    },
+    {
+      "sample": "2189",
+      "parent": "1",
+      "depth": "2",
+      "name": "PostLateUpdate.FinishFrameRendering",
+      "ms": 20.0104
+    },
+    {
+      "sample": "2192",
+      "parent": "2189",
+      "depth": "3",
+      "name": "Camera.Render",
+      "ms": 19.7555
+    },
+    {
+      "sample": "1640",
+      "parent": "1",
+      "depth": "2",
+      "name": "PostLateUpdate.PlayerUpdateCanvases",
+      "ms": 17.1276
+    },
+    {
+      "sample": "1653",
+      "parent": "1640",
+      "depth": "3",
+      "name": "UIEvents.WillRenderCanvases",
+      "ms": 17.1108
+    },
+    {
+      "sample": "1654",
+      "parent": "1653",
+      "depth": "4",
+      "name": "UGUI.Rendering.UpdateBatches",
+      "ms": 17.1104
+    },
+    {
+      "sample": "1656",
+      "parent": "1654",
+      "depth": "5",
+      "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]",
+      "ms": 16.9029
+    },
+    {
+      "sample": "1661",
+      "parent": "1656",
+      "depth": "6",
+      "name": "Render",
+      "ms": 16.863
+    },
+    {
+      "sample": "1664",
+      "parent": "1661",
+      "depth": "7",
+      "name": "CanvasUpdate.PreRender",
+      "ms": 16.8224
+    },
+    {
+      "sample": "2545",
+      "parent": "2192",
+      "depth": "4",
+      "name": "Camera.ImageEffects",
+      "ms": 9.9282
+    },
+    {
+      "sample": "2546",
+      "parent": "2545",
+      "depth": "5",
+      "name": "Camera.ImageEffects",
+      "ms": 9.927
+    },
+    {
+      "sample": "2547",
+      "parent": "2546",
+      "depth": "6",
+      "name": "ColourGrade",
+      "ms": 9.8778
+    },
+    {
+      "sample": "2549",
+      "parent": "2547",
+      "depth": "7",
+      "name": "TumbangPreso.Runtime.dll!TumbangPreso.Visual::ColourGrade.OnRenderImage() [Invoke]",
+      "ms": 9.8466
+    },
+    {
+      "sample": "2406",
+      "parent": "2192",
+      "depth": "4",
+      "name": "Drawing",
+      "ms": 6.7728
+    },
+    {
+      "sample": "2408",
+      "parent": "2406",
+      "depth": "5",
+      "name": "Render.OpaqueGeometry",
+      "ms": 6.74279976
+    },
+    {
+      "sample": "2440",
+      "parent": "2408",
+      "depth": "6",
+      "name": "RenderForwardOpaque.Render",
+      "ms": 6.6832
+    },
+    {
+      "sample": "1475",
+      "parent": "1",
+      "depth": "2",
+      "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+      "ms": 5.6857
+    }
+  ]
+}

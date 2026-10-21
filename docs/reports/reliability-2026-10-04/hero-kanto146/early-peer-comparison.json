@@ -1,0 +1,13 @@
+{
+  "scope": "Natural trueHeroStrike8 Kanto savedrecords equal; terminal/restore/artifact receipts still pending",
+  "recordCanonicalSHA256": "112983f88d7a74cc3c85b1f7e5c6b6428a93f67717a5d554cfe39890d719f1cb",
+  "fullHistoryEqualToPeerHash": true,
+  "queueEqualBoth": true,
+  "witnessEqualBoth": [
+    "87d324400ea61b25"
+  ],
+  "mode": "HeroStrike",
+  "map": "Kanto",
+  "rounds": 8,
+  "matchId": "94d0da49d99b4f9e94bb83dbe41763ff"
+}

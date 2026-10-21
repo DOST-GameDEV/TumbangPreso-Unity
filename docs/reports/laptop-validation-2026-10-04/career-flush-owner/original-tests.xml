@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.1709984">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1297" result="Failed" site="Child" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.170998" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2593" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1297" result="Failed" site="Child" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.163260" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31372" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2594" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1297" result="Failed" site="Child" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.161405" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2595" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1297" result="Failed" site="Child" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.159341" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1222" name="CareerFlushOwnerLifetimeTests" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.139459" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1223" name="ObsoleteFailureCannotOverwriteReplacementOwnerStatus" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.ObsoleteFailureCannotOverwriteReplacementOwnerStatus" methodname="ObsoleteFailureCannotOverwriteReplacementOwnerStatus" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="1831454371" result="Failed" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.036683" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 24 but was 29. Strings differ at index 0.
+  Expected: "Replacement owner status"
+  But was:  "1 match(es) waiting to upload"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.ObsoleteFailureCannotOverwriteReplacementOwnerStatus () [0x000d6] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CareerFlushOwnerLifetimeTests.cs:92
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Career] submission deferred; 1 queued: Controlled old-owner failure
+]]></output>
+            </test-case>
+            <test-case id="1227" name="ObsoleteSuccessCannotAcknowledgeReplacementOwnerData" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.ObsoleteSuccessCannotAcknowledgeReplacementOwnerData" methodname="ObsoleteSuccessCannotAcknowledgeReplacementOwnerData" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="1586135416" result="Passed" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.005710" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1226" name="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.071687" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1224" name="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(0)" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(0)" methodname="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="1473910985" result="Failed" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.013189" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected string length 24 but was 12. Strings differ at index 0.
+  Expected: "Replacement owner status"
+  But was:  "Career saved"
+  -----------^
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue (System.Int32 records) [0x001a6] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CareerFlushOwnerLifetimeTests.cs:105
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1225" name="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(1)" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(1)" methodname="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="1532154156" result="Failed" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.052505" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The old flush dispatched the replacement owner's queue.
+  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue (System.Int32 records) [0x00152] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CareerFlushOwnerLifetimeTests.cs:104
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1228" name="SameOwnerFailureRetainsItsRecordAndWitnessForRetry" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.SameOwnerFailureRetainsItsRecordAndWitnessForRetry" methodname="SameOwnerFailureRetainsItsRecordAndWitnessForRetry" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="576919703" result="Passed" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.004735" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Career] submission deferred; 1 queued: Controlled same-owner failure
+]]></output>
+            </test-case>
+            <test-case id="1229" name="SameOwnerSuccessAcknowledgesOnlyItsQueuedRecord" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.SameOwnerSuccessAcknowledgesOnlyItsQueuedRecord" methodname="SameOwnerSuccessAcknowledgesOnlyItsQueuedRecord" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="1327569281" result="Passed" start-time="2026-10-04 00:21:11Z" end-time="2026-10-04 00:21:11Z" duration="0.008275" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

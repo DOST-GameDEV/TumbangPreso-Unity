@@ -1,0 +1,28 @@
+{
+  "base": "505165ef87ad2e3b9729bc15e8e878c2efb65a4e",
+  "fonts": [
+    {
+      "path": "Assets\\TumbangPreso\\Resources\\UI\\fonts\\DINNextLTArabic-Light.ttf",
+      "sha256": "60a23b06a63300530b748be1a50ffd15687c44001c835876d5896af40108c2c4",
+      "bytes": 166232,
+      "guid": "9a6b7c65dc184df5be75b93e595f4175",
+      "weight": 300,
+      "family": "ntaqat",
+      "sourceBytesUnchanged": true,
+      "requiredGlyphsPresent": true
+    },
+    {
+      "path": "Assets\\TumbangPreso\\Resources\\UI\\fonts\\DINNextLTArabic-Bold.ttf",
+      "sha256": "0872a05baa4db7edfb7109978d0b94dce1705c04a431ce76fdb80c342e2b61e1",
+      "bytes": 133384,
+      "guid": "8fa712e38c1d467887e25802c177b226",
+      "weight": 700,
+      "family": "DIN Next LT Arabic",
+      "sourceBytesUnchanged": true,
+      "requiredGlyphsPresent": true
+    }
+  ],
+  "runtimeSourceFiles": 805,
+  "references": 172,
+  "limits": "Direct compiler preflight against retained player references; Unity import and rendered layout require laptop validation."
+}

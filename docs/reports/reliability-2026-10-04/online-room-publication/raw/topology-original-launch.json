@@ -1,0 +1,25 @@
+{
+  "sourceRef": "0b16a2e98484e3df8c480953c0ea3d1bdbc479f9",
+  "profile": "pc-room-topology-original1004",
+  "filter": "TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayHostDoesNotOfferAnUnreachableDirectLanAddress;TumbangPreso.PlayTests.OnlineRoomPublicationProbe.DirectLanHostStillAdvertisesItsReachableAddress",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-room-topology-original1004",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayHostDoesNotOfferAnUnreachableDirectLanAddress;TumbangPreso.PlayTests.OnlineRoomPublicationProbe.DirectLanHostStillAdvertisesItsReachableAddress",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\server-publication1004\\topology-original\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\server-publication1004\\topology-original\\editor.log"
+  ],
+  "pid": 8984
+}

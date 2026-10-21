@@ -1,0 +1,44 @@
+{
+  "parents": [
+    "0a28bf13",
+    "d42f6e7e"
+  ],
+  "compiler": "Editor exit0; unchanged Runtime and Core reused from input integration",
+  "nativeTests": "Seven passing state/loading cases reused; no runtime change and no rerun",
+  "incomingPathsPreserved": 8,
+  "validNewMetadataGuids": 2,
+  "files": [
+    {
+      "path": "ArtSource/phaister/doll-20260927/design-brief.md",
+      "sha256": "68C57686520CF165EA03F03ADA04C77A72F12704CBF199FA76EC5D5F45D90260"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/palette.json",
+      "sha256": "5FE942CAF468200B1E4988069B523C2D5E05357390445D6B12762A6D28D59C20"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/persons/phaister-doll.glb",
+      "sha256": "850B5787E15347CC6DB6F0809A40409D19B66498974EFFFE628AD0D9F2635CAD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/persons/phaister-doll.glb.meta",
+      "sha256": "EAE98ADC61030FD0E2FB6FCC53710C9405A78D51B0BF6CE272AE743357E07127"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/PhaisterDollReview.cs",
+      "sha256": "C6F724EB48B2A542B89C8DB01A0899A91A5752E711DA2A3BDEA7AF6E74C3A364"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/PhaisterDollReview.cs.meta",
+      "sha256": "CF30051B7C2A0BA060CAE55C82E7050C365D00C25DD51F3AC00F32CFF5969AA6"
+    },
+    {
+      "path": "docs/reports/phaister-kit-2026-09-27/plan.md",
+      "sha256": "29CB19B86289428BC9F1812EDE88725D09D3C713739D1FE455C3A5800997B410"
+    },
+    {
+      "path": "tools/build_phaister_doll_voxel.py",
+      "sha256": "2EF1935C73C20D852B0F9C84533D06599EC8E3AC26925FDB87A22216E7B48494"
+    }
+  ]
+}

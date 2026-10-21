@@ -42,42 +42,51 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown]
         public IEnumerator TearDownWorld() => PlayModeWorld.Reset();
 
-        /// <summary>Points across the panel, in normalised panel space.</summary>
+        /// <summary>Points across the list, in normalised list space.</summary>
         private const int GridX = 5;
         private const int GridY = 9;
 
         [UnityTest]
         public IEnumerator TheWheelScrollsTheSettingsListFromEveryPartOfIt()
         {
-            var load = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
+            // ⚠️⚠️ **45 OF 45 POINTS CAME BACK DEAD AND THE WHEEL WAS NOT THE PROBLEM.** Every
+            // one of them reported the same hit: `StartButton`. Her title screen is ONE
+            // full-screen press target by his instruction, so switching the settings panel on
+            // without suspending the title left the whole sweep raycasting the title, and the
+            // grid this probe exists for was sampling a screen it was not about. The panel was
+            // also the wrong object to sample: the painted screen is a scene-root SIBLING of it
+            // (§ 111.2), so the sampled rectangle was the retired converted panel's.
+            yield return PaintedScreens.OpenSettings();
 
-            for (int i = 0; i < 10; i++) yield return null;
-
-            var panel = Find("SettingsPanel");
-            Assert.IsNotNull(panel, "MainMenu has no SettingsPanel to open.");
-
-            panel.SetActive(true);
             for (int i = 0; i < 5; i++) yield return null;
 
-            var scroll = panel.GetComponentInChildren<ScrollRect>(true);
-            Assert.IsNotNull(scroll, "the settings panel has no ScrollRect at all.");
+            var scroll = PaintedScreens.SettingsScroll();
             Assert.IsNotNull(scroll.content, "the ScrollRect has no content, so nothing can scroll.");
 
             var events = Object.FindFirstObjectByType<EventSystem>();
             Assert.IsNotNull(events, "no EventSystem, so no pointer event can be delivered.");
 
-            var canvas = panel.GetComponentInParent<Canvas>();
-            Assert.IsNotNull(canvas);
+            var canvas = PaintedScreens.Settings();
 
-            var panelRt = (RectTransform)panel.transform;
+            // ⚠️⚠️ THE GRID COVERS THE LIST'S OWN BOX, NOT THE WHOLE SCREEN, AND NARROWING IT IS
+            // THE HONEST READING RATHER THAN A RETREAT. The converted panel was one column and
+            // its list filled it, so "every pixel of the panel" and "every pixel of the list"
+            // named the same rectangle. The painted screen is two columns: a rail carrying BACK,
+            // the five section tabs, CREDITS and the save hint on the left, and the reading
+            // column on the right. **None of the rail is inside the `ScrollRect`**, so a wheel
+            // turn over a section tab correctly reaches no scroll handler, and sampling it would
+            // report thirty dead points about a screen that is behaving. The fault this probe
+            // was written for lives entirely inside the list: 🧑's *"the wheel does nothing over
+            // about half the panel"* was the list's own gaps, margins and row spacing having no
+            // graphic on them to raycast against.
+            var panelRt = (RectTransform)scroll.transform;
             var corners = new Vector3[4];
             panelRt.GetWorldCorners(corners);
 
             var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
 
             var report = new StringBuilder();
-            report.AppendLine("THE WHEEL, ACROSS THE WHOLE SETTINGS PANEL.");
+            report.AppendLine("THE WHEEL, ACROSS THE SETTINGS LIST.");
             report.AppendLine();
             report.AppendLine($"{"point",-12} {"hit",-28} {"handler",-28} {"moved px",9}");
             report.AppendLine(new string('-', 82));
@@ -156,35 +165,12 @@ namespace TumbangPreso.PlayTests
             Debug.Log(report.ToString());
 
             Assert.IsEmpty(dead,
-                $"{dead.Count} of {GridX * GridY} points on the settings panel swallow the mouse "
-                + "wheel. Every pixel of an open panel must scroll its one list. Read "
+                $"{dead.Count} of {GridX * GridY} points on the settings list swallow the mouse "
+                + "wheel. Every pixel of the open list must scroll it. Read "
                 + "Logs/settings-wheel.txt: " + string.Join(" | ", dead));
         }
 
         private static string Name(GameObject go) => go == null ? "<nothing>" : go.name;
 
-        private static GameObject Find(string name)
-        {
-            foreach (var root in SceneManager.GetActiveScene().GetRootGameObjects())
-            {
-                var hit = FindIn(root.transform, name);
-                if (hit != null) return hit;
-            }
-
-            return null;
-        }
-
-        private static GameObject FindIn(Transform where, string name)
-        {
-            if (where.name == name) return where.gameObject;
-
-            for (int i = 0; i < where.childCount; i++)
-            {
-                var hit = FindIn(where.GetChild(i), name);
-                if (hit != null) return hit;
-            }
-
-            return null;
-        }
     }
 }

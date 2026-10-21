@@ -1,0 +1,12 @@
+{
+  "base_revision": "671b391c84e21168f8f0a84099efd313d1a67cd5",
+  "archive_sha256": "ba52b5fe0ad9dd0a52a49f3ccdb3afacabfd24b148cf36948ede258f34feddb1",
+  "archive_matches_committed_text_after_newline_normalization": true,
+  "before_words": 3263,
+  "after_words": 1968,
+  "reduction_percent": 39.7,
+  "local_links_checked": 23,
+  "required_markers_present": true,
+  "whitespace_passed": true,
+  "scope": "Documentation only; no Unity run"
+}

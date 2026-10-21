@@ -1,0 +1,16 @@
+{
+  "copied": [
+    "Assets/TumbangPreso/Resources/Roster/person_rafi.asset",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_left.asset",
+    "Assets/TumbangPreso/Resources/UI/portraits/rafi.png"
+  ],
+  "source": "rafi-distinct-v4, native authoring completed0, guard595303bb8589",
+  "sha256": {
+    "Assets/TumbangPreso/Resources/RosterBook.asset": "c45c81bdd7f4e4a0827a89dbad73b7d702a0f8da6253af3e2bddbda224f36f37",
+    "Assets/TumbangPreso/Resources/Roster/person_rafi.asset": "52f89f4facb291292616058854027bccbc1df1c044e3a4a1e2c3619e706ea852",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_left.asset": "d550c86746e0b8aafcbf9850ebc39a05d717ffe5a2966c602a4c4415b528e5b1",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_right.asset": "0ae0f8e5216524c3296a45fd56637ed878479c62f9ba7284cd19cf723c60da53",
+    "Assets/TumbangPreso/Resources/UI/portraits/rafi.png": "b4e546ea593e436c7a95f263c84e973ce1be72bdeae510a3fd58a7f572b24319"
+  },
+  "limits": "Only Rafi generated asset outputs transferred; unchanged existing source characters preserved. Native FPP runtime route pending v50."
+}

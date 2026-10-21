@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// The in-match menu overlay. Match-time controls live only on SpectatorCamera.
+    /// The in-match menu overlay. Offline menus pause; network matches remain live.
     ///
     /// ⚠️ OPENING THE MENU PARKS INPUT. A verb held across the boundary
     /// would stay held in the intent table, and the player walks out of the menu already
@@ -13,7 +13,10 @@ namespace TumbangPreso.UI
     public sealed partial class PausePanel : Panel
     {
         public CharacterMotor Local;
-        private Text _title;
+        private Text _title, _notice;
+        private bool _pausedOffline;
+        private bool _inputWasParked;
+        private float _resumeScale;
         private GameObject _settingsOwner;
         public bool HasNestedView => _settingsOwner != null && _settingsOwner.activeInHierarchy;
 
@@ -75,8 +78,8 @@ namespace TumbangPreso.UI
         /// STOPPED WORKING AFTER THE FIRST TIME. Build runs from `Start`, once per component
         /// for its whole life, and the card is reused rather than rebuilt (see
         /// <see cref="Panel.Open{T}"/>). So the second Escape re-activated a fully drawn card
-        /// over a match with the cursor never released. The match intentionally remains live
-        /// now; the menu still has to park local input and release the pointer on every open.
+        /// over a match with the cursor never released. Offline time, local input and the
+        /// pointer must enter and leave the menu together on every open.
         ///
         /// ⚠️⚠️ AND THE CURSOR IS THE HALF THAT LOOKS LIKE A UI BUG. A match captures the mouse
         /// so the camera can steer from raw deltas; with it captured, the pointer is pinned to
@@ -85,13 +88,39 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override void OnOpened()
         {
+            RefreshTrainingRange();
             if (Canvas != null) Canvas.gameObject.SetActive(true);
-            // This is a menu, not a time-control path. Only SpectatorCamera's broadcast keys
-            // may pause or slow the match; opening settings as a player never stops the game.
+            // End a transient hitstop before saving the actual requested match speed.
+            // A presentation hold retains this request until its own release.
+            _pausedOffline = !SceneFlow.Networked && !(Net.NetSession.Instance?.IsNetworked ?? false);
+            if (_pausedOffline)
+            {
+                Hitstop.End();
+                _resumeScale = PresentationClock.RequestedScale;
+                PresentationClock.RequestScale(0);
+            }
+            if (_notice != null)
+                _notice.text = GameServices.Match?.HasCompleted == true
+                    ? "This match has ended. Close this menu to view the results."
+                    : _pausedOffline ? "Game paused while this menu is open."
+                    : "The match keeps playing while this menu is open.";
             if (_title != null)
-                _title.text = GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
+                _title.text = PracticeRange.Active ? "Training" : GameLaunch.Spectator ? "Broadcast Menu" : "Match Menu";
+            PaintPauseState();
 
-            if (Local != null) Local.Intent.Parked = true;
+            if (Local != null)
+            {
+                _inputWasParked = Local.Intent.Parked;
+                // A live match still ticks behind this menu. Withdraw pending actions
+                // before parking makes held input look like a deliberate release.
+                if (!NetAuthority.IsNetworked || Local.PlayerSlot == NetAuthority.LocalSlot)
+                {
+                    Local.GetComponent<Carrier>()?.CancelPendingInput();
+                    Local.GetComponent<CombatVerbs>()?.CancelPendingInput();
+                    Local.AbilitySystem?.ClearPresentationInput();
+                }
+                Local.Intent.Parked = true;
+            }
 
             CursorMode.Release();
         }
@@ -103,18 +132,27 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override void OnClosed()
         {
+            if (_pausedOffline)
+            {
+                _pausedOffline = false;
+                // A scene exit may already have selected its own speed. Do not undo it.
+                if (PresentationClock.RequestedScale == 0)
+                    PresentationClock.RequestScale(_resumeScale);
+            }
             if (Canvas != null) Canvas.gameObject.SetActive(false);
             if (Local != null)
             {
                 // UI Submit/click can also bind Jump/throw. Consume that menu
                 // press and wait for release before accepting a fresh game action.
                 Local.GetComponent<PlayerInputReader>()?.DiscardMenuButtonsUntilRelease();
-                Local.Intent.Parked = false;
+                // Restore only our menu's withdrawal. A previously parked body,
+                // or a match that ended while this menu was open, stays parked.
+                Local.Intent.Parked = _inputWasParked || GameServices.Match?.HasCompleted == true;
             }
 
             // Only the match wants the mouse back. A close on the way to the title screen has
             // already handed the pointer to the menu and must not have it taken away again.
-            if (SceneFlow.InMatch) CursorMode.Capture();
+            if (SceneFlow.InMatch && GameServices.Match?.HasCompleted != true) CursorMode.Capture();
         }
 
         private void Choice(Transform parent, string label, System.Action onClick,
@@ -169,5 +207,10 @@ namespace TumbangPreso.UI
         /// <summary>⚠️ IT ONLY CLOSES. The input park and cursor are restored by
         /// <see cref="OnClosed"/>, which every exit from this card goes through.</summary>
         private void Resume() => Close();
+
+        private void OnDestroy()
+        {
+            if (Canvas != null) Destroy(Canvas.gameObject);
+        }
     }
 }

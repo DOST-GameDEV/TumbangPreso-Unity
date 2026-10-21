@@ -1,0 +1,42 @@
+[
+  {
+    "run": "baseline-import",
+    "exit": {
+      "exit_code": 1,
+      "guard_reason": null,
+      "seconds": 95.00964424500125
+    }
+  },
+  {
+    "run": "baseline-import-retry",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 50.017421201002435
+    }
+  },
+  {
+    "run": "baseline-native",
+    "exit": {
+      "exit_code": 2,
+      "guard_reason": null,
+      "seconds": 35.00330559699796
+    }
+  },
+  {
+    "run": "candidate-import",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 45.004407469008584
+    }
+  },
+  {
+    "run": "candidate-native",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 40.00352752600156
+    }
+  }
+]

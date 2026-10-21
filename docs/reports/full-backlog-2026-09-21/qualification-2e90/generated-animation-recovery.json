@@ -1,0 +1,54 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-CatSmile.anim",
+    "sha256": "31f974dbacfedf60b416225c92f73b8f95d23e5e30f8929baf0c7302f3c6bfb9"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-CheekyGiggle.anim",
+    "sha256": "b06bf9c8c48e3921c3dbd9356397c962dabf7d1b2a587d9744cd2459effe14dc"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-CuriousPeek.anim",
+    "sha256": "f4933b2cb087881b2f9b17033eeba861c18fc8682e1283879c33d5a8a71d89d7"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-GoofyDizzy.anim",
+    "sha256": "29cf4217d3b6b641fb6e0a863f0543f7efa1fe07e461c035b237405744ea1608"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-HappyHop.anim",
+    "sha256": "53b88ddb73d53d7a462d72f20781274189680523c6e3401d894de247461446f5"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-HeartbeatPulse.anim",
+    "sha256": "2353a07b4fbed39aab2e40d55d804b624a8e7cd339d55c71bd60fe619b1aecfa"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-Hover.anim",
+    "sha256": "881dea41c20437025eb6ab6d1d309c9cc9090135cea9e34e4767e0e0fb1b5846"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-OrbitArc.anim",
+    "sha256": "1c3d906e21251c6df27da8c4b21b73973e8e34edbb9f515e2d0c77d1994e1360"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-ShyPout.anim",
+    "sha256": "09a34a6478ef5622bdcfa7014c05f3e9ace6c3c7e4a8846cd7459335e7100d3e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-SleepySnooze.anim",
+    "sha256": "7e3446e7d480e899e8c5ef79df985abb8b1f4faa035528176315e212e5318855"
+  },
+  {
+    "path": "Assets/TumbangPreso/Art/animations/kuro-idles/kuro-TwirlSpin.anim",
+    "sha256": "42ea0ff46e2045bb959181ce9d0091a17510e272198671bb94f5b3a58a4aa33e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/GeneratedAnimations/team-rafi.asset",
+    "sha256": "40b6016e76c74780f52c0700aac6787293d4bc7d09d70c27d1855f631525ba5e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/GeneratedAnimations/team-rafi.asset.meta",
+    "sha256": "c32144175418244633e4a3b6051f86e273ded199d090e1f879ccea0057f3e9b4"
+  }
+]

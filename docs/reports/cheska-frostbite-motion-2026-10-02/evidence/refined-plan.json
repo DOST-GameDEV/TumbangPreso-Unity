@@ -1,0 +1,18 @@
+{
+  "question": "Distinct authored held-shoe body and owner gestures from accepted Skill2 input; real held shoe preserved",
+  "baseline": "Accepted input and loaded state pass, distinct-action assertion fails; 51 observer and owner frames retained",
+  "stop": "one fresh actual-input case and inspect both views before shipping",
+  "tooling_repairs": 0,
+  "input_sha256": {
+    "Assets/TumbangPreso/Art/characters/persons/team-cheska.glb": "fe571a9454e1c8ca36c0123504ae010b3e7371973ec3a47dacb89cbcab61cd80",
+    "Assets/TumbangPreso/Art/characters/persons/team-cheska.glb.meta": "3b224b2f63a186abf7ae27a98af3a5df127a9f95d5f67ddd404923c9c1587d34",
+    "Assets/TumbangPreso/Resources/Roster/person_cheska.asset": "e4c659d87cc6e456e6eac0077ccb1c8f1266d62b8470544b1b4d60f9a3f990b7",
+    "Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs": "5675be6fc7655a621263762e3d806ba0b397379cfad210e35d813172eead9908",
+    "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "139391bdf1a1f15f8565c05c8f95b3052037afa05b1fc21f382c2dcbbc07bac2",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "782ef871211e85586eb3c0f6d7cb8f72919d89a4d85f195db10830441f525af2",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs": "f054d004964d691a9f26ff2394dfe8ea64d86487042d8ddfb1c648b2f3be1321",
+    "Assets/TumbangPreso/Tests/PlayMode/CheskaFrostbiteMotionTests.cs": "a76bb69ad87d2c90ffbe9d6f7ade9eeb1065bae8c3dd40e39c93aa1287cea722",
+    "Assets/TumbangPreso/Editor/CheskaFrostbiteMotionAuthor.cs": "fca9a5113cd2659d462ba69ed82295fea3dab51d1c2d568342cf5376ae41f167"
+  },
+  "product_refinement": "Inspected first native pass: shoe lowered toward hip. Raise supporting hand near normal carry height and keep an open silhouette; preserve FPP and other clips."
+}

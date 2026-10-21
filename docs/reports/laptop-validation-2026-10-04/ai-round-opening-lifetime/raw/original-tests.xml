@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.073826">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1319" result="Failed" site="Child" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.073826" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2621" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1319" result="Failed" site="Child" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.067042" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29204" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2622" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1319" result="Failed" site="Child" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.065213" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2623" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1319" result="Failed" site="Child" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.064486" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1076" name="AiRoundOpeningLifetimeTests" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.048805" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1078" name="ActualInactiveUpdateCannotSubstituteForTheRoundEvent" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.ActualInactiveUpdateCannotSubstituteForTheRoundEvent" methodname="ActualInactiveUpdateCannotSubstituteForTheRoundEvent" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="1965358870" result="Failed" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.031573" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A real inactive frame still left the next round's opening unlocked.
+  Expected: 0.0f
+  But was:  25.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AiRoundOpeningLifetimeTests.ActualInactiveUpdateCannotSubstituteForTheRoundEvent () [0x00058] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\AiRoundOpeningLifetimeTests.cs:58
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1080" name="RoundEventDropsThePreviousDecisionButPreservesCastCadence" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.RoundEventDropsThePreviousDecisionButPreservesCastCadence" methodname="RoundEventDropsThePreviousDecisionButPreservesCastCadence" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="1777419644" result="Failed" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.001588" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: null
+  But was:  Skill1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AiRoundOpeningLifetimeTests.RoundEventDropsThePreviousDecisionButPreservesCastCadence () [0x00060] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\AiRoundOpeningLifetimeTests.cs:74
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1077" name="RoundEventStartsANewOpeningWithoutAnInactiveAbilityTick" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.RoundEventStartsANewOpeningWithoutAnInactiveAbilityTick" methodname="RoundEventStartsANewOpeningWithoutAnInactiveAbilityTick" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="1621944608" result="Failed" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.000674" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The next round inherited the previous round's open ability gate.
+  Expected: 0.0f
+  But was:  25.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AiRoundOpeningLifetimeTests.RoundEventStartsANewOpeningWithoutAnInactiveAbilityTick () [0x00011] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\AiRoundOpeningLifetimeTests.cs:50
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1081" name="SameRoundInactiveUpdatePreservesTheOpeningAndCadence" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.SameRoundInactiveUpdatePreservesTheOpeningAndCadence" methodname="SameRoundInactiveUpdatePreservesTheOpeningAndCadence" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="1100194971" result="Passed" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.002224" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1079" name="SuppressedBodyAiStartsFreshWithoutReleasingTheHumansHeroKey" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.SuppressedBodyAiStartsFreshWithoutReleasingTheHumansHeroKey" methodname="SuppressedBodyAiStartsFreshWithoutReleasingTheHumansHeroKey" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="277829762" result="Failed" start-time="2026-10-04 09:26:08Z" end-time="2026-10-04 09:26:08Z" duration="0.001984" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.0f
+  But was:  25.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AiRoundOpeningLifetimeTests.SuppressedBodyAiStartsFreshWithoutReleasingTheHumansHeroKey () [0x0005b] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\AiRoundOpeningLifetimeTests.cs:67
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

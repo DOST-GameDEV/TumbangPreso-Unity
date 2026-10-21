@@ -101,7 +101,8 @@ namespace TumbangPreso.PlayTests
                 "Prediction created a world field before host acceptance.");
             int spent=skill.ChargesRemaining;
             owner.transform.SetPositionAndRotation(new Vector3(8,.12f,-8),Quaternion.Euler(0,180,0));
-            system.ConfirmPredictedWorldEffect(HeroAbilitySystem.Slot.Skill1,
+            system.TrackSkillRequest(0, 1);
+            system.ConfirmPredictedWorldEffect(HeroAbilitySystem.Slot.Skill1, 1,
                 first.Position,first.Forward,first.AimPoint,.55f);
             yield return null;
             var accepted=Object.FindFirstObjectByType<HeroHazards.IceSheetComponent>();Assert.IsNotNull(accepted);
@@ -114,7 +115,8 @@ namespace TumbangPreso.PlayTests
                 "Refusing a later request removed an earlier accepted sheet.");
             Assert.AreEqual(1,Object.FindObjectsByType<HeroHazards.IceSheetComponent>(FindObjectsSortMode.None).Length);
             skill.Activate(later);
-            system.ConfirmPredictedWorldEffect(HeroAbilitySystem.Slot.Skill1,
+            system.TrackSkillRequest(0, 2);
+            system.ConfirmPredictedWorldEffect(HeroAbilitySystem.Slot.Skill1, 2,
                 later.Position,later.Forward,later.AimPoint,.55f);
             yield return null;
             Assert.AreEqual(2,Object.FindObjectsByType<HeroHazards.IceSheetComponent>(FindObjectsSortMode.None).Length,
@@ -130,12 +132,15 @@ namespace TumbangPreso.PlayTests
             var owner=new GameObject("Confirming wall caster");
             var motor=owner.AddComponent<CharacterMotor>();motor.PlayerSlot=1;
             var system=owner.AddComponent<HeroAbilitySystem>();system.BindHero("cheska");
+            motor.IsDefender = true;
+            system.Kit.SetRole(true, new AbilityContext(motor, null, null));
             NetAuthority.Provider=new PredictingOwner();
             var skill=system.Kit.Skill2;
             var pose=new AbilityContext(motor,null,null,Vector3.zero,Vector3.forward,new Vector3(0,0,4));
             skill.Activate(pose);yield return null;
             Assert.IsNull(Object.FindFirstObjectByType<HeroHazards.IceBarricadeComponent>());
-            system.ConfirmPredictedWorldEffect(HeroAbilitySystem.Slot.Skill2,
+            system.TrackSkillRequest(1, 1);
+            system.ConfirmPredictedWorldEffect(HeroAbilitySystem.Slot.Skill2, 1,
                 pose.Position,pose.Forward,pose.AimPoint,.55f);
             yield return null;Physics.SyncTransforms();
             var wall=Object.FindFirstObjectByType<HeroHazards.IceBarricadeComponent>();Assert.IsNotNull(wall);
@@ -196,7 +201,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator EscapingIceReleasesTheRestraintBeforeItsOriginalTimer()
+        public IEnumerator FrozenIgnoresRecoveryPressesAndExpiresOnItsOriginalTimer()
         {
             var victim=new GameObject("Frozen player");
             var motor=victim.AddComponent<CharacterMotor>();
@@ -209,13 +214,14 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(renderers.All(r=>r.bounds.max.y < 1.1f),"Ice hides the victim's face/eye line.");
             for (int i=0;i<12;i++)
             {
-                motor.MashOutOfStun();
+                Assert.IsFalse(motor.MashOutOfStun());
                 yield return new WaitForSeconds(.12f);
             }
-            Assert.LessOrEqual(motor.StunLeft,Balance.MinStunDown+.03f);
-            yield return new WaitForSeconds(Balance.MinStunDown+.12f);
+            Assert.Greater(motor.StunLeft,Balance.MinStunDown);
+            Assert.IsNotNull(prison,"The Frozen restraint cannot be removed by repeated input.");
+            yield return new WaitForSeconds(motor.StunLeft+.12f);
             yield return null;
-            Assert.IsTrue(prison==null,"The restraint outlives the actual ice stun after escape.");
+            Assert.IsTrue(prison==null,"The restraint outlives the actual ice stun after timed expiry.");
         }
     }
 }

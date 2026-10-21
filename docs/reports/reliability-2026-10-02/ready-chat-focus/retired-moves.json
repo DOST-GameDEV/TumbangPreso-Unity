@@ -1,0 +1,26 @@
+[
+  {
+    "Source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\ReadyChatFocusTests.cs",
+    "Destination": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\retired\\ReadyChatFocusTests.cs",
+    "SHA256": "6D6FF747103EF72B58DC83A056FF40398B8761E743491FC4D112C2ADFBAF7539",
+    "Preserved": true
+  },
+  {
+    "Source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\ReadyChatFocusTests.cs.meta",
+    "Destination": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\ready-chat1002-inputs\\retired\\ReadyChatFocusTests.cs.meta",
+    "SHA256": "345E5D0CEE58633ED7216C68B7D915D423D10664F9E86E264D048DA152F66CC5",
+    "Preserved": true
+  },
+  {
+    "Source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\EmoteChatFocusTests.cs",
+    "Destination": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\emote-chat1002-inputs\\retired\\EmoteChatFocusTests.cs",
+    "SHA256": "087BBD5A4B5A251A1457C3C65E42368C4D07FE5852506AF04B3CB5FA736AAFCF",
+    "Preserved": true
+  },
+  {
+    "Source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\EmoteChatFocusTests.cs.meta",
+    "Destination": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\emote-chat1002-inputs\\retired\\EmoteChatFocusTests.cs.meta",
+    "SHA256": "FFB31DE23839F89D58E3061A990025700D79562AFE6105252388B3EA4A8ABA56",
+    "Preserved": true
+  }
+]

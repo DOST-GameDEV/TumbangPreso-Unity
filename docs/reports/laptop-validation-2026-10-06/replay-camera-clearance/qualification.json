@@ -1,0 +1,53 @@
+{
+  "original": {
+    "sourceCommit": "082146af4eb68679053dd53733cac4df9c05e061",
+    "qualifiedManifestSha256": "4f3d7297fcef0a9e3f20dcf5cd0ea1546d0dff0ff82928f50148692edcee628e",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "runtimeSha256": "dd05aa6eeede4d3cdf3ba7187151b54e06674235bdd0306fec591f88c9b00e36",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 22164,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 6,
+      "failed": 1,
+      "inputCount": 21168,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "candidate": {
+    "sourceCommit": "082146af4eb68679053dd53733cac4df9c05e061",
+    "qualifiedManifestSha256": "387215a1efd6b50b177554ab3800e42406c7e2635cb162e169f1c2d21b1a722e",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "runtimeSha256": "28b41decb90c859b16b096ef3626d1b58cf91fe663943e784dc3d8470c7a6f20",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 40460,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 7,
+      "failed": 0,
+      "inputCount": 21168,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "integration": {
+    "sourceCommit": "082146af4eb68679053dd53733cac4df9c05e061",
+    "qualifiedManifestSha256": "6daa701039ebcdb8759776f793c0d34170860a787d7258e2509404da3f2d46ad",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "runtimeSha256": "28b41decb90c859b16b096ef3626d1b58cf91fe663943e784dc3d8470c7a6f20",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 38780,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 3,
+      "failed": 0,
+      "inputCount": 21168,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  }
+}

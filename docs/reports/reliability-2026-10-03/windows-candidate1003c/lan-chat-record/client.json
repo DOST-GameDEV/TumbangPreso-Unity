@@ -1,0 +1,65 @@
+{
+    "role": "client",
+    "phase": "passed",
+    "error": "",
+    "initialRecordId": "d64b2672661a4355bd137fea2937846d",
+    "recordId": "d64b2672661a4355bd137fea2937846d",
+    "scene": "Eskinita",
+    "passed": true,
+    "sawLive": true,
+    "originHumanSeats": true,
+    "admitted": true,
+    "hostStayedEnded": true,
+    "recordHumanOrigins": true,
+    "postJoinSpectator": false,
+    "coldActorsFrozen": true,
+    "actorRoundActive": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "actorParked": [
+        true,
+        true,
+        true,
+        true
+    ],
+    "actorSprint": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "actorMoveSquared": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "pid": 13344,
+    "matchEndedEvents": 2,
+    "recordReadyEvents": 2,
+    "beforeEndEvents": 1,
+    "beforeRecordEvents": 1,
+    "rounds": 1,
+    "roundSeconds": 30,
+    "winner": 0,
+    "sceneBefore": 568105589213750478,
+    "sceneAfter": 568105589213736166,
+    "postJoinSlot": 1,
+    "presentationMatch": 0,
+    "scores": [
+        290,
+        0,
+        0,
+        0
+    ],
+    "recordScores": [
+        290,
+        0,
+        0,
+        0
+    ],
+    "scope": "Short custom Hero one-round/30-second cold completed arrival; no retained-seat, force finish, autorematch, AllBots, SDK or physical-input claim."
+}

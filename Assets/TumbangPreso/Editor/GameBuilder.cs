@@ -45,6 +45,24 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        public static void PreferCompatibleWindowsRenderer()
+        {
+            // The same v57 accessibility route crashed in D3D12Core at shutdown
+            // on RX6600 and exited cleanly with D3D11. Prefer the compatible
+            // backend; retain D3D12 for explicit diagnostics/fallback. Other
+            // platforms and all shader/quality settings keep their own choices.
+            const BuildTarget target=BuildTarget.StandaloneWindows64;
+            var apis=new[]{UnityEngine.Rendering.GraphicsDeviceType.Direct3D11,UnityEngine.Rendering.GraphicsDeviceType.Direct3D12};
+            PlayerSettings.SetUseDefaultGraphicsAPIs(target,false);
+            PlayerSettings.SetGraphicsAPIs(target,apis);AssetDatabase.SaveAssets();
+            var saved=PlayerSettings.GetGraphicsAPIs(target);
+            if(PlayerSettings.GetUseDefaultGraphicsAPIs(target)||!saved.SequenceEqual(apis))
+                throw new InvalidOperationException("Windows renderer preference was not saved.");
+            Directory.CreateDirectory("Logs/native-shutdown");
+            File.WriteAllText("Logs/native-shutdown/renderer-preference.txt","Windows automatic=False; preferred="+string.Join(",",saved)+"; authoring editor="+SystemInfo.graphicsDeviceType+"\n");
+            EditorApplication.Exit(0);
+        }
+
         public static void BuildMac()
         {
             bool ok = Execute(CommandLineOutput() ?? DefaultMacOutput(), BuildTarget.StandaloneOSX);
@@ -303,7 +321,18 @@ namespace TumbangPreso.EditorTools
                 if (!string.Equals(args[i], "-buildOutput", StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                return string.IsNullOrWhiteSpace(args[i + 1]) ? null : args[i + 1];
+                string requested = args[i + 1];
+                if (string.IsNullOrWhiteSpace(requested)) return null;
+
+                // ⚠️ A RELATIVE PATH IS READ FROM THE MAIN CHECKOUT, NOT FROM THIS PROJECT. From a
+                // worktree, `-buildOutput Builds/Windows/TumbangPreso.exe` used to mean the
+                // worktree's own `Builds/`, which is exactly the stranded build the owner's
+                // October 20 rule forbids ("no builds inside worktrees"). Anchoring it to the
+                // folder `BuildsRoot` sits in makes the same command mean the same folder from
+                // every checkout.
+                return Path.IsPathRooted(requested)
+                    ? requested
+                    : Path.Combine(Path.GetDirectoryName(BuildsRoot()), requested);
             }
 
             return null;
@@ -386,16 +415,15 @@ namespace TumbangPreso.EditorTools
         }
 
         /// <summary>
-        /// Whether `dir` is a folder strictly INSIDE a `Builds/` folder: the main checkout's,
-        /// or this project's own.
+        /// Whether `dir` is a folder strictly INSIDE `BuildsRoot`, the main checkout's `Builds/`.
         ///
         /// ⚠️⚠️ `-buildOutput` IS CHECKED, NOT TRUSTED. The defaults alone would not have stopped
         /// the scattering `BuildsRoot` records, because most of those players were written with an
         /// explicit `-buildOutput` pointing wherever the session that built them liked. A path
-        /// outside a `Builds/` folder fails the build instead. A relative path resolves against
-        /// the project as it always did, so `-buildOutput Builds/<name>/TumbangPreso.exe` keeps
-        /// working from a worktree, and the `tools/` harnesses that insist on an internal
-        /// `Builds/` player still find it.
+        /// outside the main `Builds/` fails the build instead, and that includes a worktree's own
+        /// `Builds/`: the owner's October 20 rule in `AGENTS.md` is "no builds inside worktrees".
+        /// `CommandLineOutput` reads a relative path from the main checkout, so
+        /// `-buildOutput Builds/Windows/TumbangPreso.exe` still works from any worktree.
         ///
         /// ⚠️ STRICTLY INSIDE, NEVER THE ROOT ITSELF. The directory handed here is the one
         /// `PurgeOutputDirectory` deletes. `-buildOutput Builds/TumbangPreso.exe` would aim the
@@ -409,28 +437,18 @@ namespace TumbangPreso.EditorTools
                 return false;
             }
 
-            string[] roots =
-            {
-                BuildsRoot(),
-                Path.Combine(Directory.GetCurrentDirectory(), "Builds"),
-            };
-
+            string root = BuildsRoot();
             string full = Path.GetFullPath(dir)
                 .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string prefix = Path.GetFullPath(root)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                + Path.DirectorySeparatorChar;
 
-            foreach (string root in roots)
-            {
-                string prefix = Path.GetFullPath(root)
-                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                    + Path.DirectorySeparatorChar;
+            if (full.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return true;
 
-                if (full.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return true;
-            }
-
-            Debug.LogError($"[Build] output folder '{full}' is not inside a Builds folder. Every " +
-                           $"player goes under '{roots[0]}' (or this project's own Builds/), one " +
-                           "subfolder per build, for example -buildOutput " +
-                           "Builds/Windows/TumbangPreso.exe. Refusing to build.");
+            Debug.LogError($"[Build] output folder '{full}' is not inside '{root}'. Every " +
+                           "player goes there, one folder per platform, for example " +
+                           "-buildOutput Builds/Windows/TumbangPreso.exe. Refusing to build.");
             return false;
         }
 
@@ -909,6 +927,7 @@ namespace TumbangPreso.EditorTools
                 // written to fix, and only in the player. That is the worst possible failure to
                 // debug, which is why this line exists rather than being trusted to the fallback.
                 "TumbangPreso/ToonTransparent",
+                "TumbangPreso/DanteBarrier",
 
                 // ⚠️ THE COLOUR GRADE, FOR THE SAME REASON AND WITH A WORSE FAILURE. `ColourGrade`
                 // reaches it through `Shader.Find` too, and its miss path blits the frame through
@@ -954,6 +973,22 @@ namespace TumbangPreso.EditorTools
                 // the editor stays fixed.
                 "TumbangPreso/DownedVignette",
 
+                // Nemu's PRUSISYON: the possessed player's own screen (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, the victim gets no hands and no direction cue while every observer still sees the rider.
+                "TumbangPreso/PossessedVignette",
+
+                // Dante's CONCUSSED: the victim's ochre rim (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, the victim feels nothing but the slow.
+                "TumbangPreso/ConcussedVignette",
+
+                // Nemu's DON'T LOOK: the blinded player's own screen (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, nothing covers the victim's eyes and the blind is only a slow.
+                "TumbangPreso/DontLookBlind",
+                // ...and its ghost, Blindfold (`Visual.BlindfoldGhostModel`), also only through `Shader.Find`.
+                "TumbangPreso/BlindfoldGhost",
+                // ...and the pet ghosts that can stand in for ASTRA's three (`Visual.PetGhostModels`, behind its switch).
+                "TumbangPreso/PetGhost",
+
                 // ⚠️ THE NEAR-CAMERA DISSOLVE, AND ITS MISS PATH SHIPS THE ORIGINAL REPORT BACK.
                 // `NearFade.Install` reaches it through `Shader.Find` and nothing in any scene
                 // references it, which is exactly the case this list exists for. Stripped, the
@@ -984,6 +1019,20 @@ namespace TumbangPreso.EditorTools
                 // playtest. That is worse than pink, not better.
                 "TumbangPreso/VolcanicRock",
                 "TumbangPreso/FrostSurface",
+
+                // ⚠️⚠️ § THE RECALL BEAM, AND ITS MISS PATH IS THE VOLCANIC ONE EXACTLY: A
+                // REGRESSION RATHER THAN A HOLE. `VfxMaterial.Beam` reaches it through
+                // `Shader.Find` and nothing in any scene references it, which is this list's own
+                // case. Stripped, the painter falls back to `Ghost` and the column comes back as
+                // the flat alpha-blended tube 🧑 rejected on 2026-09-20 when he asked for a shader
+                // instead of a model. The editor would be fixed and the .exe would show the
+                // original complaint, with one warning in a log nobody reads during a playtest.
+                "TumbangPreso/SlipperBeam",
+
+                // ⚠️ § THE BLOCKY CLOUDS (LIGHT-3). `BlockyClouds` reaches it through
+                // `Shader.Find` and no scene references it. Stripped, the look's sky simply has
+                // no near clouds, with one warning in the log.
+                "TumbangPreso/BlockyCloud",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");
@@ -1190,8 +1239,9 @@ namespace TumbangPreso.EditorTools
             // so every in-editor test passes and the shipped .exe dies on the scene load. This
             // runs BEFORE the build because the point is to never write the broken player at
             // all, and because the crash it prevents cost a whole handoff to find.
-            if(!SwimmingAnimationAuthor.Execute())return false;
-            if(!RecoveryAnimationAuthor.Execute())return false;
+            // Building must preserve approved clips. Authoring is an explicit
+            // operation; those tools overwrite retained curves when rerun.
+            if(!AuthoredAnimationBuildCheck.Execute())return false;
             if (!SceneScriptCheck.Execute(gate: true))
             {
                 Debug.LogError("[Build] refusing to build: a scene holds a script reference the " +
@@ -1237,6 +1287,7 @@ namespace TumbangPreso.EditorTools
 
             StampBuildBranch();
             StampBuildIdentity(target, outputPath);
+            TrimUnusedBuildScanAssets();
 
             // Ship at the monitor's native resolution in borderless fullscreen. Starting the
             // player in a fixed 1600x900 window made a normal build look like a test harness;
@@ -1252,10 +1303,13 @@ namespace TumbangPreso.EditorTools
                 scenes = scenes,
                 locationPathName = outputPath,
                 target = target,
-                options = BuildOptions.None,
+                options = Environment.GetCommandLineArgs().Any(arg =>
+                    string.Equals(arg, "-developmentBuild", StringComparison.OrdinalIgnoreCase))
+                    ? BuildOptions.Development | BuildOptions.ConnectWithProfiler
+                    : BuildOptions.None,
             };
 
-            Debug.Log($"[Build] building {scenes.Length} scenes to {outputPath}");
+            Debug.Log($"[Build] building {scenes.Length} scenes to {outputPath} ({options.options})");
             foreach (var s in scenes) Debug.Log($"[Build]   {s}");
 
             BuildReport report = BuildPipeline.BuildPlayer(options);
@@ -1276,6 +1330,22 @@ namespace TumbangPreso.EditorTools
                         Debug.LogError($"[Build]   {step.name}: {msg.content}");
 
             return false;
+        }
+
+        private static void TrimUnusedBuildScanAssets()
+        {
+            if (!Application.isBatchMode || !Environment.GetCommandLineArgs().Any(arg =>
+                string.Equals(arg, "-tp-build-trim-unused-assets", StringComparison.OrdinalIgnoreCase))) return;
+
+            // The saved shader collection retains every variant. Release only unused
+            // scan assets before the build; preserve script/static roots and full quality.
+            long allocatedBefore = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong();
+            long reservedBefore = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            GC.Collect();
+            EditorUtility.UnloadUnusedAssetsImmediate(includeMonoReferencesAsRoots: true);
+            GC.Collect();
+            Debug.Log(FormattableString.Invariant($"[BuildMemory] unused-scan boundary allocated_before={allocatedBefore} allocated_after={UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong()} reserved_before={reservedBefore} reserved_after={UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong()} elapsed_ms={watch.Elapsed.TotalMilliseconds:F3}; Unity bytes, not process-tree working set"));
         }
     }
 }

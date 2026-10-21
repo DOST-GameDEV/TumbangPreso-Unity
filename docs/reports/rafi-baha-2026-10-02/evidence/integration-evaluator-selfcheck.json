@@ -1,0 +1,93 @@
+{
+  "synthetic_only": true,
+  "valid": {
+    "backwash": {
+      "host": {
+        "rows": 160,
+        "activeSamples": 30,
+        "regrabSamples": 22,
+        "finalPassive": 0
+      },
+      "owner": {
+        "rows": 160,
+        "activeSamples": 30,
+        "regrabSamples": 22,
+        "finalPassive": 0,
+        "normalSpeed": 4.6,
+        "boostedSpeed": 5.52,
+        "measuredRatio": 1.2
+      },
+      "observer": {
+        "rows": 160,
+        "activeSamples": 30,
+        "regrabSamples": 22,
+        "finalPassive": 0
+      },
+      "finalPositionSpread": 0.0
+    },
+    "baha": {
+      "host": {
+        "fieldIds": [
+          19
+        ],
+        "activeSamples": 112,
+        "warningSamples": 17,
+        "maxTargetVelocity": 4.8,
+        "finalUltimate": 0,
+        "starts": 1,
+        "snapshots": 2,
+        "looseCarry": 3,
+        "targetTravel": 0.8999999999999999
+      },
+      "owner": {
+        "fieldIds": [
+          19
+        ],
+        "activeSamples": 112,
+        "warningSamples": 17,
+        "maxTargetVelocity": 4.8,
+        "finalUltimate": 0,
+        "starts": 1,
+        "snapshots": 2,
+        "looseCarry": 3,
+        "targetTravel": 0.8999999999999999
+      },
+      "observer": {
+        "fieldIds": [
+          19
+        ],
+        "activeSamples": 112,
+        "warningSamples": 17,
+        "maxTargetVelocity": 4.8,
+        "finalUltimate": 0,
+        "starts": 1,
+        "snapshots": 2,
+        "looseCarry": 3,
+        "targetTravel": 0.8999999999999999
+      }
+    }
+  },
+  "rejections": {
+    "carry": [
+      "host: loose slipper did not retain its bounded3m carry"
+    ],
+    "impulse": [
+      "Actual target owner missed resolved impulse"
+    ],
+    "fee": [
+      "owner: field, fee or presentation did not retire once"
+    ],
+    "identity": [
+      "Peers disagreed on Baha identity"
+    ],
+    "can": [
+      "owner: Baha changed the can"
+    ],
+    "snapshots": [
+      "Repeated scoped Baha world snapshots were not exercised"
+    ],
+    "clock": [
+      "host: invalid bound or lifetime"
+    ]
+  }
+}

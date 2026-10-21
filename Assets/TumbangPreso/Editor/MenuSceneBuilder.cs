@@ -45,10 +45,12 @@ namespace TumbangPreso.EditorTools
                 // player already chose are still behind it. Shipping it as a scene as well is
                 // how a build ends up with two of them, one of which nothing can reach.
                 $"{UiDir}/{SceneFlow.MatchResult}.unity",
-                $"{MapDir}/{SceneFlow.Eskinita}.unity",
-                $"{MapDir}/{SceneFlow.BayanPlaza}.unity",
-                $"{MapDir}/{SceneFlow.IlalimNgTulay}.unity",
             };
+            // ⚠️ EVERY REGISTERED MAP, FROM THE REGISTRY (2026-09-27, when Kanto and the Lagoon Cove
+            // joined and the first Lagoon was vaulted): this list named three maps by hand and
+            // relied on each map's builder appending itself, so it was stale the moment a map was
+            // added or retired. SceneFlow.Maps is the one list.
+            foreach (string map in SceneFlow.Maps) wanted.Add($"{MapDir}/{map}.unity");
 
             var list = new List<EditorBuildSettingsScene>();
             bool ok = true;

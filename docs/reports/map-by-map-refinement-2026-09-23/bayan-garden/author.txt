@@ -1,0 +1,9 @@
+EdgeHedge_0: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+EdgeHedge_10: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+EdgeHedge_11: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+EdgeHedge_12: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+Clutter_0: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+Clutter_1: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+Clutter_2: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+Clutter_3: retained36planter face vertices,5authored shrub groups,786total vertices; original renderer retained disabled.
+Eight side beds only; original mesh/materials/transforms/collision and monument planters retained.

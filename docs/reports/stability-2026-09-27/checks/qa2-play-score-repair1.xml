@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 22:29:07Z" end-time="2026-09-26 22:29:15Z" duration="7.7218927">
+  <test-suite type="TestSuite" id="1869" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:29:07Z" end-time="2026-09-26 22:29:15Z" duration="7.721893" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:29:07Z" end-time="2026-09-26 22:29:15Z" duration="7.709428" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49292" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:29:07Z" end-time="2026-09-26 22:29:15Z" duration="7.702967" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1865" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:29:07Z" end-time="2026-09-26 22:29:15Z" duration="7.696338" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1747" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-26 22:29:07Z" end-time="2026-09-26 22:29:15Z" duration="7.683300" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1748" name="LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes" methodname="LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1865349275" result="Passed" start-time="2026-09-26 22:29:07Z" end-time="2026-09-26 22:29:15Z" duration="7.672150" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] CourtHud-score-five-digit-960x540 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-negative-six-digit-1920x1080 cream source=252,211,159 pixel=200,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-negative-widest-1280x720 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-six-digit-phone-2340x1080 cream source=252,211,159 pixel=52,42,41; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-score-minimum-int-accessible-1600x680 cream source=252,211,159 pixel=70,68,86; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

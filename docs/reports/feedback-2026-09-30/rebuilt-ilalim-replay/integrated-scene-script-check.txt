@@ -1,0 +1,21 @@
+SCENE SCRIPT CHECK
+  a component the player cannot bind to a script is a crash, not a warning
+
+SHIPS (12 scenes in the build, these gate)
+  Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity: clean
+  Assets/TumbangPreso/Scenes/Maps/Eskinita.unity: clean
+  Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity: clean
+  Assets/TumbangPreso/Scenes/Maps/Kanto.unity: clean
+  Assets/TumbangPreso/Scenes/Maps/LagoonCove.unity: clean
+  Assets/TumbangPreso/Scenes/Maps/SaBubong.unity: clean
+  Assets/TumbangPreso/Scenes/Ui/MainMenu.unity: clean
+  Assets/TumbangPreso/Scenes/Ui/MatchResult.unity: clean
+  Assets/TumbangPreso/Scenes/Ui/MatchSetup.unity: clean
+  Assets/TumbangPreso/Scenes/Ui/ModeSelect.unity: clean
+  Assets/TumbangPreso/Scenes/Ui/MultiplayerSetup.unity: clean
+  Assets/TumbangPreso/Scenes/Ui/SplashScreen.unity: clean
+
+DOES NOT SHIP (reported only)
+  24 scenes and prefabs, all clean
+
+OK. No unbindable script reference in any build scene.

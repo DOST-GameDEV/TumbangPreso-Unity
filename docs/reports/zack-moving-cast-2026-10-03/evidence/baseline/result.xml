@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 13:12:02Z" end-time="2026-10-03 13:12:03Z" duration="0.7625368">
+  <test-suite type="TestSuite" id="2748" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1422" result="Failed" site="Child" start-time="2026-10-03 13:12:02Z" end-time="2026-10-03 13:12:03Z" duration="0.762537" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2742" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1422" result="Failed" site="Child" start-time="2026-10-03 13:12:03Z" end-time="2026-10-03 13:12:03Z" duration="0.752409" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="102153" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2743" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1422" result="Failed" site="Child" start-time="2026-10-03 13:12:03Z" end-time="2026-10-03 13:12:03Z" duration="0.749000" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2744" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1422" result="Failed" site="Child" start-time="2026-10-03 13:12:03Z" end-time="2026-10-03 13:12:03Z" duration="0.745853" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1290" name="ClosedCircuitTests" fullname="TumbangPreso.PlayTests.ClosedCircuitTests" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-03 13:12:03Z" end-time="2026-10-03 13:12:03Z" duration="0.718714" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1301" name="WalkingDuringAcquisitionKeepsTheLegGaitActive" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.WalkingDuringAcquisitionKeepsTheLegGaitActive" methodname="WalkingDuringAcquisitionKeepsTheLegGaitActive" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="56064898" result="Failed" start-time="2026-10-03 13:12:03Z" end-time="2026-10-03 13:12:03Z" duration="0.706478" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An aiming-only gesture suppressed walking legs while the motor kept moving.
+  Expected: greater than 0.800000012f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ClosedCircuitTests+<WalkingDuringAcquisitionKeepsTheLegGaitActive>d__21.MoveNext () [0x0037d] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/ClosedCircuitTests.cs:163
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

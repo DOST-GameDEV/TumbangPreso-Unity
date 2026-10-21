@@ -1,0 +1,26 @@
+{
+  "sourceRef": "4556ab376007b6a97a6a0457fc3cdfdef9c09e11",
+  "profile": "pc-humanlike-ai-ratio-boundary-original1006",
+  "filter": "TumbangPreso.PlayTests.AiLungeChargeContinuityTests",
+  "expectedCases": 4,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-ratio-boundary-original1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiLungeChargeContinuityTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-lunge-continuity1007\\ratio-boundary-original\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-lunge-continuity1007\\ratio-boundary-original\\editor.log"
+  ],
+  "pid": 48184
+}

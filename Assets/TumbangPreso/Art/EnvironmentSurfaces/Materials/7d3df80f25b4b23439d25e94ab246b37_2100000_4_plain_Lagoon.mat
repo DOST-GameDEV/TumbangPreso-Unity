@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Householdtimberplanks7 / surface 4
+  m_Shader: {fileID: 4800000, guid: 9e26b4f70c8a51d4b83f5a71c6042de9, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    TumpSurfaceSource: 7d3df80f25b4b23439d25e94ab246b37_2100000
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Glossiness: 0.14
+    - _Metallic: 0
+    - _NearFadeCell: 2
+    - _NearFadeEnd: 0.35
+    - _NearFadeStart: 1.8
+    - _SurfaceBaseY: 0.1
+    - _SurfaceCoordinates: 1
+    - _SurfaceDebug: 0
+    - _SurfaceHasTexture: 0
+    - _SurfaceKind: 4
+    - _SurfaceScale: 1
+    - _SurfaceStrength: 1
+    - _SurfaceVertexRoles: 0
+    m_Colors:
+    - _Color: {r: 0.49499995, g: 0.44499996, b: 0.30499998, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

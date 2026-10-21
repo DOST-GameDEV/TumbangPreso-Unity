@@ -1,0 +1,13 @@
+{
+  "sourceEquivalent": "f118597f6 with prior qualified complete overlay and isolated whitespace-only imported Xelu metas, plus focused queue fixture",
+  "question": "Actual IN QUEUE PlayButton cancels both casual modes, restores PLAY and can queue again",
+  "stoppingCondition": "one fresh passing native case or one diagnosed fixture/product failure",
+  "expectedCases": 1,
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Settings/Rebinding.cs": "bce6999445b14ebd655b38d90d68a858f9a29117e663827502dce9c1050c09f0",
+    "Assets/TumbangPreso/Tests/PlayMode/FeedbackHudMenuTests.cs.meta": "921f555b3d30f56b32930d1b0cd8e3679565a06b7895bc890737077a9b622222",
+    "Assets/TumbangPreso/Tests/PlayMode/FeedbackHudMenuTests.cs": "ccb6298052327e21b78d8e47460c0e09540d4b46a754538e3a4e816ea164d9b9",
+    "Assets/TumbangPreso/Resources/TumbangPreso.inputactions": "79c2e56461f0f9d49d871c2723adfeefa27b42f5c7864732ea44b1b5e1c91ec8"
+  },
+  "retry": 0
+}

@@ -26,7 +26,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     [RequireComponent(typeof(CharacterMotor))]
     [DefaultExecutionOrder(-50)]
-    public sealed class CharacterAnimator : MonoBehaviour
+    public sealed partial class CharacterAnimator : MonoBehaviour
     {
         /// <summary>Names as they appear in the shipped GLBs. Verified by ModelProbe.</summary>
         private const string Idle = "idle";
@@ -130,8 +130,11 @@ namespace TumbangPreso.Visual
         /// ⚠️⚠️ LUNGE AND PUNCH HAVE THEIR OWN CLIPS AND MUST KEEP THEM. Both used to play the
         /// shove animation, so the taya's one-metre lunge, their close jab and an attacker
         /// shoving a rival were three different commitments with one animation between them.
-        /// `attack-kick-right` leads with the body, which is what a dash INTO somebody looks
-        /// like; `attack-melee-right` is the arm, which is the punch.
+        /// ⚠️⚠️ SINCE 2026-09-24 THE TWO TAGS ARE TOLD APART BY `TagBody`, NOT BY THESE CLIPS. 🧑:
+        /// *"make tagging better too"*. The dash tag played `attack-kick-right`, a 104-degree KICK, and the
+        /// jab `attack-melee-right`, an overhead chop; a tag is a touch. `CharacterAnimator.TagBody.cs` now
+        /// poses both over the clip (a dive with the arm held out, and a jab), and its leg split is ADDED to
+        /// the clip's legs, so the lunge sits on the milder melee clip: over a kick, the kick showed through.
         ///
         /// ⚠️ "shove" WAS RENAMED FROM "bump". The bump meter it was built for is deleted, and
         /// a clip key naming a mechanic that no longer exists is how the next reader concludes
@@ -150,7 +153,7 @@ namespace TumbangPreso.Visual
             { "shove", new[] { "attack-melee-left", "attack-melee-right", Interact } },
             { "ready", new[] { "emote-yes", Interact } },
             { "grab", new[] { PickUp, Interact, "interact-left" } },
-            { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
+            { "lunge", new[] { "attack-melee-right", Interact } },
             { "punch", new[] { "attack-melee-right", "attack-kick-left", Interact } },
 
             // ⚠️⚠️ THE RETRIEVAL SLIDE HAS ITS OWN ACTION NAME AND DELIBERATELY NO CLIP OF ITS
@@ -198,29 +201,69 @@ namespace TumbangPreso.Visual
             // -------------------------------------------------------------------
 
             { "hero-sean-dash", new[] { "hero-sean-dash", "attack-kick-right", Sprint } },
+            { "hero-sean-gate", new[] { "hero-sean-gate", Interact } },
             { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
             { "hero-sean-supernova", new[] { "hero-sean-supernova", Jump, "attack-melee-right" } },
 
             { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
             { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
+            { "hero-zack-circuit", new[] { "hero-zack-circuit" } },
+            { "hero-zack-bankshot", new[] { "hero-zack-bankshot" } },
             { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
 
+            { "hero-dante-boulder", new[] { "hero-dante-boulder" } },
+            { "hero-dante-bastion", new[] { "hero-dante-bastion" } },
             { "hero-dante-stomp", new[] { "hero-dante-stomp", PickUp, "attack-kick-right" } },
             { "hero-dante-roar", new[] { "hero-dante-roar", "attack-melee-left", "emote-yes" } },
             { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-kick-left", PickUp } },
 
+            { "hero-cheska-frostbite", new[] { "hero-cheska-frostbite" } },
             { "hero-cheska-frostwave", new[] { "hero-cheska-frostwave", "interact-right", "attack-melee-right" } },
             { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
             { "hero-cheska-nova", new[] { "hero-cheska-nova", "holding-left-shoot", Jump } },
 
+            { "hero-nemu-guard", new[] { "hero-nemu-guard" } },
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
             { "hero-nemu-project", new[] { "hero-nemu-project", "interact-left", "attack-melee-left" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
+            // NEMU'S GHOSTS (owner 2026-10-15): one clip per skill, baked by `NemuMotionAuthor`, Kuro's old clip as the fallback.
+            { "hero-nemu-dontlook", new[] { "hero-nemu-dontlook", "hero-nemu-project", "interact-left" } },
+            { "hero-nemu-skitter", new[] { "hero-nemu-skitter", "hero-nemu-project", "interact-left" } },
+            { "hero-nemu-lookout", new[] { "hero-nemu-lookout", "hero-nemu-guard" } },
 
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
             { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", Crouch, "holding-both" } },
+            // PHAISTER (HERO-10, 2026-09-27): one clip per skill, baked by `PhaisterMotionAuthor`, the old clip as the fallback.
+            { "hero-phaister-swarm", new[] { "hero-phaister-swarm", "hero-phaister-blink", Sprint } },
+            { "hero-phaister-manika", new[] { "hero-phaister-manika", "attack-melee-right" } },
+            { "hero-phaister-pin", new[] { "hero-phaister-pin", "hero-phaister-hex", "interact-right" } },
+            { "hero-phaister-omen", new[] { "hero-phaister-omen", "hero-phaister-eclipse", "holding-both" } },
+            // v3, the reach (HERO-10 plan 9.5): each curse locks on its own way, HEX's recast is its own stab, DRAIN's wring is its own.
+            { "hero-phaister-drain", new[] { "hero-phaister-drain", "interact-right" } },
+            { "hero-phaister-wring", new[] { "hero-phaister-wring", "holding-both" } },
+            { "hero-phaister-hexreach", new[] { "hero-phaister-hexreach", "interact-right" } },
+            { "hero-phaister-hexstab", new[] { "hero-phaister-hexstab", "attack-melee-right" } },
+            { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
+            { "hero-rafi-skim", new[] { "hero-rafi-skim", "interact-left" } },
+            { "hero-rafi-wall", new[] { "hero-rafi-wall", "interact-left" } },
+            { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
+            { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },
+            { "hero-amihan-dash", new[] { "hero-amihan-dash", "attack-kick-right", Sprint } },
+            { "hero-amihan-updraft", new[] { "hero-amihan-updraft", Jump } },
+            { "hero-amihan-whirlwind", new[] { "hero-amihan-whirlwind", "attack-melee-left" } },
+            { "hero-amihan-storm", new[] { "hero-amihan-storm", "holding-both-shoot" } },
+            // PAETE (2026-09-25). His own clips first (baked by `PaeteMotionAuthor`), then the
+            // nearest base clip so a cast is never a freeze.
+            { "hero-paete-vine", new[] { "hero-paete-vine", "holding-both-shoot" } },
+            { "hero-paete-sprout", new[] { "hero-paete-sprout", "attack-melee-right" } },
+            { "hero-paete-command", new[] { "hero-paete-command", "attack-melee-right" } },
+            { "hero-paete-thorns", new[] { "hero-paete-thorns", "attack-kick-right" } },
+            { "hero-paete-sentry", new[] { "hero-paete-sentry", "holding-both-shoot" } },
         };
+
+        /// <summary>Amihan's flight pose, held while `CharacterMotor.IsFlying` (Updraft).</summary>
+        public const string AmihanHover = "hero-amihan-hover";
 
         [SerializeField] private float _blend = 0.12f;
 
@@ -228,6 +271,7 @@ namespace TumbangPreso.Visual
         private Carrier _carrier;
         private Social.EmotePlayer _emote;
         private Animator _animator;
+        private Avatar _ownedAvatar;
 
         private PlayableGraph _graph;
         private AnimationMixerPlayable _mixer;
@@ -298,10 +342,14 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void Bind(GameObject model, AnimationClip[] clips)
         {
+            RestoreEdgeRecoveryPose();_edgeBones=null;_edgePlaying=false;
             // ⚠️ A wardrobe/seat swap can rebind a live component. Retire the old output
             // before replacing its Animator, including when the replacement has no clips.
             ReleaseGraph();
             if (model == null) return;
+
+            // Editor previews and inactive actors can bind before Unity invokes Awake.
+            Awake();
 
             _animator = model.GetComponentInChildren<Animator>();
             if (_animator == null) _animator = model.AddComponent<Animator>();
@@ -310,9 +358,13 @@ namespace TumbangPreso.Visual
             // Animator with a null controller, which is right for Playables, and no Avatar,
             // which is not: an animation output bound to one drives no transforms at all and
             // the whole cast stands in its bind pose. See ModelPreview.EnsureAvatar.
+            bool needsAvatar = _animator.avatar == null;
             UI.ModelPreview.EnsureAvatar(_animator);
+            if (needsAvatar) _ownedAvatar = _animator.avatar;
 
             CacheClips(model, clips);
+            // Whose walk and run this body gets (`GaitStyles`), chosen before the gait layer calibrates its cadence.
+            ResolveGaitStyle(model);
 
             if (_clips.Count == 0)
             {
@@ -334,6 +386,9 @@ namespace TumbangPreso.Visual
 
             _graph.Play();
             Play(Idle, loop: true, force: true);
+            // Seat the model against the neutral pose it will actually display,
+            // not an importer's unanimated bounds with a different leg position.
+            _graph.Evaluate(0);
         }
 
         /// <summary>
@@ -415,9 +470,7 @@ namespace TumbangPreso.Visual
             if (_animator == null) return;
 
             string rig = DanceClip.ResourceName(_animator.transform);
-            var baked = string.IsNullOrEmpty(rig)
-                ? null
-                : Resources.Load<GeneratedAnimationSet>($"{DanceClip.ResourceFolder}/{rig}");
+            var baked = GeneratedMotionAssets.For(DanceClip.ResourceFolder, rig);
 
             if (baked != null && baked.Clips != null)
             {
@@ -426,15 +479,19 @@ namespace TumbangPreso.Visual
             }
             // Character-specific carrying corrections retain the original rig and
             // source clips; the measured pose also becomes the throw's real basis.
-            var carry=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>("CarryMotion/"+rig);
+            var carry=GeneratedMotionAssets.For("CarryMotion",rig);
             if(carry!=null&&carry.Clips!=null)
                 foreach(var clip in carry.Clips)if(clip!=null)_clips[clip.name]=clip;
-            var swimming=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(SwimmingMotion.Folder+"/"+rig);
+            var swimming=GeneratedMotionAssets.For(SwimmingMotion.Folder,rig);
             if(swimming!=null&&swimming.Clips!=null)
                 foreach(var clip in swimming.Clips)if(clip!=null)_clips[clip.name]=clip;
-            var recovery=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RecoveryMotion.Folder+"/"+rig);
+            var recovery=GeneratedMotionAssets.For(RecoveryMotion.Folder,rig);
             if(recovery!=null&&recovery.Clips!=null)
                 foreach(var clip in recovery.Clips)if(clip!=null)_clips[clip.name]=clip;
+            // Paete's kit (HERO-9): the struggle against his roots and the heave on his seedling, on every rig.
+            var rooted=GeneratedMotionAssets.For(RootedMotion.Folder,rig);
+            if(rooted!=null&&rooted.Clips!=null)
+                foreach(var clip in rooted.Clips)if(clip!=null)_clips[clip.name]=clip;
 
 #if UNITY_EDITOR
             if (!_clips.ContainsKey(DanceClip.ClipName))
@@ -464,9 +521,26 @@ namespace TumbangPreso.Visual
 
         private void ReleaseGraph()
         {
+            RestoreArrivalPose(); _arrivalWeight = 0; _arrivalBones = null;
+            ClearIntroductionPose();
+            ClearTagBody();
+            ClearSlideBody();
+            ClearResetRaise();
+            ClearLocomotionArms();
+            ClearThrowBody();
+            ClearLocomotionWeight();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
             if (_graph.IsValid()) _graph.Destroy();
+            // Only the binding we built belongs to this driver. Imported or
+            // externally supplied avatars must survive its teardown/rebind.
+            if (_ownedAvatar != null)
+            {
+                if (_animator != null && _animator.avatar == _ownedAvatar) _animator.avatar = null;
+                if (Application.isPlaying) Destroy(_ownedAvatar);
+                else DestroyImmediate(_ownedAvatar);
+            }
+            _ownedAvatar = null;
 #if UNITY_EDITOR
             foreach (var clip in _generated) if (clip != null) DestroyImmediate(clip);
             _generated.Clear();
@@ -477,7 +551,7 @@ namespace TumbangPreso.Visual
                 else DestroyImmediate(_legsMask);
             }
             _legsMask = null;
-            _current = null;
+            _current = null; _playing = null;
             _oneShotLeft = _gaitWeight = _runWeight = _gaitPhase = 0;
             _tripPhase = 0;
             _running = false;
@@ -485,9 +559,25 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
+            RestoreArrivalPose();
+            RestoreEdgeRecoveryPose();
+            RestoreIntroductionPose();
+            RestoreTagBody();
+            RestoreSlideBody();
+            RestoreResetRaise();
+            RestoreLocomotionArms();
+            RestoreThrowBody();
+            RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
+            if (_arrivalWeight > 0) return; // The held arrival owns the neutral base pose.
 
             RestoreChargeOffsets();
+            if (_throwCancelTime >= 0)
+            {
+                _throwCancelTime += Time.deltaTime;
+                if (_throwCancelTime >= ThrowGesture.CancelSeconds || _motor.IsStunned || _motor.IsTripped || !_motor.HoldingSlipper)
+                    _throwCancelTime = -1;
+            }
             if (_throwReleaseTime >= 0)
             {
                 _throwReleaseTime += Time.deltaTime;
@@ -505,7 +595,9 @@ namespace TumbangPreso.Visual
 
             // ⚠️ BEFORE THE ONE-SHOT, because a fall interrupts whatever the body was doing.
             // A player tripped mid-throw must be on the tarmac, not finishing the throw.
+            if (StepEdgeRecoveryPose()) return;
             if (StepTripPose()) return;
+            if (StepRootedPose()) return;
 
             // Sample the retained cast against the actual leap/landing clock. This
             // cannot create a hit; the motor and ability remain the contact owners.
@@ -551,9 +643,9 @@ namespace TumbangPreso.Visual
 
         private void BuildGaitLayer()
         {
-            if (!_clips.TryGetValue(Walk, out var walk) || !_clips.TryGetValue(Sprint, out var run)) return;
+            if (!_clips.TryGetValue(Variant(Walk), out var walk) || !_clips.TryGetValue(Variant(Sprint), out var run)) return;
             CalibrateGait(walk,run);
-            _gaitTravelDirection=Vector3.Dot(_motor.Velocity,transform.forward)<-.25f*FlatSpeed?-1f:1f;
+            _gaitTravelDirection=_motor!=null&&Vector3.Dot(_motor.Velocity,transform.forward)<-.25f*FlatSpeed?-1f:1f;
             _gait = AnimationMixerPlayable.Create(_graph, 2);
             _walkGait = AnimationClipPlayable.Create(_graph, walk);
             _runGait = AnimationClipPlayable.Create(_graph, run);
@@ -611,16 +703,18 @@ namespace TumbangPreso.Visual
             _walkReference=2.8f; _runReference=5.4f;
             if(reach>.05f && reach<1.5f)
             {
-                // One stance crosses 2*reach*sin(swing); two stances form a cycle.
-                _walkReference=4f*reach*Mathf.Sin(WalkLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,walk.length);
-                _runReference=4f*reach*Mathf.Sin(RunLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,run.length);
+                // One stance crosses reach*(sin forward + sin back); two stances form a cycle. ⚠️ The swing is the BODY's own
+                // (`GaitStyles`, since 2026-09-27), because the legs are posed from it: a short-stepping Nemu at a shared
+                // cadence would slide her feet, a long-striding Paete would moonwalk.
+                var style=_gaitStyle??GaitStyles.Custom;
+                _walkReference=style.CycleMetres(reach,0f)/Mathf.Max(.05f,walk.length);
+                _runReference=style.CycleMetres(reach,1f)/Mathf.Max(.05f,run.length);
             }
             _walkCycleMetres=_walkReference*walk.length;
             _runCycleMetres=_runReference*run.length;
         }
 
-        private float OrdinaryWalkSpeed => Core.Balance.Speed * Core.Stamina.RoleSpeedScale(_motor.IsDefender)
-            * Core.Roster.PersonSpeedScale(_motor.CharacterIndex, _motor.Mode)
+        private float OrdinaryWalkSpeed => Core.Stamina.MovementSpeed(_motor.IsDefender, false)
             * Mathf.Max(.1f, _motor.Stamina.SpeedZones.Value);
 
         private void StepGait()=>AdvanceGait(Time.deltaTime);
@@ -630,8 +724,10 @@ namespace TumbangPreso.Visual
             float speed = FlatSpeed;
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
-            bool mobileGuard = _current == "hero-dante-roar";
-            bool movingAction = _throwReleaseTime >= 0 || mobileGuard;
+            // These upper-body actions permit movement; their legs must follow the motor.
+            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-circuit"
+                || _current == "hero-zack-bankshot";
+            bool movingAction = _throwReleaseTime >= 0 || mobileUpperBody;
             bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || movingAction)
                 && (_emote == null || !_emote.IsEmoting)
                 && (_carrier == null || _carrier.ChannelRatio <= 0)
@@ -771,6 +867,12 @@ namespace TumbangPreso.Visual
 
             if (_carrier != null && _carrier.ChannelRatio > 0.0f) return Interact;
 
+            if (_throwReleaseTime >= 0 && _current == ThrowVariantClip && _motor.IsGrounded) return ThrowVariantClip;
+
+            // HERO-10: a hero's own tell while a skill is held (`AimPose`); no other hero names one.
+            string aimPose = AimPose();
+            if (aimPose != null) return aimPose;
+
             // ⚠️⚠️ THE **OBSERVED** WIND-UP, NOT THIS PEER'S OWN CHARGE CLOCK, AND THE
             // DIFFERENCE IS THE ENTIRE COUNTERPLAY. `carrier.gd`'s header spells it out: the
             // charge timer only ticks on the peer that controls the unit, so a third-person
@@ -781,6 +883,11 @@ namespace TumbangPreso.Visual
             if (_chargePosing) return _motor.HoldingSlipper ? HoldingRight : Idle;
 
             if(_motor.IsSwimming)return SwimmingMotion.Clip(SwimmingMotion.ForwardStroke(_motor),_motor.HoldingSlipper);
+
+            // ⚠️ FLYING IS NOT FALLING. Updraft holds her 2.8 m up for ten seconds; the fall clip for
+            // that long reads as a body dropping that never lands. A kit whose rig has no flight
+            // pose (every other hero) never flies, so the old answer is untouched for them.
+            if (_motor.IsFlying && _clips.ContainsKey(AmihanHover)) return AmihanHover;
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 
@@ -794,6 +901,9 @@ namespace TumbangPreso.Visual
             // ⚠️ IT OUTRANKS WALK AND SPRINT, NOT STUN OR AIRBORNE. A fatigued player is still
             // moving, at three-quarter speed, and the whole point is that the state is legible
             // to the three people deciding whether to chase them.
+            // The movement rework's crouch and slide (a debug switch, `MovementRework`): the bent-over clip stands in for
+            // both until they have poses of their own.
+            if (_motor.ReworkCrouched) return Crouch;
             if (_motor.Stamina.IsFatigued) return Crouch;
 
             // ⚠️ The historical fix below still owns the UPPER BODY. BuildGaitLayer now
@@ -845,6 +955,9 @@ namespace TumbangPreso.Visual
         private ThrowGesture.Pose _lastThrowPose=ThrowGesture.Rest,_throwReleaseFrom=ThrowGesture.Rest;
         private ThrowGesture.Pose _throwCarryBasis=ThrowGesture.Rest;
         private float _throwReleaseTime=-1,_throwReleaseSpin;
+        private float _throwCancelTime=-1;
+        private bool _throwPreparing;
+        private ThrowGesture.Pose _throwCancelFrom=ThrowGesture.Rest;
 
         /// <summary>
         /// The wind-up, written onto the arm bone so OPPONENTS can read the commitment.
@@ -875,10 +988,19 @@ namespace TumbangPreso.Visual
 
             if (!winding)
             {
-                if (_chargePosing) ClearChargePose();
+                if (_chargePosing)
+                {
+                    bool returnToCarry = _throwPreparing && _throwReleaseTime < 0
+                        && _motor.HoldingSlipper && !_motor.IsStunned && !_motor.IsTripped;
+                    var from = _lastThrowPose;
+                    ClearChargePose();
+                    if (returnToCarry) { _throwCancelFrom = from; _throwCancelTime = 0; }
+                }
                 return false;
             }
 
+            _throwCancelTime = -1;
+            _throwPreparing = _carrier != null && _carrier.Held != null && _carrier.ObservedChargePower >= 0;
             if (!_chargePosing)
             {
                 if (!ResolveChargeBone()) return false;
@@ -891,28 +1013,56 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
-            // Remove last frame's offsets even when the graph is paused or a clip
-            // leaves a bone unkeyed. Carrier then reads this frame's posed hand.
-            RestoreChargeOffsets();
-            if (!_chargePosing && _throwReleaseTime < 0) return;
-            if (_chargeBone==null && !ResolveChargeBone()) return;
-            bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
-            var pose=throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
-                : new ThrowGesture.Pose(Vector3.zero,Vector3.zero,new Vector3(ChargePoseRad*Mathf.Clamp01(ObservedCharge())*Mathf.Rad2Deg,0,0),Vector3.zero);
-            _chargeBoneRest=_chargeBone.localRotation;
-            if(_chargeTorso!=null)_torsoRest=_chargeTorso.localRotation;
-            if(_chargeHead!=null)_headRest=_chargeHead.localRotation;
-            if(_chargeOff!=null)_offRest=_chargeOff.localRotation;
-            var basis=new ThrowGesture.Pose(_torsoRest,_headRest,_chargeBoneRest,_offRest);
-            var drawn=_throwReleaseTime>=0
-                ? ThrowGesture.Release(_throwCarryBasis,_throwReleaseFrom,basis,_throwReleaseTime,_throwReleaseSpin)
-                : throwing ? ThrowGesture.Pose.Apply(basis,pose)
-                : new ThrowGesture.Pose(_torsoRest*pose.Torso,_headRest*pose.Head,_chargeBoneRest*pose.Right,_offRest*pose.Left);
-            _chargeBone.localRotation=drawn.Right;
-            if(_chargeTorso!=null)_chargeTorso.localRotation=drawn.Torso;
-            if(_chargeHead!=null)_chargeHead.localRotation=drawn.Head;
-            if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
-            _chargeOffsetsApplied=true;_lastThrowPose=pose;
+            RestoreArrivalPose();
+            RestoreEdgeRecoveryPose();
+            RestoreIntroductionPose();
+            RestoreTagBody();
+            RestoreSlideBody();
+            RestoreResetRaise();
+            RestoreLocomotionArms();
+            RestoreThrowBody();
+            RestoreLocomotionWeight();
+            if (_arrivalWeight > 0)
+            {
+                RestoreChargeOffsets();
+                ApplyArrivalPose();
+                return;
+            }
+            try
+            {
+                // Remove last frame's offsets even when the graph is paused or a clip
+                // leaves a bone unkeyed. Carrier then reads this frame's posed hand.
+                RestoreChargeOffsets();
+                if (!_chargePosing && _throwReleaseTime < 0 && _throwCancelTime < 0) return;
+                if (_chargeBone==null && !ResolveChargeBone()) return;
+                bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
+                var pose=throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
+                    : ThrowGesture.LungePreparation(ObservedCharge());
+                // A state update can arrive after Update but before this render.
+                // Retain the last held pose until StepChargePose starts its return;
+                // otherwise this one frame replaces the return's source with Rest.
+                if (_chargePosing && _throwPreparing && !throwing) pose = _lastThrowPose;
+                if (_throwCancelTime >= 0) pose = ThrowGesture.Pose.Lerp(_throwCancelFrom,ThrowGesture.Rest,
+                    Mathf.SmoothStep(0,1,_throwCancelTime/ThrowGesture.CancelSeconds));
+                _chargeBoneRest=_chargeBone.localRotation;
+                if(_chargeTorso!=null)_torsoRest=_chargeTorso.localRotation;
+                if(_chargeHead!=null)_headRest=_chargeHead.localRotation;
+                if(_chargeOff!=null)_offRest=_chargeOff.localRotation;
+                var basis=new ThrowGesture.Pose(_torsoRest,_headRest,_chargeBoneRest,_offRest);
+                var drawn=_throwCancelTime>=0
+                    ? ThrowGesture.Pose.Apply(basis,pose)
+                    : _throwReleaseTime>=0
+                    ? ThrowGesture.Release(_throwCarryBasis,_throwReleaseFrom,basis,_throwReleaseTime,_throwReleaseSpin)
+                    : throwing ? ThrowGesture.Pose.Apply(basis,pose)
+                    : new ThrowGesture.Pose(_torsoRest*pose.Torso,_headRest*pose.Head,_chargeBoneRest*pose.Right,_offRest*pose.Left);
+                _chargeBone.localRotation=drawn.Right;
+                if(_chargeTorso!=null)_chargeTorso.localRotation=drawn.Torso;
+                if(_chargeHead!=null)_chargeHead.localRotation=drawn.Head;
+                if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
+                _chargeOffsetsApplied=true;_lastThrowPose=pose;
+                ApplyThrowBody(throwing);
+            }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplySlideBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
         }
 
         private void RestoreChargeOffsets()
@@ -978,6 +1128,7 @@ namespace TumbangPreso.Visual
         private void ClearChargePose()
         {
             RestoreChargeOffsets();
+            _throwCancelTime = -1; _throwPreparing = false;
             _chargePosing = false;
             _chargeBone = _chargeTorso = _chargeHead = _chargeOff = null;
 
@@ -992,6 +1143,7 @@ namespace TumbangPreso.Visual
         /// part-played. See `Carrier.StepDefender`, where the reset channel runs far longer than
         /// the gesture that announces it.</summary>
         public bool IsPlayingAction => _oneShotLeft > 0.0f;
+        public string CurrentClipName => _current;
 
         public void CancelHeroAction(string expected = null, string viewmodel = null)
         {
@@ -1006,7 +1158,7 @@ namespace TumbangPreso.Visual
         /// <summary>A non-looping action that owns the body until it finishes.</summary>
         public void PlayOneShot(string clipName)
         {
-            if (!_graph.IsValid() || !_clips.TryGetValue(clipName, out var clip)) return;
+            if (!_graph.IsValid() || !_clips.TryGetValue(Variant(clipName), out var clip)) return;
 
             ClearChargePose();
             _throwReleaseTime=-1;
@@ -1018,6 +1170,7 @@ namespace TumbangPreso.Visual
 
         // Rejoining an accepted preparation resumes its existing authored body/FPP
         // gesture; it does not emit a new gameplay cast or ultimate introduction.
+        private bool _restoringAction;
         public void PlayActionAt(string action,string viewmodelAction,float elapsed,bool onlyWhileClipRunning=false)
         {
             if(onlyWhileClipRunning)
@@ -1025,7 +1178,9 @@ namespace TumbangPreso.Visual
                 var runningClip=ResolveChain(ActionClips,action);
                 if(runningClip==null || elapsed>=ClipLength(runningClip)) return;
             }
-            PlayAction(action,viewmodelAction);
+            bool restoring = _restoringAction; _restoringAction = true;
+            try { PlayAction(action,viewmodelAction); }
+            finally { _restoringAction = restoring; }
             var clip=ResolveChain(ActionClips,action);
             if(clip!=null && _current==clip && _graph.IsValid())
             {
@@ -1058,6 +1213,9 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void PlayAction(string action, string viewmodelAction)
         {
+            bool raising = action == "grab" && NoteResetGesture();
+            NoteTag(action);
+            if (_introductionAbility != null && action != _introductionAbility.CastAction) ClearIntroductionPose();
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
             // `character_visual.gd::play_action` opens with exactly this call and says why:
             // *"the third-person model has always animated here; in FIRST person the player sees
@@ -1073,10 +1231,15 @@ namespace TumbangPreso.Visual
             // throw, grab, shove, punch and lunge all reach the viewmodel for free — and a verb
             // added later cannot forget to.
             CameraSystem.CameraRig.PlayViewmodelAction(_motor, viewmodelAction);
+            // This entry already reaches owner, host and observers exactly once.
+            // Restoration seeks the pose silently; a live lunge earns its rush.
+            if (!_restoringAction && action == "lunge")
+                GameServices.Audio?.PlayAtVaried("dash", transform.position, .95f, 1.03f, .8f);
 
             var releaseFrom=(_chargePosing || _chargeOffsetsApplied) ? _lastThrowPose : ThrowGesture.Rest;
             if(ThrowGesture.IsThrow(action))
             {
+                _throwCancelTime=-1;
                 bool hadPose=_chargeOffsetsApplied;
                 if(_chargeBone!=null || ResolveChargeBone())
                 {
@@ -1089,6 +1252,18 @@ namespace TumbangPreso.Visual
                 _throwReleaseFrom=ThrowGesture.Pose.Apply(_throwCarryBasis,releaseFrom);
                 _throwReleaseSpin=ThrowGesture.Spin(action);_throwReleaseTime=0;
                 _oneShotLeft=ThrowGesture.ReleaseSeconds;
+                // A variant body's own legs under the gesture (`ClipVariant`): Mountain Form stamps into the throw.
+                if(ThrowBase!=null && _motor.IsGrounded)Play(ThrowBase,loop:false,force:true);
+            }
+            else if (action == "grab" && raising)
+            {
+                // ⚠️⚠️ A RAISE DOES NOT REPLAY `pick-up` (2026-09-26). The channel relays a `grab`
+                // every 0.4 s, and each one restarted the 0.33 s one-shot UNDER the raise pose: the
+                // captured torso went 87, 42, 83 degrees and back, a bob on every relay, which is
+                // the very thing the owner asked to replace with a crouch and a lift
+                // (`CanRaiseShape`). The procedural raise owns the body for the whole channel.
+                _oneShotLeft = 0;
+                _throwReleaseTime = -1;
             }
             else
             {
@@ -1109,7 +1284,7 @@ namespace TumbangPreso.Visual
             if (key == null || !table.TryGetValue(key, out var chain)) return null;
 
             foreach (string name in chain)
-                if (_clips.ContainsKey(name)) return name;
+                if (HasClip(name)) return name;
 
             return null;
         }
@@ -1133,7 +1308,7 @@ namespace TumbangPreso.Visual
         }
 
         private float ClipLength(string clipName)
-            => _clips.TryGetValue(clipName, out var clip) ? clip.length : 0.0f;
+            => clipName != null && _clips.TryGetValue(Variant(clipName), out var clip) ? clip.length : 0.0f;
 
         /// <summary>
         /// Freeze a non-looping clip on its last frame.
@@ -1280,6 +1455,71 @@ namespace TumbangPreso.Visual
             return true;
         }
 
+        // ------------------------------------------------------------------ PAETE'S KIT, ON ANY BODY
+
+        private float _heaveProgress, _stumbleLeft;
+        private bool _wasRooted;
+        private bool _rootedPose;
+
+        /// <summary>
+        /// ⚠️ TWO POSES ANY BODY TAKES AGAINST PAETE'S KIT (HERO-9), READ OFF THE MOTOR SO EVERY PEER
+        /// DRAWS THEM: `IsStruggling` (holding Interact while Rooted) loops `rooted-struggle`, and
+        /// `PullingPlantProgress` SCRUBS `plant-heave` so the body is exactly as far into the pull as
+        /// the ring says. When a pull completes the rest of the clip (the stumble back) plays at speed.
+        ///
+        /// ⚠️ A ONE-SHOT WINS. A rooted player can still throw and cast (owner: *"theyre js
+        /// rooted"*), and the throw must not be swallowed by the struggle loop.
+        /// </summary>
+        private bool StepRootedPose()
+        {
+            if (_motor == null) return false;
+            // ⚠️ FEARED (ABILITY-2): the panicked run loops for as long as the status runs; a one-shot
+            // (the drop, a hit reaction) still wins.
+            if (_motor.IsFeared && _oneShotLeft <= 0f && _clips.ContainsKey(RootedMotion.Feared))
+            {
+                Play(RootedMotion.Feared, true);
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            // ⚠️ BREAKING OUT (direction.md section 5.6): the step the roots let go, the body plays its
+            // own break-out once, on every peer, off the replicated Rooted state. A tag keeps the tag's
+            // reaction, so it is not played over a tagged body.
+            bool rooted = _motor.IsRooted;
+            if (_wasRooted && !rooted && !_motor.IsTagged && _clips.ContainsKey(RootedMotion.Breakout))
+            { _wasRooted = false; _rootedPose = false; PlayOneShot(RootedMotion.Breakout); return false; }
+            _wasRooted = rooted;
+            float pull = _motor.PullingPlantProgress;
+            if (pull <= 0f && _heaveProgress >= .95f && _clips.ContainsKey(RootedMotion.Heave))
+                _stumbleLeft = ClipLength(RootedMotion.Heave) - RootedMotion.HeaveScrubSeconds;
+            _heaveProgress = pull;
+            if (_oneShotLeft > 0f) { _rootedPose = false; return false; }
+            if (pull > 0f && _clips.ContainsKey(RootedMotion.Heave))
+            {
+                if (_current != RootedMotion.Heave) Play(RootedMotion.Heave, false, true);
+                var front = Front(); if (front.IsValid()) { front.SetSpeed(0); front.SetTime(RootedMotion.HeaveScrubSeconds * Mathf.Clamp01(pull)); }
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            if (_stumbleLeft > 0f && _current == RootedMotion.Heave)
+            {
+                _stumbleLeft -= Time.deltaTime;
+                var front = Front(); if (!front.IsValid()) { _stumbleLeft = 0f; return false; }
+                front.SetSpeed(1);
+                if (front.GetTime() < RootedMotion.HeaveScrubSeconds) front.SetTime(RootedMotion.HeaveScrubSeconds);
+                Blend(); HoldLastFrame(); return true;
+            }
+            _stumbleLeft = 0f;
+            // ⚠️⚠️ A ROOTED BODY STRAINS ALL THE TIME, NOT ONLY WHILE ITS PLAYER HOLDS THE BUTTON (owner, 2026-09-26:
+            // *"they look like theyre js standing"*, *"animate taht shit"*). Idle, the struggle loop runs at 0.45 speed:
+            // a slow tug at the bands, the body testing the hold; fighting (Interact held), it runs at 1.25, hard.
+            if (_motor.IsRooted && _clips.ContainsKey(RootedMotion.Struggle))
+            {
+                Play(RootedMotion.Struggle, true);
+                var front = Front(); if (front.IsValid()) front.SetSpeed(_motor.IsStruggling ? 1.25f : 0.45f);
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            if (_rootedPose) { _rootedPose = false; _current = null; }
+            return false;
+        }
+
         private float _recoveryEntered,_recoveryProgress;
         private bool StepSupportedRecovery()
         {
@@ -1311,8 +1551,9 @@ namespace TumbangPreso.Visual
 
         private void Play(string clipName, bool loop, bool force = false)
         {
-            if (!force && clipName == _current) return;
-            if (!_clips.TryGetValue(clipName, out var clip) || !_mixer.IsValid()) return;
+            string playing = Variant(clipName);
+            if (!force && clipName == _current && playing == _playing) return;
+            if (!_clips.TryGetValue(playing, out var clip) || !_mixer.IsValid()) return;
 
             // Retire whatever was on input 0 and slide the current clip down to it, so the
             // mixer always crossfades from what you were doing to what you are doing now.
@@ -1368,7 +1609,7 @@ namespace TumbangPreso.Visual
             _weight = outgoing.IsValid() ? 0.0f : 1.0f;
             _mixer.SetInputWeight(0, 1f - _weight);
             _mixer.SetInputWeight(1, _weight);
-            _current = clipName;
+            _current = clipName; _playing = playing;
             _holdAtEnd = !loop;
             _transitionSeconds = loop&&System.Array.IndexOf(SwimmingMotion.Names,clipName)>=0?.24f:loop ? _blend : Mathf.Min(_blend,.07f);
         }

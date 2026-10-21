@@ -29,6 +29,9 @@ namespace TumbangPreso.PlayTests
     [Category(WallClock)]
     public class AiDiagnosticProbe
     {
+        private CustomRules _priorRules;
+        private bool _priorRulesPinned, _priorAllBots;
+        private int _priorCharacterPick;
         /// <summary>
         /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
         /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
@@ -36,10 +39,23 @@ namespace TumbangPreso.PlayTests
         /// mechanism and why BOTH hooks are needed rather than one.
         /// </summary>
         [UnitySetUp]
-        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldBefore()
+        {
+            _priorRules = UI.SceneFlow.SelectedRules.Clone();
+            _priorRulesPinned = UI.SceneFlow.RulesPinned; _priorAllBots = GameLaunch.AllBots;
+            _priorCharacterPick = Settings.SettingsStore.Current.CharacterPick;
+            yield return PlayModeWorld.Reset();
+        }
 
         [UnityTearDown]
-        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldAfter()
+        {
+            yield return PlayModeWorld.Reset();
+            UI.SceneFlow.AdoptRemoteRules(_priorRules);
+            if (_priorRulesPinned) UI.SceneFlow.PinSelectedRules(_priorRules); else UI.SceneFlow.UnpinSelectedRules();
+            GameLaunch.AllBots = _priorAllBots;
+            Settings.SettingsStore.Current.CharacterPick = _priorCharacterPick;
+        }
 
         /// <summary>
         /// The category that keeps this class out of the default PlayMode run.
@@ -94,6 +110,25 @@ namespace TumbangPreso.PlayTests
         {
             yield return Diagnose(GameMode.HeroStrike, 40.0f);
         }
+
+        [UnityTest] public IEnumerator ClassicBridgeLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.IlalimNgTulay);
+        [UnityTest] public IEnumerator HeroBridgeLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.IlalimNgTulay);
+        [UnityTest] public IEnumerator ClassicKantoLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.Kanto);
+        [UnityTest] public IEnumerator HeroKantoLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.Kanto);
+        [UnityTest] public IEnumerator ClassicCoveLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.LagoonCove);
+        [UnityTest] public IEnumerator HeroCoveLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove);
+        [UnityTest] public IEnumerator ClassicEskinitaLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.Eskinita);
+        [UnityTest] public IEnumerator HeroEskinitaLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.Eskinita);
+        [UnityTest] public IEnumerator ClassicPlazaLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.BayanPlaza);
+        [UnityTest] public IEnumerator HeroPlazaLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.BayanPlaza);
+        [UnityTest] public IEnumerator ClassicRoofLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.SaBubong);
+        [UnityTest] public IEnumerator HeroRoofLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.SaBubong);
+        [UnityTest] public IEnumerator HeroRosterPickZero() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 0);
+        [UnityTest] public IEnumerator HeroRosterPickOne() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 1);
+        [UnityTest] public IEnumerator HeroRosterPickTwo() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 2);
+        [UnityTest] public IEnumerator HeroRosterPickThree() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 3);
+        [UnityTest] public IEnumerator HeroRosterPickFour() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 4);
+        [UnityTest] public IEnumerator IlyasPrethrowLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 6);
 
         /// <summary>
         /// C2: whole matches of lunges at ordinary 1x simulation speed. The world is stepped at a
@@ -190,36 +225,83 @@ namespace TumbangPreso.PlayTests
                 "The lunge tracker and MatchStatsCollector disagree about how many lunges were released.");
         }
 
-        private IEnumerator Diagnose(GameMode mode, float seconds)
+        private IEnumerator Diagnose(GameMode mode, float seconds, string selectedMap = null, int characterPick = -1)
         {
             var previousMode = UI.SceneFlow.SelectedMode;
-            UI.SceneFlow.SelectedMode = mode;
+            if (characterPick >= 0) Settings.SettingsStore.Current.CharacterPick = characterPick;
+            var rules = CustomGameRules.Defaults(mode);
+            rules.Bots = CustomGameRules.MaxBots; rules.ManualReady = false;
+            UI.SceneFlow.PinSelectedRules(rules); GameLaunch.AllBots = characterPick < 0;
+            // Reuse the same decision trace for map-specific stall reports.
+            // The default and its historic filenames remain Eskinita.
+            string map = selectedMap ?? System.Environment.GetEnvironmentVariable("TUMP_AI_MAP");
+            if (string.IsNullOrEmpty(map)) map = UI.SceneFlow.Eskinita;
+            Assert.Contains(map, UI.SceneFlow.Maps, "Unknown diagnostic map");
 
             Hitstop.End();
             Time.timeScale = 1.0f;
 
-            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
+            var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
             yield return ProbeWait.Done(load, "scene load");
             for (int i = 0; i < 25; i++) yield return null;
 
             var round = GameServices.Round;
             Assert.IsNotNull(round);
+            if (characterPick >= 0)
+            {
+                // Use the real human character-selection path, then replace only
+                // its input writer for unattended play. AllBots deliberately has
+                // no human seat and therefore ignores the chosen character.
+                var installer = Object.FindAnyObjectByType<MatchInstaller>();
+                var chosen = round.PlayerAt(installer.HumanSeat);
+                Assert.AreEqual(characterPick, chosen.CharacterIndex, "The requested hero did not enter the actual roster.");
+                foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
+                foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>()) switcher.enabled = false;
+                // AI writes world-space keyboard headings. The selected chair's
+                // human rig otherwise rotates those headings by its mouse yaw.
+                var rig = Object.FindFirstObjectByType<CameraSystem.CameraRig>();
+                Assert.IsNotNull(rig);
+                rig.SetAimSource(CameraSystem.AimSource.Movement);
+                var brain = chosen.GetComponent<AIController>() ?? chosen.gameObject.AddComponent<AIController>();
+                brain.enabled = true;
+            }
 
             var runner = Object.FindFirstObjectByType<SliceRunner>();
             Assert.IsNotNull(runner);
-            runner.Begin();
+            var match = GameServices.Match; Assert.IsNotNull(match);
+            int starts = 0;
+            void Started(int number, int defender) => starts++;
+            match.RoundStarted += Started;
+            try
+            {
+                float until = Time.realtimeSinceStartup + 45;
+                while (!round.RoundActive && Time.realtimeSinceStartup < until) yield return null;
+                yield return null;
+                Assert.IsTrue(round.RoundActive, "The actual automatic ReadyGate did not begin the match.");
+                Assert.AreEqual(1, starts, "The diagnostic must observe one natural start without calling SliceRunner.Begin.");
+                Assert.IsFalse(PresentationClock.Held, "Live decision time must begin after the opening releases the clock.");
+            }
+            finally { match.RoundStarted -= Started; }
 
             var bots = Object.FindObjectsByType<AIController>(FindObjectsSortMode.None);
+            Assert.AreEqual(Balance.PlayerCount, bots.Length, "All four seats must have their real bot input writer.");
             var planTime = new Dictionary<string, float>();
             var log = new StringBuilder();
 
-            log.AppendLine($"ai diagnostic  ·  {mode}  ·  {bots.Length} bots  ·  1x");
+            log.AppendLine($"ai diagnostic  ·  {mode}  ·  {map}  ·  {bots.Length} bots  ·  1x");
+            log.AppendLine($"natural automatic starts={starts}; decision window begins after the opening; allbots={GameLaunch.AllBots}");
+            foreach (var bot in bots)
+            {
+                var body = bot.GetComponent<CharacterMotor>();
+                log.AppendLine($"roster seat={body.PlayerSlot} character={body.CharacterIndex} hero={body.AbilitySystem?.Kit?.HeroId} defender={body.IsDefender} origin={body.SeatOrigin}");
+            }
 
             var lunges = new LungeTracker();
             int lungeFrame = 0;
             float elapsed = 0.0f;
             float nextSample = 0.0f;
             int throws = 0;
+            float nextLungeGate = 0;
             var wasFlying = new HashSet<Slipper>();
             var escaped = new HashSet<Slipper>();
             var strayed = new HashSet<CharacterMotor>();
@@ -237,6 +319,27 @@ namespace TumbangPreso.PlayTests
                 float dt = Time.unscaledDeltaTime;
                 elapsed += dt;
                 lunges.Sample(round, GameServices.Match, ++lungeFrame, Time.deltaTime);
+                if (elapsed >= nextLungeGate)
+                {
+                    nextLungeGate = elapsed + .25f;
+                    const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                    foreach (var bot in bots)
+                    {
+                        var body = bot.GetComponent<CharacterMotor>(); var verbs = body.GetComponent<CombatVerbs>();
+                        if (!body.IsDefender || verbs == null || verbs.ObservedLungeCharge <= 0) continue;
+                        // Read the planner's chosen actor; never call TagTarget and
+                        // mutate its selection memory from an observer.
+                        var target = (CharacterMotor)typeof(AIController).GetField("_lastTagTarget", hidden).GetValue(bot);
+                        bool? facing = target != null ? (bool)typeof(AIController).GetMethod("Facing", hidden).Invoke(bot,
+                            new object[] { target, AiTuning.EffectiveLungeCone(AIController.ActiveDifficulty) }) : (bool?)null;
+                        bool? reach = target != null ? (bool)typeof(AIController).GetMethod("LungeCanReach", hidden).Invoke(bot,
+                            new object[] { target, verbs.LungeChargeRatio }) : (bool?)null;
+                        bool edge = (bool)typeof(AIController).GetMethod("EdgeLungeClear", hidden).Invoke(bot, new object[] { body.transform.forward });
+                        var held = typeof(AIController).GetField("_lungeHeld", hidden).GetValue(bot);
+                        log.AppendLine($"lunge-gate t={elapsed:F2} plan={bot.Plan} actor={body.PlayerSlot} held={held} consumerRatio={verbs.ObservedLungeCharge:F3} consumerChargeSeconds={typeof(CombatVerbs).GetField("_lungeCharge", hidden).GetValue(verbs)} target={target?.PlayerSlot} taggable={target?.IsTaggable()} facing={facing} reach={reach} edge={edge} canAct={body.CanAct()} canMove={body.CanMove()} facePoint={body.Intent.FaceAimPoint}/{body.Intent.HasAimPoint} aim={body.Intent.AimPoint} forward={body.transform.forward} at={body.transform.position} velocity={body.Velocity} targetAt={target?.transform.position} targetVelocity={target?.Velocity}");
+                    }
+                }
+
 
                 foreach (var bot in bots)
                 {
@@ -250,8 +353,7 @@ namespace TumbangPreso.PlayTests
                 {
                     if (seat == null) continue;
 
-                    bool away = Mathf.Abs(seat.transform.position.x) > AIController.PlayableHalfX + 0.5f
-                             || Mathf.Abs(seat.transform.position.z) > AIController.PlayableHalfZ + 0.5f;
+                    bool away = AIController.IsOutsidePlayable(seat.transform.position, 0.5f);
 
                     if (away && strayed.Add(seat))
                         log.AppendLine($"!! t={elapsed:F1} seat {seat.PlayerSlot} LEFT THE ARENA at " +
@@ -272,8 +374,7 @@ namespace TumbangPreso.PlayTests
                     // First moment a slipper leaves the playable rectangle, with the state and
                     // velocity that took it there. Out of bounds is unrecoverable for the owner,
                     // so naming the frame it happens on names the verb responsible.
-                    bool outside = Mathf.Abs(slipper.transform.position.x) > AIController.PlayableHalfX + 0.5f
-                                || Mathf.Abs(slipper.transform.position.z) > AIController.PlayableHalfZ + 0.5f;
+                    bool outside = AIController.IsOutsidePlayable(slipper.transform.position, 0.5f);
                     if (outside && escaped.Add(slipper))
                     {
                         log.AppendLine($"!! t={elapsed:F1} slipper own={slipper.OwnerSlot} LEFT THE ARENA at " +
@@ -320,6 +421,8 @@ namespace TumbangPreso.PlayTests
 
                         var motor = bot.GetComponent<CharacterMotor>();
                         var carrier = motor.GetComponent<Carrier>();
+                        var kit = motor.AbilitySystem?.Kit;
+                        if (kit != null) log.AppendLine($"kit t={elapsed:F1} seat={motor.PlayerSlot} hero={kit.HeroId} skill1={kit.Skill1?.CooldownRemaining:F3}/{kit.Skill1?.IsActive} skill2={kit.Skill2?.CooldownRemaining:F3}/{kit.Skill2?.IsActive} ultimate={kit.UltimateCharge:F2}/{kit.Ultimate?.IsActive}");
 
                         log.AppendLine(
                             $"t={elapsed:F1} seat={motor.PlayerSlot} plan={bot.Plan} " +
@@ -436,7 +539,9 @@ namespace TumbangPreso.PlayTests
             log.Append(lunges.Describe());
 
             Directory.CreateDirectory("Logs");
-            File.WriteAllText($"Logs/ai-diagnostic-{mode}.txt", log.ToString());
+            string mapSuffix = map == UI.SceneFlow.Eskinita ? "" : "-" + map;
+            if (characterPick >= 0) mapSuffix += "-pick" + characterPick;
+            File.WriteAllText($"Logs/ai-diagnostic-{mode}{mapSuffix}.txt", log.ToString());
             Debug.Log(log.ToString());
 
             UI.SceneFlow.SelectedMode = previousMode;
@@ -460,12 +565,12 @@ namespace TumbangPreso.PlayTests
             {
                 if (seat == null) continue;
 
-                Assert.LessOrEqual(Mathf.Abs(seat.transform.position.x),
-                    AIController.PlayableHalfX + 0.1f,
-                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on X.");
-                Assert.LessOrEqual(Mathf.Abs(seat.transform.position.z),
-                    AIController.PlayableHalfZ + 0.1f,
-                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on Z.");
+                // Per side since 2026-09-27: each wall in its own place, 0.1 m of slack.
+                Vector3 at = seat.transform.position;
+                Assert.IsTrue(at.x >= AIController.PlayableMinX - 0.1f && at.x <= AIController.PlayableMaxX + 0.1f,
+                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on X at {at.x:F2}.");
+                Assert.IsTrue(at.z >= AIController.PlayableMinZ - 0.1f && at.z <= AIController.PlayableMaxZ + 0.1f,
+                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on Z at {at.z:F2}.");
             }
 
             // ⚠️ TWICE THE TOURNAMENT GRACE PERIOD, NOT THE GRACE PERIOD ITSELF. A bot that is
@@ -503,10 +608,10 @@ namespace TumbangPreso.PlayTests
             private sealed class Live
             {
                 public int Slot, Frame, Round, ChargeFrames;
-                public string Reason, Plan, Victim;
+                public string PostReleaseState, Plan, Victim;
                 public CharacterMotor VictimBody;
                 public Vector3 From, Forward, VictimAt, VictimVel;
-                public float Power, Distance, Bearing, Lateral, Time;
+                public float Power, ChargeSeconds, Distance, Bearing, Lateral, Time;
                 public bool VictimTaggable, AnyTaggable;
                 public float MinVictim = float.MaxValue, MinVictimTaggable = float.MaxValue, MinAnyTaggable = float.MaxValue;
                 public bool VictimLeftTaggable, Hit;
@@ -520,6 +625,7 @@ namespace TumbangPreso.PlayTests
             }
 
             private readonly Dictionary<int, int> _charging = new Dictionary<int, int>();
+            private readonly Dictionary<int, float> _consumerChargeSeconds = new Dictionary<int, float>();
             private readonly Dictionary<int, bool> _cooling = new Dictionary<int, bool>();
             private readonly Dictionary<int, string> _planAtCharge = new Dictionary<int, string>();
             private readonly Dictionary<int, string> _startAtCharge = new Dictionary<int, string>();
@@ -598,6 +704,7 @@ namespace TumbangPreso.PlayTests
                     _charging[slot] = charging ? heldFrames : 0;
                     if (charging)
                     {
+                        _consumerChargeSeconds[slot] = (float)typeof(CombatVerbs).GetField("_lungeCharge", Private).GetValue(verbs);
                         _hitsWhileCharging[slot] = LungeHits(slot);
                         _tagsWhileCharging[slot] = _tagsBySlot.TryGetValue(slot, out int tw) ? tw : 0;
                     }
@@ -615,7 +722,8 @@ namespace TumbangPreso.PlayTests
                 };
                 l.From = (Vector3)(typeof(CombatVerbs).GetField("_lungeFrom", Private)?.GetValue(verbs) ?? taya.transform.position);
                 l.Forward = taya.transform.forward; l.Forward.y = 0.0f; l.Forward.Normalize();
-                float charge = chargeFrames * dt;
+                float charge = _consumerChargeSeconds.TryGetValue(taya.PlayerSlot, out float measured) ? measured : 0;
+                l.ChargeSeconds = charge;
                 l.Power = Mathf.Clamp(charge / Balance.LungeChargeTime, Balance.LungeMinPower, 1.0f);
 
                 var victim = ai != null ? typeof(AIController).GetField("_lastTagTarget", Private)?.GetValue(ai) as CharacterMotor : null;
@@ -636,12 +744,15 @@ namespace TumbangPreso.PlayTests
                 }
 
                 string planAtCharge = _planAtCharge.TryGetValue(taya.PlayerSlot, out var p0) ? p0 : "-";
-                if (ai == null) l.Reason = "human";
-                else if (l.Plan != "Hunt") l.Reason = $"released-by-plan-change({planAtCharge}->{l.Plan})";
-                else if (victim == null || !l.VictimTaggable) l.Reason = "no-taggable-victim";
-                else if (charge >= AiTuning.LungeHoldTime + 0.45f - dt * 0.5f) l.Reason = "hold-timeout";
-                else if (charge >= AiTuning.LungeHoldTime - dt * 0.5f) l.Reason = "cone-release";
-                else l.Reason = "short-release";
+                // This observer runs after the consumer can resolve a tag. It
+                // describes the resulting state and measured duration, not the
+                // producer's release cause (which may already have changed).
+                if (ai == null) l.PostReleaseState = "human-input-writer";
+                else if (l.Plan != "Hunt") l.PostReleaseState = $"current-plan({planAtCharge}->{l.Plan})";
+                else if (victim == null || !l.VictimTaggable) l.PostReleaseState = "target-absent-or-untaggable-after-release";
+                else if (charge >= AiTuning.LungeHoldTime + 0.45f - dt * 0.5f) l.PostReleaseState = "long-held-release";
+                else if (charge >= AiTuning.LungeHoldTime - dt * 0.5f) l.PostReleaseState = "charged-release";
+                else l.PostReleaseState = "short-charge-release";
 
                 l.HitsBefore = _hitsWhileCharging.TryGetValue(taya.PlayerSlot, out int hb) ? hb : LungeHits(taya.PlayerSlot);
                 l.Start = _startAtCharge.TryGetValue(taya.PlayerSlot, out var s0) ? s0 : "-";
@@ -690,8 +801,8 @@ namespace TumbangPreso.PlayTests
             {
                 int hits = LungeHits(l.Slot) - l.HitsBefore;
                 string outcome = hits > 0 ? "HIT" : "miss";
-                Lines.Add($"frame={l.Frame} round={l.Round} left={l.Time:F1} taya={l.Slot} plan={l.Plan} reason={l.Reason} " +
-                          $"charge={l.ChargeFrames} power={l.Power:F2} victim={l.Victim} victimTaggable={l.VictimTaggable} anyTaggable={l.AnyTaggable} " +
+                Lines.Add($"frame={l.Frame} round={l.Round} left={l.Time:F1} taya={l.Slot} plan={l.Plan} postReleaseState={l.PostReleaseState} " +
+                          $"chargeFrames={l.ChargeFrames} chargeSeconds={l.ChargeSeconds:F3} power={l.Power:F2} victim={l.Victim} victimTaggable={l.VictimTaggable} anyTaggable={l.AnyTaggable} " +
                           $"dist={l.Distance:F2} bearing={l.Bearing:F1} lateral={l.Lateral:F2} victimSpeed={l.VictimVel.magnitude:F2} " +
                           $"minVictim={Fmt(l.MinVictim)} minVictimWhileTaggable={Fmt(l.MinVictimTaggable)} minAnyTaggable={Fmt(l.MinAnyTaggable)} " +
                           $"victimLeftTaggable={l.VictimLeftTaggable} heldAfterRelease={l.HeldAfter:F3} punchCooldown={l.PunchCooldown:F2} tagsDuringCharge={l.TagsDuringCharge} start=[{l.Start}] outcome={outcome}");
@@ -726,17 +837,18 @@ namespace TumbangPreso.PlayTests
             {
                 var sb = new StringBuilder();
                 int hits = 0;
-                var byReason = new SortedDictionary<string, int[]>();
+                var byState = new SortedDictionary<string, int[]>();
                 foreach (var l in _done)
                 {
                     bool hit = l.Hit;
                     if (hit) hits++;
-                    string key = l.Reason.StartsWith("released-by-plan-change") ? "released-by-plan-change" : l.Reason;
-                    if (!byReason.TryGetValue(key, out var c)) byReason[key] = c = new int[2];
+                    string key = l.PostReleaseState.StartsWith("current-plan") ? "current-plan" : l.PostReleaseState;
+                    if (!byState.TryGetValue(key, out var c)) byState[key] = c = new int[2];
                     c[0]++; if (hit) c[1]++;
                 }
                 sb.AppendLine($"lunge trace: {_done.Count} completed lunges, {hits} hits");
-                foreach (var kv in byReason) sb.AppendLine($"  {kv.Key,-28} {kv.Value[1]}/{kv.Value[0]}");
+                sb.AppendLine("  Categories describe post-release state and duration, not release causes.");
+                foreach (var kv in byState) sb.AppendLine($"  {kv.Key,-28} {kv.Value[1]}/{kv.Value[0]}");
                 foreach (var line in Lines) sb.AppendLine("  " + line);
                 return sb.ToString();
             }

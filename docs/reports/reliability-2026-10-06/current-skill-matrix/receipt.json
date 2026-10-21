@@ -1,0 +1,85 @@
+{
+  "cases": [
+    {
+      "case": "stomp",
+      "exitCode": 2,
+      "folderCreated": false,
+      "error": "These Dante scenarios target the retired Stomp/Carapace/Fissure kit. Basilio now uses Unstoppable, Boulder/Bastion and Continental Drift. Do not use this matrix to qualify his current skills."
+    },
+    {
+      "case": "tremor",
+      "exitCode": 2,
+      "folderCreated": false,
+      "error": "These Dante scenarios target the retired Stomp/Carapace/Fissure kit. Basilio now uses Unstoppable, Boulder/Bastion and Continental Drift. Do not use this matrix to qualify his current skills."
+    },
+    {
+      "case": "ward",
+      "exitCode": 2,
+      "folderCreated": false,
+      "error": "These Dante scenarios target the retired Stomp/Carapace/Fissure kit. Basilio now uses Unstoppable, Boulder/Bastion and Continental Drift. Do not use this matrix to qualify his current skills."
+    },
+    {
+      "case": "plating",
+      "exitCode": 2,
+      "folderCreated": false,
+      "error": "These Dante scenarios target the retired Stomp/Carapace/Fissure kit. Basilio now uses Unstoppable, Boulder/Bastion and Continental Drift. Do not use this matrix to qualify his current skills."
+    },
+    {
+      "case": "fissure",
+      "exitCode": 2,
+      "folderCreated": false,
+      "error": "These Dante scenarios target the retired Stomp/Carapace/Fissure kit. Basilio now uses Unstoppable, Boulder/Bastion and Continental Drift. Do not use this matrix to qualify his current skills."
+    },
+    {
+      "case": "basic-zack",
+      "exitCode": 2,
+      "folderCreated": false,
+      "error": "The basic skill matrix targets retired Dante mechanics. Use a supported current movement or preparation reconstruction scenario."
+    }
+  ],
+  "helpExit": 0,
+  "scope": "Actual CLI rejects six retired scenarios before output creation, profile access or child-process launch. No player/Unity/runtime-skill acceptance.",
+  "supportedScenarioControls": [
+    {
+      "hero": "sean",
+      "case": "stomp",
+      "flags": [
+        "--movement-review"
+      ],
+      "passedScenarioPreflight": true,
+      "stoppedAtMissingInternalArtifact": true,
+      "outputCreated": false
+    },
+    {
+      "hero": "zack",
+      "case": "stomp",
+      "flags": [
+        "--movement-review"
+      ],
+      "passedScenarioPreflight": true,
+      "stoppedAtMissingInternalArtifact": true,
+      "outputCreated": false
+    },
+    {
+      "hero": "cheska",
+      "case": "fissure",
+      "flags": [
+        "--pending-review"
+      ],
+      "passedScenarioPreflight": true,
+      "stoppedAtMissingInternalArtifact": true,
+      "outputCreated": false
+    },
+    {
+      "hero": "zack",
+      "case": "fissure",
+      "flags": [
+        "--pending-review"
+      ],
+      "passedScenarioPreflight": true,
+      "stoppedAtMissingInternalArtifact": true,
+      "outputCreated": false
+    }
+  ],
+  "controlsScope": "Four actual CLI controls pass the new retirement guard and reach the existing missing-artifact check. They do not launch or qualify the native peer scenario."
+}

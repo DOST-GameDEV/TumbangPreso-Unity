@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "faults": [],
+  "observed": "agreed (hash D2A225D9 / D4EBBDD6); drift: seat 0 score 880 vs 850; seat 1 bot True vs False (origin HandedToBot / Human)",
+  "scope": "Actual two-player local link,5s outage at20s,25msone-way/5msjitter. Reports are not simultaneous; score and post-client-exit bot drift are retained, not claimed identical."
+}

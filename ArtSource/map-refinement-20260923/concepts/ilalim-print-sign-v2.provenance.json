@@ -1,0 +1,5 @@
+{
+  "source": "built-in image generation",
+  "sha256": "afcefa631896221864d68a9b0678faf1463ab9c54e161528995aa0f74a3bfe84",
+  "status": "REJECTED: visible background/transparency artifacts; never imported into game"
+}

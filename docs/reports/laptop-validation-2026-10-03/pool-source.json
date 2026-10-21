@@ -1,0 +1,9 @@
+{
+  "workerSourceRef": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+  "cacheSourceRef": "32fae8f4a22d239641ca3bb859bffc7a41ce75ee",
+  "concurrentEditors": 3,
+  "sampledLowFreeRAMKiB": 1561976,
+  "scope": "Observed concurrency and scoped product tests, not a complete performance study",
+  "profilesAndPrefs": "distinct validation company/product identities, caches and named profiles",
+  "guardUnitTestsPassed": 24
+}

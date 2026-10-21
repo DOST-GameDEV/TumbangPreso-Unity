@@ -1,0 +1,6 @@
+{
+  "repairs": 1,
+  "change": "Reset chat event/name/line observations in SetUp; NUnit reuses the fixture instance.",
+  "assertionsChanged": false,
+  "productionOriginalUnchanged": true
+}

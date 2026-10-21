@@ -1,0 +1,18 @@
+diff --git a/Assets/TumbangPreso/Runtime/UI/Hud.cs b/Assets/TumbangPreso/Runtime/UI/Hud.cs
+index 3948e7b94..23c029b75 100644
+--- a/Assets/TumbangPreso/Runtime/UI/Hud.cs
++++ b/Assets/TumbangPreso/Runtime/UI/Hud.cs
+@@ -773,8 +773,13 @@ namespace TumbangPreso.UI
+         /// expire while the match it is announcing is stopped dead. A toast driven by scaled time
+         /// would stay on screen forever at exactly the moment it is needed.
+         /// </summary>
++        private float _lastBroadcastClockScale = 1f;
++
+         private void OnBroadcastClock(float scale)
+         {
++            // Clock snapshots reaffirm state; only a changed rate is a new announcement.
++            if (Mathf.Approximately(scale, _lastBroadcastClockScale)) return;
++            _lastBroadcastClockScale = scale;
+             if (scale <= 0.001f)
+             {
+                 ShowToast("PAUSED BY A SPECTATOR", 2.0f);

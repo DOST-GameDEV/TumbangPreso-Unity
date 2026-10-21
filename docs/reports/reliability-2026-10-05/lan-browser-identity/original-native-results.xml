@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.1356426">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1340" result="Failed" site="Child" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.135643" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2650" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1340" result="Failed" site="Child" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.116596" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22020" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2651" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1340" result="Failed" site="Child" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.106629" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2652" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1340" result="Failed" site="Child" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.097302" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1678" name="LanBrowserIdentityTests" fullname="TumbangPreso.Tests.LanBrowserIdentityTests" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.066230" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1682" name="HostHintPrefersUsableIpv4OverLinkLocalAdapters" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.HostHintPrefersUsableIpv4OverLinkLocalAdapters" methodname="HostHintPrefersUsableIpv4OverLinkLocalAdapters" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="2081020730" result="Failed" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.032727" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: collection containing "169.254.38.78:8910"
+  But was:  < "192.168.1.7:8910" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LanBrowserIdentityTests.HostHintPrefersUsableIpv4OverLinkLocalAdapters () [0x0008a] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\LanBrowserIdentityTests.cs:79
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1681" name="OlderBeaconsWithoutIdentityKeepDistinctEndpoints" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.OlderBeaconsWithoutIdentityKeepDistinctEndpoints" methodname="OlderBeaconsWithoutIdentityKeepDistinctEndpoints" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="1649515055" result="Passed" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.012816" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1679" name="OneHostAcrossAdaptersHasOneUsableCurrentRow" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.OneHostAcrossAdaptersHasOneUsableCurrentRow" methodname="OneHostAcrossAdaptersHasOneUsableCurrentRow" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="2009614043" result="Failed" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.002770" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  One process appeared twice through different adapters.
+  Expected: 1
+  But was:  2
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LanBrowserIdentityTests.OneHostAcrossAdaptersHasOneUsableCurrentRow () [0x0003f] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\LanBrowserIdentityTests.cs:52
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1680" name="SeparateProcessesWithTheSameRoomNameStaySeparate" fullname="TumbangPreso.Tests.LanBrowserIdentityTests.SeparateProcessesWithTheSameRoomNameStaySeparate" methodname="SeparateProcessesWithTheSameRoomNameStaySeparate" classname="TumbangPreso.Tests.LanBrowserIdentityTests" runstate="Runnable" seed="1790754466" result="Passed" start-time="2026-10-04 23:38:05Z" end-time="2026-10-04 23:38:05Z" duration="0.000638" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

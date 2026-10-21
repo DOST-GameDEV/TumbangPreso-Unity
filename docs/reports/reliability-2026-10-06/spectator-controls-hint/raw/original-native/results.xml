@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 03:15:24Z" end-time="2026-10-06 03:15:25Z" duration="0.6964106">
+  <test-suite type="TestSuite" id="3260" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1842" result="Failed" site="Child" start-time="2026-10-06 03:15:24Z" end-time="2026-10-06 03:15:25Z" duration="0.696411" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3252" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1842" result="Failed" site="Child" start-time="2026-10-06 03:15:24Z" end-time="2026-10-06 03:15:25Z" duration="0.662767" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18732" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3253" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1842" result="Failed" site="Child" start-time="2026-10-06 03:15:24Z" end-time="2026-10-06 03:15:25Z" duration="0.638184" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3256" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1840" result="Failed" site="Child" start-time="2026-10-06 03:15:25Z" end-time="2026-10-06 03:15:25Z" duration="0.613716" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2868" name="SpectatorControlsHintTests" fullname="TumbangPreso.PlayTests.SpectatorControlsHintTests" classname="TumbangPreso.PlayTests.SpectatorControlsHintTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 03:15:25Z" end-time="2026-10-06 03:15:25Z" duration="0.563240" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2869" name="HiddenControlsRetainTheBoundRestoreHint" fullname="TumbangPreso.PlayTests.SpectatorControlsHintTests.HiddenControlsRetainTheBoundRestoreHint" methodname="HiddenControlsRetainTheBoundRestoreHint" classname="TumbangPreso.PlayTests.SpectatorControlsHintTests" runstate="Runnable" seed="1251770005" result="Failed" start-time="2026-10-06 03:15:25Z" end-time="2026-10-06 03:15:25Z" duration="0.367025" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Hiding controls also erased the only restore hint.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorControlsHintTests.HiddenControlsRetainTheBoundRestoreHint () [0x00010] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorControlsHintTests.cs:26
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2871" name="PlayersDoNotReceiveTheSpectatorRestoreHint" fullname="TumbangPreso.PlayTests.SpectatorControlsHintTests.PlayersDoNotReceiveTheSpectatorRestoreHint" methodname="PlayersDoNotReceiveTheSpectatorRestoreHint" classname="TumbangPreso.PlayTests.SpectatorControlsHintTests" runstate="Runnable" seed="1367921297" result="Passed" start-time="2026-10-06 03:15:25Z" end-time="2026-10-06 03:15:25Z" duration="0.079416" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2870" name="VisibleControlsKeepTheirHideAndCleanFeedHints" fullname="TumbangPreso.PlayTests.SpectatorControlsHintTests.VisibleControlsKeepTheirHideAndCleanFeedHints" methodname="VisibleControlsKeepTheirHideAndCleanFeedHints" classname="TumbangPreso.PlayTests.SpectatorControlsHintTests" runstate="Runnable" seed="888512380" result="Passed" start-time="2026-10-06 03:15:25Z" end-time="2026-10-06 03:15:25Z" duration="0.100693" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,16 @@
+{
+  "source": "0e3b349087de750d6868b7287cfd5f0b31afaa91",
+  "protocol": 126,
+  "baseline": "3 failures: requested maps parked, zero active renderers",
+  "failedHypothesis": "Waiting for completed callback did not solve competing default Start request; removed",
+  "final": "3/3 passed and PNGs inspected",
+  "inputCount": 755,
+  "inputDrift": [],
+  "toolingRepairs": 0,
+  "productCorrections": 1,
+  "visible": {
+    "Kanto": 804,
+    "LagoonCove": 1342,
+    "IlalimNgTulay": 1069
+  }
+}

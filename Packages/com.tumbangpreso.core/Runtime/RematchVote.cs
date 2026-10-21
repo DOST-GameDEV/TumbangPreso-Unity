@@ -37,6 +37,9 @@ namespace TumbangPreso.Core
 
         public bool HasVoted(int peerId) => _voters.Contains(peerId);
 
+        public void RetainEligible(System.Predicate<int> eligible)
+            => _voters.RemoveWhere(peer => !eligible(peer));
+
         /// <summary>
         /// Is the gate open?
         ///

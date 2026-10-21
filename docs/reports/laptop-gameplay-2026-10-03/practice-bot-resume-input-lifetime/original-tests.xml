@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.3001334">
+  <test-suite type="TestSuite" id="2896" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1542" result="Failed" site="Child" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.300133" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2890" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1542" result="Failed" site="Child" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.285507" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3608" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2891" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1542" result="Failed" site="Child" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.276192" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2892" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1542" result="Failed" site="Child" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.267148" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2180" name="PracticeBotResumeInputLifetimeTests" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.241726" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2186" name="AnAlreadyDisabledAttachedBrainDoesNotOwnHeldHumanKeys" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.AnAlreadyDisabledAttachedBrainDoesNotOwnHeldHumanKeys" methodname="AnAlreadyDisabledAttachedBrainDoesNotOwnHeldHumanKeys" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="389863078" result="Passed" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.092475" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2184" name="ANewProducerCommandStillMovesAfterIdleResume" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.ANewProducerCommandStillMovesAfterIdleResume" methodname="ANewProducerCommandStillMovesAfterIdleResume" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="2116115766" result="Passed" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.036509" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2182" name="FirstResumedMotorStepDoesNotSteerFromTheOldCommand" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.FirstResumedMotorStepDoesNotSteerFromTheOldCommand" methodname="FirstResumedMotorStepDoesNotSteerFromTheOldCommand" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="192789692" result="Failed" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.027831" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The first legal FixedUpdate before AI.Update consumed a move retained across public idle.
+  Expected: less than 9.99999975E-05f
+  But was:  0.0750000477f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.FirstResumedMotorStepDoesNotSteerFromTheOldCommand () [0x000e1] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\PracticeBotResumeInputLifetimeTests.cs:63
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2185" name="ProducerWithSuppressedAbilitiesKeepsSharedHumanHeroKeys" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.ProducerWithSuppressedAbilitiesKeepsSharedHumanHeroKeys" methodname="ProducerWithSuppressedAbilitiesKeepsSharedHumanHeroKeys" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="1621364847" result="Passed" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.024378" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2181" name="PublicIdleResumeDoesNotRestoreTheOldProducerMove" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.PublicIdleResumeDoesNotRestoreTheOldProducerMove" methodname="PublicIdleResumeDoesNotRestoreTheOldProducerMove" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="1248988559" result="Failed" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.025063" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Unparking restored the producer's old raw move without a new command.
+  Expected: (0.00, 0.00)
+  But was:  (0.00, 1.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.PublicIdleResumeDoesNotRestoreTheOldProducerMove () [0x0000c] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\PracticeBotResumeInputLifetimeTests.cs:51
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2183" name="RepeatingActivePreservesTheCurrentProducerCommand" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.RepeatingActivePreservesTheCurrentProducerCommand" methodname="RepeatingActivePreservesTheCurrentProducerCommand" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="1642738509" result="Passed" start-time="2026-10-03 12:34:07Z" end-time="2026-10-03 12:34:07Z" duration="0.023618" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

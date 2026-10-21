@@ -1,0 +1,10 @@
+{
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "selectedInputHashes": {
+    "Assets/TumbangPreso/Runtime/Map/ArenaStage.cs": "fede34fd342abc7f66d5a11787d88dff0f91386a6ec2d12968e2eda36a439c50",
+    "Assets/TumbangPreso/Runtime/Map/ArenaFallRecovery.cs": "30290766f002a999fb622148196e182d2d2fad16a460db72751a11cab3c70e5b",
+    "Assets/TumbangPreso/Tests/PlayMode/MergedContentSmokeTests.cs": "b3aca7cbaa43ee584cef769a60dccfa9afd72a4762bc6818b1cf4d3f158663b8",
+    "Assets/TumbangPreso/Tests/PlayMode/MapRetrievalProbe.cs": "3f5caee6d0165f8b045522818134c2932c98becfc1a09ed64c09f0f7d637506c"
+  },
+  "filter": "TumbangPreso.PlayTests.MergedContentSmokeTests.MergedArenaSceneAndHeroCatalogResolveActualImportedArt"
+}

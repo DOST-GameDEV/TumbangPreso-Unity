@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.7481608">
+  <test-suite type="TestSuite" id="2777" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.748161" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2771" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.727806" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="128843" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2772" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.711883" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2773" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.697587" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2505" name="TemporaryReadingFontTests" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.672570" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2508" name="ActualTutorialParagraphsUseNunitoAndExpandWithoutClipping" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests.ActualTutorialParagraphsUseNunitoAndExpandWithoutClipping" methodname="ActualTutorialParagraphsUseNunitoAndExpandWithoutClipping" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" seed="780249873" result="Failed" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.584883" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Temporary-Nunito-smaller-tutorial/Temporary reading-font review/GuidedTrainingHud/ObjectiveCard/LessonBody is below the small-window reading floor.
+  Expected: greater than or equal to 13.9499998f
+  But was:  13.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x0098f] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/TumpUiCapture.cs:219
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2507" name="MissingThemeReferenceAlsoFallsBackToNunito" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests.MissingThemeReferenceAlsoFallsBackToNunito" methodname="MissingThemeReferenceAlsoFallsBackToNunito" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" seed="2087678532" result="Passed" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.036002" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2506" name="SerializedThemeAndLoadingTipsUseTheSameRealBoldFace" fullname="TumbangPreso.PlayTests.TemporaryReadingFontTests.SerializedThemeAndLoadingTipsUseTheSameRealBoldFace" methodname="SerializedThemeAndLoadingTipsUseTheSameRealBoldFace" classname="TumbangPreso.PlayTests.TemporaryReadingFontTests" runstate="Runnable" seed="1283691345" result="Passed" start-time="2026-10-03 16:41:44Z" end-time="2026-10-03 16:41:44Z" duration="0.037607" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

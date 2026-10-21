@@ -40,7 +40,7 @@ namespace TumbangPreso.UI
             var slider = root.gameObject.AddComponent<Slider>(); slider.minValue = minimum; slider.maxValue = maximum;
             root.gameObject.AddComponent<SettingsControlFocus>();
             var track = OwnerUiLayout.Rect(root, "Track").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 17, 33, 360, 10); track.color = SettingsPalette.Rule; track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 17, 31, 360, 14); track.color = SettingsPalette.Background; track.raycastTarget = false;
             var fill = OwnerUiLayout.Rect(track.transform, "Fill").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(fill.rectTransform); fill.color = SettingsPalette.Accent; fill.raycastTarget = false; slider.fillRect = fill.rectTransform;
             var handles = OwnerUiLayout.Rect(root, "HandleArea"); OwnerUiLayout.Place(handles, 17, 17, 360, 44);
@@ -74,6 +74,83 @@ namespace TumbangPreso.UI
             colours.disabledColor = SettingsPalette.Muted; colours.pressedColor = SettingsPalette.Pressed;
             button.colors = colours; button.onClick.AddListener(() => { MenuSfx.Click(); action(); });
             return button;
+        }
+
+        /// <summary>
+        /// Give a row's action a face: a KEYCAP for a binding, an outlined PILL for a command
+        /// (OPEN, ARRANGE, RESET CONTROLS).
+        ///
+        /// ⚠️ UNTIL 2026-09-23 BOTH WERE BARE WORDS. "W" and "OPEN" sat in the control column as
+        /// plain lettering, the same weight as the row labels, so nothing said they could be pressed
+        /// (`CLAUDE.md` § 6.3: "a door is a thing that looks pressable") and a key did not look like a
+        /// key. The face is sized to the lettering, recomputed by <see cref="FitChip"/> whenever the
+        /// binding text changes, and never narrower than a thumb-sized 120 units.
+        /// </summary>
+        public static void Chip(Button button, bool keycap)
+        {
+            var label = button.GetComponentInChildren<Text>();
+            // UI revamp 2026-10-06: a keycap is a real cream toy key on a tan side; a command is the
+            // same toy tile with a honey face, so both look pressable at a glance.
+            var face = OwnerUiLayout.Rect(button.transform, "ChipFace").gameObject.AddComponent<HudCard>();
+            face.rectTransform.SetAsFirstSibling(); face.raycastTarget = false; face.FollowContrast = false;
+            if (keycap) face.Toy(HudDraw.Cream, HudDraw.CreamSide, 6, 10, .35f);
+            else face.Toy(HudDraw.Honey, HudDraw.HoneySide, 6, 12, .35f);
+            label.alignment = TextAnchor.MiddleCenter; label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label);
+            var colours = button.colors;
+            colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);
+            colours.pressedColor = HudDraw.BrownSide; colours.disabledColor = new Color32(128, 94, 70, 160);
+            button.colors = colours;
+            FitChip(button);
+        }
+
+        /// <summary>A full-width decision button face: filled accent for the one expected answer,
+        /// an outline for the others. The label centres on it and takes the matching ink.</summary>
+        public static void Slab(Button button, bool primary)
+        {
+            var label = button.GetComponentInChildren<Text>();
+            var face = OwnerUiLayout.Rect(button.transform, "SlabFace").gameObject.AddComponent<HudCard>();
+            face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); face.raycastTarget = false; face.FollowContrast = false;
+            if (primary) face.Toy(HudDraw.Honey, HudDraw.HoneySide, 7, 14, .38f);
+            else face.Toy(HudDraw.Cream, HudDraw.CreamSide, 7, 14, .38f);
+            label.alignment = TextAnchor.MiddleCenter; label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label);
+            OwnerUiLayout.Fill(label.rectTransform);
+            var colours = button.colors;
+            colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);
+            colours.pressedColor = HudDraw.BrownSide;
+            button.colors = colours;
+            button.gameObject.AddComponent<SettingsControlFocus>();
+        }
+
+        public static void FitChip(Button button)
+        {
+            var face = button.transform.Find("ChipFace") as RectTransform;
+            var label = button.GetComponentInChildren<Text>();
+            if (face == null || label == null) return;
+            float width = Mathf.Clamp(label.preferredWidth + 60, 120, 533);
+            face.anchorMin = face.anchorMax = face.pivot = new Vector2(0, .5f);
+            face.anchoredPosition = new Vector2(4, 0); face.sizeDelta = new Vector2(width, 64);
+            label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0, .5f);
+            label.rectTransform.anchoredPosition = new Vector2(4, 2); label.rectTransform.sizeDelta = new Vector2(width, 60);
+        }
+
+        /// <summary>
+        /// A group header inside a section: small accent capitals in the reading face. Settings
+        /// pages over a handful of rows are grouped (the Overwatch/Valorant settings pattern), so a
+        /// long list is scanned by its three or four headers instead of read row by row.
+        /// </summary>
+        public static Text Header(Transform list, string words)
+        {
+            var text = OwnerUiLayout.Text(list, "GroupHeader", words, 28, OwnerUiLayout.TypeRole.Reading);
+            text.color = SettingsPalette.Accent; text.alignment = TextAnchor.LowerLeft; text.raycastTarget = false;
+            var box = text.gameObject.AddComponent<LayoutElement>(); box.preferredHeight = 74; box.minHeight = 74;
+            // A short accent rule under the words: the eye jumps from header to header down a long
+            // tab (Hi-Fi RUSH's red group strips, research finding 2) instead of reading the header
+            // as one more row label.
+            var rule = OwnerUiLayout.Rect(text.transform, "GroupRule").gameObject.AddComponent<Image>();
+            rule.rectTransform.anchorMin = rule.rectTransform.anchorMax = rule.rectTransform.pivot = Vector2.zero;
+            rule.rectTransform.anchoredPosition = new Vector2(0, -10); rule.rectTransform.sizeDelta = new Vector2(72, 4);
+            rule.color = SettingsPalette.Accent; rule.raycastTarget = false;
+            return text;
         }
     }
 }

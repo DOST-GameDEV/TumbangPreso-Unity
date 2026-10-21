@@ -1,0 +1,15 @@
+{
+  "observedUTC": "2026-10-05T17:12:02.398064+00:00",
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "protocol": 152,
+  "manifestSHA256": "e407e40685617a40e6fb1f450abaf516de9643645f24ed640d50eb33a33eb511",
+  "pcHostPid": 21060,
+  "laptopClientPid": 44848,
+  "laptopWindow": 5113394,
+  "room": "GWEC",
+  "map": "Arena",
+  "route": "Normal GUI direct address192.168.1.7:8910 AFTER failednaturalLANview85.2s andfailednormalGWECcodeNoGameAnswered",
+  "admittedSeat": 2,
+  "readyVisible": true,
+  "scope": "Actualtwo-machineLANtransport admission; discovery/code remainFAILED, match/results pending"
+}

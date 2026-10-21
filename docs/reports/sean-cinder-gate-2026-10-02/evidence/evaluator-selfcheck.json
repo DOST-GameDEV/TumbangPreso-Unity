@@ -1,0 +1,17 @@
+{
+  "missing_field": [
+    "owner missed or duplicated the one crossing field"
+  ],
+  "wrong_direction": [
+    "observer did not retain approach-side pushback"
+  ],
+  "no_impulse": [
+    "The actual target owner did not receive the authoritative impulse"
+  ],
+  "different_identity": [
+    "Peers disagreed about the dynamic field identity"
+  ],
+  "wrong_role": [
+    "host lacks continuous second-round client-defender evidence"
+  ]
+}

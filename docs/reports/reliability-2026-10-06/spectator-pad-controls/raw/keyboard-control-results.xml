@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 01:57:51Z" end-time="2026-10-06 01:57:51Z" duration="0.5709222">
+  <test-suite type="TestSuite" id="3236" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1821" result="Passed" start-time="2026-10-06 01:57:51Z" end-time="2026-10-06 01:57:51Z" duration="0.570922" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3228" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1821" result="Passed" start-time="2026-10-06 01:57:51Z" end-time="2026-10-06 01:57:51Z" duration="0.534471" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10804" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3229" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1821" result="Passed" start-time="2026-10-06 01:57:51Z" end-time="2026-10-06 01:57:51Z" duration="0.507108" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3232" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1819" result="Passed" start-time="2026-10-06 01:57:51Z" end-time="2026-10-06 01:57:51Z" duration="0.479823" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2871" name="SpectatorPadControlsTests" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 01:57:51Z" end-time="2026-10-06 01:57:51Z" duration="0.426534" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2875" name="ExistingPadTargetCycleWithAKeyboardStillWorks" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.ExistingPadTargetCycleWithAKeyboardStillWorks" methodname="ExistingPadTargetCycleWithAKeyboardStillWorks" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="578472835" result="Passed" start-time="2026-10-06 01:57:51Z" end-time="2026-10-06 01:57:51Z" duration="0.411516" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

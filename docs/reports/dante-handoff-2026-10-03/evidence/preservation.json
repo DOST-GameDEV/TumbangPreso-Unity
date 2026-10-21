@@ -1,0 +1,9 @@
+{
+  "source_commit": "84fca284d309bd3671bbf1e3b997e24e97c8a5c8",
+  "before_sha256": "2ae095f9657bdfdab2a297ff63e93a2d9878f8d0fe06179b4f4acd77768e4eab",
+  "after_sha256": "aacfcd25f4e47cbbce3bc615ba0af6d47067e22a616ac59b3fa14cf39fc73736",
+  "total_clips": 38,
+  "other_clips_preserved": 37,
+  "binary_prefix_preserved": true,
+  "geometry_json_preserved": true
+}

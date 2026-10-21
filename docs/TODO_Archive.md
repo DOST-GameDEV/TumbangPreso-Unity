@@ -1,10 +1,128 @@
 # TODO archive: the batch reports and the closed work
 
+## UX-1.5b The door walk asserts HERO before it has been built DONE 2026-10-19
+
+The entry as it stood in `docs/TODO.md`:
+
+> `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts `HubHero` straight after
+> `Press("HeroButton")` and after `Press("HeroShopDoor")`. HERO builds across frames behind HOME and
+> arrived 0.09 to 0.13 s after `Press`'s own wait in five measured runs (UX-1.5a), so both asserts can
+> fail on a working door. Done means both wait through `HubFlowTests.AwaitDeferredHero` and the whole
+> door walk passes in a guarded run, or its remaining failures are recorded here.
+
+**Result: the whole door walk passes**, total 1, failed 0, 25.6 s
+(`docs/reports/character-select-2026-10-19/evidence/ux15b-doorwalk-run1-accepted.xml`). One
+graphics-enabled PlayMode run of the committed test, launched through `tools/run_unity_guarded.py`
+with `-force-d3d11` on a fresh named profile (`ux15b-doorwalk-run1`, no files before the run), with
+UDP 8910 checked free first. The only other Unity on the machine was the owner's interactive editor
+on the main checkout.
+
+- **The change is the wait and nothing else.** Both asserts are unchanged and now follow
+  `AwaitDeferredHero` (bounded at 10 s), the helper UX-1.5a added for the shop's HEROES door.
+- **The HOME door needed it.** `[HeroReveal]` logged the HERO stage arriving **0.12 s** after
+  `Press`'s own one frame and 0.45 s, inside the 0.09 to 0.13 s UX-1.5a measured, so the old assert
+  would have failed on a working door in this run. The shop's HEROES door logged 0.00 s: by then the
+  stage was already up when `Press` returned, which is why it is a race rather than a steady failure.
+- **The rest of the walk held as written.** Captures were taken at all five shapes for HOME, AVATAR,
+  HERO, the ability detail, LOADOUT (owned and unowned), the item popup and its inspect view, SHOP,
+  TASKS and MENU, with the action-bounds and 28-unit floor checks on each, followed by BACK on HOME
+  opening the MENU and the name plate's profile door. No further failure was reached.
+
+Not covered: the skill tree door is skipped while `HeroLoadoutRules.SidegradesOpen` is off, as the test
+says. `HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable` walks this same route with both
+accessibility settings on and was not run here.
+
+## UX-1.5a Three PlayMode checks left behind by later work DONE 2026-10-19
+
+The entry as it stood in `docs/TODO.md`:
+
+> They fail identically on `player-room-depth-and-bots` at `368b625f9` with and without the
+> character select rework (`docs/reports/character-select-2026-10-19/README.md` section 6):
+> `ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop` expects Berto's mesh to be
+> `character-male-f`, which became `bayan-redesign` in `bd44c197b`;
+> `MatchArrivalFlowTests.CustomRoomWithBotsOffRequiresFourHumanSeats` still forbids starting a room
+> with empty seats, which `eec7970b0` allowed on purpose; and
+> `HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect` stops at "The shop's
+> HEROES door did not open the hero stage", which may be a real fault in the SHOP to HERO route.
+> Done means the first two assert today's intended behaviour, the third's door is traced and fixed
+> or its test corrected, and all three pass so their character select halves run again.
+
+**Result: 3 of 3 pass** in a graphics-enabled guarded PlayMode run of the committed code on a fresh
+named profile (`evidence/ux15a-run5-accepted.xml` in the character select report, total 3, failed 0;
+20.9 s, 19.9 s and 4.2 s). Every case was launched through `tools/run_unity_guarded.py` with
+UDP 8910 checked free first.
+
+1. **Berto's mesh.** The expectation is `bayan-redesign(Clone)`, the model `RosterBookBuilder.PersonModels`
+   and `Resources/Roster/person_bayan.asset` give the `bayan` id since the twelve Classic people were
+   redrawn. The chalk circle and contact shadow assertions after it now run, and pass.
+2. **The bots-off room.** Replaced by `CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch`.
+   It hosts a LAN room, checks the room opens with a bot in every empty seat, presses REMOVE BOT on all
+   three, presses START GAME over a stale accepted-bot policy, presses SELECT, and follows the host into
+   a running round on Eskinita. It asserts the room's NONE retired the stale policy at START, the
+   host's seat alone has a body (`MatchInstaller.SeatHasABody`) and the three empty seats are benched
+   (`LobbySession.IsSeatBenched`). That is the first PlayMode proof of `40b7e5d9c` on a real host; the
+   two-peer case under UX-1.7 is still open.
+   - ⚠️⚠️ **IT FOUND A PRODUCT FAULT, FIXED IN THE SAME COMMIT.** `TumpHub.ShowLobby` pops to HOME before
+     pushing the lobby, and HOME's passive `Refresh` ran `HubHome.ApplyChoice`, which resets the mode and
+     the rules to the mode card's defaults. A player whose card read CLASSIC who hosted a HERO STRIKE room
+     therefore had it turned into a Classic room with every bot gone as CREATE LOBBY landed (a client's
+     adopted rules were exposed the same way). Run 3 caught it: *"Seats 0=person, 1=open, 2=open, 3=open;
+     host seat 0, Bots 0, BotSeats 0, pinned False"*. A passive refresh now leaves a live room's rules
+     alone, as `33873b71a` already made it leave pinned ones; an explicit card choice still applies. The
+     test now sets the card to CLASSIC on purpose and asserts the room is still Hero Strike in the lobby.
+   - The card was CLASSIC in runs 2 and 3 because `ModelPreviewTests`' Classic case saved it through
+     `HubHome.Choice` and restored it in memory only, and the guarded runner keeps files a run creates
+     in a named profile. That case now saves its restore.
+3. **The shop's HEROES door was never broken.** `HubShopPopup` closes itself and pushes `HubHero`, which
+   since `a225294d3` and `e1a4e2113` (2026-10-08) builds across frames behind HOME and joins the stack
+   only when complete. The test looked one frame and 0.45 s after the press. Measured over five runs,
+   the hero stage arrived 0.09 to 0.13 s after that wait. The test now waits for it (bounded at 10 s) and
+   logs the time as `[HeroReveal]`.
+   - With the door open, the size half ran for the first time since the cast was redesigned, and its
+     "Paete within 10% of Cheska" band failed: 14% on the shop stage and 17% on character select
+     (run 1). The band was set on 2026-09-27, when every standard hero shared one body (Sean 0.705,
+     Cheska 0.695). Today Sean draws 0.794 to 0.813 and Cheska 0.706 to 0.728 on character select, so
+     the owner's own rule ("supposed to be larger than sean") and the band cannot both hold there. The
+     band is removed with that reasoning beside it; the owner's rule and both crop checks remain, and a
+     new check that the picker's heading names the hero being measured.
+   - Accepted shares (run 5), Sean / Cheska / Paete: shop 0.672 / 0.646 / 0.737 at 1600x680 and
+     0.656 / 0.643 / 0.737 at 2340x1080; character select 0.799 / 0.711 / 0.832 and
+     0.794 / 0.706 / 0.834. Across a whole idle on character select (run 4, sampled every 0.12 s)
+     Paete ran 0.816 to 0.845 and Sean 0.773 to 0.808, so the order does not depend on the frame a
+     capture lands on. Paete is framed on his own standing height (2.448) and the others on the shared
+     reference (1.880).
+   - ⚠️ Runs 2 and 3 measured Paete below Sean on character select (0.735 and 0.749 against 0.770 and
+     0.768). Those were Classic people at the hero portrait indices, because the room had been reset to
+     Classic by the fault in point 2; the heading check now refuses that measurement.
+
+Not covered: `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts `HubHero` immediately
+after `Press("HeroButton")` and `Press("HeroShopDoor")`, the same timing fault, and was not run here (see
+UX-1.5b). No other Unity suite was run beyond these three PlayMode cases and `HubPinnedRulesTests`.
+
+## DOCS-0927 Documentation Organization DONE 2026-09-27
+
+Owner requested documentation organization next,after the current loading/login
+batch and before returning to network/loading work. Condense current rules and
+routing,retain important context/methods,and archive only genuinely superseded
+material with backlinks. Include clear starting points for networking,menu
+animation,character building and rendering. No history deletion. Later additions:
+update stale documents too,and keep the latest two generated visual iterations
+when pruning old captures.
+
+Implemented: short current entry points,working rules,55-document catalog,task
+routes,live UI/network/loading guides,current guarded testing/render/build/setup
+instructions,nine whole historical archives with old-path pointers,seven complete
+pre-cleanup snapshots,public queue snapshot and compact current ledger/queue header.
+Model/kit/HOME animation methods and all numbered history remain. Nine superseded
+captures pruned with hashes/retained pairs; essential references and all unique
+footage preserved. [Record and evidence](reports/documentation-cleanup-2026-09-27/README.md).
+This completes organization,not the still-open runtime/network/QA assignment.
+
 ## 2026-09-15 pre-demo checkpoint and ordering notes
 
 These notes are preserved whole as history. Their scheduling is superseded by
 the September16 demo priority order in TODO.md. Deferred work is still open in
-the current queue and GAMEPLAY_RESUME_AFTER_UI.md; this is not a completion claim.
+the current queue and archive/GAMEPLAY_RESUME_AFTER_UI.md; this is not a completion claim.
 
 <!-- OWNER_PLAYTEST_20260913 -->
 
@@ -81,7 +199,7 @@ source files, editable controls and the approved controller diagram.
 - [ ] Redesign the rejected UI creatively, then finish U8's actual art/motion/
   input/async/native-route qualification. The current native run failed a
   reduced-motion settling assertion before matches; it is NOT a pass.
-- [ ] Resume every remaining item in GAMEPLAY_RESUME_AFTER_UI.md afterward,
+- [ ] Resume every remaining item in archive/GAMEPLAY_RESUME_AFTER_UI.md afterward,
   including deferred Inday and the selected seventh hero/map LAST LAST.
 
 Current checkpoint/evidence: reports/owner-ui-u8-checkpoint.md and newest
@@ -93,7 +211,7 @@ destination continues across batch boundaries, commits and compactions.
 **NEWEST owner order,2026-09-15:** finish the currently running same-process
 reconnect check, then thoroughly analyze/plan and implement the new hand-drawn
 UI theme. Resume all unfinished gameplay afterward using
-[GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md). UI is reopened;
+[archive/GAMEPLAY_RESUME_AFTER_UI.md](archive/GAMEPLAY_RESUME_AFTER_UI.md). UI is reopened;
 older cancellation text below is historical. No extra agents or reset credits.
 
 **Verified progress,2026-09-15:** complete seven-kind persistent ground snapshots

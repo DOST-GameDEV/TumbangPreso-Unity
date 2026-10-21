@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 10:32:16Z" end-time="2026-09-22 10:32:22Z" duration="6.5037225">
+  <test-suite type="TestSuite" id="1696" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="526" result="Passed" start-time="2026-09-22 10:32:16Z" end-time="2026-09-22 10:32:22Z" duration="6.503723" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1690" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="526" result="Passed" start-time="2026-09-22 10:32:16Z" end-time="2026-09-22 10:32:22Z" duration="6.492859" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24016" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1691" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="526" result="Passed" start-time="2026-09-22 10:32:16Z" end-time="2026-09-22 10:32:22Z" duration="6.491497" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1692" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="526" result="Passed" start-time="2026-09-22 10:32:16Z" end-time="2026-09-22 10:32:22Z" duration="6.490447" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1008" name="AccessibilityControlTests" fullname="TumbangPreso.PlayTests.AccessibilityControlTests" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-22 10:32:16Z" end-time="2026-09-22 10:32:22Z" duration="6.468479" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1017" name="LargeAbilityReferencesKeepAllSevenHeroesDescriptionsVisible" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.LargeAbilityReferencesKeepAllSevenHeroesDescriptionsVisible" methodname="LargeAbilityReferencesKeepAllSevenHeroesDescriptionsVisible" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="2080677730" result="Passed" start-time="2026-09-22 10:32:16Z" end-time="2026-09-22 10:32:22Z" duration="6.451545" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] accessibility-reference-v4-dante-4x3/DetailIcon0: vertices=28, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] accessibility-reference-v4-dante-4x3/DetailIcon1: vertices=28, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-reference-v4-dante-4x3/DetailIcon2: vertices=40, cull=False, alpha=1, depth=10, material=1
+[TumpUiCapture] accessibility-reference-v4-dante-4x3 cream source=252,211,159 pixel=213,212,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-reference-v4-cheska-4x3/DetailIcon0: vertices=28, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] accessibility-reference-v4-cheska-4x3/DetailIcon1: vertices=36, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-reference-v4-cheska-4x3/DetailIcon2: vertices=108, cull=False, alpha=1, depth=10, material=1
+[TumpUiCapture] accessibility-reference-v4-cheska-4x3 cream source=252,211,159 pixel=213,212,203; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-reference-v4-sean-4x3/DetailIcon0: vertices=28, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] accessibility-reference-v4-sean-4x3/DetailIcon1: vertices=36, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-reference-v4-sean-4x3/DetailIcon2: vertices=128, cull=False, alpha=1, depth=10, material=1
+[TumpUiCapture] accessibility-reference-v4-sean-4x3 cream source=252,211,159 pixel=213,212,203; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-reference-v4-zack-4x3/DetailIcon0: vertices=44, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] accessibility-reference-v4-zack-4x3/DetailIcon1: vertices=56, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-reference-v4-zack-4x3/DetailIcon2: vertices=64, cull=False, alpha=1, depth=10, material=1
+[TumpUiCapture] accessibility-reference-v4-zack-4x3 cream source=252,211,159 pixel=214,212,203; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-reference-v4-nemu-4x3/DetailIcon0: vertices=228, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] accessibility-reference-v4-nemu-4x3/DetailIcon1: vertices=36, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-reference-v4-nemu-4x3/DetailIcon2: vertices=216, cull=False, alpha=1, depth=10, material=1
+[TumpUiCapture] accessibility-reference-v4-nemu-4x3 cream source=252,211,159 pixel=214,212,203; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-reference-v4-phaister-4x3/DetailIcon0: vertices=116, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] accessibility-reference-v4-phaister-4x3/DetailIcon1: vertices=24, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-reference-v4-phaister-4x3/DetailIcon2: vertices=132, cull=False, alpha=1, depth=10, material=1
+[TumpUiCapture] accessibility-reference-v4-phaister-4x3 cream source=252,211,159 pixel=214,212,203; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-reference-v4-rafi-4x3/DetailIcon0: vertices=28, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] accessibility-reference-v4-rafi-4x3/DetailIcon1: vertices=216, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-reference-v4-rafi-4x3/DetailIcon2: vertices=40, cull=False, alpha=1, depth=10, material=1
+[TumpUiCapture] accessibility-reference-v4-rafi-4x3 cream source=252,211,159 pixel=215,212,203; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

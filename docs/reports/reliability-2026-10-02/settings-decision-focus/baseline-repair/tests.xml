@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:33:20Z" end-time="2026-10-02 07:33:21Z" duration="0.7509201">
+  <test-suite type="TestSuite" id="2555" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1269" result="Failed" site="Child" start-time="2026-10-02 07:33:20Z" end-time="2026-10-02 07:33:21Z" duration="0.750920" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2549" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1269" result="Failed" site="Child" start-time="2026-10-02 07:33:20Z" end-time="2026-10-02 07:33:21Z" duration="0.725432" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5528" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2550" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1269" result="Failed" site="Child" start-time="2026-10-02 07:33:20Z" end-time="2026-10-02 07:33:21Z" duration="0.708167" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2551" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1269" result="Failed" site="Child" start-time="2026-10-02 07:33:20Z" end-time="2026-10-02 07:33:21Z" duration="0.690472" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2227" name="SettingsDecisionFocusTests" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 07:33:20Z" end-time="2026-10-02 07:33:21Z" duration="0.651710" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2230" name="CleanBackRetainsItsExistingCallbackWithoutOpeningTheDecision" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests.CleanBackRetainsItsExistingCallbackWithoutOpeningTheDecision" methodname="CleanBackRetainsItsExistingCallbackWithoutOpeningTheDecision" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" seed="652107520" result="Passed" start-time="2026-10-02 07:33:20Z" end-time="2026-10-02 07:33:21Z" duration="0.439184" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2229" name="ClosingTheDecisionPreservesAnotherLiveScreensSelection" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests.ClosingTheDecisionPreservesAnotherLiveScreensSelection" methodname="ClosingTheDecisionPreservesAnotherLiveScreensSelection" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" seed="1505837440" result="Passed" start-time="2026-10-02 07:33:21Z" end-time="2026-10-02 07:33:21Z" duration="0.097820" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2228" name="KeepEditingReturnsFocusToLiveSettingsAndKeepsUnsavedChanges" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests.KeepEditingReturnsFocusToLiveSettingsAndKeepsUnsavedChanges" methodname="KeepEditingReturnsFocusToLiveSettingsAndKeepsUnsavedChanges" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" seed="101377698" result="Failed" start-time="2026-10-02 07:33:21Z" end-time="2026-10-02 07:33:21Z" duration="0.097679" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  KEEP EDITING left focus on an inactive dialog control.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SettingsDecisionFocusTests+<KeepEditingReturnsFocusToLiveSettingsAndKeepsUnsavedChanges>d__8.MoveNext () [0x0005c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SettingsDecisionFocusTests.cs:51
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,7 @@
+{
+  "question": "Actual skill2 cast currently uses same body/FPP as ground sheet; record intact held shoe before asserting distinct motion",
+  "source": "17bd92c25ca7bb229cc26156913e5a1f4ca59f28 plus new test, generated import metadata excluded from shipping",
+  "stop": "one fresh test/frames or actionable failure",
+  "retry_count": 0,
+  "test_sha256": "a76bb69ad87d2c90ffbe9d6f7ade9eeb1065bae8c3dd40e39c93aa1287cea722"
+}

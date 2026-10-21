@@ -1,0 +1,15 @@
+{
+  "Assets/TumbangPreso/Runtime/UI/InputGlyphs.cs": "fc5ce0a63de843314a0d338e9cf79f0581826a0ff921b3837a536d5bc3301008",
+  "Assets/TumbangPreso/Runtime/UI/GuidedTrainingHud.OwnerPainted.cs": "cb1cc9a1743a545b7ea4937d12250036cf7b169d850b0bf16d27adfb41456a01",
+  "Assets/TumbangPreso/Runtime/GuidedTraining.cs": "5155740950db71c9febe297d723e86c11d9584c8f7120f76d1436e2662018360",
+  "Assets/TumbangPreso/Runtime/UI/Hud.cs": "c9837d6b2f133cdd489d8e6103c43da2820f0e49baae356a71fdbf905f3bea0e",
+  "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs": "a4eb2b20b45ee146da20ea8e92e1e0e28eaef206425e36dd13e0177fc9ae1c55",
+  "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.OwnerDeck.cs": "7b7f9ec09a83d2137d2bee3cdf51a8b62d28e5025fa530c3c08b15682156c10b",
+  "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs": "2d1ccf07dba8fbbc94ac6390e63ff13d8ee7414387fc96b7bfd3b562d84dc375",
+  "Assets/TumbangPreso/Tests/InputGlyphTests.cs": "6352d6ecbf7c5dc95e966d3b2ce673100cc429e12d2aff4a7684719c83072b8b",
+  "Assets/TumbangPreso/Tests/TrainingPromptRenderingTests.cs": "2f5f1494966657b52908849810d635225e25b823d5f9e352f7a210bfa8c17492",
+  "Assets/TumbangPreso/Resources/UI/input/xelu/owner_scroll_up_v2.png": "937c6cea18956884576faf22c801fb4347e36b77c57e95491f5f2087b9fd42c2",
+  "Assets/TumbangPreso/Resources/UI/input/xelu/owner_scroll_up_v2.png.meta": "a0da9480ea002e25c020fbbd6f20d1b5d9eb260beca76562509fe8d9aee63515",
+  "Assets/TumbangPreso/Resources/UI/input/xelu/owner_scroll_down_v2.png": "3a7a504980307d4d3785fd91d3f041ff4025fd9793693db88732bdc5792fa89b",
+  "Assets/TumbangPreso/Resources/UI/input/xelu/owner_scroll_down_v2.png.meta": "acbd59050d79dbb2678948c12c687d5f5eab47d1a0a1560df68b80ddc12c879b"
+}

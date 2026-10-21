@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "originalProtectedCount": 18424,
+  "originalProtectedChanged": [],
+  "ownedSourceCount": 3,
+  "newOwnedImportMetadata": "Assets/TumbangPreso/Runtime/Net/NetCompletedArrivalProbe.cs.meta",
+  "generatedMetaSha256": "fab0efe1c7fcb6d62eec5f71dcd40b139f1cda1dc15a53ced7d83ebc7b1d70f0",
+  "sourceMetaSha256": "ae6ad93a7518899558a830d73179ab1d387bfd0465de60482c022ec8349aaf6f",
+  "sourceMetaChanged": false,
+  "originalStrictPostSha256": "c424cf61544b3666e5e8b2587229f92007c7e947574e907042c9bbad162dbf81",
+  "classification": "One previously absent metadata output generated for our copied observer script. All originally protected inputs unchanged, exact3 MAIN/q source/fixture hashes match. Strict post result retained; no mutation, deletion or native retry."
+}

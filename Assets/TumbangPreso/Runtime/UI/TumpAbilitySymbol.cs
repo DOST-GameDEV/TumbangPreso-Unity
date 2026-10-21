@@ -1,18 +1,131 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    /// <summary>New editable pictograms. AbilityGlyph remains the semantic contract with gameplay.</summary>
+    /// <summary>
+    /// New editable pictograms. AbilityGlyph remains the semantic contract with gameplay.
+    ///
+    /// ⚠️⚠️ ONE STROKE WEIGHT, ROUND ENDS AND A BLACK KEEL IN A MATCH (TODO VISUAL-1.18).
+    /// <see cref="HudStyle"/> is set by the in-match power deck. (The touch buttons keep the
+    /// thin line beside their thin verb icons, so one button never mixes two weights.) A stroke 3.6 percent of the icon wide is right in the character select, where
+    /// the icon is large and sits on paper, and it was a 1.5-pixel hairline in the deck at
+    /// 960x540 over a moving street. In a match the same drawing is laid down twice: a black
+    /// keel, then the colour, at twice the weight, with a round cap on every joint, so every
+    /// power icon shares one weight, one corner treatment and the black in-game outline
+    /// (AGENTS standing rule, 2026-09-22). The drawings themselves, and so each ability's
+    /// `AbilityGlyph` job, are unchanged. The front end keeps the thin line.
+    /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class TumpAbilitySymbol : MaskableGraphic
     {
-        public AbilityGlyph Glyph;
+        [SerializeField, FormerlySerializedAs("Glyph")]
+        private AbilityGlyph _glyph;
+
+        public AbilityGlyph Glyph
+        {
+            get => _glyph;
+            set
+            {
+                if (_glyph == value) return;
+                _glyph = value;
+                SetVerticesDirty();
+                SetMaterialDirty();
+            }
+        }
+        public bool HudStyle;
+        private UnityEngine.UI.Text _castLock;
+        public bool CastLocked => _castLock != null && _castLock.gameObject.activeSelf;
+        public void SetCastLocked(bool locked)
+        {
+            if (_castLock == null && locked)
+            {
+                _castLock = TumpUiFactory.Text(transform, "CastLock", "X", 58, bold: true);
+                _castLock.alignment = TextAnchor.MiddleCenter; _castLock.raycastTarget = false;
+                _castLock.color = new Color(.86f, .12f, .08f);
+                var rect = _castLock.rectTransform; rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+                var outline = _castLock.gameObject.AddComponent<UnityEngine.UI.Outline>();
+                outline.effectColor = UiTheme.InGameOutline; outline.effectDistance = new Vector2(1.5f, -1.5f);
+            }
+            if (_castLock != null) _castLock.gameObject.SetActive(locked);
+        }
+
+        /// <summary>
+        /// Draw the ability's illustration dimmed: a power on cooldown or not yet available.
+        /// ⚠️ THIS REPLACED TINTING AS THE STATE CUE FOR DRAWN ICONS (2026-09-23). The deck used to
+        /// tint the white stroke gold when ready and cream when not; a coloured illustration cannot
+        /// be tinted without turning to mud, so ready shows it as drawn and muted shows it at half
+        /// value. The deck's ring, number and fill still carry the cooldown itself.
+        /// </summary>
+        public bool Muted;
+
+        private Sprite _art;
+
+        /// <summary>The illustration when one exists, else the white texture the strokes use.</summary>
+        public override Texture mainTexture
+        {
+            get
+            {
+                _art = AbilityIcons.Illustration(Glyph);
+                return _art != null ? _art.texture : s_WhiteTexture;
+            }
+        }
+        /// <summary>Stroke width as a fraction of the icon's short side, match style.</summary>
+        public const float HudStroke = .115f;
+        public static readonly Color Keel = new Color(0, 0, 0, .92f);
+        private readonly System.Collections.Generic.List<Vector2> _segments = new System.Collections.Generic.List<Vector2>();
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
+            _segments.Clear();
+            _art = AbilityIcons.Illustration(Glyph);
+            if (_art != null)
+            {
+                // ⚠️ THE DRAWING, FITTED SQUARE AND CENTRED, NOT TINTED: its own colours are the
+                // point. `color` still contributes its alpha, so fades keep working.
+                var box = rectTransform.rect; float side = Mathf.Min(box.width, box.height);
+                var r = new Rect(box.center.x - side / 2, box.center.y - side / 2, side, side);
+                var uv = UnityEngine.Sprites.DataUtility.GetOuterUV(_art);
+                float v = Muted ? 0.5f : 1.0f;
+                var c = new Color(v, v, v, color.a);
+                vh.AddVert(new Vector3(r.xMin, r.yMin), c, new Vector2(uv.x, uv.y));
+                vh.AddVert(new Vector3(r.xMin, r.yMax), c, new Vector2(uv.x, uv.w));
+                vh.AddVert(new Vector3(r.xMax, r.yMax), c, new Vector2(uv.z, uv.w));
+                vh.AddVert(new Vector3(r.xMax, r.yMin), c, new Vector2(uv.z, uv.y));
+                vh.AddTriangle(0, 1, 2); vh.AddTriangle(0, 2, 3);
+                return;
+            }
+            Collect(vh);
+            var rect = rectTransform.rect; float size = Mathf.Min(rect.width, rect.height);
+            if (!HudStyle)
+            {
+                for (int i = 0; i + 1 < _segments.Count; i += 2)
+                    Quad(vh, rect.center + _segments[i] * size, rect.center + _segments[i + 1] * size, Mathf.Max(1.5f, size * .036f), color);
+                return;
+            }
+            float half = Mathf.Max(1.5f, size * HudStroke * .5f), keel = Mathf.Max(1.5f, size * .035f);
+            var ink = Keel; ink.a *= color.a;
+            for (int pass = 0; pass < 2; pass++)
+            {
+                float w = pass == 0 ? half + keel : half; var c = pass == 0 ? ink : color;
+                for (int i = 0; i + 1 < _segments.Count; i += 2)
+                {
+                    Vector2 a = rect.center + _segments[i] * size, b = rect.center + _segments[i + 1] * size;
+                    Quad(vh, a, b, w, c);
+                    HudDraw.Disc(vh, a, w, c, 12); HudDraw.Disc(vh, b, w, c, 12);
+                }
+            }
+        }
+        private void Collect(VertexHelper vh)
+        {
             switch (Glyph)
             {
+                case AbilityGlyph.ComingSoon:
+                    Ring(vh, 0, 0, .32f);
+                    P(vh, -.16f, 0, .16f, 0);
+                    break;
                 case AbilityGlyph.DanteStomp: case AbilityGlyph.Slam:
                     P(vh,-.18f,.38f,-.18f,-.02f,.25f,-.02f,.32f,-.16f,-.30f,-.16f);
                     P(vh,-.38f,-.34f,-.12f,-.27f,.05f,-.39f,.36f,-.25f); break;
@@ -56,6 +169,19 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.NemuAstralPet:
                     P(vh,-.33f,-.10f,-.28f,.32f,-.07f,.18f,.14f,.19f,.32f,.34f,.33f,-.11f,0,-.34f,-.33f,-.10f);
                     P(vh,-.12f,.02f,-.08f,-.03f);P(vh,.10f,.02f,.14f,-.03f); break;
+                case AbilityGlyph.NemuDontLook:
+                    P(vh,-.38f,0,-.20f,.15f,0,.20f,.20f,.15f,.38f,0,.20f,-.15f,0,-.20f,-.20f,-.15f,-.38f,0);Ring(vh,0,0,.08f);
+                    P(vh,-.46f,.13f,-.14f,.17f);P(vh,-.46f,0,-.10f,.02f);P(vh,-.46f,-.13f,-.14f,-.15f);
+                    P(vh,.46f,.13f,.14f,.17f);P(vh,.46f,0,.10f,.02f);P(vh,.46f,-.13f,.14f,-.15f); break;
+                case AbilityGlyph.NemuSkitter:
+                    P(vh,-.20f,-.38f,-.20f,0,-.12f,.12f,.12f,.12f,.20f,0,.20f,-.38f,.10f,-.30f,0,-.38f,-.10f,-.30f,-.20f,-.38f);
+                    P(vh,-.16f,.05f,-.24f,.27f);P(vh,.16f,.05f,.24f,.27f);
+                    P(vh,-.32f,.27f,.32f,.27f,.32f,.38f,-.32f,.38f,-.32f,.27f);
+                    Ring(vh,-.07f,-.04f,.035f);Ring(vh,.07f,-.04f,.035f); break;
+                case AbilityGlyph.NemuLookout:
+                    P(vh,-.42f,-.38f,-.42f,-.05f,-.34f,.08f,-.18f,.08f,-.10f,-.05f,-.10f,-.38f,-.18f,-.30f,-.26f,-.38f,-.34f,-.30f,-.42f,-.38f);
+                    P(vh,.04f,-.38f,.04f,.10f,.28f,.10f,.28f,-.38f,.04f,-.38f);P(vh,.04f,.02f,.28f,.02f);
+                    P(vh,.40f,-.24f,.43f,.10f,.32f,.32f);P(vh,.22f,.30f,.32f,.32f,.34f,.21f); break;
                 case AbilityGlyph.NemuSeanceVoid:
                     Ring(vh,0,0,.37f);P(vh,-.29f,0,-.10f,.17f,.13f,.17f,.30f,0,.11f,-.17f,-.11f,-.17f,-.29f,0);
                     Ring(vh,0,0,.08f); break;
@@ -64,9 +190,23 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterShadowBlink:
                     P(vh,-.35f,.34f,-.13f,.08f,-.25f,-.21f,.04f,-.38f);
                     P(vh,-.09f,.34f,.18f,.34f,.31f,.10f,.21f,-.20f); break;
+                case AbilityGlyph.PhaisterVoodooDoll:
+                    P(vh,-.36f,.33f,-.19f,.40f,0,.42f,.19f,.40f,.36f,.33f);
+                    P(vh,0,.42f,0,.17f);P(vh,-.27f,.37f,-.29f,-.02f);P(vh,.27f,.37f,.29f,-.02f);
+                    Ring(vh,0,.05f,.12f);P(vh,.02f,.09f,.08f,.02f);P(vh,.02f,.02f,.08f,.09f);
+                    P(vh,-.13f,-.08f,-.15f,-.37f,.15f,-.37f,.13f,-.08f);P(vh,-.13f,-.13f,-.29f,-.02f);P(vh,.13f,-.13f,.29f,-.02f);break;
                 case AbilityGlyph.PhaisterEclipse:
                     Ring(vh,0,0,.28f);P(vh,.06f,.28f,-.09f,.10f,-.05f,-.12f,.11f,-.26f);
                     Rays(vh,6,.35f,.44f); break;
+                case AbilityGlyph.RafiCrosscurrent:
+                    P(vh,-.38f,-.25f,-.12f,-.25f,.10f,-.13f,.18f,.08f,.12f,.27f,-.08f,.34f);
+                    P(vh,-.08f,.34f,.08f,.42f,-.05f,.21f);break;
+                case AbilityGlyph.RafiMirrorwake:
+                    Ring(vh,-.20f,.24f,.10f);P(vh,-.32f,.06f,-.34f,-.28f,-.07f,-.28f,-.08f,.06f,-.32f,.06f);
+                    Ring(vh,.18f,.20f,.09f);P(vh,.09f,.03f,.10f,-.22f,.32f,-.27f);break;
+                case AbilityGlyph.RafiBreakwater:
+                    P(vh,-.42f,-.27f,.40f,-.27f,.35f,-.08f,.18f,.02f,.06f,.23f,.17f,.34f,.32f,.28f,.25f,.11f);
+                    P(vh,-.42f,-.27f,-.34f,-.02f,-.15f,.19f,.06f,.23f);break;
                 default:
                     P(vh,-.37f,-.21f,.06f,.24f,.34f,.30f,.27f,.01f,-.20f,-.37f,-.37f,-.21f); break;
             }
@@ -79,14 +219,14 @@ namespace TumbangPreso.UI
         {var c=new Vector2(x,y);for(int i=0;i<24;i++)V(vh,c+Dir(i*Mathf.PI/12)*radius,c+Dir((i+1)*Mathf.PI/12)*radius);}
         private void P(VertexHelper vh,params float[] points)
         {for(int i=2;i<points.Length;i+=2)V(vh,new Vector2(points[i-2],points[i-1]),new Vector2(points[i],points[i+1]));}
-        private void V(VertexHelper vh,Vector2 a,Vector2 b)
+        private void V(VertexHelper vh,Vector2 a,Vector2 b){_segments.Add(a);_segments.Add(b);}
+        private static void Quad(VertexHelper vh,Vector2 a,Vector2 b,float half,Color c)
         {
-            var rect=rectTransform.rect;float size=Mathf.Min(rect.width,rect.height);
-            a=rect.center+a*size;b=rect.center+b*size;
-            var d=(b-a).normalized;var n=new Vector2(-d.y,d.x)*Mathf.Max(1.5f,size*.036f);
+            if((b-a).sqrMagnitude<1e-6f)return;
+            var d=(b-a).normalized;var n=new Vector2(-d.y,d.x)*half;
             int i=vh.currentVertCount;
-            vh.AddVert(a-n,color,Vector2.zero);vh.AddVert(b-n,color,Vector2.zero);
-            vh.AddVert(b+n,color,Vector2.zero);vh.AddVert(a+n,color,Vector2.zero);
+            vh.AddVert(a-n,c,Vector2.zero);vh.AddVert(b-n,c,Vector2.zero);
+            vh.AddVert(b+n,c,Vector2.zero);vh.AddVert(a+n,c,Vector2.zero);
             vh.AddTriangle(i,i+1,i+2);vh.AddTriangle(i,i+2,i+3);
         }
     }

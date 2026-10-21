@@ -1,0 +1,27 @@
+{
+  "provenance": "Original deterministic synthesis. No external samples or paid API.",
+  "listening": "Technical measurements only; native mix/listening acceptance remains open.",
+  "cues": [
+    {
+      "cue": "sfx_step_deck",
+      "seconds": 0.22,
+      "peak": 0.396867784332008,
+      "rms": 0.05754737630124333,
+      "sha256": "eb240735925d56a15924fb04d62a9a3536249a2908315fc7805051e02a9e773f"
+    },
+    {
+      "cue": "sfx_swim_stroke",
+      "seconds": 0.48,
+      "peak": 0.6,
+      "rms": 0.1141972540496436,
+      "sha256": "6cce33b6aadb3252a1c78f587f06fb2f4838a8b6300ed01f0df6405752e9493e"
+    },
+    {
+      "cue": "sfx_lagoon_lap",
+      "seconds": 1.1499773242630384,
+      "peak": 0.37032364612970775,
+      "rms": 0.07497964683825291,
+      "sha256": "b2f52c720f30b25d0ff9522e21860b004b358972e50456a7485df10b3647df5d"
+    }
+  ]
+}

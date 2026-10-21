@@ -1,0 +1,8 @@
+{
+  "candidateRestored": true,
+  "sha256": {
+    "Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs": "27201c7a623d5d9e4edb1f826eff9373ceac9485aca0892d86d132a1629013e2",
+    "Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs": "621a3c4800ae80f892843cf9b08b637b99551718deed4b68d19649c206efa710",
+    "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.TagBody.cs": "62730304f83c57fb7ff5ce48a57c4b33955c77ca06a5ba5ca837b2d8b22df1d8"
+  }
+}

@@ -1,0 +1,94 @@
+Mono path[0] = 'C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/TumbangPreso_Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4050 Laptop GPU (ID=0x28a1)
+    Vendor:   NVIDIA
+    VRAM:     5936 MB
+    Driver:   31.0.15.4618
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.344 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Audio] loaded 122 of 122 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 3.663200 ms
+[Build] TUMBANG PRESO 1.0.0 | cb5f4ad9f84f+dirty | protocol 153 | StandaloneWindows64
+[NetBoot] lobby requested, port=49158 join='192.168.1.7:49157' chat=''
+[NetReport] writing C:\Users\Matthew\Documents\Codex\2026-10-03\continue-competition-readiness-engineering-for-dost\work\lan-hostloss1007\client-a\state.txt after 240 s.
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.090600 ms
+Unloading 8 unused Assets to reduce memory usage. Loaded Objects now: 4191.
+Total: 1.316500 ms (FindLiveObjects: 0.127000 ms CreateObjectMapping: 0.306600 ms MarkObjects: 0.846100 ms  DeleteObjects: 0.036500 ms)
+
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/TumbangPreso_Data/sharedassets0.resource
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/TumbangPreso_Data/resources.resource
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/Documents/Codex/2026-10-03/continue-competition-readiness-engineering-for-dost/Builds/lan-combined-cb5f1007/TumbangPreso_Data/resources.resource
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 49158, join code 6ZH5
+[LobbyAuto] joining 192.168.1.7:49157
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.Net.NetSession.StartClientAsync (System.String address, System.Int32 port, System.Threading.CancellationToken cancellationToken) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.StartClientAsync (System.String address, System.Int32 port, System.Threading.CancellationToken cancellationToken) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.LobbyJoinPanel.Connect (System.String typed, System.Threading.CancellationToken cancellationToken) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.UI.LobbyJoinPanel.Connect (System.String typed, System.Threading.CancellationToken cancellationToken) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.LobbyJoinPanel.NativeJoinAsync (System.String typed) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.UI.LobbyJoinPanel.NativeJoinAsync (System.String typed) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.LobbyJoinPanel.AutomationJoin (System.String typed) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.UI.LobbyJoinPanel.AutomationJoin (System.String typed) [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.DriveAutomation () [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at System.Runtime.CompilerServices.AsyncVoidMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.DriveAutomation () [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.AutoHost () [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at System.Runtime.CompilerServices.AsyncVoidMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.AutoHost () [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.WireOwnerPreparation () [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.Wire () [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+  at TumbangPreso.UI.ConvertedScreen.Start () [0x00000] in <9481dbfb01c0439d803380162ec25f72>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Net] connecting to 192.168.1.7:49157
+[Net] connected
+[Net] connected as seat 2
+[LobbyAuto] join result True
+[Link] Good at 33 ms round trip (client).
+[Link] Bad at 4628 ms round trip (client).
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 6.226700 ms
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 82 unused Assets to reduce memory usage. Loaded Objects now: 15572.
+Total: 3.615300 ms (FindLiveObjects: 0.848900 ms CreateObjectMapping: 0.972300 ms MarkObjects: 1.636800 ms  DeleteObjects: 0.157100 ms)
+
+[Link] Good at 108 ms round trip (client).
+[NetAuto] READY submitted from a client peer.
+[ArenaPrewarm] drew 20 views in 0.37 s.
+[HubLoading] Eskinita ready after 1.19 s.
+[Link] Bad at 851 ms round trip (client).
+[Link] Good at 17 ms round trip (client).
+[Slice] round 1 begins, taya is seat 0

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 22:03:09Z" end-time="2026-09-26 22:03:09Z" duration="0.0748536">
+  <test-suite type="TestSuite" id="1869" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:03:09Z" end-time="2026-09-26 22:03:09Z" duration="0.074854" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:03:09Z" end-time="2026-09-26 22:03:09Z" duration="0.065490" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51960" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:03:09Z" end-time="2026-09-26 22:03:09Z" duration="0.061643" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1865" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:03:09Z" end-time="2026-09-26 22:03:09Z" duration="0.058230" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1400" name="MatchRecordIdentityProbe" fullname="TumbangPreso.PlayTests.MatchRecordIdentityProbe" classname="TumbangPreso.PlayTests.MatchRecordIdentityProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 22:03:09Z" end-time="2026-09-26 22:03:09Z" duration="0.045828" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1401" name="MatchEligibilityIsCapturedFromTheChosenRouteAtStart" fullname="TumbangPreso.PlayTests.MatchRecordIdentityProbe.MatchEligibilityIsCapturedFromTheChosenRouteAtStart" methodname="MatchEligibilityIsCapturedFromTheChosenRouteAtStart" classname="TumbangPreso.PlayTests.MatchRecordIdentityProbe" runstate="Runnable" seed="1476313427" result="Passed" start-time="2026-09-26 22:03:09Z" end-time="2026-09-26 22:03:09Z" duration="0.036406" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[IdentityProbe] eligibility body complete
+[IdentityProbe] preserving InitTestScene
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

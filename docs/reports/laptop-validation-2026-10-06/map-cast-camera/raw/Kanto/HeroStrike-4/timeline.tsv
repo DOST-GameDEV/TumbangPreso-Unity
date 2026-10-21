@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.480	Quiet	QuietEstablish	the street	1	0
+1.000	88.980	Quiet	QuietEstablish	the street	1	0
+1.501	88.480	Quiet	QuietEstablish	the street	1	0
+2.002	87.980	Quiet	QuietEstablish	the street	1	0
+2.503	87.480	ThrowPrep	Objective	throw · SORAYA	2	0
+3.005	86.981	ThrowPrep	Objective	throw · SORAYA	2	0
+3.506	86.481	ThrowPrep	Objective	throw · SORAYA	2	0
+4.006	85.981	Retrieval	RetrievalTwoShot	retrieval · YASMIN	3	0
+4.506	85.481	Retrieval	RetrievalTwoShot	retrieval · SORAYA	4	0
+5.006	84.981	Retrieval	Chase	retrieval · SORAYA	6	0
+5.507	84.601	Retrieval	Chase	retrieval · SORAYA	6	0
+6.009	84.101	Retrieval	Chase	retrieval · SORAYA	6	0
+6.510	83.601	Tag	Defender	tag · SORAYA	7	0
+7.011	83.101	Tag	Defender	tag · SORAYA	7	0
+7.513	82.601	Tag	Defender	tag · SORAYA	7	0
+8.013	82.101	Downed	Recovery	down · YASMIN	8	0
+8.515	81.601	Downed	Recovery	down · YASMIN	8	0
+9.016	81.101	Downed	Recovery	down · YASMIN	8	0
+9.516	80.602	Downed	Recovery	down · YASMIN	8	0
+10.264	79.862	Downed	Recovery	down · YASMIN	8	0
+10.766	79.342	Quiet	QuietEstablish	the street	10	0
+11.269	78.842	Quiet	QuietEstablish	the street	10	0
+11.769	78.402	Quiet	QuietEstablish	the street	10	0
+12.269	77.902	Quiet	QuietEstablish	the street	10	0
+12.770	77.402	Tag	Defender	tag · SORAYA	11	0
+13.271	76.902	Tag	Defender	tag · SORAYA	11	0
+13.771	76.402	Tag	Defender	tag · SORAYA	11	0
+14.273	75.902	Downed	Recovery	down · SORAYA	11	0
+14.775	75.402	Downed	Recovery	down · SORAYA	11	0

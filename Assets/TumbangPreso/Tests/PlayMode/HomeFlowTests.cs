@@ -13,8 +13,20 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class HomeFlowTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private bool _boot,_offered;
+        private Settings.GameSettings _settings;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _boot=SceneFlow.BootedThroughSplash;_offered=SceneFlow.LoginStepOffered;_settings=Settings.SettingsStore.Current;
+            yield return PlayModeWorld.Reset();GameServices.Ensure();
+            Settings.SettingsStore.OverrideForTests(new Settings.GameSettings{PlayerName="Startup flow guest",AccountHasPassword=false});
+            SceneFlow.BootedThroughSplash=true;SceneFlow.LoginStepOffered=false;
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();Settings.SettingsStore.OverrideForTests(_settings);
+            SceneFlow.BootedThroughSplash=_boot;SceneFlow.LoginStepOffered=_offered;
+        }
 
         /// <summary>
         /// ⚠️⚠️ THIS FIXTURE WAS ASSERTING A SCREEN THE GAME HAD ALREADY STOPPED BUILDING.
@@ -30,108 +42,110 @@ namespace TumbangPreso.PlayTests
         /// `TumpNativeFrontEndTests` walks to settings and credits through the lobby.
         /// </summary>
         [UnityTest]
-        public IEnumerator TitleIsOnePressAndKeepsHerStreetMoving()
+        public IEnumerator LoadingTitleKeepsSuppliedPaintingAndHasNoContinueTarget()
         {
-            yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-            yield return new WaitForSecondsRealtime(0.5f);
+            // Inspect the loading composition independently of the automatic
+            // scene arrival so the control cannot disappear mid-capture.
+            var root=new GameObject("Loading title art control");
+            root.AddComponent<TumpHomeView>().Build(root.transform,null,null);
+            yield return null;
             var canvas = GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
             Assert.IsNotNull(canvas);
 
             var buttons = canvas.GetComponentsInChildren<Button>().Where(b => b.isActiveAndEnabled).ToArray();
-            CollectionAssert.AreEquivalent(new[] { "StartButton" }, buttons.Select(b => b.name));
+            Assert.IsEmpty(buttons,"The loading title must not ask for another click.");
+            Assert.IsFalse(canvas.GetComponentsInChildren<Text>().Any(t=>t.name=="ContinuePrompt"));
+            var progress=canvas.transform.Find("OwnerMainMenuComposition/ActualProgress").GetComponent<Image>();
+            Assert.IsNotNull(progress);Assert.IsFalse(progress.raycastTarget);
 
-            var prompt = canvas.GetComponentsInChildren<Text>().Single(t => t.name == "ContinuePrompt");
-            StringAssert.Contains("to continue", prompt.text);
-            Assert.AreEqual(OwnerUiTheme.Current.Display, prompt.font,
-                "Her caption is Darumadrop; Paalalabas is the caption face on the login.");
+            var picture=canvas.GetComponentsInChildren<RawImage>().Single(i=>i.name=="OwnerMainMenuBackground");
+            Assert.AreEqual(OwnerMenuArt.Texture("main2-background"),picture.texture);
+            Assert.AreEqual(1920,picture.texture.width);Assert.AreEqual(1080,picture.texture.height);
+            Assert.AreEqual(Graphic.defaultGraphicMaterial,picture.material);
+            Assert.IsNull(canvas.GetComponentInChildren<OwnerMenuAir>());
+            Assert.IsNull(canvas.GetComponentInChildren<OwnerMenuLeaves>());
+            Assert.IsNull(canvas.GetComponentInChildren<OwnerRoadDust>());
 
-            var air = canvas.GetComponentInChildren<OwnerMenuAir>();
-            Assert.IsNotNull(air, "The sky and the cast shadow are the title's only motion in the air.");
-            Assert.IsNotNull(canvas.GetComponentInChildren<OwnerMenuLeaves>());
-            Assert.IsNotNull(canvas.GetComponentInChildren<OwnerRoadDust>());
-
-            yield return UiRuntimeShots.Capture("Home-street-v1",1920,1080);
-            yield return UiRuntimeShots.Capture("Home-street-v1-720p",1280,720);
-            yield return UiRuntimeShots.Capture("Home-street-v1-shortwide",1920,820);
+            yield return TumpUiCapture.Capture("Title-clean-1080p",canvas,1920,1080,false);
+            yield return TumpUiCapture.Capture("Title-clean-720p",canvas,1280,720,false);
+            yield return TumpUiCapture.Capture("Title-clean-shortwide",canvas,1920,820,false);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ UX-1, 2026-09-23: TAP TO START OPENS HOME, AND THIS TEST CHANGED BECAUSE THE FLOW DID,
+        /// BY THE OWNER'S DESIGN. It walked TAP TO START → LET'S PLAY → the preparation board's
+        /// PROFILE and CHANGE LOADOUT doors; those screens are retired (kept on disk, reached by
+        /// nothing). Its intent is unchanged and asserted on the doors that replaced them: the
+        /// profile is one press from where the player lands (HOME's name plate), and so is the
+        /// loadout (HOME's LOADOUT sticker), and each backs out to HOME. Every press is a real
+        /// raycast, so a covered door fails here.
+        /// </summary>
         [UnityTest]
-        public IEnumerator PreparationRemainsReachableFromThePracticeLobby()
+        public IEnumerator LoginArrivesAtHomeWhoseDoorsReachProfileAndLoadout()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-            yield return new WaitForSecondsRealtime(.3f);
-            yield return PressWhen("StartButton");
-            yield return PressWhen("ClassicButton");
-            yield return PressWhen("PracticeButton");
+            yield return PressWhen("GuestAccount");
             yield return WaitForScene(SceneFlow.MatchSetup);
-            yield return PressWhen("ProfileButton");
-            Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen);
-            // ⚠⚠ TWO MORE NAMES THIS FIXTURE HELD AND THE GAME NO LONGER BUILDS. The hub's
-            // way out is `ClosePlayerHub` (`PlayerHub.OwnerPainted`), not `PlayerHub.cs`'s rail
-            // footer `HubClose`; and preparation reaches the character/equipment picker through
-            // `LoadoutButton`, "CHANGE LOADOUT", because `OpenLoadout` IS `OpenCharacterSelect`.
-            // `CharacterButton` is the converted lobby's door and `ConvertedMatchSetup` still
-            // wires it, so it compiles, builds and is simply never on screen. § 124.11.
-            yield return PressWhen("ClosePlayerHub");yield return null;
+            yield return WaitForButton("PlayButton");
+            Assert.IsInstanceOf<UI.Hub.HubHome>(UI.Hub.TumpHub.Current.Top);
+            yield return new WaitForSecondsRealtime(.6f);
+            yield return PressWhen("NamePlate");
+            Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen, "The name plate is the door to profile settings.");
+            yield return PressWhen("ClosePlayerHub"); yield return null;
             yield return PressWhen("LoadoutButton");
-            // ⚠️⚠️ THE PICKER A PLAYER SEES IS `TumpPickerView`, NOT THE CONVERTED PANEL.
-            // `OpenLoadout` still switches `CharacterSelectPanel` on and `ConvertedCharacterSelect`
-            // still owns the choice, so asking the scene for that component finds it and proves
-            // nothing: its authored controls (`BackButton`, `ConfirmButton` and the two arrows)
-            // stay switched off, which is exactly what this fixture was reading when it reported
-            // a picker with no way out. The owner-painted screen's door is `TumpBack`.
-            yield return WaitForButton("TumpBack");
-            var picker=Object.FindFirstObjectByType<TumpPickerView>();
-            Assert.IsNotNull(picker,"Preparation must still expose the real character/equipment picker.");
+            yield return new WaitForSecondsRealtime(.5f);
+            Assert.IsInstanceOf<UI.Hub.HubLoadout>(UI.Hub.TumpHub.Current.Top);
+            Assert.IsNotNull(ActiveButton("TsinelasTab"));
+            Assert.IsNotNull(ActiveButton("LataTab"));
             Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-                .Any(button=>button.name=="CustomDoor" && button.isActiveAndEnabled));
-            yield return UiRuntimeShots.Capture("Picker-from-lobby-brand-v1",1920,1080);
-            yield return PressWhen("TumpBack");yield return null;
-            Assert.IsNotNull(ActiveButton("LoadoutButton"));
+                .Any(b => b.name == "SkillsTab" && b.isActiveAndEnabled), "SKILLS moved to the SKILL TREE.");
+            yield return UiRuntimeShots.Capture("Hub-loadout-from-home-v1", 1920, 1080);
+            yield return PressWhen("BackButton"); yield return new WaitForSecondsRealtime(.3f);
+            Assert.IsInstanceOf<UI.Hub.HubHome>(UI.Hub.TumpHub.Current.Top);
         }
 
+        /// <summary>
+        /// ⚠️ THE SAME RULE AS BEFORE, ON THE OWNER'S GAMEMODE SELECT: the ruleset (Classic or Hero
+        /// Strike) is separate from the stakes, and there is no Classic ladder. RANKED is always Hero
+        /// Strike; CLASSIC asks which game and is casual. Choosing a mode opens no room.
+        /// </summary>
         [UnityTest]
-        public IEnumerator PlaySeparatesRulesFromRoutesAndNeverPromisesAClassicLadder()
+        public IEnumerator ModeSelectSeparatesRulesFromStakesAndNeverPromisesAClassicLadder()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return PressWhen("StartButton");
-            yield return WaitForScene(SceneFlow.ModeSelect);
-            Assert.IsNotNull(ActiveButton("TutorialButton"));
-            yield return PressWhen("ClassicButton");
-            Assert.IsNotNull(ActiveButton("PracticeButton"));
-            Assert.IsNotNull(ActiveButton("CustomButton"));
-            Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-                .Any(b => b.name == "RankedButton" && b.isActiveAndEnabled));
-            Assert.IsNotNull(ActiveButton("HeroStrikeButton"),"Game choice stays visible beside its access routes.");
-            yield return PressWhen("HeroStrikeButton");
-            Assert.IsNotNull(ActiveButton("RankedButton"));
-            // ⚠⚠ THIS LINE LOOKED FOR `PlayChoiceCanvas/TumpMark` AND THE GAME HAS BUILT
-            // `OwnerPlayCanvas` SINCE THE OWNER-PAINTED PASS. `TumpPlayView.Install` adds
-            // `CourtPlayView`, whose canvas is `OwnerPlayCanvas` and whose logo is
-            // `OriginalOwnerLogo`; `PlaySelectionScreen` still exists and still owns
-            // `RequestedLobbyMode`, which is the only part of it this flow uses, so the old name
-            // resolved to nothing and the test died on a null. § 124.11 again.
-            // The assertion itself is unchanged and is worth keeping: a Default-imported texture
-            // yields a null sprite and draws as a white rectangle where the logo should be.
-            var logo = GameObject.Find("OwnerPlayCanvas").GetComponentsInChildren<Image>(true)
-                .Single(i => i.name == "OriginalOwnerLogo");
-            Assert.IsNotNull(logo.sprite,
-                "A texture imported as Default must not become a white logo rectangle.");
-            yield return UiRuntimeShots.Capture("Play-brand-v2",1920,1080);
-            yield return UiRuntimeShots.Capture("Play-brand-v2-720p",1280,720);
-            yield return UiRuntimeShots.Capture("Play-brand-v2-4by3",1200,900);
-            yield return PressWhen("RankedButton");
             yield return WaitForScene(SceneFlow.MatchSetup);
-            Assert.IsFalse(PlaySelectionScreen.RequestedLobbyMode.HasValue);
+            yield return WaitForButton("ModeCard");
+            yield return new WaitForSecondsRealtime(.6f);
+            yield return PressWhen("ModeCard");
+            yield return new WaitForSecondsRealtime(.4f);
+            foreach (var card in new[] { "PracticeCard", "CustomCard", "ClassicCard", "RankedCard" })
+                Assert.IsNotNull(ActiveButton(card));
+            yield return PressWhen("ClassicCard");
+            yield return new WaitForSecondsRealtime(.4f);
+            Assert.IsNotNull(ActiveButton("ClassicChoice"));
+            Assert.IsNotNull(ActiveButton("HeroStrikeChoice"));
+            Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .Any(b => b.name.Contains("Ranked") && b.isActiveAndEnabled && b.GetComponentInParent<UI.Hub.HubClassicPopup>() != null),
+                "The casual popup never offers a ladder.");
+            yield return PressWhen("HeroStrikeChoice");
+            yield return new WaitForSecondsRealtime(.3f);
+            Assert.AreEqual(2, UI.Hub.HubHome.Choice);
+            yield return PressWhen("ModeCard");
+            yield return new WaitForSecondsRealtime(.4f);
+            yield return PressWhen("RankedCard");
+            yield return new WaitForSecondsRealtime(.3f);
+            Assert.AreEqual(0, UI.Hub.HubHome.Choice);
+            Assert.AreEqual(Core.GameMode.HeroStrike, SceneFlow.SelectedMode, "Ranked is always Hero Strike.");
             Assert.IsFalse(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked,
-                           "Opening the ranked destination must not open a LAN room.");
+                           "Choosing the ranked mode must not open a room.");
         }
 
         // A scene load is asynchronous, so asserting the scene name after a fixed sleep tests the
         // machine rather than the flow.
         private static IEnumerator WaitForScene(string name)
         {
-            float end = Time.realtimeSinceStartup + 20f;
+            float end = Time.realtimeSinceStartup + 60f;
             while (SceneManager.GetActiveScene().name != name && Time.realtimeSinceStartup < end) yield return null;
             Assert.AreEqual(name, SceneManager.GetActiveScene().name);
         }
@@ -244,31 +258,17 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator LoadingStoryCanBeOpenedAdvancedAndClosedWithoutSkippingReadiness()
+        public IEnumerator LoadingTipsStayInlineAndReadinessStillGatesTheTitle()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.Splash);
-            yield return new WaitForSecondsRealtime(0.6f);
+            float surfaceUntil=Time.realtimeSinceStartup+30;
+            while(GameObject.Find("OwnerLoadingCanvas")==null&&Time.realtimeSinceStartup<surfaceUntil)yield return null;
             Assert.IsNotNull(Object.FindFirstObjectByType<SplashScreen>());
-            // ⚠⚠ THE STORY DOOR IS A NAMED LINK NOW, NOT THE ARTWORK. `SplashScreen.cs`'s
-            // `LoadingArtButton` belongs to the converted loading screen;
-            // `BuildCourtLoadingSurface` is what the game builds, and it puts the door on a
-            // labelled `LoadingStories` link instead of on the illustration, because artwork that
-            // is secretly a button is `CLAUDE.md` § 6.3's invisible door. Both are still on disk.
-            yield return PressWhen("LoadingStories");
-            var story = GameObject.Find("LoadingStoryRoot");
-            Assert.IsNotNull(story);
-            var text = story.GetComponentsInChildren<Text>()
-                .FirstOrDefault(t => LoadingPresentation.Stories.Contains(t.text));
-            Assert.IsNotNull(text, "The story sheet shows none of LoadingPresentation.Stories: " +
-                string.Join(" | ", story.GetComponentsInChildren<Text>().Select(t => t.name + "=" + t.text)));
-            string first = text.text;
-            yield return PressWhen("LoadingStoryNext");
-            Assert.AreNotEqual(first, text.text);
-            yield return new WaitForSecondsRealtime(15.1f);
-            Assert.AreEqual(SceneFlow.Splash, SceneManager.GetActiveScene().name,
-                "Reading must hold the loading screen past its maximum random dwell.");
-            yield return PressWhen("LoadingStoryClose");
-            Assert.IsFalse(story.activeSelf);
+            var loadingCanvas = GameObject.Find("OwnerLoadingCanvas").GetComponent<Canvas>();
+            Assert.IsNotNull(loadingCanvas.GetComponentInChildren<LoadingArtwork>());
+            Assert.IsTrue(loadingCanvas.GetComponentsInChildren<Text>().Any(t => t.name == "InlineLoadingTip" && !string.IsNullOrEmpty(t.text)));
+            Assert.IsFalse(loadingCanvas.GetComponentsInChildren<Button>().Any(b => b.name == "LoadingStories"));
+            Assert.IsNull(GameObject.Find("LoadingStoryRoot"), "Tips must not open a second screen or hold readiness.");
             float end = Time.realtimeSinceStartup + 60f;
             while (SceneManager.GetActiveScene().name != SceneFlow.MainMenu && Time.realtimeSinceStartup < end)
                 yield return null;
@@ -281,7 +281,9 @@ namespace TumbangPreso.PlayTests
             // player walks, so the loading test now ends where a player ends: on her street.
             yield return WaitForButton("GuestAccount");
             yield return PressWhen("GuestAccount");
-            yield return WaitForButton("StartButton");
+            yield return WaitForScene(SceneFlow.MatchSetup);
+            yield return WaitForButton("PlayButton");
+            Assert.IsTrue(UI.Hub.TumpHub.Current.AtHome);
         }
     }
 }

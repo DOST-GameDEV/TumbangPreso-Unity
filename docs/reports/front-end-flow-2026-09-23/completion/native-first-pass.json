@@ -1,0 +1,23 @@
+{
+  "source": "8f81e96bdf39de04dfbad9d6cf967c884e13c05a",
+  "buildSucceeded": true,
+  "megabytes": 1235,
+  "buildSeconds": 87,
+  "identityDirty": true,
+  "derivedChanges": [
+    "RecoveryAnimations/character-female-a.asset",
+    "RecoveryAnimations/team-rafi.asset",
+    "SwimmingAnimations/character-female-a.asset",
+    "SwimmingAnimations/team-rafi.asset"
+  ],
+  "protectedMetaChurn": 2,
+  "lanJoinByAddress": true,
+  "seatedPeers": 2,
+  "hubVisible": "Not confirmed; native desktop capture failed",
+  "windowsCaptureErrors": [
+    "SetIsBorderRequired failed: No such interface supported (0x80004002)",
+    "no screenshot targets found"
+  ],
+  "shutdown": "Both task-owned players terminated after handshake; not a graceful-exit assertion",
+  "startupFinding": "BeforeSplashScreen creates PlayerAccount before NetBootstrap selects launch profile; first UGS attempt can use default cache, then profile selection drops its task and starts another. Fixed source pending checks."
+}

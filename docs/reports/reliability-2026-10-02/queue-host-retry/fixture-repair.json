@@ -1,0 +1,7 @@
+{
+  "kind": "Fixture namespace import",
+  "firstAttempt": "baseline compile error CS1061; no test XML; original logs/receipt preserved",
+  "change": "Add System.Linq for existing Contains assertion",
+  "productionChanged": false,
+  "repairCount": 1
+}

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Failed(Child)" total="12" passed="3" failed="9" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:20:52Z" end-time="2026-10-03 03:20:56Z" duration="3.6383663">
+  <test-suite type="TestSuite" id="2671" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:20:52Z" end-time="2026-10-03 03:20:56Z" duration="3.638366" total="12" passed="3" failed="9" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2665" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:20:52Z" end-time="2026-10-03 03:20:56Z" duration="3.609065" total="12" passed="3" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10572" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2666" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:20:52Z" end-time="2026-10-03 03:20:56Z" duration="3.595829" total="12" passed="3" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2667" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:20:52Z" end-time="2026-10-03 03:20:56Z" duration="3.579540" total="12" passed="3" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1572" name="InputProducerCancellationTests" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-03 03:20:53Z" end-time="2026-10-03 03:20:56Z" duration="3.492322" total="12" passed="3" failed="9" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1581" name="ActualLungeReleaseStillSpendsCooldownAndOpensContact" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ActualLungeReleaseStillSpendsCooldownAndOpensContact" methodname="ActualLungeReleaseStillSpendsCooldownAndOpensContact" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="752978880" result="Passed" start-time="2026-10-03 03:20:53Z" end-time="2026-10-03 03:20:54Z" duration="1.094075" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1580" name="ActualThrowReleaseStillLaunchesTheOwnedShoe" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ActualThrowReleaseStillLaunchesTheOwnedShoe" methodname="ActualThrowReleaseStillLaunchesTheOwnedShoe" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1578526150" result="Passed" start-time="2026-10-03 03:20:54Z" end-time="2026-10-03 03:20:54Z" duration="0.469630" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1574" name="FocusLossCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossCancelsPendingLunge" methodname="FocusLossCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="707889393" result="Failed" start-time="2026-10-03 03:20:54Z" end-time="2026-10-03 03:20:55Z" duration="0.235055" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: -1
+  But was:  0.0051550027f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckCancelled>d__26.MoveNext () [0x00088] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:96
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1573" name="FocusLossCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossCancelsPendingThrow" methodname="FocusLossCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="796475755" result="Failed" start-time="2026-10-03 03:20:55Z" end-time="2026-10-03 03:20:55Z" duration="0.221542" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckCancelled>d__26.MoveNext () [0x00078] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:96
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1582" name="FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" methodname="FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1745437731" result="Passed" start-time="2026-10-03 03:20:55Z" end-time="2026-10-03 03:20:55Z" duration="0.361141" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1578" name="FocusLossRequiresAFreshInteractPress" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossRequiresAFreshInteractPress" methodname="FocusLossRequiresAFreshInteractPress" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1498073479" result="Failed" start-time="2026-10-03 03:20:55Z" end-time="2026-10-03 03:20:55Z" duration="0.133633" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Retired held Interact restarted without release.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckInteractRelease>d__32.MoveNext () [0x000b7] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:129
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1584" name="PracticeIdleCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.PracticeIdleCancelsPendingLunge" methodname="PracticeIdleCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="273182478" result="Failed" start-time="2026-10-03 03:20:55Z" end-time="2026-10-03 03:20:55Z" duration="0.142568" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: -1
+  But was:  0.00469161011f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckPracticeIdle>d__38.MoveNext () [0x00150] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:180
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1583" name="PracticeIdleCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.PracticeIdleCancelsPendingThrow" methodname="PracticeIdleCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="377087140" result="Failed" start-time="2026-10-03 03:20:55Z" end-time="2026-10-03 03:20:56Z" duration="0.147274" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckPracticeIdle>d__38.MoveNext () [0x00140] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:180
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1576" name="ReaderDisableCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderDisableCancelsPendingLunge" methodname="ReaderDisableCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1683619273" result="Failed" start-time="2026-10-03 03:20:56Z" end-time="2026-10-03 03:20:56Z" duration="0.126827" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: -1
+  But was:  0.00249060383f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckCancelled>d__26.MoveNext () [0x00088] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:96
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1575" name="ReaderDisableCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderDisableCancelsPendingThrow" methodname="ReaderDisableCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="366389238" result="Failed" start-time="2026-10-03 03:20:56Z" end-time="2026-10-03 03:20:56Z" duration="0.141671" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckCancelled>d__26.MoveNext () [0x00078] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:96
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1579" name="ReaderReenableRequiresAFreshInteractPress" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderReenableRequiresAFreshInteractPress" methodname="ReaderReenableRequiresAFreshInteractPress" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="732022469" result="Failed" start-time="2026-10-03 03:20:56Z" end-time="2026-10-03 03:20:56Z" duration="0.135785" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Retired held Interact restarted without release.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<CheckInteractRelease>d__32.MoveNext () [0x000b7] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:129
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1577" name="ReaderReenableRequiresReleaseBeforeASecondThrowWindup" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderReenableRequiresReleaseBeforeASecondThrowWindup" methodname="ReaderReenableRequiresReleaseBeforeASecondThrowWindup" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1621197849" result="Failed" start-time="2026-10-03 03:20:56Z" end-time="2026-10-03 03:20:56Z" duration="0.137654" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Held touch input restarted the retired windup.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.InputProducerCancellationTests+<ReaderReenableRequiresReleaseBeforeASecondThrowWindup>d__31.MoveNext () [0x0007d] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\InputProducerCancellationTests.cs:115
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

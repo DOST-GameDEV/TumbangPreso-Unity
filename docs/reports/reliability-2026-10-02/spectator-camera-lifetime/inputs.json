@@ -1,0 +1,54 @@
+{
+  "sourceCommit": "f163882cc9ea65d6b4fb2411f2781deb2e885a1b",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+      "variant": "baseline",
+      "sha256": "89454b1d7fe35081c8ae1ec482b60f321da6d7018db53b6f6eb5e3f4f5a30660",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\SpectatorCamera.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+      "variant": "final",
+      "sha256": "4204b869749a00877ebbdd98ad06e462c9f0dc289ab9f2e9881a802785712e96",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\SpectatorCamera.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+      "variant": "baseline",
+      "sha256": "cfa1f925e68df4f6df117f7a7e3f94945691c8a006569d01e45719641a3880e8",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\MatchInstaller.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+      "variant": "final",
+      "sha256": "b6844bae58be9385d302e0b0b7b409cd1d60cbfc6bac6d6a280fc904194281f0",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\MatchInstaller.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SpectatorCameraLifetimeTests.cs",
+      "variant": "baseline",
+      "sha256": "77ce54641c5de976711c6ee1ce8ada4753390f07872b79b0d9e91d7ff3b2b750",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\SpectatorCameraLifetimeTests.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SpectatorCameraLifetimeTests.cs",
+      "variant": "final",
+      "sha256": "77ce54641c5de976711c6ee1ce8ada4753390f07872b79b0d9e91d7ff3b2b750",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\SpectatorCameraLifetimeTests.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SpectatorCameraLifetimeTests.cs.meta",
+      "variant": "baseline",
+      "sha256": "f9b9d073b78b62c1074cc91359b6031bb8b0e5a17c32a2d28e535ba8aa5c93bc",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\SpectatorCameraLifetimeTests.cs.meta.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SpectatorCameraLifetimeTests.cs.meta",
+      "variant": "final",
+      "sha256": "f9b9d073b78b62c1074cc91359b6031bb8b0e5a17c32a2d28e535ba8aa5c93bc",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\spectator-lifetime1002-inputs\\SpectatorCameraLifetimeTests.cs.meta.final.txt"
+    }
+  ],
+  "qualificationInstalled": false
+}

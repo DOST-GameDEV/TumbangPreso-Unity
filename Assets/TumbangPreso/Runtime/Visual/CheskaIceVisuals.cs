@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Rendering;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace TumbangPreso.Visual
 {
@@ -7,11 +9,35 @@ namespace TumbangPreso.Visual
     public static class CheskaIceVisuals
     {
         private static readonly Color Ice = new Color(.23f,.62f,.73f,.72f);
+        private static readonly string[] WallMeshes = { "wall_left", "wall_center", "wall_right" };
+        private static readonly Dictionary<string, Mesh> Meshes = new Dictionary<string, Mesh>();
+
+        public static IEnumerator Warmup()
+        {
+            foreach (string name in WallMeshes) yield return WarmMesh(name);
+            yield return WarmMesh("thaw_shard");
+            // The reworked Glacial Wall bakes four crystal meshes on first use; done here, behind the loading screen,
+            // the first wall of a match costs a frame like any other.
+            if (CheskaGlacialWallLook.Enabled)
+            {
+                CheskaGlacialWallLook.Warm(Core.CryoRules.GlacialWallArcLength, Core.CryoRules.GlacialWallArcRadius);
+                yield return null;
+            }
+        }
+
+        private static IEnumerator WarmMesh(string name)
+        {
+            if (Meshes.TryGetValue(name, out var known) && known != null) yield break;
+            var load = Resources.LoadAsync<Mesh>("Models/CheskaIce/" + name);
+            yield return load;
+            if (load.asset is Mesh mesh) Meshes[name] = mesh;
+        }
 
         public static GameObject Piece(Transform parent, string name, string meshName, Color color)
         {
-            var mesh = Resources.Load<Mesh>("Models/CheskaIce/" + meshName);
-            if (mesh == null) throw new System.InvalidOperationException("Missing Cheska ice mesh: " + meshName);
+            if (!Meshes.TryGetValue(meshName, out var mesh) || mesh == null)
+                Meshes[meshName] = mesh = Resources.Load<Mesh>("Models/CheskaIce/" + meshName);
+            if (mesh == null) throw new System.InvalidOperationException("Missing Yasmin ice mesh: " + meshName);
             var go = new GameObject(name);
             go.transform.SetParent(parent,false);
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
@@ -22,13 +48,12 @@ namespace TumbangPreso.Visual
             return go;
         }
 
-        public static void BuildWall(Transform parent, float span, float thickness, bool split = false)
+        public static void BuildWall(Transform parent, float span, float thickness, bool split = false, bool renderOnly = false)
         {
-            string[] meshes = { "wall_left", "wall_center", "wall_right" };
             for (int i=0;i<3;i++)
             {
                 if (split && i == 1) continue;
-                var slab = Piece(parent,"IcePillar_" + (i-1),meshes[i],Ice);
+                var slab = Piece(parent,"IcePillar_" + (i-1),WallMeshes[i],Ice);
                 slab.transform.localPosition = new Vector3((i-1)*.75f*span,0,0);
                 slab.transform.localScale = new Vector3(1,1,thickness);
                 // Anchor to the lowest supporting corner, so the base buries into a
@@ -41,10 +66,45 @@ namespace TumbangPreso.Visual
                 var position=slab.transform.position; position.y=lowest; slab.transform.position=position;
                 // The same fractured surface blocks slippers and bodies. Decorative
                 // toppers previously extended outside the three box colliders.
-                var collider=slab.AddComponent<MeshCollider>();
+                if(!renderOnly) { var collider=slab.AddComponent<MeshCollider>();
                 collider.sharedMesh=slab.GetComponent<MeshFilter>().sharedMesh;
-                collider.convex=true;
+                collider.convex=true; }
                 Cracks(slab.transform,i);
+            }
+        }
+
+        /// <summary>
+        /// GLACIAL WALL (ABILITY-2, owner: *"an arc-shaped icicle wall"*): the barricade's own ice pieces
+        /// stood along an arc facing her, five of them at their own heights, each with its collider, so
+        /// slippers and bodies stop at the curve. `arcLength` along the arc, bowed on `radius`.
+        /// </summary>
+        public static void BuildArc(Transform parent, float arcLength, float radius, bool renderOnly = false)
+        {
+            string[] meshes = { "wall_left", "wall_center", "wall_center", "wall_center", "wall_right" };
+            float[] heights = { 0.86f, 1.0f, 1.12f, 0.96f, 0.84f };
+            float sweepDeg = arcLength / radius * Mathf.Rad2Deg;
+            for (int i = 0; i < 5; i++)
+            {
+                // Five slabs fill five neighbouring arc segments. Endpoint-centred
+                // placement left four gaps because each slab was only one fifth wide.
+                float a = (-0.5f + (i + .5f) / 5f) * sweepDeg;
+                var slab = Piece(parent, "IceArc_" + i, meshes[i], Ice);
+                // The arc bows AWAY from her: its centre is behind the aimed point by the radius.
+                Vector3 at = Quaternion.Euler(0f, a, 0f) * new Vector3(0f, 0f, radius) - new Vector3(0f, 0f, radius);
+                slab.transform.localPosition = at;
+                slab.transform.localRotation = Quaternion.Euler(0f, a, 0f);
+                // Cover the outer face of each tangent segment, with a small seam
+                // overlap. The same authored mesh supplies the collision surface.
+                float width = 2f * (radius + .275f) * Mathf.Tan(sweepDeg * Mathf.Deg2Rad / 10f) + .015f;
+                slab.transform.localScale = new Vector3(width / .85f, heights[i], 1f);
+                var position = slab.transform.position; position.y = VfxShapes.GroundPoint(position).y; slab.transform.position = position;
+                if (!renderOnly)
+                {
+                    var collider = slab.AddComponent<MeshCollider>();
+                    collider.sharedMesh = slab.GetComponent<MeshFilter>().sharedMesh;
+                    collider.convex = true;
+                }
+                Cracks(slab.transform, i == 0 ? 0 : i == 4 ? 2 : 1);
             }
         }
 
@@ -80,9 +140,12 @@ namespace TumbangPreso.Visual
             }
         }
 
+        public static void ShatterWall(Transform wall) => CheskaWallBreak.Play(wall);
+
         public static void Shatter(Vector3 center, bool wall)
         {
             var root=new GameObject(wall?"BarricadeThaw":"RestraintThaw");root.transform.position=center;
+            Object.Destroy(root,.7f);
             int count=wall?8:5;
             for (int i=0;i<count;i++)
             {
@@ -94,7 +157,6 @@ namespace TumbangPreso.Visual
                 drift.Velocity=new Vector3(Mathf.Cos(angle)*1.1f,.8f+(i%3)*.15f,Mathf.Sin(angle)*1.1f);
                 drift.Spin=new Vector3(70+i*7,95-i*11,40);
             }
-            Object.Destroy(root,.7f);
         }
     }
 

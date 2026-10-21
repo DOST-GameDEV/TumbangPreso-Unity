@@ -1,0 +1,9 @@
+{
+  "base": "dc10b68f25d4ad555d6b4431d228fffc2cc86c57",
+  "sha256": {
+    "Assets/TumbangPreso/Editor/MapKit/SaBubongBirdVisitAuthor.cs": "6be4422017424269a719e7372c702cffc851a7ce48e79d124d83eb3cc682fcd1",
+    "Assets/TumbangPreso/Editor/MapKit/SaBubongBuilder.cs": "758aa44ab14662195c1a21a0205a5e881aacdf65e5e42efda4986010dbcdb175",
+    "Assets/TumbangPreso/Tests/PlayMode/AmbientLifeProbe.BirdVisits.cs": "39f4d7b70ee09ebc5c853bbb635f70321e953e34828175b599a5593244206f63",
+    "Assets/TumbangPreso/Scenes/Maps/SaBubong.unity": "aeadbb8348ed2d1bd6b04ab9116715fdae86a040cd57bae39aaeb2442d7d3d65"
+  }
+}

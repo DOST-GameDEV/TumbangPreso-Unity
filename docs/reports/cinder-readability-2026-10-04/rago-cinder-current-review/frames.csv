@@ -1,0 +1,2 @@
+frame,real_seconds,game_seconds,speed,held,leg_angle,action,charge,spin,torso_x,arm_x,hand_y,hand_forward,hand_side,body_y
+0,5.3244,0.2081,0.0000,False,0.000,idle,-1.0000,0.0000,-4.236,0.000,0.8705,0.0024,0.9256,0.1200

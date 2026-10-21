@@ -10,14 +10,26 @@ namespace TumbangPreso.Net
     public static class WorldEffectSnapshot
     {
         public const int MaxFields = 256;
-        public enum Kind { Sheet = 1, Barricade = 2, Fire = 3, Shock = 4, Crater = 5, Hex = 6, Fissure = 7 }
+        public enum Kind { Sheet = 1, Barricade = 2, Fire = 3, Shock = 4, Crater = 5, Hex = 6, Fissure = 7, Current = 8, Mirrorwake = 9, Breakwater = 10,
+            // ⚠️ APPEND ONLY (protocol 53): Amihan's Whirlwind gale, a travelling front.
+            Gale = 11,
+            // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
+            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16, CinderGate = 17, Baha = 18,
+            // ⚠️ APPEND ONLY (protocol 161): Nemu's DON'T LOOK ghost, waiting (a sprung one is the victim's BLINDED clock).
+            Blindfold = 19 }
+        public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind) || kind == Kind.CinderGate;
         public struct Field
         {
             public Kind Type;
+            [System.NonSerialized] public GameObject Source;
             public Vector3 Position, Forward;
             public float Duration, Remaining, Radius, FirstScale, SecondScale;
             public int Owner;
             public bool Split;
+            public int EventId;
+            public long InstanceId;
+            public byte TargetMask;
+            public Vector3[] Path;
         }
 
         public sealed class Batch
@@ -51,38 +63,60 @@ namespace TumbangPreso.Net
             foreach (var sheet in Object.FindObjectsByType<HeroHazards.IceSheetComponent>(FindObjectsSortMode.None))
             {
                 if (sheet.Remaining <= .02f) continue;
-                fields.Add(new Field { Type = Kind.Sheet, Position = sheet.transform.position,
+                fields.Add(new Field { Type = Kind.Sheet, Source = sheet.gameObject, Position = sheet.transform.position,
                     Forward = Vector3.forward, Duration = sheet.Duration, Remaining = sheet.Remaining,
                     Radius = sheet.Radius, Owner = sheet.OwnerSlot,
                     FirstScale = sheet.ChillMultiplier, SecondScale = sheet.SlipScale });
             }
             foreach (var wall in Object.FindObjectsByType<HeroHazards.IceBarricadeComponent>(FindObjectsSortMode.None))
             {
-                if (wall.Remaining <= .02f) continue;
-                fields.Add(new Field { Type = Kind.Barricade, Position = wall.transform.position,
+                if (wall.Remaining <= .02f || wall.IsShattered) continue;
+                fields.Add(new Field { Type = Kind.Barricade, Source = wall.gameObject, Position = wall.transform.position,
                     Forward = wall.transform.forward, Duration = wall.Duration, Remaining = wall.Remaining,
-                    Owner = -1, FirstScale = wall.SpanScale, SecondScale = wall.ThicknessScale, Split = wall.Split });
+                    Owner = -1,
+                    // A nonzero barricade Radius denotes an arc. The two existing
+                    // scale channels carry arc length and remaining hit budget.
+                    Radius = wall.ArcLength > 0 ? wall.ArcRadius : 0,
+                    FirstScale = wall.ArcLength > 0 ? wall.ArcLength : wall.SpanScale,
+                    SecondScale = wall.ArcLength > 0 ? wall.RemainingHits : wall.ThicknessScale,
+                    Split = wall.ArcLength <= 0 && wall.Split });
             }
             foreach (var trail in Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None))
-                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Fire,
+                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Fire, Source = trail.gameObject,
                     Position = trail.transform.position, Forward = trail.Forward, Radius = trail.Radius,
                     Duration = trail.Duration, Remaining = trail.Remaining, Owner = trail.OwnerSlot });
             foreach (var trail in Object.FindObjectsByType<HeroHazards.ShockTrailComponent>(FindObjectsSortMode.None))
-                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Shock,
+                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Shock, Source = trail.gameObject,
                     Position = trail.transform.position, Forward = trail.Forward, Radius = trail.Radius,
                     Duration = trail.Duration, Remaining = trail.Remaining, Owner = trail.OwnerSlot, FirstScale = trail.EffectScale });
             foreach (var crater in Object.FindObjectsByType<HeroHazards.SupernovaCraterComponent>(FindObjectsSortMode.None))
-                if (crater.Remaining > .02f) fields.Add(new Field { Type = Kind.Crater,
+                if (crater.Remaining > .02f) fields.Add(new Field { Type = Kind.Crater, Source = crater.gameObject,
                     Position = crater.transform.position, Radius = crater.Radius,
                     Duration = crater.Duration, Remaining = crater.Remaining, Owner = crater.OwnerSlot });
             foreach (var hex in Object.FindObjectsByType<HeroHazards.HexSigilComponent>(FindObjectsSortMode.None))
-                if (hex.Remaining > .02f) fields.Add(new Field { Type = Kind.Hex,
+                if (hex.Remaining > .02f) fields.Add(new Field { Type = Kind.Hex, Source = hex.gameObject,
                     Position = hex.transform.position, Radius = hex.Radius,
                     Duration = hex.Duration, Remaining = hex.Remaining, Owner = hex.OwnerSlot, FirstScale = hex.EffectScale });
             foreach (var pillar in Object.FindObjectsByType<DanteFissurePillar>(FindObjectsSortMode.None))
-                if (pillar.Remaining > .02f) fields.Add(new Field { Type = Kind.Fissure,
+                if (pillar.isActiveAndEnabled && pillar.Remaining > .02f) fields.Add(new Field { Type = Kind.Fissure, Source = pillar.gameObject,
                     Position = pillar.transform.position, Forward = pillar.transform.forward,
                     Duration = pillar.LifeSeconds, Remaining = pillar.Remaining, Owner = -1, FirstScale = pillar.Side });
+            foreach (var drift in Object.FindObjectsByType<DanteDriftWave>(FindObjectsSortMode.None))
+                if (drift.isActiveAndEnabled && drift.Remaining > .02f) fields.Add(drift.Capture());
+            foreach (var gale in Object.FindObjectsByType<AmihanGale>())
+                if (gale.isActiveAndEnabled && gale.Remaining > .02f) fields.Add(gale.Capture());
+            foreach (var plant in PaetePlant.Live)
+                if (plant != null && plant.isActiveAndEnabled && plant.Landed && !plant.IsRetiring) fields.Add(plant.Capture());
+            foreach (var thorns in Object.FindObjectsByType<PaeteThorns>())
+                if (thorns.isActiveAndEnabled && thorns.Age < Core.PaeteRules.ThornConstructSeconds - .05f) fields.Add(thorns.Capture());
+            foreach (var sentry in Object.FindObjectsByType<PaeteSentry>())
+                if (sentry.isActiveAndEnabled && sentry.Age >= 0f && sentry.Age < Core.PaeteRules.SentryLifeSeconds + .5f) fields.Add(sentry.Capture());
+            foreach (var water in RafiWaterField.Active)
+                if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
+            foreach (var gate in SeanCinderGate.Active)
+                if (gate != null && gate.isActiveAndEnabled && gate.Remaining > .02f) fields.Add(gate.Capture());
+            foreach (var blindfold in NemuBlindfold.Live)
+                if (blindfold != null && blindfold.isActiveAndEnabled && !blindfold.Sprung && blindfold.Remaining > .02f) fields.Add(blindfold.Capture());
             return fields;
         }
 
@@ -93,13 +127,33 @@ namespace TumbangPreso.Net
             if (!Finite(field.Position) || !Finite(field.Forward) || !Finite(field.Duration) || !Finite(field.Remaining)
                 || !Finite(field.Radius) || !Finite(field.FirstScale) || !Finite(field.SecondScale)
                 || field.Duration <= 0 || field.Duration > 60 || field.Remaining < 0 || field.Remaining > field.Duration + .05f
-                || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount) return false;
+                || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount || field.InstanceId < 0
+                || (field.TargetMask & ~((1 << Core.Balance.PlayerCount) - 1)) != 0
+                || (field.Type != Kind.Sentry && field.TargetMask != 0)) return false;
+            if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
+            if (field.Type == Kind.CinderGate) return SeanCinderGate.Valid(field);
+            if (field.Type == Kind.Drift)
+                return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.GeoRules.DriftSeconds) < .001f
+                    && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .001f
+                    && field.Radius > 0 && field.Radius <= 100 && field.FirstScale > 0 && field.FirstScale <= 100
+                    && field.SecondScale == 0;
             if (field.Type == Kind.Sheet)
                 return field.Radius > 0 && field.Radius <= 10 && field.FirstScale > 0 && field.FirstScale <= 1
                     && field.SecondScale > 0 && field.SecondScale <= 3;
             if (field.Type == Kind.Barricade)
-                return field.Forward.sqrMagnitude > .5f && field.Forward.sqrMagnitude < 1.5f
-                    && field.FirstScale > 0 && field.FirstScale <= 3 && field.SecondScale > 0 && field.SecondScale <= 3;
+            {
+                if (field.Forward.sqrMagnitude <= .5f || field.Forward.sqrMagnitude >= 1.5f) return false;
+                if (field.Radius == 0) // Retained straight/split barricades.
+                    return field.FirstScale > 0 && field.FirstScale <= 3 && field.SecondScale > 0 && field.SecondScale <= 3;
+                return field.Radius >= .25f && field.Radius <= 10 && !field.Split
+                    && field.FirstScale > 0 && field.FirstScale <= 12 && field.FirstScale / field.Radius <= Mathf.PI
+                    && field.SecondScale >= 0 && field.SecondScale <= 16 && field.SecondScale == Mathf.Floor(field.SecondScale);
+            }
+            if (field.Type == Kind.Blindfold)
+                return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.NecroRules.DontLookLifeSeconds) < .001f
+                    && Mathf.Abs(field.Radius - Core.NecroRules.DontLookTriggerRadius) < .001f
+                    && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .01f
+                    && field.FirstScale == 0 && field.SecondScale == 0 && !field.Split;
             if (field.Type == Kind.Fissure)
                 return field.Forward.sqrMagnitude > .5f && field.Forward.sqrMagnitude < 1.5f
                     && (field.FirstScale == -1 || field.FirstScale == 1);
@@ -111,6 +165,17 @@ namespace TumbangPreso.Net
             }
             if (field.Type == Kind.Crater) return true;
             if (field.Type == Kind.Hex) return field.FirstScale > 0 && field.FirstScale <= 3;
+            if (field.Type == Kind.Gale)
+                return field.Forward.sqrMagnitude > .5f && field.Forward.sqrMagnitude < 1.5f
+                    && field.Duration <= Core.AmihanRules.WhirlwindSeconds + .05f;
+            if (field.Type == Kind.Plant)
+                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.PlantLifeSeconds + .05f
+                    && field.FirstScale >= 0 && field.FirstScale <= Core.PaeteRules.PlantReloadSeconds + .05f;
+            if (field.Type == Kind.Thorns)
+                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.ThornConstructSeconds + .05f;
+            if (field.Type == Kind.Sentry)
+                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.SentryLifeSeconds + .65f
+                    && (field.TargetMask & (1 << field.Owner)) == 0;
             return false;
         }
 
@@ -118,23 +183,14 @@ namespace TumbangPreso.Net
         {
             if (fields == null || fields.Count > MaxFields || !Finite(elapsed) || elapsed < 0) return false;
             foreach (var field in fields) if (!Valid(field)) return false;
-            // Replace only snapshot-owned persistent fields. Familiars, sky and
-            // cast state use their own authoritative paths and remain untouched.
-            foreach (var sheet in Object.FindObjectsByType<HeroHazards.IceSheetComponent>(FindObjectsSortMode.None))
-            { sheet.gameObject.SetActive(false); Object.Destroy(sheet.gameObject); }
-            foreach (var wall in Object.FindObjectsByType<HeroHazards.IceBarricadeComponent>(FindObjectsSortMode.None))
-            { wall.gameObject.SetActive(false); Object.Destroy(wall.gameObject); }
-            Retire<HeroHazards.FireTrailComponent>();
-            Retire<HeroHazards.ShockTrailComponent>();
-            Retire<HeroHazards.SupernovaCraterComponent>();
-            Retire<HeroHazards.HexSigilComponent>();
-            Retire<DanteFissurePillar>();
-            Physics.SyncTransforms();
+            ClearPersistentFields();
             foreach (var field in fields)
             {
                 float remaining = Mathf.Clamp(field.Remaining - elapsed, 0, field.Duration);
                 if (remaining <= .02f) continue;
-                if (field.Type == Kind.Sheet)
+                if (field.Type == Kind.CinderGate) SeanCinderGate.Restore(field, elapsed);
+                else if (RafiWaterField.IsWater(field.Type)) RafiWaterField.Restore(field, elapsed);
+                else if (field.Type == Kind.Sheet)
                 {
                     var go = HeroHazards.SpawnIceSheet(field.Position, field.Radius, field.Duration,
                         field.Owner, field.SecondScale, silent: true);
@@ -144,9 +200,13 @@ namespace TumbangPreso.Net
                 }
                 else if (field.Type == Kind.Barricade)
                 {
+                    bool arc = field.Radius > 0;
                     var go = HeroHazards.SpawnIceBarricade(field.Position, field.Forward, field.Duration,
-                        field.FirstScale, field.SecondScale, field.Split, silent: true);
-                    go.GetComponent<HeroHazards.IceBarricadeComponent>().RestoreRemaining(remaining);
+                        arc ? 1 : field.FirstScale, arc ? 1 : field.SecondScale, field.Split, silent: true,
+                        arcLength: arc ? field.FirstScale : 0, arcRadius: arc ? field.Radius : 3);
+                    var wall = go.GetComponent<HeroHazards.IceBarricadeComponent>();
+                    if (arc) wall.HitsToShatter = Mathf.RoundToInt(field.SecondScale);
+                    wall.RestoreRemaining(remaining);
                 }
                 else if (field.Type == Kind.Fire)
                 {
@@ -172,6 +232,23 @@ namespace TumbangPreso.Net
                     go.GetComponent<HeroHazards.HexSigilComponent>().RestoreRemaining(remaining);
                     go.GetComponent<HeroHazards.WardInscribe>().StepTo(field.Duration - remaining);
                 }
+                else if (field.Type == Kind.Plant)
+                    PaetePlant.Restore(field.Position, field.Owner, field.Duration - remaining, Mathf.Max(0f, field.FirstScale - elapsed), field.InstanceId);
+                else if (field.Type == Kind.Thorns)
+                    PaeteThorns.Restore(field.Position, field.Owner, field.Duration - remaining);
+                else if (field.Type == Kind.Sentry)
+                    // A rejoiner's sentry is the same tree at the same age; the host alone catches.
+                    PaeteSentry.Spawn(field.Position, field.Position, field.Owner, field.Duration - remaining,
+                        restoredTargets: field.TargetMask, instanceId: field.InstanceId);
+                else if (field.Type == Kind.Drift)
+                    DanteDriftWave.Restore(field, elapsed);
+                else if (field.Type == Kind.Blindfold)
+                    NemuBlindfold.Restore(field, elapsed);
+                else if (field.Type == Kind.Gale)
+                {
+                    // A rejoiner's gale is the same front at the same age; the host alone hits.
+                    AmihanGale.Spawn(field.Position, field.Forward, field.Owner, field.Duration - remaining);
+                }
                 else if (field.Type == Kind.Fissure)
                 {
                     var pillar = DanteFissurePillar.Create(field.Position, field.Forward, (int)field.FirstScale, field.Duration);
@@ -184,10 +261,36 @@ namespace TumbangPreso.Net
             if(GameServices.Round!=null) foreach(var player in GameServices.Round.Players)
             {
                 if(player==null) continue;
-                if(player.AbilitySystem?.Kit is ZackHeroKit zack) zack.AdoptMovementFields(player.PlayerSlot);
-                else if(player.AbilitySystem?.Kit is SeanHeroKit sean) sean.AdoptMovementFields(player.PlayerSlot);
+                if(player.AbilitySystem?.Kit is IWorldEffectBinding binding) binding.RebindWorldEffects(player);
             }
             return true;
+        }
+
+        // Own the same finite set for snapshot replacement and round retirement.
+        // Map hazards and render-only replay copies are deliberately outside it.
+        public static void ClearPersistentFields()
+        {
+            Retire<RafiWaterField>();
+            Retire<SeanCinderGate>();
+            Retire<HeroHazards.IceSheetComponent>();
+            Retire<HeroHazards.IceBarricadeComponent>();
+            Retire<HeroHazards.FireTrailComponent>();
+            Retire<HeroHazards.ShockTrailComponent>();
+            Retire<HeroHazards.SupernovaCraterComponent>();
+            Retire<HeroHazards.HexSigilComponent>();
+            Retire<DanteDriftWave>();
+            Retire<AmihanGale>();
+            Retire<AmihanStorm>();
+            Retire<PaetePlant>();
+            Retire<PaeteThorns>();
+            Retire<PaeteSentry>();
+            Retire<NemuBlindfold>();
+            // Nemu's other ghosts are only looks (their abilities hold the rules), but none outlives the round.
+            Retire<NemuSkitter>();
+            Retire<NemuLookout>();
+            // Render-only fissures have no gameplay lifetime component.
+            Retire<HeroHazards.EarthPillarComponent>();
+            Physics.SyncTransforms();
         }
 
         private static void Retire<T>() where T : Component

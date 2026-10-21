@@ -27,6 +27,9 @@ namespace TumbangPreso
         /// at the exact moment the player is in the most danger in the game.
         /// </summary>
         public bool Timed;
+
+        /// <summary>Keep this named effect visible beside a first-person reticle.</summary>
+        public bool ShowWithReticle;
     }
 
     /// <summary>
@@ -83,11 +86,23 @@ namespace TumbangPreso
             if (m.StunLeft > 0 && m.StunElement == StunElement.None)
                 into.Add(new StatusRow
                 {
-                    Label = "STUNNED",
+                    // The owner's status table names the tag's hold TAGGED (2026-09-25).
+                    Label = m.IsTagged ? "TAGGED" : "STUNNED",
                     Remaining = m.StunLeft,
                     Total = m.StunTotal,
                     Timed = true,
                 });
+
+            // The two statuses that are not stuns (owner's status table, 2026-09-25). The HUD also
+            // draws them as icon chips with the owner's tooltip (`TumpMatchReadout.Statuses`).
+            if (m.IsWhirled)
+                into.Add(new StatusRow { Label = "WHIRLED", Remaining = m.WhirledLeft, Total = StatusRules.WhirledSeconds, Timed = true });
+            if (m.IsChilled)
+                into.Add(new StatusRow { Label = "CHILLED", Remaining = m.ChilledLeft, Total = StatusRules.ChilledSeconds, Timed = true });
+            // Paete's roots: the row counts the sentry's time down; the break-free ring is drawn
+            // by the readout from `BreakFreeProgress`.
+            if (m.IsRooted)
+                into.Add(new StatusRow { Label = "ROOTED", Remaining = m.RootedLeft, Total = StatusRules.RootedSeconds, Timed = true });
 
             if (m.Stamina.IsFatigued)
                 into.Add(new StatusRow
@@ -124,7 +139,7 @@ namespace TumbangPreso
                     {
                         Label = "SHOVE CD",
                         Remaining = verbs.ShoveCooldownLeft,
-                        Total = Balance.ShoveCooldown,
+                        Total = verbs.ShoveCooldownDuration,
                         Timed = true,
                     });
 
@@ -145,7 +160,7 @@ namespace TumbangPreso
                         // the cooldown label names the game action the role is trying to land.
                         Label = "TAG CD",
                         Remaining = verbs.PunchCooldownLeft,
-                        Total = Balance.PunchCooldown,
+                        Total = verbs.PunchCooldownDuration,
                         Timed = true,
                     });
             }
@@ -169,6 +184,8 @@ namespace TumbangPreso
                         Remaining = kit.Skill1.DurationRemaining,
                         Total = kit.Skill1.Duration,
                         Timed = true,
+                        // The wearer's FPP camera hides the stone ward itself.
+                        ShowWithReticle = kit is DanteHeroKit,
                     });
 
                 if (kit.Skill2 != null && kit.Skill2.IsActive)

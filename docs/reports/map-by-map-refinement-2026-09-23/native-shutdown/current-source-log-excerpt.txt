@@ -1,0 +1,17 @@
+  Version:                 1.18.1+9fbee8e
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    Driver:   32.0.21043.19003
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+TumbangPreso.Visual.WorldLookPresentation:FindGround () (at Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs:138)
+TumbangPreso.Visual.WorldLookPresentation:Update () (at Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs:101)
+(Filename: Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs Line: 138)
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+TumbangPreso.Visual.WorldLookPresentation:FindGround () (at Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs:138)
+TumbangPreso.Visual.WorldLookPresentation:Update () (at Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs:101)
+(Filename: Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs Line: 138)
+Test run completed. Exiting with code 0 (Ok). Run completed.

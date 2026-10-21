@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/UI/OwnerCreditsView.cs": "1daa25ff8638ee5addae87b85c2b61693374ef743f97a4adc284bfd83f6b11f9",
+  "Assets/TumbangPreso/Runtime/Net/WalletStore.cs": "d1e91fead349bd82c85ee020df4f20b77282cb19a5ab4e7745f0bad87d356509",
+  "Packages/com.tumbangpreso.core/Runtime/CreditsCodeSequence.cs": "074fb79378d56fbac2f250473c5c7db130f9cad17819e87bd704074f6b9de4d4",
+  "Packages/com.tumbangpreso.core/Runtime/CreditsCodeSequence.cs.meta": "8e5c56efc1b642058e7bda87e761cdbad89f774b7af23dbc0c712c82280f1663",
+  "Assets/TumbangPreso/Tests/PlayMode/CreditsCodeInputTests.cs": "996baeeef7a244c4340727eea65431d2b82105e813374270fa8f052315fc19ab",
+  "Assets/TumbangPreso/Tests/PlayMode/CreditsCodeInputTests.cs.meta": "6478a1f67103379cccf3d8be916dd02a30eff1b6dad09d7f36ee03ee0c56f766"
+}

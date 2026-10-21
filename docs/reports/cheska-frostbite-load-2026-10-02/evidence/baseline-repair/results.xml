@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 13:12:13Z" end-time="2026-10-02 13:12:15Z" duration="1.2306045">
+  <test-suite type="TestSuite" id="2547" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1264" result="Failed" site="Child" start-time="2026-10-02 13:12:13Z" end-time="2026-10-02 13:12:15Z" duration="1.230605" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2541" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1264" result="Failed" site="Child" start-time="2026-10-02 13:12:13Z" end-time="2026-10-02 13:12:15Z" duration="1.220563" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="105536" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2542" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1264" result="Failed" site="Child" start-time="2026-10-02 13:12:13Z" end-time="2026-10-02 13:12:15Z" duration="1.217504" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2543" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1264" result="Failed" site="Child" start-time="2026-10-02 13:12:13Z" end-time="2026-10-02 13:12:15Z" duration="1.214925" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1245" name="CheskaFrostbiteLoadTests" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 13:12:13Z" end-time="2026-10-02 13:12:15Z" duration="1.190576" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1247" name="AnUnloadedKitLeavesTheShoeUntouched" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.AnUnloadedKitLeavesTheShoeUntouched" methodname="AnUnloadedKitLeavesTheShoeUntouched" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1835771737" result="Passed" start-time="2026-10-02 13:12:13Z" end-time="2026-10-02 13:12:14Z" duration="0.540951" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1246" name="LoadedCueUsesTheRealShoeAndRetiresWithTheLoad" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.LoadedCueUsesTheRealShoeAndRetiresWithTheLoad" methodname="LoadedCueUsesTheRealShoeAndRetiresWithTheLoad" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1518117233" result="Failed" start-time="2026-10-02 13:12:14Z" end-time="2026-10-02 13:12:15Z" duration="0.637037" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A loaded Frostbite slipper has no visible surface cue.
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaFrostbiteLoadTests+<LoadedCueUsesTheRealShoeAndRetiresWithTheLoad>d__16.MoveNext () [0x000fb] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CheskaFrostbiteLoadTests.cs:58
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

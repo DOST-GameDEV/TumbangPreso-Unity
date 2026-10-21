@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 22:00:54Z" end-time="2026-09-23 22:00:59Z" duration="4.5963641">
+  <test-suite type="TestSuite" id="1768" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-23 22:00:54Z" end-time="2026-09-23 22:00:59Z" duration="4.596364" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1762" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-23 22:00:54Z" end-time="2026-09-23 22:00:59Z" duration="4.582419" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13244" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1763" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-23 22:00:54Z" end-time="2026-09-23 22:00:59Z" duration="4.577059" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1764" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="592" result="Passed" start-time="2026-09-23 22:00:54Z" end-time="2026-09-23 22:00:59Z" duration="4.571917" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1285" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="26" result="Passed" start-time="2026-09-23 22:00:54Z" end-time="2026-09-23 22:00:59Z" duration="4.550510" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1287" name="SaBubongNeighborRoofReview" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.SaBubongNeighborRoofReview" methodname="SaBubongNeighborRoofReview" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="1739728088" result="Passed" start-time="2026-09-23 22:00:54Z" end-time="2026-09-23 22:00:59Z" duration="4.532972" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 212 renderers, 0 with a roof variant.
+[NearFade] 2215 occluder nodes matched, 27 renderers moved onto TumbangPreso/NearFade.
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-preview-before.png
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-preview-after.png
+[Env] repainted 0 of 212 renderers, 0 with a roof variant.
+[NearFade] 2215 occluder nodes matched, 27 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-north-player-before.png
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-north-player-after.png
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-west-player-before.png
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-west-player-after.png
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-roof-detail-before.png
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-roof-detail-after.png
+[Play] wrote Logs/refine2-sabubong-neighbors-v1/SaBubong-neighbors-low.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

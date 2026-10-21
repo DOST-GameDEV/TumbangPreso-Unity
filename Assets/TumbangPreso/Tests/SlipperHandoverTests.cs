@@ -34,8 +34,47 @@ namespace TumbangPreso.Tests
             Object.DestroyImmediate(_root);
             typeof(GameServices).GetProperty("Round").GetSetMethod(true).Invoke(null,new object[]{_oldRound});NetAuthority.Provider=_provider;
         }
+        [TestCase("round-handover", true)]
+        [TestCase("duplicate-snapshot", false)]
+        [TestCase("duplicate-pickup", false)]
+        public void OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(string route, bool clearsLock)
+        {
+            var originalAudio=GameServices.Audio;
+            var originalStats=GameServices.Stats;
+            typeof(GameServices).GetProperty("Audio").SetValue(null,null);
+            typeof(GameServices).GetProperty("Stats").SetValue(null,null);
+            try
+            {
+                var player=_players[1];var shoe=_shoes[1];var carrier=player.GetComponent<Carrier>();
+                Assert.IsTrue(shoe.HostGrab(player),"The fixture must make a real pickup first.");
+                float pickupLock=carrier.ThrowLockLeft;
+                Assert.Greater(pickupLock,0,"The actual pickup did not establish its throw lock.");
+                if(route=="round-handover")
+                {
+                    var runner=_root.AddComponent<SliceRunner>();runner.AutoStart=false;
+                    runner.Seats=_players;runner.Slippers=_shoes;
+                    typeof(SliceRunner).GetMethod("EquipOwnedSlippers",Private).Invoke(runner,new object[]{0});
+                }
+                else if(route=="duplicate-snapshot")
+                    shoe.ApplySnapshotState(SlipperState.Held,player,shoe.transform.position,
+                        shoe.transform.rotation,Vector3.zero,0,SlipperAffinity.Normal,-1);
+                else carrier.NotifyHolding(shoe);
+                Assert.AreSame(shoe,carrier.Held);
+                Assert.AreSame(player,shoe.Holder);
+                Assert.IsTrue(player.HoldingSlipper);
+                Assert.AreEqual(clearsLock?0:pickupLock,carrier.ThrowLockLeft,
+                    "Only the explicit forced handover may retire the existing pickup delay.");
+            }
+            finally
+            {
+                typeof(GameServices).GetProperty("Audio").SetValue(null,originalAudio);
+                typeof(GameServices).GetProperty("Stats").SetValue(null,originalStats);
+            }
+        }
         [Test] public void ForceEquippingAnotherShoeReleasesTheDisplacedRelationship()
         {
+            // Exercise displacement after an explicit ownership reassignment.
+            _shoes[0].OwnerSlot=1;
             Assert.IsTrue(_shoes[0].HostForceEquip(_players[1]));
             Assert.IsTrue(_shoes[1].HostForceEquip(_players[1]));
             Assert.IsNull(_shoes[0].Holder,"The displaced warmup shoe still claims this hand.");
@@ -52,6 +91,8 @@ namespace TumbangPreso.Tests
             _players[1].transform.position=new Vector3(0,3.6f,0);_shoes[0].OwnerSlot=1;
             Physics.SyncTransforms();
             Assert.AreEqual(9,Slipper.GroundY(_players[1].transform.position),.01f,"Fixture must expose the broad overhead query.");
+            // Exercise displacement after an explicit ownership reassignment.
+            _shoes[0].OwnerSlot=1;
             Assert.IsTrue(_shoes[0].HostForceEquip(_players[1]));
             Assert.IsTrue(_shoes[1].HostForceEquip(_players[1]));
             Assert.AreEqual(3.5f+_shoes[0].RestHeight,_shoes[0].transform.position.y,.01f,
@@ -89,6 +130,7 @@ namespace TumbangPreso.Tests
         }
         [Test] public void ParkingDefendersShoeClearsItsWarmupHolderBeforeRoundEquipment()
         {
+            _shoes[0].OwnerSlot=1;
             Assert.IsTrue(_shoes[0].HostForceEquip(_players[1]));
             var runner=_root.AddComponent<SliceRunner>();runner.AutoStart=false;runner.Seats=_players;runner.Slippers=_shoes;
             typeof(SliceRunner).GetMethod("EquipOwnedSlippers",Private).Invoke(runner,new object[]{0});

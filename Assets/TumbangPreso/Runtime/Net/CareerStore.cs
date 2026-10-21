@@ -136,8 +136,11 @@ namespace TumbangPreso.Net
         }
 
         private Cache _cache = new Cache();
+        private Cache _primaryCache;
         private bool _flushing;
         private bool _refreshing;
+        private long _profileRevision;
+        private Cache _accountSyncOwner;
 
         /// <summary>Raised whenever the profile or the history changed, from any cause.</summary>
         public event Action Changed;
@@ -177,6 +180,9 @@ namespace TumbangPreso.Net
         /// </summary>
         public string LastVerdict { get; private set; } = "";
 
+        /// <summary>The submitted match named by LastVerdict, so a later board cannot inherit it.</summary>
+        public string LastVerdictMatchId { get; private set; } = "";
+
         public static string Path =>
             System.IO.Path.Combine(ProfilePaths.Root, "career.json");
 
@@ -186,7 +192,11 @@ namespace TumbangPreso.Net
             Load();
 
             var account = GameServices.Account;
-            if (account != null) account.Changed += OnAccountChanged;
+            if (account != null)
+            {
+                account.Changed += OnAccountChanged;
+                if (account.IsGuest) OnAccountChanged();
+            }
         }
 
         private void OnDestroy()
@@ -247,20 +257,47 @@ namespace TumbangPreso.Net
 
         private void Save()
         {
+            // A tournament guest borrows the device, not the primary career file.
+            if (_primaryCache != null || (GameServices.Account?.IsGuest ?? false)) return;
             // ⚠️ SEE `SafeStore`. A career file is the one player file that cannot be
             // regenerated from anything, so a truncated save costs a real history.
-            SafeStore.Write(Path, JsonUtility.ToJson(_cache));
+            string path = Path;
+            SafeStore.Write(path, JsonUtility.ToJson(_cache),
+                text => JsonUtility.FromJson<Cache>(text) != null);
         }
 
         private void OnAccountChanged()
         {
-            string id = GameServices.Account?.PlayerId ?? "";
+            var account = GameServices.Account;
+            string id = account?.PlayerId ?? "";
             if (string.IsNullOrEmpty(id)) return;
+
+            if (account.IsGuest)
+            {
+                // Repeated guest handovers retain the same primary cache and queue.
+                _primaryCache ??= _cache;
+                if (_cache.OwnerId != id)
+                {
+                    _cache = new Cache { OwnerId = id };
+                    Status = "Local guest career";
+                    Changed?.Invoke();
+                }
+                return;
+            }
+
+            bool restoredPrimary = _primaryCache != null;
+            if (restoredPrimary)
+            {
+                _cache = _primaryCache;
+                _primaryCache = null;
+                Status = "Local career";
+            }
 
             if (string.IsNullOrEmpty(_cache.OwnerId))
             {
                 _cache.OwnerId = id;
                 Save();
+                if (restoredPrimary) Changed?.Invoke();
             }
             else if (_cache.OwnerId != id)
             {
@@ -269,8 +306,28 @@ namespace TumbangPreso.Net
                 Save();
                 Changed?.Invoke();
             }
+            else if (restoredPrimary) Changed?.Invoke();
 
-            _ = SyncAsync();
+            _ = SyncAfterPendingWorkAsync(_cache);
+        }
+
+        private async Task SyncAfterPendingWorkAsync(Cache requestedCache)
+        {
+            if (ReferenceEquals(_accountSyncOwner, requestedCache)) return;
+            _accountSyncOwner = requestedCache;
+            try
+            {
+                while (_flushing || _refreshing)
+                {
+                    if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
+                    await Task.Delay(100);
+                }
+                if (this != null && ReferenceEquals(_cache, requestedCache)) await SyncAsync();
+            }
+            finally
+            {
+                if (ReferenceEquals(_accountSyncOwner, requestedCache)) _accountSyncOwner = null;
+            }
         }
 
         // -------------------------------------------------------------------
@@ -294,26 +351,49 @@ namespace TumbangPreso.Net
         /// nine hundred passive-defence ticks in it costs four calls.
         /// </summary>
         /// <summary>
-        /// File a report against another player.
-        ///
-        /// ⚠️ IT IS FIRE AND FORGET AND IT SAYS SO. The player has already been told REPORTED
-        /// by the button that called this; an error toast for a report that failed to upload would
-        /// be a second sentence about somebody else's behaviour on a screen that should be about
-        /// the match that just finished. The endpoint rate-limits at ten a day.
+        /// Compatibility entry for callers that do not display delivery feedback.
+        /// Result screens await ReportAsync before acknowledging delivery.
         /// </summary>
         public async void Report(string playerId, ReportReason reason)
-        {
-            if (string.IsNullOrWhiteSpace(playerId)) return;
-            if (!(GameServices.Account?.IsSignedIn ?? false)) return;
+            => await ReportAsync(playerId, reason);
 
+        /// <summary>True only after the report endpoint acknowledges the current account.</summary>
+        public Task<bool> ReportAsync(string playerId, ReportReason reason)
+        {
+            if (string.IsNullOrWhiteSpace(playerId)) return Task.FromResult(false);
+            var account = GameServices.Account;
+            return ReportForOwnerAsync(account, account?.PlayerId,
+                () => CloudCode.CallAsync(ScriptName,
+                    new { action = "report", playerId = playerId, reason = (int)reason }));
+        }
+
+        private bool CanReportFor(PlayerAccount account, string owner)
+            => this != null && account != null && ReferenceEquals(GameServices.Account, account)
+               && account.IsSignedIn && !account.IsGuest && !string.IsNullOrWhiteSpace(owner)
+               && account.PlayerId == owner;
+
+        private async Task<bool> ReportForOwnerAsync(PlayerAccount account, string owner,
+                                                    Func<Task<string>> dispatch)
+        {
+            // Guests retain the primary account's authentication session. Their
+            // report must never use that credential, even if IsSignedIn is still true.
+            if (!CanReportFor(account, owner)) return false;
             try
             {
-                await CloudCode.CallAsync(ScriptName,
-                    new { action = "report", playerId = playerId, reason = (int)reason });
+                string output = await dispatch();
+                if (!CanReportFor(account, owner)) return false;
+                // The existing endpoint returns applied:true only after recording
+                // the report. A completed request without that acknowledgement is not success.
+                if (string.IsNullOrWhiteSpace(output)) return false;
+                var answer = Newtonsoft.Json.Linq.JToken.Parse(output) as Newtonsoft.Json.Linq.JObject;
+                var applied = answer?["applied"];
+                return applied?.Type == Newtonsoft.Json.Linq.JTokenType.Boolean && (bool)applied;
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Career] report not delivered: {e.Message}");
+                if (CanReportFor(account, owner))
+                    Debug.LogWarning($"[Career] report not delivered: {e.Message}");
+                return false;
             }
         }
 
@@ -357,18 +437,14 @@ namespace TumbangPreso.Net
             if (string.IsNullOrEmpty(_cache.InMatchSinceUtc)) return;
             if (!(GameServices.Account?.IsSignedIn ?? false)) return;
 
+            var requestedCache = _cache;
             _cache.InMatchSinceUtc = "";
             Save();
 
             try
             {
                 string output = await CloudCode.CallAsync(ScriptName, new { action = "abandon" });
-                var answer = JsonUtility.FromJson<SubmitResponse>(output);
-
-                if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                    AdoptRemoteProfile(answer.profile);
-
-                Debug.Log("[Career] reported a match left early");
+                CompleteAbandon(requestedCache, output);
             }
             catch (Exception e)
             {
@@ -376,14 +452,26 @@ namespace TumbangPreso.Net
             }
         }
 
+        private void CompleteAbandon(Cache requestedCache, string output)
+        {
+            if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+            if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
+                AdoptRemoteProfile(answer.profile);
+            Debug.Log("[Career] reported a match left early");
+        }
+
         public void Record(MatchRecord record, string witnessDigest)
         {
             if (record == null || string.IsNullOrWhiteSpace(record.MatchId)) return;
 
-            // ⚠️ PLAYING TO THE WHISTLE IS WHAT CLEARS THE FLAG, and it is cleared here
-            // rather than in `Adopt` so that a spectator, who has no line and returns early below,
-            // does not clear a flag it never set.
-            _cache.InMatchSinceUtc = "";
+            // Practice and training can show an immediate result, but do not enter career history
+            // or the upload queue that the server wallet settles from.
+            if (!record.Online)
+            {
+                LastAward = null;
+                return;
+            }
 
             string me = LocalPlayerId;
             var line = MatchRecordRules.LineFor(record, me);
@@ -392,6 +480,10 @@ namespace TumbangPreso.Net
             // referee has no line in the record, so there is nothing to add to a career and
             // nothing to submit.
             if (line == null) return;
+
+            // Playing to the whistle clears this player's abandon marker. A spectator has no
+            // line and cannot clear a marker for a match they never played.
+            _cache.InMatchSinceUtc = "";
 
             bool applied = ProfileRules.Apply(_cache.Profile, record, me, out XpAward award);
             LastAward = award;
@@ -466,52 +558,71 @@ namespace TumbangPreso.Net
         /// a match silently deleted from a career is worse than one that never uploads: the
         /// player at least knows to say something about the second.
         /// </summary>
-        public async Task FlushAsync()
+        private bool CompleteSubmission(Cache submittedCache, MatchRecord submittedRecord, string output)
+        {
+            if (!ReferenceEquals(_cache, submittedCache)) return false;
+            if (string.IsNullOrWhiteSpace(output) || output.Trim() == "null")
+                throw new InvalidDataException("Career submission returned no acknowledgement.");
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+            if (answer == null || (answer.verdict != "pending" && answer.verdict != "witnessed"
+                && answer.verdict != "disputed" && answer.verdict != "impossible" && answer.verdict != "offline"))
+                throw new InvalidDataException("Career submission returned an unknown acknowledgement.");
+            if (!string.IsNullOrWhiteSpace(answer.profile)) AdoptRemoteProfile(answer.profile);
+
+            // Known terminal verdicts also acknowledge duplicates and permanent refusals.
+            // Missing or unknown answers leave the record and its witness queued for retry.
+            LastVerdict = answer.verdict;
+            LastVerdictMatchId = submittedRecord.MatchId;
+            int index = submittedCache.Queue.IndexOf(submittedRecord);
+            if (index >= 0)
+            {
+                submittedCache.Queue.RemoveAt(index);
+                if (index < submittedCache.QueueWitness.Count) submittedCache.QueueWitness.RemoveAt(index);
+            }
+            Save();
+            Changed?.Invoke();
+            return true;
+        }
+
+        public Task FlushAsync() => FlushWithDispatchAsync(CloudCode.CallAsync);
+
+        private async Task FlushWithDispatchAsync(Func<string, object, Task<string>> dispatch)
         {
             if (_flushing || _cache.Queue.Count == 0) return;
             if (!(GameServices.Account?.IsSignedIn ?? false)) return;
 
+            var flushingCache = _cache;
             _flushing = true;
             try
             {
                 int abandoned = DropUnsubmittable();
 
-                while (_cache.Queue.Count > 0)
+                while (flushingCache.Queue.Count > 0)
                 {
-                    var record = _cache.Queue[0];
+                    if (this == null || !ReferenceEquals(_cache, flushingCache)) return;
+                    var submittedCache = flushingCache;
+                    var record = flushingCache.Queue[0];
                     string json = JsonUtility.ToJson(record);
 
                     PadWitnesses();
-                    string witness = _cache.QueueWitness[0] ?? "";
+                    string witness = flushingCache.QueueWitness[0] ?? "";
 
-                    string output = await CloudCode.CallAsync(
+                    string output = await dispatch(
                         ScriptName, new { action = "submit", record = json, witness = witness });
 
-                    var answer = JsonUtility.FromJson<SubmitResponse>(output);
-                    if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                        AdoptRemoteProfile(answer.profile);
-
-                    // ⚠️⚠️ THE VERDICT IS REPORTED AND NEVER RETRIED. A disputed match is
-                    // a finished piece of business: the career stats still applied, the ranked
-                    // rating did not, and submitting it again would produce the same answer. The
-                    // one thing that must not happen is the wedge `docs/TODO.md` § 94.1 records,
-                    // where one record that can never be accepted holds up every match behind it.
-                    LastVerdict = answer?.verdict ?? "";
-
-                    _cache.Queue.RemoveAt(0);
-                    if (_cache.QueueWitness.Count > 0) _cache.QueueWitness.RemoveAt(0);
-                    Save();
-                    Changed?.Invoke();
+                    if (!CompleteSubmission(submittedCache, record, output)) return;
                 }
 
+                if (this == null || !ReferenceEquals(_cache, flushingCache)) return;
                 Status = abandoned > 0
                     ? $"Career saved; {abandoned} match(es) could not be uploaded"
                     : "Career saved";
             }
             catch (Exception e)
             {
-                Status = $"{_cache.Queue.Count} match(es) waiting to upload";
-                Debug.LogWarning($"[Career] submission deferred; {_cache.Queue.Count} queued: {e.Message}");
+                if (this == null || !ReferenceEquals(_cache, flushingCache)) return;
+                Status = $"{flushingCache.Queue.Count} match(es) waiting to upload";
+                Debug.LogWarning($"[Career] submission deferred; {flushingCache.Queue.Count} queued: {e.Message}");
             }
             finally
             {
@@ -526,7 +637,7 @@ namespace TumbangPreso.Net
         /// ⚠️⚠️ IT IS DECIDED WITHOUT A CALL, BY `MatchRecordRules.Submittable`, AND THAT IS THE
         /// POINT. Asking the service would cost one 422 per bad record per boot and would still
         /// have to decide what a 422 means, which is unanswerable from the outside: a thrown
-        /// Cloud Code error and a service that is unwell both arrive as one. The two refusals in
+        /// Cloud Code error and a service that is unwell both arrive as one. The known identity/retrieval-count refusals in
         /// `match-record.js`'s `submit` are pure functions of the record and the caller, so this
         /// side can answer them exactly, and everything that survives is a record whose failure
         /// really is worth retrying.
@@ -537,6 +648,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private int DropUnsubmittable()
         {
+            PadWitnesses();
             string me = LocalPlayerId;
             int dropped = 0;
 
@@ -550,6 +662,7 @@ namespace TumbangPreso.Net
                     MatchRecordRules.SubmitRefusal(verdict));
 
                 _cache.Queue.RemoveAt(i);
+                _cache.QueueWitness.RemoveAt(i);
                 dropped++;
             }
 
@@ -563,7 +676,28 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>Replaces the local profile with the server's.</summary>
-        public async Task RefreshAsync()
+        private bool CompleteRefresh(Cache requestedCache, string output)
+        {
+            if (!ReferenceEquals(_cache, requestedCache)) return false;
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+
+            if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
+            {
+                AdoptRemoteProfile(answer.profile);
+                Status = "Career synced";
+            }
+            else
+            {
+                // An empty profile is the right answer for somebody who has never finished a
+                // match, exactly as an empty `accountProfile` is in `player-account.js`.
+                Status = "No matches on this account yet";
+            }
+            return true;
+        }
+
+        public Task RefreshAsync() => RefreshWithDispatchAsync(CloudCode.CallAsync);
+
+        private async Task RefreshWithDispatchAsync(Func<string, object, Task<string>> dispatch)
         {
             // ⚠️ ONE AT A TIME. `PlayerAccount.Changed` fires more than once during a boot,
             // and the career page calls this from its own REFRESH button on top of that.
@@ -578,6 +712,7 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            var requestedCache = _cache;
             _refreshing = true;
             try
             {
@@ -586,24 +721,16 @@ namespace TumbangPreso.Net
                 // clean profile and then a queue that refuses them, with nothing on screen having
                 // changed in between.
                 await ReportAbandonIfAnyAsync();
+                if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
 
-                string output = await CloudCode.CallAsync(ScriptName, new { action = "load" });
-                var answer = JsonUtility.FromJson<SubmitResponse>(output);
-
-                if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                {
-                    AdoptRemoteProfile(answer.profile);
-                    Status = "Career synced";
-                }
-                else
-                {
-                    // An empty profile is the right answer for somebody who has never finished a
-                    // match, exactly as an empty `accountProfile` is in `player-account.js`.
-                    Status = "No matches on this account yet";
-                }
+                long profileRevision = _profileRevision;
+                string output = await dispatch(ScriptName, new { action = "load" });
+                // A newer acknowledgement already supplied this owner's profile.
+                if (profileRevision == _profileRevision) CompleteRefresh(requestedCache, output);
             }
             catch (Exception e)
             {
+                if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
                 Status = "Showing the career saved on this machine";
                 Debug.LogWarning($"[Career] profile refresh failed; local career kept: {e.Message}");
             }
@@ -625,22 +752,32 @@ namespace TumbangPreso.Net
         {
             if (!(GameServices.Account?.IsSignedIn ?? false)) return LocalPage(offset, limit);
 
+            var requestedCache = _cache;
             try
             {
                 string output = await CloudCode.CallAsync(
                     ScriptName, new { action = "history", offset, limit });
 
-                var answer = JsonUtility.FromJson<HistoryResponse>(output);
-                if (answer == null || string.IsNullOrWhiteSpace(answer.history)) return LocalPage(offset, limit);
-
-                var page = JsonUtility.FromJson<RecordList>("{\"items\":" + answer.history + "}");
-                return page?.items ?? LocalPage(offset, limit);
+                return CompleteHistory(requestedCache, output, offset, limit);
             }
+            catch (OperationCanceledException) { throw; }
             catch (Exception e)
             {
+                if (this == null || !ReferenceEquals(_cache, requestedCache))
+                    throw new OperationCanceledException("The requested career account changed.", e);
                 Debug.LogWarning($"[Career] history page failed; showing local history: {e.Message}");
                 return LocalPage(offset, limit);
             }
+        }
+
+        private List<MatchRecord> CompleteHistory(Cache requestedCache, string output, int offset, int limit)
+        {
+            if (this == null || !ReferenceEquals(_cache, requestedCache))
+                throw new OperationCanceledException("The requested career account changed.");
+            var answer = JsonUtility.FromJson<HistoryResponse>(output);
+            if (answer == null || string.IsNullOrWhiteSpace(answer.history)) return LocalPage(offset, limit);
+            var page = JsonUtility.FromJson<RecordList>("{\"items\":" + answer.history + "}");
+            return page?.items ?? LocalPage(offset, limit);
         }
 
         /// <summary>⚠️ `JsonUtility` CANNOT PARSE A BARE JSON ARRAY. It needs a named field, which
@@ -681,6 +818,7 @@ namespace TumbangPreso.Net
             // server's arithmetic yet, so the profile shown will be a match or two behind until
             // `FlushAsync` succeeds. That is honest, and `Status` says so.
             _cache.Profile = ProfileRules.Normalise(remote);
+            _profileRevision++;
             Save();
             Changed?.Invoke();
         }

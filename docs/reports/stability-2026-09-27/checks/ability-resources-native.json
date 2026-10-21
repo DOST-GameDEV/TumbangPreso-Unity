@@ -1,0 +1,54 @@
+{
+  "base": "6d8083d6b7ca5187687876443507be5a3067d637",
+  "protocol": 78,
+  "scope": "Stable full-kit resources, role identity, ordered scoped receive and owner prediction",
+  "result": "Passed",
+  "total": 2,
+  "duration": 0.1808458,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs",
+      "sha256": "9A573624801318EFAA018266BDAA4A32B5D5624BCCE2C15E3CE87FEE18EA705D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "9523D38247FA14F47A19CE82776A1758B30ED22C9FF1D08EFA0EE425B72C056F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "81A4891C8E3C6F56046D5C55FA9F37C7621F52321CD250D0BF6F7BC970413AB1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/AbilityResourceSnapshot.cs",
+      "sha256": "0C96CB673CA4C63AC4A60F4ABD214207DD6770C02B4AA128C24C5D230595B107"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/AbilityResourceSnapshot.cs.meta",
+      "sha256": "5226ACDBD6E8CC22F303F02E45ABE60F89E5BF2027792E3D28D74EBACD6DA3F4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.AbilityResources.cs",
+      "sha256": "E790E66850F5A41E95D88F9F04C70FB9967B54D5DCD25373778CCA9CAE40DCB0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.AbilityResources.cs.meta",
+      "sha256": "ACDC2FC8EAE51582DDE86D35BCB6AD28363592945DBD6131929E6A74A015F088"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "8644E86C80C9A4861A6B4E9AE452C420961A1250BA9272DEC303041371B52867"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "FAD6A0EB837D789500F08CE4911B4C89D574F2427C1D35C116368F4104EA496A"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6195240960,
+  "retryCount": 1,
+  "firstAttempt": "Runtime compiled; test compile failed CS1657, no cases/XML. Corrected only reader disposal.",
+  "unverified": [
+    "Actual peers/ranked/reconnect",
+    "Live character-rework integration"
+  ]
+}

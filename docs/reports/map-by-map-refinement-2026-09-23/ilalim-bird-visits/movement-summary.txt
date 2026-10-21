@@ -1,0 +1,6 @@
+maya before: farthest 5.00m; max root y 3.001; first hidden 2.160s
+maya after: farthest 35.41m; max root y 5.400; first hidden 7.166s
+kalapati before: farthest 5.00m; max root y 3.001; first hidden 2.262s
+kalapati after: farthest 35.48m; max root y 5.330; first hidden not hidden in recorded span
+fantail before: farthest 5.00m; max root y 3.001; first hidden 2.270s
+fantail after: farthest 37.77m; max root y 5.394; first hidden not hidden in recorded span

@@ -1,0 +1,130 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002b/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002b/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002b/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.282 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+[Audio] loaded 64 of 64 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 1.723800 ms
+[Build] TUMBANG PRESO 1.0.0 | 2c3f39dc9775+dirty | protocol 129 | StandaloneWindows64
+[NetReport] writing C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-fullhero1002b\demo-clean-direct\host.txt after 913 s.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code PDCY
+[NetBoot] host requested on 8910 dedicated=False: listening
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+[Link] Good at 126 ms round trip (host, worst peer).
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+UnloadTime: 3.635700 ms
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+Unloading 105 unused Assets to reduce memory usage. Loaded Objects now: 22453.
+Total: 6.546200 ms (FindLiveObjects: 1.260300 ms CreateObjectMapping: 1.225300 ms MarkObjects: 2.623300 ms  DeleteObjects: 1.437000 ms)
+
+[NetAuto] READY submitted with 2 playing peers.
+[Link] Bad at 1268 ms round trip (host, worst peer).
+[Link] Good at 61 ms round trip (host, worst peer).
+[ArenaPrewarm] drew 20 views in 1.00 s.
+[HubLoading] IlalimNgTulay ready after 8.24 s.
+[Link] Poor at 438 ms round trip (host, worst peer).
+[Link] Good at 33 ms round trip (host, worst peer).
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 40 / 40 / 3500 / 3035. seat 2 wins
+[Link] Bad at 515 ms round trip (host, worst peer).
+[Link] Good at 16 ms round trip (host, worst peer).
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[NetReport] wrote C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-fullhero1002b\demo-clean-direct\host.txt
+TUMBANG PRESO NETWORK STATE REPORT
+
+role            : HOST
+networked       : True
+local slot      : 0
+protocol        : 129
+mode            : HeroStrike
+map             : IlalimNgTulay
+sampled         : 913.0 s
+graphics        : Balanced; 1920x1080; vsync=0; target=60
+hardware        : AMD Ryzen 5 2600 Six-Core Processor ; AMD Radeon RX 6600; RAM=16335 MB
+live frame rate : frames=43218; seconds=724.772; avg=59.63; p50=59.70; p5=57.97; p1=57.97; max_ms=107.07
+round           : 8
+defender        : 3
+round active    : False
+hub lobby seen  : False
+arrival seen    : False
+auto count seen : False
+lata upright    : True   flips: 12
+tournament ruleset : the rule set is not the tournament one: mode is HeroStrike, tournament is Classic
+tournament modifiers : none
+build identity  : TUMBANG PRESO 1.0.0 | 2c3f39dc9775+dirty | protocol 129 | StandaloneWindows64
+
+seat   char   bot      origin  taya   score  travelled  skills  ults
+--------------------------------------------------------------------------
+0         0 False       Human False      40       38.9       0     0
+1         0  True HandedToBot False      40      623.1       0     0
+2         6  True         Bot False    3500      770.0       7     1
+3         0  True         Bot  True    3035      741.5       2     0
+
+slipper    on  state  owner  holder  changes
+---------------------------------------------
+0           y      1      0       0        3
+1           y      1      1       1        5
+2           y      1      2       2       65
+3           n      0     -1      -1       63
+
+structural state hash : D2F4FB7D
+discrete state hash : 549A2C1D
+
+⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit
+for bit on a position or a clock; they must agree on who is who, who is
+taya, what each tsinelas is doing and what the score is.
+
+⚠️⚠️ AND IT IS NOT AN EQUALITY GATE ACROSS PEERS, WHICH THE STRUCTURAL HASH
+IS. Discrete is not the same as CONSTANT: the score, the slipper states and
+the defender all move during a match, and two reports stop at two different
+instants by construction (a referee has to outlive its clients). Comparing
+the discrete hash between peers therefore fails on a working link roughly
+whenever anything happens. The structural hash covers only what CANNOT
+change while a match runs: which character sits in which seat, which seats
+are bots, and the protocol. Two peers disagreeing on that are playing two
+different matches, whenever you look.
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

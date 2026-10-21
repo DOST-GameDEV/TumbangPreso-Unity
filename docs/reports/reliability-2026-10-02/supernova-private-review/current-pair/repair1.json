@@ -1,0 +1,11 @@
+{
+  "repairUsed": 1,
+  "nativeRetryNotYetRun": true,
+  "helperSha256": "8edc5e70c8e67e3cc37fda0277c88209a2d1a13d8e10fb7a78587f1f5b57c762",
+  "fixes": [
+    "Use Unity object references for pre-cast membership; EntityId.ToString only for metadata/order",
+    "Use current TumbangPreso.Verb namespace"
+  ],
+  "originalHelperSha256": "e18a32a833e3c69f5249e8ba12e716784e1fefae1cc331882d09c89729c4734e",
+  "qualificationSourceAlreadyRestored": true
+}

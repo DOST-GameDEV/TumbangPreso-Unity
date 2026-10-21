@@ -1,0 +1,36 @@
+{
+  "base": "ad19d440516ec8e7ffbbe44946df4eca0165eaef",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; unchanged Core reused",
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "9673F174F63000C6AA54044D0C61A7FEDB46420CFCCA007E2B666C5CDD2556CF",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs",
+      "sha256": "E3BB448AE6A1AD4A84A2E633A8EEB3C4F0C523D8D341E723B32083432A66EAAA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs",
+      "sha256": "603D1833EBC6878BE15D87C82A6FE1F97DE0B4820C21F11FEA5AEF3DCB8B311E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "3FE3546DEFEA1D43A36F8D0C7F9FDEECBC845F78BC25F47EABD364C131F6DFFC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "E2CB419894A4D68573832083EBBAE3EC00EAF05B1EFAC0023CB77A59C1BAC14F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/MatchFlair.cs",
+      "sha256": "19766DDC44F779B471E55A5BB9B2113DCEE93E134239B97A9CBEF43A13CE0F41"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "68C1B7560B987F6D1910763BBF4E11FEAE620C24C0D0EE7FA40DC96D7769F72E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "DD46F27FA06CC61C9FD2D4EAD5B9BB18C655CBCEA38EB8AD017C41069929FBCA"
+    }
+  ]
+}

@@ -193,6 +193,10 @@ namespace TumbangPreso.UI
                                               HeroAbility ultimate)
         {
             if (caster == null || kit == null || ultimate == null) return;
+            // The full shared introduction has already named this accepted cast.
+            // Keep the legacy card for legacy/restore routes without covering the
+            // personal HUD again when the actual warning/effect starts.
+            if (caster.AbilitySystem?.DeliveringSharedIntroduction == true) return;
 
             // See `DuplicateWindow`.
             int seat = caster.PlayerSlot;
@@ -289,7 +293,7 @@ namespace TumbangPreso.UI
             _ultimateLine.text = ultimate.Name;
 
             _icon.sprite = AbilityIcons.For(ultimate.Glyph);
-            _icon.color = accent;
+            _icon.color = AbilityIcons.Tint(_icon.sprite, accent);
 
             _motif.sprite = UltimateMotifs.For(kit.HeroId);
             _motif.color = new Color(accent.r, accent.g, accent.b, 0.55f);
@@ -351,6 +355,8 @@ namespace TumbangPreso.UI
             }
 
             _group.alpha = Mathf.Clamp01(alpha);
+
+            if (Settings.SettingsStore.Current.ReducedEffects || Settings.SettingsStore.Current.ReducedUiMotion) slide = 0;
 
             var pos = _card.anchoredPosition;
             _card.anchoredPosition = new Vector2(CardLeftX + slide, pos.y);
@@ -489,7 +495,7 @@ namespace TumbangPreso.UI
             go.transform.SetParent(_card, false);
 
             var t = go.AddComponent<Text>();
-            t.font = MenuKit.Font;
+            t.font = InGameTypography.Resolve(MenuKit.Font, true, t);
             t.fontSize = size;
             t.color = colour;
             t.alignment = align;
@@ -626,6 +632,22 @@ namespace TumbangPreso.UI
                 // A coven ring: evenly spaced arcs on a baseline.
                 case "phaister":
                     return Mathf.Max(Line(v, -0.42f, 0.10f), Arcs(u, v));
+                case "rafi": return Mathf.Max(Line(v,Mathf.Sin(u*7)*.22f,.12f),Line(v,-.44f,.065f));
+
+                // A gust: three thin swept streaks, curving up and thinning as they run right,
+                // the edges-not-fills rule of her wind (direction.md § 2).
+                // Growth: a vine along the band with two leaves off it, thick at the left, thin at
+                // the right, the way a vine grows out of his arm.
+                case "paete":
+                    return Mathf.Max(Line(v, Mathf.Sin(u * 5f) * .16f, .12f * (1.2f - u * .7f)),
+                        Mathf.Max(Line(v, .34f - (u - .3f) * (u - .3f) * 4f, .07f * (1f - Mathf.Abs(u - .3f) * 4f)),
+                                  Line(v, -.30f + (u - .7f) * (u - .7f) * 4f, .06f * (1f - Mathf.Abs(u - .7f) * 4f))));
+
+                case "amihan":
+                    return Mathf.Max(Mathf.Max(
+                        Line(v, 0.34f + u * u * 0.28f, 0.10f * (1.1f - u)),
+                        Line(v, 0.02f + u * u * 0.22f, 0.13f * (1.1f - u * 0.8f))),
+                        Line(v, -0.34f + u * u * 0.16f, 0.08f * (1.1f - u)));
 
                 default:
                     return Line(v, 0.0f, 0.10f);

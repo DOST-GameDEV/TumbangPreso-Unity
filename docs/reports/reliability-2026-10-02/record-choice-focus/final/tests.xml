@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:09:26Z" end-time="2026-10-02 07:09:27Z" duration="1.2253128">
+  <test-suite type="TestSuite" id="2543" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1260" result="Passed" start-time="2026-10-02 07:09:26Z" end-time="2026-10-02 07:09:27Z" duration="1.225313" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2537" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1260" result="Passed" start-time="2026-10-02 07:09:26Z" end-time="2026-10-02 07:09:27Z" duration="1.202223" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4944" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2538" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1260" result="Passed" start-time="2026-10-02 07:09:26Z" end-time="2026-10-02 07:09:27Z" duration="1.187917" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2539" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1260" result="Passed" start-time="2026-10-02 07:09:26Z" end-time="2026-10-02 07:09:27Z" duration="1.173920" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2044" name="RecordChoiceFocusTests" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 07:09:26Z" end-time="2026-10-02 07:09:27Z" duration="1.140828" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2046" name="CancellingAnActiveChoiceReturnsFocusToItsOpener" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.CancellingAnActiveChoiceReturnsFocusToItsOpener" methodname="CancellingAnActiveChoiceReturnsFocusToItsOpener" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="594815873" result="Passed" start-time="2026-10-02 07:09:26Z" end-time="2026-10-02 07:09:26Z" duration="0.577583" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2045" name="CareerModeRefreshDoesNotReselectItsRetiredChoice" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.CareerModeRefreshDoesNotReselectItsRetiredChoice" methodname="CareerModeRefreshDoesNotReselectItsRetiredChoice" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="6504019" result="Passed" start-time="2026-10-02 07:09:27Z" end-time="2026-10-02 07:09:27Z" duration="0.255711" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2047" name="SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" methodname="SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="1694512120" result="Passed" start-time="2026-10-02 07:09:27Z" end-time="2026-10-02 07:09:27Z" duration="0.291869" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

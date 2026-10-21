@@ -13,6 +13,8 @@ namespace TumbangPreso.Abilities
         public CombatVerbs Verbs { get; }
         public RoundDirector Round => GameServices.Round;
         public MatchDirector Match => GameServices.Match;
+        // Only accepted network playback sets this, never a request or local input.
+        internal bool IsApprovedReplay { get; }
 
         public bool HasVariant(string variantId)
             => Motor != null && Motor.AbilitySystem != null
@@ -46,6 +48,9 @@ namespace TumbangPreso.Abilities
         private readonly bool _hasAimPoint;
         private readonly Vector3 _aimPoint;
 
+        /// <summary>True when the aim is a real point (sent with a cast, or set by a bot or a probe), not the fallback ahead.</summary>
+        public bool HasAimPoint => _hasAimPoint || (Motor != null && Motor.Intent != null && Motor.Intent.HasAimPoint);
+
         public Vector3 AimPoint
         {
             get
@@ -71,6 +76,10 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public AbilityContext(CharacterMotor motor, Carrier carrier, CombatVerbs verbs,
                               Vector3 position, Vector3 forward, Vector3 aimPoint)
+            : this(motor, carrier, verbs, position, forward, aimPoint, false) { }
+
+        internal AbilityContext(CharacterMotor motor, Carrier carrier, CombatVerbs verbs,
+                                Vector3 position, Vector3 forward, Vector3 aimPoint, bool approvedReplay)
             : this(motor, carrier, verbs)
         {
             forward.y = 0.0f;
@@ -81,6 +90,10 @@ namespace TumbangPreso.Abilities
             _forward = forward.normalized;
             _hasAimPoint = true;
             _aimPoint = aimPoint;
+            IsApprovedReplay = approvedReplay;
         }
+
+        internal AbilityContext Capture()
+            => new AbilityContext(Motor, Carrier, Verbs, Position, Forward, AimPoint, IsApprovedReplay);
     }
 }

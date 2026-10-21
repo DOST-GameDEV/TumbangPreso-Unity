@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 23:50:30Z" end-time="2026-09-23 23:50:49Z" duration="18.2456958">
+  <test-suite type="TestSuite" id="1774" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="597" result="Passed" start-time="2026-09-23 23:50:30Z" end-time="2026-09-23 23:50:49Z" duration="18.245696" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1768" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="597" result="Passed" start-time="2026-09-23 23:50:30Z" end-time="2026-09-23 23:50:49Z" duration="18.234091" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15008" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1769" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="597" result="Passed" start-time="2026-09-23 23:50:30Z" end-time="2026-09-23 23:50:49Z" duration="18.232437" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1770" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="597" result="Passed" start-time="2026-09-23 23:50:30Z" end-time="2026-09-23 23:50:49Z" duration="18.231236" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1029" name="AmbientLifeProbe" fullname="TumbangPreso.PlayTests.AmbientLifeProbe" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-23 23:50:30Z" end-time="2026-09-23 23:50:49Z" duration="18.201992" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1030" name="LagoonBirdsFlyGlideAndPause" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.LagoonBirdsFlyGlideAndPause" methodname="LagoonBirdsFlyGlideAndPause" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="304852250" result="Passed" start-time="2026-09-23 23:50:30Z" end-time="2026-09-23 23:50:49Z" duration="18.182318" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 215 renderers, 0 with a roof variant.
+[NearFade] 7835 occluder nodes matched, 70 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-lagoon-birds-v1/Lagoon-bird-flap.png
+[Play] wrote Logs/refine2-lagoon-birds-v1/Lagoon-bird-glide.png
+[Play] wrote Logs/refine2-lagoon-birds-v1/Lagoon-birds-world-scale.png
+[Lagoon birds] native wing motion 85.14038, travelled 54.95,48.14,63.37m; pause and habitat bounds held.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

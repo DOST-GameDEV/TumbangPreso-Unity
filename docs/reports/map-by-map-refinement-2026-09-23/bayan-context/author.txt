@@ -1,0 +1,1 @@
+Bayan context: 32 blocks, 38 retained-family homes, 68 simplified distant homes, 22 planted shared plots, 110343 vertices. One palette material, no new colliders or distant shadows.

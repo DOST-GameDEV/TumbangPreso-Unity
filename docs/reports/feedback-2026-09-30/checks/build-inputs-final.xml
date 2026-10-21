@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:56Z" duration="1.8480611">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="666" result="Passed" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:56Z" duration="1.848061" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1776" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="666" result="Passed" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:56Z" duration="1.837643" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9300" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1777" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="666" result="Passed" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:56Z" duration="1.836413" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1778" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="666" result="Passed" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:56Z" duration="1.835471" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1037" name="AuthoredAnimationBuildTests" fullname="TumbangPreso.Tests.AuthoredAnimationBuildTests" classname="TumbangPreso.Tests.AuthoredAnimationBuildTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:56Z" duration="1.818354" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1039" name="MissingEmptyAndDuplicateClipsRefuseButAnAuthoredCurveIsRetained" fullname="TumbangPreso.Tests.AuthoredAnimationBuildTests.MissingEmptyAndDuplicateClipsRefuseButAnAuthoredCurveIsRetained" methodname="MissingEmptyAndDuplicateClipsRefuseButAnAuthoredCurveIsRetained" classname="TumbangPreso.Tests.AuthoredAnimationBuildTests" runstate="Runnable" seed="1807308773" result="Passed" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:54Z" duration="0.025309" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1038" name="NativeBuildPrerequisitesPreserveEveryRetainedAssetByte" fullname="TumbangPreso.Tests.AuthoredAnimationBuildTests.NativeBuildPrerequisitesPreserveEveryRetainedAssetByte" methodname="NativeBuildPrerequisitesPreserveEveryRetainedAssetByte" classname="TumbangPreso.Tests.AuthoredAnimationBuildTests" runstate="Runnable" seed="1383579324" result="Passed" start-time="2026-09-30 08:23:54Z" end-time="2026-09-30 08:23:56Z" duration="1.776293" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

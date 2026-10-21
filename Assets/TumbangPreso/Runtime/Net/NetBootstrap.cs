@@ -52,6 +52,7 @@ namespace TumbangPreso.Net
         public const string LobbySwitch = "-tp-lobby";
         public const string LobbyPortSwitch = "-tp-lobbyport";
         public const string LobbyJoinSwitch = "-tp-lobbyjoin";
+        public const string LobbyOnlineSwitch = "-tp-lobbyonline";
         public const string LobbyChatSwitch = "-tp-lobbychat";
 
         /// <summary>The port this process's lobby auto-hosts on, or 0 for the default.</summary>
@@ -59,6 +60,8 @@ namespace TumbangPreso.Net
 
         /// <summary>An address or join code to press JOIN with once the lobby has settled.</summary>
         public static string LobbyJoin { get; private set; }
+        /// <summary>Explicit review request to open the normal lobby through Relay.</summary>
+        public static bool LobbyOnline { get; private set; }
 
         /// <summary>One line to say once this process is connected.</summary>
         public static string LobbyChat { get; private set; }
@@ -149,6 +152,7 @@ namespace TumbangPreso.Net
                     LobbyPort = lobbyPort;
 
                 LobbyJoin = Value(args, LobbyJoinSwitch);
+                LobbyOnline = Has(args, LobbyOnlineSwitch);
                 LobbyChat = Value(args, LobbyChatSwitch);
 
                 Requested = true;
@@ -171,7 +175,8 @@ namespace TumbangPreso.Net
             bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") ||
                                Has(args, "--dedicated") ||
                                (Application.isBatchMode && !Application.isEditor &&
-                                !explicitJoin && !explicitHost);
+                                !explicitJoin && !explicitHost && !Has(args, "-tp-startup-order-probe") &&
+                                !Has(args, "-tp-map-preview-probe"));
             bool isHost = explicitHost || isDedicated;
 
             if (isHost)
@@ -243,7 +248,11 @@ namespace TumbangPreso.Net
                 Debug.Log($"[NetBoot] join requested to {address}:{joinPort}: " +
                           (ok ? "connecting" : "FAILED"));
 
-                if (ok) UI.SceneFlow.Go(UI.SceneFlow.SelectedMap);
+                if (!ok) return;
+                // Starting the transport is not admission. The existing trusted
+                // seating/start messages own arena entry after assigning this client.
+                bool admitted = await net.WaitForConnectionAsync();
+                Debug.Log($"[NetBoot] join admission: {(admitted ? "seat assigned" : "FAILED: " + net.Status)}");
             });
         }
 

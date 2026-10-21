@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.1537233">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.153723" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2310" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.130136" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31760" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2311" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.115709" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2312" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.101564" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2041" name="ReplayMatchIdentityTests" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.077731" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2045" name="BodyHistoryFollowsMatchAndRoundBoundary" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.061527" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2042" name="BodyHistoryFollowsMatchAndRoundBoundary(True,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary(True,False)" methodname="BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="118482694" result="Failed" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.043059" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A prior round/match cannot supply a new highlight's lead-in
+  Expected: null
+  But was:  <TumbangPreso.CameraSystem.MatchPoseHistory+Track>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary (System.Boolean newMatch, System.Boolean newRound) [0x00082] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\ReplayMatchIdentityTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2043" name="BodyHistoryFollowsMatchAndRoundBoundary(False,True)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary(False,True)" methodname="BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="1510462252" result="Passed" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.003533" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2044" name="BodyHistoryFollowsMatchAndRoundBoundary(False,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary(False,False)" methodname="BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="654935787" result="Passed" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.001692" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2049" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.011140" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2046" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(True,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(True,False)" methodname="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="1303064385" result="Failed" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.007185" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Previous match props cannot carry old pose samples into a fresh round 1
+  Expected: <empty>
+  But was:  < <TumbangPreso.CameraSystem.MatchReplayArchive+Prop> >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds (System.Boolean newMatch, System.Boolean newRound) [0x00051] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\ReplayMatchIdentityTests.cs:99
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2047" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,True)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,True)" methodname="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="1619345688" result="Passed" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.001630" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2048" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,False)" methodname="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="797890230" result="Passed" start-time="2026-10-03 05:41:01Z" end-time="2026-10-03 05:41:01Z" duration="0.001193" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

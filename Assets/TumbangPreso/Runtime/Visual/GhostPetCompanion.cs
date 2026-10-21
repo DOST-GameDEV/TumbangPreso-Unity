@@ -46,6 +46,7 @@ namespace TumbangPreso.Visual
         private bool _ownerVisible = true;
         private bool _mirrored;
         private Vector3 _baseScale = Vector3.one;
+        internal Vector3 RestScale => _baseScale;
         private float _timeOffset;
         private System.Random _idleRandom = new System.Random(1709);
         private bool _reactingToEmote;
@@ -114,14 +115,15 @@ namespace TumbangPreso.Visual
         {
             if (_devourTotal <= 0) return;
             _devourLeft=Mathf.Max(0,_devourTotal-seconds);
-            float open=Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.65f));
+            float open=_devourStartsRevealed?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.65f));
             float grown=Mathf.Lerp(1,DevourScale,open);
             float breath=1+Mathf.Sin(seconds*9f)*.018f*open;
             _devourStretch=_ragePresentation!=null?Vector3.one:
                 new Vector3(Mathf.Lerp(1,1.30f,open),Mathf.Lerp(1,1.08f,open),Mathf.Lerp(1,1.08f,open));
             transform.localScale=Vector3.Scale(_baseScale,_devourStretch)*(grown*breath);
-            transform.position=_ragePresentation!=null?Vector3.Lerp(_devourStartPosition,_devourGround,open):
-                _devourGround+Vector3.up*(_originAboveFeet*grown*_devourStretch.y*breath);
+            if(!_smoothDevour)_devourRenderedGround=_devourGround;
+            transform.position=_ragePresentation!=null?Vector3.Lerp(_devourStartPosition,_devourRenderedGround,open):
+                _devourRenderedGround+Vector3.up*(_originAboveFeet*grown*_devourStretch.y*breath);
             PoseDevourFace(open);
             PoseDevourBody(open);
         }
@@ -182,6 +184,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void StopDevouring()
         {
+            ClearInvocationPreview();
             if (!IsDevouring) return;
             _devourLeft=0;
             BeginReturn();
@@ -189,19 +192,56 @@ namespace TumbangPreso.Visual
 
         public Vector3 DevourGround=>_devourGround;
         public float DevourRemaining=>_devourLeft;
-        public void RestoreDevour(Vector3 ground,float duration,float remaining)
+        public void RestoreDevour(Vector3 ground,float duration,float remaining,bool fullyRevealed=false,bool smoothPose=false)
         {
+            bool moving=smoothPose && IsDevouring;
             if(!IsDevouring)
             {
                 transform.localScale=_baseScale;RestoreFace();
-                transform.position=ground;Devour(duration);
+                transform.position=ground;Devour(duration,fullyRevealed);
             }
+            _smoothDevour=moving;
             _devourGround=VfxShapes.GroundPoint(ground);_devourTotal=duration;
+            if(!moving)_devourRenderedGround=_devourGround;
             StepTo(Mathf.Clamp(duration-remaining,0,duration));
         }
 
-        public void Devour(float seconds)
+        public void ApplyDevourFacing(float yaw,bool smoothPose=false)
         {
+            if(!IsDevouring || !FinitePose(_devourGround,yaw))return;
+            _devourYaw=yaw%360f;
+            if(!smoothPose || !_smoothDevour)transform.rotation=Quaternion.Euler(0,_devourYaw,0);
+        }
+
+        /// <summary>Move the transformed familiar without restarting its authored pose.</summary>
+        public void MoveDevour(Vector3 ground)
+        {
+            if (!IsDevouring || !float.IsFinite(ground.x) || !float.IsFinite(ground.y) || !float.IsFinite(ground.z)) return;
+            ground = VfxShapes.GroundPoint(ground);
+            Vector3 shift = ground - _devourGround;
+            _devourStartPosition += shift; _devourGround = ground; _devourRenderedGround = ground;
+            _smoothDevour = false; transform.position += shift;
+        }
+
+        private bool _devourStartsRevealed, _invocationPreview;
+        public void PreviewRevealedInvocation(Vector3 ground,Quaternion facing)
+        {
+            FindFace();
+            if(IsPossessed)EndPossession(teleportNemu:false);
+            _invocationPreview=true;_devourGround=VfxShapes.GroundPoint(ground);
+            transform.SetPositionAndRotation(_devourGround,facing);
+            transform.localScale=_baseScale*DevourScale;
+            PoseDevourFace(1);PoseDevourBody(1);
+        }
+        private void ClearInvocationPreview()
+        {
+            if(!_invocationPreview)return;
+            _invocationPreview=false;transform.localScale=_baseScale;
+            RestoreFace();PoseDevourBody(0);
+        }
+        public void Devour(float seconds,bool fullyRevealed=false)
+        {
+            ClearInvocationPreview();_devourStartsRevealed=fullyRevealed;
             FindFace();_devourStartPosition=transform.position;
             _devourLeft = Mathf.Max(0.5f, seconds);
             _devourTotal = _devourLeft;
@@ -252,10 +292,14 @@ namespace TumbangPreso.Visual
 
             // Prefer the real court under an overhead bridge, just as ground skills do.
             _devourGround=VfxShapes.GroundPoint(transform.position);
+            _devourRenderedGround=_devourGround;_devourYaw=transform.eulerAngles.y;_smoothDevour=false;
+            if(fullyRevealed)StepTo(0);
         }
 
         /// <summary>Where the road is under the maw. Written once, at the cast.</summary>
-        private Vector3 _devourGround;
+        private Vector3 _devourGround,_devourRenderedGround;
+        private float _devourYaw;
+        private bool _smoothDevour;
 
         /// <summary>
         /// How far his origin sits above his own lowest point, at bind scale, in metres.
@@ -326,7 +370,7 @@ namespace TumbangPreso.Visual
         /// If this ever needs to come down again, take it out of the RADIUS in `NemuHeroKit`
         /// rather than out of him: the footprint is the budgeted quantity, not the height.
         /// </summary>
-        private const float DevourScale = 7.4f;
+        public const float DevourScale = 7.4f;
 
         /// <summary>
         /// The body's current proportion change, so children can divide it back out.
@@ -364,8 +408,14 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void StepDevour(float dt)
         {
-            // Review sampling and runtime use the same transformation and clock.
-            // Keep facing the court instead of spinning the face away from its victims.
+            if(_smoothDevour)
+            {
+                // Reuse the familiar's existing remote possession blend. Only the
+                // drawn pose lags; authoritative ground and remaining time do not.
+                float blend=1-Mathf.Exp(-18f*Mathf.Max(0,dt));
+                _devourRenderedGround=Vector3.Lerp(_devourRenderedGround,_devourGround,blend);
+                transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.Euler(0,_devourYaw,0),blend);
+            }
             StepTo(_devourTotal-_devourLeft+dt);
             if (_devourLeft<=0) BeginReturn();
         }
@@ -542,6 +592,44 @@ namespace TumbangPreso.Visual
             foreach(var face in pet.GetComponentsInChildren<Renderer>(true))
                 if(face.name.Contains("eye")||face.name.Contains("mouth"))
                     ToonSkin.Apply(face,0,restored!=null&&face.transform.IsChildOf(restored)?ownerPalette:null);
+            DressTail(pet);
+        }
+
+        // ⚠️⚠️ HIS TAIL FADES OUT (owner, 2026-10-06: "i think the ghost tail models should fade out"). The parts named
+        // `ghost-tail*` leave the cast's shader for `Shaders/KuroTail`, which thins them to nothing down their length in
+        // halftone dots (the mesh's vertex alpha says how much is left; `tools/kubo_kuro.py` bakes it). They keep the
+        // palette, the tint and the ink width the cast's shader had just given them, so a recolour still reaches them.
+        // One fade material for each dressed material, kept: twelve Kuros do not make twelve copies a frame.
+        private static readonly System.Collections.Generic.Dictionary<Material,Material> TailMaterials=new System.Collections.Generic.Dictionary<Material,Material>();
+        private static Shader _tailShader;
+        private static bool _tailShaderMissing;
+        private static void DressTail(GameObject pet)
+        {
+            if(_tailShaderMissing)return;
+            if(_tailShader==null)_tailShader=Resources.Load<Shader>("Shaders/KuroTail");
+            if(_tailShader==null){_tailShaderMissing=true;Debug.LogWarning("[Kuro] Shaders/KuroTail is missing; his tail stays solid.");return;}
+            var calm=FindForm(pet.transform,"RestoredCalm");
+            if(calm==null)return;
+            foreach(var renderer in calm.GetComponentsInChildren<Renderer>(true))
+            {
+                if(!renderer.name.StartsWith("ghost-tail"))continue;
+                var mesh=renderer.GetComponent<MeshFilter>()?.sharedMesh;
+                // An older model has no alpha down its tail: every point would read as "all there" or, unset, as nothing.
+                if(mesh==null||mesh.colors32==null||mesh.colors32.Length==0)continue;
+                var dressed=renderer.sharedMaterial;
+                if(dressed==null||dressed.shader==_tailShader)continue;
+                if(!TailMaterials.TryGetValue(dressed,out var fade)||fade==null)
+                {
+                    fade=new Material(_tailShader){name=dressed.name+" (tail fade)"};
+                    if(dressed.HasProperty("_Color"))fade.SetColor("_Color",dressed.GetColor("_Color"));
+                    if(dressed.HasProperty("_OutlineColor"))fade.SetColor("_OutlineColor",dressed.GetColor("_OutlineColor"));
+                    if(dressed.HasProperty("_OutlineWidth"))fade.SetFloat("_OutlineWidth",dressed.GetFloat("_OutlineWidth"));
+                    var palette=dressed.GetVectorArray("_Palette");
+                    if(palette!=null&&palette.Length==16)fade.SetVectorArray("_Palette",palette);
+                    TailMaterials[dressed]=fade;
+                }
+                renderer.sharedMaterial=fade;
+            }
         }
 
         private void FindFace()
@@ -864,6 +952,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void BeginReturn()
         {
+            _smoothDevour=false;
             _returnFromDevour=_devourTotal>0 || IsRageFormVisible;
             _returnFrom = transform.position;
             _returnTotal = ReturnSeconds;
@@ -1127,6 +1216,7 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
+            if (PresentationClock.Held) return;
             float dt = Time.deltaTime > 0.0f ? Time.deltaTime : Time.unscaledDeltaTime;
             if (dt <= 0.0f) dt = 0.016f;
             dt = Mathf.Min(dt, 0.10f);
@@ -1145,6 +1235,7 @@ namespace TumbangPreso.Visual
             // is ridden or devoured. Those are precisely the two states the player is looking
             // straight at him in. It is local rotation on child transforms, so it composes with
             // whatever the branch below then does to the body.
+            StepOwnerView(dt);
             StepTail(time);
             // The familiar is the committed ultimate target. Keep it still during
             // invocation on every peer; cancellation automatically releases this.
@@ -1159,6 +1250,14 @@ namespace TumbangPreso.Visual
             if (_returnLeft > 0.0f)
             {
                 StepReturn(Mathf.Max(0,Time.deltaTime));
+                return;
+            }
+
+            // ⚠️ AN ERRAND (ABILITY-2, Nemu's Necro kit): Kuro flies on his own to a point his kit names
+            // (the haunt, her slipper, the guard spot), at his own size, and holds there until released.
+            if (_errand != null)
+            {
+                StepErrand(Mathf.Max(0, Time.deltaTime), time);
                 return;
             }
 
@@ -1279,6 +1378,93 @@ namespace TumbangPreso.Visual
         /// transition happens a handful of times a match, so the search costs nothing, and a
         /// cached array is how a renderer added later stays visible through a hide.
         /// </summary>
+        // ------------------------------------------------------------------ ERRANDS (ABILITY-2)
+
+        private System.Func<Vector3> _errand;
+        private float _errandSpeed = 7.0f, _errandScale = 1.0f, _errandScaleNow = 1.0f;
+
+        /// <summary>True while Kuro is away on an errand of his kit's.</summary>
+        public bool OnErrand => _errand != null;
+
+        /// <summary>True once Kuro is within half a metre of the errand's point.</summary>
+        public bool ErrandArrived => _errand != null && (transform.position - (_errand() + Vector3.up * 0.9f)).sqrMagnitude < 0.25f;
+
+        /// <summary>Send Kuro to wherever <paramref name="target"/> answers each frame, at <paramref name="speed"/>
+        /// m/s, grown to <paramref name="scale"/> of his size. Presentation on every peer; the kit decides.</summary>
+        public void BeginErrand(System.Func<Vector3> target, float speed, float scale = 1.0f)
+        {
+            if (target == null) return;
+            if (IsPossessed) EndPossession(teleportNemu: false);
+            _errand = target; _errandSpeed = Mathf.Max(0.5f, speed); _errandScale = Mathf.Max(0.2f, scale);
+        }
+
+        /// <summary>Release him: he eases back to his owner's shoulder.</summary>
+        public void EndErrand() { _errand = null; _currentVelocity = Vector3.zero; }
+
+        private void StepErrand(float dt, float time)
+        {
+            Vector3 goal = _errand() + Vector3.up * (0.9f + Mathf.Sin(time * 2.2f) * 0.08f);
+            if (!IsFinite(goal)) { EndErrand(); return; }
+            Vector3 to = goal - transform.position;
+            float step = _errandSpeed * dt;
+            transform.position = to.magnitude <= step ? goal : transform.position + to.normalized * step;
+            Vector3 flat = new Vector3(to.x, 0f, to.z);
+            if (flat.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(flat.normalized, Vector3.up), 1 - Mathf.Exp(-10 * dt));
+            _errandScaleNow = Mathf.MoveTowards(_errandScaleNow, _errandScale, dt * 2.5f);
+            float pulse = 1.0f + Mathf.Sin(time * _pulseSpeed) * _pulseAmount;
+            transform.localScale = _baseScale * _errandScaleNow * pulse;
+            _lastTargetPos = _target != null ? _target.position : _lastTargetPos;
+        }
+
+        // ⚠️ RETIRED 2026-10-13 (owner: "remove her fpp ghost dapat its js following her"): the sleeve Kuro is now only an
+        // unlockable (`ViewmodelArms.UnlockedHandPets`), so `For` answers null and he simply trails her in every view.
+        // What follows describes the path that still runs if that unlock is ever switched on.
+        // ⚠️⚠️ FOR HER OWN FIRST-PERSON VIEW HE IS ON HER SLEEVE, NOT BEHIND HER (`CameraSystem.NemuKuroHand`; owner,
+        // 2026-10-06: "make it so that the fpv only sees the hand kuro. and then when casting her E ability to place kuro,
+        // it looks like it moves from her hand for fpv only"). On the machine of the player who IS Nemu, in first
+        // person: while he is at her side he is not drawn here at all; when a skill sends him out, his calm form is
+        // drawn starting AT the sleeve, at the sleeve's size, and reaches his real place in a quarter of a second; when
+        // he is released he is drawn back into the sleeve and stops being drawn here.
+        // ⚠️ ONLY WHAT IS DRAWN MOVES. `transform` (his real place, which the kit reads: `ErrandArrived`, the fetch) is
+        // never touched; the offset is on the `CalmForm` child. Every other player, and she herself in third person,
+        // sees him exactly as before. Nothing is sent.
+        private CharacterMotor _ownerMotor;
+        private Transform _ownerCalm;
+        private Vector3 _ownerCalmPosition,_ownerCalmScale;
+        private float _inWorld=1f;
+        private bool _ownerHidden,_ownerOffset;
+        private readonly System.Collections.Generic.List<Renderer> _ownerRenderers=new System.Collections.Generic.List<Renderer>();
+        private void StepOwnerView(float dt)
+        {
+            if(_ownerMotor==null&&_target!=null)_ownerMotor=_target.GetComponentInParent<CharacterMotor>();
+            var hand=CameraSystem.NemuKuroHand.For(_ownerMotor);
+            bool atHerSide=_errand==null&&!IsPossessed&&_devourLeft<=0f&&_returnLeft<=0f&&!IsRageFormVisible
+                &&_nemuMotor?.AbilitySystem?.Kit?.Ultimate?.IsWindingUp!=true;
+            float want=hand!=null&&atHerSide?0f:1f;
+            _inWorld=hand==null?1f:Mathf.MoveTowards(_inWorld,want,dt/(want>_inWorld?.26f:.38f));
+            if(hand!=null&&_inWorld>0f)hand.MarkAway();
+            bool hide=_inWorld<=0f;
+            if(hide!=_ownerHidden)
+            {
+                _ownerHidden=hide;
+                GetComponentsInChildren(true,_ownerRenderers);
+                foreach(var r in _ownerRenderers)if(r!=null)r.forceRenderingOff=hide;
+            }
+            if(_ownerCalm==null){_ownerCalm=FindForm(transform,"CalmForm");if(_ownerCalm==null)return;_ownerCalmPosition=_ownerCalm.localPosition;_ownerCalmScale=_ownerCalm.localScale;}
+            if(hand!=null&&_inWorld>0f&&_inWorld<1f)
+            {
+                // Out of the sleeve in an arc: fast at first, a little hop on the way.
+                float u=1f-(1f-_inWorld)*(1f-_inWorld);
+                Vector3 home=transform.TransformPoint(_ownerCalmPosition);
+                _ownerCalm.position=Vector3.Lerp(hand.WorldPosition,home,u)+Vector3.up*(Mathf.Sin(u*Mathf.PI)*.18f);
+                float small=hand.WorldScale/Mathf.Max(.0001f,transform.lossyScale.x);
+                _ownerCalm.localScale=_ownerCalmScale*Mathf.Lerp(small,1f,u);
+                _ownerOffset=true;
+            }
+            else if(_ownerOffset){_ownerCalm.localPosition=_ownerCalmPosition;_ownerCalm.localScale=_ownerCalmScale;_ownerOffset=false;}
+        }
+
         private void MirrorOwnerVisibility(bool visible)
         {
             if (_ownerVisible == visible && _mirrored) return;
@@ -1537,6 +1723,32 @@ namespace TumbangPreso.Visual
             PoseIdleExpression(gesture,p,expression);
         }
 
+        /// <summary>One authored face: the expression parts it shows and which of his own features they replace.</summary>
+        public readonly struct KuroFace
+        {
+            public readonly string[] Parts;public readonly bool HideEyeL,HideEyeR,HideMouth;
+            public KuroFace(string[] parts,bool eyeL,bool eyeR,bool mouth){Parts=parts;HideEyeL=eyeL;HideEyeR=eyeR;HideMouth=mouth;}
+        }
+
+        /// <summary>
+        /// The face each idle gesture wears, or none. Every name is a child of `KuroExpressions` in
+        /// pet-nemu-ghost.glb; `KuroFormTests` asserts each set shows and clears.
+        /// </summary>
+        public static KuroFace ExpressionFor(FidgetState gesture) => gesture switch
+        {
+            FidgetState.CatSmile=>new KuroFace(new[]{"KuroCatMouth"},false,false,true),
+            FidgetState.GoofyDizzy=>new KuroFace(new[]{"KuroCrossLeft","KuroCrossRight","KuroGoofyMouth"},true,true,true),
+            FidgetState.ShyPout=>new KuroFace(new[]{"KuroShyEye","KuroPoutMouth"},false,true,true),
+            FidgetState.HappyHop=>new KuroFace(new[]{"KuroHappyEyeL","KuroHappyEyeR","KuroGrinMouth"},true,true,true),
+            FidgetState.CuriousPeek=>new KuroFace(new[]{"KuroSparkleL","KuroSparkleR","KuroOhMouth"},false,false,true),
+            FidgetState.SleepySnooze=>new KuroFace(new[]{"KuroSleepEyeL","KuroSleepEyeR"},true,true,false),
+            FidgetState.CheekyGiggle=>new KuroFace(new[]{"KuroHappyEyeL","KuroHappyEyeR","KuroCatMouth","KuroTongue"},true,true,true),
+            FidgetState.HeartbeatPulse=>new KuroFace(new[]{"KuroHeartEyeL","KuroHeartEyeR","KuroCatMouth"},true,true,true),
+            FidgetState.TwirlSpin=>new KuroFace(new[]{"KuroHappyEyeL","KuroHappyEyeR","KuroCatMouth"},true,true,true),
+            FidgetState.OrbitArc=>new KuroFace(new[]{"KuroSparkleL","KuroSparkleR","KuroCatMouth"},false,false,true),
+            _=>new KuroFace(null,false,false,false),
+        };
+
         private void PoseIdleExpression(FidgetState gesture,float p,float amount)
         {
             if(_expressionRoot==null)return;
@@ -1545,22 +1757,23 @@ namespace TumbangPreso.Visual
             bool cat=gesture==FidgetState.CatSmile;
             bool goofy=gesture==FidgetState.GoofyDizzy;
             bool shy=gesture==FidgetState.ShyPout;
+            // ⚠️ EVERY GESTURE HAS A FACE OF ITS OWN NOW; THREE DID. 🧑 2026-09-24: *"make kuro's
+            // expressions cuter"*, *"make it more expressive hehe"*. `tools/cute_kuro.py` authored the
+            // new parts (happy, sleepy, heart and sparkle eyes; a grin, an "o", a tongue) the same way
+            // `tools/author_kuro.py` authored the first three. The table is the whole mapping: which
+            // parts show, and which of his own eyes and mouth they stand in for.
+            var face=ExpressionFor(gesture);
             // Graphic faces switch crisply after the anticipation and before the
             // recovery. Blending overlapping line art makes an unreadable face.
-            bool show=(cat||goofy||shy) && p>=.15f && p<=.82f;
+            bool show=face.Parts!=null && p>=.15f && p<=.82f;
             _expressionRoot.localScale=show?Vector3.one:Vector3.zero;
             if(show)
             {
                 foreach(var pair in _expressionParts)
-                {
-                    bool selected=cat?pair.Key=="KuroCatMouth":goofy?
-                        pair.Key=="KuroCrossLeft"||pair.Key=="KuroCrossRight"||pair.Key=="KuroGoofyMouth":
-                        pair.Key=="KuroShyEye"||pair.Key=="KuroPoutMouth";
-                    pair.Value.localScale=selected?Vector3.one:Vector3.zero;
-                }
-                if(_mouth!=null)_mouth.localScale=Vector3.zero;
-                if(goofy && _eyeL!=null)_eyeL.localScale=Vector3.zero;
-                if((goofy||shy) && _eyeR!=null)_eyeR.localScale=Vector3.zero;
+                    pair.Value.localScale=System.Array.IndexOf(face.Parts,pair.Key)>=0?Vector3.one:Vector3.zero;
+                if(face.HideMouth && _mouth!=null)_mouth.localScale=Vector3.zero;
+                if(face.HideEyeL && _eyeL!=null)_eyeL.localScale=Vector3.zero;
+                if(face.HideEyeR && _eyeR!=null)_eyeR.localScale=Vector3.zero;
             }
             else foreach(var part in _expressionParts.Values)part.localScale=Vector3.zero;
             if(cat)
@@ -1662,6 +1875,8 @@ namespace TumbangPreso.Visual
 
         private void ResolvePossessionContacts()
         {
+            // Ordinary pause freezes gameplay contacts while keeping the accepted possession.
+            if (PresentationClock.RequestedScale <= 0) return;
             var round = GameServices.Round;
             if (round != null && _nemuMotor != null)
             {

@@ -1,0 +1,28 @@
+Unity: /home/bokken/build/output/Unity-Technologies/mono/external/corefx-bugfix/src/Native/Unix/Common/pal_utilities.h:160: int ToFileDescriptor(intptr_t): Assertion `fd < sysconf(_SC_OPEN_MAX) && "Requested file descriptor exceeds maximum number of files allowed to be open at a time."' failed.
+Unity: /home/bokken/build/output/Unity-Technologies/mono/external/corefx-bugfix/src/Native/Unix/Common/pal_utilities.h:160: int ToFileDescriptor(intptr_t): Assertion `fd < sysconf(_SC_OPEN_MAX) && "Requested file descriptor exceeds maximum number of files allowed to be open at a time."' failed.
+Caught fatal signal - signo:6 code:-6 errno:0 addr:0x3e80001fb22
+Caught fatal signal - signo:6 code:-6 errno:0 addr:0x3e80001fb22
+Obtained 22 stack frames.
+#0  0x007f7ee19b095c in (Unknown)
+#1  0x007f7ee195bcc2 in gsignal
+#2  0x007f7ee19444ac in abort
+#3  0x007f7ee1944420 in __assert_perror_fail
+#4  0x007f7cf044548b in SystemNative_FcntlSetCloseOnExec
+#5  0x00000040f7530e in (wrapper managed-to-native) Interop/Sys/Fcntl:SetCloseOnExec (System.Runtime.InteropServices.SafeHandle)
+#6  0x00000040f7515b in System.IO.Pipes.PipeStream:ConfigureSocket (System.Net.Sockets.Socket,Microsoft.Win32.SafeHandles.SafePipeHandle,System.IO.Pipes.PipeDirection,int,int,System.IO.HandleInheritability)
+#7  0x00000040f6f2a3 in System.IO.Pipes.NamedPipeServerStream:HandleAcceptedSocket (System.Net.Sockets.Socket)
+#8  0x00000040f678f7 in System.IO.Pipes.NamedPipeServerStream/<<WaitForConnectionAsync>g__WaitForConnectionAsyncCore|8_0>d:MoveNext ()
+#9  0x00000040f6f046 in System.Runtime.CompilerServices.AsyncMethodBuilderCore/MoveNextRunner:InvokeMoveNext (object)
+#10 0x00000040e7009a in System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+#11 0x00000040e6fc33 in System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+#12 0x00000040f6ef2b in System.Runtime.CompilerServices.AsyncMethodBuilderCore/MoveNextRunner:Run ()
+#13 0x00000040f6ec82 in System.Threading.Tasks.AwaitTaskContinuation:RunOrScheduleAction (System.Action,bool,System.Threading.Tasks.Task&)
+#14 0x00000040f57d57 in System.Threading.Tasks.Task:FinishContinuations ()
+#15 0x00000040f573df in System.Threading.Tasks.Task:FinishStageThree ()
+#16 0x00000040f6c6b2 in System.Net.Sockets.SocketAsyncResult/<>c:<Complete>b__27_0 (object)
+#17 0x00000040f6098e in System.Threading.QueueUserWorkItemCallback:System.Threading.IThreadPoolWorkItem.ExecuteWorkItem ()
+#18 0x00000040f4b402 in System.Threading.ThreadPoolWorkQueue:Dispatch ()
+#19 0x00000040f4ae7b in System.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()
+#20 0x00000040f4b01e in (wrapper runtime-invoke) <Module>:runtime_invoke_bool (object,intptr,intptr,intptr)
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...

@@ -1,0 +1,44 @@
+{
+  "port": 8911,
+  "seconds": 6,
+  "packets": [
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "bytes": 67,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "bytes": 67,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "bytes": 67,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "bytes": 67,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "bytes": 67,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "bytes": 67,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    }
+  ],
+  "purpose": "Passive LAN beacon capture; existing game remains listening",
+  "bound": true
+}

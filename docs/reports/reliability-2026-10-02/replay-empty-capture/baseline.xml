@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 18:14:02Z" end-time="2026-10-01 18:14:02Z" duration="0.3804531">
+  <test-suite type="TestSuite" id="2497" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-10-01 18:14:02Z" end-time="2026-10-01 18:14:02Z" duration="0.380453" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2491" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-10-01 18:14:02Z" end-time="2026-10-01 18:14:02Z" duration="0.355862" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17664" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2492" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-10-01 18:14:02Z" end-time="2026-10-01 18:14:02Z" duration="0.340092" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2493" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-10-01 18:14:02Z" end-time="2026-10-01 18:14:02Z" duration="0.324814" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2013" name="RecordedEffectsTests" fullname="TumbangPreso.PlayTests.RecordedEffectsTests" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-01 18:14:02Z" end-time="2026-10-01 18:14:02Z" duration="0.288084" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2015" name="IdleFlightCaptureDoesNotAllocateUnusedTrailStorage" fullname="TumbangPreso.PlayTests.RecordedEffectsTests.IdleFlightCaptureDoesNotAllocateUnusedTrailStorage" methodname="IdleFlightCaptureDoesNotAllocateUnusedTrailStorage" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" seed="1784717651" result="Failed" start-time="2026-10-01 18:14:02Z" end-time="2026-10-01 18:14:02Z" duration="0.272393" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An empty replay sample allocated unused trail storage.
+  Expected: 0
+  But was:  1000
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedEffectsTests+<IdleFlightCaptureDoesNotAllocateUnusedTrailStorage>d__3.MoveNext () [0x00183] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordedEffectsTests.cs:100
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

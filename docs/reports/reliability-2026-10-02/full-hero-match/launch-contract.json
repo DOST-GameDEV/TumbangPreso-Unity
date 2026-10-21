@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "2c3f39dc97756b23f12239bdd7bba0429ab2e352",
+  "runtimeSha256": "539deda0cc4e225dcf653c55eacf70e5af4218bca12e9ff34f8d2eebea1ead74",
+  "buildReceipt": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002b\\build-receipt.json",
+  "buildReceiptSha256": "cffd3c0f551956e6ac10016647bfecd8badeb6a6dcc5c2fa6d45756fa3e3b375",
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1002b\\TumbangPreso.exe",
+  "mode": "HeroStrike",
+  "map": "IlalimNgTulay",
+  "rounds": 8,
+  "roundSeconds": 90,
+  "clientReportSeconds": 900,
+  "hostReportSeconds": 913,
+  "graphics": "D3D11/Balanced/1920x1080/60FPS cap",
+  "membership": "two human-owned seats with no scripted gameplay input; two ordinary bots",
+  "profilePrefix": "competition-fullhero1002b",
+  "scope": "Natural default finish; no rematch, shortened rules, tournament preset or staged gameplay"
+}

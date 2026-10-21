@@ -1,0 +1,24 @@
+{
+  "phase": "baseline",
+  "preparedUtc": "2026-10-02T06:41:00.2398126Z",
+  "expectedCases": 3,
+  "testFilter": "TumbangPreso.PlayTests.PlayerHubOwnerDetailTests",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerPainted.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\playerhub-owner-detail1002\\frozen\\PlayerHub.OwnerPainted.original.cs",
+      "sha256": "A74208D517E3D08F2AD9D8539EA3B99CFB89A23CB11B05EE828EB69790AF5F83"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubOwnerDetailTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\playerhub-owner-detail1002\\frozen\\PlayerHubOwnerDetailTests.cs",
+      "sha256": "5C083234A8BC2527898B3C5E2BDD68A0A8F25FAE94765572967FC73CA2635935"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubOwnerDetailTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\playerhub-owner-detail1002\\frozen\\PlayerHubOwnerDetailTests.cs.meta",
+      "sha256": "ABCAA775A138D2A5CCE41551A232FCC8B4AAE3626A8819BDB3970640D042515F"
+    }
+  ],
+  "protectedCount": 1293
+}

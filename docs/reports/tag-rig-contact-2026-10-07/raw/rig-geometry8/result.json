@@ -1,0 +1,23 @@
+{
+  "sourceRef": "ced3fa7612b55666ce30e48970c793e18a1c74cb",
+  "profile": "pc-catch-framing-rig-geometry81006",
+  "filter": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 27992,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu",
+      "result": "Failed",
+      "message": "  The actual rendered reaching hand must reach the accepted victim's visible body bounds.\n  Expected: less than 0.0799999982f\n  But was:  0.428256989f\n"
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21279,
+  "terminal": true
+}

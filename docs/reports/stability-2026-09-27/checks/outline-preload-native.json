@@ -1,0 +1,47 @@
+{
+  "base": "cc21bdceedb75a37051e40867e063dcdc46a9ea3",
+  "native": {
+    "result": "Passed",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "0.40366",
+    "unity": "6000.5.8f1",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineCacheRejectsForeignIdentityAndDoesNotCacheUnfinishedMeshes",
+      "result": "Passed",
+      "duration": "0.069293",
+      "output": ""
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels",
+      "result": "Passed",
+      "duration": "0.277925",
+      "output": "[OutlineWarmupCheck] meshes=2 vertices=13785 coldMs=2.818 maxStepMs=1.822 reusedMs=0.046\nSaving results to: ISOLATED_PROFILE\\TestResults.xml\n"
+    }
+  ],
+  "originalXmlSha256": "1F9A582EFE88C170CE201F1F5F4E69ACCA36B458038AFE61C5CD07AB71A39383",
+  "frozenInputs": 207,
+  "nativeInputChurn": 0,
+  "minimumFreeBytes": 6676463616,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "70204E7BCC3AD2E0E2FCCBCB8229C1F3F3A67B9E853BD35EA2D82014A241C1A2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/OutlineNormals.cs",
+      "sha256": "681DF04B717D3651C417002F717E7EFB486B3CAEFC030733AE3DA84961EBF1B2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "6AB8BE7400C91E7F37E6EDA0C9EE2DB6929E158E5944031D2F7879FE80F3623A"
+    }
+  ],
+  "limits": "Local native geometry/cache checks, not player first-use or visual acceptance."
+}

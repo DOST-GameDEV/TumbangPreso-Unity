@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.0636472">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1219" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.063647" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2495" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1219" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.055138" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24652" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2496" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1219" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.052125" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2497" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1219" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.049498" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1383" name="EmoteTargetOwnershipTests" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.035326" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1386" name="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.021123" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1384" name="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(False)" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(False)" methodname="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1197548289" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.016106" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1385" name="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(True)" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(True)" methodname="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1884863799" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.000727" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1387" name="EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel" methodname="EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="2915914" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.000693" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1390" name="EnabledReplacementReaderSurvivesAnOlderDisabledReader" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.EnabledReplacementReaderSurvivesAnOlderDisabledReader" methodname="EnabledReplacementReaderSurvivesAnOlderDisabledReader" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="605810204" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.002480" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1392" name="GuidedTutorialStillTargetsItsStudentFallback" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.GuidedTutorialStillTargetsItsStudentFallback" methodname="GuidedTutorialStillTargetsItsStudentFallback" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1230998905" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.000594" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1388" name="NoActiveReaderCannotEmoteOnTheRetiredFallback" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.NoActiveReaderCannotEmoteOnTheRetiredFallback" methodname="NoActiveReaderCannotEmoteOnTheRetiredFallback" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1352898552" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.000907" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1389" name="ParkedInputOwnerCannotReceiveAWheelChoice" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.ParkedInputOwnerCannotReceiveAWheelChoice" methodname="ParkedInputOwnerCannotReceiveAWheelChoice" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="918670361" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.000562" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1391" name="TemporaryAiWithHumanHeroInputKeepsTheSameFallbackOwner" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.TemporaryAiWithHumanHeroInputKeepsTheSameFallbackOwner" methodname="TemporaryAiWithHumanHeroInputKeepsTheSameFallbackOwner" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="173679427" result="Passed" start-time="2026-10-03 14:40:43Z" end-time="2026-10-03 14:40:43Z" duration="0.000973" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

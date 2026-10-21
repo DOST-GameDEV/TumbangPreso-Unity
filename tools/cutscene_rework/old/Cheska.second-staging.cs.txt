@@ -1,0 +1,262 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    public sealed partial class HeroIntroductionScene
+    {
+        // =========================================================================================
+        // YASMIN, ABSOLUTE ZERO, 6.5 s (was 3.2 s; plan.md § 6 is the first one, staged as GLACIAL NOVA).
+        //
+        // ⚠️ RESTAGED 2026-10-08. The owner, of three staging ideas: "cheska i like 1 and 3", agreed to them joined at
+        // about 6.5 s. The ultimate now freezes EVERY player on the map, and the first cutscene showed nobody but her.
+        //   1. READ (0 to 1.7): she reads the court, a cold breath, and closes her hands on a crystal.
+        //   2. INSIDE (1.7 to 3.3): the lens goes into the crystal. In it is the court in miniature: everyone where
+        //      they really stand, and the can. She breathes on it once and frost crosses the little court.
+        //   3. THE BREATH (3.3 to 5.4), from behind her: the same breath leaves her across the real court as a pale
+        //      front. What it passes stops: each player is coated and cased in ice, the can, the motes in the air.
+        //   4. THE GLOBE (5.4 to 6.5): the whole court still and pale. Only she moves: the crystal again, and the snap.
+        //
+        // Kept of her first cutscene, each asked for or approved in September: she is calm and exact, the frame PALES
+        // where every other stage darkens (she is the one dark warm shape in it), the highland mist and the pines of
+        // La Trinidad, the cold breath, the crystal between her palms that shatters on the snap, the frost plates at
+        // her feet. Gone: the fingertip line of frost and the ring of spires (the "one line" idea was not picked).
+        //
+        // ⚠️ BLOCKING. The ice round each body is the one crystal mesh; the breath is a plain ring. Staging and timing
+        // are what this is for.
+        // ⚠️ EVERY TIME IS ON THE TABLE'S CLOCK (`tools/author_ultimate_intros.py`, `_cheska`). The last pose is `snap`.
+        // =========================================================================================
+        private const float CkForm = 1.05f, CkInside = 1.70f, CkBlow = 2.50f, CkOut = 3.30f, CkSweepTo = 5.05f, CkAgain = 5.60f, CkSnap = 6.15f,
+                            CkReach = 13f, CkMiniature = 1f / 60f;
+        private static readonly Color CheskaIce = new Color(.62f, .9f, 1, .9f);
+
+        // The motes hanging in the air: (x, height, z), typed. They drift until the breath reaches them.
+        private static readonly Vector3[] CkMotes =
+        {
+            new Vector3(-1.6f, 1.9f, 2.2f), new Vector3(1.1f, 2.6f, 3.4f), new Vector3(2.8f, 1.2f, 1.6f), new Vector3(-3.4f, 2.3f, 4.6f),
+            new Vector3(.4f, 3.1f, 5.8f), new Vector3(3.9f, 1.7f, 5.1f), new Vector3(-2.2f, 1.1f, 6.9f), new Vector3(1.9f, 2.2f, 7.8f),
+            new Vector3(-4.8f, 1.6f, 2.1f), new Vector3(5.2f, 2.8f, 3.0f), new Vector3(-.8f, 1.5f, 9.2f), new Vector3(3.1f, 3.3f, 9.9f),
+            new Vector3(-3.9f, 2.9f, 8.4f), new Vector3(.9f, 1.0f, 4.4f), new Vector3(-5.6f, 2.0f, 6.0f), new Vector3(4.6f, 1.3f, 7.2f),
+            new Vector3(-1.3f, 2.7f, -1.8f), new Vector3(2.2f, 1.8f, -2.6f), new Vector3(-3.0f, 1.4f, -3.4f), new Vector3(.3f, 3.4f, 1.0f),
+        };
+
+        private sealed class CkFrozen
+        {
+            public Renderer[] Body, MiniBody;
+            public int Ice, MiniIce;
+            public Vector3 Home; public float Reach, Height;
+        }
+
+        private int _ckMistLow, _ckMistHigh, _ckBreath, _ckCrystal, _ckPlates, _ckFront, _ckFloor, _ckMiniFront, _ckMiniFloor, _ckMiniCourt;
+        private readonly List<int> _ckPines = new List<int>(10), _ckShards = new List<int>(6), _ckMoteGlows = new List<int>(20);
+        private readonly List<CkFrozen> _ckFrozen = new List<CkFrozen>(5);
+        private Transform _ckMini;
+        private Vector3 _ckCentre;
+
+        private void BuildCheska()
+        {
+            _ckMistLow = Wall("HighlandMistGround", 0, 1.4f, new Color(.6f, .66f, .64f, .55f), radius: 14.5f, emission: .2f);
+            _ckMistHigh = Wall("HighlandMistSky", 1.4f, 30, new Color(.8f, .86f, .88f, .5f), radius: 14.5f, emission: .3f, cap: true);
+            for (int i = 0; i < 10; i++)
+                _ckPines.Add(AddSolid("RidgePine" + i, VfxShapes.Spire(6, .08f, .25f, 120 + i), new Color(.26f, .34f, .31f, 1)));
+            _ckBreath = Add("ColdBreath", VfxShapes.TwoSided(VfxShapes.Splat(10, .3f, 5)), new Color(.95f, .98f, 1, .5f), .4f);
+            _ckPlates = Add("FrostPlates", VfxShapes.Wedges(8, .14f, 9, .05f, .25f, 33), new Color(.78f, .95f, 1, .8f), .5f);
+            for (int i = 0; i < 6; i++) _ckShards.Add(Add("SnapShard" + i, YasminGatheredCrystal(), CheskaIce, .9f));
+
+            // Everyone else, where they stand, and the can.
+            StageOthers(2.6f, 10.5f);
+            _ckCentre = _hasCan ? _canAt : new Vector3(0, 0, 4.5f);
+
+            // The breath over the real court: a pale front running out, and the frost it leaves on the ground.
+            _ckFloor = Add("BreathFrost", VfxShapes.Prism(36, .012f, 1f), new Color(.82f, .95f, 1, .34f), .35f);
+            _ckFront = Add("BreathFront", VfxShapes.Collar(44, .55f, .9f, .05f, 0f, 9), new Color(.95f, .99f, 1, .6f), .6f);
+
+            // The court in miniature, inside the crystal: its own floor, the same people, the same breath.
+            _ckMini = new GameObject("MiniatureCourt").transform; _ckMini.SetParent(_root.transform, false);
+            _ckMini.localScale = Vector3.one * CkMiniature;
+            _ckMiniCourt = Under(_ckMini, AddSolid("MiniatureGround", VfxShapes.Prism(8, .3f, .94f, 0, 0, 3), new Color(.62f, .62f, .58f, 1)));
+            _ckMiniFloor = Under(_ckMini, Add("MiniatureFrost", VfxShapes.Prism(36, .012f, 1f), new Color(.82f, .95f, 1, .5f), .4f));
+            _ckMiniFront = Under(_ckMini, Add("MiniatureFront", VfxShapes.Collar(44, .55f, .9f, .05f, 0f, 9), new Color(.95f, .99f, 1, .7f), .7f));
+
+            foreach (var other in _others)
+            {
+                var frozen = new CkFrozen { Body = other.Renderers, Home = other.Home, Reach = other.Reach, Height = 1.75f };
+                MiniatureOf(other.Holder, _ckMini, out frozen.MiniBody);
+                frozen.Ice = Add("IceCase", YasminGatheredCrystal(), new Color(.7f, .93f, 1, .5f), .5f);
+                frozen.MiniIce = Under(_ckMini, Add("MiniatureIceCase", YasminGatheredCrystal(), new Color(.7f, .93f, 1, .6f), .6f));
+                _ckFrozen.Add(frozen);
+            }
+            // The can is cased too. Nothing copies it: the real one stands in the world; the miniature gets a small tin.
+            var can = new CkFrozen { Home = _ckCentre, Reach = _ckCentre.magnitude, Height = .62f };
+            can.Ice = Add("IceCaseCan", YasminGatheredCrystal(), new Color(.7f, .93f, 1, .5f), .5f);
+            can.MiniIce = Under(_ckMini, Add("MiniatureIceCaseCan", YasminGatheredCrystal(), new Color(.7f, .93f, 1, .6f), .6f));
+            int tin = Under(_ckMini, AddSolid("MiniatureCan", VfxShapes.Prism(10, .34f, 1f), new Color(.72f, .2f, .16f, 1)));
+            Place(tin, _ckCentre, new Vector3(.13f, 1, .13f), Quaternion.identity, 1);
+            _ckFrozen.Add(can);
+            // And her own small self, standing in it where she stands.
+            if (_bodyRoot != null)
+            {
+                var self = MiniatureOf(_bodyRoot, _ckMini, out _);
+                self.transform.localPosition = _root.transform.InverseTransformPoint(_bodyRoot.transform.position);
+                self.transform.localRotation = Quaternion.Inverse(_root.transform.rotation) * _bodyRoot.transform.rotation;
+                self.transform.localScale = _bodyRoot.transform.lossyScale;
+            }
+
+            // The crystal is made last so it is drawn over what is inside it.
+            _ckCrystal = Add("GatheredCrystal", YasminGatheredCrystal(), new Color(.7f, .94f, 1, .95f), .8f);
+            for (int i = 0; i < CkMotes.Length; i++)
+                _ckMoteGlows.Add(AddGlow("HangingMote" + i, new Color(.9f, .97f, 1, 1), falloff: 2.4f, core: .7f));
+        }
+
+        private int Under(Transform parent, int index) { _pieces[index].Transform.SetParent(parent, false); return index; }
+
+        // A held crystal needs volume. VfxShapes.Crystal is a flat ground fan,
+        // which disappeared edge-on in the low gather shot.
+        private static Mesh YasminGatheredCrystal()
+        {
+            var top = Vector3.up;
+            var bottom = Vector3.down * .65f;
+            var front = Vector3.forward;
+            var right = Vector3.right;
+            var back = Vector3.back;
+            var left = Vector3.left;
+            var mesh = new Mesh { name = "Yasmin gathered ice crystal" };
+            mesh.vertices = new[] {
+                top, front, right, top, right, back,
+                top, back, left, top, left, front,
+                bottom, right, front, bottom, back, right,
+                bottom, left, back, bottom, front, left
+            };
+            mesh.triangles = new[] { 0,1,2,3,4,5,6,7,8,9,10,11,
+                12,13,14,15,16,17,18,19,20,21,22,23 };
+            mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        /// <summary>Where the crystal is held: between her palms, or on the free palm when the other holds a slipper.</summary>
+        private Vector3 CheskaGather => (_heldItem != null ? FreePalm : BothPalms) + new Vector3(0, .1f, .12f);
+
+        /// <summary>INSIDE is shot from the crystal itself: the lens starts at arm's length and goes in until the little court fills the frame.</summary>
+        private void CheskaFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
+        {
+            if (index != 1) return;
+            float u = Ease(CkInside, CkBlow - .15f, t), drift = Ease(CkBlow, CkOut, t);
+            float side = _heldItem != null ? -1 : 1;
+            look = CheskaGather + new Vector3(0, -.04f, 0);
+            eye = look + Vector3.Lerp(new Vector3(side * .55f, .32f, 1.05f), new Vector3(side * .16f, .2f, .46f), u) + new Vector3(side * .05f, .02f, -.04f) * drift;
+            fov = Mathf.Lerp(40f, 30f, u);
+        }
+
+        private void SampleCheska(float t)
+        {
+            float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
+
+            // A cold breath while she reads the court, and again onto the crystal.
+            float puff = Ease(.1f, .3f, t) * (1 - Ease(.35f, .8f, t)), blow = Ease(CkBlow - .05f, CkBlow + .12f, t) * (1 - Ease(CkBlow + .2f, CkBlow + .65f, t));
+            var mouth = HeadPoint + new Vector3(0, -.42f, .3f);
+            if (blow > puff)
+                Place(_ckBreath, Vector3.Lerp(mouth, CheskaGather, Ease(CkBlow, CkBlow + .5f, t)), Vector3.one * Mathf.Lerp(.08f, .26f, Ease(CkBlow, CkBlow + .5f, t)),
+                    Quaternion.Euler(-60, 0, 0), blow * leave);
+            else
+                Place(_ckBreath, HeadPoint + new Vector3(0, -.2f, .35f + Ease(.1f, .8f, t) * .3f), Vector3.one * Mathf.Lerp(.08f, .3f, Ease(.1f, .8f, t)),
+                    Quaternion.Euler(-90, 0, 0), puff * leave);
+
+            // The mist and the pine ridge come in as she closes her hands.
+            float mist = Ease(.7f, 1.5f, t) * leave;
+            Tint(_ckMistLow, mist); Tint(_ckMistHigh, mist);
+            for (int i = 0; i < _ckPines.Count; i++)
+            {
+                float angle = (180 - 95 + i * 21) * Mathf.Deg2Rad;
+                var at = new Vector3(Mathf.Sin(angle) * 13.4f, 0, Mathf.Cos(angle) * 13.4f);
+                float height = 3.4f + (i * 41 % 5) * .5f;
+                Place(_ckPines[i], at, new Vector3(.9f, height * Ease(.8f + i * .03f, 1.4f + i * .03f, t) + .01f, .9f), Quaternion.identity, mist > .01f ? 1 : 0);
+            }
+
+            // The crystal: closed between her palms, opened up for the lens to enter, given to the court as the breath, and
+            // made once more, small, to be broken on the snap.
+            Vector3 gather = CheskaGather;
+            float form = Ease(CkForm, CkForm + .5f, t), opened = Ease(CkInside - .1f, CkInside + .35f, t) * (1 - Ease(CkOut - .05f, CkOut + .25f, t));
+            float again = Ease(CkAgain, CkAgain + .4f, t), snap = Ease(CkSnap - .03f, CkSnap + .02f, t);
+            float small = Mathf.Max(form * (1 - Ease(CkOut, CkOut + .25f, t)), again);
+            var size = Vector3.Lerp(new Vector3(.11f, .18f, .11f) * small, new Vector3(.25f, .3f, .25f), opened);
+            // Clear enough to see into while the lens is inside it.
+            Place(_ckCrystal, gather + Vector3.down * (.02f + .1f * opened), size, Quaternion.Euler(0, t * 26, 0), small * (1 - snap) * Mathf.Lerp(1f, .22f, opened) * leave);
+            for (int i = 0; i < _ckShards.Count; i++)
+            {
+                float age = t - CkSnap, u = Mathf.Clamp01(age / .3f);
+                float angle = i * Mathf.PI * 2 / _ckShards.Count;
+                var at = gather + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) * .7f, .3f) * u * .9f;
+                Place(_ckShards[i], at, Vector3.one * .06f * (1 - u * .5f), Quaternion.Euler(angle * 57, 0, 90), age >= 0 ? (1 - u) * leave : 0);
+            }
+
+            // The miniature rides in the crystal, the court's middle at its middle, and is there only while it is open.
+            bool inside = opened > .02f;
+            _ckMini.gameObject.SetActive(inside);
+            float miniBreath = Ease(CkBlow + .1f, CkOut - .12f, t) * CkReach;
+            if (inside)
+            {
+                _ckMini.localPosition = gather + Vector3.down * .13f - _ckCentre * CkMiniature;
+                Place(_ckMiniCourt, _ckCentre + Vector3.down * .3f, new Vector3(9.4f, 1, 9.4f), Quaternion.identity, 1);
+                CheskaBreath(_ckMiniFloor, _ckMiniFront, miniBreath, 1f);
+            }
+
+            // The breath over the real court.
+            float breath = Ease(CkOut + .05f, CkSweepTo, t) * CkReach;
+            CheskaBreath(_ckFloor, _ckFront, breath, leave);
+            float spread = Ease(CkOut, CkOut + .7f, t);
+            Place(_ckPlates, Vector3.up * .03f, Vector3.one * Mathf.Lerp(.3f, 2.3f, spread), Quaternion.Euler(0, 15, 0), spread * leave);
+
+            // What it passes stops: a coat of frost, then a case of ice that snaps shut round it.
+            foreach (var frozen in _ckFrozen)
+            {
+                float caught = CheskaCaught(breath, frozen.Reach), miniCaught = inside ? CheskaCaught(miniBreath, frozen.Reach) : 0;
+                if (frozen.Body != null) FrostOther(frozen.Body, caught * leave);
+                if (frozen.MiniBody != null) FrostOther(frozen.MiniBody, miniCaught);
+                var caseSize = new Vector3(.62f, frozen.Height * .62f, .62f);
+                var at = frozen.Home + Vector3.up * frozen.Height * .4f;
+                Place(frozen.Ice, at, caseSize * (.6f + .4f * caught), Quaternion.Euler(0, frozen.Reach * 40, 4), caught * leave);
+                Place(frozen.MiniIce, at, caseSize * (.6f + .4f * miniCaught), Quaternion.Euler(0, frozen.Reach * 40, 4), miniCaught);
+            }
+            // Until it reaches them the others shift their weight; once it has, nothing moves.
+            foreach (var other in _others)
+            {
+                float still = CheskaCaught(breath, other.Reach) > 0 ? 0 : 1;
+                float sway = _reducedEffects ? 0 : Mathf.Sin(Mathf.Min(t, CheskaReaches(other.Reach)) * 3.1f + other.Reach) * 3.5f;
+                other.Holder.transform.localRotation = Quaternion.Euler(0, other.Yaw + sway * (still > 0 ? 1 : 1), sway * .5f);
+            }
+
+            // The motes: drifting, then hung where the breath found them.
+            for (int i = 0; i < _ckMoteGlows.Count; i++)
+            {
+                var seat = CkMotes[i];
+                float reach = new Vector2(seat.x, seat.z).magnitude, clock = Mathf.Min(t, CheskaReaches(reach));
+                var at = seat + new Vector3(Mathf.Sin(clock * .9f + i) * .35f, -.22f * clock + Mathf.Sin(clock * 1.7f + i * 2) * .08f, Mathf.Cos(clock * .7f + i) * .3f);
+                PlaceGlow(_ckMoteGlows[i], at, Vector3.one * (.09f + (i % 3) * .03f), Quaternion.identity, mist * (.55f + .45f * CheskaCaught(breath, reach)));
+            }
+        }
+
+        /// <summary>One breath on one court: the frost it has laid, out to <paramref name="reach"/>, and the front at its edge.</summary>
+        private void CheskaBreath(int floor, int front, float reach, float strength)
+        {
+            bool running = reach > .05f;
+            float thinning = 1 - Mathf.Clamp01((reach - CkReach * .8f) / (CkReach * .2f));
+            Place(floor, Vector3.up * .035f, new Vector3(reach, 1, reach), Quaternion.identity, running ? strength : 0);
+            Place(front, Vector3.up * .03f, new Vector3(reach, 1.6f, reach), Quaternion.identity, running ? strength * thinning : 0);
+        }
+
+        /// <summary>0 before the breath reaches a thing this far out, 1 a moment after.</summary>
+        private static float CheskaCaught(float breath, float reach) => Mathf.Clamp01((breath - reach) / .7f);
+
+        /// <summary>The moment the real breath reaches this far out (the inverse of its eased run, closely enough to stop a clock on).</summary>
+        private float CheskaReaches(float reach)
+        {
+            float lo = CkOut, hi = CkSweepTo + .01f;
+            for (int i = 0; i < 12; i++)
+            {
+                float mid = (lo + hi) * .5f;
+                if (Ease(CkOut + .05f, CkSweepTo, mid) * CkReach < reach) lo = mid; else hi = mid;
+            }
+            return reach >= CkReach ? float.MaxValue : hi;
+        }
+    }
+}

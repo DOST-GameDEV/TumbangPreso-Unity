@@ -1,0 +1,12 @@
+Eskinita run1: 0 protected changes / 2509 rows
+Eskinita run2: 0 protected changes / 2509 rows
+Eskinita: 0 repeat differences / 4736 rows
+BayanPlaza run1: 0 protected changes / 1887 rows
+BayanPlaza run2: 0 protected changes / 1887 rows
+BayanPlaza: 0 repeat differences / 3774 rows
+IlalimNgTulay run1: 0 protected changes / 7266 rows
+IlalimNgTulay run2: 0 protected changes / 7266 rows
+IlalimNgTulay: 0 repeat differences / 13973 rows
+SaBubong run1: 0 protected changes / 4450 rows
+SaBubong run2: 0 protected changes / 4450 rows
+SaBubong: 0 repeat differences / 5025 rows

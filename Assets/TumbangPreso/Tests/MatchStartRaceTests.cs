@@ -179,3 +179,196 @@ namespace TumbangPreso.Tests
         }
     }
 }
+
+namespace TumbangPreso.Tests
+{
+    // Controlled native receiver state only. No transport, scene load, SDK or
+    // career write; the actual public snapshot entry owns every transition.
+    public sealed class CompletedMatchArrivalTests
+    {
+        private const System.Reflection.BindingFlags Hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+        private sealed class Peer : INetProvider
+        {
+            public bool Host;
+            public bool IsHost => Host;
+            public bool IsNetworked => true;
+            public int LocalSlot => 1;
+            public int LocalPeerId => 1;
+            public bool IsSeatlessReferee => false;
+        }
+
+        private readonly System.Collections.Generic.Dictionary<string, object> _previous = new System.Collections.Generic.Dictionary<string, object>();
+        private GameObject _root;
+        private MatchDirector _match;
+        private RoundDirector _round;
+        private MatchStatsCollector _stats;
+        private MatchRpc _rpc, _previousRpc;
+        private NetSession _net, _previousNet;
+        private INetProvider _previousProvider;
+        private Peer _peer;
+        private CustomRules _previousRules;
+        private string _previousMap;
+        private bool _previousPinned;
+        private int _ends, _winner, _records;
+
+        [SetUp]
+        public void Before()
+        {
+            _previous.Clear();
+            foreach (string name in new[] { "Match", "Round", "Stats", "Telemetry" })
+                _previous[name] = typeof(GameServices).GetProperty(name).GetValue(null);
+            _previousProvider = NetAuthority.Provider;
+            _previousNet = NetSession.Instance; _previousRpc = MatchRpc.Instance;
+            _previousRules = UI.SceneFlow.SelectedRules.Clone();
+            _previousPinned = UI.SceneFlow.RulesPinned; _previousMap = UI.SceneFlow.SelectedMap;
+            _ends = _records = 0; _winner = -99;
+            _root = new GameObject("Dormant completed-arrival state"); _root.SetActive(false);
+            _match = _root.AddComponent<MatchDirector>();
+            _round = _root.AddComponent<RoundDirector>();
+            _stats = _root.AddComponent<MatchStatsCollector>();
+            _rpc = _root.AddComponent<MatchRpc>();
+            _net = _root.AddComponent<NetSession>();
+            SetService("Match", _match); SetService("Round", _round); SetService("Stats", _stats);
+            SetService("Telemetry", null);
+            typeof(NetSession).GetProperty("Instance").SetValue(null, _net);
+            typeof(MatchRpc).GetProperty("Instance").SetValue(null, _rpc);
+            _peer = new Peer(); NetAuthority.Provider = _peer;
+            UI.SceneFlow.AdoptRemoteRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            UI.SceneFlow.SelectedMap = UI.SceneFlow.Eskinita;
+            _net.Lobby.MatchInProgress = true;
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                var body = new GameObject("Arrival seat " + slot); body.SetActive(false);
+                body.transform.SetParent(_root.transform, false);
+                var motor = body.AddComponent<CharacterMotor>(); motor.PlayerSlot = slot;
+                _round.Register(motor);
+            }
+            _match.MatchEnded += winner => { _ends++; _winner = winner; };
+            _stats.RecordReady += _ => _records++;
+            typeof(MatchStatsCollector).GetMethod("OnEnable", Hidden).Invoke(_stats, null);
+            // Even a locally running collector must not author a record on a client.
+            typeof(MatchStatsCollector).GetField("_running", Hidden).SetValue(_stats, true);
+            typeof(MatchStatsCollector).GetField("_matchId", Hidden).SetValue(_stats, "client-must-not-author");
+        }
+
+        [TearDown]
+        public void After()
+        {
+            if (_stats != null) typeof(MatchStatsCollector).GetMethod("OnDisable", Hidden).Invoke(_stats, null);
+            if (_root != null) Object.DestroyImmediate(_root);
+            foreach (var previous in _previous) SetService(previous.Key, previous.Value);
+            typeof(NetSession).GetProperty("Instance").SetValue(null, _previousNet);
+            typeof(MatchRpc).GetProperty("Instance").SetValue(null, _previousRpc);
+            NetAuthority.Provider = _previousProvider;
+            if (_previousRules != null)
+            {
+                if (_previousPinned) UI.SceneFlow.PinSelectedRules(_previousRules);
+                else { UI.SceneFlow.AdoptRemoteRules(_previousRules); UI.SceneFlow.UnpinSelectedRules(); }
+            }
+            UI.SceneFlow.SelectedMap = _previousMap;
+        }
+
+        private static void SetService(string name, object value)
+            => typeof(GameServices).GetProperty(name).SetValue(null, value);
+
+        private static int[] FinalScores() => new[] { 10, 20, 350, 40 };
+
+        private void Receive(int round, bool inProgress, bool active, float seconds = 0)
+            => _rpc.SyncWorldSnapshotClientRpc(round, MatchRules.DefenderSlotFor(round), seconds,
+                FinalScores(), inProgress, active);
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ColdArrivalReceivesCompletedStandingsWithoutALivePacket(bool locallyStarted)
+        {
+            if (locallyStarted) _match.StartMatch();
+            Assert.IsFalse(_match.HostConfirmedInProgress);
+            Receive(_match.TotalRounds, false, false);
+            Assert.AreEqual(1, _ends, "An arriving client never received the real completed match event.");
+            Assert.AreEqual(2, _winner);
+            Assert.AreEqual(_match.TotalRounds, _match.RoundNumber);
+            Assert.AreEqual(350, _match.ScoreFor(2));
+            Assert.IsFalse(_match.MatchInProgress);
+            Assert.IsFalse(_round.RoundActive);
+            Assert.AreEqual(0, _records, "The client authored a local result before the host record arrived.");
+            Assert.IsNull(_stats.Last);
+            Assert.AreEqual("client-must-not-author", typeof(MatchStatsCollector).GetField("_matchId", Hidden).GetValue(_stats));
+            Receive(_match.TotalRounds, false, false);
+            Assert.AreEqual(1, _ends, "Repeated terminal snapshots replayed the result event.");
+        }
+
+        [Test]
+        public void PreStartAndLiveEndKeepTheirExistingPublicSnapshotOrder()
+        {
+            _match.StartMatch(); _round.ApplySnapshot(90, true, 0, true);
+            Receive(0, false, false);
+            Assert.AreEqual(0, _ends);
+            Assert.AreEqual(1, _match.RoundNumber);
+            Assert.IsTrue(_match.MatchInProgress);
+            Assert.IsTrue(_round.RoundActive, "The pre-start guard failed to protect the round half.");
+            Receive(1, true, true, 90);
+            Assert.IsTrue(_match.HostConfirmedInProgress);
+            Receive(_match.TotalRounds, false, false);
+            Receive(_match.TotalRounds, false, false);
+            Assert.AreEqual(1, _ends);
+            Assert.AreEqual(2, _winner);
+        }
+
+        [TestCase("negative-round")]
+        [TestCase("beyond-final")]
+        [TestCase("nonfinite-clock")]
+        public void InvalidTerminalStateCannotBypassThePreStartGuard(string invalid)
+        {
+            _match.StartMatch(); _round.ApplySnapshot(90, true, 0, true);
+            int round = invalid == "negative-round" ? -1 : invalid == "beyond-final" ? _match.TotalRounds + 2 : _match.TotalRounds;
+            Receive(round, false, false, invalid == "nonfinite-clock" ? float.NaN : 0);
+            Assert.AreEqual(0, _ends);
+            Assert.AreEqual(1, _match.RoundNumber);
+            Assert.IsTrue(_match.MatchInProgress);
+            Assert.IsTrue(_round.RoundActive);
+            Assert.AreEqual(90, _round.TimeLeft);
+        }
+
+        [Test]
+        public void APlainLobbySnapshotCannotOpenCompletedStandings()
+        {
+            _net.Lobby.MatchInProgress = false;
+            Receive(_match.TotalRounds, false, false);
+            Assert.AreEqual(0, _ends, "A lobby-only peer manufactured a finished arena.");
+            Assert.AreEqual(0, _records);
+        }
+
+        // Final-only eligibility checks. The original source has no recovery selector;
+        // its absence is not a causal baseline test.
+        [TestCase("matching", true)]
+        [TestCase("wrong-winner", false)]
+        [TestCase("live", false)]
+        [TestCase("loading", false)]
+        [TestCase("prior-match", false)]
+        public void RetainedRecordRecoveryRequiresTheCurrentFinishedMatch(string state, bool expected)
+        {
+            _peer.Host = true;
+            int rounds = _match.TotalRounds;
+            _match.ApplySnapshot(FinalScores(), rounds, false);
+            var record = new MatchRecord
+            {
+                MatchId = "completed-host-record", Mode = UI.SceneFlow.SelectedMode.ToString(),
+                MapId = UI.SceneFlow.SelectedMap, Rounds = rounds, WinningSlot = 2,
+                Players = new PlayerMatchStats[Balance.PlayerCount]
+            };
+            var scores = FinalScores();
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                record.Players[slot] = new PlayerMatchStats { Slot = slot, Score = scores[slot], PlayerId = "record-seat-" + slot };
+            typeof(MatchStatsCollector).GetProperty("Last").SetValue(_stats, record);
+            if (state == "wrong-winner") record.WinningSlot = 0;
+            if (state == "live") _match.ApplySnapshot(scores, 1, true);
+            if (state == "loading") typeof(MatchRpc).GetField("_loadingOwnArena", Hidden).SetValue(_rpc, true);
+            if (state == "prior-match") _match.ResetForNewMatch();
+            var method = typeof(MatchRpc).GetMethod("RetainedCompletedRecord", Hidden);
+            Assert.IsNotNull(method, "This final-only selector must be present on the candidate.");
+            var selected = method.Invoke(_rpc, null) as MatchRecord;
+            if (expected) Assert.AreSame(record, selected);
+            else Assert.IsNull(selected);
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "question": "Does the exact shipping schema12 decoder catch malformed signature/future schema instead of throwing?",
+  "expected": 2,
+  "reproduced_failure": "Baha repaired fixture caused InvalidDataException to escape TryDecode when refusing incompatible schema",
+  "candidate_decoder_sha256": "23e33f34de18bd20891f95d067c3cff8502d62eb5af0cbfd373a108296263439",
+  "scope": "Only catch-filter fix over current schema12, Baha schema13 excluded from this decoder qualification",
+  "retry_count": 0,
+  "stopping": "Fresh2correct cases with native guard restored"
+}

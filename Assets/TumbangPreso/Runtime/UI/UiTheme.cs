@@ -51,6 +51,9 @@ namespace TumbangPreso.UI
         /// </summary>
         public static readonly Color Ink = Hex("1c0f06");
 
+        // Owner rule: gameplay UI strokes use black, independent of the painted menu ink.
+        public static readonly Color InGameOutline = Color.black;
+
         /// <summary>
         /// Light neutral: screen background.
         ///
@@ -612,6 +615,41 @@ namespace TumbangPreso.UI
         public static readonly Color HeroEarth = Hex("3fa65c");
         public static readonly Color HeroEarthBright = Hex("8fe0a0");
 
+        // Deep-water indigo keeps Rafi distinct from mint ice and the taya's blue.
+        // His physical water keeps its own transparent aqua/foam material.
+        public static readonly Color HeroCurrent = Hex("6065e6");
+        public static readonly Color HeroCurrentBright = Hex("a2a5ff");
+
+        /// <summary>
+        /// Amihan's wind: a fresh yellow-green, hue 100.
+        ///
+        /// ⚠️ IT IS THE ONLY WINDOW LEFT, NOT A TASTE CHOICE (2026-09-25). The law above is 30 degrees
+        /// between any two hero accents and 25 clear of the two role colours. With fire 350, electric
+        /// 64, earth 137, ice 170, current 238, spirit 275, witch 311 and the roles at 22 and 207, the
+        /// open bands are 95 to 106 only; 100 sits 36 from electric and 37 from earth. It suits the
+        /// fiction anyway: young rice and leaves in the amihan wind. Red above blue in both, so it
+        /// is legal in a menu (CLAUDE.md 6.4).
+        /// </summary>
+        public static readonly Color HeroWind = Hex("88e35a");
+        public static readonly Color HeroWindBright = Hex("c3f5aa");
+
+        /// <summary>
+        /// Paete's grove: a dark moss, hue 82 (2026-09-25).
+        ///
+        /// ⚠️⚠️ THE LAW WAS AMENDED FOR HIM, AND IT WAS ASKED FIRST. After Amihan took hue 100 there
+        /// was no hue left 30 degrees from every accent and 25 from both role colours. The owner,
+        /// asked whether to relax the rule or pick: *"its fine dude u go fgigure out hhis color"*.
+        /// So two HERO accents now pass if they are 30 degrees apart in hue OR at least 0.15 apart in
+        /// OKLab (the distance the eye reads, lightness included), and the 25 degrees clear of the
+        /// two ROLE colours is unchanged, because those are the colours a player has to read.
+        /// Every accent before this one still passes on hue alone. This dark moss is 0.169 from
+        /// Dante's jade, its nearest; for scale, the closest pair that already passed on hue (Zack
+        /// and Amihan) is 0.126 apart in OKLab. `HeroPresentationTests.TheFiveHeroAccentsAreTellableApart`.
+        /// Red above blue, so it is legal in a menu (CLAUDE.md 6.4).
+        /// </summary>
+        public static readonly Color HeroGrove = Hex("4f6b1f");
+        public static readonly Color HeroGroveBright = Hex("a8cc52");
+
         /// <summary>
         /// The hot orange that stays hot: Dante's magma core, the fissure light, the embers.
         ///
@@ -657,6 +695,9 @@ namespace TumbangPreso.UI
                 case "phaister":
                 case "witch":
                     return HeroWitchBright;
+                case "rafi": return HeroCurrentBright;
+                case "amihan": return HeroWindBright;
+                case "paete": return HeroGroveBright;
                 case "dante":
                 case "bayan":
                 default:
@@ -683,6 +724,9 @@ namespace TumbangPreso.UI
                 case "phaister":
                 case "witch":
                     return HeroWitch;
+                case "rafi": return HeroCurrent;
+                case "amihan": return HeroWind;
+                case "paete": return HeroGrove;
                 case "dante":
                 case "bayan":
                 default:

@@ -1,0 +1,53 @@
+TUMBANG PRESO NETWORK STATE REPORT
+
+role            : HOST
+networked       : True
+local slot      : 0
+protocol        : 129
+mode            : HeroStrike
+map             : IlalimNgTulay
+sampled         : 913.0 s
+graphics        : Balanced; 1920x1080; vsync=0; target=60
+hardware        : AMD Ryzen 5 2600 Six-Core Processor ; AMD Radeon RX 6600; RAM=16335 MB
+live frame rate : frames=43218; seconds=724.772; avg=59.63; p50=59.70; p5=57.97; p1=57.97; max_ms=107.07
+round           : 8
+defender        : 3
+round active    : False
+hub lobby seen  : False
+arrival seen    : False
+auto count seen : False
+lata upright    : True   flips: 12
+tournament ruleset : the rule set is not the tournament one: mode is HeroStrike, tournament is Classic
+tournament modifiers : none
+build identity  : TUMBANG PRESO 1.0.0 | 2c3f39dc9775+dirty | protocol 129 | StandaloneWindows64
+
+seat   char   bot      origin  taya   score  travelled  skills  ults
+--------------------------------------------------------------------------
+0         0 False       Human False      40       38.9       0     0
+1         0  True HandedToBot False      40      623.1       0     0
+2         6  True         Bot False    3500      770.0       7     1
+3         0  True         Bot  True    3035      741.5       2     0
+
+slipper    on  state  owner  holder  changes
+---------------------------------------------
+0           y      1      0       0        3
+1           y      1      1       1        5
+2           y      1      2       2       65
+3           n      0     -1      -1       63
+
+structural state hash : D2F4FB7D
+discrete state hash : 549A2C1D
+
+⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit
+for bit on a position or a clock; they must agree on who is who, who is
+taya, what each tsinelas is doing and what the score is.
+
+⚠️⚠️ AND IT IS NOT AN EQUALITY GATE ACROSS PEERS, WHICH THE STRUCTURAL HASH
+IS. Discrete is not the same as CONSTANT: the score, the slipper states and
+the defender all move during a match, and two reports stop at two different
+instants by construction (a referee has to outlive its clients). Comparing
+the discrete hash between peers therefore fails on a working link roughly
+whenever anything happens. The structural hash covers only what CANNOT
+change while a match runs: which character sits in which seat, which seats
+are bots, and the protocol. Two peers disagreeing on that are playing two
+different matches, whenever you look.

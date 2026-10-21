@@ -1,0 +1,17 @@
+{
+  "source": "23168e90888e74a9256a7b396d7bcf49e2dc1eee",
+  "protocol": 146,
+  "actualDefaultHeroPassed": true,
+  "actualMode": "HeroStrike",
+  "defaultRuleWire": "1|0|8|90|0|3|0|1|0|0|0",
+  "matchRecordCanonicalSHA256": "112983f88d7a74cc3c85b1f7e5c6b6428a93f67717a5d554cfe39890d719f1cb",
+  "queueEqualsHistory": true,
+  "queueWitness": [
+    "87d324400ea61b25"
+  ],
+  "peerRecordMatch": "PC independently reported the identical full canonical record/queue/witness; raw host terminal evidence owned by PC.",
+  "terminalExit": 0,
+  "settingsRestored": true,
+  "fullArtifactUnchanged": true,
+  "tournamentRuleRefusal": "Expected because canonical tournament mode remains Classic; this is separate Hero casual acceptance."
+}

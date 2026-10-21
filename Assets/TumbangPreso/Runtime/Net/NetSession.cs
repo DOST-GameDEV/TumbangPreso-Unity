@@ -33,8 +33,34 @@ namespace TumbangPreso.Net
     /// </summary>
     public sealed class NetSession : MonoBehaviour, INetProvider
     {
+        /// <summary>
+        /// UX-1.6's custom room settings, written by the HOST form before a host starts.
+        ///
+        /// ⚠️ PRESENTATION OF THE ROOM, NOT PART OF THE MATCH. They name and list the room (the UGS
+        /// lobby record, the LAN beacon's name and presence) and never go on the match wire, so
+        /// `ProtocolVersion` does not move. Empty and 0 are exactly today's behaviour: the host's
+        /// handle as the name, listed publicly.
+        /// </summary>
+        private static string _roomTitle = "";
+        public static string RoomTitle
+        {
+            get => _roomTitle;
+            set => _roomTitle = Settings.GameSettings.SanitiseRoomTitle(value);
+        }
+        public static string RoomMap = "";
+        public static int RoomVisibility;
+
+        /// <summary>Back to today's defaults, when a room is left.</summary>
+        public static void ClearRoomSettings()
+        {
+            RoomTitle = "";
+            RoomMap = "";
+            RoomVisibility = 0;
+        }
+
         private static string LocalLobbyName()
         {
+            if (!string.IsNullOrWhiteSpace(RoomTitle)) return RoomTitle.Trim();
             string account = GameServices.Account?.LobbyName;
             if (!string.IsNullOrWhiteSpace(account)) return account;
             string local = Settings.SettingsStore.Current.PlayerName;
@@ -51,6 +77,59 @@ namespace TumbangPreso.Net
 
         /// <summary>The local network beacon for LAN game discovery.</summary>
         public LanBeacon Beacon => _beacon;
+
+        // A joined client's directory title is display data for this transport operation,
+        // not the host's static RoomTitle and not part of the match wire.
+        private JoinAttemptGate.Attempt? _clientTitleOperation, _pendingTitleOwner, _joinedTitleOwner;
+        private string _pendingClientTitle = "", _pendingClientCode = "";
+        private string _joinedClientTitle = "", _joinedClientCode = "";
+        public JoinAttemptGate.Attempt? ClientTitleOperation => _clientTitleOperation;
+        public string JoinedClientRoomTitle => _joinedTitleOwner?.CanContinue == true &&
+            NetAuthority.IsNetworked && !NetAuthority.IsHost &&
+            !string.IsNullOrEmpty(Lobby.JoinCode) &&
+            string.Equals(Lobby.JoinCode, _joinedClientCode, StringComparison.OrdinalIgnoreCase)
+                ? _joinedClientTitle : "";
+
+        public void RememberJoinedClientRoomTitle(string title, string code, JoinAttemptGate.Attempt? operation)
+        {
+            if (operation?.CanContinue != true || !_clientTitleOperation.HasValue ||
+                !operation.Value.Equals(_clientTitleOperation.Value) ||
+                !NetAuthority.IsNetworked || NetAuthority.IsHost) return;
+            string clean = Settings.GameSettings.SanitiseRoomTitle(title);
+            if (string.IsNullOrEmpty(clean) || string.IsNullOrEmpty(code)) return;
+            _pendingClientTitle = clean;
+            _pendingClientCode = code;
+            _pendingTitleOwner = operation;
+            if (!string.IsNullOrEmpty(Lobby.JoinCode)) OnClientTitleCodeChanged(Lobby.JoinCode);
+        }
+
+        private void OnClientTitleCodeChanged(string code)
+        {
+            if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(_joinedClientCode) &&
+                !string.Equals(code, _joinedClientCode, StringComparison.OrdinalIgnoreCase))
+            {
+                _joinedClientTitle = _joinedClientCode = "";
+                _joinedTitleOwner = null;
+            }
+            if (string.IsNullOrEmpty(_pendingClientTitle) || string.IsNullOrEmpty(code)) return;
+            if (_pendingTitleOwner?.CanContinue == true && _clientTitleOperation.HasValue &&
+                _pendingTitleOwner.Value.Equals(_clientTitleOperation.Value) &&
+                string.Equals(code, _pendingClientCode, StringComparison.OrdinalIgnoreCase))
+            {
+                _joinedClientTitle = _pendingClientTitle;
+                _joinedClientCode = _pendingClientCode;
+                _joinedTitleOwner = _pendingTitleOwner;
+            }
+            _pendingClientTitle = _pendingClientCode = "";
+            _pendingTitleOwner = null;
+        }
+
+        private void ClearJoinedClientRoomTitle()
+        {
+            _pendingClientTitle = _pendingClientCode = "";
+            _joinedClientTitle = _joinedClientCode = "";
+            _pendingTitleOwner = _joinedTitleOwner = null;
+        }
 
         public event Action<string> StatusChanged;
 
@@ -103,6 +182,7 @@ namespace TumbangPreso.Net
         private sealed class ConnectionHello
         {
             public int Protocol;
+            public string SkillContract;
             public string Token;
             public string Name;
 
@@ -362,7 +442,224 @@ namespace TumbangPreso.Net
         // snapshot. Internal protocol39 players cannot decode this TimedKit field.
         // 41 carries remaining sprint/rush emitter state after its world-field batch.
         // 42 preserves missing wake time slots when a movement snapshot arrives late.
-        public const int ProtocolVersion = 42;
+        // 43 carries match-scoped accepted presentation identity and capped chain awards.
+        // StartMatch/SyncWorld append the host epoch; mixed clients must be refused.
+        // 44 adds accepted ultimate requests/cohorts; owners no longer predict ultimate effects.
+        // Round retirement must remove solid ability fields on every peer.
+        // 50 carries authenticated peer-leave intent and host-confirmed departure notices.
+        // 51 adds explicit host-owned edge-climb pose state and the swim-to-climb request.
+        // 52 derives the shared ultimate phase's length from the accepted heroes' authored
+        // introductions (2.8 to 4.2 s, REFINE-2.11) instead of a fixed 2.8. No bytes changed, but
+        // a 51 peer would release its presentation clock at a different moment from the host.
+        // 53 is the ability overhaul (2026-09-25): `SyncUnit` carries the Whirled and Chilled
+        // status clocks, and the new `Carry` message holds a wind or dash hit on a client's body.
+        // 54 is Paete, the ninth hero (2026-09-25): his roster index, `SyncUnit` carries the Rooted
+        // clock, `ScoreEvent.SproutKnock` is appended, and `ReqBreakFree` and `ReqUproot` are new.
+        // 55 (2026-09-26): `SubmitMove` and `SyncUnit` append the struggle flag and the plant-pull
+        // progress, so every peer draws a body fighting Paete's roots or heaving at his seedling.
+        // 56 is the roster rework (ABILITY-2, 2026-09-26): `SyncUnit` carries Concussed, Feared,
+        // Disoriented, Vulnerable and the fear's source.
+        // 57 (2026-09-26 night): Paete's introduction is 5.0 s (was 4.6; direction.md 5.14). No bytes changed, but as 52
+        // recorded, the shared phase's length is derived on every peer from the heroes' tables, so a 56 peer would
+        // release its presentation clock 0.4 s before the host.
+        // 58 (2026-09-27): Paete's guardian is kept 2.4 m off the can (`PaeteRules.SentrySpotClearOfCan`, run on every peer from
+        // the accepted cast) and holds its prisoners 1.4 m out (was 1.9). No bytes changed, but a 57 peer would draw the tree ON
+        // the can where the host catches beside it, and would see the bodies dragged to a different ring.
+        // 59 (2026-09-27): Paete's introduction is 6.5 s (the owner: *"slow down ult a bit"*), his ultimate is placed where he
+        // looks and the commit carries that spot (`HeroAbility.AimsWhereLooking`), and the live guardian comes up already grown
+        // and catches at the hand-back (`PaeteSentry.Spawn`'s `handBack`). No bytes changed, but a 58 peer would release the
+        // phase 1.5 s early, land the tree 8 m straight ahead, and grow it and catch 0.75 s after everyone else.
+        // 60 (2026-09-26): THORN HARVEST is placed where Paete looks (the owner: *"castable and not cast on body"*); the commit
+        // carries the spot, a thorn trail runs from his stamp to it (`PaeteRules.ThornTrailSeconds`, up to 0.25 s) and the
+        // rattan bursts and catches THERE; and BAKYA BLOOM lands outside the taya's box (`PaeteRules.PlantSpotOutsideBox`). No
+        // bytes changed, but a 59 peer would burst the thorns under his feet at once, catching a different set of slippers a
+        // quarter of a second early, and plant the pot inside the box where everyone else sees it outside.
+        // 61 (2026-09-27): FEATHERFALL is 5 s / 40 s. SubmitMove/SyncUnit retain its takeoff key,
+        // ReqAbility/PlayAbility carry explicit takeoff/recast intent, and TimedKit adds its 57-byte restore tail.
+        // 62: WorldFieldBegin uses a shared bounded header with match identity, request/event
+        // watermarks and the round simulation clock; older snapshots cannot clobber newer casts.
+        // 63: shared ReqAbility/PlayAbility serializer carries stable ability ID and
+        // activation/command intent. Cosmetic names and assets are not wire identity.
+        // 64: ConnectionHello includes deterministic shared skill/phase metadata.
+        // Peers with different reworked rules cannot silently join the same match.
+        // HERO-10 also makes Phaister's OMEN introduction 5.0 s (was 4.0).
+        // Its duration is included in the shared skill fingerprint, so peers with
+        // the older presentation clock cannot join even at the same wire version.
+        // 65: world recovery includes ultimate phase/stage/request freshness;
+        // PreparedWorld replaces CovenEffect with ability-owned spatial recovery,
+        // joins its world generation and ages on the round clock.
+        // 66: pose streams carry shared held-aim presentation; casts/ultimate
+        // commits close the matching hold token without cancelling a newer hold.
+        // 67: ordinary action requests,refusals,body actions and charge tells
+        // carry match/round/body-epoch scope; charge kind is always explicit.
+        // 68: accepted pose effort bits carry movement/sprint intent so the host
+        // advances remote resource clocks without simulating the remote body.
+        // 69: combat predictions/refusals carry request identity. Refusals return
+        // current authoritative resource state instead of adding a second refund.
+        // 70: accepted Interact intent drives host hold clocks; escape/uproot
+        // notifications carry the shared match/round/body scope.
+        // 71: persistent fields carry accepted-cast lifetime IDs; plant removal
+        // names that lifetime within its match and round.
+        // 72: match moments carry match/round scope and the existing ultimate
+        // victim-camera feedback reaches the affected peer.
+        // 73: SyncUnit includes bounded Voodoo status/mark/reach state and an
+        // explicit reach result, independent of other bodies' arrival order.
+        // 74: persistent sentries recover their captured target seats, not a new
+        // distance query on the observing peer.
+        // 75: received Voodoo statuses now tick, expire, cleanse and affect
+        // movement. Older bodies leave these replicated curses inert or stuck.
+        // 76: requested match rate carries scope/sequence and joins world recovery;
+        // transient hitstop is not a replicated pause or spectator speed.
+        // 77: body pose/status snapshots carry match/round as well as movement
+        // epoch, so delayed previous-world state cannot seed a fresh body.
+        // 78: cooldown/charge snapshots identify the hero and every ability,
+        // including the idle role, with world scope and per-seat ordering.
+        // 79: resetting a Paete kit retires only its owned/recovered sentries,
+        // not every caster's active guardian in the shared world.
+        // 80: shared ultimate cohorts carry the host's sealed duration even
+        // while a joining peer has not installed the caster's kit yet.
+        // 81: ultimate commits name hero/ability IDs; requests also carry the
+        // current movement epoch. Receivers wait for the matching caster kit.
+        // 82: live sentries bind host-captured targets to the accepted ultimate
+        // cohort; replicas no longer infer victims from local positions.
+        // 83: READY and countdown messages name their match; only seated peers
+        // count toward a loaded host's one-time pre-round countdown.
+        // 84: generic timed recovery binds both ability IDs to world/body scope
+        // and ordered snapshots; the specialized flight contract is unchanged.
+        // 85: live familiar effects bind match/body and accepted ultimate identity;
+        // old, duplicate and completed effects cannot recreate a seance field.
+        // 86: timed skill and familiar recovery age by the host round clock,
+        // so pauses, introductions and slow motion do not consume their lifetime.
+        // 87: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
+        // the first Lagoon is vaulted, and Kanto is index 5. Maps travel as indices into
+        // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
+        // 88: intermission votes accept seated clients, name their match/round,
+        // and acknowledge the authoritative tally without client round events.
+        // 89: rematches allocate and announce a fresh world identity; rematch
+        // votes/tallies name the old result and acknowledge seated participants.
+        // 90: companion bodies (HERO-10 v3, Phaister's VOODOO DOLL): seats 4 to 7 exist; `CompanionSet` lists them
+        // and SyncUnit, Teleport, PlayAction, SyncSlipper and SlipperPose admit their seats.
+        // 91: the `Score` message names the body that scored after the event (a companion's seat, whose owner is paid), so every
+        // peer shows the point over the doll that made it (`MatchDirector.CompanionScored`, HERO-10 v3); and Phaister's introduction
+        // becomes 6.4 s (VOODOO DOLL v7), which changes the shared ultimate phase every peer derives.
+        // 92: Phaister's introduction becomes 6.35 s (VOODOO DOLL v12, THE TWIST) and the doll body's speed 0.5.
+        // 93: Phaister's introduction ends on the doll's stare, 6.0 s.
+        // 97: the ordinary defender lunge travels 3 metres; predicted and host
+        // movement must use matching tuning. The movement-budget ceiling is unchanged.
+        // Protocol107 aligns Unstoppable/Bastion clocks and the bounded cleanse exception.
+        //114: current Wiki Airburst releases at1.5seconds with a60degree fan.
+        //115: Hydro Current uses a35second cooldown and earliest swept contact.
+        //116: Hydro Skim load and first-ground flight phase replace Mirrorwake.
+        //117: Hydro Water wall uses a single-interception stationary field.
+        //118: knockdown cancels charge and throws wait for can/protection reset.
+        //119: revised camping/slipper warning windows and2.5second fatigue.
+        //122: live Frostbite load uses the existing scoped timed-kit recovery.
+        //123: authoritative objective cooldown grants reach predicted owners.
+        //124: match-long Overclock uses an explicit bounded permanent-state bit.
+        //133: ordinary Next Round uses the shared3.5second deadline; halftime stays10.
+        //134: trip, elemental stun and edge recovery no longer accept mash input.
+        //135: Absolute Zero excludes its own caster from Frozen and thaw Chilled.
+        //136: objective income is knockdown/tag plus one defender-round grant.
+        //137: explicit movement speeds, stamina, jump and charged lunge recovery.
+        //138: playtested movement revision and stamina-free shove/lunge.
+        // 139: empty network bot seats use shared, unrotated character/kit selection.
+        // 140: occupied lobby seats require recipient consent before an atomic swap.
+        // 141: owner restores near-original jump launch, gravity and fall-speed cap.
+        // Three-second entry countdown: mixed clients must not release their hold two seconds apart.
+        // Revised throw/contact timings, hit-confirmed punch recovery and retired retrieval slide.
+        //146: throws ignore can state; restoration lowers an active charge over0.5s.
+        //147: revised Cryo placement and fifteen-second all-throw Frostbite; timed Boulder.
+        //148: arc-wall snapshots preserve radius, length and remaining hit budget.
+        //150: owner pose acknowledgements are distinct from authoritative corrections.
+        //151: bounded remote vine completion; deadline grace is separate from reel speed.
+        // 152: the Arena joins the map list as index 6 (maps travel as an index); its ordinary break is 8 s,
+        // read from the map; and the drone carry is a third edge-recovery kind on `SyncUnit`. Also one
+        // host-to-all message, `ArenaBalloon`, the Arena's slipper balloon (hits, popped, its last event),
+        // also sent to a joining peer. (This was 146 on QoLUpdates before the two branches met:
+        // ASTRAReworks had taken 146 to 151 for other things.)
+        // 153: the Arena's taya box is round and sized by its layout (`Core.Confinement.Use`). Nothing new is sent,
+        // but a peer on 152 would judge throws and tags by the square, so the two may not meet.
+        // ASTRA-only154: replay clip15 preserves companion bodies, seats and held slippers.
+        // Older peers cannot decode these new highlight payloads.
+        // 154: Paete's LIANA LEAP swings (owner 2026-10-07). `PaeteVineState.Phase` gains three values, and on them the
+        // caster's own peer swings itself (`CharacterMotor.BeginSwing`) where the host used to send a flat `Carry`. A
+        // peer on 153 would refuse the state and never move.
+        // 155: Paete's ultimate performance is 9.0 s (owner 2026-10-08, of the 6.5 s one with a goddess in the sky and a dive
+        // under the court in it: "it looks like its sped up"; asked, "Lengthen to about 9 s"). Nothing new is sent, but
+        // every peer holds the match for the longest accepted performance's length (`UltimatePerformance.MaxSeconds`, 6.5 to
+        // 9.0), read off its own copy of the table: a peer on 154 would resume play 2.5 s before the others.
+        // 156: three more ultimate performances are longer (owner 2026-10-08, restaged the way Paete's was; asked for a length
+        // each): Dante's 3.8 to 7.0 s, Cheska's 3.2 to 11.9 s, Sean's 3.4 to 7.0 s (8.4 since 2026-10-09). Nothing new is sent, but the cap
+        // (`UltimatePerformance.MaxSeconds`) goes from 9.0 to 13.0 for hers ("we can extend the ult cutscene until everything
+        // looks smooth"), and as with 155 every peer holds the match for the longest accepted performance off its own table.
+        // Also in 156: ABSOLUTE ZERO released after its cutscene freezes at once (owner: the cutscene counts as its 1.5 s
+        // delay, `HeroAbility.IntroductionIsTheWindup`). A peer on 155 would hold the freeze 1.5 s longer than the host.
+        // And SUPERNOVA released after its cutscene starts at the top of its leap (the cutscene is the leap): no wind-up, no
+        // launch, the caster put `SeanHeroKit.SupernovaApexRise` up by the motor's own teleport, then the dive. A peer on 155
+        // would launch him from the ground 0.4 s later.
+        // And Nemu's performance is 3.8 to 7.2 s, Zack's 2.8 to 6.4 s and Rafi's 3.4 to 9.2 s (2026-10-09, restaged, Rafi lengthened 2026-10-10 for his dive; under the same cap and the same
+        // standing answer on length).
+        // 157: THE MOVEMENT REWORK IS ON IN NETWORKED MATCHES (owner 2026-10-09: "lets push the movement rework to the main
+        // gameplay for this build", then "yes" to online). Nothing new is sent: a player still simulates their own body
+        // and submits its pose, and the speeds stay inside `MoveBudget`. But the body now moves by
+        // `CharacterMotor.MovementRework.cs` (acceleration, kept air speed, crouch, slide, the hop), and a peer on 156
+        // would be playing a different game from the same seat: the two may not meet. KNOWN AND NOT YET SENT: the host
+        // does not see a crouch (it judges a thrown slipper against a standing capsule), and its count of a remote
+        // player's stamina does not know hopping stops the refill (`CharacterMotor.NetworkStamina`).
+        // ⚠️ 158 (2026-10-09): ESKINITA IS A DIFFERENT MAP UNDER THE SAME NAME (the stepped alley replaced it, at the owner's word:
+        // "push this to the map pool, replace the old eskinita"). Nothing new is sent, but a peer on 157 would load the old flat
+        // street for the same map id and stand inside the new one's houses: the two may not meet.
+        // 159: integrate QoL movement/crouch, map and timed performances with ASTRA clip15 companions.
+        // Neither standalone158 QoL nor154 ASTRA peers implement this combined contract.
+        // 160 (2026-10-11): Nemu's ultimate is PRUSISYON. `SyncUnit` appends the POSSESSED clock and the ultimate no longer
+        // sends Kuro's Haunt chase; a 159 peer would read a different unit layout and run a different ultimate.
+        // 161 (2026-10-15): Nemu's signature is DON'T LOOK (Blindfold, the hidden ghost that covers the eyes), replacing KURO: SIT!.
+        // `SyncUnit` appends the BLINDED clock and the world snapshot gains the waiting ghost (`WorldEffectSnapshot.Kind.Blindfold`);
+        // a 160 peer would read a different unit layout and still teleport to Kuro.
+        // 162 (2026-10-15): Nemu's other skills are their own ghosts. SKITTER (`nemu_skill2`, was KURO: FETCH!) is host-confirmed
+        // (was predicted) so every peer runs the ghost; LOOKOUT (`nemu_skill2d`, was KURO: CATCH!) stands a downed can back up
+        // instead of making it knock-proof. The wire is unchanged; a 161 peer would disagree with the host about both skills.
+        // 163: host-authored Nemu ghost lifetimes, victim, carry pose and lift progress on LAN and Relay.
+        // 164 (2026-10-15): SKITTER waits by her holding the slipper until she takes it with INTERACT (no longer set down
+        // beside her; it follows her past its 8 s), and its ghost frame carries that as flag 8 (offering). A 163 peer would
+        // refuse those frames and expect the slipper on the ground.
+        // 165 (2026-10-16): Nemu's passive is DEAD WEIGHT (rivals within 3 m of her visible ghosts move 10 % slower),
+        // replacing KURO!'s 10 % on her own speed. The wire is unchanged; a 164 peer would move its body at a different speed.
+        // 166 (2026-10-16): Concussed lasts 5 s (the Wiki's number), not 2.5 s. The wire is unchanged; a 165 peer would clamp the
+        // replicated timer to 2.5 s and release a Boulder or Drift victim early.
+        // 167 (2026-10-17): CONTINENTAL DRIFT resolves at the cutscene's cut, all five bands at once: everyone in the lane is
+        // thrown down it (a carry) and Concussed as they land 0.6 s later; it no longer erupts band by band after the cutscene.
+        // A 166 host would resolve the bands 0.3 s apart and throw nobody.
+        // 168 (2026-10-17): CONTINENTAL DRIFT's cutscene ends on the slam and the cascade is play's: five bands 0.3 s apart from
+        // the cut, each throwing the players in it down the lane, Concussed as they land. A 167 host would throw the whole lane
+        // at once.
+        // 169 (2026-10-17): after her cutscene AIRBURST puts every caught player where the cutscene's throw had them (mid-air,
+        // `CharacterMotor.ApplyResolvedRelocate`, sent as the host teleport) and the throw flies on; a 168 host threw them again
+        // from where they had stood. Nemu's LET THEM IN likewise leaves her victims where her cutscene ended them.
+        // 170 (2026-10-17): a Concussed throw wobbles up to 16 degrees (was 9) and has a 60 per cent chance to misfire, sailing
+        // 35 to 80 degrees off, higher and faster (`StatusRules.ConcussedMisfireChance`); a 169 host throws it nearly straight.
+        // 171 (2026-10-18, ASTRAReworks): Dante's Mountain Form in play, 30 s after CONTINENTAL DRIFT (armour, his own clips,
+        // immunity, rock throws). Recorded here at the merge; the commit that moved it ("protocol 171") left no line of its own.
+        // ⚠️ QoLUpdates-only 159 (2026-10-11): AMIHAN'S WHIRLWIND HITS A DIFFERENT SHAPE. Its gale was a bowed band 3.2 m wide and
+        // 0.9 m deep born 1.0 m ahead; it is a circle of radius 2.1 m born 2.4 m ahead (`AmihanRules.WhirlwindRadius`), at the
+        // owner's word: "maybe just do 1 large whirlwind only. feel free to rework the ability itself". Nothing new is sent, but
+        // the host decides who is Whirled, so a peer on 158 would be shown a hit or a miss its own rule and picture disagree with.
+        // (That 159 is not ASTRAReworks' 159 above: the two lines took the number separately.)
+        // ⚠️ 172 (2026-10-18): QoLUpdates and ASTRAReworks meet. One number above both (QoLUpdates 159, ASTRAReworks 171), and
+        // both rule sets are in: ASTRA's Concussed 5 s, its Dante and Nemu kits and Mountain Form, AND our Whirlwind circle
+        // (radius 2.1 m). A peer on either 159 or 171 judges one of those differently from the host: the two may not meet.
+        // Windows and Android rebuilt from the same commit and shipped together.
+        // 172 (2026-10-18): Bayan Plaza and Sa Bubong leave the selectable map pool.
+        // Map sync/votes carry indices, so older peers would interpret the remaining maps differently.
+        // 173 (2026-10-19): the two 172s meet (QoLUpdates' merge number and ASTRAReworks' smaller map pool), and Payo joins the
+        // pool as its last entry. Map sync and votes carry indices, so a peer on either 172 reads the pool differently.
+        // 174 (2026-10-19): the player's room merges into QoLUpdates. Its rules carry `CustomRules.BotSeats` (the room's
+        // seat-by-seat ADD BOT, a twelfth field on the rules wire) and every peer builds a body only for a seat a person
+        // or a chosen bot fills (`MatchInstaller.SeatHasABody`). A 173 peer builds all four, so in a room with bots off or
+        // an OPEN seat the two would disagree about which bodies exist: they may not meet. The room branch appended the
+        // field without a number because an older parser ignores the suffix; that keeps the rules readable, not the
+        // match the same. Windows and Android rebuilt from the same commit and shipped together.
+        public const int ProtocolVersion = 174;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -401,6 +698,8 @@ namespace TumbangPreso.Net
         // INetProvider
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
         public bool IsNetworked => _nm != null && _nm.IsListening;
+        /// <summary>A hosted room or a client whose connection and seat were admitted.</summary>
+        public bool IsAdmitted => IsNetworked && (IsHost || _everConnected && _seatApplied);
         public int LocalSlot { get; private set; }
 
         /// <summary>
@@ -428,6 +727,7 @@ namespace TumbangPreso.Net
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            Lobby.JoinCodeChanged += OnClientTitleCodeChanged;
 
             _nm = GetComponent<NetworkManager>();
             if (_nm == null) _nm = gameObject.AddComponent<NetworkManager>();
@@ -439,15 +739,7 @@ namespace TumbangPreso.Net
             _utp = GetComponent<UnityTransport>();
             if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
 
-            _nm.NetworkConfig ??= new NetworkConfig();
-            _nm.NetworkConfig.NetworkTransport = _utp;
-            _nm.NetworkConfig.ConnectionApproval = true;
-
-            // ⚠️ SCENE MANAGEMENT OFF. The game loads its own scenes through SceneFlow, and
-            // letting the netcode also drive scene loads means two systems racing to decide
-            // which scene a client is in. The symptom is a client stuck on a black screen while
-            // the host plays on.
-            _nm.NetworkConfig.EnableSceneManagement = false;
+            ConfigureManager();
 
             _beacon = GetComponent<LanBeacon>();
             if (_beacon == null) _beacon = gameObject.AddComponent<LanBeacon>();
@@ -460,17 +752,80 @@ namespace TumbangPreso.Net
 
             NetAuthority.Provider = this;
 
+            HookManager();
+        }
+
+        /// <summary>The NetworkManager's settings, applied at Awake and again to a rebuilt manager (`RebuildManager`).</summary>
+        private void ConfigureManager()
+        {
+            _nm.NetworkConfig ??= new NetworkConfig();
+            _nm.NetworkConfig.NetworkTransport = _utp;
+            _nm.NetworkConfig.ConnectionApproval = true;
+
+            // ⚠️ SCENE MANAGEMENT OFF. The game loads its own scenes through SceneFlow, and
+            // letting the netcode also drive scene loads means two systems racing to decide
+            // which scene a client is in. The symptom is a client stuck on a black screen while
+            // the host plays on.
+            _nm.NetworkConfig.EnableSceneManagement = false;
+        }
+
+        private void HookManager()
+        {
             _nm.OnClientConnectedCallback += OnClientConnected;
             _nm.OnClientDisconnectCallback += OnClientDisconnected;
+            _nm.OnTransportFailure += OnTransportFailure;
+            _nm.OnServerStopped += OnServerStopped;
             _nm.ConnectionApprovalCallback += ApproveConnection;
         }
 
-        private void OnDestroy()
+        private bool _stopWasRequested;
+        private void OnTransportFailure() => Debug.LogWarning(
+            $"[NetLifecycle] transport-failure server={_nm?.IsServer} relay={IsRelay} requestedStop={_stopWasRequested}");
+        private void OnServerStopped(bool wasHost)
         {
+            Debug.Log($"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
+            if (_stopWasRequested) return;
+            _beacon?.StopAll();
+            if (Query != null) _ = Query.DeleteHostedLobbyAsync();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE LAST RESORT FOR A WEDGED NETWORKMANAGER (QA, 2026-09-26; `PrepareManagerForStart` has the whole story). When a
+        /// start still throws after the object is un-nested and the transport re-selected, netcode's own state is broken in a way
+        /// only its internals can see (its connection manager holding the host role with no manager). A NEW NetworkManager has
+        /// none of that state: this one is destroyed, a fresh one takes its place with the same settings and callbacks, the
+        /// message router re-registers on it, and the start is tried once more. The transport (and any relay data already on it)
+        /// is kept.
+        /// </summary>
+        private void RebuildManager()
+        {
+            Debug.LogWarning("[Net] rebuilding the NetworkManager after a failed start.");
             if (_nm != null)
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.OnTransportFailure -= OnTransportFailure;
+                _nm.OnServerStopped -= OnServerStopped;
+                _nm.ConnectionApprovalCallback -= ApproveConnection;
+                DestroyImmediate(_nm);
+            }
+            _seatHandlerOn = null;
+            _nm = gameObject.AddComponent<NetworkManager>();
+            ConfigureManager();
+            HookManager();
+            GetComponent<MatchRpc>()?.Initialize(_nm);
+            ConfigureClientHello();
+        }
+
+        private void OnDestroy()
+        {
+            Lobby.JoinCodeChanged -= OnClientTitleCodeChanged;
+            if (_nm != null)
+            {
+                _nm.OnClientConnectedCallback -= OnClientConnected;
+                _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.OnTransportFailure -= OnTransportFailure;
+                _nm.OnServerStopped -= OnServerStopped;
                 _nm.ConnectionApprovalCallback -= ApproveConnection;
 
                 if (_seatHandlerOn != null && _nm.CustomMessagingManager != null)
@@ -487,6 +842,72 @@ namespace TumbangPreso.Net
                 NetAuthority.Provider = new SoloProvider();
             }
         }
+
+        /// <summary>
+        /// ⚠️⚠️ NETCODE REFUSES A NESTED OR TRANSPORTLESS NetworkManager SILENTLY, THEN HIDES WHY (QA, 2026-09-26: *"Could not
+        /// open an online room. (relay allocation failed: There is no NetworkManager assigned to this instance!)"*).
+        ///
+        /// `NetworkManager.StartHost` gives the connection the host role FIRST, and `Initialize` then RETURNS WITHOUT AN
+        /// EXCEPTION when the NetworkManager's GameObject has a parent (`NetworkManagerCheckForParent`) or no transport is
+        /// selected. The transport is started anyway, fails, and the clean-up (`ShutdownInternal`) runs the host branch of a
+        /// connection manager that was never given its NetworkManager, which throws "There is no NetworkManager assigned to
+        /// this instance!": the message the player sees, with the real cause only in the log. Read from netcode 2.13.1
+        /// (`NetworkManager.StartHost`, `NetworkConnectionManager.Shutdown`); LAN hosting passes in the cloud PlayMode run
+        /// (`SessionRestartTests` 2/2), so the manager itself is sound and something put it in one of those two states.
+        ///
+        /// So before EVERY start: this object is put back at the root (and kept across scenes), and our transport is selected
+        /// again. Anything else that makes a start throw is reported by name instead of the clean-up's message.
+        /// </summary>
+        private bool PrepareManagerForStart(out string problem)
+        {
+            problem = null;
+            if (transform.parent != null)
+            {
+                Debug.LogWarning($"[Net] {name} was nested under {transform.root.name}; moved back to the root so netcode can start.");
+                transform.SetParent(null, true);
+                DontDestroyOnLoad(gameObject);
+            }
+            if (_utp == null) _utp = GetComponent<UnityTransport>();
+            if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
+            if (_nm == null) { problem = "the network manager is missing"; return false; }
+            _nm.NetworkConfig ??= new NetworkConfig();
+            if (_nm.NetworkConfig.NetworkTransport != _utp)
+            {
+                Debug.LogWarning("[Net] the network transport was not selected; selecting ours again before starting.");
+                _nm.NetworkConfig.NetworkTransport = _utp;
+            }
+            if (!_nm.enabled || !_nm.gameObject.activeInHierarchy) { problem = "the network manager is switched off"; return false; }
+            return true;
+        }
+
+        /// <summary>A netcode start that cannot hide its cause behind the clean-up's message (see `PrepareManagerForStart`).</summary>
+        private bool StartNetcode(Func<bool> start, string what)
+        {
+            _startProblem = null;
+            _stopWasRequested = false;
+            if (!PrepareManagerForStart(out var problem)) { _startProblem = $"{what} failed: {problem}"; return false; }
+            try { return start(); }
+            catch (Exception first)
+            {
+                Debug.LogException(first);
+                // Once, with a fresh NetworkManager (`RebuildManager`), before the player is told anything.
+                try
+                {
+                    RebuildManager();
+                    if (!PrepareManagerForStart(out problem)) { _startProblem = $"{what} failed: {problem}"; return false; }
+                    return start();
+                }
+                catch (Exception second)
+                {
+                    Debug.LogException(second);
+                    _startProblem = $"{what} failed: netcode could not start ({second.Message}). The log lines above it name the cause.";
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>Why the last start failed, when it was not an ordinary refusal; the callers' status reads it.</summary>
+        private string _startProblem;
 
         /// <summary>
         /// ⚠️ CREATED ON DEMAND SO SINGLE PLAYER PAYS NOTHING FOR IT. A NetworkManager that
@@ -574,8 +995,11 @@ namespace TumbangPreso.Net
 
         public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
         {
-            _joinAttempts.Invalidate();
-            await EnsureStoppedAsync();
+            var attempt = _joinAttempts.Begin();
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
+            await EnsureStoppedAsync(attempt);
+            if (!CanContinueJoin(attempt)) return false;
 
             Configure("0.0.0.0", port);
             ConfigureClientHello();
@@ -591,7 +1015,7 @@ namespace TumbangPreso.Net
                 QualitySettings.vSyncCount = 0;
             }
 
-            bool ok = dedicated ? _nm.StartServer() : _nm.StartHost();
+            bool ok = StartNetcode(() => dedicated ? _nm.StartServer() : _nm.StartHost(), "hosting");
 
             // ⚠️ ALL FOUR START PATHS REGISTER THE SEAT HANDLER, and this one was the last that
             // did not. A listen host is its own client, so `SendSeatAssignment` applies its seat
@@ -601,7 +1025,7 @@ namespace TumbangPreso.Net
             if (ok) RegisterSeatHandler();
             SetStatus(ok
                 ? $"hosting on {port}, join code {Lobby.JoinCode}"
-                : "failed to start hosting");
+                : _startProblem ?? "failed to start hosting");
 
             if (ok)
             {
@@ -735,6 +1159,17 @@ namespace TumbangPreso.Net
 
         private void Update()
         {
+            if (_connectingAttempt.HasValue && !_connectingAttempt.Value.CanContinue)
+            {
+                var cancelled = _connectingAttempt.Value;
+                _connectingAttempt = null;
+                if (cancelled.OwnsSession && _nm != null && _nm.IsListening &&
+                    !_nm.IsServer)
+                    StopCurrentTransport();
+            }
+            else if (_connectingAttempt.HasValue && _everConnected && _seatApplied)
+                _connectingAttempt = null;
+
             // ⚠️ BEFORE THE SERVER-ONLY RETURN BELOW, AND THAT IS THE WHOLE POINT. A client is
             // the peer that suffers a bad link and the one whose player needs telling, so
             // sampling only on the host would measure the machine least likely to be the problem.
@@ -868,6 +1303,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -878,10 +1315,48 @@ namespace TumbangPreso.Net
             IsRelay = false;
             RelayJoinCode = null;
 
-            bool ok = _nm.StartClient();
+            bool ok = StartNetcode(() => _nm.StartClient(), "joining");
+            if (ok) _connectingAttempt = attempt;
             if (ok) RegisterSeatHandler();
-            SetStatus(ok ? $"connecting to {address}:{port}" : "failed to connect");
+            SetStatus(ok ? $"connecting to {address}:{port}" : _startProblem ?? "failed to connect");
             return ok;
+        }
+
+        public async Task<bool> WaitForConnectionAsync(CancellationToken cancellationToken = default,
+                                                        float timeoutSeconds = -1)
+        {
+            if (!_connectingAttempt.HasValue)
+                return !cancellationToken.IsCancellationRequested && !_localShutdown &&
+                       _nm != null && _nm.IsListening && !_nm.IsServer && _everConnected && _seatApplied;
+            var attempt = _connectingAttempt.Value;
+            float duration = timeoutSeconds > 0 ? timeoutSeconds :
+                (_utp.ConnectTimeoutMS * _utp.MaxConnectAttempts) / 1000f + 2f;
+            float deadline = Time.realtimeSinceStartup + duration;
+            while (this != null && attempt.CanContinue && !cancellationToken.IsCancellationRequested &&
+                   _nm != null && _nm.IsListening && Time.realtimeSinceStartup < deadline)
+            {
+                if (_everConnected && _seatApplied)
+                {
+                    _connectingAttempt = null;
+                    return true;
+                }
+                try { await Awaitable.NextFrameAsync(destroyCancellationToken); }
+                catch (OperationCanceledException) { return false; }
+            }
+            if (this != null && attempt.OwnsSession)
+            {
+                string reason = !attempt.CanContinue || cancellationToken.IsCancellationRequested
+                    ? "Join cancelled."
+                    : Time.realtimeSinceStartup >= deadline
+                        ? "Connection timed out before a seat was assigned."
+                        : Status;
+                if (!_localShutdown && _nm != null && _nm.IsListening && !_nm.IsServer)
+                    StopCurrentTransport();
+                // Transport cleanup resets the general state to offline; the failed
+                // attempt still needs its timeout or refusal for callers and diagnostics.
+                if (!string.IsNullOrWhiteSpace(reason)) SetStatus(reason);
+            }
+            return false;
         }
 
         /// <summary>
@@ -894,10 +1369,15 @@ namespace TumbangPreso.Net
         /// generated in LobbySession as usual; the UGS Relay join code is an internal transport
         /// handle mapped behind this session.
         /// </summary>
-        public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
+        public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections,
+                                               CancellationToken cancellationToken = default)
         {
-            _joinAttempts.Invalidate();
-            await EnsureStoppedAsync();
+            var attempt = _joinAttempts.Begin(cancellationToken);
+            if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
+            await EnsureStoppedAsync(attempt);
+            if (!CanContinueJoin(attempt)) return false;
 
             SetStatus("signing in to online services...");
 
@@ -906,6 +1386,7 @@ namespace TumbangPreso.Net
             // relay. The status now carries which of the three situations stopped it rather
             // than the single "authentication failed" that covered all of them.
             bool authOk = await NetIdentity.EnsureSignedInAsync();
+            if (!CanContinueJoin(attempt)) return false;
             if (!authOk)
             {
                 SetStatus($"cannot go online: {NetIdentity.StateReason}");
@@ -916,7 +1397,9 @@ namespace TumbangPreso.Net
             try
             {
                 Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
+                if (!CanContinueJoin(attempt)) return false;
                 string relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                if (!CanContinueJoin(attempt)) return false;
                 RelayJoinCode = relayCode;
                 IsRelay = true;
 
@@ -933,9 +1416,10 @@ namespace TumbangPreso.Net
                 // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
                 // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
                 await PrimeHandleProofAsync();
+                if (!CanContinueJoin(attempt)) return false;
                 ConfigureClientHello();
 
-                bool ok = _nm.StartHost();
+                bool ok = StartNetcode(() => _nm.StartHost(), "relay hosting");
 
                 // ⚠️ THE RELAY HOST REGISTERS THE SEAT HANDLER TOO, exactly as `StartHost` does.
                 // A listen host is also its own client, so the message can reach it, and the two
@@ -943,9 +1427,7 @@ namespace TumbangPreso.Net
                 // notices until a player is stuck. Same reasoning as `docs/TODO.md` § 60: two
                 // routes to one outcome, one of them a subset.
                 if (ok) RegisterSeatHandler();
-                SetStatus(ok
-                    ? $"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})"
-                    : "failed to start relay host");
+                if (!ok) SetStatus(_startProblem ?? "failed to start relay host");
 
                 if (ok)
                 {
@@ -955,18 +1437,28 @@ namespace TumbangPreso.Net
                     _beacon.Port = DefaultPort;
                     _beacon.InProgress = false;
                     PublishLobbyCounts();
-                    _beacon.StartAdvertising();
 
-                    if (Query != null)
-                    {
-                        _ = Query.CreateHostedLobbyAsync(
+                    // Relay does not listen at the direct LAN address. Advertising that
+                    // address makes LAN-first code lookup bypass the working Relay route.
+                    SetStatus("publishing the online room...");
+                    string published = Query == null ? null : await Query.CreateHostedLobbyAsync(
                             LocalLobbyName(),
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
                             Lobby.OccupiedSeatCount(),
                             Advert);
+                    if (!CanContinueJoin(attempt)) return false;
+                    if (string.IsNullOrEmpty(published))
+                    {
+                        string problem = Query?.HostedLobbyProblem;
+                        await EnsureStoppedAsync(attempt);
+                        if (!CanContinueJoin(attempt)) return false;
+                        SetStatus("Could not publish the online room." +
+                            (string.IsNullOrWhiteSpace(problem) ? " Please try again." : " " + problem));
+                        return false;
                     }
+                    SetStatus($"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})");
                 }
 
                 if (!ok)
@@ -979,6 +1471,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!CanContinueJoin(attempt)) return false;
                 IsRelay = false;
                 RelayJoinCode = null;
                 SetStatus($"relay allocation failed: {e.Message}");
@@ -994,6 +1487,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1020,7 +1515,7 @@ namespace TumbangPreso.Net
             SetStatus($"joining relay allocation {relayJoinCode}...");
             try
             {
-                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
+                JoinAllocation joinAllocation = await RequestRelayJoinAsync(relayJoinCode.Trim(), attempt);
                 if (!CanContinueJoin(attempt)) return false;
                 var relayServerData = joinAllocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
@@ -1034,14 +1529,15 @@ namespace TumbangPreso.Net
                 await PrimeHandleProofAsync();
                 if (!CanContinueJoin(attempt)) return false;
                 ConfigureClientHello();
-                bool ok = _nm.StartClient();
+                bool ok = StartNetcode(() => _nm.StartClient(), "relay joining");
+                if (ok) _connectingAttempt = attempt;
                 if (ok) RegisterSeatHandler();
                 else
                 {
                     IsRelay = false;
                     RelayJoinCode = null;
                 }
-                SetStatus(ok ? "connecting to relay host..." : "failed to start relay client");
+                SetStatus(ok ? "connecting to relay host..." : _startProblem ?? "failed to start relay client");
                 return ok;
             }
             catch (Exception e)
@@ -1065,7 +1561,34 @@ namespace TumbangPreso.Net
         /// ⚠️ `StartClient` CALLS `Stop` FIRST when a session is already live, so this also covers
         /// the disconnect that a re-join produces on the way out of the old connection.
         /// </summary>
+        private Func<string, Task<JoinAllocation>> _relayJoinDispatch;
+        private async Task<JoinAllocation> RequestRelayJoinAsync(string code, JoinAttemptGate.Attempt attempt)
+        {
+            for (int request = 0; ; request++)
+            {
+                if (!CanContinueJoin(attempt)) return null;
+                try
+                {
+                    return await (_relayJoinDispatch == null
+                        ? RelayService.Instance.JoinAllocationAsync(code) : _relayJoinDispatch(code));
+                }
+                catch (RelayServiceException error) when (request == 0 && IsRelayRequestTimeout(error))
+                {
+                    if (!CanContinueJoin(attempt)) return null;
+                    SetStatus("Online join timed out; retrying the connection...");
+                    await Task.Delay(350);
+                }
+            }
+        }
+
+        private static bool IsRelayRequestTimeout(RelayServiceException error)
+            => error.Reason == RelayExceptionReason.RequestTimeOut ||
+               (error.Reason == RelayExceptionReason.NetworkError &&
+                (error.Message.IndexOf("timeout", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                 error.Message.IndexOf("timed out", StringComparison.OrdinalIgnoreCase) >= 0));
+
         private bool _localShutdown;
+        public bool IsStopping => _localShutdown;
 
         /// <summary>
         /// ⚠️⚠️ TRUE ONLY ONCE THIS PEER HAS ACTUALLY BEEN LET IN, AND IT IS WHAT STOPS THE
@@ -1084,11 +1607,23 @@ namespace TumbangPreso.Net
 
         public void Stop()
         {
+            if (!CancelPendingOperation()) StopCurrentTransport();
+        }
+
+        public bool CancelPendingOperation()
+        {
+            bool stopClient = _connectingAttempt.HasValue && _connectingAttempt.Value.OwnsSession &&
+                              _nm != null && _nm.IsListening && !_nm.IsServer;
             _joinAttempts.Invalidate();
-            StopCurrentTransport();
+            _clientTitleOperation = null;
+            ClearJoinedClientRoomTitle();
+            _connectingAttempt = null;
+            if (stopClient) StopCurrentTransport();
+            return stopClient;
         }
 
         private readonly JoinAttemptGate _joinAttempts = new JoinAttemptGate();
+        private JoinAttemptGate.Attempt? _connectingAttempt;
         private bool CanContinueJoin(JoinAttemptGate.Attempt attempt)
         {
             if (this == null) return false;
@@ -1105,6 +1640,17 @@ namespace TumbangPreso.Net
 
         private void StopCurrentTransport()
         {
+            if (_nm != null && _nm.IsListening)
+            {
+                _stopWasRequested = true;
+                // Record the initiating call only at shutdown, not on the movement hot path.
+                // No room codes, account IDs or credentials are included.
+                Debug.Log($"[NetLifecycle] requested-stop server={_nm.IsServer} relay={IsRelay} origin="
+                    + new System.Diagnostics.StackTrace(1, false));
+            }
+            ClearJoinedClientRoomTitle();
+            _connectingAttempt = null;
+            if (!_localShutdown) MatchRpc.Instance?.NotifyLocalPeerLeaving();
             _localShutdown = true;
             _everConnected = false;
             _beacon.StopAll();
@@ -1117,7 +1663,7 @@ namespace TumbangPreso.Net
             // `MatchResult`'s own header records that exact failure happening once already, from
             // a different writer, and this is the same lifetime rule: whoever can stop time
             // restores it on every exit path including death.
-            Time.timeScale = 1.0f;
+            EndTransportPresentation();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
             // ⚠️⚠️ A HOST TELLS ITS PEERS IT IS LEAVING. IT USED TO JUST STOP ANSWERING.
@@ -1178,7 +1724,18 @@ namespace TumbangPreso.Net
             SetStatus("offline");
         }
 
-        public void BrowseLan() => _beacon.StartListening();
+        private static void EndTransportPresentation()
+        {
+            MatchRpc.Instance?.CancelNemuGhostPresentation();
+            SharedUltimatePhase.Instance?.Cancel();
+            HalftimePresentation.Instance?.End(false);
+            foreach (var arrival in UnityEngine.Object.FindObjectsByType<MatchArrivalPresentation>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None)) arrival.Cancel();
+            Hitstop.End();
+            PresentationClock.RequestScale(1);
+        }
+
+        public void BrowseLan() => _beacon.RequestDiscovery();
 
         public System.Collections.Generic.IEnumerable<LanEntry> LanEntries => _beacon.Entries;
 
@@ -1329,6 +1886,10 @@ namespace TumbangPreso.Net
             _beacon.Occupied = Lobby.OccupiedSeatCount();
             _beacon.Connections = Lobby.ConnectedHumanCount();
             _beacon.InProgress = Lobby.MatchInProgress;
+            // Beacon v3's MAP (LAN-VPN-JOIN-1020): the map the next match loads, the same value the
+            // Multiplay query answers with. Re-read every frame while hosting, like the counts above,
+            // so a lobby map change or a vote shows up in the next beacon without another call site.
+            _beacon.MapId = UI.SceneFlow.SelectedMap ?? "";
         }
 
         /// <summary>
@@ -1371,6 +1932,7 @@ namespace TumbangPreso.Net
             var hello = new ConnectionHello
             {
                 Protocol = ProtocolVersion,
+                SkillContract = SkillContractFingerprint.Current,
                 Token = account?.ConnectionToken ?? NetIdentity.Token,
                 Name = LocalLobbyName(),
 
@@ -1378,7 +1940,9 @@ namespace TumbangPreso.Net
                 // every start path including the two LAN ones, and `FUTURE.md` § 0.5 rule 7 says
                 // a LAN match may never sit behind a login. `PrimeHandleProofAsync` fetches one
                 // on the relay paths, before this; empty here is a normal, playable state.
-                AccountPlayerId = account != null && account.IsSignedIn ? account.PlayerId : "",
+                // LAN records need this peer's cached local profile identity too. This
+                // is an identity claim, not a verified handle or an authenticated session.
+                AccountPlayerId = account != null && (account.IsSignedIn || !IsRelay) ? account.PlayerId : "",
                 HandleProof = account?.HandleProof ?? "",
 
                 // ⚠️ THE SAME DERIVATION THE QUEUE USES, ASKED ONCE. `Matchmaker.LocalLadderRating`
@@ -1420,6 +1984,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private readonly Dictionary<string, (Core.AccountRules.HandleCheck Check, string Handle)>
             _handleChecks = new Dictionary<string, (Core.AccountRules.HandleCheck, string)>();
+        private Func<string, string, Task<(Core.AccountRules.HandleCheck Check, string Handle)>> _verifyHandleDispatch;
 
         /// <summary>
         /// The host side of `docs/TODO.md` § 88.1c: asks the account endpoint whether an arriving
@@ -1502,6 +2067,13 @@ namespace TumbangPreso.Net
             // of machines joining off the beacon.
             if (!IsRelay) return;
 
+            var peer = Lobby?.PeerById(peerId);
+            if (peer == null) return;
+            string token = peer.Token;
+            var network = _nm;
+            int session = _joinAttempts.Version;
+            _helloByClient.TryGetValue((ulong)peerId, out var approved);
+
             // ⚠️⚠️ THE WHOLE BODY IS GUARDED BECAUSE THIS IS `async void`. Nothing awaits it, so
             // an exception escaping here has no caller to land in and takes the process with it.
             // A guard that fails must cost a name, never a match.
@@ -1510,12 +2082,15 @@ namespace TumbangPreso.Net
                 string key = accountPlayerId + "|" + proof;
                 if (!_handleChecks.TryGetValue(key, out var answer))
                 {
-                    answer = await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof);
+                    answer = _verifyHandleDispatch == null
+                        ? await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof)
+                        : await _verifyHandleDispatch(accountPlayerId, proof);
+                    if (!OwnsArrivalVerification(peerId, accountPlayerId, token, network, session, approved)) return;
                     if (answer.Check != Core.AccountRules.HandleCheck.Unreachable)
                         _handleChecks[key] = answer;
                 }
 
-                if (Lobby == null) return;
+                if (!OwnsArrivalVerification(peerId, accountPlayerId, token, network, session, approved)) return;
                 if (!Lobby.ApplyHandleCheck(peerId, accountPlayerId, answer.Check, answer.Handle)) return;
 
                 if (answer.Check == Core.AccountRules.HandleCheck.NotOwned)
@@ -1535,11 +2110,25 @@ namespace TumbangPreso.Net
             }
         }
 
+        private bool OwnsArrivalVerification(int peerId, string accountPlayerId, string token,
+                                            NetworkManager network, int session, ConnectionHello approved)
+        {
+            if (this == null || !IsHost || !IsRelay || !ReferenceEquals(_nm, network)
+                || _joinAttempts.Version != session) return false;
+            var current = Lobby?.PeerById(peerId);
+            if (current == null || current.Token != token || (!string.IsNullOrEmpty(current.AccountPlayerId)
+                && current.AccountPlayerId != accountPlayerId)) return false;
+            // Identify rebuilds the peer record, so bind to approval rather than that temporary record.
+            _helloByClient.TryGetValue((ulong)peerId, out var currentApproved);
+            return ReferenceEquals(currentApproved, approved);
+        }
+
         private void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
                                        NetworkManager.ConnectionApprovalResponse response)
         {
             var hello = DecodeHello(request.Payload);
             bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
+            bool skillsMatch = protocolMatches && SkillContractFingerprint.Matches(hello.SkillContract);
             bool hasCapacity = _nm == null ||
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
                                < LobbySession.MaxConnections;
@@ -1563,7 +2152,12 @@ namespace TumbangPreso.Net
             bool blocked = hello != null &&
                            Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
 
-            response.Approved = protocolMatches && hasCapacity && !blocked;
+            // A remote reconnect can replace its prior socket, never the running server's own
+            // lobby record. The server cannot reconnect to itself through a second transport.
+            bool claimsHost = _nm != null && _nm.IsServer && hello != null
+                && request.ClientNetworkId != _nm.LocalClientId
+                && hello.Token == Lobby.PeerById((int)_nm.LocalClientId)?.Token;
+            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked && !claimsHost;
             response.CreatePlayerObject = false;
             response.Pending = false;
             // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
@@ -1577,8 +2171,12 @@ namespace TumbangPreso.Net
             // "Could not join" is what every shipping game says.
             response.Reason = !protocolMatches
                 ? $"Game version mismatch (network protocol {ProtocolVersion})"
+                : !skillsMatch
+                    ? "Skill rules differ from the host. Use matching game builds."
                 : blocked
                     ? "Could not join this game."
+                : claimsHost
+                    ? "This player is already hosting the room. Use another account to join."
                     : hasCapacity
                         ? string.Empty
                         : $"This game is full: {LobbySession.MaxPlayers} players and "
@@ -1615,6 +2213,9 @@ namespace TumbangPreso.Net
 
         private void RegisterSeatHandler()
         {
+            // Called only after one of the four transport starts succeeds. A stop
+            // while already offline may not produce a disconnect callback to clear this.
+            _localShutdown = false;
             if (_nm?.CustomMessagingManager == null) return;
             if (ReferenceEquals(_seatHandlerOn, _nm.CustomMessagingManager)) return;
 
@@ -1626,7 +2227,11 @@ namespace TumbangPreso.Net
         private void OnSeatAssignmentMessage(ulong senderClientId, FastBufferReader reader)
         {
             if(senderClientId!=NetworkManager.ServerClientId)return;
+            // One complete seat only. Refuse malformed payloads before reads or
+            // seating notifications can throw/rebind the local player's controls.
+            if (reader.Length - reader.Position != sizeof(int) || !reader.TryBeginRead(sizeof(int))) return;
             reader.ReadValueSafe(out int seat);
+            if (seat < -1 || seat >= Core.Balance.PlayerCount) return;
             ApplyAssignedSeat(seat);
         }
 
@@ -1719,11 +2324,18 @@ namespace TumbangPreso.Net
             {
                 if (clientId == _nm.LocalClientId)
                 {
+                    if (_connectingAttempt.HasValue && !_connectingAttempt.Value.CanContinue &&
+                        _connectingAttempt.Value.OwnsSession)
+                    {
+                        StopCurrentTransport();
+                        return;
+                    }
                     _everConnected = true;
                     MatchRpc.Instance?.Initialize(_nm);
                     SetStatus("connected");
                     var s = Settings.SettingsStore.Current;
-                    int charPick = s.CharacterPick >= 0 ? s.CharacterPick : 0;
+                    // ⚠️ A LOCKED HERO NEVER LEAVES THIS MACHINE (`EconomyRules.UnlockedHeroes`).
+                    int charPick = Core.EconomyRules.PlayablePick(Core.Roster.GetPeople(UI.SceneFlow.SelectedMode), s.CharacterPick >= 0 ? s.CharacterPick : 0);
                     int canPick = s.CanPick >= 0 ? s.CanPick : 0;
                     int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
                     var identity = GameServices.Account;
@@ -1767,6 +2379,9 @@ namespace TumbangPreso.Net
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
+            // An admitted listen host has an established session too.
+            if (clientId == _nm.LocalClientId) _everConnected = true;
+            record.AccountPlayerId = hello.AccountPlayerId ?? "";
             Debug.Log($"[NetArrival] peer={clientId} seat={record.Seat} replaces={replacedPeerId}");
 
             // ⚠️ AFTER `Admit`, NOT THROUGH IT. `Admit` has five callers and a widened signature
@@ -1798,7 +2413,7 @@ namespace TumbangPreso.Net
             // still arrive on the RPC.
             if (clientId == _nm.LocalClientId)
             {
-                int charPick = settings.CharacterPick >= 0 ? settings.CharacterPick : 0;
+                int charPick = Core.EconomyRules.PlayablePick(Core.Roster.GetPeople(UI.SceneFlow.SelectedMode), settings.CharacterPick >= 0 ? settings.CharacterPick : 0);
                 int canPick = settings.CanPick >= 0 ? settings.CanPick : 0;
                 int slipperPick = settings.SlipperPick >= 0 ? settings.SlipperPick : 0;
                 Lobby.SetPicks((int)clientId, charPick, canPick, slipperPick);
@@ -1837,12 +2452,18 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            ClearJoinedClientRoomTitle();
+            if (!_localShutdown) _clientTitleOperation = null;
+            EndTransportPresentation();
+
             // ⚠️⚠️ THE REASON IS THE WHOLE POINT OF THIS BRANCH NOW. A refused approval arrives
             // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a
             // host that vanished were all one word: "disconnected". The player then has nothing
             // to act on, and a version mismatch in particular is a thing they CAN fix.
+            _connectingAttempt = null;
             string reason = _nm != null ? _nm.DisconnectReason : null;
-            SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
+            if (!_localShutdown)
+                SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
 
             // ⚠️⚠️ THE REASON IS REDUCED TO A CLASS BEFORE IT IS COUNTED, AND THE SENTENCE IS
             // NEVER SENT. `FUTURE.md` § 3 asks for a disconnect rate, which needs four or five
@@ -1906,6 +2527,8 @@ namespace TumbangPreso.Net
         private static string PlayerFacingDisconnectReason(string raw)
         {
             var cause = Core.SessionEndRules.Classify(raw, wasLocal: false);
+            if (cause == Core.SessionEndCause.HostLost && MatchAbandon.MatchWasCompleted)
+                return MatchAbandon.PlayerLine;
 
             // ⚠️ THE HOST'S OWN SENTENCE STILL WINS WHERE IT IS ONE. `ApproveConnection` writes
             // "Game version mismatch (network protocol 24)" with the actual number in it, and

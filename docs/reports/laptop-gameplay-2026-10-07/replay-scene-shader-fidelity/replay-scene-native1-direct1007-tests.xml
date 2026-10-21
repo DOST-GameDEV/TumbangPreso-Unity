@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.1765641">
+  <test-suite type="TestSuite" id="3511" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2033" result="Passed" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.176564" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3503" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2033" result="Passed" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.163727" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48972" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3504" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2033" result="Passed" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.155842" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3507" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2031" result="Passed" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.147145" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2019" name="LocalReplaySceneStateTests" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.118855" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2020" name="RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" methodname="RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="1911965325" result="Passed" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.074355" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2021" name="RecordedVisibilityNeverActivatesAnInactiveVehicle" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RecordedVisibilityNeverActivatesAnInactiveVehicle" methodname="RecordedVisibilityNeverActivatesAnInactiveVehicle" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="1622788632" result="Passed" start-time="2026-10-07 06:16:01Z" end-time="2026-10-07 06:16:01Z" duration="0.034334" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

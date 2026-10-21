@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.2209202">
+  <test-suite type="TestSuite" id="2873" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1525" result="Failed" site="Child" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.220920" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2867" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1525" result="Failed" site="Child" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.210195" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10820" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2868" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1525" result="Failed" site="Child" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.204600" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2869" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1525" result="Failed" site="Child" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.199401" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1721" name="LungeRoleInputLifetimeTests" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.178165" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1726" name="BecomingAttackerPreservesAnAlreadyCommittedLungeAndItsCooldown" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.BecomingAttackerPreservesAnAlreadyCommittedLungeAndItsCooldown" methodname="BecomingAttackerPreservesAnAlreadyCommittedLungeAndItsCooldown" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="1432365392" result="Passed" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.069003" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1722" name="BecomingAttackerRetiresTheDefenderLungeWindupAndTell" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.BecomingAttackerRetiresTheDefenderLungeWindupAndTell" methodname="BecomingAttackerRetiresTheDefenderLungeWindupAndTell" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="1143493776" result="Failed" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.027387" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An attacker retained the previous defender lunge tell.
+  Expected: -1
+  But was:  0.037948411f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.BecomingAttackerRetiresTheDefenderLungeWindupAndTell () [0x00013] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\LungeRoleInputLifetimeTests.cs:86
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1725" name="OrdinaryDefenderReleaseStillOpensLungeContactAndCooldown" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.OrdinaryDefenderReleaseStillOpensLungeContactAndCooldown" methodname="OrdinaryDefenderReleaseStillOpensLungeContactAndCooldown" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="1987575615" result="Passed" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.023058" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1723" name="ReturningToDefenderAfterAttackerReleaseDoesNotLaunchTheOldWindup" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.ReturningToDefenderAfterAttackerReleaseDoesNotLaunchTheOldWindup" methodname="ReturningToDefenderAfterAttackerReleaseDoesNotLaunchTheOldWindup" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="2146290168" result="Failed" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.021890" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The old role's windup launched on return without a fresh defender press.
+  Expected: 0
+  But was:  0.5f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.ReturningToDefenderAfterAttackerReleaseDoesNotLaunchTheOldWindup () [0x0006e] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\LungeRoleInputLifetimeTests.cs:94
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1724" name="SameDefenderSnapshotPreservesTheHeldLungeWindup" fullname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests.SameDefenderSnapshotPreservesTheHeldLungeWindup" methodname="SameDefenderSnapshotPreservesTheHeldLungeWindup" classname="TumbangPreso.PlayTests.LungeRoleInputLifetimeTests" runstate="Runnable" seed="362505218" result="Passed" start-time="2026-10-03 10:56:27Z" end-time="2026-10-03 10:56:27Z" duration="0.025598" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

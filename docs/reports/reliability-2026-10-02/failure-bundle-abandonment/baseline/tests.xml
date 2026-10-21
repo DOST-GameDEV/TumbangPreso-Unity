@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.2029868">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="940" result="Failed" site="Child" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.202987" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2134" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="940" result="Failed" site="Child" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.173816" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2135" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="940" result="Failed" site="Child" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.154669" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2136" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="940" result="Failed" site="Child" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.137872" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1288" name="FailureBundleAbandonTests" fullname="TumbangPreso.Tests.FailureBundleAbandonTests" classname="TumbangPreso.Tests.FailureBundleAbandonTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.059782" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1291" name="NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires" fullname="TumbangPreso.Tests.FailureBundleAbandonTests.NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires" classname="TumbangPreso.Tests.FailureBundleAbandonTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.054692" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1289" name="NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires(True)" fullname="TumbangPreso.Tests.FailureBundleAbandonTests.NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires(True)" methodname="NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires" classname="TumbangPreso.Tests.FailureBundleAbandonTests" runstate="Runnable" seed="896450017" result="Failed" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.038747" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The bundle lost the classified cause and original round after live state reset.
+  Expected: String containing "RemovedByHost: ABANDONED at round 3 of 8; this peer may no longer resolve anything"
+  But was:  "  protocol      129
+  networked     False
+  host          True
+  local slot    0
+  local peer    0
+  referee       False
+  online        False"
+]]></message>
+                  <stack-trace><![CDATA[at NUnit.Framework.StringAssert.Contains (System.String expected, System.String actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at TumbangPreso.Tests.FailureBundleAbandonTests.NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires (System.Boolean abandoned) [0x001b8] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\FailureBundleAbandonTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Abandon] RemovedByHost: ABANDONED at round 3 of 8; this peer may no longer resolve anything
+]]></output>
+              </test-case>
+              <test-case id="1290" name="NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires(False)" fullname="TumbangPreso.Tests.FailureBundleAbandonTests.NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires(False)" methodname="NetworkDiagnosticsRetainTheRecordedAbandonmentAfterSimulationRetires" classname="TumbangPreso.Tests.FailureBundleAbandonTests" runstate="Runnable" seed="692268693" result="Passed" start-time="2026-10-02 05:53:59Z" end-time="2026-10-02 05:53:59Z" duration="0.003323" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

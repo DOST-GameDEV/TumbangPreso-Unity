@@ -1,0 +1,11 @@
+{
+  "baselineUICommit": "cd4a41069",
+  "stoppingCondition": "Fresh8case baseline/final XML, original fixture unchanged, restored terminal guards",
+  "expectedCases": 8,
+  "clickedActions": false,
+  "retryCount": 0,
+  "question": "Does report availability wrongly depend on friendship offers or a SocialStore?",
+  "filter": "TumbangPreso.Tests.RecentPlayerReportEligibilityTests.ReportsRemainAvailableIndependentlyOfFriendOffers",
+  "profile": "report-eligibility1002",
+  "candidateUIHash": "FD102A14E8F327D60E70C719A4D0376B7CBC36E153DFFCC124130F0776F94EE3"
+}

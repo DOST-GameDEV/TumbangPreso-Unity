@@ -1,0 +1,11 @@
+{
+  "source": "239050ac60a338f88b482b8a79dec2aa4aa1321b",
+  "protocol": 114,
+  "buildExit": 0,
+  "inputCount": 15422,
+  "changedInputs": [],
+  "codeDrift": [],
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-current-player-1001\\TumbangPreso.exe",
+  "runtimeSha256": "36cdbf3c41afbb287e4f4890046a26373b5a4e082a478705fdd7a3a61182da21",
+  "executableBytes": 667648
+}

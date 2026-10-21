@@ -1,0 +1,16 @@
+{
+  "staticReview": "PASS",
+  "scope": "Exact portable file I/O branch on Windows temporary files; no device or crash atomicity claim",
+  "original": {
+    "total": "6",
+    "passed": "2",
+    "failed": "4",
+    "skipped": "0"
+  },
+  "candidate": {
+    "total": "6",
+    "passed": "6",
+    "failed": "0",
+    "skipped": "0"
+  }
+}

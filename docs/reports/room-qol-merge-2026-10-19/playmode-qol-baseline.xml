@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="1" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 15:37:56Z" end-time="2026-10-19 15:38:51Z" duration="54.819242">
+  <test-suite type="TestSuite" id="3708" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2185" result="Failed" site="Child" start-time="2026-10-19 15:37:56Z" end-time="2026-10-19 15:38:51Z" duration="54.819242" total="7" passed="1" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3700" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/game-networking-lan-relay-d56db9/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2185" result="Failed" site="Child" start-time="2026-10-19 15:37:56Z" end-time="2026-10-19 15:38:51Z" duration="54.766857" total="7" passed="1" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17504" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3701" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2185" result="Failed" site="Child" start-time="2026-10-19 15:37:56Z" end-time="2026-10-19 15:38:51Z" duration="54.688750" total="7" passed="1" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3704" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2183" result="Failed" site="Child" start-time="2026-10-19 15:37:56Z" end-time="2026-10-19 15:38:51Z" duration="54.650474" total="7" passed="1" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2316" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-19 15:37:57Z" end-time="2026-10-19 15:38:47Z" duration="49.992710" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2321" name="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" methodname="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="2120605619" result="Failed" start-time="2026-10-19 15:37:57Z" end-time="2026-10-19 15:38:22Z" duration="25.442136" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 10 but was 13. Strings differ at index 0.
+  Expected: "BayanPlaza"
+  But was:  "IlalimNgTulay"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MatchArrivalFlowTests+<StartFlow>d__11.MoveNext () [0x003e8] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\MatchArrivalFlowTests.cs:290
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code QASA
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+Cannot Pause a disabled VideoPlayer
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] host: gate opened for seat 0
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[ArenaPrewarm] drew 20 views in 0.62 s.
+[HeroFxPrewarm] warmed 5 hero effects in 0.28 s.
+[HubLoading] IlalimNgTulay ready after 8.71 s.
+[Arrival] host: arrival prepared (12.7 s, directed=True, rig=True, closes on the taya)
+[Arrival] host: arrival playing
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <7828b41f82464171acf0d8d03648dbcf>:0 
+  at TumbangPreso.PlayTests.MatchArrivalFlowTests+<After>d__7.MoveNext () [0x0001e] in <655861b12e5a4fc8898aad0e3d4f53be>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Arrival] host: cancelled after 8.4 s on screen
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Arrival] offline: opening done, waiting for the countdown
+]]></output>
+            </test-case>
+            <test-case id="2320" name="QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" methodname="QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1564271236" result="Failed" start-time="2026-10-19 15:38:22Z" end-time="2026-10-19 15:38:47Z" duration="24.533933" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 10 but was 13. Strings differ at index 0.
+  Expected: "BayanPlaza"
+  But was:  "IlalimNgTulay"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MatchArrivalFlowTests+<StartFlow>d__11.MoveNext () [0x003e8] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\MatchArrivalFlowTests.cs:290
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 8ZVM
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+Cannot Pause a disabled VideoPlayer
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] host: gate opened for seat 0
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[ArenaPrewarm] drew 20 views in 0.54 s.
+[HeroFxPrewarm] warmed 5 hero effects in 0.15 s.
+[HubLoading] IlalimNgTulay ready after 3.56 s.
+[Arrival] host: arrival prepared (12.7 s, directed=True, rig=True, closes on the taya)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 12.7 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/1)
+[Arrival] host: countdown sent with 1/1 ready
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <7828b41f82464171acf0d8d03648dbcf>:0 
+  at TumbangPreso.PlayTests.MatchArrivalFlowTests+<After>d__7.MoveNext () [0x0001e] in <655861b12e5a4fc8898aad0e3d4f53be>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2380" name="ModelPreviewTests" fullname="TumbangPreso.PlayTests.ModelPreviewTests" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-19 15:38:47Z" end-time="2026-10-19 15:38:51Z" duration="4.532365" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2389" name="ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" methodname="ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1401498683" result="Failed" start-time="2026-10-19 15:38:47Z" end-time="2026-10-19 15:38:47Z" duration="0.053896" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  BERTO is not using the Godot Classic rig.
+  Expected string length 16 but was 14. Strings differ at index 0.
+  Expected: "character-male-f"
+  But was:  "bayan-redesign"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests.ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes () [0x000e8] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:617
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2388" name="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" methodname="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1619949543" result="Passed" start-time="2026-10-19 15:38:47Z" end-time="2026-10-19 15:38:48Z" duration="1.145530" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] preparation-skills-defending-960x540/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] preparation-skills-defending-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="2385" name="TheCastAnimatesInAMatch" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheCastAnimatesInAMatch" methodname="TheCastAnimatesInAMatch" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="190416107" result="Failed" start-time="2026-10-19 15:38:48Z" end-time="2026-10-19 15:38:50Z" duration="1.967058" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  'forearm-left' has not moved in 40 frames of a live match.
+  Expected: greater than 0.00999999978f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests+<TheCastAnimatesInAMatch>d__8.MoveNext () [0x0014e] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:355
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: cancelled after 0.4 s on screen
+]]></output>
+            </test-case>
+            <test-case id="2384" name="TheCharacterPreviewIsFramedPosedAndMovable" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheCharacterPreviewIsFramedPosedAndMovable" methodname="TheCharacterPreviewIsFramedPosedAndMovable" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="77834806" result="Failed" start-time="2026-10-19 15:38:50Z" end-time="2026-10-19 15:38:50Z" duration="0.748981" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  'forearm-left' has not moved in 30 frames, so no clip is playing and the preview is showing the rig's bind pose.
+  Expected: greater than 0.00999999978f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests+<TheCharacterPreviewIsFramedPosedAndMovable>d__7.MoveNext () [0x002a1] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:252
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2386" name="TheReplacedCharacterShowsOnTheSelectScreen" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheReplacedCharacterShowsOnTheSelectScreen" methodname="TheReplacedCharacterShowsOnTheSelectScreen" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1975330700" result="Failed" start-time="2026-10-19 15:38:50Z" end-time="2026-10-19 15:38:51Z" duration="0.611851" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The select screen would show the retired CC0 rig for dante.
+  Expected string length 10 but was 14. Strings differ at index 0.
+  Expected: "team-dante"
+  But was:  "dante-redesign"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewTests+<TheReplacedCharacterShowsOnTheSelectScreen>d__9.MoveNext () [0x001f5] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:408
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

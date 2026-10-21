@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.1188359">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1410" result="Failed" site="Child" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.118836" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2740" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1410" result="Failed" site="Child" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.100979" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49544" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2741" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1410" result="Failed" site="Child" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.088563" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2742" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1410" result="Failed" site="Child" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.077585" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2578" name="SpectatorBodyLensContractTests" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.058599" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2580" name="ABodyCrossingOnlyTheSightlineRemainsAllowed" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.ABodyCrossingOnlyTheSightlineRemainsAllowed" methodname="ABodyCrossingOnlyTheSightlineRemainsAllowed" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="241131505" result="Failed" label="Error" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.045037" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[SetUp : System.ArgumentNullException : Value cannot be null.
+Parameter name: dest]]></message>
+                <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x00011] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Renderer.Internal_GetPropertyBlock (UnityEngine.MaterialPropertyBlock dest) [0x00003] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Renderer.GetPropertyBlock (UnityEngine.MaterialPropertyBlock properties) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Visual.CharacterVisual.PushColour () [0x0005d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:1025 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint, UnityEngine.AnimationClip[] clips, UnityEngine.Color[] palette, UnityEngine.GameObject petModel) [0x002e0] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:329 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint, UnityEngine.AnimationClip[] clips) [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:238 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint) [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:230 
+  at TumbangPreso.Tests.SpectatorBodyLensContractTests.Before () [0x000e1] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SpectatorBodyLensContractTests.cs:33 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2581" name="AnEyeClearOfBothBodyAndSightlineRemainsAllowed" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AnEyeClearOfBothBodyAndSightlineRemainsAllowed" methodname="AnEyeClearOfBothBodyAndSightlineRemainsAllowed" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="308805091" result="Failed" label="Error" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.001374" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[SetUp : System.ArgumentNullException : Value cannot be null.
+Parameter name: dest]]></message>
+                <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x00011] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Renderer.Internal_GetPropertyBlock (UnityEngine.MaterialPropertyBlock dest) [0x00003] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Renderer.GetPropertyBlock (UnityEngine.MaterialPropertyBlock properties) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Visual.CharacterVisual.PushColour () [0x0005d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:1025 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint, UnityEngine.AnimationClip[] clips, UnityEngine.Color[] palette, UnityEngine.GameObject petModel) [0x002e0] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:329 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint, UnityEngine.AnimationClip[] clips) [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:238 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint) [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:230 
+  at TumbangPreso.Tests.SpectatorBodyLensContractTests.Before () [0x000e1] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SpectatorBodyLensContractTests.cs:33 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2579" name="EyeInsideAnOpaqueRenderBodyIsNotAValidPose" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.EyeInsideAnOpaqueRenderBodyIsNotAValidPose" methodname="EyeInsideAnOpaqueRenderBodyIsNotAValidPose" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="1109832306" result="Failed" label="Error" start-time="2026-10-06 04:41:06Z" end-time="2026-10-06 04:41:06Z" duration="0.000733" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[SetUp : System.ArgumentNullException : Value cannot be null.
+Parameter name: dest]]></message>
+                <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x00011] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Renderer.Internal_GetPropertyBlock (UnityEngine.MaterialPropertyBlock dest) [0x00003] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Renderer.GetPropertyBlock (UnityEngine.MaterialPropertyBlock properties) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Visual.CharacterVisual.PushColour () [0x0005d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:1025 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint, UnityEngine.AnimationClip[] clips, UnityEngine.Color[] palette, UnityEngine.GameObject petModel) [0x002e0] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:329 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint, UnityEngine.AnimationClip[] clips) [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:238 
+  at TumbangPreso.Visual.CharacterVisual.ApplyModel (UnityEngine.GameObject prefab, UnityEngine.Color tint) [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Visual\CharacterVisual.cs:230 
+  at TumbangPreso.Tests.SpectatorBodyLensContractTests.Before () [0x000e1] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SpectatorBodyLensContractTests.cs:33 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

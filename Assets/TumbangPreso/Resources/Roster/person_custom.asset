@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: custom
   Model: {fileID: 1474294577768133571, guid: 7e12dca6d6462d3499df2522cdc7d8fc, type: 3}
+  ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}

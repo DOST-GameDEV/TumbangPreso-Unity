@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.167928">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="993" result="Failed" site="Child" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.167928" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2202" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="993" result="Failed" site="Child" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.145765" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14924" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2203" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="993" result="Failed" site="Child" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.132977" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2204" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="993" result="Failed" site="Child" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.120531" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1928" name="RebindSeatPacketTests" fullname="TumbangPreso.Tests.RebindSeatPacketTests" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.097824" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1931" name="ImpossibleDefenderCannotReplaceLocalOwnership" fullname="TumbangPreso.Tests.RebindSeatPacketTests.ImpossibleDefenderCannotReplaceLocalOwnership" methodname="ImpossibleDefenderCannotReplaceLocalOwnership" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="1706116770" result="Failed" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.045344" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.RebindSeatPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:64
+at TumbangPreso.Tests.RebindSeatPacketTests.ImpossibleDefenderCannotReplaceLocalOwnership () [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:74
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 3
+]]></output>
+            </test-case>
+            <test-case id="1930" name="ImpossibleSeatCannotReplaceLocalOwnership" fullname="TumbangPreso.Tests.RebindSeatPacketTests.ImpossibleSeatCannotReplaceLocalOwnership" methodname="ImpossibleSeatCannotReplaceLocalOwnership" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="209770428" result="Failed" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.002195" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  -2
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.RebindSeatPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:64
+at TumbangPreso.Tests.RebindSeatPacketTests.ImpossibleSeatCannotReplaceLocalOwnership () [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:72
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] connected as seat 2
+[Net] connected as spectator
+]]></output>
+            </test-case>
+            <test-case id="1929" name="IncompleteFramesCannotThrowOrRebindLocalOwnership" fullname="TumbangPreso.Tests.RebindSeatPacketTests.IncompleteFramesCannotThrowOrRebindLocalOwnership" methodname="IncompleteFramesCannotThrowOrRebindLocalOwnership" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="1551692402" result="Failed" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.002080" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnRebindSeatMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0005d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:6742 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.RebindSeatPacketTests+<>c__DisplayClass15_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:60 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.RebindSeatPacketTests.Deliver (System.Byte[] bytes, System.UInt64 sender) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:60
+at TumbangPreso.Tests.RebindSeatPacketTests.IncompleteFramesCannotThrowOrRebindLocalOwnership () [0x0001c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:69
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] connected as seat 2
+]]></output>
+            </test-case>
+            <test-case id="1932" name="NonBooleanOrTrailingDataCannotRebindTheSeat" fullname="TumbangPreso.Tests.RebindSeatPacketTests.NonBooleanOrTrailingDataCannotRebindTheSeat" methodname="NonBooleanOrTrailingDataCannotRebindTheSeat" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="213638214" result="Failed" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.001892" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.RebindSeatPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:64
+at TumbangPreso.Tests.RebindSeatPacketTests.NonBooleanOrTrailingDataCannotRebindTheSeat () [0x00010] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindSeatPacketTests.cs:77
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 3
+]]></output>
+            </test-case>
+            <test-case id="1934" name="NonHostAndHostLoopbackCannotRebindMalformedFrames" fullname="TumbangPreso.Tests.RebindSeatPacketTests.NonHostAndHostLoopbackCannotRebindMalformedFrames" methodname="NonHostAndHostLoopbackCannotRebindMalformedFrames" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="431683748" result="Passed" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.004286" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+]]></output>
+            </test-case>
+            <test-case id="1933" name="ValidSeatsSpectatorAndFreeRoamDefenderRetainIdempotentRebind" fullname="TumbangPreso.Tests.RebindSeatPacketTests.ValidSeatsSpectatorAndFreeRoamDefenderRetainIdempotentRebind" methodname="ValidSeatsSpectatorAndFreeRoamDefenderRetainIdempotentRebind" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="2135571198" result="Passed" start-time="2026-10-02 21:49:30Z" end-time="2026-10-02 21:49:30Z" duration="0.024167" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 4
+[Net] connected as seat 2
+[Net] connected as seat 4
+[Net] connected as seat 2
+[Net] connected as seat 4
+[Net] connected as seat 2
+[Net] connected as seat 4
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

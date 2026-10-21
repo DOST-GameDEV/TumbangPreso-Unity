@@ -1,0 +1,7 @@
+{
+  "testHash": "2B0062AA3326DF318477529F52DD63C7AF3B42F63C649DBFC669B0129A3120EC",
+  "expectedCases": 1,
+  "question": "Reproduce introduction cleanup releasing the newer round-break hold",
+  "phaseHash": "ED26D020CF5D2807292ED23BCA46B3F4515EE04D31DBDD5928B7D5FA2F1D3401",
+  "retry": 0
+}

@@ -1,0 +1,12 @@
+{
+  "expectedCases": 5,
+  "expectedOriginalCauses": 2,
+  "controls": 3,
+  "retryCount": 0,
+  "question": "Does joining role preserve Sean until admitted client seat instead of temporary host or listening seat zero?",
+  "candidate": {
+    "Assets/TumbangPreso/Runtime/Diagnostics/NetIceProbe.cs": "509fd2c41218de7392e61c4843f9e722a5f2f25c0acab9f6d4181c41c9048ea6",
+    "Assets/TumbangPreso/Tests/NetIceAdmissionRoleTests.cs": "56551336416c8666f72f32e2eadb8d528a949b9c2a7943426e741c0d3d3e0584",
+    "Assets/TumbangPreso/Tests/NetIceAdmissionRoleTests.cs.meta": "63d4bfedf5a5f696fbfd85fb7d2c358cbf199943463e18958b897819e022999e"
+  }
+}

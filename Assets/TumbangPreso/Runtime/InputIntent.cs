@@ -3,18 +3,34 @@ using UnityEngine;
 
 namespace TumbangPreso
 {
-    /// <summary>The verbs a unit can press. One name per Godot input action.</summary>
+    /// <summary>
+    /// The verbs a unit can press. One name per Godot input action. The keys are the owner's
+    /// default layout, 2026-09-27 (`Settings.Rebinding`'s class note has it in full).
+    /// </summary>
     public enum Verb
     {
         Sprint,
         Jump,
-        SpecialAbility, // Left click. Throw charge for an attacker, punch for the taya.
-        Grab,           // E. Contextual: pickup, shove, or the lata reset channel.
-        Lunge,          // Right click. The taya's dash tag.
-        EmoteWheel,     // B
-        Skill1,         // Hero Skill 1. Q
-        Skill2,         // Hero Skill 2. E
-        Ultimate,       // Hero Ultimate. F
+        SpecialAbility, // Left click. Throw / Tag: the throw charge for an attacker, the jab tag for the taya.
+        Grab,           // F. Interact / Use: pick up, or the lata reset channel.
+        Lunge,          // Right click. Shove / Lunge: the taya's dash tag; an attacker's shove (or retrieval slide).
+        EmoteWheel,     // T
+        Skill1,         // The signature ability. E
+        Skill2,         // The attacking / defending ability. Q
+        Ultimate,       // X
+
+        // ⚠️ APPENDED (2026-09-25). The general INTERACT: do the thing in front of me that is not a
+        // pickup. Owner, on pulling out Paete's plant: *"dont make the keybind shove maybe make like
+        // a general keybind for interact and remove and shit"*, and on breaking out of his roots:
+        // *"i suggest the general interact button"*. F on a keyboard, beside `Grab`
+        // (`Settings.Rebinding.IsOneUseKey`).
+        Interact,
+
+        // ⚠️ CROUCH, a verb of its own since 2026-10-09 (owner: "add controller and touch support for crouch"). Hold to
+        // crouch; pressed at a sprint it is the slide (`MovementRework`, `CharacterMotor.MovementRework.cs`). Left Ctrl
+        // on a keyboard, B on a pad (shared with Ready Up, which only exists before a round:
+        // `Settings.Rebinding.IsOneUseKey`), a button of its own on a phone. It began as a debug key read.
+        Crouch,
     }
 
     /// <summary>
@@ -41,6 +57,14 @@ namespace TumbangPreso
         private readonly HashSet<Verb> _held = new HashSet<Verb>();
         private readonly HashSet<Verb> _heldPrev = new HashSet<Verb>();
         private readonly HashSet<Verb> _bufferedPresses = new HashSet<Verb>();
+        private readonly HashSet<Verb> _releaseRequired = new HashSet<Verb>();
+
+        public void RequireFreshActions()
+        {
+            foreach (var verb in _held) if (verb != Verb.Sprint) _releaseRequired.Add(verb);
+            _bufferedPresses.Clear(); _held.RemoveWhere(v => v != Verb.Sprint);
+            _heldPrev.RemoveWhere(v => v != Verb.Sprint); LookDelta = Vector2.zero;
+        }
 
         public Vector2 Move { get; set; }
 
@@ -112,8 +136,17 @@ namespace TumbangPreso
         /// </summary>
         public bool Parked { get; set; }
 
+        /// <summary>
+        /// Crouch held, for the movement rework (`MovementRework`). It was a debug field of its own, written from two
+        /// keyboard keys; since 2026-10-09 it is `Verb.Crouch`, on all three devices, and this is only its reading.
+        /// </summary>
+        public bool Crouch => Pressed(Verb.Crouch);
+
         public void Set(Verb v, bool pressed)
         {
+            if (!pressed) _releaseRequired.Remove(v);
+            else if (PresentationClock.BlocksInput && v != Verb.Sprint) _releaseRequired.Add(v);
+            if (_releaseRequired.Contains(v)) { _held.Remove(v); return; }
             if (pressed) _held.Add(v);
             else _held.Remove(v);
         }
@@ -122,7 +155,7 @@ namespace TumbangPreso
         // observed press without inventing a held state or repeat presses.
         public void BufferPress(Verb verb)
         {
-            if (!Parked && !Locked(verb)) _bufferedPresses.Add(verb);
+            if (!PresentationClock.BlocksInput && !_releaseRequired.Contains(verb) && !Parked && !Locked(verb)) _bufferedPresses.Add(verb);
         }
 
         /// <summary>Called by the motor after the physics consumers have read intent.</summary>

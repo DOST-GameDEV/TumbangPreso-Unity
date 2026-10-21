@@ -1,0 +1,292 @@
+271 fixtures discovered in /workspace/shared/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode
+
+  destroyer  (1)
+   ⚠️⚠️ `InputSurfaceProbe` ALONE, AND `CLAUDE.md` § 7 ALREADY SAID SO IN CAPITALS: "RUN IT ALONE. It loads every scene in the build settings and opens every overlay it can discover, so it is the most destructive fixture in the suite: in a twelve-suite run it took most of the group down with it and the numbers were meaningless." § 126.8b sorted a whole run by start time and found it clean for 57 case
+      InputSurfaceProbe
+
+  screens  (51)
+   Everything that builds a menu, an overlay or a screen. They contend for the same canvases, the same EventSystem and the same `DontDestroyOnLoad` chrome (`MatchResult`, `PausePanel`, `BootSting`), and § 126.8d measured that isolating them from the match fixtures turns every one of them green.
+      AspectRatioProbes
+      CustomCharacterScreenProbe
+      CustomGameScreenProbe
+      HomeFlowTests
+      HeroPickerLayoutProbe
+      HudLayoutProbe
+      HudOverflowProbe
+      LoadoutSurfaceProbe
+      LobbyChatProbe
+      LobbyChatStripProbe
+      LobbyStyleProbe
+      LobbyTypingProbe
+      NestedCanvasProbe
+      NetworkedLobbyTypingProbe
+      PaperPurityProbe
+      PhaseSurfaceLayoutProbe
+      PlayerHubLayoutProbe
+      PreviewDragProbe
+      QueueCardLayoutProbe
+      SettingsScrollProbe
+      SettingsWheelProbe
+      UiClickProbe
+      UiRuntimeShots
+      WardrobeSheetProbe
+      ModelPreviewProbe
+      ModelPreviewTests
+      HeroPreviewSizeProbe
+      MatchRecordIdentityProbe
+      BrandPickerTests
+      BrandPreparationTests
+      BrandSettingsTests
+      CloseFeedbackViewProbe
+      ModelPreviewPixelTests
+      OwnerMenuEditsTests
+      OwnerMenuSkyTests
+      OwnerPasswordTests
+      OwnerPlayerHubTests
+      OwnerPreparationTests
+      OwnerUiAuthoringTests
+      PlayHeadingScaleTests
+      ReducedActionFocusProbe
+      SwimmingNameplateTests
+      TumpNativeFrontEndTests
+      TumpNativeJoinTests
+      TumpNativePickerTests
+      TumpNativeSettingsTests
+      HubFlowTests
+      MatchArrivalFlowTests
+      ColdLobbyCodeTests
+      HubSceneVideoTests
+      OwnerLoginFeedbackTests
+
+  match  (128)
+   Everything that installs an arena and runs a round. `MapPreviewSurface` loads arenas ADDITIVELY AND CACHES THEM (§ 126.8b), so a cached map landing inside a screen suite brings a whole arena's lights, cameras and post stack with it, and the reverse leaves a match fixture with no main camera. Keeping the two apart is the same boundary read from either side.
+      AiLaneTests
+      ArenaBoundsProbe
+      BotMotionProbe
+      CarriedSlipperSelfHideProbe
+      CarryTests
+      MapRetrievalProbe
+      EmoteCameraProbe
+      EmoteLifecycleProbe
+      FppFrameProbe
+      AmihanWikiTests
+      AmihanAirburstTests
+      DanteDriftTests
+      HexPhantomReviewTests
+      DanteBoulderImbueTests
+      DanteWardRuleTests
+      DanteEarthboundTests
+      DanteWardBadgeTests
+      DanteVisibilityTests
+      CheskaFrostbiteLoadTests
+      CheskaExpiryPresentationTests
+      CheskaIceContractProbe
+      IceTractionProbe
+      NemuKitContractProbe
+      NemuHauntContractTests
+      NemuFamiliarPoseTests
+      BotCompanionObservationTests
+      HauntedPerceptionTests
+      MapRouteProbe
+      RetrievalSlideTests
+      HitFreezeProbe
+      SecondMatchLifecycleProbe
+      AudioListenerProbe
+      FppOccluderProbe
+      LandedHighlightTests
+      LataFloatProbe
+      MatchRunTests
+      MultiplayerModelSwapSelfHideProbe
+      ScoreWitnessProbe
+      SeatAnnouncementTests
+      SessionRestartTests
+      SoloPracticeTests
+      SteeringTests
+      StunFrostTests
+      TrainingStreetProbe
+      TutorialDefenderProbe
+      TutorialLessonHonestyProbe
+      VolcanicZoneTests
+      InputEdgeTests
+      InputReaderTests
+      MatchSoakProbe
+      ScoreIdempotencyTests
+      AmbientLifeProbe
+      BlackIceFootingProbe
+      CheskaNovaSlipperProbe
+      ClassicCosmeticMotorProbe
+      ClientRoundBoundaryProbe
+      DanteStompContractProbe
+      EquipmentIntegrationProbe
+      FootSupportProbe
+      FppHandsReviewProbe
+      FppSlipperShadowProbe
+      IceWorldSnapshotProbe
+      MapGraphicsReviewProbe
+      MovementSnapshotProbe
+      OwnerTrainingUiTests
+      PendingPreparationTests
+      PendingPresentationProbe
+      PickupPressOwnershipProbe
+      PinnedFetchProbe
+      RecoveryDeviceProbe
+      RecoveryMenuBoundaryProbe
+      ResidentLaundrySceneTests
+      RooftopRecoveryProbe
+      RooftopSwimmingProbe
+      SeanSkillTimingProbe
+      SlipperLookupCostProbe
+      SpectatorReplayOwnershipProbe
+      SplitSpiresPassageProbe
+      ThrowAimIntegrationProbe
+      ThrowMotionReviewProbe
+      TumpNativeHudTests
+      TumpNativeResultTests
+      ZackKitAcceptanceProbe
+      ZackSkillPresentationProbe
+      MatchLoadingReadinessTests
+      PracticeRangeTests
+      VoodooBodyWiringTests
+      GeneratedMotionAssetsTests
+      ActionChainIntegrationTests
+      AccessibilityControlTests
+      WorldCourtCueTests
+      BlockContactTests
+      CatchReconstructionTests
+      CloseCallPresentationTests
+      ExchangeAudioTests
+      ExchangeMotionTests
+      ExchangePresenceTests
+      LocomotionArmsProbe
+      GameplayActionShots
+      CastAndMotionReel
+      ExchangePresentationTests
+      FamiliarReadoutTests
+      MapPreviewTransitionTests
+      MatchFinishPresentationTests
+      MatchMomentTests
+      RecordedEffectsTests
+      ReplayRetentionTests
+      ReplayReadbackSupportTests
+      DefenderLungeTravelTests
+      RoundBreakFreezeTests
+      RoundFieldCleanupTests
+      ScoreFeedbackTests
+      SharedUltimatePhaseTests
+      SkillReceiptTests
+      RafiExpansionProbe
+      SeanCinderGateProbe
+      SeanSteadyEmberProbe
+      RafiBackwashProbe
+      RafiBahaProbe
+      SpectatorExchangeTests
+      AiReactionTimingTests
+      LagoonRecoveryProbe
+      PaeteKitPlayProbe
+      PaeteWorldSnapshotProbe
+      AmihanKitPlayProbe
+      PhaisterKitPlayProbe
+      PhaisterVoodooKitTests
+      WalkArmsProbe
+
+  capture  (22)
+   The fixtures whose job is to photograph something. They replace cameras, drive the render pipeline and write files, and a replaced camera is what several of the `MissingReferenceException: the object of type 'UnityEngine.Camera' has been destroyed` failures are holding.
+      AntiAliasStateProbe
+      CosmeticSurfaceProbe
+      GameplayShots
+      ModelFacingProbe
+      MsaaResolveProbe
+      NationalsShowcaseProbe
+      ImprovementEvidenceProbe
+      NearFadeProbe
+      ToneSweep
+      WorldOutlineCoverageProbe
+      MatchFrameRateProbe
+      HudPerformanceProbe
+      ReplayCaptureProbe
+      AbilityStressProbe
+      KuroIdleReviewProbe
+      KuroMapClearanceProbe
+      MapExperienceProbe
+      SlipperRecallShots
+      BusyExchangeProbe
+      ThrowCancellationProbe
+      UltimateIntroductionProbe
+      HudIconSheetShots
+
+  services  (3)
+   ⚠️ THE ONLY GROUP WHOSE STATE LIVES ON SOMEBODY ELSE'S SERVER, so "tear the world down" does not reach it and neither does isolation from this side. § 126.8's own note: six of its cases went red in one run having passed in the previous one with nothing changed that touches authentication. In batch mode `NetIdentity` refuses UGS sign-in by design and these report SKIPPED with the reason.
+      UgsServicesProbe
+      OnlineSignInProbe
+      CloudEndpointActionProbe
+
+  bots  (2)
+   The long seeded probes. `BotBehaviourProbe` runs whole matches in both modes on two maps and is minutes rather than seconds; it shares nothing with the screens and would otherwise dominate a group's wall time.
+      BotBehaviourProbe
+      AiDiagnosticProbe
+
+PARTITION PROBLEMS, nothing was run:
+  - AiObstacleQueryTests (AiObstacleQueryTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - AttachedEffectVisibilityTests (AttachedEffectVisibilityTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - BotHopInputTests (BotHopInputTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - BotLandingPredictionTests (BotLandingPredictionTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - BotSlipperQueryTests (BotSlipperQueryTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - BotSpacingQueryTests (BotSpacingQueryTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - CarrierDisableLifetimeTests (CarrierDisableLifetimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - CheskaWikiRuleTests (CheskaWikiRuleTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - Client (RoundBreakFreezeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - Clock (TimedPowerUiTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - ClosedCircuitTests (ClosedCircuitTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - CloudRequestTimeoutTests (CloudRequestTimeoutTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - ColdArrivalActorFreezeTests (ColdArrivalActorFreezeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - CurrentPauseExitTests (CurrentPauseExitTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - EmoteWheelLifetimeTests (EmoteWheelLifetimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - EmpoweredThrowTests (EmpoweredThrowTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - FeedbackHudMenuTests (FeedbackHudMenuTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - FeedbackMenuRouteTests (FeedbackMenuRouteTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - FetchQueryAllocationTests (FetchQueryAllocationTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - FrameContextTests (FrameContextTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - FrostbiteDeliveryTests (FrostbiteDeliveryTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - GameplayChatInputTests (GameplayChatInputTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - HauntedRuntimeTests (HauntedRuntimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - HubAdmissionTests (HubAdmissionTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - IlalimSidewalkPlayProbe (IlalimSidewalkPlayProbe.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - InputFocusLifetimeTests (InputFocusLifetimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - Kit (TimedPowerUiTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - KitRecallParityChecks (LoadoutSurfaceProbe.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - LandingCircleTests (LandingCircleTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - LivePoseHistoryTests (LivePoseHistoryTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - LungeDisableLifetimeTests (LungeDisableLifetimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - LungeWindupLifetimeTests (LungeWindupLifetimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - MapVotePacketTests (MapVotePacketTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - NemuCatchContractTests (NemuCatchContractTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - NemuFetchContractTests (NemuFetchContractTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - NemuSitContractTests (NemuSitContractTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - Observer (AmihanAirburstTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - OfflineMenuPauseTests (OfflineMenuPauseTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - PauseOwnerRebindTests (PauseOwnerRebindTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - PlayerHubFriendJoinHandlerTests (PlayerHubFriendJoinHandlerTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - PlayerHubOwnerDetailTests (PlayerHubOwnerDetailTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - PracticeAttentionTests (PracticeAttentionTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - QueueAdvertOwnershipTests (QueueAdvertOwnershipTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - QuickCircuitTests (QuickCircuitTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - ReadyGateNetworkTests (ReadyGateNetworkTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - RecastAbility (QuickCircuitTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - RecastKit (QuickCircuitTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - RecordChoiceFocusTests (RecordChoiceFocusTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - RemadeMapPreviewTests (RemadeMapPreviewTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - ScoreStockPacketTests (ScoreStockPacketTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - ScorecardFocusTests (ScorecardFocusTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - SettingsDecisionFocusTests (SettingsDecisionFocusTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - SlideDisableLifetimeTests (SlideDisableLifetimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - SpectatorCameraLifetimeTests (SpectatorCameraLifetimeTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - StokeStepChecks (SeanSkillTimingProbe.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - ThrowChargeUiTests (ThrowChargeUiTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - TimedPowerUiTests (TimedPowerUiTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - TouchLayoutHudLifecycleTests (TouchLayoutHudLifecycleTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - TournamentPenaltyTimingTests (TournamentPenaltyTimingTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - TrainingEmoteEligibilityTests (TrainingEmoteEligibilityTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - TrainingPauseTransitionTests (TrainingPauseTransitionTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - VictoryInputTests (VictoryInputTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - VoodooDollBodyTests (VoodooDollBodyTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.
+  - ZackBankShotTests (ZackBankShotTests.cs) is in NO group. Every fixture runs exactly once: add it to the group whose world it shares.

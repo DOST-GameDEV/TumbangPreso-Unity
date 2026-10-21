@@ -1,0 +1,9 @@
+{
+  "changed": [
+    "Assets/TumbangPreso/Tests/TouchLayoutNullListTests.cs",
+    "Assets/TumbangPreso/Tests/TouchLayoutNullListTests.cs.meta"
+  ],
+  "correctionCount": 1,
+  "nativeLaunched": false,
+  "reason": "Only concurrently retired peer-owned new fixture/meta; retained bytes/hash checked, every other input unchanged."
+}

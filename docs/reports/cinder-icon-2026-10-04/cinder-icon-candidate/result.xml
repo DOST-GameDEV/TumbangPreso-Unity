@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:30Z" duration="0.4521946">
+  <test-suite type="TestSuite" id="3051" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:30Z" duration="0.452195" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3045" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:30Z" duration="0.430968" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="97333" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3046" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:30Z" duration="0.416054" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3047" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:30Z" duration="0.401175" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2848" name="TumpNativePickerTests" fullname="TumbangPreso.PlayTests.TumpNativePickerTests" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:30Z" duration="0.353463" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2854" name="ChangingAnAbilityGlyphRebuildsItsRenderedMeshAndTexture" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.ChangingAnAbilityGlyphRebuildsItsRenderedMeshAndTexture" methodname="ChangingAnAbilityGlyphRebuildsItsRenderedMeshAndTexture" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="1878813853" result="Passed" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:29Z" duration="0.095120" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2849" name="CinderGateHasItsOwnIllustrationAtHudAndSmallSizes" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.CinderGateHasItsOwnIllustrationAtHudAndSmallSizes" methodname="CinderGateHasItsOwnIllustrationAtHudAndSmallSizes" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="1107287421" result="Passed" start-time="2026-10-04 12:45:29Z" end-time="2026-10-04 12:45:30Z" duration="0.245408" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] CinderGate-icon-sizes/CinderSize128: vertices=4, cull=False, alpha=1, depth=0, material=1
+[TumpGeometry] CinderGate-icon-sizes/CinderSize72: vertices=4, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] CinderGate-icon-sizes/CinderSize44: vertices=4, cull=False, alpha=1, depth=2, material=1
+[TumpUiCapture] CinderGate-icon-sizes cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

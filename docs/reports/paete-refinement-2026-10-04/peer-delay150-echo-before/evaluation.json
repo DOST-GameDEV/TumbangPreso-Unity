@@ -1,0 +1,62 @@
+{
+  "scope": "Three actual Linux player processes over loopback; observer kit refresh, not process restart or WAN/hardware qualification",
+  "errors": [
+    "host caster did not make bounded approach",
+    "host did not stop at capsule contact",
+    "owner caster did not make bounded approach",
+    "owner did not stop at capsule contact",
+    "observer caster did not make bounded approach",
+    "observer did not stop at capsule contact"
+  ],
+  "peers": {
+    "host": {
+      "samples": 629,
+      "casterTravel": 0.28000000000000025,
+      "targetTravel": 1.044,
+      "finalGap": 4.676,
+      "casterFinal": [
+        0.0,
+        -7.72
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "activeSamples": 31,
+      "refreshed": false
+    },
+    "owner": {
+      "samples": 620,
+      "casterTravel": 0.28000000000000025,
+      "targetTravel": 1.044,
+      "finalGap": 4.676,
+      "casterFinal": [
+        0.0,
+        -7.72
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "activeSamples": 20,
+      "refreshed": false
+    },
+    "observer": {
+      "samples": 618,
+      "casterTravel": 0.28000000000000025,
+      "targetTravel": 1.044,
+      "finalGap": 4.676,
+      "casterFinal": [
+        0.0,
+        -7.72
+      ],
+      "targetFinal": [
+        0.0,
+        -3.044
+      ],
+      "activeSamples": 9,
+      "refreshed": true
+    }
+  },
+  "ok": false
+}

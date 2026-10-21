@@ -1,0 +1,6 @@
+3 ScreenVeranda: low-palm texture/edges, actual woven-strip fibre axes; original topology/other slots retained.
+5 CommunityShade: low-palm texture/edges; original topology/other slots retained.
+6 ScreenVeranda: low-palm texture/edges, actual woven-strip fibre axes; original topology/other slots retained.
+10 ScreenVeranda: low-palm texture/edges, actual woven-strip fibre axes; original topology/other slots retained.
+17 ScreenVeranda: low-palm texture/edges, actual woven-strip fibre axes; original topology/other slots retained.
+Five low roofs and 4 woven screens; 8040 added edge vertices/five renderers, no new colliders/shadow casters. Gable/hip/gameplay/birds unchanged.

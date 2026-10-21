@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.3916598">
+  <test-suite type="TestSuite" id="3100" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1712" result="Failed" site="Child" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.391660" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3092" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1712" result="Failed" site="Child" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.367518" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9040" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3093" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1712" result="Failed" site="Child" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.351955" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3096" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1710" result="Failed" site="Child" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.336337" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2155" name="OwnerPoseFeedbackTests" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.292226" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2156" name="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1017142576" result="Failed" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.127134" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An accepted earlier owner pose pulled valid prediction backward after its round trip.
+  Expected: (1.60, 0.00, 0.00)
+  But was:  (0.00, 0.00, 0.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<AcceptedEcho>d__10.MoveNext () [0x00083] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2157" name="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1991221044" result="Failed" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.036319" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An accepted earlier owner pose pulled valid prediction backward after its round trip.
+  Expected: (4.20, 0.00, 0.00)
+  But was:  (0.00, 0.00, 0.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<AcceptedEcho>d__10.MoveNext () [0x00083] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2160" name="AcceptedOtherSeatPosesStillMoveTheObservedReplica" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedOtherSeatPosesStillMoveTheObservedReplica" methodname="AcceptedOtherSeatPosesStillMoveTheObservedReplica" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="523201854" result="Passed" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.035811" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2159" name="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.ANewMovementEpochStillAppliesTheAuthoritativeTeleport" methodname="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1100286595" result="Passed" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.037743" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2158" name="AnExplicitHostCorrectionStillCorrectsTheOwner" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AnExplicitHostCorrectionStillCorrectsTheOwner" methodname="AnExplicitHostCorrectionStillCorrectsTheOwner" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="317539055" result="Passed" start-time="2026-10-04 17:57:55Z" end-time="2026-10-04 17:57:55Z" duration="0.039048" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

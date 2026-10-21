@@ -1,0 +1,24 @@
+{
+  "phase": "final",
+  "preparedUtc": "2026-10-02T05:55:02.0820331Z",
+  "expectedCases": 2,
+  "testFilter": "TumbangPreso.Tests.FailureBundleAbandonTests",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Diagnostics/FailureBundle.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\failure-bundle-abandon1002\\frozen\\FailureBundle.candidate.cs",
+      "sha256": "1C9B956235CD316EDC8A63326C5103013C7CD19FF91D3B36AA94DD97CB4DB2F6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/FailureBundleAbandonTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\failure-bundle-abandon1002\\frozen\\FailureBundleAbandonTests.cs",
+      "sha256": "BD3F1BDCC0659B9CF0A3058BF1A77C66FE9917E37E18498A75786DD29ECE539A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/FailureBundleAbandonTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\failure-bundle-abandon1002\\frozen\\FailureBundleAbandonTests.cs.meta",
+      "sha256": "1D5529BFC8F8209E0E6DE3F6B46670D3FC9F192D6E5BEA3910FC07C2E4670A07"
+    }
+  ],
+  "protectedCount": 1290
+}

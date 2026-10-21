@@ -1,0 +1,9 @@
+{
+  "source": "43514ae9c9260b11fb9fcf45fdddc5e6b794f0d4",
+  "checks": {
+    "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": true,
+    "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs": true
+  },
+  "retry": 0,
+  "scope": "Actual CareerStore refresh completion/cache identity, not live account switching"
+}

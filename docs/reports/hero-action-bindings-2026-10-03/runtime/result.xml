@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 12:48:17Z" end-time="2026-10-03 12:48:18Z" duration="0.2619089">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1121" result="Passed" start-time="2026-10-03 12:48:17Z" end-time="2026-10-03 12:48:18Z" duration="0.261909" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2367" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1121" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.213943" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="100026" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2368" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1121" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.207041" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2369" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1121" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.201141" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1376" name="HeroPresentationTests" fullname="TumbangPreso.Tests.HeroPresentationTests" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" testcasecount="32" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.167717" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1409" name="EveryActionChainHasAShippedOwnClipOrFallback" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryActionChainHasAShippedOwnClipOrFallback" methodname="EveryActionChainHasAShippedOwnClipOrFallback" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="2145800033" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.108665" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1401" name="EveryHeroAbilityHasBespokeCastAndViewModelActions" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.045307" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1392" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;dante&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;dante&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1487091744" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.028048" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1393" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;cheska&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;cheska&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="727918570" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.002011" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1394" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;sean&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;sean&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1683872455" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.001966" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1395" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;zack&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;zack&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1203587247" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.001897" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1396" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;nemu&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;nemu&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="2089744836" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.002044" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1397" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;phaister&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;phaister&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1221044312" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.001495" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1398" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;rafi&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;rafi&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="377313589" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.001435" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1399" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;amihan&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;amihan&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1068390758" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.001584" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1400" name="EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;paete&quot;)" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions(&quot;paete&quot;)" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1589169840" result="Passed" start-time="2026-10-03 12:48:18Z" end-time="2026-10-03 12:48:18Z" duration="0.001537" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

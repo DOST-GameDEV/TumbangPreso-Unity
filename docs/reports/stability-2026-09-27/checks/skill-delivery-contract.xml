@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.0672063">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="619" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.067206" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1721" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="619" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.058889" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="53296" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1722" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="619" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.056557" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1723" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="619" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.054073" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1230" name="InputMapAndAbilityTests" fullname="TumbangPreso.Tests.InputMapAndAbilityTests" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" testcasecount="33" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.037528" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1231" name="EveryRosterAbilityDeclaresItsNetworkDeliveryAndPassesTheBuildGate" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.EveryRosterAbilityDeclaresItsNetworkDeliveryAndPassesTheBuildGate" methodname="EveryRosterAbilityDeclaresItsNetworkDeliveryAndPassesTheBuildGate" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="1033806662" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.018113" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1236" name="InvalidAbilityDeliveryCannotEnterACheckedKit" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InvalidAbilityDeliveryCannotEnterACheckedKit" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.004772" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1232" name="InvalidAbilityDeliveryCannotEnterACheckedKit(Unspecified,SharedUltimate)" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InvalidAbilityDeliveryCannotEnterACheckedKit(Unspecified,SharedUltimate)" methodname="InvalidAbilityDeliveryCannotEnterACheckedKit" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="908464076" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.002118" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1233" name="InvalidAbilityDeliveryCannotEnterACheckedKit(SharedUltimate,SharedUltimate)" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InvalidAbilityDeliveryCannotEnterACheckedKit(SharedUltimate,SharedUltimate)" methodname="InvalidAbilityDeliveryCannotEnterACheckedKit" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="1135824922" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.000121" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1234" name="InvalidAbilityDeliveryCannotEnterACheckedKit(Predicted,Predicted)" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InvalidAbilityDeliveryCannotEnterACheckedKit(Predicted,Predicted)" methodname="InvalidAbilityDeliveryCannotEnterACheckedKit" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="607894783" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.000077" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1235" name="InvalidAbilityDeliveryCannotEnterACheckedKit(99,SharedUltimate)" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InvalidAbilityDeliveryCannotEnterACheckedKit(99,SharedUltimate)" methodname="InvalidAbilityDeliveryCannotEnterACheckedKit" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="1086618605" result="Passed" start-time="2026-09-27 02:02:47Z" end-time="2026-09-27 02:02:47Z" duration="0.000066" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

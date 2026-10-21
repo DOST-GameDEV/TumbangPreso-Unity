@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &148454527
 RectTransform:
   m_ObjectHideFlags: 0
@@ -189,7 +189,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: press any key to skip
+  m_Text: 
 --- !u!222 &148454529
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -484,6 +484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.UI.SplashScreen
   _clip: {fileID: 32900000, guid: e6c23de3b78a95c42b3f4c595e677b6e, type: 3}
+  _portableClip: {fileID: 32900000, guid: 0212d8d6d52445a3b5df6198061071b0, type: 3}
   _sting: {fileID: 8300000, guid: b83881d92a0e5a148a03409584da961c, type: 3}
 --- !u!114 &1907392948
 MonoBehaviour:

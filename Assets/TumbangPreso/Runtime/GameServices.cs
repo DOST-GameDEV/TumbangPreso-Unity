@@ -64,10 +64,14 @@ namespace TumbangPreso
         /// <summary>Friends, blocks and presence. `docs/TODO.md` § 102.</summary>
         public static Net.SocialStore Social { get; private set; }
 
+        /// <summary>The TANSAN wallet, read-only on the client. `docs/TODO.md` UX-1.8.</summary>
+        public static Net.WalletStore Wallet { get; private set; }
+
         /// <summary>The announcer. Godot had it inside AudioManager; it is its own director
         /// here because its take pooling, per-line cooldowns and music ducking are a system,
         /// not three fields on the SFX player.</summary>
         public static Audio.VoiceDirector Voice { get; private set; }
+        public static Audio.HeroVoice HeroVoice { get; private set; }
 
         public static bool Ready => _root != null;
 
@@ -78,21 +82,26 @@ namespace TumbangPreso
         /// booting: the bed is the one thing in an audio stack whose absence a player can play
         /// straight through without noticing anything is broken.
         /// </summary>
-        public static AudioClip MenuTrack => LoadMusic("ost_menu", ref _menuTrack);
-        public static AudioClip MatchTrack => LoadMusic("ost_match", ref _matchTrack);
+        public static AudioClip MenuTrack => LoadMusic("ost_menu", ref _menuTrack, ref _menuTried);
+        public static AudioClip MatchTrack => LoadMusic("ost_match", ref _matchTrack, ref _matchTried);
 
+        public static AudioClip TutorialTrack => LoadMusic("ost_tutorial", ref _tutorialTrack, ref _tutorialTried);
+        public static string ArenaMusicCue => GameLaunch.GuidedTutorial ? "tutorial" : "match";
+        public static AudioClip ArenaTrack => GameLaunch.GuidedTutorial ? TutorialTrack : MatchTrack;
+
+        private static AudioClip _tutorialTrack;
+        private static bool _tutorialTried;
         private static AudioClip _menuTrack;
         private static AudioClip _matchTrack;
         private static bool _menuTried, _matchTried;
 
-        private static AudioClip LoadMusic(string name, ref AudioClip cache)
+        private static AudioClip LoadMusic(string name, ref AudioClip cache, ref bool tried)
         {
             if (cache != null) return cache;
 
-            bool tried = name == "ost_menu" ? _menuTried : _matchTried;
             if (tried) return null;
 
-            if (name == "ost_menu") _menuTried = true; else _matchTried = true;
+            tried = true;
 
             cache = Resources.Load<AudioClip>($"Music/{name}");
             if (cache == null)
@@ -103,6 +112,46 @@ namespace TumbangPreso
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Bootstrap() => Ensure();
+
+#if UNITY_EDITOR
+        /// ⚠️⚠️ THE ROOT OUTLIVED PLAY MODE IN THE EDITOR, ONE COPY PER PRESS OF PLAY. Owner,
+        /// 2026-09-27, a Scene view screenshot of the Lagoon Cove court in EDIT mode covered in
+        /// AudioSource gizmos: *"whats with all the sound emmiters"*. They were `WorldVoice*`
+        /// pool voices (one read `step_rubber`), about 70 of them: six leaked roots of 12 world
+        /// voices each, parked where their last footstep played. `HideAndDontSave` (below, and
+        /// correct for a build) means Unity never destroys the object when Play ends; the docs
+        /// require a manual `DestroyImmediate`. Every leaked root kept its own AudioListener and
+        /// managers alive in the editor until the next domain reload. A built player never
+        /// leaves Play, so this is editor only.
+        ///
+        /// On returning to edit mode, every `~GameServices` root still alive is destroyed and
+        /// the static references cleared, so the next Play (with or without a domain reload)
+        /// builds a fresh one. Also run once on script reload, which sweeps up roots leaked
+        /// before this existed.
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void HookEditorCleanup()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged += state =>
+            {
+                if (state == UnityEditor.PlayModeStateChange.EnteredEditMode)
+                    PurgeLeakedRoots();
+            };
+            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+                PurgeLeakedRoots();
+        }
+
+        private static void PurgeLeakedRoots()
+        {
+            foreach (var director in Resources.FindObjectsOfTypeAll<AudioDirector>())
+            {
+                if (director == null || UnityEditor.EditorUtility.IsPersistent(director)) continue;
+                var go = director.gameObject;
+                if (go.name == "~GameServices")
+                    Object.DestroyImmediate(go);
+            }
+            _root = null;
+        }
+#endif
 
         /// <summary>
         /// Builds the services root if it does not exist yet. Idempotent, and public for
@@ -136,6 +185,7 @@ namespace TumbangPreso
             Audio = _root.AddComponent<AudioDirector>();
             Match = _root.AddComponent<MatchDirector>();
             Round = _root.AddComponent<RoundDirector>();
+            _root.AddComponent<SharedUltimatePhase>();
 
             // ⚠️ AFTER BOTH DIRECTORS, because `LastTsinelasDirector.OnEnable` subscribes to
             // `Match.RoundStarted` and `Round.Tagged`, and `AddComponent` runs `OnEnable`
@@ -145,6 +195,7 @@ namespace TumbangPreso
 
             Music = _root.AddComponent<Audio.MusicDirector>();
             Voice = _root.AddComponent<Audio.VoiceDirector>();
+            HeroVoice = _root.AddComponent<Audio.HeroVoice>();
             Account = _root.AddComponent<Net.PlayerAccount>();
 
             // ⚠️ THE CAREER IS ADDED AFTER THE ACCOUNT, DELIBERATELY. `CareerStore.Awake`
@@ -170,6 +221,9 @@ namespace TumbangPreso
             // drawn under another player's name. Same hazard and same answer as the two lines
             // above: order the construction rather than hoping for one.
             Social = _root.AddComponent<Net.SocialStore>();
+
+            // ⚠️ AFTER `Career`, because the wallet listens to career syncs to settle new matches.
+            Wallet = _root.AddComponent<Net.WalletStore>();
         }
 
         /// <summary>
@@ -191,9 +245,11 @@ namespace TumbangPreso
             Stats = null;
             Telemetry = null;
             Social = null;
+            Wallet = null;
 
             _menuTrack = null;
             _matchTrack = null;
+            _tutorialTrack = null; _tutorialTried = false;
             _menuTried = false;
             _matchTried = false;
         }

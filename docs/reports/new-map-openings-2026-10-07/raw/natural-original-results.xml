@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 02:09:09Z" end-time="2026-10-07 02:09:27Z" duration="17.5897925">
+  <test-suite type="TestSuite" id="3468" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2001" result="Failed" site="Child" start-time="2026-10-07 02:09:09Z" end-time="2026-10-07 02:09:27Z" duration="17.589793" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3460" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2001" result="Failed" site="Child" start-time="2026-10-07 02:09:09Z" end-time="2026-10-07 02:09:27Z" duration="17.570311" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="42368" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3461" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2001" result="Failed" site="Child" start-time="2026-10-07 02:09:09Z" end-time="2026-10-07 02:09:27Z" duration="17.559897" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3464" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1999" result="Failed" site="Child" start-time="2026-10-07 02:09:09Z" end-time="2026-10-07 02:09:27Z" duration="17.547623" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1630" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-07 02:09:10Z" end-time="2026-10-07 02:09:27Z" duration="17.316778" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1640" name="BridgeNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeNaturalHeroCountdown" methodname="BridgeNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1950766171" result="Failed" start-time="2026-10-07 02:09:10Z" end-time="2026-10-07 02:09:20Z" duration="9.861521" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<NaturalFlow>d__23.MoveNext () [0x000b7] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:73
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Flow] unknown map 'PlayModeWorldReset_114', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1641" name="CoveNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveNaturalHeroCountdown" methodname="CoveNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1748987317" result="Failed" start-time="2026-10-07 02:09:20Z" end-time="2026-10-07 02:09:24Z" duration="4.644382" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<NaturalFlow>d__23.MoveNext () [0x000b7] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:73
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_152', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1642" name="KantoNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoNaturalHeroCountdown" methodname="KantoNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="908386254" result="Failed" start-time="2026-10-07 02:09:24Z" end-time="2026-10-07 02:09:27Z" duration="2.790826" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<NaturalFlow>d__23.MoveNext () [0x000b7] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:73
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_187', falling back to 'Eskinita'.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

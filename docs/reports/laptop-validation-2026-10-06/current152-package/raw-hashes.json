@@ -1,0 +1,30 @@
+{
+  "artifact-manifest.json": {
+    "bytes": 51033,
+    "sha256": "e407e40685617a40e6fb1f450abaf516de9643645f24ed640d50eb33a33eb511"
+  },
+  "build-identity.json": {
+    "bytes": 367,
+    "sha256": "5b693acda859d17f2fcdd91067ecaf48e6ff5c044a87294d11783816999fcb14"
+  },
+  "build-summary.txt": {
+    "bytes": 1434,
+    "sha256": "8502f764f2e52926a4bced6afb576e60aa3ef7155b83c30c3ca3aa1ddfe3aaf3"
+  },
+  "direct-result.json": {
+    "bytes": 23219,
+    "sha256": "d154dd64064415caa8cf821b470998a900a440f92c79bfd0e6b3b853af188573"
+  },
+  "dirty-classification.json": {
+    "bytes": 102394,
+    "sha256": "fbc41f5cb371fb250a12420f984b0863e543cebe9e06697f72eb9b59799ef913"
+  },
+  "launch.json": {
+    "bytes": 959,
+    "sha256": "9d3ea710b234f9ba2af30cec14ed354b4c68fafaeafd5603bb32cff3e2d0a6b2"
+  },
+  "settings-change-classification.json": {
+    "bytes": 640,
+    "sha256": "a99cd3a534ab3edc2852db0afa7d3ce9b35c089f469f4869feac86ff95d15250"
+  }
+}

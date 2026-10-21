@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 16:02:55Z" end-time="2026-10-01 16:02:56Z" duration="0.3088385">
+  <test-suite type="TestSuite" id="2491" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-01 16:02:55Z" end-time="2026-10-01 16:02:56Z" duration="0.308839" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2485" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-01 16:02:55Z" end-time="2026-10-01 16:02:56Z" duration="0.293343" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="332720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2486" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-01 16:02:55Z" end-time="2026-10-01 16:02:56Z" duration="0.285743" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2487" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1220" result="Failed" site="Child" start-time="2026-10-01 16:02:55Z" end-time="2026-10-01 16:02:56Z" duration="0.278943" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1556" name="KitRecallParityChecks" fullname="TumbangPreso.PlayTests.KitRecallParityChecks" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 16:02:56Z" end-time="2026-10-01 16:02:56Z" duration="0.250119" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1559" name="SameKitRoleChangeRefreshesItsRealNameAndDescription" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 16:02:56Z" end-time="2026-10-01 16:02:56Z" duration="0.245723" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1557" name="SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;cheska&quot;)" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;cheska&quot;)" methodname="SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="226863085" result="Failed" start-time="2026-10-01 16:02:56Z" end-time="2026-10-01 16:02:56Z" duration="0.190429" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Same kit kept the attacker's name after becoming defender.
+  Expected: collection containing "GLACIAL WALL"
+  But was:  < "CHESKA  ·  HERO POWERS", "HOLD [TAB] TO INSPECT", "E", "COLD FEET", "GROUND ZONE", "35s CD", "Hold to aim, release to freeze a patch of street for 7.5 s. Anyone standing in it is Chilled: half speed, and it lingers.", "Q", "FROSTBITE", "SLIPPER BUFF", "35s CD · 10s", "Attacking. Frost your slipper for 10 s. The next player it hits is Frozen: no moving, no grabbing, for 2.5 s.", "X", "ABSOLUTE ZERO", "AREA BURST", "ULTIMATE", "After 1.5 s, every player is Frozen for 2.5 s, then Chilled for 5 s as they thaw." >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription (System.String hero) [0x00055] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/LoadoutSurfaceProbe.cs:777
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1558" name="SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;dante&quot;)" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription(&quot;dante&quot;)" methodname="SameKitRoleChangeRefreshesItsRealNameAndDescription" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="1010760279" result="Failed" start-time="2026-10-01 16:02:56Z" end-time="2026-10-01 16:02:56Z" duration="0.043572" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Same kit kept the attacker's name after becoming defender.
+  Expected: collection containing "BASTION"
+  But was:  < "DANTE  ·  HERO POWERS", "HOLD [TAB] TO INSPECT", "E", "UNSTOPPABLE", "PROTECTION", "40s CD · 15s", "Remove removable negative effects and gain Status Immunity for 15 s. Tagged cannot be removed.", "Q", "BOULDER", "PROJECTILE", "35s CD", "Imbue your held slipper. Your next throw inflicts Concussed on a player hit: 75% slower for 2.5 s.", "X", "CONTINENTAL DRIFT", "AREA BURST", "ULTIMATE", "A wide earthquake cascades forward in successive blasts. Players caught in each blast are Concussed for 2.5 s." >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.KitRecallParityChecks.SameKitRoleChangeRefreshesItsRealNameAndDescription (System.String hero) [0x00055] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/LoadoutSurfaceProbe.cs:777
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

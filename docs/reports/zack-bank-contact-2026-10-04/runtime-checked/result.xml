@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.5189481">
+  <test-suite type="TestSuite" id="1032" name="TUMP Bank Runtime1004" fullname="TUMP Bank Runtime1004" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.518948" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1026" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.510305" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17155" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1027" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.508593" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1028" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.506718" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1003" name="ZackBankShotTests" fullname="TumbangPreso.PlayTests.ZackBankShotTests" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="19" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.504171" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1014" name="CeilingBetweenOverclockBanksDoesNotReplayBankFlairOrSpendCredit" fullname="TumbangPreso.PlayTests.ZackBankShotTests.CeilingBetweenOverclockBanksDoesNotReplayBankFlairOrSpendCredit" methodname="CeilingBetweenOverclockBanksDoesNotReplayBankFlairOrSpendCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="95111909" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:18Z" duration="0.287373" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+[UI] Darumadrop is missing from Resources/UI/fonts/DarumadropOne-Regular; the menus will draw in the wrong face.
+[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1013" name="CeilingDoesNotSpendTheRemainingPoweredWallCredit" fullname="TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:18Z" duration="0.079718" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1011" name="CeilingDoesNotSpendTheRemainingPoweredWallCredit(False)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit(False)" methodname="CeilingDoesNotSpendTheRemainingPoweredWallCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1752921413" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:18Z" duration="0.041097" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+]]></output>
+              </test-case>
+              <test-case id="1012" name="CeilingDoesNotSpendTheRemainingPoweredWallCredit(True)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit(True)" methodname="CeilingDoesNotSpendTheRemainingPoweredWallCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1503454415" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:18Z" duration="0.035491" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1017" name="EveryUnspunPoweredWallAnnouncesContact" fullname="TumbangPreso.PlayTests.ZackBankShotTests.EveryUnspunPoweredWallAnnouncesContact" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.080044" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1015" name="EveryUnspunPoweredWallAnnouncesContact(False,1)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.EveryUnspunPoweredWallAnnouncesContact(False,1)" methodname="EveryUnspunPoweredWallAnnouncesContact" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="150632281" result="Passed" start-time="2026-10-04 04:51:18Z" end-time="2026-10-04 04:51:19Z" duration="0.030066" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+]]></output>
+              </test-case>
+              <test-case id="1016" name="EveryUnspunPoweredWallAnnouncesContact(True,2)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.EveryUnspunPoweredWallAnnouncesContact(True,2)" methodname="EveryUnspunPoweredWallAnnouncesContact" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1027971859" result="Passed" start-time="2026-10-04 04:51:19Z" end-time="2026-10-04 04:51:19Z" duration="0.048531" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1018" name="OrdinaryCeilingContactRetainsExistingBankLimit" fullname="TumbangPreso.PlayTests.ZackBankShotTests.OrdinaryCeilingContactRetainsExistingBankLimit" methodname="OrdinaryCeilingContactRetainsExistingBankLimit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1795781135" result="Passed" start-time="2026-10-04 04:51:19Z" end-time="2026-10-04 04:51:19Z" duration="0.033398" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Audio] no cue registered for 'slipper_land'.
+[Audio] no cue registered for 'slipper_land'.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Bank Runtime1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

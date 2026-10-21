@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sharedInputUnchanged": true,
+  "profile": "presentation-native-environment-20260922",
+  "existingFilesRestored": 0,
+  "reviewPassed": false,
+  "error": "System.InvalidOperationException: Native review loaded the wrong map\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<MapSurfacesOnly>d__7.MoveNext () [0x003e5] in <73c81ebda95c44a69f9051a3dea0006f>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__33.MoveNext () [0x00054] in <73c81ebda95c44a69f9051a3dea0006f>:0 "
+}

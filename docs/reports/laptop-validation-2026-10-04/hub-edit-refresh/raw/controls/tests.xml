@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 04:38:20Z" end-time="2026-10-04 04:38:21Z" duration="0.520533">
+  <test-suite type="TestSuite" id="2984" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1614" result="Passed" start-time="2026-10-04 04:38:20Z" end-time="2026-10-04 04:38:21Z" duration="0.520533" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2978" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1614" result="Passed" start-time="2026-10-04 04:38:20Z" end-time="2026-10-04 04:38:21Z" duration="0.505365" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="32648" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2979" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1614" result="Passed" start-time="2026-10-04 04:38:20Z" end-time="2026-10-04 04:38:21Z" duration="0.495765" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2980" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1614" result="Passed" start-time="2026-10-04 04:38:20Z" end-time="2026-10-04 04:38:21Z" duration="0.486826" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2208" name="PlayerHubDeferredRefreshControlTests" fullname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests" classname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-04 04:38:20Z" end-time="2026-10-04 04:38:21Z" duration="0.462635" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2211" name="ClosingWithPendingRefreshCannotReopenTheHub" fullname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests.ClosingWithPendingRefreshCannotReopenTheHub" methodname="ClosingWithPendingRefreshCannotReopenTheHub" classname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests" runstate="Runnable" seed="1149503524" result="Passed" start-time="2026-10-04 04:38:20Z" end-time="2026-10-04 04:38:21Z" duration="0.303350" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2209" name="EditingKeepsSelectionThenBlurRefreshesNoneditedBio" fullname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests.EditingKeepsSelectionThenBlurRefreshesNoneditedBio" methodname="EditingKeepsSelectionThenBlurRefreshesNoneditedBio" classname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests" runstate="Runnable" seed="707521659" result="Passed" start-time="2026-10-04 04:38:21Z" end-time="2026-10-04 04:38:21Z" duration="0.066241" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2210" name="PointerUpDeliversItsButtonBeforePendingRowsRebuild" fullname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests.PointerUpDeliversItsButtonBeforePendingRowsRebuild" methodname="PointerUpDeliversItsButtonBeforePendingRowsRebuild" classname="TumbangPreso.PlayTests.PlayerHubDeferredRefreshControlTests" runstate="Runnable" seed="1125850270" result="Passed" start-time="2026-10-04 04:38:21Z" end-time="2026-10-04 04:38:21Z" duration="0.081895" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

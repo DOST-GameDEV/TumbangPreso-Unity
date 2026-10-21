@@ -32,7 +32,7 @@ namespace TumbangPreso
     /// </remarks>
     [DefaultExecutionOrder(-100)]
     [RequireComponent(typeof(CharacterController))]
-    public sealed class CharacterMotor : MonoBehaviour
+    public sealed partial class CharacterMotor : MonoBehaviour
     {
         [Header("Role")]
         [SerializeField] private bool _isDefender;
@@ -302,6 +302,12 @@ namespace TumbangPreso
         public Stamina Stamina { get; private set; }
 
         public Vector3 Velocity => _velocity;
+        // Read-only presentation speed includes a slide/lunge's impulse as well
+        // as steerable travel. It never feeds back into movement or networking.
+        public Vector3 PresentationTravelVelocity => _velocity + _externalVelocity;
+        /// <summary>How fast a shove or carry is sliding this body, flat, m/s. Real only on the peer that simulates it
+        /// (Dante's Earthbound furrows read it there; other peers see the slide through the stagger).</summary>
+        public float ExternalFlatSpeed => new Vector2(_externalVelocity.x, _externalVelocity.z).magnitude;
         public bool IsGrounded => _grounded;
         public bool IsSwimming => RooftopPool.Swimming(transform.position);
         private bool _swimLeap;
@@ -339,6 +345,12 @@ namespace TumbangPreso
             _cc = GetComponent<CharacterController>();
             Stamina = new Stamina();
             if (GetComponent<Visual.MotionFoley>() == null) gameObject.AddComponent<Visual.MotionFoley>();
+            // The Whirled and Chilled body tells, on every peer (`Visual.StatusBodyMarks`).
+            if (GetComponent<Visual.StatusBodyMarks>() == null) gameObject.AddComponent<Visual.StatusBodyMarks>();
+            if (GetComponent<Visual.StatusOverhead>() == null) gameObject.AddComponent<Visual.StatusOverhead>();
+            if (GetComponent<Visual.PhaisterStatusPresenter>() == null) gameObject.AddComponent<Visual.PhaisterStatusPresenter>();
+            // HERO-10 v3: her reach's thread on the caster and her marks over the cursed, from replicated body state.
+            if (GetComponent<Visual.VoodooCursePresenter>() == null) gameObject.AddComponent<Visual.VoodooCursePresenter>();
         }
 
         /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's
@@ -370,10 +382,15 @@ namespace TumbangPreso
         /// </summary>
         public void BeginSpawnSettle()
         {
+            unchecked { PresentationTeleportSerial++; }
             _spawnSettle = Balance.SpawnSettleFrames;
             _spawnSettleAt = transform.position;
             _velocity = Vector3.zero;
             _externalVelocity = Vector3.zero;
+            // ⚠️ A SPAWN IS A FRESH START FOR EVERY STATUS THAT IS NOT A STUN (the stun stack has
+            // its own resets). A Whirl or a Chill must not follow a body across a round boundary,
+            // and a flight must not survive a teleport to the mark.
+            ClearStatuses();
         }
 
         /// <summary>
@@ -396,6 +413,9 @@ namespace TumbangPreso
         }
 
         public int MovementEpoch { get; private set; }
+        // Local presentation discontinuity, including offline teleports. Never
+        // serialized onto the gameplay wire or used to decide movement/outcomes.
+        public int PresentationTeleportSerial { get; private set; }
         private int _predictingAbility=-1,_teleportAbility=-1;
         private bool _awaitingTeleport;
         public bool AwaitingAuthoritativeTeleport=>_awaitingTeleport;
@@ -414,12 +434,20 @@ namespace TumbangPreso
         public void AdoptMovementEpoch(int epoch)
         {
             if(epoch<=MovementEpoch)return;
+            _paetePull?.Stop("movement epoch changed");
+            ClearNetworkResourceIntent();
+            InvalidateFlightEpisode();
+            ClearSpeedBoost();
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
         }
 
         public void Teleport(Vector3 position)
         {
             if (!MayMutateGameplayState()) return;
+            EndHaul();
+            EndSwing();
+            _paetePull?.Stop("teleport");
+            if(IsEdgeRecovering)ClearTrip();
             if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
             // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
             // BROKE IT. `Confine` holds a body that WALKS or is PUSHED at the edge, and a
@@ -438,8 +466,7 @@ namespace TumbangPreso
             //
             // ⚠️ THE SPAWN MARKS AND THE TAG SAFE ZONE ARE ALL WELL INSIDE THIS, so nothing that
             // was already correct moves by a millimetre.
-            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            position = AIController.ClampToPlayable(position);
 
             _cc.enabled = false;      // CharacterController fights direct transform writes
             transform.position = position;
@@ -618,7 +645,13 @@ namespace TumbangPreso
             Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
             if (wish.sqrMagnitude > 1.0f) wish.Normalize();
 
-            if (MouseAimed)
+            // ⚠️ THE DEBUG THIRD PERSON'S FREE CAMERA (`CameraRig.SetDebugCameraLock`, the prototype map only): the keys
+            // walk relative to the CAMERA, and the body turns to face the way it walks, by the bounded turn below that
+            // every movement-aimed body uses. Never true outside that debug view.
+            bool freeCamera = _rig != null && _rig.DebugFreeCamera && _rig.IsFollowing(this);
+            if (freeCamera) wish = Quaternion.Euler(0.0f, _rig.DebugOrbitYaw, 0.0f) * wish;
+
+            if (MouseAimed && !freeCamera)
             {
                 if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
                 wish = transform.TransformDirection(wish);
@@ -780,9 +813,12 @@ namespace TumbangPreso
 
         private void FixedUpdate()
         {
+            if (PresentationClock.Held) return;
             float dt = Time.fixedDeltaTime;
 
             ResolveRig();
+
+            if(StepEdgeRecoveryFixed(dt))return;
 
             // A remote body is a host-authored picture, not a second simulation. Before this
             // guard every client applied gravity and confinement to remote seats between
@@ -790,6 +826,7 @@ namespace TumbangPreso
             // visibly bob and fight itself, and it made bots look worse than human peers.
             if (NetAuthority.IsNetworked && !IsLocallySimulated())
             {
+                StepRemoteStamina(dt);
                 StepNetworkReplica(dt);
                 return;
             }
@@ -834,12 +871,17 @@ namespace TumbangPreso
             // when that was found and is 5 now (§ 83.13); the fault would be the same at either.
             bool canSteer = CanMove();
 
-            Vector2 axis = canSteer ? Intent.MoveAxis : Vector2.zero;
-            bool moving = axis.sqrMagnitude > 0.0001f;
+            // ⚠️ A FEARED BODY RUNS ON ITS OWN (the owner's flee), so it counts as moving whatever the stick says.
+            Vector2 axis = canSteer ? (IsFeared ? Vector2.up : Intent.MoveAxis) : Vector2.zero;
+            // A possessing ghost walks the body even with the stick at rest (`CharacterMotor.Possession.cs`).
+            bool moving = axis.sqrMagnitude > 0.0001f || (canSteer && !IsFeared && IsPossessionPulling);
 
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
-            float sprint = Stamina.Step(dt, moving, canSteer && Intent.Pressed(Verb.Sprint));
+            // HERO-10 (plan 9.5): Phaister walks while she reaches for someone with a curse, but she cannot sprint.
+            Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
+                                                   && !ReworkCrouched
+                                                   && Intent.Pressed(Verb.Sprint));
 
             // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
             // `character_base.gd::_enter_fatigue` plays it on the frame the bar bottoms out, and
@@ -872,27 +914,33 @@ namespace TumbangPreso
             // the taya can read where it is going to come out. `docs/TODO.md` § 146.
             if (CommitLeft > 0.0f) CommitLeft = Mathf.Max(0.0f, CommitLeft - dt);
 
-            float speed = Balance.Speed
-                          * Stamina.RoleSpeedScale(_isDefender)
-                          * Roster.PersonSpeedScale(_characterIndex, Mode)
-                          * sprint
+            float speed = Stamina.MovementSpeed(_isDefender, Stamina.IsSprinting)
                           * Stamina.SpeedZones.Value
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
+                          * StatusSpeedScale
+                          * SpeedBoostScale
+                          * BodySpeedScale
                           * RooftopPool.MovementScale(transform.position);
 
             if (canSteer)
             {
-                Vector3 wish = Steer(axis, dt);
+                Vector3 wish = IsFeared ? FleeWish() : PossessedWish(Steer(axis, dt), dt);
 
-                var target=new Vector2(wish.x*speed,wish.z*speed);
-                if (IsOnIce && _grounded)
-                    target=Vector2.MoveTowards(new Vector2(_velocity.x,_velocity.z),target,IceAcceleration()*dt);
-                _velocity.x=target.x;
-                _velocity.z=target.y;
+                // ⚠️ THE MOVEMENT REWORK PROTOTYPE takes the write for the local human while its debug switch is on
+                // (`MovementRework`, `CharacterMotor.MovementRework.cs`); otherwise this is the write it has always been.
+                if (!StepReworkVelocity(wish, speed, dt))
+                {
+                    var target=new Vector2(wish.x*speed,wish.z*speed);
+                    if (IsOnIce && _grounded)
+                        target=Vector2.MoveTowards(new Vector2(_velocity.x,_velocity.z),target,IceAcceleration()*dt);
+                    _velocity.x=target.x;
+                    _velocity.z=target.y;
+                }
             }
             else
             {
+                StepReworkIdle();
                 _velocity.x = Mathf.MoveTowards(_velocity.x, 0.0f, Balance.Friction * dt);
                 _velocity.z = Mathf.MoveTowards(_velocity.z, 0.0f, Balance.Friction * dt);
             }
@@ -901,6 +949,10 @@ namespace TumbangPreso
             // Every published knockback distance in the game is that solve, so this
             // deceleration is not a feel parameter: changing it invalidates SHOVE_SPEED,
             // LUNGE_SPEED and BLOCK_KNOCKBACK_SPEED all at once.
+            // ⚠️ THE CARRY IS HELD FIRST, THEN RELEASED INTO THE SAME `Friction` DECAY BELOW, which
+            // is what makes its tail the old v^2/(2 x Friction) exactly (`Core.CarryRules`).
+            StepCarry(dt);
+
             if (_externalVelocity.sqrMagnitude > 0.0001f)
             {
                 float mag = _externalVelocity.magnitude;
@@ -909,9 +961,20 @@ namespace TumbangPreso
             }
 
             ApplyGravity(dt);
+            // A haul owns the whole velocity while it lasts (`CharacterMotor.Status.cs`).
+            StepHaul(dt);
+            // And so does a swing on Paete's vines (`CharacterMotor.Swing.cs`).
+            StepSwing(dt);
 
             Vector3 total = _velocity + _externalVelocity;
+            if (PaetePullVelocity(dt, out var vineVelocity))
+            {
+                _velocity.x=vineVelocity.x; _velocity.z=vineVelocity.z;
+                total.x=vineVelocity.x; total.z=vineVelocity.z;
+            }
             CollisionFlags flags = _cc.Move(total * dt);
+            // Hauled up into something overhead: the line lets go rather than pin the body there.
+            if ((flags & CollisionFlags.Above) != 0) { EndHaul(); EndSwing(); }
 
             // ⚠️ `isGrounded` ALONE IS NOT TRUSTWORTHY. It reflects only the last Move and
             // goes false on slopes, on steps and on the frame an impulse lifts the capsule.
@@ -940,14 +1003,7 @@ namespace TumbangPreso
             ShedCharacterPerch();
             Confine();
 
-            // ⚠⚠ THE MASH IS READ HERE, BEFORE `CommitFrame`, AND IT IS THE JUMP KEY ON
-            // PURPOSE. Jump is the one verb that is meaningless while a body is face down on the
-            // tarmac, so nothing is taken away by giving it a second job in that state, and
-            // "hammer the jump key to get up" needs no teaching. It follows the pattern `Grab`
-            // already uses: one control, one action, resolved by context. No new binding is
-            // added, so `InputMapAndAbilityTests`' one-control-one-action rule is untouched.
-            bool mashPressed = Intent.JustPressed(Verb.Jump);
-            if (mashPressed) RecoverFromInput();
+            // Status recovery is timed; Jump has no recovery side effect.
 
             // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
             // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
@@ -1048,8 +1104,14 @@ namespace TumbangPreso
         {
             if (!_inputSourceKnown)
             {
+                // Prefer the replacement producer while the retired one awaits Destroy.
+                // Without a replacement, preserve a surviving paused producer's ownership.
                 _hostReader = GetComponent<PlayerInputReader>();
+                foreach (var reader in GetComponents<PlayerInputReader>())
+                    if (reader.enabled) { _hostReader = reader; break; }
                 _hostBrain = GetComponent<AIController>();
+                foreach (var brain in GetComponents<AIController>())
+                    if (brain.enabled) { _hostBrain = brain; break; }
                 _inputSourceKnown = true;
             }
 
@@ -1090,17 +1152,24 @@ namespace TumbangPreso
         /// accepts a correction when prediction has drifted far enough to be visible.
         /// </summary>
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
-                                          bool grounded, bool reconcileLocal, bool force = false)
+                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0,
+                                          bool acceptedOwnerPose = false)
         {
             // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
             // whose owner is predicting it skips the rest of this method whenever the error is
             // small, which is most frames; the pose it keeps is its own, but the grounded bit is
             // still the owner's truth and `StepNetworkReplica` never runs for it anyway.
             _networkGrounded = grounded;
+            ObserveFlightPose(grounded, flightEpisode);
+
+            // Accepted owner poses are acknowledgements of earlier input. Their
+            // round-trip distance is not a prediction error or a host correction.
+            if (acceptedOwnerPose && !force) return;
 
             float error = Vector3.Distance(transform.position, position);
             if(reconcileLocal && !force && _awaitingTeleport)return;
             if (reconcileLocal && !force && error < 1.25f) return;
+            if(reconcileLocal&&(force||error>3f))_paetePull?.Stop("host correction");
 
             // ⚠️⚠️ THE VELOCITY IS TAKEN WITH THE POSITION OR NOT AT ALL, AND IT USED TO BE
             // TAKEN ON THE LINE ABOVE `_networkGrounded`, UNCONDITIONALLY. 🧑 2026-08-30, of an
@@ -1141,6 +1210,7 @@ namespace TumbangPreso
             if (!snap) return;
 
             SetNetworkPose(position, yaw);
+            if (IsSwimming) EndFlightImmediately();
             _networkSmoothVelocity = Vector3.zero;
             _networkYawVelocity = 0.0f;
         }
@@ -1248,8 +1318,7 @@ namespace TumbangPreso
         /// </summary>
         private void SetNetworkPose(Vector3 position, float yaw)
         {
-            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            position = AIController.ClampToPlayable(position);
 
             bool enabled = _cc != null && _cc.enabled;
             if (enabled) _cc.enabled = false;
@@ -1274,8 +1343,28 @@ namespace TumbangPreso
         /// </summary>
         private const float GroundedRestVelocityY = -2.0f;
 
+        /// <summary>
+        /// A MAP'S OWN FALL. A map may change the gravity and the terminal speed of a body that
+        /// is in the air in its own space: the Arena's shaft, where an updraft slows the fall
+        /// (`Map.ArenaFallRecovery.Updraft`, owner, 2026-10-05: "the fall effect is too fast").
+        /// It is handed the game's numbers (`Balance.CharacterGravity`, `Balance.MaxFallSpeed`)
+        /// and changes them or leaves them.
+        ///
+        /// ⚠️ NULL ON EVERY OTHER MAP, and then the two numbers reach the same two lines they
+        /// always did: nothing about a fall anywhere else moves. The map that sets it clears it
+        /// when it unloads, as `MatchRpc.MoveFloorY` is.
+        ///
+        /// ⚠️ ONLY THE PEER THAT SIMULATES THE BODY RUNS IT (`ApplyGravity` is never reached on a
+        /// replica), and nothing is sent: the owner falls slower and its poses travel as they
+        /// always do. `MatchRpc.AcceptMove` limits how FAST a body may go, never how slow.
+        /// </summary>
+        public delegate void FallRule(CharacterMotor who, ref float gravity, ref float maxFallSpeed);
+        public static FallRule MapFall;
+
         private void ApplyGravity(float dt)
         {
+            // Flight owns the vertical while it lasts (`CharacterMotor.Status.cs`).
+            if (StepFlightVertical(dt)) return;
             if(_swimLeap&&(_grounded||_velocity.y<=0))_swimLeap=false;
             if(IsSwimming&&!_swimLeap)
             {
@@ -1292,7 +1381,8 @@ namespace TumbangPreso
                     // eye .27m underwater. Keep a short, visible settling descent
                     // without carrying the dry-air terminal speed into the pool.
                     _velocity.y=Mathf.Max(_velocity.y,-1.8f);
-                    float target=RooftopPool.SurfaceY-RooftopPool.FloatDepth;
+                    RooftopPool.TrySurface(transform.position,out float floatSurface);
+                    float target=floatSurface-RooftopPool.FloatDepth;
                     float rise=Mathf.Clamp((target-transform.position.y)*5,-1.8f,1.8f);
                     _velocity.y=Mathf.MoveTowards(_velocity.y,rise,9*dt);
                 }
@@ -1309,9 +1399,10 @@ namespace TumbangPreso
                 // ⚠️ `CanMove()`, FOR THE REASON THE STEER GATE GIVES. Walking and jumping are
                 // one permission: gating them differently is how you get a player who can hop
                 // through the warmup buffer but not walk across it.
-                if (Intent.JustPressed(Verb.Jump) && CanMove())
+                // (`ReworkJumpQueued`: the movement rework's buffered or held jump, false with its switch off.)
+                if ((Intent.JustPressed(Verb.Jump) || ReworkJumpQueued) && CanMove())
                 {
-                    _velocity.y = Balance.JumpVelocity;
+                    _velocity.y = Balance.JumpVelocity * ReworkJumpScale;
                     NetCue.PlayVaried("jump", transform.position,
                                                      0.96f, 1.08f, 0.9f);
                     GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.20f);
@@ -1319,8 +1410,10 @@ namespace TumbangPreso
             }
             else
             {
-                _velocity.y -= Balance.Gravity * dt;
-                if (_velocity.y < -Balance.MaxFallSpeed) _velocity.y = -Balance.MaxFallSpeed;
+                float gravity = Balance.CharacterGravity, maxFallSpeed = Balance.MaxFallSpeed;
+                MapFall?.Invoke(this, ref gravity, ref maxFallSpeed);
+                _velocity.y -= gravity * dt;
+                if (_velocity.y < -maxFallSpeed) _velocity.y = -maxFallSpeed;
             }
         }
 
@@ -1377,13 +1470,13 @@ namespace TumbangPreso
             Vector3 p = transform.position;
             float x = p.x, z = p.z;
 
-            if (Confinement.IsConfined(RoundActive, _isDefender))
+            if (Confinement.IsConfined(RoundActive, _isDefender) && !MayLeaveBoxToTag)
                 Confinement.ClampToBox(ref x, ref z);
 
             // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
             // RULE and applies to the taya only; this is the WALL and applies to everybody. The
             // port had the wall for the tsinelas and not for the people: `Slipper.BounceOffBounds`
-            // has bounced off `PlayableHalfX/Z` since it was written, while a body could walk or
+            // has bounced off the playable walls since it was written, while a body could walk or
             // be launched straight through the same line into empty space.
             //
             // ⚠️ MEASURED, AND IT IS NOT A CORNER CASE. `AiDiagnosticProbe` on 2026-08-23 caught
@@ -1397,8 +1490,13 @@ namespace TumbangPreso
             // ⚠️ HERO STRIKE IS WHERE IT SURFACES BUT IT IS NOT A HERO BUG. Its kits apply far
             // more knockback than Classic's do, so they find the missing wall first. A human
             // shoved off the same edge in Classic has always had the same hole to fall into.
-            x = Mathf.Clamp(x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            z = Mathf.Clamp(z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            //
+            // ⚠️ PER SIDE SINCE 2026-09-27: each wall is its own limit, so an arena whose sea wall
+            // is farther out than its land wall lets a body walk to the shore without also letting
+            // it through the land side. Symmetric arenas clamp exactly as before
+            // (`AIController.PlayableMinX` has the arithmetic).
+            x = AIController.ClampPlayableX(x);
+            z = AIController.ClampPlayableZ(z);
 
             if (x == p.x && z == p.z) return;
 
@@ -1429,7 +1527,9 @@ namespace TumbangPreso
         // the HUD and the rule that acts must never be able to disagree.
         // -------------------------------------------------------------------
 
-        public bool CanAct() => RoundActive && !IsStunned;
+        // ⚠️ FEARED ACTS ON NOTHING (owner, 2026-09-26: *"Flee from kuro and drop slipper"*): no throw, pickup or skill.
+        public bool CanAct() => RoundActive && !IsStunned && !IsFeared && !PresentationClock.BlocksInput
+            && !(AbilitySystem?.Kit?.BlocksOwnActions ?? false);
 
         // -------------------------------------------------------------------
         // § COMMITMENT
@@ -1496,7 +1596,9 @@ namespace TumbangPreso
         /// for a stop meant to be permanent. See `SliceRunner.OnMatchEnded`, which had been
         /// leaning on `RoundActive` for it and now calls the freeze outright.
         /// </summary>
-        public bool CanMove() => !IsStunned;
+        // ⚠️ ROOTED IS NOT A STUN AND DOES NOT STOP ANYTHING BUT THE LEGS (Paete's sentry, 2026-09-25):
+        // no steering, no jump, and throwing and skills still work (`CanAct` does not read it).
+        public bool CanMove() => !IsStunned && !IsRooted && !(AbilitySystem?.Kit?.BlocksOwnLocomotion ?? false);
 
         public bool IsStunned => _stunLeft > 0.0f || _tripLeft > 0.0f;
         public bool HoldingSlipper { get; set; }
@@ -1544,6 +1646,14 @@ namespace TumbangPreso
         {
             if (_isDefender || !RoundActive) return false;
             if (AbilitySystem != null && AbilitySystem.IsImmuneToTags) return false;
+            // ⚠️ A BODY HELD ALOFT (Updraft, 2.8 m up) IS OUT OF THE TAYA'S REACH. The reach is a
+            // flat distance, so without this a taya would tag somebody over their head. It is safe
+            // because Updraft cannot START with a slipper inside the box (`AmihanHeroKit`), and a
+            // body aloft cannot pick one up: the retrieval is still made on the ground, in reach.
+            if (IsAloft) return false;
+            // ⚠️ VULNERABLE IS TAGGABLE ANYWHERE, WITH OR WITHOUT A SLIPPER (owner, 2026-09-26: *"easier
+            // to tag and phaister can go out of box and tag them"*).
+            if (IsVulnerable) return true;
             if (!HoldingSlipper) return false;
             return IsInsideBox();
         }
@@ -1567,40 +1677,20 @@ namespace TumbangPreso
 
         private float _lastMashTime = -99.0f;
 
-        /// <summary>Real seconds since this fall began, and the ONLY clock left in a trip.
-        /// It drives nothing but <see cref="Balance.TripAutoRecoverSeconds"/>: the fall itself
-        /// no longer runs down with time.</summary>
+        /// <summary>Seconds elapsed in the current timed fall.</summary>
         private float _tripElapsed;
 
         private int _mashPresses;
         private float _mashRemoved;
         private float _tripImmuneUntil = -99.0f;
 
-        /// <summary>Accepted presses in the current fall, so the HUD can show it filling.</summary>
+        /// <summary>Legacy wire/readout field, always zero for current timed recovery.</summary>
         public int MashPresses => _mashPresses;
 
-        /// <summary>Seconds of the current fall that PRESSES have bought.
-        ///
-        /// ⚠️⚠️ IT IS THE GATE, NOT A READOUT, AS OF 2026-08-26. Reaching the mashable slack
-        /// (`TripTotal` - `Balance.MinTripDown`) is the only thing that puts a player back on
-        /// their feet inside `Balance.TripAutoRecoverSeconds`, and the HUD's one bar is this
-        /// number over that slack. So the bar filling and the body standing are the same event,
-        /// which is what 🧑 asked for after three passes that retuned a decay rate instead:
-        /// *"i want it so that i can only get up when ive reached the end of the mashing shit
-        /// bcz sometimes i get up with it still at middle or when i only clicked once"*.
-        ///
-        /// ⚠️ THE STRANDING GUARD CREDITS THE REST OF THE SLACK HERE RATHER THAN BYPASSING IT,
-        /// so the invariant holds with no exception: nobody ever stands up with the bar
-        /// part-full.</summary>
+        /// <summary>Legacy wire/readout field, always zero for current timed recovery.</summary>
         public float MashRemoved => _mashRemoved;
 
-        /// <summary>When the last ACCEPTED press landed, so the HUD can pop on it.
-        ///
-        /// ⚠️ A REJECTED PRESS IS A DEAD PRESS, NEVER A PENALTY, and the screen has to say so.
-        /// `Combat.MashRecover` returns `accepted: false` inside `Balance.MashCooldown` and
-        /// changes nothing, but with no feedback either way a player mashing above 10 Hz sees
-        /// most of their presses do nothing and reads the rate cap as being punished for
-        /// mashing. Popping on the accepted ones makes the cap legible as a rhythm.</summary>
+        /// <summary>Legacy readout retained for older callers; no new press is accepted.</summary>
         public float LastMashAcceptedTime => _lastMashTime;
 
         /// <summary>
@@ -1619,15 +1709,8 @@ namespace TumbangPreso
         /// </summary>
         public bool IsTripImmune => Time.time < _tripImmuneUntil;
 
-        /// <summary>
-        /// True while the player should be told to mash.
-        ///
-        /// ⚠️ IT GOES FALSE AT THE FLOOR RATHER THAN AT THE END OF THE TRIP. Once
-        /// `Balance.MinTripDown` is reached nothing further can be bought, and a prompt that
-        /// keeps asking for presses it will not honour teaches the player that mashing does not
-        /// work, which is the opposite of the intent.
-        /// </summary>
-        public bool CanMashUp => _tripLeft > Balance.MinTripDown;
+        /// <summary>No status recovery accepts mash input.</summary>
+        public bool CanMashUp => false;
 
         public void ClearStun()
         {
@@ -1647,12 +1730,20 @@ namespace TumbangPreso
         public void ClearTrip()
         {
             if (!MayMutateGameplayState()) return;
+            bool wasEdge=IsEdgeRecovering;
+            ResetEdgeRecovery();
             AdvanceRecoveryEpisode();
             _tripLeft = 0.0f;
             _tripTotal = 0.0f;
             _mashPresses = 0;
             _mashRemoved = 0.0f;
             _tripElapsed = 0.0f;
+
+            if(wasEdge&&NetAuthority.IsHost)
+            {
+                Net.MatchRpc.Instance?.BeginEdgeMovementOwnership(_playerSlot);
+                Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(_playerSlot,transform.position,transform.eulerAngles.y,_velocity);
+            }
 
             // ⚠️ NO GRACE FROM HERE. `ClearTrip` is the round and seat reset path, not the
             // player answering a fall, and handing a fresh round a window of hazard immunity
@@ -1677,6 +1768,7 @@ namespace TumbangPreso
             AdvanceRecoveryEpisode();
             _tripLeft = Mathf.Max(_tripLeft, duration);
             _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
+            if (IsTripped) EndFlightImmediately();
             ReleaseCommitment();
             _velocity.x = 0.0f;
             _velocity.z = 0.0f;
@@ -1689,37 +1781,11 @@ namespace TumbangPreso
             _tripElapsed = 0.0f;
         }
 
-        /// <summary>
-        /// One mash press against the current fall.
-        ///
-        /// 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
-        /// get back up"*.
-        ///
-        /// Trip recovery never spends time from an overlapping tag or element
-        /// hold. IsStunned includes both independent timers, and the existing
-        /// snapshot already carries each timer separately (protocol30 semantics).
-        ///
-        /// ⚠️ THE RATE CAP LIVES IN `Combat.MashRecover`, NOT HERE. A bot presses the same
-        /// buttons a human does, so both reach the cap through the same function rather than
-        /// through an input-layer check only one of them passes through.
-        /// </summary>
+        /// <summary>Deprecated recovery entry point. Trips end on their authored timer.</summary>
         public bool MashRecover()
         {
-            if (_tripLeft <= 0.0f) return false;
-
-            float since = Time.time - _lastMashTime;
-            float before = _tripLeft;
-            float after = Combat.MashRecover(_tripLeft, since, out bool accepted);
-            if (!accepted) return false;
-
-            _lastMashTime = Time.time;
-            _mashPresses++;
-
-            float removed = before - after;
-            _tripLeft = after;
-            _mashRemoved += removed;
-
-            return removed > 0.0f;
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
@@ -1764,6 +1830,8 @@ namespace TumbangPreso
             // whether their number is big enough, which is a judgement that would drift the
             // moment somebody retuned a duration.
             if (duration <= Balance.MinStunDown) element = StunElement.None;
+            // ⚠️ VULNERABLE: stuns on them last longer (ABILITY-2 plan section 2).
+            if (IsVulnerable) duration *= StatusRules.VulnerableStunScale;
 
             bool wins = duration >= _stunLeft;
 
@@ -1812,44 +1880,20 @@ namespace TumbangPreso
         // repeatedly, and a fresh authoritative stun cannot inherit these presses.
         public bool RecoverFromInput()
         {
-            if (!IsLocallySimulated() || _pendingRecovery.Count>=32) return false;
-            bool accepted=IsTripped ? MashRecover() : MashOutOfStun();
-            if (accepted && NetAuthority.ShouldRequest() && _playerSlot==NetAuthority.LocalSlot)
-            {
-                int sequence=++_recoverySequence;
-                _pendingRecovery.Add(sequence);
-                Net.MatchRpc.Instance?.RequestMashServerRpc(_playerSlot,_recoveryEpisode,sequence);
-            }
-            return accepted;
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         public bool AcceptRecoveryRequest(int episode,int sequence)
         {
-            if (!NetAuthority.ShouldResolve() || episode!=_recoveryEpisode ||
-                sequence<=_recoveryAcknowledged || sequence-_recoveryAcknowledged>32) return false;
-            // A refusal is also acknowledged so it cannot remain predicted forever.
-            _recoveryAcknowledged=sequence;
-            return IsTripped ? MashRecover() : MashOutOfStun();
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         private void ReplayUnacknowledgedRecovery()
         {
-            foreach (int sequence in _pendingRecovery)
-            {
-                if (_tripLeft>0)
-                {
-                    float after=Combat.MashRecover(_tripLeft,Balance.MashCooldown,out bool accepted);
-                    if (!accepted) continue;
-                    float removed=_tripLeft-after;
-                    _tripLeft=after;_mashRemoved+=removed;_mashPresses++;
-                }
-                else if (_stunElement!=StunElement.None)
-                {
-                    _stunLeft=Combat.MashOutOfStun(_stunLeft,_stunTotal,_stunBreakPresses,
-                        Balance.MashCooldown,out bool accepted);
-                    if (accepted) _stunMashPresses++;
-                }
-            }
+            // Old buffered presses cannot alter a restored timed state.
+            _pendingRecovery.Clear();
         }
 
         /// <summary>What is holding this body, for the coat, the vignette and the card.</summary>
@@ -1889,81 +1933,28 @@ namespace TumbangPreso
             _stunTotal = Mathf.Max(_stunLeft, stunTotal);
             _stunElement = _stunLeft > 0.0f ? element : StunElement.None;
             _stunBreakPresses = Mathf.Clamp(stunBreakPresses, 1, 32);
-            _stunMashPresses = Mathf.Clamp(stunMashPresses, 0, _stunBreakPresses);
+            _stunMashPresses = 0; // Legacy wire field is no longer live recovery input.
 
             _tripLeft = Mathf.Max(0.0f, tripLeft);
             _tripTotal = Mathf.Max(_tripLeft, tripTotal);
-            _mashPresses = Mathf.Max(0, tripMashPresses);
-            _mashRemoved = Mathf.Clamp(tripMashRemoved, 0.0f, _tripTotal);
+            _mashPresses = 0;
+            _mashRemoved = 0;
 
             if (recoveryEpisode>=0 && _playerSlot==NetAuthority.LocalSlot)
                 ReplayUnacknowledgedRecovery();
+            if (IsTagged || IsTripped) EndFlightImmediately();
             Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
         }
 
-        /// <summary>
-        /// True while hammering buys something.
-        ///
-        /// ⚠️ IT GOES FALSE AT THE FLOOR, exactly as `CanMashUp` does, and for the reason that
-        /// property records: a prompt that keeps demanding presses it will not honour teaches
-        /// the player that mashing does not work.
-        /// </summary>
+        /// <summary>No elemental hold accepts mash input.</summary>
         public bool CanMashOutOfStun
-            => _stunElement != StunElement.None && _stunLeft > Balance.MinStunDown;
+            => false;
 
-        /// <summary>
-        /// One press against an element stun.
-        ///
-        /// ⚠️ IT DOES NOT TOUCH `_tripLeft`, WHICH IS THE MIRROR OF THE TRAP `MashRecover`
-        /// CARRIES. There, shortening the trip without the stun left a player standing and
-        /// unable to act; here, shortening the stun without the trip would stand somebody up
-        /// mid-knockdown. A body that is BOTH tripped and element-stunned is answered by the
-        /// trip mash, which already clears both, so this returns early rather than racing it.
-        /// </summary>
+        /// <summary>Deprecated recovery entry point. Element holds keep their full timer.</summary>
         public bool MashOutOfStun()
         {
-            if (_stunElement == StunElement.None) return false;
-            if (_stunLeft <= 0.0f) return false;
-            if (_tripLeft > 0.0f) return false;
-
-            float since = Time.time - _lastStunMashTime;
-            float before = _stunLeft;
-            float after = Combat.MashOutOfStun(_stunLeft, _stunTotal, _stunBreakPresses,
-                                               since, out bool accepted);
-            if (!accepted) return false;
-
-            _lastStunMashTime = Time.time;
-            _stunMashPresses++;
-            _stunLeft = after;
-
-            // ⚠️⚠️ IT FIRES ON THE PRESS THAT REACHES THE FLOOR, NOT ON EVERY PRESS. `docs/TODO.md`
-            // § 23 ended the mash silently, so the only confirmation that the last press was the
-            // one that worked was a card the player is not looking at. One cue per BREAK is the
-            // sparse answer; one per press would be a cue at up to 10 Hz, which is the buzzsaw
-            // case `AudioCues.HeadroomDb` exists to keep out.
-            //
-            // ⚠️ AND `MinStunDown` IS THE TEST, NOT ZERO. The floor is deliberately left to run
-            // down (see the note below), so the moment the fight is WON is the moment the meter
-            // can buy nothing more, which is exactly when `CanMashOutOfStun` goes false and the
-            // card stops asking. Waiting for the stun to expire would put the sound on the clock
-            // rather than on the player.
-            if (after <= Balance.MinStunDown && before > Balance.MinStunDown && IsLocalHuman)
-            {
-                GameServices.Audio?.PlayUi("sfx_stun_break");
-            }
-
-            // ⚠️⚠️ THE FLOOR IS LEFT TO RUN DOWN AND IS NOT CLEARED HERE. Releasing the body the
-            // moment the meter fills would put a perfectly answered 3.0 s stun at **0.6 s**, six
-            // presses at the 10 Hz cap and nothing else, which is not a control ability any more
-            // and refunds the cooldown that bought it. `MinStunDown` is the part of the stun the
-            // mash CANNOT buy, exactly as `MinTripDown` is for a fall, and the honest total is
-            // the mash plus the floor: about **1.7 s** against 3.0 unanswered, because the clock
-            // is draining underneath the presses the whole time.
-            //
-            // ⚠️ AND THAT LAST 1.2 s IS WHERE THE ELEMENT COMES OFF. It is the shatter, the same
-            // way `MinTripDown` is the get-up clip: a window with a name and a picture, not dead
-            // time. `CanMashOutOfStun` goes false at its start so the card stops asking.
-            return before - after > 0.0f;
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         // Contact is resolved once by the host. A remote human integrates movement
@@ -1972,6 +1963,7 @@ namespace TumbangPreso
         {
             if(!NetAuthority.ShouldResolve())return;
             if(AbilitySystem!=null && AbilitySystem.IsImmuneToStuns)return;
+            _paetePull?.Stop("new impact");
             if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] resolve slot={_playerSlot} bot={IsBot} sim={IsLocallySimulated()} reader={GetComponent<PlayerInputReader>()!=null} ai={GetComponent<AIController>()!=null}");
             if(!IsLocallySimulated())
             {
@@ -1981,51 +1973,77 @@ namespace TumbangPreso
             ApplyImpulse(impulse);
         }
 
+        private float IncomingKnockbackSpeedScale => Mode == Core.GameMode.HeroStrike
+            ? Mathf.Sqrt(Mathf.Clamp01(AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1)) : 1;
+
+        /// <summary>A jump pad's throw (`JumpPad`): sets the vertical speed outright, past
+        /// `Balance.MaxKnockbackLift`, which caps hits and not map furniture. Only on the peer
+        /// that simulates this unit; returns whether it launched.</summary>
+        /// `cue` is the sound relayed with it; null when the pad plays its own on every peer (the Arena's).
+        public bool LaunchUp(float speed, string cue = "jump")
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated() || !CanMove()) return false;
+            _velocity.y = speed;
+            _grounded = false;
+            if (cue != null) NetCue.PlayVaried(cue, transform.position, 0.7f, 0.8f, 1.0f);
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ A VEHICLE'S HIT IS A LAUNCH, PAST THE KNOCKBACK CAPS (owner, 2026-10-04, hit by a car
+        /// on the rebuilt Ilalim: "can you add more physics to the ragdoll? i wanna feel like im
+        /// getting launched"). Every hit in the game is clamped to `MaxKnockbackSpeed` 16 and
+        /// `MaxKnockbackLift` 7, which at `Friction` 30 is 4 m of slide and a 1.2 m hop: right for
+        /// a shove, nothing like a jeepney. A car or the train sends its throw through the SAME
+        /// impact path (and the same network message), marked by adding `LaunchFlag` to its lift;
+        /// `ApplyImpulse` takes the flag off and uses the launch caps instead. Nothing new is on
+        /// the wire: a peer that does not know the flag would clamp the lift to 7, a weaker fall.
+        /// </summary>
+        public const float LaunchFlag = 1000.0f, LaunchMaxSpeed = 27.0f, LaunchMaxLift = 13.0f;
+
+        public static Vector3 AsLaunch(Vector3 throwVelocity)
+            => new Vector3(throwVelocity.x, Mathf.Max(0.0f, throwVelocity.y) + LaunchFlag, throwVelocity.z);
+
         public void ApplyImpulse(Vector3 impulse)
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            bool launch = impulse.y > LaunchFlag * 0.5f;
+            if (launch) impulse.y -= LaunchFlag;
+            float maxSpeed = launch ? LaunchMaxSpeed : Balance.MaxKnockbackSpeed;
+            float maxLift = launch ? LaunchMaxLift : Balance.MaxKnockbackLift;
+            float lift=impulse.y;
+            // A launch's height is the jump arc alone; left in the slide as well it would be braked by `Friction`.
+            if (launch) impulse.y = 0.0f;
+            float scale=IncomingKnockbackSpeedScale;
+            if(scale<1)
+            {
+                // Distance under friction is squared speed. Apply the existing cap first.
+                impulse=Vector3.ClampMagnitude(impulse,maxSpeed);
+                impulse.x*=scale; impulse.z*=scale;
+            }
             _externalVelocity += impulse;
 
             float mag = _externalVelocity.magnitude;
-            if (mag > Balance.MaxKnockbackSpeed)
-                _externalVelocity = _externalVelocity.normalized * Balance.MaxKnockbackSpeed;
+            if (mag > maxSpeed)
+                _externalVelocity = _externalVelocity.normalized * maxSpeed;
 
-            if (impulse.y > 0.0f)
-                _velocity.y = Mathf.Min(impulse.y, Balance.MaxKnockbackLift);
+            if (lift > 0.0f)
+                _velocity.y = Mathf.Min(lift, maxLift);
+            if (launch) _grounded = false;
         }
 
         private void Update()
         {
-            if (_tripLeft > 0.0f)
+            // ⚠️ ON EVERY PEER, like the stun clock below: the icons and the pickup gate read these
+            // timers, and a replica never runs the physics step.
+            if (!PresentationClock.Held) StepStatuses(Time.deltaTime);
+
+            if (_tripLeft > 0.0f && !IsEdgeRecovering)
             {
-                // ⚠️⚠️ ABOVE THE FLOOR NOTHING RUNS DOWN ON ITS OWN. THAT IS THE WHOLE RULE.
-                // 🧑, 2026-08-26, off the 4.70 player: *"u randomly get up after set amt of
-                // time, i dont have to actually mash it"*, and *"i want it so that i can only
-                // get up when ive reached the end of the mashing shit bcz sometimes i get up
-                // with it still at middle or when i only clicked once"*. Three previous passes
-                // answered that by retuning a decay RATE (docs/TODO.md §§ 12.1, 13.1, 14.1) and
-                // every one of them left the property he is describing in place: while a rate
-                // above zero exists, TIME ends the fall and the meter is a decoration on a
-                // countdown. `Balance.TripPassiveDecayRate` is deleted; see
-                // `Balance.TripAutoRecoverSeconds` for the whole argument.
-                //
-                // Below `MinTripDown` the get-up clip is playing, nothing can be bought, and
-                // this runs at real time so the animation and the clock agree.
-                if (_tripLeft <= Balance.MinTripDown)
-                    _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime);
-
-                // ⚠️⚠️ THE STRANDING GUARD, AND IT FILLS THE METER ON ITS WAY OUT. A fall that
-                // only a press can clear strands a player whose hands left the keyboard, so
-                // `Balance.TripAutoRecoverSeconds` releases one that nobody answered. Crediting
-                // the remaining slack to `_mashRemoved` is not cosmetic: the bar is the gate
-                // now, and standing up with it part-full is the exact frame he photographed.
+                // The authored duration now runs normally, including the existing
+                // final get-up beat. No press meter or emergency-only release gate.
                 _tripElapsed += Time.deltaTime;
-
-                if (_tripLeft > Balance.MinTripDown && _tripElapsed >= Balance.TripAutoRecoverSeconds)
-                {
-                    _mashRemoved += _tripLeft - Balance.MinTripDown;
-                    _tripLeft = Balance.MinTripDown;
-                }
+                _tripLeft = Mathf.Max(0, _tripLeft - Time.deltaTime);
 
                 if (_tripLeft <= 0.0f)
                 {

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 16:07:07Z" end-time="2026-10-01 16:07:09Z" duration="1.7915946">
+  <test-suite type="TestSuite" id="2492" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1221" result="Passed" start-time="2026-10-01 16:07:07Z" end-time="2026-10-01 16:07:09Z" duration="1.791595" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2486" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1221" result="Passed" start-time="2026-10-01 16:07:07Z" end-time="2026-10-01 16:07:09Z" duration="1.778772" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="333874" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2487" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1221" result="Passed" start-time="2026-10-01 16:07:07Z" end-time="2026-10-01 16:07:09Z" duration="1.771200" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2488" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1221" result="Passed" start-time="2026-10-01 16:07:07Z" end-time="2026-10-01 16:07:09Z" duration="1.764348" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1556" name="KitRecallParityChecks" fullname="TumbangPreso.PlayTests.KitRecallParityChecks" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-01 16:07:07Z" end-time="2026-10-01 16:07:09Z" duration="1.737010" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1560" name="CurrentGuidesAndRecallCardsMatchBothCompleteKits" fullname="TumbangPreso.PlayTests.KitRecallParityChecks.CurrentGuidesAndRecallCardsMatchBothCompleteKits" methodname="CurrentGuidesAndRecallCardsMatchBothCompleteKits" classname="TumbangPreso.PlayTests.KitRecallParityChecks" runstate="Runnable" seed="619837406" result="Passed" start-time="2026-10-01 16:07:07Z" end-time="2026-10-01 16:07:09Z" duration="1.725324" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] KitParity-cheska-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] KitParity-cheska-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] KitParity-cheska-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] KitParity-cheska-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] KitParity-cheska-guide-960/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] KitParity-cheska-guide-960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] KitParity-cheska-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] KitParity-cheska-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] KitParity-cheska-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] KitParity-cheska-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] KitParity-cheska-guide-1600/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] KitParity-cheska-guide-1600 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] KitParity-cheska-defender-recall cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] KitParity-dante-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] KitParity-dante-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] KitParity-dante-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] KitParity-dante-guide-960/Symbol: vertices=4, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] KitParity-dante-guide-960/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] KitParity-dante-guide-960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] KitParity-dante-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] KitParity-dante-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] KitParity-dante-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] KitParity-dante-guide-1600/Symbol: vertices=4, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] KitParity-dante-guide-1600/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] KitParity-dante-guide-1600 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] KitParity-dante-defender-recall cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

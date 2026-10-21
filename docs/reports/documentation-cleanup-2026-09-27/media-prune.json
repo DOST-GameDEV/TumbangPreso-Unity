@@ -1,0 +1,98 @@
+{
+  "sourceCommit": "9535fc216b943f4fd945fa1145ba421dcfe8a1d3",
+  "policy": "Keep newest two matching generated capture iterations; preserve source/shipped/reference media and essential selected v61 decision evidence",
+  "removed": [
+    {
+      "path": "ArtSource/amihan/concept-20260925/evidence/amihan-v5-restyle-beside-dante-phaister.png",
+      "bytes": 132233,
+      "sha256": "49324F99454C04C4029FFB82A1FB38A7780CAEFD7E63B82F63989976CEF85A05",
+      "retained": [
+        "ArtSource/amihan/concept-20260925/evidence/amihan-v6-restyle-beside-dante-phaister.png",
+        "ArtSource/amihan/concept-20260925/evidence/amihan-v7-restyle-beside-dante-phaister.png"
+      ],
+      "essentialOlder": null
+    },
+    {
+      "path": "ArtSource/nemu/restyle-20260927/nemu-v1-restyle-beside-dante-phaister.png",
+      "bytes": 98725,
+      "sha256": "A6BB2B9691D1756CBB64A83DEC52B7DE99A4859A01C0CD3C9F5501B683C2B560",
+      "retained": [
+        "ArtSource/nemu/restyle-20260927/nemu-v2-restyle-beside-dante-phaister.png",
+        "ArtSource/nemu/restyle-20260927/nemu-v3-restyle-beside-dante-phaister.png"
+      ],
+      "essentialOlder": null
+    },
+    {
+      "path": "ArtSource/paete/concept-20260925/evidence/paete-v10-turnaround.png",
+      "bytes": 451927,
+      "sha256": "2E2166063E4AD9CB0847BBEAC82D418E5F1B8AA6516516158DF86711C42001F3",
+      "retained": [
+        "ArtSource/paete/concept-20260925/evidence/paete-v14-turnaround.png",
+        "ArtSource/paete/concept-20260925/evidence/paete-v17-turnaround.png"
+      ],
+      "essentialOlder": null
+    },
+    {
+      "path": "docs/reports/ultimate-performances-2026-09-24/previews/zack_v1_shots.png",
+      "bytes": 137655,
+      "sha256": "F95591991F0D21170EA7189888AEF274455D5C28889DBA6DE099B64E60A1D4D6",
+      "retained": [
+        "docs/reports/ultimate-performances-2026-09-24/previews/zack_v3_shots.png",
+        "docs/reports/ultimate-performances-2026-09-24/previews/zack_v4_shots.png"
+      ],
+      "essentialOlder": null
+    },
+    {
+      "path": "docs/reports/ultimate-performances-2026-09-24/previews/zack_v2_shots.png",
+      "bytes": 61012,
+      "sha256": "FAF151B988563EE3FE2ED7A94BCAEC4BF23F6FCA354B0D832EE2620BA2E32FF4",
+      "retained": [
+        "docs/reports/ultimate-performances-2026-09-24/previews/zack_v3_shots.png",
+        "docs/reports/ultimate-performances-2026-09-24/previews/zack_v4_shots.png"
+      ],
+      "essentialOlder": null
+    },
+    {
+      "path": "docs/reports/cloud-integration-2026-09-24/skill-fx/v60-blast_ignition_eye-grey25.png",
+      "bytes": 31063,
+      "sha256": "7962267B11186B678C615610C6AFB1C9551E3B993659731A0EB60691663A15B5",
+      "retained": [
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v62-blast_ignition_eye-grey25.png",
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v63-blast_ignition_eye-grey25.png"
+      ],
+      "essentialOlder": "docs/reports/cloud-integration-2026-09-24/skill-fx/v61-blast_ignition_eye-grey25.png"
+    },
+    {
+      "path": "docs/reports/cloud-integration-2026-09-24/skill-fx/v60-blast_ignition_eye.png",
+      "bytes": 929910,
+      "sha256": "E8E0772689ACE6029F34F96349204C49A897128E8461ED35B619B17FAE77AABE",
+      "retained": [
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v62-blast_ignition_eye.png",
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v63-blast_ignition_eye.png"
+      ],
+      "essentialOlder": "docs/reports/cloud-integration-2026-09-24/skill-fx/v61-blast_ignition_eye.png"
+    },
+    {
+      "path": "docs/reports/cloud-integration-2026-09-24/skill-fx/v60-blast_ignition-grey25.png",
+      "bytes": 32113,
+      "sha256": "5A38E6075D6F4E820543C21406762C0CC94EB4B6C3CFBA143ABBBBA61EE5E045",
+      "retained": [
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v62-blast_ignition-grey25.png",
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v63-blast_ignition-grey25.png"
+      ],
+      "essentialOlder": "docs/reports/cloud-integration-2026-09-24/skill-fx/v61-blast_ignition-grey25.png"
+    },
+    {
+      "path": "docs/reports/cloud-integration-2026-09-24/skill-fx/v60-blast_ignition.png",
+      "bytes": 1017882,
+      "sha256": "F430091F5ABEB6FE267CAD4C061880ECB9FE501FD8253AD217187873377BD779",
+      "retained": [
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v62-blast_ignition.png",
+        "docs/reports/cloud-integration-2026-09-24/skill-fx/v63-blast_ignition.png"
+      ],
+      "essentialOlder": "docs/reports/cloud-integration-2026-09-24/skill-fx/v61-blast_ignition.png"
+    }
+  ],
+  "count": 9,
+  "logicalBytes": 2892520.0
+}

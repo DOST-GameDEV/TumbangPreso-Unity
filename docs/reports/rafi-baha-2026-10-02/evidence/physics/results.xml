@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.6665195">
+  <test-suite type="TestSuite" id="2541" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.666520" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2535" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.651179" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="90465" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2536" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.642605" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2537" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.633681" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2007" name="RafiBahaProbe" fullname="TumbangPreso.PlayTests.RafiBahaProbe" classname="TumbangPreso.PlayTests.RafiBahaProbe" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.612357" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2009" name="ActualJumpAndNarrowCoverAvoidTheFront" fullname="TumbangPreso.PlayTests.RafiBahaProbe.ActualJumpAndNarrowCoverAvoidTheFront" methodname="ActualJumpAndNarrowCoverAvoidTheFront" classname="TumbangPreso.PlayTests.RafiBahaProbe" runstate="Runnable" seed="1341340968" result="Passed" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.456534" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2008" name="WarnsBeforeOneGroundedNudgeAndCarriesOnlyLooseShoes" fullname="TumbangPreso.PlayTests.RafiBahaProbe.WarnsBeforeOneGroundedNudgeAndCarriesOnlyLooseShoes" methodname="WarnsBeforeOneGroundedNudgeAndCarriesOnlyLooseShoes" classname="TumbangPreso.PlayTests.RafiBahaProbe" runstate="Runnable" seed="166405594" result="Failed" start-time="2026-10-02 07:11:20Z" end-time="2026-10-02 07:11:20Z" duration="0.142848" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: in range (2.5,3.01)
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RafiBahaProbe+<WarnsBeforeOneGroundedNudgeAndCarriesOnlyLooseShoes>d__20.MoveNext () [0x001f0] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/RafiBahaProbe.cs:77
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

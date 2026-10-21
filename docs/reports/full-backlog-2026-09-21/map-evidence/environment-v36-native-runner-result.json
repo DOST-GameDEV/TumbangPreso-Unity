@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sharedInputUnchanged": true,
+  "profile": "presentation-native-environment-20260922",
+  "existingFilesRestored": 2,
+  "reviewPassed": false,
+  "error": "System.InvalidOperationException: Map did not offer ready: scene=SaBubong HUD=False gate=False awaiting=False countdown=False scale=1 activeRound=True\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<MapReady>d__7.MoveNext () [0x00280] in <6283b3af3a1b4dd88f0b57e1b18b0b1b>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__34.MoveNext () [0x00054] in <6283b3af3a1b4dd88f0b57e1b18b0b1b>:0 "
+}

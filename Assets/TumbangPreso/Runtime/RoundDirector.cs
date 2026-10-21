@@ -68,7 +68,6 @@ namespace TumbangPreso
         public Lata Lata { get; set; }
 
         private readonly List<CharacterMotor> _players = new List<CharacterMotor>();
-        private float _throwCooldownLeft;
         private float _defenseTickAccum;
         private float _tayaCampTimer;
         private float _tayaCampTickAccum;
@@ -83,6 +82,102 @@ namespace TumbangPreso
         private float _clock;
 
         public IReadOnlyList<CharacterMotor> Players => _players;
+
+        // -------------------------------------------------------------------
+        // § COMPANIONS (HERO-10 v3, plan 9.12)
+        //
+        // ⚠️⚠️ A COMPANION IS A BODY THAT IS NOT A PLAYER, AND IT IS KEPT OUT OF `Players` ON PURPOSE. Phaister's VOODOO DOLL
+        // (Nemu's KURO PLAYS later) sits in a companion seat (`Core.CompanionSeats`: 4 + its owner) and plays by a player's rules,
+        // but it is never a player: no chip, no result row, no passive defence, no tournament clock. `Players` has 152 readers and
+        // every one of them means "the four people"; the handful that must also see a companion (the tag sweeps, a slipper's body
+        // blocks, the bots' tag targets, a flourish's seat lookup) read `Bodies` or `BodyAt` instead.
+        // -------------------------------------------------------------------
+
+        private readonly List<CharacterMotor> _companions = new List<CharacterMotor>();
+        private readonly List<CharacterMotor> _bodies = new List<CharacterMotor>();
+        private bool _bodiesStale = true;
+
+        /// <summary>The live companions (at most one per player).</summary>
+        public IReadOnlyList<CharacterMotor> Companions => _companions;
+
+        /// <summary>Every body on the court: the players, then their companions. For the few sweeps a companion is part of.</summary>
+        public IReadOnlyList<CharacterMotor> Bodies
+        {
+            get
+            {
+                if (!_bodiesStale) return _bodies;
+                _bodies.Clear();
+                _bodies.AddRange(_players);
+                _bodies.AddRange(_companions);
+                _bodiesStale = false;
+                return _bodies;
+            }
+        }
+
+        /// <summary>Raised when a companion joins or leaves the round (the network's companion set listens).</summary>
+        public event Action CompanionsChanged;
+
+        /// <summary>A companion was tagged: stunned where it stands, and nobody paid (defenderSeat, companionSeat).</summary>
+        public event Action<int, int> CompanionTagged;
+
+        /// <summary>
+        /// Adds a companion. It takes its owner's side for the round (a companion of the taya guards and tags with them) and the
+        /// round's live state. A second companion for the same seat replaces nothing: the call is refused.
+        /// </summary>
+        public bool RegisterCompanion(CharacterMotor companion)
+        {
+            if (companion == null || !CompanionSeats.IsCompanion(companion.PlayerSlot)) return false;
+            if (_companions.Contains(companion)) return true;
+            if (BodyAt(companion.PlayerSlot) != null) return false;
+            var owner = PlayerAt(CompanionSeats.OwnerOf(companion.PlayerSlot));
+            companion.IsDefender = owner != null && owner.IsDefender;
+            _companions.Add(companion);
+            _bodiesStale = true;
+            CompanionsChanged?.Invoke();
+            return true;
+        }
+
+        /// <summary>Takes a companion out of the round (its body is its own owner's business).</summary>
+        public void UnregisterCompanion(CharacterMotor companion)
+        {
+            if (companion == null || !_companions.Remove(companion)) return;
+            _bodiesStale = true;
+            CompanionsChanged?.Invoke();
+        }
+
+        /// <summary>The body in any seat, a player's or a companion's, or null.</summary>
+        public CharacterMotor BodyAt(int seat)
+        {
+            if (CompanionSeats.IsPlayer(seat)) return PlayerAt(seat);
+            if (!CompanionSeats.IsCompanion(seat)) return null;
+            for (int i = 0; i < _companions.Count; i++)
+                if (_companions[i] != null && _companions[i].PlayerSlot == seat) return _companions[i];
+            return null;
+        }
+
+        /// <summary>
+        /// ⚠️ EVERY COMPANION LEAVES WITH THE ROUND (plan 9.12: *"removed with its slipper at the round's end, the match's end, or
+        /// if she leaves"*). Destroying the body is what removes it everywhere: its own `OnDestroy` unregisters it and takes its
+        /// slipper with it.
+        /// </summary>
+        public void ReleaseCompanions()
+        {
+            if (_companions.Count == 0) return;
+            var leaving = _companions.ToArray();
+            _companions.Clear();
+            _bodiesStale = true;
+            foreach (var companion in leaving)
+                if (companion != null) Destroy(companion.gameObject);
+            CompanionsChanged?.Invoke();
+        }
+
+        private void ReleaseCompanionOf(int owner)
+        {
+            var companion = BodyAt(CompanionSeats.For(owner));
+            if (companion == null) return;
+            UnregisterCompanion(companion);
+            Destroy(companion.gameObject);
+        }
         public float TayaCampSeconds => _tayaCampTimer;
         public bool IsTayaCampWarningActive => TournamentRules.IsCampWarning(_tayaCampTimer);
         public bool IsTayaCampPenaltyActive => TournamentRules.IsCampPenalty(_tayaCampTimer);
@@ -93,9 +188,22 @@ namespace TumbangPreso
         public void Register(CharacterMotor m)
         {
             if (!_players.Contains(m)) _players.Add(m);
+            _bodiesStale = true;
         }
 
-        public void Clear() => _players.Clear();
+        public void Clear()
+        {
+            ReleaseCompanions();
+            _players.Clear();
+            _bodiesStale = true;
+        }
+
+        public void Unregister(CharacterMotor motor)
+        {
+            if (motor != null && CompanionSeats.IsPlayer(motor.PlayerSlot)) ReleaseCompanionOf(motor.PlayerSlot);
+            _players.Remove(motor);
+            _bodiesStale = true;
+        }
 
         public CharacterMotor PlayerAt(int slot)
         {
@@ -113,6 +221,19 @@ namespace TumbangPreso
         /// state: a player who disconnected as an attacker may be the current taya when they
         /// return.
         /// </summary>
+        internal void ApplyPresentationTime(float timeLeft)
+        {if(float.IsFinite(timeLeft))TimeLeft=Mathf.Clamp(timeLeft,0,RoundLength);}
+        private int _fieldRound;
+        private long _fieldMatch;
+        private void AdoptFieldLifetime()
+        {
+            var match=GameServices.Match;
+            if(match==null)return;
+            if(_fieldRound!=0&&(_fieldRound!=match.RoundNumber||_fieldMatch!=match.PresentationMatchId))
+                Net.WorldEffectSnapshot.ClearPersistentFields();
+            _fieldRound=match.RoundNumber;_fieldMatch=match.PresentationMatchId;
+        }
+
         public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot,
                                   bool matchInProgress = true)
         {
@@ -123,7 +244,10 @@ namespace TumbangPreso
             // to a number the HOST sent**, so a 120 second round would have arrived correct and
             // been cut to 90 on every client: the clock would read 01:30 while the host counted
             // 02:00, and it would look like a desync rather than like a clamp.
-            TimeLeft = Mathf.Clamp(timeLeft, 0.0f, RoundLength);
+            float incoming=Mathf.Clamp(timeLeft,0,RoundLength);
+            TimeLeft=SharedUltimatePhase.Instance!=null?SharedUltimatePhase.Instance.HoldSnapshotClock(incoming,roundActive,matchInProgress):incoming;
+            if(RoundActive&&!roundActive)Net.WorldEffectSnapshot.ClearPersistentFields();
+            AdoptFieldLifetime();
             RoundActive = roundActive;
 
             // The accepted snapshot owns the client's buffer state too. Do not raise the
@@ -203,6 +327,14 @@ namespace TumbangPreso
                 player.IsDefender = player.PlayerSlot == defenderSlot;
                 player.GetComponentInChildren<Visual.CharacterNameplate>()?.Refresh();
             }
+
+            // A companion is on its owner's side and lives while the round does.
+            foreach (var companion in _companions)
+            {
+                if (companion == null) continue;
+                companion.IsDefender = CompanionSeats.OwnerOf(companion.PlayerSlot) == defenderSlot;
+                if (matchInProgress) companion.RoundActive = roundActive;
+            }
         }
 
         /// <summary>
@@ -225,9 +357,9 @@ namespace TumbangPreso
 
         public void BeginRound()
         {
+            AdoptFieldLifetime();
             RoundActive = true;
             TimeLeft = RoundLength;
-            _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
@@ -237,6 +369,9 @@ namespace TumbangPreso
             _shoveCredit.Clear();
 
             foreach (var p in _players) p.RoundActive = true;
+            // One host-resolved grant per match/round, independent of reset or
+            // rejoin hydration. The ability system fences repeated BeginRound calls.
+            PlayerAt(GameServices.Match?.DefenderSlot ?? -1)?.AbilitySystem?.OnDefenderRoundStarted();
         }
 
         /// <summary>⚠️ ANY LIVE FRAME CLEARS THE FREEZE. See Hitstop: no instance owns it, so
@@ -247,6 +382,8 @@ namespace TumbangPreso
         {
             RoundActive = false;
             foreach (var p in _players) p.RoundActive = false;
+            ReleaseCompanions();
+            Net.WorldEffectSnapshot.ClearPersistentFields();
 
             // ⚠️⚠️ THE WEATHER IS PUT BACK HERE, AND IT IS THE ONE PIECE OF AN ABILITY THAT CAN
             // OUTLIVE THE ROUND THAT CAST IT. `Visual.SkyEvent` writes `RenderSettings`, which is
@@ -261,11 +398,13 @@ namespace TumbangPreso
 
         public void ResetForNewMatch()
         {
+            ReleaseCompanions();
             _players.Clear();
+            _bodiesStale = true;
+            _fieldRound=0;_fieldMatch=0;
 
             RoundActive = false;
             TimeLeft = RoundLength;
-            _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
@@ -278,19 +417,18 @@ namespace TumbangPreso
 
         private void FixedUpdate()
         {
-            if (!RoundActive) return;
+            // A physics callback may already be queued when a network receipt
+            // starts the hold. timeScale alone cannot cancel that callback.
+            if (!RoundActive || PresentationClock.Held) return;
 
             float dt = Time.fixedDeltaTime;
             _clock += dt;
             TimeLeft = Mathf.Max(0.0f, TimeLeft - dt);
 
-            if (_throwCooldownLeft > 0.0f)
-                _throwCooldownLeft = Mathf.Max(0.0f, _throwCooldownLeft - dt);
-
             // Guided training is a practice range, not a scored round. The rules and every
-            // verb stay live, including throw restoration protection and real ability
+            // verb stay live, including can contact protection and real ability
             // cooldowns, but the lesson must not end halfway through because 90 seconds passed.
-            if (GameLaunch.GuidedTutorial)
+            if (GameLaunch.GuidedTutorial || PracticeRange.Active)
             {
                 TimeLeft = RoundLength;
                 return;
@@ -506,54 +644,33 @@ namespace TumbangPreso
         {
             if (who == null) return false;
 
+            var carrier = who.GetComponent<Carrier>();
             var ctx = new ThrowContext
             {
                 RoundActive = RoundActive,
                 IsDefender = who.IsDefender,
                 HoldingSlipper = who.HoldingSlipper,
                 LataUpright = Lata != null && Lata.IsUpright,
-                ThrowCooldownLeft = _throwCooldownLeft,
+                ThrowCooldownLeft = carrier != null && carrier.IsThrowChargeDecaying ? 1f : 0f,
                 X = who.transform.position.x,
                 Z = who.transform.position.z,
-                ConfinementRadius = Balance.ConfinementRadius,
+                ConfinementRadius = Confinement.Radius,
             };
             return ThrowRules.CanThrow(in ctx);
         }
 
         /// <summary>
-        /// Whether an already-started throw wind-up may stay visually committed.
-        ///
-        /// The lata being down and the short restoration lock are transient release gates, not
-        /// reasons to snap a charged arm back to idle. Starting still asks <see cref="CanThrow"/>
-        /// and releasing still asks it again, so this cannot launch an illegal throw. It only
-        /// keeps the animation and stored charge while the attacker holds the button.
+        /// Normal charge maintenance shares position/role legality. Restoration
+        /// decay is handled by Carrier before this gate.
         /// </summary>
-        public bool CanMaintainThrowCharge(CharacterMotor who)
-        {
-            if (who == null) return false;
-
-            var ctx = new ThrowContext
-            {
-                RoundActive = RoundActive,
-                IsDefender = who.IsDefender,
-                HoldingSlipper = who.HoldingSlipper,
-                LataUpright = true,
-                ThrowCooldownLeft = 0.0f,
-                X = who.transform.position.x,
-                Z = who.transform.position.z,
-                ConfinementRadius = Balance.ConfinementRadius,
-            };
-            return ThrowRules.CanThrow(in ctx);
-        }
+        public bool CanMaintainThrowCharge(CharacterMotor who) => CanThrow(who);
 
         /// <summary>
-        /// ⚠️ NOBODY MAY THROW FOR A MOMENT AFTER THE CAN IS STOOD BACK UP. It stops the lata
-        /// being re-knocked by a slipper already charged and waiting on the last frame of the
-        /// reset channel, which would make the channel unfinishable.
+        /// Round observers are told the reset completed. The can retains its contact
+        /// protection; it no longer imposes a global throw cooldown.
         /// </summary>
         public void NotifyLataRestored()
         {
-            _throwCooldownLeft = Balance.ThrowRestoreCooldown;
             LataRestored?.Invoke();
         }
 
@@ -568,19 +685,26 @@ namespace TumbangPreso
         /// VULNERABLE row asks, so the warning a player sees and the check that catches them
         /// are one function and cannot disagree.
         /// </summary>
-        public void ResolveTag(CharacterMotor taya, CharacterMotor victim)
+        public void ResolveTag(CharacterMotor taya, CharacterMotor victim) => TryResolveTag(taya, victim);
+
+        /// <summary>Whether the authoritative tag actually landed, including a companion tag.</summary>
+        public bool TryResolveTag(CharacterMotor taya, CharacterMotor victim)
         {
             // ⚠️ THE HOST RE-CHECKS EVERYTHING THE CLIENT ALREADY CHECKED, and that is not
             // redundancy. A client says where it stood, which way it faced and how hard it
             // committed; it never says who it hit. A client that could report a result is a
             // client that can award itself 100 points.
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve()) return false;
 
-            if (!RoundActive || taya == null || victim == null) return;
-            if (!taya.IsDefender || !victim.IsTaggable()) return;
-            if (Lata == null || !Lata.IsUpright) return;
+            if (!RoundActive || taya == null || victim == null) return false;
+            if (!taya.IsDefender || !victim.IsTaggable()) return false;
+            if (Lata == null || !Lata.IsUpright) return false;
+
+            // ⚠️⚠️ TAGGING A COMPANION PAYS NOBODY (the owner: *"The doll does not give points when tagged/sabotaged"*).
+            if (CompanionSeats.IsCompanion(victim.PlayerSlot)) { ResolveCompanionTag(taya, victim); return true; }
 
             GameServices.Match.AddScore(taya.PlayerSlot, ScoreEvent.Tag);
+            GameServices.Match.RecordHostTagChain(taya.PlayerSlot, victim.PlayerSlot);
             taya.AbilitySystem?.OnTagScored();
 
             // ⚠️ SABOTAGE: an attacker who shoved this victim shortly before the tag gets
@@ -596,6 +720,20 @@ namespace TumbangPreso
 
             ApplyTagPenalty(taya, victim);
             Tagged?.Invoke(taya.PlayerSlot, victim.PlayerSlot);
+            return true;
+        }
+
+        /// <summary>
+        /// A companion tagged (plan 9.12): stunned five seconds WHERE IT STANDS (no trip home, it has no spawn mark), no score for
+        /// the taya, no sabotage credit for whoever shoved it, and nothing for its owner to lose. The stun is the host's decision
+        /// and replicates with the body; `CompanionTagged` is for its presentation.
+        /// </summary>
+        private void ResolveCompanionTag(CharacterMotor taya, CharacterMotor companion)
+        {
+            _shoveCredit.Remove(companion.PlayerSlot);
+            companion.ApplyTagged();
+            NetCue.PlayImpact("tag", "downed", companion.transform.position, 0.7f);
+            CompanionTagged?.Invoke(taya.PlayerSlot, companion.PlayerSlot);
         }
 
         /// <summary>
@@ -611,7 +749,10 @@ namespace TumbangPreso
         /// </summary>
         private void ApplyTagPenalty(CharacterMotor taya, CharacterMotor victim)
         {
-            victim.ApplyStagger(Balance.TagStunTime);
+            // ⚠️⚠️ `ApplyTagged`, NOT `ApplyStagger`: the owner's status table says Tagged *"Cannot
+            // be removed or be immune to"* (2026-09-25), and `ApplyStagger` returns early under
+            // stun immunity. Same five seconds, same unmashable `None` element.
+            victim.ApplyTagged();
 
             // ⚠️⚠️ EVERY PIECE OF THE TAG'S PRESENTATION USED TO BE WRITTEN HERE, INSIDE A
             // HOST-ONLY METHOD, AND SO HAPPENED ON ONE SCREEN. 🧑 2026-08-29: *"make sure that

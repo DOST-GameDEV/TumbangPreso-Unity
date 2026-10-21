@@ -156,28 +156,33 @@ namespace TumbangPreso.UI
 
             // ---- terms, sign-up only ----------------------------------------
             _ownerTermsRow = OwnerUiLayout.Rect(_ownerForm, "TermsRow").gameObject;
-            OwnerUiLayout.Place((RectTransform)_ownerTermsRow.transform, TermsRow.x, TermsRow.y, TermsRow.width, TermsRow.height);
+            OwnerUiLayout.Place((RectTransform)_ownerTermsRow.transform, TermsRow.x, TermsRow.y - TermsRestLift, TermsRow.width, TermsRow.height);
             var hit = OwnerUiLayout.Rect(_ownerTermsRow.transform, "TermsAcceptance");
-            OwnerUiLayout.Place(hit, 0, 0, 44, 40);
+            OwnerUiLayout.Place(hit, 0, -2, 44, 44);
             var hitImage = hit.gameObject.AddComponent<Image>();
             hitImage.color = Color.clear;
             _ownerTerms = hit.gameObject.AddComponent<Toggle>();
             _ownerTerms.targetGraphic = hitImage;
             _ownerTerms.transition = Selectable.Transition.None;
+            _ownerTerms.toggleTransition = Toggle.ToggleTransition.None;
             var box = OwnerMenuArt.Image(hit, "OriginalCheckbox", "login3-checkbox");
-            OwnerUiLayout.Place(box.rectTransform, 0, 7, 21, 24);
-            var tick = OwnerUiGlyph.Create(hit, "Check", OwnerUiGlyph.Mark.Check, theme.ActionInk);
-            OwnerUiLayout.Place(tick.rectTransform, 1, 8, 19, 22);
-            _ownerTerms.graphic = tick;
+            OwnerUiLayout.Place(box.rectTransform, 2, 2, 38, 38);
+            var check = OwnerMenuArt.Image(hit, "AcceptedCheck", "login3-accepted-tick");
+            check.color = theme.Paper;
+            OwnerUiLayout.Place(check.rectTransform, 7, 7, 28, 28);
+            _ownerTerms.graphic = check;
             _ownerTerms.isOn = false;
+            check.canvasRenderer.SetAlpha(0);
             _ownerTerms.onValueChanged.AddListener(_ => MenuSfx.Tick());
             _ownerTermsLink = OwnerTextButton(_ownerTermsRow.transform, "TermsLink", "TERMS & CONDITIONS",
                 ShowOwnerTerms, LinkSize, OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Place((RectTransform)_ownerTermsLink.transform, 38, 0, 400, 40);
+            OwnerUiLayout.Place((RectTransform)_ownerTermsLink.transform, 50, 0, 400, 40);
             var termsLabel = _ownerTermsLink.GetComponentInChildren<Text>();
             termsLabel.alignment = TextAnchor.MiddleLeft;
             OwnerUiRule.Under(termsLabel);
             Enter(_ownerTermsRow, .25f);
+            var termsPulse = _ownerTermsRow.AddComponent<OwnerConsentPulse>();
+            _ownerTerms.onValueChanged.AddListener(accepted => { if (accepted) termsPulse.Clear(); });
 
             // ---- forgot password, sign-in only ------------------------------
             _ownerForgotRow = OwnerUiLayout.Rect(_ownerForm, "ForgotRow").gameObject;
@@ -242,7 +247,7 @@ namespace TumbangPreso.UI
             var art = OwnerMenuArt.Image(_ownerForm, name, piece);
             art.raycastTarget = true;
             OwnerLoginLayout.Place(art.transform, piece);
-            var input = art.gameObject.AddComponent<InputField>();
+            var input = art.gameObject.AddComponent<OwnerBoundedInputField>();
             input.targetGraphic = art;
             input.transition = Selectable.Transition.None;
             input.lineType = InputField.LineType.SingleLine;
@@ -267,6 +272,11 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Fill(hint.rectTransform);
             hint.color = OwnerUiTheme.Current.Ochre;
             input.placeholder = hint;
+            // ⚠️ EVERY FIELD ON THE SCREEN ANSWERS THE PLAYER. See `OwnerFieldSound`: the
+            // three most-pressed controls on this screen were the only silent ones on it.
+            input.gameObject.AddComponent<OwnerFieldSound>();
+            var pulse = input.gameObject.AddComponent<OwnerFieldPulse>();
+            input.onValueChanged.AddListener(_ => pulse.Clear());
             return input;
         }
 
@@ -275,6 +285,7 @@ namespace TumbangPreso.UI
             var text = OwnerUiLayout.Text(_ownerForm, name, "", FaultSize, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(text.rectTransform, 682, y, 540, 30);
             text.alignment = TextAnchor.MiddleLeft;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
             text.color = OwnerUiTheme.Current.HintInk;
             text.raycastTarget = false;
             text.gameObject.AddComponent<OwnerFieldFade>();

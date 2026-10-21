@@ -1,0 +1,14 @@
+{
+  "Packages/com.tumbangpreso.core/Runtime/Balance.cs": "53d5dd851959225821911572f0a5d3ceaf7978f23d68d383929e5bc7bf9a79dd",
+  "Assets/TumbangPreso/Runtime/CombatVerbs.cs": "bc345f47bd47902f5575b77464dc5de2ae069b576904841734ec42e57a203645",
+  "Assets/TumbangPreso/Runtime/RoundDirector.cs": "7fdeb30b536930b5377209235ac58adb31033d112aec29f2b49c295af361a965",
+  "Assets/TumbangPreso/Runtime/AIController.cs": "a39f493311be630a8ae7fc0ac4c13ede936d9453453a8614bee941c94e32ca7b",
+  "Assets/TumbangPreso/Runtime/StatusStack.cs": "97e288949db2eb07285eb32237bc0bd41554591ee10611d0f48d9ffcfb78c08a",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "c905a41be8242489a1fab093d137a2ea8dbff1fae76427fd54749bb45be56e98",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs": "375f8d5c279f2580d813255201ecbff864f59200cc916fe8a2a14fc0a6617b06",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.VerbReceipts.cs": "e832eecc0ecfe9158b059fadace9b5565edcee4c2c22c9f8f8ea8a0f0420b72a",
+  "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Gameplay.cs": "65f2edfd7c1ec0312680fcdc2cffab687c49e62350838eb74e59fb3e1d0f3089",
+  "Assets/TumbangPreso/Tests/PlayMode/ContactTimingRevisionTests.cs": "b313271eb858ec6280bc964241ac96a1e453f2959a2e37a2f9082a0c7a29988a",
+  "Assets/TumbangPreso/Tests/PlayMode/ContactTimingRevisionTests.cs.meta": "888e9b6512d9a733e6d0d30416e27f659e492bc6c5ab52a21726a7cb0a12a349",
+  "Assets/TumbangPreso/Tests/PlayMode/ShoveSlidePressRecoveryTests.cs": "1cea3ff5e53ebb6cf7fff1744bcbaa19c08d416575502dc35728f5b6dce96f0f"
+}

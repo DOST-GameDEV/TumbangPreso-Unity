@@ -12,7 +12,6 @@ namespace TumbangPreso.UI
         private RectTransform _routes;
         private GameObject _routeRows;
         private StreetGraphic _classic, _hero;
-        private Sprite _generatedMark;
 
         public static void Install(ConvertedModeSelect owner)
         {
@@ -39,13 +38,7 @@ namespace TumbangPreso.UI
             var heading=MenuKit.Label(root,"Play",66,UiTheme.BrandRed,new Vector2(0,1),
                 new Vector2(190,-158),new Vector2(220,90));heading.alignment=TextAnchor.MiddleLeft;heading.raycastTarget=false;
             var logo=new GameObject("TumpMark",typeof(RectTransform),typeof(Image)).GetComponent<Image>();
-            logo.transform.SetParent(root,false);logo.sprite=Resources.Load<Sprite>("UI/brand/tump_logo");
-            if(logo.sprite==null)
-            {
-                var texture=Resources.Load<Texture2D>("UI/brand/tump_logo");
-                if(texture!=null)logo.sprite=_generatedMark=Sprite.Create(texture,
-                    new Rect(0,0,texture.width,texture.height),new Vector2(.5f,.5f));
-            }
+            logo.transform.SetParent(root,false);logo.sprite = TumpUiFactory.Sprite("UI/brand/tump_logo");
             logo.preserveAspect=true;logo.raycastTarget=false;
             MenuKit.Place(logo.rectTransform,new Vector2(1,1),new Vector2(-188,-104),new Vector2(210,138));
 
@@ -66,7 +59,6 @@ namespace TumbangPreso.UI
         }
 
         public void Back()=>SceneFlow.Go(SceneFlow.MainMenu);
-        private void OnDestroy(){if(_generatedMark!=null)Destroy(_generatedMark);}
 
         private StreetGraphic GameChoice(Transform parent,string name,string title,string detail,
             StreetIcon.Glyph icon,float top,GameMode mode)

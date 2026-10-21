@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 14:13:16Z" end-time="2026-10-04 14:13:33Z" duration="16.743239">
+  <test-suite type="TestSuite" id="3056" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1676" result="Failed" site="Child" start-time="2026-10-04 14:13:16Z" end-time="2026-10-04 14:13:33Z" duration="16.743239" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3050" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1676" result="Failed" site="Child" start-time="2026-10-04 14:13:16Z" end-time="2026-10-04 14:13:33Z" duration="16.731393" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="114268" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3051" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1676" result="Failed" site="Child" start-time="2026-10-04 14:13:16Z" end-time="2026-10-04 14:13:33Z" duration="16.725698" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3052" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1676" result="Failed" site="Child" start-time="2026-10-04 14:13:16Z" end-time="2026-10-04 14:13:33Z" duration="16.720562" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1812" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-10-04 14:13:16Z" end-time="2026-10-04 14:13:33Z" duration="16.699058" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1813" name="OwnerBirdsEyeMapScreenshots" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.OwnerBirdsEyeMapScreenshots" methodname="OwnerBirdsEyeMapScreenshots" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="827776382" result="Failed" start-time="2026-10-04 14:13:16Z" end-time="2026-10-04 14:13:33Z" duration="16.685019" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 61' (isReadable is false; Read/Write must be enabled in import settings)'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Mesh:get_tangents ()
+TumbangPreso.PlayTests.MapGraphicsReviewProbe/<>c:<OwnerBirdsEyeMapScreenshots>b__13_5 (UnityEngine.Renderer) (at Assets/TumbangPreso/Tests/PlayMode/MapGraphicsReviewProbe.cs:94)
+System.IO.File:WriteAllLines (string,System.Collections.Generic.IEnumerable`1<string>)
+TumbangPreso.PlayTests.MapGraphicsReviewProbe/<OwnerBirdsEyeMapScreenshots>d__13:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/MapGraphicsReviewProbe.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/kanto-trunk-material-controls/frames/Kanto-east.png
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 61' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 79' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 57' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 60' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 60' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 122' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 57' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 58' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 58' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 61' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 42' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 61' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 42' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 79' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 42' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 78' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 124' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 79' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 57' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access tangents on mesh 'Combined Mesh (root: scene) 42' (isReadable is false; Read/Write must be enabled in import settings)
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

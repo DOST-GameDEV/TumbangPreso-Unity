@@ -1,0 +1,13 @@
+{
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(True)": "final.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,False)": "final-retry.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(False)": "final.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(False)": "final.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,True)": "final-retry.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(False,False)": "final-retry.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(True)": "final.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(False)": "final.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(\"_writing\")": "final.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(True)": "final.xml",
+  "TumbangPreso.Tests.CareerAndCloudCodeTests.SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(\"_loading\")": "final.xml"
+}

@@ -1,0 +1,7 @@
+  TumbangPreso.Core -> /workspace/scratch/0ed9da4aed7f/tump/Core/bin/Debug/netstandard2.1/TumbangPreso.Core.dll
+  TumbangPreso.Core.Tests -> /workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll
+Test run for /workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll (.NETCoreApp,Version=v9.0)
+A total of 1 test files matched the specified pattern.
+Results File: /workspace/scratch/0ed9da4aed7f/tump-qa/credits-code-1003/core/credits.trx
+
+Passed!  - Failed:     0, Passed:   715, Skipped:     0, Total:   715, Duration: 254 ms - TumbangPreso.Core.Tests.dll (net9.0)

@@ -203,11 +203,13 @@ namespace TumbangPreso.UI
         /// </summary>
         private GameMode _mode = SceneFlow.SelectedMode;
         private int _page;
+        private int _historyRequest;
         private List<MatchRecord> _shown = new List<MatchRecord>();
         // ⚠️ `_loadoutHeroIndex` AND `_loadoutViews` LIVED HERE AND ARE DELETED WITH THE TAB
         // THEY BACKED. See the long note above `BuildAchievementsRows` for what moved where and
         // for the one behaviour (browsing a locked variant) that deliberately did not come with it.
         private bool _deleteArmed;
+        private int _deleteViewRequest;
         private string _notice = "";
 
         private SignInScreen _signIn;
@@ -272,7 +274,7 @@ namespace TumbangPreso.UI
 
             if (_detail != null && _detail.activeSelf)
             {
-                _detail.SetActive(false);
+                CloseDetail();
                 MenuSfx.Back();
                 return;
             }
@@ -435,6 +437,8 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            ++_deleteViewRequest;
+            RetireProfileSave();
             ScreenTakeover.Unregister(this);
             if (GameServices.Account != null) GameServices.Account.Changed -= OnDataChanged;
             if (GameServices.Career != null) GameServices.Career.Changed -= OnDataChanged;
@@ -893,6 +897,22 @@ namespace TumbangPreso.UI
             Show(onAccount ? Tab.Account : Tab.Profile);
         }
 
+        /// <summary>Which tab the UX-1 hamburger asks for. `docs/TODO.md` UX-1.10.</summary>
+        public enum Door { Profile, Party, Career }
+
+        /// <summary>
+        /// ⚠️ THE HAMBURGER'S PARTY AND CAREER ROWS OPEN THIS SAME SCREEN ON ANOTHER TAB, and that is
+        /// not a second door to one place: the name plate's door is the PROFILE, the hamburger's are
+        /// the FRIENDS list (a party is the humans in your room, `PartyRules`) and the CAREER. Three
+        /// destinations, one screen that already holds all three.
+        /// </summary>
+        public void OpenTab(Door door)
+        {
+            _root.SetActive(true);
+            VisibleChanged?.Invoke(true);
+            Show(door == Door.Party ? Tab.Friends : door == Door.Career ? Tab.Career : Tab.Profile);
+        }
+
         /// <summary>
         /// ⚠️⚠️ `OpenLoadout` LIVED HERE AND IS DELETED. It was the lobby YOUR SKILLS row's deep
         /// link into the LOADOUT tab; that row opens `ConvertedCharacterSelect` now
@@ -907,6 +927,9 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Close()
         {
+            ++_deleteViewRequest;
+            RetireProfileSave();
+            ++_historyRequest;
             _deleteArmed = false;
             _notice = "";
             if (_detail != null) _detail.SetActive(false);
@@ -922,7 +945,44 @@ namespace TumbangPreso.UI
 
         private void OnDataChanged()
         {
-            if (_root != null && _root.activeSelf) Show(_tab);
+            bool ownerChanged = _ownerDraftId != (GameServices.Account?.PlayerId ?? "local");
+            if (ownerChanged)
+            {
+                _notice = "";
+                if (GameServices.Account?.IsGuest == true) ++_deleteViewRequest;
+            }
+            if (_root != null && _root.activeSelf)
+            {
+                if (!ownerChanged && (EditingField() || UiActionHeld()))
+                {
+                    _refreshAfterEditing = true;
+                    RefreshHeader();
+                    return;
+                }
+                Show(_tab);
+            }
+        }
+
+        private bool _refreshAfterEditing;
+        private bool EditingField()
+        {
+            var selected = UnityEngine.EventSystems.EventSystem.current?.currentSelectedGameObject;
+            return selected != null && _list != null && selected.transform.IsChildOf(_list)
+                && selected.GetComponent<UnityEngine.UI.InputField>()?.isFocused == true;
+        }
+        private static bool UiActionHeld()
+        {
+            var module = UnityEngine.EventSystems.EventSystem.current?.currentInputModule
+                as UnityEngine.InputSystem.UI.InputSystemUIInputModule;
+            return module != null && (module.leftClick?.action?.IsPressed() == true
+                || module.submit?.action?.IsPressed() == true);
+        }
+        private void LateUpdate()
+        {
+            if (!_refreshAfterEditing) return;
+            if (_root == null || !_root.activeSelf) { _refreshAfterEditing = false; return; }
+            // After EventSystem.Update has delivered pointer-up/submit, never mid-click.
+            if (!EditingField() && !UiActionHeld()) Show(_tab);
         }
 
         /// <summary>
@@ -1319,6 +1379,10 @@ namespace TumbangPreso.UI
         private async void SaveProfile()
         {
             if(_ownerSaving)return;
+            var a = GameServices.Account;
+            string owner = a?.PlayerId ?? "";
+            bool signedIn = a?.IsSignedIn ?? false;
+            int request = ++_profileSaveRequest;
             OwnerProfileSaving(true);
             try
             {
@@ -1328,7 +1392,6 @@ namespace TumbangPreso.UI
                 // ANYTHING NOT ON SCREEN. `SetProfileAsync` takes all four at once, so reading a
                 // destroyed `InputField` would throw, and defaulting one to "" would silently
                 // WIPE a bio the player had written just because they had the group shut.
-                var a = GameServices.Account;
                 string name = OwnerDraftValue("PlayerNameEdit",_displayName != null ? _displayName.text : a?.DisplayName ?? "");
 
                 // ⚠️⚠️ SIGNED OUT, THE NAME STILL SAVES. Without this the whole method threw a
@@ -1352,16 +1415,27 @@ namespace TumbangPreso.UI
                 string pronouns = OwnerDraftValue("ProfilePronouns",_pronouns != null ? _pronouns.text : a.Pronouns);
 
                 await a.SetProfileAsync(name, bio, country, pronouns);
+                if (!ProfileSaveIsCurrent(request, a, owner, signedIn)) return;
                 _notice = "Saved.";
                 OwnerProfileSaved();
             }
             catch (Exception e)
             {
+                if (!ProfileSaveIsCurrent(request, a, owner, signedIn)) return;
                 _notice = e.Message;
                 if(_tab==Tab.Profile && IsOpen)SetFooter("SAVE", _notice);
             }
-            finally{OwnerProfileSaving(false);}
+            finally
+            {
+                if (this != null && request == _profileSaveRequest) OwnerProfileSaving(false);
+            }
         }
+
+        private bool ProfileSaveIsCurrent(int request, Net.PlayerAccount account, string owner, bool signedIn)
+            => this != null && request == _profileSaveRequest
+               && ReferenceEquals(GameServices.Account, account)
+               && (account?.PlayerId ?? "") == owner
+               && (account?.IsSignedIn ?? false) == signedIn;
 
         // -------------------------------------------------------------------
         // § CAREER
@@ -1911,6 +1985,15 @@ namespace TumbangPreso.UI
 
             MenuSfx.Click();
             Close();
+            var hub = Hub.TumpHub.Current;
+            if (hub != null)
+            {
+                // HOME and an existing room both already own a join controller.
+                // Reloading this scene only consumed the code after a new auto-host.
+                hub.Home();
+                hub.Push<Hub.HubJoin>(screen => screen.JoinCodeOnOpen = joinCode);
+                return;
+            }
             SceneFlow.PendingJoinCode = joinCode;
             SceneFlow.Go(SceneFlow.MatchSetup);
         }
@@ -1990,17 +2073,32 @@ namespace TumbangPreso.UI
             var career = GameServices.Career;
             if (career == null) return;
 
+            int request = ++_historyRequest;
+            int page = _page;
             try
             {
                 SetFooter("REFRESH", "Loading...");
-                _shown = await career.HistoryPageAsync(_page * HistoryPageSize, HistoryPageSize);
-                Show(Tab.Matches);
+                var shown = await career.HistoryPageAsync(page * HistoryPageSize, HistoryPageSize);
+                CompleteHistoryRefresh(request, page, shown);
             }
+            catch (OperationCanceledException) { }
             catch (Exception e)
             {
-                SetFooter("REFRESH", e.Message);
+                if (HistoryRequestIsCurrent(request, page)) SetFooter("REFRESH", e.Message);
             }
         }
+
+        private bool CompleteHistoryRefresh(int request, int page, List<MatchRecord> shown)
+        {
+            if (!HistoryRequestIsCurrent(request, page)) return false;
+            _shown = shown;
+            Show(Tab.Matches);
+            return true;
+        }
+
+        private bool HistoryRequestIsCurrent(int request, int page)
+            => this != null && IsOpen && _tab == Tab.Matches
+                && request == _historyRequest && page == _page;
 
         // -------------------------------------------------------------------
         // § ACCOUNT
@@ -2174,21 +2272,31 @@ namespace TumbangPreso.UI
                 return;
             }
 
+            var account = GameServices.Account;
+            string owner = account?.PlayerId ?? "";
+            int request = ++_deleteViewRequest;
             try
             {
                 _notice = "Deleting...";
                 SetFooter("", _notice);
-                await GameServices.Account.DeleteAsync();
+                await account.DeleteAsync();
+                // A valid deletion creates a fresh identity. Keep the view and
+                // account component fence without requiring the removed ID.
+                if (!CanCompleteDeletionView(account, request) || account.IsGuest) return;
                 _deleteArmed = false;
                 _notice = "Account deleted.";
                 Show(Tab.Account);
             }
             catch (Exception e)
             {
+                if (!CanCompleteDeletionView(account, request) || (account?.PlayerId ?? "") != owner) return;
                 _notice = e.Message;
                 SetFooter("", _notice);
             }
         }
+
+        private bool CanCompleteDeletionView(Net.PlayerAccount account, int request)
+            => this != null && IsOpen && request == _deleteViewRequest && ReferenceEquals(GameServices.Account, account);
 
         // -------------------------------------------------------------------
         // § THE FOOTER

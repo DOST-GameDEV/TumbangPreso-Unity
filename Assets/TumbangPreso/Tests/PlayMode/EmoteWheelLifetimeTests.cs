@@ -1,0 +1,84 @@
+using System.Collections;
+using System.Reflection;
+using NUnit.Framework;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.TestTools;
+
+namespace TumbangPreso.PlayTests
+{
+    public sealed class EmoteWheelLifetimeTests
+    {
+        private GameObject _body;
+        private EmoteWheel _wheel;
+        private Gamepad _pad, _previousPad;
+        private InputSettings.BackgroundBehavior _background;
+        private InputSettings.EditorInputBehaviorInPlayMode _editorFocus;
+        private int _chosen;
+
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _chosen = 0;
+            yield return PlayModeWorld.Reset();
+            Assert.IsFalse(Panel.AnyOpen); Assert.IsFalse(LobbyChat.AnyTyping);
+            _background = InputSystem.settings.backgroundBehavior;
+            _editorFocus = InputSystem.settings.editorInputBehaviorInPlayMode;
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            InputSystem.settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            _previousPad = Gamepad.current; _pad = InputSystem.AddDevice<Gamepad>();
+            _body = new GameObject("Actual wheel lifetime owner");
+            _wheel = _body.AddComponent<EmoteWheel>();
+            typeof(EmoteWheel).GetField("_emoteAction", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(_wheel, null);
+            _wheel.EmoteChosen += _ => _chosen++;
+        }
+
+        [UnityTearDown] public IEnumerator After()
+        {
+            _wheel?.Close(false);
+            if (_body != null) Object.Destroy(_body); yield return null;
+            if (_pad != null && _pad.added) InputSystem.RemoveDevice(_pad);
+            if (_previousPad != null && _previousPad.added) _previousPad.MakeCurrent();
+            InputSystem.settings.backgroundBehavior = _background;
+            InputSystem.settings.editorInputBehaviorInPlayMode = _editorFocus;
+            yield return PlayModeWorld.Reset();
+        }
+
+        private IEnumerator SelectActualSlice()
+        {
+            _wheel.Open();
+            InputSystem.QueueStateEvent(_pad, new GamepadState { rightStick = Vector2.up });
+            InputSystem.Update();
+            float until = Time.realtimeSinceStartup + 3;
+            while (_wheel.Selection < 0 && Time.realtimeSinceStartup < until) yield return null;
+            Assert.GreaterOrEqual(_wheel.Selection, 0, "The actual gamepad direction selected no wheel slice.");
+            Assert.IsTrue(_wheel.IsOpen); Assert.IsTrue(EmoteWheel.AnyOpen);
+        }
+
+        [UnityTest] public IEnumerator FocusLossCancelsTheSelectedWheelBeforeALaterReleaseCanCommit()
+        {
+            yield return SelectActualSlice();
+            _body.SendMessage("OnApplicationFocus", false, SendMessageOptions.DontRequireReceiver);
+            _wheel.Close(true);
+            Assert.AreEqual(0, _chosen, "Focus loss left the old selection armed for release.");
+            Assert.IsFalse(_wheel.IsOpen); Assert.IsFalse(EmoteWheel.AnyOpen);
+        }
+
+        [UnityTest] public IEnumerator DisabledOwnerCannotReopenWithItsOldSelectionArmed()
+        {
+            yield return SelectActualSlice();
+            _body.SetActive(false); _body.SetActive(true);
+            _wheel.Close(true);
+            Assert.AreEqual(0, _chosen, "Reactivation committed the retired wheel selection.");
+            Assert.IsFalse(_wheel.IsOpen); Assert.IsFalse(EmoteWheel.AnyOpen);
+        }
+
+        [UnityTest] public IEnumerator OrdinarySelectedReleaseStillCommitsExactlyOnce()
+        {
+            yield return SelectActualSlice();
+            _wheel.Close(true); _wheel.Close(true);
+            Assert.AreEqual(1, _chosen); Assert.IsFalse(_wheel.IsOpen); Assert.IsFalse(EmoteWheel.AnyOpen);
+        }
+    }
+}

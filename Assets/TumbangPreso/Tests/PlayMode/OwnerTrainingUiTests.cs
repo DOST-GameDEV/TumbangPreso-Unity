@@ -16,6 +16,107 @@ namespace TumbangPreso.PlayTests
     {
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator CompletedTutorialRemainsPlayableUntilItsRealQuit()
+        {
+            bool training = GameLaunch.GuidedTutorial;
+            try
+            {
+                SceneFlow.Networked = false;
+                SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+                GameLaunch.GuidedTutorial = true;
+                yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                float until = Time.realtimeSinceStartup + 15;
+                while (route == null && Time.realtimeSinceStartup < until)
+                { route = Object.FindFirstObjectByType<GuidedTraining>(); yield return null; }
+                Assert.IsNotNull(route);
+                var ready = typeof(GuidedTraining).GetField("_ready", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                while (!(bool)ready.GetValue(route) && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue((bool)ready.GetValue(route));
+                typeof(GuidedTraining).GetMethod("EnterLesson", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(route, new object[] { GuidedTraining.Lesson.Complete });
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                yield return new WaitForSeconds(.2f);
+                Assert.AreEqual(GuidedTraining.Lesson.Complete, route.CurrentLesson);
+                Assert.AreEqual(SceneFlow.Eskinita, SceneManager.GetActiveScene().name);
+                Assert.IsTrue(GameServices.Match.MatchInProgress);
+                Assert.IsTrue(GameServices.Round.RoundActive);
+                Assert.IsFalse(hud.GetComponentsInChildren<Button>(true).First(b => b.name == "SkipTrainingLesson").gameObject.activeSelf);
+                var local = (CharacterMotor)typeof(GuidedTraining).GetField("_local", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(route);
+                Assert.IsFalse(local.IsDefender); Assert.IsTrue(local.CanAct());
+                var defender = GameServices.Round.Players.First(p => p != null && p.IsDefender);
+                Assert.IsTrue(defender.gameObject.activeSelf);
+                until = Time.time + 5;
+                while (GameServices.Round.Lata.IsProtected && Time.time < until) yield return null;
+                GameServices.Round.Lata.HostKnockDown(-1);
+                Assert.IsFalse(GameServices.Round.Lata.IsUpright);
+                until = Time.time + 12;
+                while (!GameServices.Round.Lata.IsUpright && Time.time < until) yield return null;
+                Assert.IsTrue(GameServices.Round.Lata.IsUpright, "The completed range defender must actually reset the can.");
+                Assert.IsFalse(defender.Intent.Pressed(Verb.SpecialAbility));
+                Assert.IsFalse(defender.Intent.Pressed(Verb.Lunge));
+                Press(hud.GetComponentsInChildren<Button>().First(b => b.name == "QuitTraining"));
+                until = Time.realtimeSinceStartup + 130;
+                while ((SceneManager.GetActiveScene().name != SceneFlow.MatchSetup || UI.Hub.HubLoading.Visible) && Time.realtimeSinceStartup < until)
+                    yield return null;
+                Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name);
+                Assert.IsFalse(UI.Hub.HubLoading.Visible);
+                Assert.IsNotNull(UI.Hub.TumpHub.Current);
+                Assert.IsFalse(GameLaunch.GuidedTutorial);
+                Assert.IsFalse(GameServices.Match.MatchInProgress);
+            }
+            finally { GameLaunch.GuidedTutorial = training; }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator XeluControlsRenderThroughTheRealTrainingKeyRow()
+        {
+            bool training = GameLaunch.GuidedTutorial;
+            try
+            {
+                SceneFlow.Networked = false;
+                SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+                GameLaunch.GuidedTutorial = true;
+                yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+                float until = Time.realtimeSinceStartup + 15;
+                GuidedTrainingHud hud = null;
+                while (hud == null && Time.realtimeSinceStartup < until)
+                { hud = Object.FindFirstObjectByType<GuidedTrainingHud>(); yield return null; }
+                Assert.IsNotNull(hud);
+                Object.FindFirstObjectByType<GuidedTraining>().enabled = false;
+                Hud.Instance.SetTrainingDeckHidden(false);
+                yield return null;
+                var readout = Object.FindFirstObjectByType<TumpMatchReadout>();
+                var liveGlyphs = readout.Canvas.GetComponentsInChildren<Image>()
+                    .Where(i => i.name == "BindingGlyph" && i.enabled && i.sprite != null && i.sprite.name.StartsWith("xelu:")).ToArray();
+                Assert.AreEqual(3, liveGlyphs.Length, "The live power HUD did not adopt the current keyboard prompt images.");
+                hud.SetLesson(0, GuidedTraining.LessonCount, "YOUR CONTROLS", "Your current binding chooses the picture.",
+                    "[F]  READY / SHOVE  [RMB]  PICK UP", UiTheme.Offense);
+                yield return null;
+                var keyRow = hud.GetComponentsInChildren<RectTransform>().Single(r => r.name == "KeyRow");
+                var glyphs = keyRow.GetComponentsInChildren<Image>().Where(i => i.sprite != null && i.sprite.name.StartsWith("xelu:")).ToArray();
+                Assert.AreEqual(2, glyphs.Length);
+                var pad = OwnerUiLayout.Rect(hud.transform, "PadPromptSamples");
+                OwnerUiLayout.Place(pad, 800, 90, 640, 180);
+                foreach (var family in new[] { InputGlyphs.PadFamily.Xbox, InputGlyphs.PadFamily.PlayStation })
+                {
+                    int x = family == InputGlyphs.PadFamily.Xbox ? 0 : 240;
+                    var image = OwnerUiLayout.Rect(pad, family + "Confirm").gameObject.AddComponent<Image>();
+                    image.sprite = InputGlyphs.For("BUTTON SOUTH", true, family);
+                    image.preserveAspect = true; image.raycastTarget = false;
+                    OwnerUiLayout.Place(image.rectTransform, x, 0, 76, 76);
+                    var label = OwnerUiLayout.Text(pad, family + "Label", family == InputGlyphs.PadFamily.Xbox ? "XBOX A" : "PLAYSTATION CROSS", 28);
+                    OwnerUiLayout.Place(label.rectTransform, x, 86, 220, 70); label.color = Color.white;
+                    label.gameObject.AddComponent<Outline>().effectColor = UiTheme.InGameOutline;
+                }
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback0930-xelu-controls-" + size.x + "x" + size.y,
+                        hud.GetComponent<Canvas>(), size.x, size.y, false, true, underlays: new[] { readout.Canvas });
+            }
+            finally { GameLaunch.GuidedTutorial = training; }
+        }
         [UnityTest,Timeout(90000)]
         public IEnumerator TrainingUsesOwnerThemeAndRealSkipQuitCallbacks()
         {
@@ -51,11 +152,696 @@ namespace TumbangPreso.PlayTests
                 yield return TumpUiCapture.Capture("TrainingSidebar-complete",canvas,1280,720,false,true,checkActionBounds:true);
                 Press(hud.GetComponentsInChildren<Button>().First(b=>b.name=="QuitTraining"));
                 until=Time.realtimeSinceStartup+10;
-                while(SceneManager.GetActiveScene().name!=SceneFlow.MainMenu && Time.realtimeSinceStartup<until)yield return null;
-                Assert.AreEqual(SceneFlow.MainMenu,SceneManager.GetActiveScene().name);Assert.False(GameLaunch.GuidedTutorial);
+                while(SceneManager.GetActiveScene().name!=SceneFlow.MatchSetup && Time.realtimeSinceStartup<until)yield return null;
+                Assert.AreEqual(SceneFlow.MatchSetup,SceneManager.GetActiveScene().name);Assert.False(GameLaunch.GuidedTutorial);
             }
             finally{GameLaunch.GuidedTutorial=training;SceneFlow.Networked=networked;}
         }
+        [UnityTest, Timeout(180000)]
+        public IEnumerator TutorialUsesReadableGlyphsAndEnterSkip()
+        {
+            bool training = GameLaunch.GuidedTutorial;
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            var input = UnityEngine.InputSystem.InputSystem.settings;
+            var background = input.backgroundBehavior; var editor = input.editorInputBehaviorInPlayMode;
+            input.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            input.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keys = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+            UnityEngine.InputSystem.InputSystem.EnableDevice(keys);
+            QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+                GameLaunch.GuidedTutorial = true;
+                yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                float until = Time.unscaledTime + 15;
+                while (route == null && Time.unscaledTime < until)
+                { yield return null; route = Object.FindFirstObjectByType<GuidedTraining>(); }
+                Assert.IsNotNull(route);
+                var ready = typeof(GuidedTraining).GetField("_ready", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                while (!(bool)ready.GetValue(route) && Time.unscaledTime < until) yield return null;
+                Assert.IsTrue((bool)ready.GetValue(route));
+                var first = route.CurrentLesson;
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys,
+                    new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.N));
+                UnityEngine.InputSystem.InputSystem.Update(); route.SendMessage("Update");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update();
+                yield return new WaitForSecondsRealtime(.8f);
+                Assert.AreEqual(first, route.CurrentLesson, "Retired N binding must not skip a lesson.");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys,
+                    new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Enter));
+                UnityEngine.InputSystem.InputSystem.Update(); route.SendMessage("Update");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update();
+                yield return new WaitForSecondsRealtime(.8f);
+                Assert.AreEqual((int)first + 1, (int)route.CurrentLesson, "Enter must advance exactly one lesson.");
+                route.enabled = false;
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                foreach (var name in new[] { "SkipTrainingLesson", "QuitTraining" })
+                {
+                    var action = hud.GetComponentsInChildren<Button>().Single(b => b.name == name);
+                    var label = action.GetComponentInChildren<Text>();
+                    Assert.AreSame(OwnerUiTheme.Current.Display, label.font);
+                    Assert.IsFalse(label.text.Contains("ENTER") || label.text.Contains("BACKSPACE"));
+                    var glyph = action.GetComponentsInChildren<Image>().Single(i => i.sprite != null);
+                    Assert.AreSame(InputGlyphs.For(name == "SkipTrainingLesson" ? "ENTER" : "BACKSPACE", true), glyph.sprite);
+                    Assert.That(glyph.rectTransform.rect.height, Is.GreaterThanOrEqualTo(64));
+                }
+                hud.SetLesson(1, GuidedTraining.LessonCount, "MOVE AROUND", "Move around the arena.", "[W] [A] [S] [D] MOVE", UiTheme.Offense);
+                yield return null;
+                var row = hud.GetComponentsInChildren<RectTransform>().Single(r => r.name == "KeyRow");
+                var prompts = row.GetComponentsInChildren<Image>().Where(i => i.sprite != null).ToArray();
+                Assert.AreEqual(4, prompts.Length);
+                Assert.IsTrue(prompts.All(i => i.rectTransform.rect.height >= 64));
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback0930-training-prompts-" + size.x + "x" + size.y,
+                        hud.GetComponent<Canvas>(), size.x, size.y, false, true, checkActionBounds: true);
+            }
+            finally
+            {
+                UnityEngine.InputSystem.InputSystem.RemoveDevice(keys);
+                input.backgroundBehavior = background; input.editorInputBehaviorInPlayMode = editor;
+                QualitySettings.globalTextureMipmapLimit = mip; GameLaunch.GuidedTutorial = training;
+            }
+        }
+
+        private static IEnumerator OpenRevisedTraining()
+        {
+            GameLaunch.Reset(); GameLaunch.GuidedTutorial = true;
+            SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+            float until = Time.unscaledTime + 20;
+            while (Object.FindFirstObjectByType<GuidedTraining>() == null && Time.unscaledTime < until) yield return null;
+            var route = Object.FindFirstObjectByType<GuidedTraining>(); Assert.IsNotNull(route);
+            var ready = typeof(GuidedTraining).GetField("_ready", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            while (!(bool)ready.GetValue(route) && Time.unscaledTime < until) yield return null;
+            Assert.IsTrue((bool)ready.GetValue(route));
+            while (UI.Hub.HubLoading.Visible && Time.unscaledTime < until) yield return null;
+            Assert.IsFalse(UI.Hub.HubLoading.Visible);
+            foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
+        }
+        private static void SelectLesson(GuidedTraining route, GuidedTraining.Lesson lesson)
+            => typeof(GuidedTraining).GetMethod("EnterLesson", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(route, new object[] { lesson });
+        private static CharacterMotor Student(GuidedTraining route)
+            => (CharacterMotor)typeof(GuidedTraining).GetField("_local", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(route);
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator RevisedTutorialHasTwentyOrderedLessonsAndHonestMovement()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
+                Assert.AreEqual(20, GuidedTraining.LessonCount);
+                Assert.IsNotNull(InputGlyphs.For("MOUSE", true));
+                StringAssert.Contains("Mouse_Simple", InputGlyphs.For("MOUSE", true).name);
+                Assert.AreEqual(GuidedTraining.Lesson.Ready, route.CurrentLesson);
+                Assert.IsFalse(local.IsDefender);
+                Assert.IsFalse(GameServices.Round.Lata.gameObject.activeSelf);
+                SelectLesson(route, GuidedTraining.Lesson.Move);
+                local.Intent.Move = Vector2.up;
+                yield return new WaitForSeconds(.3f);
+                Assert.AreEqual(GuidedTraining.Lesson.Move, route.CurrentLesson, "Less than 7.5 metres cannot complete movement.");
+                float until = Time.time + 8;
+                while (route.CurrentLesson == GuidedTraining.Lesson.Move && Time.time < until) yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.Sprint, route.CurrentLesson);
+                local.Intent.Move = Vector2.up; local.Intent.Set(Verb.Sprint, true);
+                yield return new WaitForSeconds(.5f);
+                Assert.AreEqual(GuidedTraining.Lesson.Sprint, route.CurrentLesson, "A short sprint cannot satisfy 7.5 metres.");
+                until = Time.time + 12;
+                while (route.CurrentLesson == GuidedTraining.Lesson.Sprint && Time.time < until) yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.Jump, route.CurrentLesson);
+                local.Intent.Clear(); route.enabled = false;
+                foreach (GuidedTraining.Lesson lesson in System.Enum.GetValues(typeof(GuidedTraining.Lesson)))
+                {
+                    SelectLesson(route, lesson); yield return null;
+                    bool defender = lesson == GuidedTraining.Lesson.Block || lesson == GuidedTraining.Lesson.Punch
+                        || lesson == GuidedTraining.Lesson.DefenderReset || lesson == GuidedTraining.Lesson.ResetAndTag || lesson == GuidedTraining.Lesson.Lunge;
+                    Assert.AreEqual(defender, local.IsDefender, lesson.ToString());
+                    Assert.AreEqual(defender || lesson == GuidedTraining.Lesson.ThrowAndRetrieve || lesson == GuidedTraining.Lesson.Complete,
+                        GameServices.Round.Lata.gameObject.activeSelf, lesson + " can visibility");
+                }
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator TutorialBlockExerciseRequiresThreeRealBodyBlocks()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
+                SelectLesson(route, GuidedTraining.Lesson.Block);
+                int blocks = 0;
+                void Observe(Visual.MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+                { if (kind == Visual.MatchFlair.Kind.Block && subject == local.PlayerSlot) blocks++; }
+                Visual.MatchFlair.Presented += Observe;
+                try
+                {
+                    local.Teleport(new Vector3(-4, 0, 0));
+                    yield return new WaitForSeconds(3.5f);
+                    Assert.AreEqual(0, blocks, "A missed throw must not count as a body block.");
+                    Assert.AreEqual(GuidedTraining.Lesson.Block, route.CurrentLesson);
+                    float until = Time.time + 18;
+                    while (route.CurrentLesson == GuidedTraining.Lesson.Block && Time.time < until)
+                    {
+                        local.Teleport(new Vector3(2, 0, 4));
+                        yield return new WaitForSeconds(.1f);
+                        if (blocks < 3) Assert.AreEqual(GuidedTraining.Lesson.Block, route.CurrentLesson);
+                    }
+                    Assert.That(blocks, Is.GreaterThanOrEqualTo(3));
+                    Assert.AreEqual(GuidedTraining.Lesson.Punch, route.CurrentLesson);
+                }
+                finally { Visual.MatchFlair.Presented -= Observe; }
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator ReadyAndLookRequireTheirActualInputAndOneAndAHalfSeconds()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            var input = UnityEngine.InputSystem.InputSystem.settings;
+            var background = input.backgroundBehavior; var editor = input.editorInputBehaviorInPlayMode;
+            input.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            input.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+            UnityEngine.InputSystem.InputSystem.EnableDevice(keyboard);
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
+                yield return new WaitForSeconds(.3f);
+                Assert.AreEqual(GuidedTraining.Lesson.Ready, route.CurrentLesson);
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard,
+                    new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.F));
+                UnityEngine.InputSystem.InputSystem.Update(); route.SendMessage("Update");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update();
+                yield return new WaitForSecondsRealtime(.8f);
+                Assert.AreEqual(GuidedTraining.Lesson.Look, route.CurrentLesson);
+                yield return new WaitForSecondsRealtime(.3f);
+                Assert.AreEqual(GuidedTraining.Lesson.Look, route.CurrentLesson, "Idle time must not count as looking.");
+                local.Intent.LookDelta = new Vector2(.2f, .1f);
+                yield return new WaitForSecondsRealtime(1.3f);
+                Assert.AreEqual(GuidedTraining.Lesson.Look, route.CurrentLesson, "Looking for less than 1.5 seconds must not finish.");
+                float until = Time.unscaledTime + 1.2f;
+                while (route.CurrentLesson == GuidedTraining.Lesson.Look && Time.unscaledTime < until) yield return null;
+                local.Intent.LookDelta = Vector2.zero;
+                Assert.AreEqual(GuidedTraining.Lesson.Move, route.CurrentLesson);
+            }
+            finally
+            {
+                UnityEngine.InputSystem.InputSystem.RemoveDevice(keyboard);
+                input.backgroundBehavior = background; input.editorInputBehaviorInPlayMode = editor;
+                QualitySettings.globalTextureMipmapLimit = mip;
+            }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator CombinedTutorialExercisesRequireTheOrderedRealOutcomes()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
+                var lata = GameServices.Round.Lata; var carrier = local.GetComponent<Carrier>();
+                SelectLesson(route, GuidedTraining.Lesson.ThrowAndRetrieve);
+                yield return new WaitForSeconds(.2f);
+                Assert.AreEqual(GuidedTraining.Lesson.ThrowAndRetrieve, route.CurrentLesson, "Starting with a slipper is not completing the exercise.");
+                float until = Time.time + 5;
+                while (lata.IsProtected && Time.time < until) yield return null;
+                var shoe = carrier.Held; Assert.IsNotNull(shoe);
+                carrier.HostThrowAt(carrier.ThrowOrigin(), lata.transform.position + Vector3.up * .28f, 1);
+                Assert.AreEqual(SlipperState.InFlight, shoe.State);
+                until = Time.time + 6;
+                while (lata.IsUpright && Time.time < until) yield return null;
+                Assert.IsFalse(lata.IsUpright, "The real thrown slipper must hit the can.");
+                Assert.AreEqual(GuidedTraining.Lesson.ThrowAndRetrieve, route.CurrentLesson, "A knock alone is not retrieval and escape.");
+                until = Time.time + 6;
+                while (shoe.State != SlipperState.Loose && Time.time < until) yield return null;
+                Assert.AreEqual(SlipperState.Loose, shoe.State);
+                local.Teleport(shoe.transform.position);
+                Assert.IsTrue(shoe.HostGrab(local));
+                local.Teleport(new Vector3(2, 0, 2)); yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.ThrowAndRetrieve, route.CurrentLesson, "Holding inside the box cannot satisfy escape.");
+                local.Teleport(local.SpawnPosition);
+                yield return new WaitForSeconds(.8f);
+                Assert.AreEqual(GuidedTraining.Lesson.Shove, route.CurrentLesson);
+
+                SelectLesson(route, GuidedTraining.Lesson.ResetAndTag);
+                var dummy = (CharacterMotor)typeof(GuidedTraining).GetField("_dummy", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(route);
+                Assert.IsFalse(dummy.gameObject.activeSelf, "The target cannot be tagged before the can-down exercise is armed.");
+                until = Time.time + 5;
+                while (lata.IsUpright && Time.time < until) yield return null;
+                Assert.IsFalse(lata.IsUpright); Assert.IsTrue(dummy.gameObject.activeSelf);
+                local.Teleport(lata.transform.position + Vector3.back);
+                local.Intent.Set(Verb.Grab, true);
+                until = Time.time + 5;
+                while (!lata.IsUpright && Time.time < until) yield return null;
+                local.Intent.Set(Verb.Grab, false);
+                Assert.IsTrue(lata.IsUpright); Assert.AreEqual(GuidedTraining.Lesson.ResetAndTag, route.CurrentLesson);
+                until = Time.time + 5;
+                while (lata.IsProtected && Time.time < until) yield return null;
+                local.Teleport(dummy.transform.position + Vector3.back);
+                local.transform.forward = Vector3.forward;
+                Assert.IsTrue(local.GetComponent<CombatVerbs>().HostResolvePunch(local.transform.position, local.transform.forward));
+                yield return new WaitForSeconds(.1f);
+                Assert.IsFalse(dummy.gameObject.activeSelf, "The actually tagged practice target must disappear.");
+                yield return new WaitForSeconds(.7f);
+                Assert.AreEqual(GuidedTraining.Lesson.Lunge, route.CurrentLesson);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator CurveLungeAndEmoteLessonsNeedTheActualActions()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
+                SelectLesson(route, GuidedTraining.Lesson.Pektus);
+                var carrier = local.GetComponent<Carrier>(); var shoe = carrier.Held;
+                carrier.HostThrowAt(carrier.ThrowOrigin(), local.transform.position + local.transform.forward * 4, .5f, 0f);
+                float until = Time.time + 8;
+                while (shoe.State != SlipperState.Loose && Time.time < until) yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.Pektus, route.CurrentLesson, "A straight throw cannot satisfy Curve Throw.");
+                local.Teleport(shoe.transform.position); Assert.IsTrue(shoe.HostGrab(local));
+                local.Teleport(new Vector3(0, 0, Confinement.AttackerSpawnRing()));
+                local.transform.forward = Vector3.back;
+                carrier.HostThrowAt(carrier.ThrowOrigin(), local.transform.position + local.transform.forward * 4, .5f, 1f);
+                until = Time.time + 3;
+                while (route.CurrentLesson == GuidedTraining.Lesson.Pektus && Time.time < until) yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.ThrowAndRetrieve, route.CurrentLesson,
+                    "A genuinely curved throw completes without a retrieval input.");
+                SelectLesson(route, GuidedTraining.Lesson.Lunge);
+                var dummy = (CharacterMotor)typeof(GuidedTraining).GetField("_dummy", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(route);
+                local.Intent.Set(Verb.SpecialAbility, true);
+                Assert.IsFalse(local.Intent.Pressed(Verb.SpecialAbility), "The lunge exercise must not accept the old stationary-punch shortcut.");
+                local.Intent.Set(Verb.SpecialAbility, false);
+                float deadline = Time.time + 5;
+                while (GameServices.Round.Lata.IsProtected && Time.time < deadline) yield return null;
+                local.Teleport(dummy.transform.position + Vector3.back * 2.5f); local.transform.forward = Vector3.forward;
+                int score = GameServices.Match.ScoreFor(local.PlayerSlot);
+                Assert.IsTrue(local.GetComponent<CombatVerbs>().HostResolveLunge(local.transform.position, local.transform.forward, 1));
+                deadline = Time.time + 3;
+                while (route.CurrentLesson == GuidedTraining.Lesson.Lunge && Time.time < deadline) yield return null;
+                Assert.AreNotEqual(GuidedTraining.Lesson.Lunge, route.CurrentLesson);
+                Assert.Greater(GameServices.Match.ScoreFor(local.PlayerSlot), score);
+                // Select after any Classic-only unavailable-kit skip has finished.
+                route.StopAllCoroutines(); SelectLesson(route, GuidedTraining.Lesson.Emote);
+                local.Intent.Clear();
+                var emote = local.GetComponent<TumbangPreso.Social.EmotePlayer>();
+                Assert.IsTrue(emote.CanEmote());
+                emote.HostPlay(TumbangPreso.Social.Emotes.All[0].Id);
+                Assert.IsTrue(emote.IsEmoting);
+                yield return new WaitForSeconds(.8f);
+                Assert.AreEqual(GuidedTraining.Lesson.Complete, route.CurrentLesson);
+                Assert.AreEqual(SceneFlow.Eskinita, SceneManager.GetActiveScene().name);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator TrainingScrollPromptsHaveVisibleNativeMeshes()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                hud.SetLesson(7, GuidedTraining.LessonCount, "CURVE THROW", "Scroll to curve the throw, then retrieve your slipper.",
+                    "[WHEEL UP] / [WHEEL DOWN] CURVE", UiTheme.Offense);
+                yield return null; Canvas.ForceUpdateCanvases(); yield return null;
+                var row = hud.GetComponentsInChildren<RectTransform>().Single(r => r.name == "KeyRow");
+                var wheels = row.GetComponentsInChildren<Graphic>().Where(g => g.GetType().Name == "TrainingWheelGlyph").ToArray();
+                Assert.AreEqual(2, wheels.Length);
+                foreach (var wheel in wheels)
+                {
+                    Assert.IsNotNull(wheel.GetComponent<CanvasRenderer>());
+                    var mesh = wheel.canvasRenderer.GetMesh(); Assert.IsNotNull(mesh);
+                    Assert.Greater(mesh.vertexCount, 50, "The layout box alone is not a visible scroll icon.");
+                    Assert.IsTrue(mesh.colors32.Any(c => c.a > 0)); Assert.IsFalse(wheel.canvasRenderer.cull);
+                }
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback0930-training-wheel-" + size.x + "x" + size.y,
+                        hud.GetComponent<Canvas>(), size.x, size.y, false, true, checkActionBounds: true);
+                hud.SetLesson(7, GuidedTraining.LessonCount, "CURVE THROW", "Rebound keys keep their own prompts.",
+                    "[Q] / [E] CURVE", UiTheme.Offense);
+                yield return null;
+                Assert.IsFalse(row.GetComponentsInChildren<Graphic>().Any(g => g.GetType().Name == "TrainingWheelGlyph"));
+                Assert.AreEqual(2, row.GetComponentsInChildren<Image>().Count(i => i.sprite != null && i.sprite.name.StartsWith("xelu:")));
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator HiddenTrainingCanAlsoHidesItsIndependentClock()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var can = GameServices.Round.Lata;
+                var clock = Visual.LataClockPresentation.For(can); Assert.IsNotNull(clock);
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Look, GuidedTraining.Lesson.Throw,
+                    GuidedTraining.Lesson.Retrieve, GuidedTraining.Lesson.Pektus, GuidedTraining.Lesson.ThrowAndRetrieve,
+                    GuidedTraining.Lesson.Block, GuidedTraining.Lesson.AbilityInfo, GuidedTraining.Lesson.Complete })
+                {
+                    SelectLesson(route, lesson); yield return null;
+                    Assert.AreEqual(can.gameObject.activeInHierarchy, clock.gameObject.activeInHierarchy, lesson.ToString());
+                }
+                SelectLesson(route, GuidedTraining.Lesson.Look); yield return null;
+                yield return TumpUiCapture.Capture("Feedback0930-training-hidden-can",
+                    Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(), 960, 540, false, true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator RefinedMovementTargetsRequireSevenAndAHalfMetres()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
+                var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+                var metric = typeof(GuidedTraining).GetField("_metric", flags);
+                var advancing = typeof(GuidedTraining).GetField("_advancing", flags);
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Move, GuidedTraining.Lesson.Sprint })
+                {
+                    SelectLesson(route, lesson); local.Intent.Move = Vector2.up;
+                    local.Intent.Set(Verb.Sprint, lesson == GuidedTraining.Lesson.Sprint);
+                    float until = Time.unscaledTime + 12;
+                    while ((float)metric.GetValue(route) < 6 && route.CurrentLesson == lesson && Time.unscaledTime < until) yield return null;
+                    Assert.AreEqual(lesson, route.CurrentLesson);
+                    Assert.GreaterOrEqual((float)metric.GetValue(route), 6);
+                    Assert.IsFalse((bool)advancing.GetValue(route), "Six metres cannot complete either movement lesson.");
+                    while (!(bool)advancing.GetValue(route) && route.CurrentLesson == lesson && Time.unscaledTime < until) yield return null;
+                    Assert.IsTrue((bool)advancing.GetValue(route));
+                    Assert.That((float)metric.GetValue(route), Is.InRange(7.5f, 8.2f), "Completion must begin at the authored distance.");
+                    local.Intent.Clear();
+                    while ((bool)advancing.GetValue(route) && Time.unscaledTime < until + 2) yield return null;
+                }
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator AuthoredLessonCopyAndCompletedQuitStayClean()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                var expected = new Dictionary<GuidedTraining.Lesson, string>
+                {
+                    { GuidedTraining.Lesson.Jump, "Jump around the arena." },
+                    { GuidedTraining.Lesson.Pektus, "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block." },
+                    { GuidedTraining.Lesson.Block, "You are now defending. Move around to block incoming slippers." },
+                    { GuidedTraining.Lesson.Skill1, "Signature abilities are always available regardless of your role. It gives you a reliable mix of mobility and utility." },
+                    { GuidedTraining.Lesson.Skill2, "Role abilities change depending on which role you take each round. It adapts to your role, helping you escape tags when attacking or chase attackers when defending" },
+                    { GuidedTraining.Lesson.Complete, "You are now ready to fight in the actual arena. Feel free to test everything you just learned while you are still here." }
+                };
+                var body = hud.GetComponentsInChildren<Text>(true).Single(t => t.name == "LessonBody");
+                foreach (var item in expected)
+                { SelectLesson(route, item.Key); yield return null; Assert.AreEqual(item.Value, body.text); }
+                var quit = hud.GetComponentsInChildren<RectTransform>(true).Single(t => t.name == "QuitTraining");
+                var skip = hud.GetComponentsInChildren<RectTransform>(true).Single(t => t.name == "SkipTrainingLesson");
+                var keys = hud.GetComponentsInChildren<RectTransform>(true).Single(t => t.name == "KeyRow");
+                Assert.IsFalse(skip.gameObject.activeSelf); Assert.IsFalse(keys.gameObject.activeSelf);
+                Assert.AreEqual(0, quit.anchoredPosition.x);
+                Assert.IsFalse(hud.GetComponentsInChildren<Text>().Any(t => t.text.Contains("PRACTISE FREELY")));
+                hud.SetInspecting(true); hud.SetInspecting(false); Assert.IsFalse(keys.gameObject.activeSelf);
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback0930-training-refined-complete-" + size.x + "x" + size.y,
+                        hud.GetComponent<Canvas>(), size.x, size.y, false, true, checkActionBounds: true);
+                SelectLesson(route, GuidedTraining.Lesson.Look); yield return null;
+                Assert.IsTrue(skip.gameObject.activeSelf); Assert.IsTrue(keys.gameObject.activeSelf);
+                Assert.AreEqual(320, quit.anchoredPosition.x);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator LatestTutorialNotesRemoveDummyMarkersAndEnlargeQuit()
+        {
+            bool previous=GameLaunch.GuidedTutorial;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route=Object.FindFirstObjectByType<GuidedTraining>();route.enabled=false;
+                var hud=Object.FindFirstObjectByType<GuidedTrainingHud>();
+                var marker=Object.FindObjectsByType<Transform>(FindObjectsInactive.Include,FindObjectsSortMode.None)
+                    .Single(t=>t.name=="TrainingObjectiveMarker");
+                foreach(var lesson in new[]{GuidedTraining.Lesson.Shove,GuidedTraining.Lesson.Block,GuidedTraining.Lesson.Lunge})
+                {
+                    SelectLesson(route,lesson);yield return null;
+                    Assert.IsFalse(marker.gameObject.activeInHierarchy,lesson+" still enables the tutorial star/ring.");
+                }
+                yield return TumpUiCapture.Capture("Tutorial-dummy-no-marker-960x540",hud.GetComponent<Canvas>(),960,540,false,true);
+                SelectLesson(route,GuidedTraining.Lesson.Complete);yield return null;Canvas.ForceUpdateCanvases();
+                var title=hud.GetComponentsInChildren<Text>().Single(t=>t.name=="LessonTitle");
+                Assert.AreEqual("TUTORIAL COMPLETE",title.text);
+                var quit=hud.GetComponentsInChildren<Button>().Single(b=>b.name=="QuitTraining");
+                Assert.GreaterOrEqual(quit.GetComponentInChildren<Text>().fontSize,37);
+                Assert.GreaterOrEqual(((RectTransform)quit.transform).rect.height,94);
+                var glyph=(RectTransform)quit.transform.Find("Key_BACKSPACE");
+                Assert.GreaterOrEqual(glyph.rect.width,89);Assert.GreaterOrEqual(glyph.rect.height,89);
+                foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1600,680)})
+                    yield return TumpUiCapture.Capture("Tutorial-complete-readable-quit-"+size.x+"x"+size.y,
+                        hud.GetComponent<Canvas>(),size.x,size.y,false,true,checkActionBounds:true);
+                Assert.IsTrue(quit.IsInteractable());
+            }
+            finally { GameLaunch.GuidedTutorial=previous; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator CompletionCornerCounterHidesAndRestores()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>(); route.enabled=false;
+            var hud=Object.FindFirstObjectByType<GuidedTrainingHud>();
+            var counter=(Text)typeof(GuidedTrainingHud).GetField("_counter",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(hud);
+            SelectLesson(route,GuidedTraining.Lesson.Complete);yield return null;
+            Assert.IsFalse(counter.gameObject.activeSelf,"The corner COMPLETE repeats TRAINING COMPLETE.");
+            yield return TumpUiCapture.Capture("Feedback0930-training-clean-completion",hud.GetComponent<Canvas>(),960,540,false,true);
+            SelectLesson(route,GuidedTraining.Lesson.Retrieve);yield return null;
+            Assert.IsTrue(counter.gameObject.activeSelf);Assert.AreEqual("07 / 20",counter.text);
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator AutomaticRetrieveHighThrowsReturnToReachableRoad()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>(); var local=Student(route);
+            var carrier=local.GetComponent<Carrier>();
+            foreach(var target in new[]{new Vector3(0,14,0),new Vector3(7,7,-8),new Vector3(0,.25f,1)})
+            {
+                SelectLesson(route,GuidedTraining.Lesson.Throw);yield return null;
+                var shoe=carrier.Held;Assert.IsNotNull(shoe);
+                carrier.HostThrowAt(carrier.ThrowOrigin(),target,1f);
+                float end=Time.unscaledTime+12;
+                while((route.CurrentLesson!=GuidedTraining.Lesson.Retrieve || shoe.State==SlipperState.InFlight) && Time.unscaledTime<end)yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.Retrieve,route.CurrentLesson,"The real route must advance itself after release.");
+                float airborne=(float)typeof(Slipper).GetField("_airborneTotal",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(shoe);
+                Debug.Log($"Tutorial end target={target} state={shoe.State} pos={shoe.transform.position} velocity={shoe.Velocity} airborne={airborne} scale={Time.timeScale} active={shoe.isActiveAndEnabled}");
+                if(shoe.State==SlipperState.InFlight)
+                    yield return TumpUiCapture.Capture("Feedback0930-training-floating-repro",Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(),960,540,false,true);
+                Assert.AreEqual(SlipperState.Loose,shoe.State);
+                float road=(float)typeof(Slipper).GetMethod("FindGroundY",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(null,new object[]{new Vector3(shoe.transform.position.x,local.transform.position.y,shoe.transform.position.z),.5f});
+                Debug.Log($"Tutorial actual target={target} landed={shoe.transform.position} road={road} rest={shoe.RestHeight}");
+                Assert.That(shoe.transform.position.y-road,Is.EqualTo(shoe.RestHeight).Within(.05f));
+            }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator ProtectedCanCannotBypassAirborneLifetime()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>();route.enabled=false;
+            var local=Student(route); SelectLesson(route,GuidedTraining.Lesson.ThrowAndRetrieve);
+            var can=GameServices.Round.Lata;can.HostRestore();Assert.IsTrue(can.IsProtected);
+            var carrier=local.GetComponent<Carrier>();var shoe=carrier.Held;Assert.IsNotNull(shoe);
+            shoe.HostThrow(local,can.transform.position+Vector3.up*4,Vector3.down,SlipperAffinity.Normal,0);
+            typeof(Slipper).GetField("_airborneTotal",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                .SetValue(shoe,Balance.MaxAirborneTime-.005f);
+            shoe.SendMessage("FixedUpdate");
+            Assert.AreEqual(SlipperState.Loose,shoe.State,"A contact return cannot defeat the existing six-second ceiling.");
+            Assert.IsTrue(can.IsUpright);Assert.IsTrue(can.IsProtected);
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator SkippedThrowStagesReachableSlipper()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>();route.enabled=false;
+            var local=Student(route);var carrier=local.GetComponent<Carrier>();
+            SelectLesson(route,GuidedTraining.Lesson.Throw);var shoe=carrier.Held;Assert.IsNotNull(shoe);
+            SelectLesson(route,GuidedTraining.Lesson.Retrieve);yield return null;
+            Assert.AreEqual(SlipperState.Loose,shoe.State);
+            Assert.Less(shoe.transform.position.y,local.transform.position.y+.5f);
+            Debug.Log($"Tutorial skipped throw staged={shoe.transform.position}");
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator RetrievePreservesTheRealThrowUntilItLandsOnTheRoad()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var local = Student(route); SelectLesson(route, GuidedTraining.Lesson.Throw);
+                var carrier = local.GetComponent<Carrier>(); var shoe = carrier.Held; Assert.IsNotNull(shoe);
+                carrier.HostThrowAt(carrier.ThrowOrigin(), new Vector3(0, .25f, 1), 1f);
+                Assert.AreEqual(SlipperState.InFlight, shoe.State);
+                Vector3 flyingAt = shoe.transform.position;
+                SelectLesson(route, GuidedTraining.Lesson.Retrieve);
+                Assert.AreEqual(SlipperState.InFlight, shoe.State, "The next lesson must not fake a landing by snapshotting the airborne slipper onto a new surface.");
+                Assert.Less(Vector3.Distance(flyingAt, shoe.transform.position), .001f);
+                float until = Time.unscaledTime + 8;
+                while (shoe.State == SlipperState.InFlight && Time.unscaledTime < until) yield return null;
+                Assert.AreEqual(SlipperState.Loose, shoe.State);
+                Assert.That(shoe.transform.position.y - (float)typeof(Slipper).GetMethod("FindGroundY",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(null, new object[] { shoe.transform.position, .5f }),
+                    Is.EqualTo(shoe.RestHeight).Within(.04f), "The real landing must rest on the road rather than hover above it.");
+                yield return TumpUiCapture.Capture("Feedback0930-training-real-landing",
+                    Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(), 960, 540, false, true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator AttackingLessonTransitionsPreservePositionAndHideTheEventFeed()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var local = Student(route); var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                var feed = Object.FindFirstObjectByType<MatchEventFeed>(FindObjectsInactive.Include);
+                Assert.IsNotNull(feed); Assert.IsFalse(feed.gameObject.activeInHierarchy);
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Move, GuidedTraining.Lesson.Sprint,
+                    GuidedTraining.Lesson.Jump, GuidedTraining.Lesson.Retrieve, GuidedTraining.Lesson.Pektus,
+                    GuidedTraining.Lesson.ThrowAndRetrieve })
+                {
+                    Vector3 at = new Vector3(1, 0, 9.5f); Quaternion facing = Quaternion.Euler(0, 23, 0);
+                    local.Teleport(at); local.transform.rotation = facing;
+                    SelectLesson(route, lesson);
+                    Assert.Less(Vector3.Distance(at, local.transform.position), .001f, lesson.ToString());
+                    Assert.Less(Quaternion.Angle(facing, local.transform.rotation), .001f, lesson.ToString());
+                }
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Throw, GuidedTraining.Lesson.Shove })
+                {
+                    local.Teleport(new Vector3(2, 0, 10)); SelectLesson(route, lesson);
+                    Assert.Less(Vector3.Distance(new Vector3(0, 0, Confinement.AttackerSpawnRing()), local.transform.position), .001f);
+                }
+                GameServices.Match.AddScore(local.PlayerSlot, ScoreEvent.LataKnocked); yield return null;
+                Assert.IsFalse(feed.gameObject.activeInHierarchy, "Scoring must not restore the hidden training announcer.");
+                SelectLesson(route, GuidedTraining.Lesson.Throw); yield return null;
+                Assert.IsTrue(hud.GetComponentsInChildren<Text>().Any(t => t.text == "HOLD THEN RELEASE TO THROW"));
+                yield return TumpUiCapture.Capture("Feedback0930-training-throw-prompt", hud.GetComponent<Canvas>(), 960, 540, false, true, checkActionBounds: true);
+                SelectLesson(route, GuidedTraining.Lesson.Lunge); yield return null;
+                Assert.IsTrue(hud.GetComponentsInChildren<Text>().Any(t => t.text == "HOLD THEN RELEASE TO LUNGE"));
+                yield return TumpUiCapture.Capture("Feedback0930-training-lunge-prompt", hud.GetComponent<Canvas>(), 960, 540, false, true, checkActionBounds: true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator CompletedTrainingWheelReleaseEmotesOnTheStudent()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            var settings = UnityEngine.InputSystem.InputSystem.settings;
+            var background = settings.backgroundBehavior; var editor = settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keys = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+            var mouse = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Mouse>();
+            UnityEngine.InputSystem.InputSystem.EnableDevice(keys); UnityEngine.InputSystem.InputSystem.EnableDevice(mouse);
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                SelectLesson(route, GuidedTraining.Lesson.Complete);
+                var local = Student(route); local.Intent.Clear();
+                var player = local.GetComponent<TumbangPreso.Social.EmotePlayer>(); Assert.IsTrue(player.CanEmote());
+                var wheel = Object.FindFirstObjectByType<EmoteWheel>(); Assert.IsNotNull(wheel);
+                string chosen = null; wheel.EmoteChosen += id => chosen = id;
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys,
+                    new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.T));
+                UnityEngine.InputSystem.InputSystem.Update(); wheel.SendMessage("Update");
+                Assert.IsTrue(wheel.IsOpen);
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(mouse,
+                    new UnityEngine.InputSystem.LowLevel.MouseState { delta = new Vector2(160, 0) });
+                UnityEngine.InputSystem.InputSystem.Update(); wheel.SendMessage("Update");
+                Assert.GreaterOrEqual(wheel.Selection, 0);
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update(); wheel.SendMessage("Update");
+                Assert.IsFalse(wheel.IsOpen); Assert.IsNotEmpty(chosen);
+                Assert.AreEqual(chosen, player.Current, "The real wheel release must target the student, not an AI-disabled practice actor.");
+                foreach (var actor in GameServices.Round.Players)
+                    if (actor != null && actor != local) Assert.IsFalse(actor.GetComponent<TumbangPreso.Social.EmotePlayer>()?.IsEmoting ?? false);
+                yield return null;
+                Assert.IsTrue(player.IsEmoting);
+            }
+            finally
+            {
+                UnityEngine.InputSystem.InputSystem.RemoveDevice(keys); UnityEngine.InputSystem.InputSystem.RemoveDevice(mouse);
+                settings.backgroundBehavior = background; settings.editorInputBehaviorInPlayMode = editor;
+                QualitySettings.globalTextureMipmapLimit = mip;
+            }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator CompletedPracticeKeepsBothRoamingAttackers()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var local = Student(route); SelectLesson(route, GuidedTraining.Lesson.Emote);
+                var friends = GameServices.Round.Players.Where(p => p != null && p != local && !p.IsDefender && p.gameObject.activeSelf).ToArray();
+                Assert.AreEqual(2, friends.Length);
+                var places = friends.Select(p => p.transform.position).ToArray();
+                SelectLesson(route, GuidedTraining.Lesson.Complete);
+                for (int n = 0; n < friends.Length; n++)
+                {
+                    Assert.IsTrue(friends[n].gameObject.activeInHierarchy); Assert.IsFalse(friends[n].IsDefender);
+                    Assert.Less(Vector3.Distance(places[n], friends[n].transform.position), .001f, "Completion should keep the existing practice partners in place.");
+                }
+                Assert.AreEqual(1, GameServices.Round.Players.Count(p => p != null && p.IsDefender && p.gameObject.activeSelf));
+                route.enabled = true; yield return new WaitForSeconds(.6f);
+                Assert.IsTrue(friends.Where((p, n) => Vector3.Distance(places[n], p.transform.position) > .15f).Any(),
+                    "The retained attackers should continue their existing roam.");
+                route.enabled = false;
+                SelectLesson(route, GuidedTraining.Lesson.Ready); SelectLesson(route, GuidedTraining.Lesson.Complete);
+                Assert.AreEqual(2, GameServices.Round.Players.Count(p => p != null && p != local && !p.IsDefender && p.gameObject.activeSelf),
+                    "Skipping earlier lessons must still prepare both friends.");
+                yield return TumpUiCapture.Capture("Feedback0930-training-complete-with-friends",
+                    Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(), 960, 540, false, true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
         private static void Press(Button button)
         {
             Canvas.ForceUpdateCanvases();var rect=(RectTransform)button.transform;

@@ -1,0 +1,53 @@
+{
+  "base": "8840df783e400826e0db29645cd21860e1368251",
+  "scope": "Full merged managed source; direct Roslyn compilation only",
+  "result": "CompileOnlyPassed",
+  "assemblies": [
+    {
+      "assembly": "TumbangPreso.Core",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Runtime",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Editor",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Tests",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.PlayTests",
+      "exitCode": 0
+    }
+  ],
+  "frozenFileCount": 1233,
+  "sourceBytes": 20237701,
+  "manifestSha256": "D7D33F819CBDB6A74C470CBD34D3DB63B286C083451C7E521E476C53BF23E8C0",
+  "ownedInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/RosterBook.cs",
+      "sha256": "074292FB8931EE790B14526C928C93F5B4867948BAB6B9EAC0A9E6C9502B6622"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "A80A45B1CB4093C466021285F9EE9B257B5D36A84B2BCAFA2E4E1F5D18A81931"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "B1520798BF66F986F2F5338CC47DED046F5633EE83E20DA91FB8E34231493DA3"
+    }
+  ],
+  "drift": 0,
+  "nativeTestsRun": 0,
+  "actualCompilerAttempts": 1,
+  "preflightBlocks": 1,
+  "notes": [
+    "First attempt stopped before copying or compiling; external headroom later recovered",
+    "No Unity import, IL postprocessing, native runtime, player build or timing claim",
+    "Unrelated HeroLoadout EOL-only dirt preserved in source snapshot, not committed"
+  ]
+}

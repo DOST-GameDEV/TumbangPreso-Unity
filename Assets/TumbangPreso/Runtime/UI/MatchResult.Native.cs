@@ -105,10 +105,10 @@ namespace TumbangPreso.UI
         }
         private void PresentNativeResult(int winner)
         {
-            _message.text = winner < 0 ? "It's a draw!" : NameFor(winner) + " wins!"; _message.color = OwnerUiTheme.Current.ActionInk;
+            _message.text = winner < 0 ? "It's a draw!" : NameFor(winner) + " wins!"; _message.color = CourtPresentationPalette.Paper;
             int rounds=GameServices.Match.TotalRounds;
             _broadcastLine.text = (SceneFlow.SelectedMode == GameMode.Classic ? "Classic" : "Hero Strike") + " · " + rounds + (rounds==1 ? " round" : " rounds");
-            _broadcastLine.color = OwnerUiTheme.Current.EnteredInk;
+            _broadcastLine.color = CourtPresentationPalette.Paper;
             var order = GameServices.Match.Ranking();
             for(int i=0;i<4;i++)
             {
@@ -121,6 +121,7 @@ namespace TumbangPreso.UI
                 _nativePortraits[i].sprite=portrait;_nativePortraits[i].enabled=portrait!=null;
             }
             NativePage(0);
+            PresentFinishPerformance(winner);
         }
         private void NativeProgression(XpAward award, PlayerProfile profile)
         {
@@ -186,8 +187,11 @@ namespace TumbangPreso.UI
         }
         private void Update()
         {
+            TickRematchVote();
+            TickFinishPerformance();
             if(!_nativeResult||!NativeVisible||!MenuNav.CancelPressed||ScreenTakeover.EscapeIsSpokenExcept(this))return;
-            ScreenTakeover.ConsumeEscape();OnMenuPressed();
+            ScreenTakeover.ConsumeEscape();
+            if(_courtPicker!=null)CloseCourtPicker();else OnMenuPressed();
         }
     }
 }

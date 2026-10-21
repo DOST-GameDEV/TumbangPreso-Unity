@@ -1,0 +1,40 @@
+{
+  "job": {
+    "id": "5d53f7b0fdf64b18a194f9914bd80bbb",
+    "ownerPid": 29096,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T18:17:01Z",
+    "kind": "gpu",
+    "memoryMb": 5120,
+    "reserveMb": 1024,
+    "project": "c:\\users\\matthew\\dev\\tump-laptop-player1003i",
+    "library": "c:\\users\\matthew\\dev\\tump-laptop-player1003i\\library",
+    "profile": "laptop-arrival-pan1004-hero-motion-off",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-03T18:17:01Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 6961,
+    "activeJobsBefore": 0,
+    "outsideEditors": [],
+    "outsideReserveMb": 0,
+    "acquiredUtc": "2026-10-03T18:17:01Z"
+  },
+  "startedUtc": "2026-10-03T18:17:01Z",
+  "guardPid": 17648,
+  "endedUtc": "2026-10-03T18:17:55Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 7040,
+  "leaseHeld": false
+}

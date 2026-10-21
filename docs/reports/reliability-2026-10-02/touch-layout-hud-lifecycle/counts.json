@@ -1,0 +1,21 @@
+{
+  "baseline": {
+    "intendedFailures": [
+      "CancelThenImmediateReopenUsesFreshControlsInsteadOfTheRetiringPreview",
+      "RetiringAnOldHudDoesNotReleaseTheReplacementsHeldInput"
+    ],
+    "total": 3,
+    "failed": 2,
+    "passed": 1
+  },
+  "fixtureRepairs": 0,
+  "candidate": {
+    "total": 3,
+    "failed": 0,
+    "passed": 3
+  },
+  "protectedChanged": 0,
+  "protectedInputs": 12534,
+  "player1002hContainsPatch": false,
+  "toolingRepairs": 0
+}

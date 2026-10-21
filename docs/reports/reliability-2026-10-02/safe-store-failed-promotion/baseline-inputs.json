@@ -1,0 +1,9 @@
+{
+  "Assets/TumbangPreso/Runtime/SafeStore.cs": "8b729f06d25a92458ea3b15dd9b8f632a785da0ef19020d16acd961385b18b52",
+  "Assets/TumbangPreso/Runtime/Settings/GameSettings.cs": "685a72f282a2ebe883fb227b00d73724be3d02e10c251326f1b8d93f6d4c7f4c",
+  "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": "26421fac6315853827d55805aa618baf7e5acce63660d92b9d59c763e665fbe7",
+  "Assets/TumbangPreso/Runtime/Net/SocialStore.cs": "43e1746e410fd8baeb1b42a24f1a97125367bfd89d2c49af37f6e69828f258b7",
+  "Assets/TumbangPreso/Runtime/Net/WalletStore.cs": "9fe39202f078fbe42d97cc627bdba09f18e554b59d60470d25b552457ab8f45b",
+  "Assets/TumbangPreso/Tests/SafeStoreFailedPromotionSaveTests.cs": "a53cfa860e5a5b83fb720ad40f2de2416ce4116e1f605ecb547afaa3295d1bf9",
+  "Assets/TumbangPreso/Tests/SafeStoreFailedPromotionSaveTests.cs.meta": "a4b0cc9bccf6800c1ba165fdfbd12eb5f29505099a77a0156af34775b5f47600"
+}

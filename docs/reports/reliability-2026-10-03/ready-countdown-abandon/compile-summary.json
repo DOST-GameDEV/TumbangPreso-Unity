@@ -1,0 +1,11 @@
+{
+  "compilation": {
+    "Runtime": 0,
+    "Tests": 0
+  },
+  "scope": "Compile only;3IEnumeratorcases nativepending",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/ReadyGate.cs": "0a3062ab814c1e2c202c453dd4960d1a837062343f1740494991d3f13d8bf068",
+    "Assets/TumbangPreso/Tests/ReadyCountdownAbandonTests.cs": "ed07f113de34b7bc126ede8a50171808ed43e45e2c9523c12b7dfd4c93ac84bd"
+  }
+}

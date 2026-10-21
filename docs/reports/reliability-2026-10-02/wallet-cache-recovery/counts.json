@@ -1,0 +1,40 @@
+{
+  "baseline": {
+    "total": 7,
+    "passed": 5,
+    "failed": 2,
+    "fixtures": [
+      {
+        "fullname": "TumbangPreso.Tests.SlipperHandoverTests",
+        "total": "3",
+        "passed": "2",
+        "failed": "1"
+      },
+      {
+        "fullname": "TumbangPreso.Tests.WalletCacheRecoveryTests",
+        "total": "4",
+        "passed": "3",
+        "failed": "1"
+      }
+    ]
+  },
+  "final": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "fixtures": [
+      {
+        "fullname": "TumbangPreso.Tests.SlipperHandoverTests",
+        "total": "3",
+        "passed": "3",
+        "failed": "0"
+      },
+      {
+        "fullname": "TumbangPreso.Tests.WalletCacheRecoveryTests",
+        "total": "4",
+        "passed": "4",
+        "failed": "0"
+      }
+    ]
+  }
+}

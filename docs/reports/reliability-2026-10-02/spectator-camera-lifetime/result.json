@@ -1,0 +1,66 @@
+{
+  "status": "qualified_native_playmode",
+  "sourceCommit": "f163882cc9ea65d6b4fb2411f2781deb2e885a1b",
+  "fixtureRepairs": 0,
+  "nativeRetries": 0,
+  "preExecutionToolSyntaxCorrections": 1,
+  "protectedCount": 1469,
+  "protectedDrift": [],
+  "ownedCandidateHashesMatch": true,
+  "runs": {
+    "baseline": {
+      "total": 3,
+      "passed": 0,
+      "failed": 3,
+      "durationSeconds": 0.5706253,
+      "cases": [
+        {
+          "name": "DisabledSpectatorControllerCannotKeepRenderingOverThePlayer",
+          "result": "Failed",
+          "message": "  Disabling the controller left its high-depth Unity Camera rendering.\n  Expected: False\n  But was:  True\n"
+        },
+        {
+          "name": "PublicSeatChangesCompleteWatchSeatWatchWithOneCameraOwner",
+          "result": "Failed",
+          "message": "  The retired spectator still owned a rendered view while seated.\n  Expected: False\n  But was:  True\n"
+        },
+        {
+          "name": "WatchingAgainReusesAndEnablesTheExistingController",
+          "result": "Failed",
+          "message": "  The watcher was found but never re-enabled.\n  Expected: True\n  But was:  False\n"
+        }
+      ],
+      "guardPid": 14560,
+      "unityPid": 15972,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    },
+    "final": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "durationSeconds": 0.4404603,
+      "cases": [
+        {
+          "name": "DisabledSpectatorControllerCannotKeepRenderingOverThePlayer",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "PublicSeatChangesCompleteWatchSeatWatchWithOneCameraOwner",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "WatchingAgainReusesAndEnablesTheExistingController",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "guardPid": 23100,
+      "unityPid": 23820,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    }
+  }
+}

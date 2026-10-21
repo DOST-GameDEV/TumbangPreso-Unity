@@ -1,0 +1,26 @@
+[
+  {
+    "sha256": "877c855ea2dcabfe520ebe169c486bc5ce869664cce58873e443e0d44d670606",
+    "from": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\PlayMode\\PracticeBotResumeTests.cs",
+    "to": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\practice-bot-resume1002\\retired-PracticeBotResumeTests.cs.txt",
+    "retired": true
+  },
+  {
+    "sha256": "ceaf9c3777542a9a516ce4eec78bbb82f45a9d431bd0b521fa1135dc9d8bd298",
+    "from": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\PlayMode\\PracticeBotResumeTests.cs.meta",
+    "to": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\practice-bot-resume1002\\retired-PracticeBotResumeTests.cs.meta.txt",
+    "retired": true
+  },
+  {
+    "sha256": "877c855ea2dcabfe520ebe169c486bc5ce869664cce58873e443e0d44d670606",
+    "from": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Assets\\TumbangPreso\\Tests\\PlayMode\\PracticeBotResumeTests.cs",
+    "to": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\practice-bot-resume1002\\retired-PracticeBotResumeTests.cs.txt",
+    "retired": true
+  },
+  {
+    "sha256": "ceaf9c3777542a9a516ce4eec78bbb82f45a9d431bd0b521fa1135dc9d8bd298",
+    "from": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Assets\\TumbangPreso\\Tests\\PlayMode\\PracticeBotResumeTests.cs.meta",
+    "to": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\practice-bot-resume1002\\retired-PracticeBotResumeTests.cs.meta.txt",
+    "retired": true
+  }
+]

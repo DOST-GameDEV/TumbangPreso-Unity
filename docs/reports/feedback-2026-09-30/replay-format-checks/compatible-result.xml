@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 19:02:58Z" end-time="2026-09-30 19:02:58Z" duration="0.2511644">
+  <test-suite type="TestSuite" id="2191" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-09-30 19:02:58Z" end-time="2026-09-30 19:02:58Z" duration="0.251164" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2185" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-09-30 19:02:58Z" end-time="2026-09-30 19:02:58Z" duration="0.236814" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="159853" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2186" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-09-30 19:02:58Z" end-time="2026-09-30 19:02:58Z" duration="0.229018" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2187" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-09-30 19:02:58Z" end-time="2026-09-30 19:02:58Z" duration="0.221197" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1797" name="ReplayReadbackSupportTests" fullname="TumbangPreso.PlayTests.ReplayReadbackSupportTests" classname="TumbangPreso.PlayTests.ReplayReadbackSupportTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-30 19:02:58Z" end-time="2026-09-30 19:02:58Z" duration="0.201552" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1798" name="ActualCaptureRetainsReadyColourFramesOnThisDevice" fullname="TumbangPreso.PlayTests.ReplayReadbackSupportTests.ActualCaptureRetainsReadyColourFramesOnThisDevice" methodname="ActualCaptureRetainsReadyColourFramesOnThisDevice" classname="TumbangPreso.PlayTests.ReplayReadbackSupportTests" runstate="Runnable" seed="1220686329" result="Passed" start-time="2026-09-30 19:02:58Z" end-time="2026-09-30 19:02:58Z" duration="0.190247" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ReplayFormat] async=True render565=True read565=False actualAsync=False
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

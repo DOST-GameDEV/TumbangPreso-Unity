@@ -1,0 +1,23 @@
+{
+    "frame": 0,
+    "unityFrame": 3908,
+    "beat": -2,
+    "realtime": 5.448837757110596,
+    "fieldOfView": 95.0,
+    "loadingVisible": true,
+    "loadingPreparing": true,
+    "clockHeld": false,
+    "roundActive": false,
+    "arrivalPresent": true,
+    "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+    }
+}

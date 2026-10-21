@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:38:02Z" end-time="2026-10-02 05:38:03Z" duration="0.2589252">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="936" result="Failed" site="Child" start-time="2026-10-02 05:38:02Z" end-time="2026-10-02 05:38:03Z" duration="0.258925" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2128" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="936" result="Failed" site="Child" start-time="2026-10-02 05:38:02Z" end-time="2026-10-02 05:38:03Z" duration="0.239140" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22564" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2129" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="936" result="Failed" site="Child" start-time="2026-10-02 05:38:02Z" end-time="2026-10-02 05:38:03Z" duration="0.229080" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2130" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="936" result="Failed" site="Child" start-time="2026-10-02 05:38:02Z" end-time="2026-10-02 05:38:03Z" duration="0.180332" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1668" name="MenuExitLifetimeTests" fullname="TumbangPreso.Tests.MenuExitLifetimeTests" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 05:38:03Z" end-time="2026-10-02 05:38:03Z" duration="0.078837" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1669" name="LeavingALiveRoundRetiresPersistentSimulation" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.LeavingALiveRoundRetiresPersistentSimulation" methodname="LeavingALiveRoundRetiresPersistentSimulation" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="1794947827" result="Failed" start-time="2026-10-02 05:38:03Z" end-time="2026-10-02 05:38:03Z" duration="0.037698" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The old arena keeps ticking on HOME.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.MenuExitLifetimeTests.LeavingALiveRoundRetiresPersistentSimulation () [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MenuExitLifetimeTests.cs:87
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1670" name="LeavingAnIntermissionRetiresItsHoldWithoutAdvancing" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.LeavingAnIntermissionRetiresItsHoldWithoutAdvancing" methodname="LeavingAnIntermissionRetiresItsHoldWithoutAdvancing" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="464134131" result="Failed" start-time="2026-10-02 05:38:03Z" end-time="2026-10-02 05:38:03Z" duration="0.007119" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Persistent break can advance the abandoned match.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.MenuExitLifetimeTests.LeavingAnIntermissionRetiresItsHoldWithoutAdvancing () [0x00077] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MenuExitLifetimeTests.cs:100
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1671" name="RepeatedExitRemainsQuiescent" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.RepeatedExitRemainsQuiescent" methodname="RepeatedExitRemainsQuiescent" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="1464049962" result="Failed" start-time="2026-10-02 05:38:03Z" end-time="2026-10-02 05:38:03Z" duration="0.003194" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.MenuExitLifetimeTests.RepeatedExitRemainsQuiescent () [0x0000c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MenuExitLifetimeTests.cs:107
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+[Flow] scene 'MatchSetup' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.
+]]></output>
+            </test-case>
+            <test-case id="1672" name="TheControlRoundReallyTicksBeforeExit" fullname="TumbangPreso.Tests.MenuExitLifetimeTests.TheControlRoundReallyTicksBeforeExit" methodname="TheControlRoundReallyTicksBeforeExit" classname="TumbangPreso.Tests.MenuExitLifetimeTests" runstate="Runnable" seed="1177476322" result="Passed" start-time="2026-10-02 05:38:03Z" end-time="2026-10-02 05:38:03Z" duration="0.011794" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

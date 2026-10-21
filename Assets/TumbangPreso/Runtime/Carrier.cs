@@ -8,17 +8,17 @@ namespace TumbangPreso
     /// <summary>
     /// Holding, charging, throwing, and the lata reset channel.
     ///
-    /// ⚠️⚠️ E DOES THREE JOBS AND PICKS BY WHAT IS IN FRONT OF YOU. Rather than inventing two
-    /// more keybinds for a game whose entire brief is "simpler", the press resolves against
-    /// context, and THIS COMPONENT GETS FIRST REFUSAL. Only a press that neither a pickup nor
-    /// a channel consumed falls through to the shove or the lunge.
+    /// ⚠️⚠️ THE OWNER'S LAYOUT, 2026-09-27: INTERACT / USE (F) PICKS UP AND RESETS; SHOVE / LUNGE
+    /// (right click) SHOVES AND LUNGES. Until then one key did all four and this component took
+    /// first refusal so a pickup never also shoved; that is why `IsBusy` and the press-consumed
+    /// flag below exist. The shove and the lunge now live on their own button (`CombatVerbs`).
     ///
-    /// | press            | condition                                   | result           |
-    /// |------------------|---------------------------------------------|------------------|
-    /// | E tap            | Attacker, loose slipper within PickupRadius  | pick up          |
-    /// | E tap            | Attacker, nothing grabbable                  | shove, instantly |
-    /// | E hold           | Defender, in the lata's ring, lata down      | reset the lata   |
-    /// | E hold 0.5 s     | Defender, anything else                      | lunge            |
+    /// | press               | condition                                   | result           |
+    /// |---------------------|---------------------------------------------|------------------|
+    /// | F tap               | Attacker, loose slipper within PickupRadius  | pick up          |
+    /// | F hold              | Defender, in the lata's ring, lata down      | reset the lata   |
+    /// | right click         | Attacker                                    | shove (or slide) |
+    /// | right click hold    | Defender                                    | lunge            |
     ///
     /// ⚠️ WHILE THE CHANNEL IS RUNNING THE LUNGE CHARGE IS CANCELLED, so resetting the can can
     /// never fire a lunge out of it. That is the one interaction between the two that a player
@@ -121,6 +121,8 @@ namespace TumbangPreso
         private float _aimHeldSeconds, _aimMovement;
         private int _aimSequence;
         private bool _charging;
+        private float _throwChargeDecayLeft, _throwChargeDecayStart, _observedDecayStart;
+        public bool IsThrowChargeDecaying => _throwChargeDecayLeft > 0f;
         private float _throwLockLeft;
         private float _channel;
 
@@ -133,12 +135,15 @@ namespace TumbangPreso
 
         public Slipper Held { get; private set; }
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
+        private float ChargeRate => _motor.Mode == GameMode.HeroStrike
+            ? Mathf.Clamp(_motor.AbilitySystem?.Kit?.ThrowChargeRate ?? 1f,.25f,2f) : 1f;
         public float ChannelRatio { get; private set; }
 
         private float _pektusSpin;
         public float CurrentPektusSpin => _charging ? _pektusSpin : 0.0f;
         public float ObservedPektusSpin => _observedCharge >= 0 ? _observedSpin : 0;
         private float _observedSpin;
+        private bool _observedChargeFromInput;
         private float _chargeSyncLeft,_lastSentSpin;
 
         /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
@@ -159,14 +164,14 @@ namespace TumbangPreso
         public float AimGuideConfidence => ThrowAimRules.GuideConfidence(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
         public float AimGuideHorizon => ThrowAimRules.GuideHorizon(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
         public Vector3 AimGuidePoint() => RawAimPoint();
-        public Vector3 AimGuideOrigin() => ThrowOriginFor(AimGuidePoint());
+        public Vector3 AimGuideOrigin() => ThrowOriginFor(AimPoint());
 
         /// <summary>
         /// ⚠️⚠️ THE WIND-UP EVERY OTHER PLAYER CAN SEE, and it is a SEPARATE value from
         /// <see cref="ChargeRatio"/> on purpose. `carrier.gd`'s header states it: the charge
         /// clock only ticks on the peer that controls the unit, so a third-person wind-up pose
         /// driven from it is invisible to the person being aimed at — which is the whole
-        /// counterplay the 2.5 s charge exists to create.
+        /// counterplay the shared charge duration exists to create.
         ///
         /// -1 when nobody is winding up.
         /// </summary>
@@ -216,6 +221,23 @@ namespace TumbangPreso
 
         private void Awake() => _motor = GetComponent<CharacterMotor>();
 
+        private void OnDisable() => CancelPendingInput();
+
+        internal void CancelPendingInput() => RetireProducerInput(true);
+
+        internal void RetireThrowInput(bool clearReceivedPresentation)
+        {
+            bool clearTell = clearReceivedPresentation || _observedChargeFromInput;
+            RetireLocalCharge(clearReceivedPresentation);
+            if (clearTell) ApplyObservedCharge(false);
+        }
+
+        internal void RetireProducerInput(bool clearReceivedPresentation)
+        {
+            if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
+            ClearPendingState(clearReceivedPresentation);
+        }
+
         /// <summary>
         /// HOST-SIDE pickup, shared by the solo path and the networked request.
         ///
@@ -237,9 +259,39 @@ namespace TumbangPreso
         /// HOST-SIDE throw from an explicit origin and aim point, so a networked throw leaves
         /// along the line the CLIENT was aiming rather than the one the host sees a frame later.
         /// </summary>
+        private int _concussedThrows;
+
+        /// <summary>A roll for one Concussed throw, from the thrower's seat, their throw count and the frame. It never touches
+        /// `UnityEngine.Random`, so it cannot shift anything else's random state.</summary>
+        public static uint MisfireRoll(int slot, int count, int frame)
+        {
+            uint h = 2166136261u;
+            h = (h ^ (uint)slot) * 16777619u; h = (h ^ (uint)count) * 16777619u; h = (h ^ (uint)frame) * 16777619u;
+            h ^= h >> 15; h *= 2246822519u; h ^= h >> 13; h *= 3266489917u; h ^= h >> 16;
+            return h;
+        }
+
+        /// <summary>
+        /// The Concussed misfire, decided by <paramref name="roll"/>: with `StatusRules.ConcussedMisfireChance` the throw is
+        /// turned far off to one side, kicked higher and sent faster; otherwise it is returned as it was.
+        /// </summary>
+        public static Vector3 ConcussedMisfire(Vector3 velocity, uint roll)
+        {
+            float U(int shift) => ((roll >> shift) & 0xFF) / 255.0f;
+            if (U(0) >= StatusRules.ConcussedMisfireChance) return velocity;
+            float yaw = Mathf.Lerp(StatusRules.ConcussedMisfireYawMin, StatusRules.ConcussedMisfireYawMax, U(8)) * (U(16) < 0.5f ? -1.0f : 1.0f);
+            float pitch = Mathf.Lerp(StatusRules.ConcussedMisfirePitchMin, StatusRules.ConcussedMisfirePitchMax, U(24));
+            float speed = Mathf.Lerp(StatusRules.ConcussedMisfireSpeedMin, StatusRules.ConcussedMisfireSpeedMax, U(4));
+            var turned = Quaternion.AngleAxis(yaw, Vector3.up) * velocity;
+            var flat = new Vector3(turned.x, 0.0f, turned.z);
+            // Higher: tipped up about the axis across its own flight.
+            if (flat.sqrMagnitude > 1e-4f) turned = Quaternion.AngleAxis(-pitch, Vector3.Cross(Vector3.up, flat.normalized)) * turned;
+            return turned * speed;
+        }
+
         public void HostThrowAt(Vector3 origin, Vector3 aimPoint, float charge, float spin = 0.0f)
         {
-            if (!NetAuthority.ShouldResolve() || Held == null) return;
+            if (!NetAuthority.ShouldResolve() || Held == null || IsThrowChargeDecaying) return;
 
             // ⚠️⚠️ `NetCue`, NOT `GameServices.Audio`, AND THIS LINE IS WHY THAT CLASS EXISTS.
             // It sits inside `HostThrowAt`, which opens with `if (!NetAuthority.ShouldResolve())
@@ -271,24 +323,35 @@ namespace TumbangPreso
             ability?.OnThrowReleased();
 
             Vector3 velocity = Held.LaunchVelocityTo(origin, aimPoint, Mathf.Clamp01(charge));
-            SlipperAffinity affinity = SlipperAffinity.Normal;
+            // ⚠️ CONCUSSED AND DISORIENTED KNOCK THE THROW OFF AIM (ABILITY-2): turned about the vertical by
+            // the body's own wobble, on the host, which is where the throw is decided.
+            float wobble = _motor.AimWobbleDegrees;
+            if (Mathf.Abs(wobble) > 0.01f) velocity = Quaternion.AngleAxis(wobble, Vector3.up) * velocity;
+            // ⚠️ AND A CONCUSSED THROW MAY MISFIRE: sail off somewhere else entirely (`StatusRules.ConcussedMisfireChance`).
+            if (_motor.IsConcussed)
+                velocity = ConcussedMisfire(velocity, MisfireRoll(_motor.PlayerSlot, ++_concussedThrows, Time.frameCount));
+            SlipperAffinity affinity = Held.Affinity == SlipperAffinity.Concussed
+                ? SlipperAffinity.Concussed : SlipperAffinity.Normal;
 
-            if (ability != null && ability.Kit is ZackHeroKit zack &&
-                (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            if (ability?.Kit is ZackHeroKit zack && zack.IsBankShotLoadedFor(Held))
             {
-                // ⚠️ THE ALTERNATE'S FRACTION COMES OFF THE TABLE, NOT OUT OF THIS LINE. `2.4f`
-                // was written here as `1.6 x 1.5` at a moment when Snap Discharge happened to be
-                // +50 per cent; the row is the only place that number may live, or the label the
-                // player reads and the shoe they throw are two different numbers.
-                velocity *= 1.6f * ability.VariantGain("zack.2.discharge");
-                affinity = SlipperAffinity.ElectricZap;
+                affinity = zack.BankShotAffinityFor(Held);
                 zack.ConsumeMagnetCharge();
             }
-            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsEmpoweredThrowLoadedFor(Held))
             {
-                velocity *= 1.3f * ability.VariantGain("sean.2.flare");
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();
+            }
+            else if (ability != null && ability.Kit is RafiHeroKit rafi && rafi.ConsumeSkim(Held))
+            {
+                affinity = SlipperAffinity.Skim;
+            }
+            else if (ability != null && ability.Kit is CheskaHeroKit cheska && cheska.IsFrostbiteLoaded)
+            {
+                // Every throw in the timed Frostbite window carries a one-hit freeze.
+                // Releasing a throw neither consumes nor refreshes the window.
+                affinity = SlipperAffinity.Frost;
             }
             else if (ability != null && ability.Kit is PhaisterHeroKit phaister &&
                      (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
@@ -297,8 +360,19 @@ namespace TumbangPreso
                 phaister.IsWitchfireInfused = false;
             }
 
+            // DANTE IN MOUNTAIN FORM throws a rock: `GeoRules.MountainThrowScale` faster, and the hit stuns and knocks back
+            // (`Slipper.HostBodyAffinity`). On top of whatever the slipper already carries (a Boulder load stays a Boulder load).
+            bool mountain = ability?.Kit is DanteHeroKit danteForm && danteForm.IsMountainForm;
+            if (mountain) velocity *= GeoRules.MountainThrowScale;
+
             var thrown = Held;
             thrown.HostThrow(_motor, origin, velocity, affinity, spin);
+            if (mountain) thrown.HostArmMountainHit();
+            // The Arena's slipper balloon (`Map.ArenaBalloon`, a toy): a full-charge throw aimed at it leaves
+            // play to strike it and is set back on the stage. No other map has one: there this is one null
+            // test, and the throw above is the whole of what happened.
+            Map.ArenaBalloon.HostOfferThrow(thrown, _motor, origin, aimPoint, charge, affinity);
+            Map.PayoMoon.HostOfferThrow(thrown, _motor, origin, aimPoint, charge, affinity);   // Payo's moon, the same toy at night
 
             Held = null;
             _motor.HoldingSlipper = false;
@@ -320,13 +394,21 @@ namespace TumbangPreso
         /// emphatically not a "return" mechanic: nothing in this game hands a slipper back,
         /// and a label implying otherwise promised a mechanic that does not exist.
         /// </summary>
-        public void NotifyHolding(Slipper what)
+        public void NotifyHolding(Slipper what, bool retrievedOwnThrow = false)
         {
             // ⚠️ IDEMPOTENT, BECAUSE THERE ARE NOW TWO CALLERS ON ONE PICKUP. `Slipper.HostGrab`
             // tells this component itself (see its own note on owning the relationship) and
             // `HostPickUp` calls it again straight afterwards. Without this guard the pickup
             // sound plays twice on the same frame and the grab clip restarts on its second frame.
             if (Held == what && what != null) return;
+
+            // Charge belongs to one possession, even if the same shoe is immediately
+            // re-equipped. Empty-hand keepalives do not interrupt the reset channel.
+            if (Held != what)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
+            }
 
             Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"holding");
             Held = what;
@@ -361,8 +443,10 @@ namespace TumbangPreso
             // twice by the double call that guard exists for. The distance to the taya is taken
             // NOW: it is what decides whether this was a run under pressure or a walk, and one
             // frame later the defender has moved.
+            // HostGrab captures the own-throw episode before Held consumes it.
+            // Ownership alone also matches a dropped, unthrown shoe.
             GameServices.Stats?.NoteRetrieval(
-                _motor.PlayerSlot, what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
+                _motor.PlayerSlot, retrievedOwnThrow && what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
 
             if (what.OwnerSlot == _motor.PlayerSlot)
                 _motor.AbilitySystem?.OnOwnSlipperRetrieved();
@@ -406,9 +490,21 @@ namespace TumbangPreso
         /// such beat, and charging one on the first frame of a round is the opening the game is
         /// tuned around.
         /// </summary>
-        public void NotifyEquipped(Slipper what)
+        public void NotifyEquipped(Slipper what, bool resetPickupLock = false)
         {
-            if (Held == what && what != null) return;
+            if (Held == what && what != null)
+            {
+                // A round handover can reuse the same shoe just retrieved. Repeated
+                // network snapshots remain idempotent and preserve a live pickup lock.
+                if (resetPickupLock) _throwLockLeft = 0.0f;
+                return;
+            }
+
+            if (Held != what)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
+            }
 
             Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"equipped");
             Held = what;
@@ -433,10 +529,12 @@ namespace TumbangPreso
 
             if (_throwLockLeft > 0.0f) _throwLockLeft = Mathf.Max(0.0f, _throwLockLeft - dt);
 
+            if (StepRestoreChargeDecay(dt)) return;
+
             // The observed wind-up runs on every peer, including the ones that are not driving
             // this unit. See ObservedChargePower.
             if (_observedCharge >= 0.0f)
-                _observedCharge = Mathf.Min(_observedCharge + dt, Balance.ChargeFullTime);
+                _observedCharge = Mathf.Min(_observedCharge + dt * ChargeRate, Balance.ChargeFullTime);
 
             if (!_motor.CanAct())
             {
@@ -444,8 +542,20 @@ namespace TumbangPreso
                 return;
             }
 
-            if (_motor.IsDefender) StepDefender(dt);
-            else StepAttacker(dt);
+            // A pending verb belongs to the role that started it.
+            if (_motor.IsDefender)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
+                StepDefender(dt);
+            }
+            else
+            {
+                if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
+                _channel = 0.0f;
+                ChannelRatio = 0.0f;
+                StepAttacker(dt);
+            }
         }
 
         /// <summary>
@@ -495,6 +605,8 @@ namespace TumbangPreso
         private void RideAnchor()
         {
             if (Held == null) return;
+
+            if (RideBelt()) return;
 
             var hand = Hand();
 
@@ -562,20 +674,44 @@ namespace TumbangPreso
                 fallback.rotation * Slipper.CarryRotation);
         }
 
+        /// <summary>
+        /// Where the carried slipper goes while a cast needs her right hand (HERO-10 v3, plan 9.4; only Phaister's curses ask,
+        /// through `CharacterMotor.StowsCarriedSlipper`): tucked flat against her back at the belt, toe down, riding the torso
+        /// bone so it leans when she leans. A throw charge overrides it (the slipper is back in the hand the moment she winds up).
+        /// </summary>
+        private bool RideBelt()
+        {
+            if (_motor == null || !_motor.StowsCarriedSlipper || _charging) return false;
+            var torso = GetComponent<Visual.CharacterVisual>()?.TorsoBone;
+            if (torso == null) return false;
+            Quaternion body = transform.rotation;
+            Held.transform.rotation = body * BeltRotation;
+            Held.transform.position = torso.position + body * BeltOffset - Held.DrawnCentreOffset;
+            return true;
+        }
+
+        /// <summary>The belt, from the torso bone in the body's frame (metres): a little to her right, at the waist, at her back.</summary>
+        private static readonly Vector3 BeltOffset = new Vector3(0.10f, 0.03f, -0.30f);
+
+        /// <summary>The sole flat against her back (the shoe's up out of it), its length hanging down.</summary>
+        private static readonly Quaternion BeltRotation = Quaternion.LookRotation(Vector3.right, Vector3.back);
+
         // -------------------------------------------------------------------
 
         private void StepAttacker(float dt)
         {
+            if (IsThrowChargeDecaying) return; // Releasing during the return cannot throw.
             var intent = _motor.Intent;
 
             // First refusal: a tap with something grabbable at your feet is a pickup, and
             // nothing else gets to see that press.
             //
-            // ⚠️ THE FLAG IS SET AFTER THE PICKUP IS ALREADY COMMITTED, NOT AS A GATE ABOVE.
+            // A consumed press cannot retrieve again after same-frame hand loss.
+            // The flag is set only after the pickup is already committed.
             // `carrier.gd::_step_grab` is emphatic about the ordering for the same reason: a
             // grab that did NOT connect must still fall through to the shove, so only a
             // CONNECTING grab may mark the press spent.
-            if (intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
+            if (!_grabPressConsumed && intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
             {
                 _grabPressConsumed = true;
                 return;
@@ -632,16 +768,13 @@ namespace TumbangPreso
 
             if (intent.Pressed(Verb.SpecialAbility))
             {
-                _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
+                _charge = Mathf.Min(_charge + dt * ChargeRate, Balance.ChargeFullTime);
                 _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
                 _observedSpin = _pektusSpin;
+                _observedChargeFromInput = true;
 
-                // Walking into the box, losing the slipper or ending the round cancels the
-                // commitment. The lata going down does not. That state is often caused by a
-                // teammate during somebody else's wind-up, and snapping every charged arm to
-                // idle on that frame made the shared knockdown feel like an animation error.
-                // Release legality is still checked below, so holding the pose cannot bank an
-                // illegal shot inside the box or launch through restoration protection.
+                // Leaving legal position/role still cancels ordinary preparation.
+                // Can knockdown and barrier state do not cancel or refuse it.
                 if (!canMaintainCharge) CancelCharge();
                 else
                 {
@@ -667,14 +800,19 @@ namespace TumbangPreso
         /// hands, the round reset. An arc left on screen after the throw has gone is worse than
         /// one that never appeared, so the clear belongs with the cancel and not at each site.
         /// </summary>
-        private void CancelCharge()
+        private void CancelCharge() => RetireLocalCharge(true);
+
+        private void RetireLocalCharge(bool publish)
         {
+            // An obsolete reader can retire its own input without cancelling
+            // another seat's received charge-return presentation.
+            if (publish || _observedChargeFromInput) _throwChargeDecayLeft = 0;
             if (!_charging) return;
 
             _charging = false;
             _charge = 0.0f;
             _pektusSpin = 0.0f;
-            BroadcastCharge(false);
+            if (publish) BroadcastCharge(false);
         }
 
         /// <summary>
@@ -688,12 +826,43 @@ namespace TumbangPreso
             _lastSentSpin=_pektusSpin;_chargeSyncLeft=.1f;
             if (NetAuthority.IsNetworked)
                 Net.MatchRpc.Instance?.SetThrowCharge(_motor.PlayerSlot, active,_charge,_pektusSpin);
+            // Mark after the synchronous listen-host echo has applied the same sample.
+            _observedChargeFromInput = active;
+        }
+
+        // Called on the actual down-to-upright edge, locally and on snapshot peers.
+        // The same observed charge drives both the body and first-person hands.
+        internal void BeginRestoreChargeDecay()
+        {
+            if (Held == null || _motor.IsDefender || (!_charging && _observedCharge < 0)) return;
+            _throwChargeDecayLeft = Balance.ThrowChargeResetTime;
+            _throwChargeDecayStart = _charge;
+            _observedDecayStart = Mathf.Max(0, _observedChargeFromInput ? _charge : _observedCharge);
+        }
+
+        private bool StepRestoreChargeDecay(float dt)
+        {
+            if (!IsThrowChargeDecaying) return false;
+            if (Held == null || _motor.IsDefender || !_motor.CanAct())
+            { CancelAll(); return true; }
+            _throwChargeDecayLeft = Mathf.Max(0, _throwChargeDecayLeft - dt);
+            float weight = Mathf.SmoothStep(0, 1, _throwChargeDecayLeft / Balance.ThrowChargeResetTime);
+            _charge = _throwChargeDecayStart * weight;
+            _observedCharge = _observedDecayStart * weight;
+            if (_throwChargeDecayLeft <= 0)
+            {
+                CancelCharge(); ApplyObservedCharge(false);
+            }
+            return true;
         }
 
         /// <summary>Applies another peer's visible throw wind-up without touching local input.</summary>
         public void ApplyObservedCharge(bool active,float seconds=0,float spin=0)
         {
             if(float.IsNaN(seconds) || float.IsInfinity(seconds) || float.IsNaN(spin) || float.IsInfinity(spin))return;
+            if (active && IsThrowChargeDecaying) return; // Late keepalives cannot raise the returning hand.
+            _observedChargeFromInput = active && _observedChargeFromInput && NetAuthority.IsHost
+                                       && (_motor.PlayerSlot == NetAuthority.LocalSlot || _motor.IsBot);
             _observedCharge = active ? Mathf.Clamp(seconds,0,Balance.ChargeFullTime) : -1.0f;
             _observedSpin=active ? Mathf.Clamp(spin,-Balance.MaxPektusSpin,Balance.MaxPektusSpin) : 0;
         }
@@ -794,7 +963,7 @@ namespace TumbangPreso
             // constant for that case rather than the FPP eye height, so a bot's throw and a
             // probe's throw leave from the same place.
             return rig != null && rig.IsFollowing(_motor)
-                ? rig.transform.position
+                ? rig.AimEye
                 : transform.position + Vector3.up * 0.9f;
         }
 
@@ -819,7 +988,7 @@ namespace TumbangPreso
             => LaunchVelocityFor(ThrowOrigin(), AimPoint());
 
         public Vector3 AimGuideVelocityNow()
-            => LaunchVelocityFor(AimGuideOrigin(), AimGuidePoint());
+            => LaunchVelocityNow();
 
         private Vector3 LaunchVelocityFor(Vector3 origin, Vector3 target)
         {
@@ -827,15 +996,7 @@ namespace TumbangPreso
 
             Vector3 vel = Held.LaunchVelocityTo(origin, target, ChargeRatio);
             var ability = _motor.AbilitySystem;
-            if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
-            {
-                vel *= 1.6f * ability.VariantGain("zack.2.discharge");
-            }
-            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
-            {
-                vel *= 1.3f * ability.VariantGain("sean.2.flare");
-            }
-            else if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
+            if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
             {
                 vel *= 1.35f;
             }
@@ -891,19 +1052,25 @@ namespace TumbangPreso
 
         // -------------------------------------------------------------------
 
+        public bool HasResetTarget
+        {
+            get
+            {
+                if (_motor != null && _motor.IsWhirled) return false;
+                var lata = GameServices.Round?.Lata;
+                if (lata == null || lata.IsUpright) return false;
+                var offset = transform.position - lata.transform.position; offset.y = 0;
+                return offset.magnitude <= Balance.InteractionRadius;
+            }
+        }
+
         private void StepDefender(float dt)
         {
             var round = GameServices.Round;
             var lata = round?.Lata;
             var intent = _motor.Intent;
 
-            bool inRing = lata != null
-                          && Vector3.Distance(
-                                 new Vector3(transform.position.x, 0, transform.position.z),
-                                 new Vector3(lata.transform.position.x, 0, lata.transform.position.z))
-                             <= Balance.InteractionRadius;
-
-            bool canChannel = lata != null && !lata.IsUpright && inRing;
+            bool canChannel = HasResetTarget;
 
             if (!canChannel || !intent.Pressed(Verb.Grab))
             {
@@ -997,10 +1164,13 @@ namespace TumbangPreso
             Net.MatchRpc.Instance?.RequestLataResetServerRpc(_motor.PlayerSlot, phase);
         }
 
-        private void CancelAll()
+        private void CancelAll() => ClearPendingState(true);
+
+        private void ClearPendingState(bool clearReceivedPresentation)
         {
-            CancelCharge();
-            ApplyObservedCharge(false);
+            bool clearTell = clearReceivedPresentation || _observedChargeFromInput;
+            RetireLocalCharge(clearReceivedPresentation);
+            if (clearTell) ApplyObservedCharge(false);
             _channel = 0.0f;
             ChannelRatio = 0.0f;
         }

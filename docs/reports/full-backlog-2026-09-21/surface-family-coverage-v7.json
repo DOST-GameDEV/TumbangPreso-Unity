@@ -1,0 +1,2021 @@
+{
+  "scope": "Every active material family has an explicit authored or retained treatment. Slot counts and renderer counts differ for mixed-material meshes. Saved repeatability and generator checks remain pending.",
+  "maps": [
+    {
+      "map": "Eskinita",
+      "mappedRenderers": 711,
+      "enabledInventoriedRenderers": 726,
+      "decisions": [
+        {
+          "slots": 57,
+          "decision": "authored part roles colormap"
+        },
+        {
+          "slots": 5,
+          "decision": "family 11 rubber"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 asphalt 1"
+        },
+        {
+          "slots": 4,
+          "decision": "family 12 continued_asphalt"
+        },
+        {
+          "slots": 4,
+          "decision": "family 13 continued_pavement"
+        },
+        {
+          "slots": 14,
+          "decision": "family 13 yard_paving"
+        },
+        {
+          "slots": 9,
+          "decision": "family 14 tree_bark"
+        },
+        {
+          "slots": 8,
+          "decision": "family 15 colormap"
+        },
+        {
+          "slots": 2,
+          "decision": "family 15 leaf"
+        },
+        {
+          "slots": 9,
+          "decision": "family 15 tree_foliage"
+        },
+        {
+          "slots": 9,
+          "decision": "family 15 tree_new_growth"
+        },
+        {
+          "slots": 9,
+          "decision": "family 15 tree_shaded_foliage"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 Cream goods"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 Oxblood goods"
+        },
+        {
+          "slots": 6,
+          "decision": "family 16 plastic"
+        },
+        {
+          "slots": 2,
+          "decision": "family 17 soil"
+        },
+        {
+          "slots": 1,
+          "decision": "family 2 Mat_floor"
+        },
+        {
+          "slots": 2,
+          "decision": "family 2 Warm concrete"
+        },
+        {
+          "slots": 3,
+          "decision": "family 2 Warm concrete.001"
+        },
+        {
+          "slots": 2,
+          "decision": "family 2 concrete"
+        },
+        {
+          "slots": 2,
+          "decision": "family 2 env_sari_sari_store_concrete"
+        },
+        {
+          "slots": 56,
+          "decision": "family 2 lot_concrete"
+        },
+        {
+          "slots": 4,
+          "decision": "family 4 Timber course joints"
+        },
+        {
+          "slots": 4,
+          "decision": "family 4 Timber upper quiet"
+        },
+        {
+          "slots": 4,
+          "decision": "family 4 Timber upper warm"
+        },
+        {
+          "slots": 4,
+          "decision": "family 4 Warm aged timber"
+        },
+        {
+          "slots": 3,
+          "decision": "family 4 Warm aged timber.001"
+        },
+        {
+          "slots": 16,
+          "decision": "family 4 Wooden clothespins"
+        },
+        {
+          "slots": 24,
+          "decision": "family 4 Wooden clothespins.001"
+        },
+        {
+          "slots": 8,
+          "decision": "family 4 Wooden clothespins.002"
+        },
+        {
+          "slots": 2,
+          "decision": "family 4 colormap"
+        },
+        {
+          "slots": 2,
+          "decision": "family 4 env_sari_sari_store_timber"
+        },
+        {
+          "slots": 16,
+          "decision": "family 4 timber"
+        },
+        {
+          "slots": 3,
+          "decision": "family 5 Galvanized shade roof.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 5 roof"
+        },
+        {
+          "slots": 7,
+          "decision": "family 8 Dull painted steel"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 Dull painted steel.001"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 Substantial dark window trim"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 band"
+        },
+        {
+          "slots": 12,
+          "decision": "family 8 drum"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 frame"
+        },
+        {
+          "slots": 418,
+          "decision": "family 8 lot_steel"
+        },
+        {
+          "slots": 8,
+          "decision": "family 8 painted_steel"
+        },
+        {
+          "slots": 4,
+          "decision": "family 8 rim"
+        },
+        {
+          "slots": 14,
+          "decision": "family 8 rust"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 tin"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 trim"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 utility_wire"
+        },
+        {
+          "slots": 12,
+          "decision": "family 8 wire"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 0"
+        },
+        {
+          "slots": 3,
+          "decision": "family 9 Cotton 0.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 0.002"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Cotton 1"
+        },
+        {
+          "slots": 3,
+          "decision": "family 9 Cotton 1.001"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Cotton 2.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 2.002"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Cotton 3"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Cotton 3.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 4"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Cotton 4.001"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Cotton 5"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 5.002"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Cream goods"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 Oxblood goods"
+        },
+        {
+          "slots": 3,
+          "decision": "family 9 Worn braided line"
+        },
+        {
+          "slots": 6,
+          "decision": "family 9 Worn braided line.001"
+        },
+        {
+          "slots": 3,
+          "decision": "family 9 Worn braided line.002"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 env_sari_sari_store_stripe"
+        },
+        {
+          "slots": 2,
+          "decision": "family 9 env_sari_sari_store_tarp"
+        },
+        {
+          "slots": 16,
+          "decision": "retained readable artwork/marking Mat_chalk"
+        },
+        {
+          "slots": 2,
+          "decision": "retained recess shadow env_sari_sari_store_dark"
+        },
+        {
+          "slots": 2,
+          "decision": "retained supplied mountain art Mountain"
+        }
+      ],
+      "rawInventory": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\map-surfaces-all-v7\\Eskinita.json",
+      "inventorySha256": "511b9dd32f7656a5b3f33e6343e8b7163a2d281485a2a7e70f0f817f226844a0"
+    },
+    {
+      "map": "BayanPlaza",
+      "mappedRenderers": 262,
+      "enabledInventoriedRenderers": 279,
+      "decisions": [
+        {
+          "slots": 44,
+          "decision": "authored part roles colormap"
+        },
+        {
+          "slots": 8,
+          "decision": "family 1 civic_lime_plaster"
+        },
+        {
+          "slots": 1,
+          "decision": "family 1 env_municipal_hall_body"
+        },
+        {
+          "slots": 3,
+          "decision": "family 11 Dark vinyl seats"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Rubber"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Rubber.001"
+        },
+        {
+          "slots": 3,
+          "decision": "family 11 Tyres and grips"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 town_asphalt"
+        },
+        {
+          "slots": 2,
+          "decision": "family 13 civic_approach"
+        },
+        {
+          "slots": 1,
+          "decision": "family 13 civic_paving"
+        },
+        {
+          "slots": 5,
+          "decision": "family 13 terminal_paving"
+        },
+        {
+          "slots": 15,
+          "decision": "family 14 tree_bark"
+        },
+        {
+          "slots": 8,
+          "decision": "family 15 colormap"
+        },
+        {
+          "slots": 4,
+          "decision": "family 15 leaf"
+        },
+        {
+          "slots": 4,
+          "decision": "family 15 leaf_dark"
+        },
+        {
+          "slots": 15,
+          "decision": "family 15 tree_foliage"
+        },
+        {
+          "slots": 15,
+          "decision": "family 15 tree_new_growth"
+        },
+        {
+          "slots": 15,
+          "decision": "family 15 tree_shaded_foliage"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 Cream goods"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 Oxblood goods"
+        },
+        {
+          "slots": 1,
+          "decision": "family 16 Sauce bottle"
+        },
+        {
+          "slots": 2,
+          "decision": "family 17 town_yards"
+        },
+        {
+          "slots": 2,
+          "decision": "family 2 Warm concrete"
+        },
+        {
+          "slots": 4,
+          "decision": "family 2 Warm concrete.001"
+        },
+        {
+          "slots": 4,
+          "decision": "family 2 concrete"
+        },
+        {
+          "slots": 4,
+          "decision": "family 2 coping"
+        },
+        {
+          "slots": 1,
+          "decision": "family 2 env_bell_tower_band"
+        },
+        {
+          "slots": 1,
+          "decision": "family 2 env_municipal_hall_band"
+        },
+        {
+          "slots": 1,
+          "decision": "family 2 env_municipal_hall_plinth"
+        },
+        {
+          "slots": 1,
+          "decision": "family 2 step"
+        },
+        {
+          "slots": 25,
+          "decision": "family 3 civic_window_stone"
+        },
+        {
+          "slots": 1,
+          "decision": "family 3 env_bell_tower_stone"
+        },
+        {
+          "slots": 1,
+          "decision": "family 3 env_church_facade_stone"
+        },
+        {
+          "slots": 42,
+          "decision": "family 3 plaza_limestone"
+        },
+        {
+          "slots": 1,
+          "decision": "family 3 stone"
+        },
+        {
+          "slots": 2,
+          "decision": "family 4 Warm aged timber"
+        },
+        {
+          "slots": 4,
+          "decision": "family 4 Warm aged timber.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 4 Worn timber"
+        },
+        {
+          "slots": 1,
+          "decision": "family 4 Worn timber.001"
+        },
+        {
+          "slots": 2,
+          "decision": "family 4 board"
+        },
+        {
+          "slots": 68,
+          "decision": "family 4 civic_window_timber"
+        },
+        {
+          "slots": 17,
+          "decision": "family 4 colormap"
+        },
+        {
+          "slots": 1,
+          "decision": "family 4 env_church_facade_timber"
+        },
+        {
+          "slots": 6,
+          "decision": "family 4 terminal_shade_timber"
+        },
+        {
+          "slots": 4,
+          "decision": "family 5 Galvanized shade roof.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 5 env_bell_tower_roof"
+        },
+        {
+          "slots": 1,
+          "decision": "family 5 env_municipal_hall_roof"
+        },
+        {
+          "slots": 1,
+          "decision": "family 5 terminal_shade_roof"
+        },
+        {
+          "slots": 1,
+          "decision": "family 6 civic_roof_clay"
+        },
+        {
+          "slots": 3,
+          "decision": "family 7 Headlamp lens"
+        },
+        {
+          "slots": 3,
+          "decision": "family 7 Smoked windscreen"
+        },
+        {
+          "slots": 1,
+          "decision": "family 7 env_bell_tower_window"
+        },
+        {
+          "slots": 1,
+          "decision": "family 7 env_municipal_hall_window"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 Brushed sheet metal"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dark cookware"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 Dull painted steel"
+        },
+        {
+          "slots": 4,
+          "decision": "family 8 Dull painted steel.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dull stainless steel"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dull stainless steel.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Muted oxblood cart"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 Terminal oxblood paint"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 edge"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 hoop_bracket"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 post"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 ring"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Green shade"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Green shade.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Plum shade"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Plum shade.001"
+        },
+        {
+          "slots": 3,
+          "decision": "family 9 Warm canopy"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Warm cloth"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Warm cloth.001"
+        },
+        {
+          "slots": 2,
+          "decision": "retained authored ground marking/contact plaza_joint"
+        },
+        {
+          "slots": 11,
+          "decision": "retained readable artwork/marking Mat_chalk"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking civic_crossing"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking plaque"
+        },
+        {
+          "slots": 4,
+          "decision": "retained readable artwork/marking terminal_bay_marks"
+        },
+        {
+          "slots": 1,
+          "decision": "retained recess shadow env_church_facade_dark"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Dark sauce"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Fishballs and bread"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Fried golden snacks"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Fried golden snacks.001"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Watermelon flesh.001"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Watermelon rind.001"
+        },
+        {
+          "slots": 1,
+          "decision": "retained transparent/procedural Display glass.001"
+        }
+      ],
+      "rawInventory": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\map-surfaces-all-v7\\BayanPlaza.json",
+      "inventorySha256": "ee286531314704baca3e5df4554d63bc3ff697b3a918fd3a35b3598813e944f1"
+    },
+    {
+      "map": "IlalimNgTulay",
+      "mappedRenderers": 1335,
+      "enabledInventoriedRenderers": 1482,
+      "decisions": [
+        {
+          "slots": 22,
+          "decision": "authored part roles colormap"
+        },
+        {
+          "slots": 69,
+          "decision": "authored part roles colormap_tumbang-lrt"
+        },
+        {
+          "slots": 144,
+          "decision": "authored part roles colormap_tumbang-warm-a"
+        },
+        {
+          "slots": 73,
+          "decision": "authored part roles colormap_tumbang-warm-b"
+        },
+        {
+          "slots": 69,
+          "decision": "authored part roles colormap_tumbang-warm-c"
+        },
+        {
+          "slots": 28,
+          "decision": "authored part roles utility_original_aged_0"
+        },
+        {
+          "slots": 22,
+          "decision": "family 1 shop_plaster_0"
+        },
+        {
+          "slots": 23,
+          "decision": "family 1 shop_plaster_1"
+        },
+        {
+          "slots": 18,
+          "decision": "family 1 shop_plaster_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Ilalim_CordCoil_0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Ilalim_CordCoil_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Ilalim_CordCoil_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Ilalim_Cord_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Ilalim_Cord_0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Ilalim_Cord_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Rubber"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Rubber.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 Rubber.002"
+        },
+        {
+          "slots": 4,
+          "decision": "family 11 rubber"
+        },
+        {
+          "slots": 2,
+          "decision": "family 11 service_cord"
+        },
+        {
+          "slots": 2,
+          "decision": "family 11 stock_oxblood"
+        },
+        {
+          "slots": 1,
+          "decision": "family 11 utility_cable"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 AsphaltRoad_IlalimNgTulay"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Asphalt_BackgroundCrossroad_-1_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Asphalt_BackgroundCrossroad_-1_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Asphalt_BackgroundCrossroad_1_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Asphalt_BackgroundCrossroad_1_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_BackgroundCrossroad_-1_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_BackgroundCrossroad_-1_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_BackgroundCrossroad_1_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_BackgroundCrossroad_1_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_FarGroundPlate"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_ManholeCollar_0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_ManholeCollar_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_ManholeCollar_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_ManholeCollar_3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_ManholeCollar_4"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_ManholeCollar_5"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_RoadContinuationNorth"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Ilalim_RoadContinuationSouth"
+        },
+        {
+          "slots": 168,
+          "decision": "family 12 asphalt"
+        },
+        {
+          "slots": 1,
+          "decision": "family 13 Ilalim_ApronEast"
+        },
+        {
+          "slots": 1,
+          "decision": "family 13 Ilalim_ApronWest"
+        },
+        {
+          "slots": 1,
+          "decision": "family 13 Ilalim_BackgroundSidewalk_-1_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 13 Ilalim_BackgroundSidewalk_-1_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 13 Ilalim_BackgroundSidewalk_1_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 13 Ilalim_BackgroundSidewalk_1_1"
+        },
+        {
+          "slots": 4,
+          "decision": "family 13 pavement_extension"
+        },
+        {
+          "slots": 11,
+          "decision": "family 13 shop_floor"
+        },
+        {
+          "slots": 1,
+          "decision": "family 14 tree_bark"
+        },
+        {
+          "slots": 2,
+          "decision": "family 15 leaf"
+        },
+        {
+          "slots": 1,
+          "decision": "family 15 tree_foliage"
+        },
+        {
+          "slots": 1,
+          "decision": "family 15 tree_new_growth"
+        },
+        {
+          "slots": 1,
+          "decision": "family 15 tree_shaded_foliage"
+        },
+        {
+          "slots": 1,
+          "decision": "family 16 Ilalim_CordTape"
+        },
+        {
+          "slots": 1,
+          "decision": "family 16 Ilalim_ExtensionBlock"
+        },
+        {
+          "slots": 1,
+          "decision": "family 16 Sauce bottle"
+        },
+        {
+          "slots": 1,
+          "decision": "family 16 Sauce bottle.002"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 piso_bezel"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 piso_chair_red"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 piso_trim"
+        },
+        {
+          "slots": 4,
+          "decision": "family 16 plastic"
+        },
+        {
+          "slots": 1,
+          "decision": "family 16 stock_paper"
+        },
+        {
+          "slots": 2,
+          "decision": "family 17 soil"
+        },
+        {
+          "slots": 29,
+          "decision": "family 18 stock_green"
+        },
+        {
+          "slots": 28,
+          "decision": "family 18 stock_oxblood"
+        },
+        {
+          "slots": 30,
+          "decision": "family 18 stock_paper"
+        },
+        {
+          "slots": 1,
+          "decision": "family 2 Ilalim_RoadSubBase"
+        },
+        {
+          "slots": 32,
+          "decision": "family 2 bridge_bearing"
+        },
+        {
+          "slots": 14,
+          "decision": "family 2 bridge_cast_concrete"
+        },
+        {
+          "slots": 24,
+          "decision": "family 2 colormap_tumbang-warm-a"
+        },
+        {
+          "slots": 147,
+          "decision": "family 2 concrete"
+        },
+        {
+          "slots": 33,
+          "decision": "family 2 shop_concrete"
+        },
+        {
+          "slots": 1,
+          "decision": "family 4 Worn timber"
+        },
+        {
+          "slots": 1,
+          "decision": "family 4 Worn timber.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 4 Worn timber.003"
+        },
+        {
+          "slots": 2,
+          "decision": "family 4 piso_wood"
+        },
+        {
+          "slots": 8,
+          "decision": "family 4 timber"
+        },
+        {
+          "slots": 10,
+          "decision": "family 5 roof_laundry_steel"
+        },
+        {
+          "slots": 9,
+          "decision": "family 7 stock_screen"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dark cookware"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dark cookware.002"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dark cookware.003"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dull stainless steel"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dull stainless steel.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dull stainless steel.002"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Dull stainless steel.003"
+        },
+        {
+          "slots": 11,
+          "decision": "family 8 Ilalim_Arm_0"
+        },
+        {
+          "slots": 11,
+          "decision": "family 8 Ilalim_Arm_1"
+        },
+        {
+          "slots": 11,
+          "decision": "family 8 Ilalim_Arm_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_0_-19"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_0_-25"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_1_-10"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_1_-16"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_2_-1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_2_-7"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_3_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_3_8"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_4_11"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_4_17"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_5_20"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_BacklotPipeTrestle_5_26"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_E_0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_E_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_E_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_E_3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_E_4"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_W_0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_W_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_W_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_W_3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_GutterGrate_W_4"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_0_-2.3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_0_2.3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_1_-2.5"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_1_2.5"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_2_-2.0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_2_2.0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_3_-2.3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_3_2.3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_4_-2.1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_4_2.1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_5_-2.0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_HoardingMast_5_2.0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_ManholeCover_0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_ManholeCover_1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_ManholeCover_2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_ManholeCover_3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_ManholeCover_4"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_ManholeCover_5"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_E0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_E1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_E2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_E3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_E4"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_E5"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_W0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_W1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_W2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_W3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Ilalim_RoofAerial_W4"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Muted oxblood cart"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Muted oxblood cart.002"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Muted oxblood cart.003"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 band"
+        },
+        {
+          "slots": 8,
+          "decision": "family 8 bridge_drain"
+        },
+        {
+          "slots": 36,
+          "decision": "family 8 colormap"
+        },
+        {
+          "slots": 10,
+          "decision": "family 8 colormap_tumbang-lrt"
+        },
+        {
+          "slots": 7,
+          "decision": "family 8 colormap_tumbang-warm-a"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 colormap_tumbang-warm-b"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 piso_coinbox"
+        },
+        {
+          "slots": 4,
+          "decision": "family 8 rim"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 rust"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 service_metal"
+        },
+        {
+          "slots": 75,
+          "decision": "family 8 shop_dark_frame"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Bakery"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Barber"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 sign_backing_Clothing"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Hardware"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 sign_backing_Laundry"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Load"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_PC_Express"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Pares"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Pisonet"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Print"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 sign_backing_Repair"
+        },
+        {
+          "slots": 13,
+          "decision": "family 8 stock_metal"
+        },
+        {
+          "slots": 3,
+          "decision": "family 8 stock_paper"
+        },
+        {
+          "slots": 2,
+          "decision": "family 8 tin"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Green shade"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Green shade.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Green shade.002"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Green shade.003"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Plum shade"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Plum shade.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Plum shade.002"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Plum shade.003"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Warm cloth"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Warm cloth.001"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Warm cloth.002"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Warm cloth.003"
+        },
+        {
+          "slots": 5,
+          "decision": "family 9 cloth"
+        },
+        {
+          "slots": 5,
+          "decision": "family 9 cloth_grey"
+        },
+        {
+          "slots": 5,
+          "decision": "family 9 cloth_mint"
+        },
+        {
+          "slots": 5,
+          "decision": "family 9 cloth_pale"
+        },
+        {
+          "slots": 5,
+          "decision": "family 9 stock_green"
+        },
+        {
+          "slots": 6,
+          "decision": "family 9 stock_oxblood"
+        },
+        {
+          "slots": 4,
+          "decision": "family 9 stock_paper"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_East"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_North"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_OilStain_0"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_OilStain_1"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_OilStain_2"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_Skid_N_0"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_Skid_N_1"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_Skid_N_2"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_Skid_S_0"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_Skid_S_1"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_Skid_S_2"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_South"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored ground marking/contact Ilalim_West"
+        },
+        {
+          "slots": 1,
+          "decision": "retained gameplay pad presentation Ilalim_PadBase"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_0"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_1"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_10"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_11"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_12"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_13"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_14"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_15"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_16"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_2"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_3"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_4"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_5"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_6"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_7"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_8"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_E_9"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_0"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_1"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_10"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_11"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_12"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_13"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_14"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_15"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_16"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_2"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_3"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_4"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_5"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_6"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_7"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_8"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_LaneDash_W_9"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_RgbBar_0"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_RgbBar_1"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_RgbBar_2"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_ThrowLineNorth"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking Ilalim_ThrowLineSouth"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking mark"
+        },
+        {
+          "slots": 2,
+          "decision": "retained readable artwork/marking piso_led_timer"
+        },
+        {
+          "slots": 2,
+          "decision": "retained readable artwork/marking piso_screen"
+        },
+        {
+          "slots": 96,
+          "decision": "retained readable artwork/marking score"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Bakery"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Barber"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Clothing"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Hardware"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Laundry"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Load"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_PC_Express"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Pares"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Pisonet"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Print"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking sign_face_Repair"
+        },
+        {
+          "slots": 2,
+          "decision": "retained readable artwork/marking wall_paint_Bawal"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking wall_paint_laro"
+        },
+        {
+          "slots": 30,
+          "decision": "retained readable artwork/marking worn_crossing"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Dark sauce"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Fishballs and bread"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Fried golden snacks"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Fried golden snacks.001"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Watermelon flesh.001"
+        },
+        {
+          "slots": 1,
+          "decision": "retained stylized food form/palette Watermelon rind.001"
+        },
+        {
+          "slots": 18,
+          "decision": "retained stylized food form/palette stock_paper"
+        },
+        {
+          "slots": 4,
+          "decision": "retained supplied jeepney livery/finish blinn1SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish blinn2SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish blinn3SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish blinn4SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish blinn6SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish blinn7SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish blinn8SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish initialShadingGroup_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish lambert11SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish lambert12SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish lambert14SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish lambert7SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish lambert8SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish maya_sofa_skin_shadermaya_sofa_skin_shaderSG"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish mi_car_paint_phen_x2SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish mia_material_x3SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained supplied jeepney livery/finish silver_shader4Silver_SG_finish"
+        },
+        {
+          "slots": 1,
+          "decision": "retained transparent/procedural Display glass.001"
+        },
+        {
+          "slots": 11,
+          "decision": "retained transparent/procedural shop_glazing"
+        }
+      ],
+      "rawInventory": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\map-surfaces-all-v7\\IlalimNgTulay.json",
+      "inventorySha256": "19bf13c325bf18ed092f1d585f19af8e4ca04f8fc8c88696c50c0da83ad65bc3"
+    },
+    {
+      "map": "SaBubong",
+      "mappedRenderers": 179,
+      "enabledInventoriedRenderers": 199,
+      "decisions": [
+        {
+          "slots": 4,
+          "decision": "authored part roles CityPalette_00ff3bd57e0b90e42946ab9383a9354c_colormap_1"
+        },
+        {
+          "slots": 4,
+          "decision": "authored part roles CityPalette_00ff3bd57e0b90e42946ab9383a9354c_colormap_2"
+        },
+        {
+          "slots": 6,
+          "decision": "authored part roles CityPalette_095451393493a2246b43f307c46ec020_colormap_0"
+        },
+        {
+          "slots": 3,
+          "decision": "authored part roles CityPalette_095451393493a2246b43f307c46ec020_colormap_1"
+        },
+        {
+          "slots": 1,
+          "decision": "authored part roles CityPalette_1f4a7589dc971f94fa6c86f5d332153d_colormap_0"
+        },
+        {
+          "slots": 4,
+          "decision": "authored part roles CityPalette_3189a9a28f3c5ff47a9ebf7fe207b062_colormap_0"
+        },
+        {
+          "slots": 3,
+          "decision": "authored part roles CityPalette_3189a9a28f3c5ff47a9ebf7fe207b062_colormap_2"
+        },
+        {
+          "slots": 4,
+          "decision": "authored part roles CityPalette_3716b0708d3fc804f939b78cbcbc68d2_colormap_0"
+        },
+        {
+          "slots": 6,
+          "decision": "authored part roles CityPalette_3716b0708d3fc804f939b78cbcbc68d2_colormap_1"
+        },
+        {
+          "slots": 2,
+          "decision": "authored part roles CityPalette_45b81511f59ab9944ac6501a6759bf24_colormap_1"
+        },
+        {
+          "slots": 3,
+          "decision": "authored part roles CityPalette_45b81511f59ab9944ac6501a6759bf24_colormap_2"
+        },
+        {
+          "slots": 5,
+          "decision": "authored part roles CityPalette_67b73e3069f31a6459f1148e14f152da_colormap_0"
+        },
+        {
+          "slots": 2,
+          "decision": "authored part roles CityPalette_67b73e3069f31a6459f1148e14f152da_colormap_2"
+        },
+        {
+          "slots": 12,
+          "decision": "authored part roles colormap"
+        },
+        {
+          "slots": 5,
+          "decision": "family 1 Skylineclayplaster"
+        },
+        {
+          "slots": 5,
+          "decision": "family 1 Skylinegreyplaster"
+        },
+        {
+          "slots": 5,
+          "decision": "family 1 Skylinewarmplaster"
+        },
+        {
+          "slots": 5,
+          "decision": "family 10 Old terracotta"
+        },
+        {
+          "slots": 1,
+          "decision": "family 12 Cityasphalt"
+        },
+        {
+          "slots": 4,
+          "decision": "family 13 Roofpaving"
+        },
+        {
+          "slots": 7,
+          "decision": "family 14 tree_bark"
+        },
+        {
+          "slots": 7,
+          "decision": "family 15 Leaf green"
+        },
+        {
+          "slots": 4,
+          "decision": "family 15 Leaf shade"
+        },
+        {
+          "slots": 7,
+          "decision": "family 15 tree_foliage"
+        },
+        {
+          "slots": 7,
+          "decision": "family 15 tree_new_growth"
+        },
+        {
+          "slots": 7,
+          "decision": "family 15 tree_shaded_foliage"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 FadedWashBasin"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 Quiet worn pail band"
+        },
+        {
+          "slots": 2,
+          "decision": "family 16 Reused cream pail"
+        },
+        {
+          "slots": 7,
+          "decision": "family 17 Potting soil"
+        },
+        {
+          "slots": 1,
+          "decision": "family 19 Residentgreentile"
+        },
+        {
+          "slots": 15,
+          "decision": "family 2 Skylinesunlitledge"
+        },
+        {
+          "slots": 53,
+          "decision": "family 2 Warmroofconcrete"
+        },
+        {
+          "slots": 14,
+          "decision": "family 2 Weatheredparapet"
+        },
+        {
+          "slots": 2,
+          "decision": "family 4 Shadedtimber"
+        },
+        {
+          "slots": 2,
+          "decision": "family 4 Stems"
+        },
+        {
+          "slots": 8,
+          "decision": "family 4 Wooden clothespins"
+        },
+        {
+          "slots": 2,
+          "decision": "family 7 Quietwindow"
+        },
+        {
+          "slots": 15,
+          "decision": "family 7 Skylinewindowrecess"
+        },
+        {
+          "slots": 5,
+          "decision": "family 8 Paintedsteel"
+        },
+        {
+          "slots": 1,
+          "decision": "family 8 Tanksteel"
+        },
+        {
+          "slots": 4,
+          "decision": "family 8 painted_steel"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 0"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 1"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 2"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Cotton 3"
+        },
+        {
+          "slots": 1,
+          "decision": "family 9 Worn braided line"
+        },
+        {
+          "slots": 8,
+          "decision": "retained authored water/ceramic/court Poolceramic"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored water/ceramic/court Poolwater"
+        },
+        {
+          "slots": 1,
+          "decision": "retained authored water/ceramic/court Recreationcourtcoating"
+        },
+        {
+          "slots": 7,
+          "decision": "retained readable artwork/marking Courtchalk"
+        },
+        {
+          "slots": 1,
+          "decision": "retained readable artwork/marking MuralClay"
+        },
+        {
+          "slots": 3,
+          "decision": "retained readable artwork/marking MuralLeaf"
+        }
+      ],
+      "rawInventory": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\map-surfaces-all-v7\\SaBubong.json",
+      "inventorySha256": "640db12371eaa4ff42b1858d68bd7306a7cdf9e8b1a38905c92f5ae3b3b8cd44"
+    }
+  ]
+}

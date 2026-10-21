@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:47:55Z" end-time="2026-10-02 02:48:04Z" duration="8.2682857">
+  <test-suite type="TestSuite" id="2518" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1241" result="Passed" start-time="2026-10-02 02:47:55Z" end-time="2026-10-02 02:48:04Z" duration="8.268286" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2512" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1241" result="Passed" start-time="2026-10-02 02:47:55Z" end-time="2026-10-02 02:48:04Z" duration="8.243690" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22152" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2513" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1241" result="Passed" start-time="2026-10-02 02:47:55Z" end-time="2026-10-02 02:48:04Z" duration="8.229131" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2514" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1241" result="Passed" start-time="2026-10-02 02:47:55Z" end-time="2026-10-02 02:48:04Z" duration="8.213713" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1949" name="PlayerHubFriendJoinHandlerTests" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:47:55Z" end-time="2026-10-02 02:48:04Z" duration="8.168261" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1950" name="FriendActionFromHomeUsesExistingPanelAndKeepsRefusalVisible" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests.FriendActionFromHomeUsesExistingPanelAndKeepsRefusalVisible" methodname="FriendActionFromHomeUsesExistingPanelAndKeepsRefusalVisible" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" runstate="Runnable" seed="1217189425" result="Passed" start-time="2026-10-02 02:47:55Z" end-time="2026-10-02 02:48:00Z" duration="4.928632" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1951" name="FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests.FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry" methodname="FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" runstate="Runnable" seed="1286727013" result="Passed" start-time="2026-10-02 02:48:00Z" end-time="2026-10-02 02:48:04Z" duration="3.221612" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 53965, join code 8BES
+[Net] offline
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] offline
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

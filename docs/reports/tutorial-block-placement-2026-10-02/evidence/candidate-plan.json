@@ -1,0 +1,10 @@
+{
+  "question": "Behind-centre Block spawn, three real unblocked near-can misses, one actual student body interception",
+  "expected_cases": 1,
+  "admission_retry_used": 1,
+  "assertions_unchanged_from_baseline": true,
+  "source_hashes": {
+    "Assets/TumbangPreso/Runtime/GuidedTraining.cs": "3890377f5f7050a844b00f47bb5731e1cd07083e037487e1f6f5a517d5f10d4a",
+    "Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs": "2efed174de6ab9e4767a00d4d0f28ae2781eb6e872fffa27c5997a2bdb29db2d"
+  }
+}

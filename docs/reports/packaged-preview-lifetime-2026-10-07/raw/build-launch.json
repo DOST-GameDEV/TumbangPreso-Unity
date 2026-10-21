@@ -1,0 +1,25 @@
+{
+  "pid": 52896,
+  "source": "55ef828fe1c20d7c645fb9959c4338d61154ee11",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-executeMethod",
+    "TumbangPreso.EditorTools.GameBuilder.BuildWindows",
+    "-buildOutput",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Builds\\preview-lifetime-55ef828fe-1007\\TumbangPreso.exe",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\preview-lifetime-build-55ef828fe-1007\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ],
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\preview-lifetime-build-55ef828fe-1007",
+  "artifact": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Builds\\preview-lifetime-55ef828fe-1007"
+}

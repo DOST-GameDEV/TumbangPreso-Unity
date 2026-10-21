@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 07:58:39Z" end-time="2026-09-23 07:59:35Z" duration="55.6900925">
+  <test-suite type="TestSuite" id="1737" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="561" result="Passed" start-time="2026-09-23 07:58:39Z" end-time="2026-09-23 07:59:35Z" duration="55.690093" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1731" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="561" result="Passed" start-time="2026-09-23 07:58:39Z" end-time="2026-09-23 07:59:35Z" duration="55.668572" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16732" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1732" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="561" result="Passed" start-time="2026-09-23 07:58:39Z" end-time="2026-09-23 07:59:35Z" duration="55.660169" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1733" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="561" result="Passed" start-time="2026-09-23 07:58:39Z" end-time="2026-09-23 07:59:35Z" duration="55.651694" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1294" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-23 07:58:39Z" end-time="2026-09-23 07:59:35Z" duration="55.616359" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1295" name="CharacterSelectionExplainsItsKitWithoutPausingTheClock" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionExplainsItsKitWithoutPausingTheClock" methodname="CharacterSelectionExplainsItsKitWithoutPausingTheClock" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="733568785" result="Passed" start-time="2026-09-23 07:58:39Z" end-time="2026-09-23 07:59:35Z" duration="55.587094" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-960x540 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x720 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1920x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-960x540 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x720 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1920x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=216, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=40, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

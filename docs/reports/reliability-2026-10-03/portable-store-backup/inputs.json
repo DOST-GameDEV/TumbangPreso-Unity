@@ -1,0 +1,12 @@
+{
+  "expectedCases": 6,
+  "expectedOriginalCauses": 4,
+  "controls": 2,
+  "retryCount": 0,
+  "question": "Does portable file replacement preserve usable backup after corrupt primary?",
+  "candidate": {
+    "Assets/TumbangPreso/Runtime/SafeStore.cs": "b9ad5b89cbbed3e50a90a389fcd7fb9d52b2f56850ab550f191403d3364642ca",
+    "Assets/TumbangPreso/Tests/PortableStoreBackupTests.cs": "b9272e330d9b991caa0bf8fbb8fed71945fbc1016f625787a42e43e4fcf79bf1",
+    "Assets/TumbangPreso/Tests/PortableStoreBackupTests.cs.meta": "7bdbbe7a6539578543674087bc0f745c8467a9c94b7a625dfe25efb4f516e586"
+  }
+}

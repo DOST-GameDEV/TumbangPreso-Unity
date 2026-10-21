@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="43" result="Passed" total="43" passed="43" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:42Z" duration="1.4762306">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:42Z" duration="1.476231" total="43" passed="43" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1955" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:42Z" duration="1.464845" total="43" passed="43" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11588" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1956" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:42Z" duration="1.463014" total="43" passed="43" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1957" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="805" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:42Z" duration="1.461670" total="43" passed="43" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:42Z" duration="1.442238" total="43" passed="43" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1105" name="AFullMatchRecordNeedsMoreThanOnePacketAndIsSentFragmented" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.AFullMatchRecordNeedsMoreThanOnePacketAndIsSentFragmented" methodname="AFullMatchRecordNeedsMoreThanOnePacketAndIsSentFragmented" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2124009533" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.028403" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[CareerAudit] a full four-player MatchRecord serialises to 2443 bytes
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1088" name="CareerRefreshResponseCannotReplaceAnotherAccountCache" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CareerRefreshResponseCannotReplaceAnotherAccountCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.025917" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1086" name="CareerRefreshResponseCannotReplaceAnotherAccountCache(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CareerRefreshResponseCannotReplaceAnotherAccountCache(False)" methodname="CareerRefreshResponseCannotReplaceAnotherAccountCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1063083220" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.022817" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1087" name="CareerRefreshResponseCannotReplaceAnotherAccountCache(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CareerRefreshResponseCannotReplaceAnotherAccountCache(True)" methodname="CareerRefreshResponseCannotReplaceAnotherAccountCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="131088519" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.000395" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1082" name="CloudOutputKeepsCallerOwnedPayloadShape" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.022881" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1078" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:{\&quot;ok\&quot;:true}}&quot;,&quot;{\&quot;ok\&quot;:true}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:{\&quot;ok\&quot;:true}}&quot;,&quot;{\&quot;ok\&quot;:true}&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1231827099" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.017711" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1079" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:[1,2]}&quot;,&quot;[1,2]&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:[1,2]}&quot;,&quot;[1,2]&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1288134261" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.003253" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1080" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:false}&quot;,&quot;false&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:false}&quot;,&quot;false&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2093351143" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.000301" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1081" name="CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:0}&quot;,&quot;0&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.CloudOutputKeepsCallerOwnedPayloadShape(&quot;{\&quot;output\&quot;:0}&quot;,&quot;0&quot;)" methodname="CloudOutputKeepsCallerOwnedPayloadShape" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2074507450" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:41Z" duration="0.000112" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1098" name="EveryCloudCodeRequestGoesThroughTheOneHelper" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.EveryCloudCodeRequestGoesThroughTheOneHelper" methodname="EveryCloudCodeRequestGoesThroughTheOneHelper" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="695482330" result="Passed" start-time="2026-10-02 00:24:41Z" end-time="2026-10-02 00:24:42Z" duration="1.109948" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1104" name="EveryCloudCodeScriptSitsInTheFolderTheCliDeploys" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.EveryCloudCodeScriptSitsInTheFolderTheCliDeploys" methodname="EveryCloudCodeScriptSitsInTheFolderTheCliDeploys" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="633924100" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000621" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1106" name="EveryParameterACloudCodeScriptReadsIsDeclaredSoItIsNotStripped" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.EveryParameterACloudCodeScriptReadsIsDeclaredSoItIsNotStripped" methodname="EveryParameterACloudCodeScriptReadsIsDeclaredSoItIsNotStripped" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1489269275" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.113185" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1085" name="LateSubmissionAcknowledgementCannotRemoveAnotherRecord" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.006423" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1083" name="LateSubmissionAcknowledgementCannotRemoveAnotherRecord(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord(False)" methodname="LateSubmissionAcknowledgementCannotRemoveAnotherRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="569428717" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.005155" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1084" name="LateSubmissionAcknowledgementCannotRemoveAnotherRecord(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord(True)" methodname="LateSubmissionAcknowledgementCannotRemoveAnotherRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="999935315" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000373" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1077" name="MissingCloudOutputCannotReportSuccessfulDelivery" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.003256" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1073" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="983957637" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.001308" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1074" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;null&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;null&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2016158451" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000306" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1075" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;other\&quot;:{}}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;other\&quot;:{}}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="224996933" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000116" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1076" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;output\&quot;:null}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;output\&quot;:null}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1733996693" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000251" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1097" name="OfflinePracticeResultDoesNotEnterTheLocalCareerOrUploadQueue" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.OfflinePracticeResultDoesNotEnterTheLocalCareerOrUploadQueue" methodname="OfflinePracticeResultDoesNotEnterTheLocalCareerOrUploadQueue" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1510976205" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.016662" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1096" name="RefusedQueuedRecordsKeepRemainingWitnessesAligned" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RefusedQueuedRecordsKeepRemainingWitnessesAligned" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.013888" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1094" name="RefusedQueuedRecordsKeepRemainingWitnessesAligned(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RefusedQueuedRecordsKeepRemainingWitnessesAligned(False)" methodname="RefusedQueuedRecordsKeepRemainingWitnessesAligned" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="417718371" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.009213" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Career] abandoning queued match 'wrong-player': no non-bot line in it carries this player's account id, so the endpoint will always answer 422. The usual cause is a record written before the account finished signing in.
+[Career] abandoning queued match '': it carries no match id, so the endpoint cannot deduplicate it
+]]></output>
+              </test-case>
+              <test-case id="1095" name="RefusedQueuedRecordsKeepRemainingWitnessesAligned(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RefusedQueuedRecordsKeepRemainingWitnessesAligned(True)" methodname="RefusedQueuedRecordsKeepRemainingWitnessesAligned" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1451744464" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.003756" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Career] abandoning queued match 'wrong-player': no non-bot line in it carries this player's account id, so the endpoint will always answer 422. The usual cause is a record written before the account finished signing in.
+[Career] abandoning queued match '': it carries no match id, so the endpoint cannot deduplicate it
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1093" name="RemainingCareerResponsesRespectAccountOwnership" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.008744" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1089" name="RemainingCareerResponsesRespectAccountOwnership(False,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(False,False)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1102287341" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.005372" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Career] reported a match left early
+]]></output>
+              </test-case>
+              <test-case id="1090" name="RemainingCareerResponsesRespectAccountOwnership(False,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(False,True)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="273836873" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000365" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1091" name="RemainingCareerResponsesRespectAccountOwnership(True,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(True,False)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1461552396" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.001008" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1092" name="RemainingCareerResponsesRespectAccountOwnership(True,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(True,True)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1840287321" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000678" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1072" name="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.019608" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1067" name="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;pending&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;pending&quot;)" methodname="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="438122301" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.003631" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1068" name="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;witnessed&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;witnessed&quot;)" methodname="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1368389971" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.002468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1069" name="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;disputed&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;disputed&quot;)" methodname="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1653437843" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.006260" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1070" name="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;impossible&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;impossible&quot;)" methodname="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="535880950" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.002955" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1071" name="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;offline&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(&quot;offline&quot;)" methodname="TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1747427785" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.002838" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1100" name="TheAccountScriptStillAgreesWithTheCoreAboutTheNameLimit" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheAccountScriptStillAgreesWithTheCoreAboutTheNameLimit" methodname="TheAccountScriptStillAgreesWithTheCoreAboutTheNameLimit" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2076119245" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.002371" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1101" name="TheAccountScriptStillDerivesTheTagRatherThanTrustingTheClaim" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheAccountScriptStillDerivesTheTagRatherThanTrustingTheClaim" methodname="TheAccountScriptStillDerivesTheTagRatherThanTrustingTheClaim" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1154218611" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000869" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1108" name="TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber" methodname="TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1144125954" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.005336" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1099" name="TheCareerScriptStillAgreesWithTheCoreAboutItsNumbers" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheCareerScriptStillAgreesWithTheCoreAboutItsNumbers" methodname="TheCareerScriptStillAgreesWithTheCoreAboutItsNumbers" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1567800635" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000948" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1111" name="TheHandleIndexIsShardedHashedAndRevalidatedAgainstTheLiveProfile" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheHandleIndexIsShardedHashedAndRevalidatedAgainstTheLiveProfile" methodname="TheHandleIndexIsShardedHashedAndRevalidatedAgainstTheLiveProfile" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1025056812" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.002379" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1110" name="TheSocialScriptDeclaresEveryParameterItReads" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheSocialScriptDeclaresEveryParameterItReads" methodname="TheSocialScriptDeclaresEveryParameterItReads" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1329839824" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.028877" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1109" name="TheSocialScriptStillAgreesWithTheCoreAboutItsCaps" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheSocialScriptStillAgreesWithTheCoreAboutItsCaps" methodname="TheSocialScriptStillAgreesWithTheCoreAboutItsCaps" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1423701508" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.001238" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1107" name="TheTelemetryBatchIsSentAndDeclaredAsAString" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheTelemetryBatchIsSentAndDeclaredAsAString" methodname="TheTelemetryBatchIsSentAndDeclaredAsAString" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="673972214" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.002075" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1102" name="TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend" methodname="TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1195211944" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.003465" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1103" name="TheTelemetryScriptStillAgreesWithTheCoreAboutItsLimits" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.TheTelemetryScriptStillAgreesWithTheCoreAboutItsLimits" methodname="TheTelemetryScriptStillAgreesWithTheCoreAboutItsLimits" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="463402801" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000837" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1066" name="UnacknowledgedSubmissionKeepsRecordAndWitness" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.003139" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1061" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="843444300" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000655" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1062" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;null&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;null&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="205045115" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000288" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1063" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;profile\&quot;:\&quot;\&quot;,\&quot;applied\&quot;:false}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;profile\&quot;:\&quot;\&quot;,\&quot;applied\&quot;:false}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1009772193" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000271" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1064" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;\&quot;}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;\&quot;}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="595201885" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000272" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1065" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;unknown-server-error\&quot;}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;unknown-server-error\&quot;}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="848541319" result="Passed" start-time="2026-10-02 00:24:42Z" end-time="2026-10-02 00:24:42Z" duration="0.000280" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

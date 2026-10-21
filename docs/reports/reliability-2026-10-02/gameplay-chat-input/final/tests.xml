@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 06:11:33Z" end-time="2026-10-02 06:11:34Z" duration="0.8259546">
+  <test-suite type="TestSuite" id="2535" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1254" result="Passed" start-time="2026-10-02 06:11:33Z" end-time="2026-10-02 06:11:34Z" duration="0.825955" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2529" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1254" result="Passed" start-time="2026-10-02 06:11:33Z" end-time="2026-10-02 06:11:34Z" duration="0.810847" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22252" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2530" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1254" result="Passed" start-time="2026-10-02 06:11:33Z" end-time="2026-10-02 06:11:34Z" duration="0.804328" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2531" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1254" result="Passed" start-time="2026-10-02 06:11:33Z" end-time="2026-10-02 06:11:34Z" duration="0.797777" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1430" name="GameplayChatInputTests" fullname="TumbangPreso.PlayTests.GameplayChatInputTests" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-02 06:11:33Z" end-time="2026-10-02 06:11:34Z" duration="0.765352" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1435" name="AutomaticReadyRetriesWhileTyping" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.AutomaticReadyRetriesWhileTyping" methodname="AutomaticReadyRetriesWhileTyping" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="1216455047" result="Passed" start-time="2026-10-02 06:11:33Z" end-time="2026-10-02 06:11:34Z" duration="0.322559" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1442" name="ChatFocusCancelsAnOpenWheelBeforeRelease" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.ChatFocusCancelsAnOpenWheelBeforeRelease" methodname="ChatFocusCancelsAnOpenWheelBeforeRelease" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="1408249857" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.079038" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1438" name="ManualBufferVoteBelongsToChatContext" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.ManualBufferVoteBelongsToChatContext" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.091354" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1436" name="ManualBufferVoteBelongsToChatContext(True)" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.ManualBufferVoteBelongsToChatContext(True)" methodname="ManualBufferVoteBelongsToChatContext" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="2124192432" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.044336" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1437" name="ManualBufferVoteBelongsToChatContext(False)" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.ManualBufferVoteBelongsToChatContext(False)" methodname="ManualBufferVoteBelongsToChatContext" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="1000304049" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.043715" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1433" name="ManualReadyPressBelongsToChatContext" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.ManualReadyPressBelongsToChatContext" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.087840" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1431" name="ManualReadyPressBelongsToChatContext(True)" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.ManualReadyPressBelongsToChatContext(True)" methodname="ManualReadyPressBelongsToChatContext" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="1981374576" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.040854" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1432" name="ManualReadyPressBelongsToChatContext(False)" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.ManualReadyPressBelongsToChatContext(False)" methodname="ManualReadyPressBelongsToChatContext" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="1873346255" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.045631" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1441" name="OrdinaryEmoteHoldSteerAndReleaseStillCommits" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.OrdinaryEmoteHoldSteerAndReleaseStillCommits" methodname="OrdinaryEmoteHoldSteerAndReleaseStillCommits" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="775316442" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.043479" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1439" name="SubmittedBufferVoteRetriesWhileTyping" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.SubmittedBufferVoteRetriesWhileTyping" methodname="SubmittedBufferVoteRetriesWhileTyping" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="865023082" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.041843" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1434" name="SubmittedReadyRetriesWhileTyping" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.SubmittedReadyRetriesWhileTyping" methodname="SubmittedReadyRetriesWhileTyping" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="501387669" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.040266" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1440" name="TypingDoesNotOpenTheEmoteWheel" fullname="TumbangPreso.PlayTests.GameplayChatInputTests.TypingDoesNotOpenTheEmoteWheel" methodname="TypingDoesNotOpenTheEmoteWheel" classname="TumbangPreso.PlayTests.GameplayChatInputTests" runstate="Runnable" seed="10854974" result="Passed" start-time="2026-10-02 06:11:34Z" end-time="2026-10-02 06:11:34Z" duration="0.043008" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

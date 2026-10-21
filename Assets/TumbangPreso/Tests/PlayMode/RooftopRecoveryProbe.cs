@@ -20,7 +20,7 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After()=>PlayModeWorld.Reset();
 
         [UnityTest,Timeout(180000)]
-        public IEnumerator ActualEdgeFallUsesMashAndDelaysSlipperReturnInBothModes()
+        public IEnumerator ActualEdgeFallRecoversOnTimeAndDelaysSlipperReturnInBothModes()
         {
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
             {
@@ -39,23 +39,18 @@ namespace TumbangPreso.PlayTests
                 {minY=Mathf.Min(minY,who.transform.position.y);yield return null;}
                 input.Move=Vector2.zero;
                 Assert.Less(minY,-.35f,"This must be a real descent past the ledge,not an early trigger on the roof");
-                Assert.IsTrue(who.IsTripped,"Falling returned no mashable recovery");
+                Assert.IsTrue(who.IsTripped,"Falling returned no timed recovery");
                 Assert.IsFalse(shoe.gameObject.activeSelf);
                 Assert.IsFalse(shoe.IsGrabbableIgnoringReach(who),"A delayed request can grab an unavailable shoe");
                 Assert.IsFalse(who.HoldingSlipper);
                 var recovery=Object.FindFirstObjectByType<RooftopRecovery>();
                 Assert.That(recovery.SecondsUntilReturn(shoe),Is.InRange(9.7f,10f));
                 input.Jump=true;yield return new WaitForSeconds(.65f);
-                Assert.AreEqual(1,who.MashPresses,"Holding the input must not manufacture repeated presses");
+                Assert.AreEqual(0,who.MashPresses,"Holding Jump must not shorten recovery");
                 input.Jump=false;yield return new WaitForSeconds(.12f);
-                int pulses=0;
-                while(who.CanMashUp&&pulses++<16)
-                {
-                    input.Jump=true;yield return new WaitForSeconds(.065f);
-                    input.Jump=false;yield return new WaitForSeconds(.065f);
-                }
-                yield return new WaitForSeconds(.5f);
-                Assert.IsFalse(who.IsTripped,"Accepted press edges did not finish getting up");
+                until=Time.time+3;
+                while(who.IsTripped&&Time.time<until)yield return null;
+                Assert.IsFalse(who.IsTripped,"The authored recovery timer did not finish");
                 Assert.IsFalse(who.IsStunned,"Standing up left a hidden trip stun behind");
                 yield return new WaitForSeconds(Mathf.Max(0,recovery.SecondsUntilReturn(shoe)-.12f));
                 Assert.IsFalse(shoe.gameObject.activeSelf,"The ten-second penalty returned early");
@@ -66,12 +61,12 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(RooftopRecovery.InPool(shoe.transform.position));
                 who.Teleport(shoe.transform.position+Vector3.back*.25f);yield return new WaitForSeconds(.2f);
                 Assert.IsTrue(shoe.HostGrab(who),"Returned shoe is still not retrievable");
-                Debug.Log($"[Roof recovery] {mode}: actual descent {minY:F3},held input1press,{pulses}tap pulses,10s return and actual pickup");
+                Debug.Log($"[Roof recovery] {mode}: actual descent {minY:F3},input-neutral timed recovery,10s return and actual pickup");
             }
         }
 
         [UnityTest,Timeout(120000)]
-        public IEnumerator EveryOuterFenceStopsWalkingButAllowsJumpFallAndMashInBothModes()
+        public IEnumerator EveryOuterFenceStopsWalkingButAllowsJumpFallAndTimedRecoveryInBothModes()
         {
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
             {
@@ -95,14 +90,10 @@ namespace TumbangPreso.PlayTests
                     input.Move=Vector2.zero;
                     Assert.Less(minY,-.35f,$"{mode}/side{side}: no physical descent");
                     Assert.IsTrue(who.IsTripped,$"{mode}/side{side}: jump did not reach fall recovery");
-                    for(int tap=0;tap<14&&who.CanMashUp;tap++)
-                    {
-                        input.Jump=true;yield return new WaitForSeconds(.065f);
-                        input.Jump=false;yield return new WaitForSeconds(.065f);
-                    }
-                    yield return new WaitForSeconds(.7f);
-                    Assert.IsFalse(who.IsTripped,$"{mode}/side{side}: mash recovery did not finish");
-                    Debug.Log($"[Roof fence] {mode}/side{side}: walk blocked, jump descent {minY:F3}, mash returned control");
+                    until=Time.time+3;
+                    while(who.IsTripped&&Time.time<until)yield return null;
+                    Assert.IsFalse(who.IsTripped,$"{mode}/side{side}: timed recovery did not finish");
+                    Debug.Log($"[Roof fence] {mode}/side{side}: walk blocked, jump descent {minY:F3}, timed recovery returned control");
                 }
             }
         }

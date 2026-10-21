@@ -1,0 +1,18 @@
+{
+  "baseline": {
+    "intendedFailure": "FailedPromotionThenReleasedLockAndValidatedSavePreserveTheUsableBackup",
+    "failed": 1,
+    "total": 3,
+    "passed": 2
+  },
+  "toolingRepairs": 0,
+  "protectedChanged": 0,
+  "fixtureRepairs": 0,
+  "candidate": {
+    "failed": 0,
+    "total": 3,
+    "passed": 3
+  },
+  "claim": "Windows Editor overloaded-writer boundary; four Save callsites compile",
+  "protectedInputs": 12535
+}

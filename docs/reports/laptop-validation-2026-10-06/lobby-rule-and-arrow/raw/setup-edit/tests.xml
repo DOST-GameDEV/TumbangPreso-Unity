@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="6" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.3305389">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.330539" total="9" passed="6" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2763" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.317520" total="9" passed="6" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="54132" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2764" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.310510" total="9" passed="6" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2765" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1429" result="Failed" site="Child" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.305737" total="9" passed="6" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1551" name="HubLobbySeatControlsTests" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.287827" total="9" passed="6" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1557" name="ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" methodname="ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1603192809" result="Passed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.139412" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1554" name="FillingVacanciesWithBotsKeepsStartAvailable" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.FillingVacanciesWithBotsKeepsStartAvailable" methodname="FillingVacanciesWithBotsKeepsStartAvailable" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1499836227" result="Failed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.052477" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Seat3: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Object:Destroy (UnityEngine.Object)
+TumbangPreso.UI.Hub.HubLobby:Draw (bool) (at Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs:517)
+TumbangPreso.UI.Hub.HubLobby:Tick () (at Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs:482)
+TumbangPreso.Tests.HubLobbySeatControlsTests:FillingVacanciesWithBotsKeepsStartAvailable () (at Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs:94)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Seat3: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat2: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat1: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat0: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+]]></output>
+            </test-case>
+            <test-case id="1555" name="FourHumansKeepStartAvailableWithoutBots" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.FourHumansKeepStartAvailableWithoutBots" methodname="FourHumansKeepStartAvailableWithoutBots" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1900103912" result="Failed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.011974" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Seat3: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Object:Destroy (UnityEngine.Object)
+TumbangPreso.UI.Hub.HubLobby:Draw (bool) (at Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs:517)
+TumbangPreso.UI.Hub.HubLobby:Tick () (at Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs:482)
+TumbangPreso.Tests.HubLobbySeatControlsTests:FourHumansKeepStartAvailableWithoutBots () (at Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Seat3: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat2: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat1: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat0: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+]]></output>
+            </test-case>
+            <test-case id="1553" name="HumanOnlyVacanciesExplainWhyStartIsDisabled" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.HumanOnlyVacanciesExplainWhyStartIsDisabled" methodname="HumanOnlyVacanciesExplainWhyStartIsDisabled" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1247426702" result="Failed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.018749" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HubLobbySeatControlsTests.HumanOnlyVacanciesExplainWhyStartIsDisabled () [0x0005a] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\HubLobbySeatControlsTests.cs:88
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Seat3: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat2: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat1: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+Seat0: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+]]></output>
+            </test-case>
+            <test-case id="1561" name="HumanSlotOffersSwitchAndOwnSlotHasNoAction" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.HumanSlotOffersSwitchAndOwnSlotHasNoAction" methodname="HumanSlotOffersSwitchAndOwnSlotHasNoAction" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="852733991" result="Passed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.007751" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1552" name="OpenAndBotSlotsExposeRealSeatActions" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.OpenAndBotSlotsExposeRealSeatActions" methodname="OpenAndBotSlotsExposeRealSeatActions" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="894681196" result="Passed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.007731" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1560" name="RecipientPopupSendsTheChosenAnswerExactlyOnce" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.029850" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1558" name="RecipientPopupSendsTheChosenAnswerExactlyOnce(True)" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce(True)" methodname="RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="2003608259" result="Passed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.012762" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1559" name="RecipientPopupSendsTheChosenAnswerExactlyOnce(False)" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce(False)" methodname="RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="298356212" result="Passed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.008436" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1556" name="StaleRoomStateIsRecheckedBeforeSendingASeatRequest" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.StaleRoomStateIsRecheckedBeforeSendingASeatRequest" methodname="StaleRoomStateIsRecheckedBeforeSendingASeatRequest" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1654615016" result="Passed" start-time="2026-10-06 09:34:22Z" end-time="2026-10-06 09:34:22Z" duration="0.007694" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

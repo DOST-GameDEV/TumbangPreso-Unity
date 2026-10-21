@@ -1,0 +1,1 @@
+24pillars/28guideway bays/56track sections receive local material finishes. Original atlases, train bodies, geometry and collision retained; sleeper roles only changed to concrete.

@@ -1,0 +1,14 @@
+{
+  "base": "b263ff1dde14b2eef5a8bc047e9fdf48454317a0",
+  "question": "Older refresh overwrites newer acknowledged same-owner social action",
+  "status": "Original/candidate direct compiler checks only; native execution pending",
+  "files": {
+    "SocialStore.original-controlled.cs": "d1fd1d68ac28ed054b57a3ebdc62a6d9749b8b8f0e3602f9d4f3817e5b2b1e1b",
+    "SocialStore.candidate.cs": "caa59805d06664fe35032c5ae22d4d052288ad7327d31be324a0ed4dd50dfc76",
+    "SocialRefreshOrderingTests.cs": "273f9dc436d761fc9942a35388de32d19d5aa5f330ccdf4abfd0402d34e11b91",
+    "SocialRefreshOrderingTests.cs.meta": "752fe19b2b47067fdcb1c0d80b859a0866edb418b379a0419e0bc793ae6a5faf"
+  },
+  "filter": "TumbangPreso.Tests.SocialRefreshOrderingTests",
+  "expectedCases": 6,
+  "baselineExpected": "four response-order failures and two ordinary controls, subject to actual native result"
+}

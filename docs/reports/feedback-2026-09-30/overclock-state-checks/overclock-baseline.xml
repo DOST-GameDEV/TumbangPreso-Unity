@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 10:16:15Z" end-time="2026-10-01 10:16:16Z" duration="0.5779634">
+  <test-suite type="TestSuite" id="2414" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-01 10:16:15Z" end-time="2026-10-01 10:16:16Z" duration="0.577963" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2408" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-01 10:16:15Z" end-time="2026-10-01 10:16:16Z" duration="0.550666" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31496" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2409" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-01 10:16:16Z" end-time="2026-10-01 10:16:16Z" duration="0.532951" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2410" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-01 10:16:16Z" end-time="2026-10-01 10:16:16Z" duration="0.515991" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2128" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="47" result="Failed" site="Child" start-time="2026-10-01 10:16:16Z" end-time="2026-10-01 10:16:16Z" duration="0.450892" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2143" name="OverclockRemainsAfterItsOldSevenSecondWindowAndRoundReset" fullname="TumbangPreso.PlayTests.SkillReceiptTests.OverclockRemainsAfterItsOldSevenSecondWindowAndRoundReset" methodname="OverclockRemainsAfterItsOldSevenSecondWindowAndRoundReset" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="777444808" result="Failed" start-time="2026-10-01 10:16:16Z" end-time="2026-10-01 10:16:16Z" duration="0.386081" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The accepted upgrade expired instead of lasting for the match.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SkillReceiptTests.OverclockRemainsAfterItsOldSevenSecondWindowAndRoundReset () [0x000b3] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs:536
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2142" name="OverclockUsesTheWikiCostAndSelfTarget" fullname="TumbangPreso.PlayTests.SkillReceiptTests.OverclockUsesTheWikiCostAndSelfTarget" methodname="OverclockUsesTheWikiCostAndSelfTarget" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1637945704" result="Failed" start-time="2026-10-01 10:16:16Z" end-time="2026-10-01 10:16:16Z" duration="0.040040" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Overclock still uses the retired twenty-point price.
+  Expected: 15
+  But was:  20.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SkillReceiptTests.OverclockUsesTheWikiCostAndSelfTarget () [0x00006] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs:519
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,6 @@
+map,quality,samples,mean_player_frame_ms,p95_player_frame_ms,requested_width,requested_height,screen_width,screen_height,capture_width,capture_height,mean_look_off_ms,p95_look_off_ms
+Eskinita,Balanced,120,10.255,37.300,0,0,2940,1912,2940,1912,8.945,33.374
+BayanPlaza,Balanced,120,8.934,33.375,0,0,2940,1912,2940,1912,8.203,27.505
+IlalimNgTulay,Balanced,120,14.208,47.704,0,0,2940,1912,2940,1912,13.324,43.401
+SaBubong,Balanced,120,10.843,38.604,0,0,2940,1912,2940,1912,9.731,34.186
+Lagoon,Balanced,120,11.311,42.980,0,0,2940,1912,2940,1912,10.009,38.010

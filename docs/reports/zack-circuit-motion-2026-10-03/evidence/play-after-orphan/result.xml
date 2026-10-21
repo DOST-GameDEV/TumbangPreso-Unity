@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.6543238">
+  <test-suite type="TestSuite" id="2746" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1420" result="Failed" site="Child" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.654324" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2740" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1420" result="Failed" site="Child" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.644641" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="92204" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2741" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1420" result="Failed" site="Child" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.641318" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2742" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1420" result="Failed" site="Child" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.638562" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1290" name="ClosedCircuitTests" fullname="TumbangPreso.PlayTests.ClosedCircuitTests" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.612646" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1299" name="AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming" methodname="AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="47652189" result="Failed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.197136" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ClosedCircuitTests+<AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming>d__19.MoveNext () [0x000e5] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/ClosedCircuitTests.cs:140
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1292" name="BrokenAimAndNewWallCancelWithoutSpendingCooldown" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.BrokenAimAndNewWallCancelWithoutSpendingCooldown" methodname="BrokenAimAndNewWallCancelWithoutSpendingCooldown" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="121238166" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.064404" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1291" name="LockCommitsOnlyAfterMaintainedAimWithoutRooting" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.LockCommitsOnlyAfterMaintainedAimWithoutRooting" methodname="LockCommitsOnlyAfterMaintainedAimWithoutRooting" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="1814803749" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.041833" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1294" name="OverclockRequiresDifferentTargetAndCannotRefillAThirdCast" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.OverclockRequiresDifferentTargetAndCannotRefillAThirdCast" methodname="OverclockRequiresDifferentTargetAndCannotRefillAThirdCast" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="966087233" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.039132" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1293" name="RangeBehindAndRoundEndCannotCompleteALock" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RangeBehindAndRoundEndCannotCompleteALock" methodname="RangeBehindAndRoundEndCannotCompleteALock" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="2131937044" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.053799" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1297" name="RecoveryAgesTheTellWithoutApplyingAHitOrReopeningAnExpiredWindow" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RecoveryAgesTheTellWithoutApplyingAHitOrReopeningAnExpiredWindow" methodname="RecoveryAgesTheTellWithoutApplyingAHitOrReopeningAnExpiredWindow" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="2103691279" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.071393" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1296" name="RemoteAimMustBeFreshScopedToTheAcquisitionAndActuallyMaintained" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RemoteAimMustBeFreshScopedToTheAcquisitionAndActuallyMaintained" methodname="RemoteAimMustBeFreshScopedToTheAcquisitionAndActuallyMaintained" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="415707922" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.041402" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1295" name="RepeatingTheFirstVictimEndsTheOptionalWindow" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RepeatingTheFirstVictimEndsTheOptionalWindow" methodname="RepeatingTheFirstVictimEndsTheOptionalWindow" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="321693207" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.046292" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1298" name="TellIsVisibleWhileAcquiringAndDisappearsOnCancellation" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.TellIsVisibleWhileAcquiringAndDisappearsOnCancellation" methodname="TellIsVisibleWhileAcquiringAndDisappearsOnCancellation" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="2135815670" result="Passed" start-time="2026-10-03 11:48:46Z" end-time="2026-10-03 11:48:46Z" duration="0.042711" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

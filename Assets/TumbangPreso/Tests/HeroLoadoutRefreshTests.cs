@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
@@ -13,35 +14,43 @@ namespace TumbangPreso.Tests
         [TestCase("zack", "zack.1.arcline", "zack.2.discharge")]
         [TestCase("nemu", "nemu.1.fade", "nemu.2.leash")]
         [TestCase("phaister", "phaister.1.brand", "phaister.2.stride")]
-        public void SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(string hero,string first,string second)
+        public void StaleAlternateBuildDoesNotChangeTheHardcodedLiveKit(string hero,string first,string second)
         {
             var owner=new GameObject("Loadout refresh");
             var system=owner.AddComponent<HeroAbilitySystem>();
             try
             {
-                system.BindHero(hero);
+                var alternate=new HeroBuild{HeroId=hero,Slot1VariantId=first,Slot2VariantId=second};
+                system.BindHero(hero,alternate);
                 var kit=system.Kit;var one=kit.Skill1;var two=kit.Skill2;
-                float[] original=Tuning(one,two);
+                Assert.IsFalse(HeroLoadoutRules.SidegradesOpen);
+                Assert.IsTrue(kit.HasRoleAbilities);
+                var powers=kit.AllAbilities;
+                var authored=HeroAbilitySystem.CreateKitFor(hero).AllAbilities;
+                float[] original=Tuning(powers);
+                CollectionAssert.AreEqual(Tuning(authored),original);
+                for(int i=0;i<powers.Length;i++)Assert.AreEqual(authored[i].Name,powers[i].Name);
+                Assert.AreEqual(HeroLoadoutRules.DefaultFor(hero,1).Id,system.VariantFor(1).Id);
+                Assert.AreEqual(HeroLoadoutRules.DefaultFor(hero,2).Id,system.VariantFor(2).Id);
+                Assert.IsFalse(system.HasVariant(first));Assert.IsFalse(system.HasVariant(second));
                 kit.AddUltimateCharge(17);
                 float banked=kit.UltimateCharge;
                 one.ApplyNetworkSnapshot(11,1);two.ApplyNetworkSnapshot(13,0);
                 typeof(HeroAbility).GetProperty(nameof(HeroAbility.DurationRemaining)).SetValue(one,2.5f);
                 int firstCharges=one.ChargesRemaining,secondCharges=two.ChargesRemaining;
-                var alternate=new HeroBuild{HeroId=hero,Slot1VariantId=first,Slot2VariantId=second};
-                Assert.True(system.UpdateLoadout(alternate));
-                Assert.True(system.HasVariant(first));Assert.True(system.HasVariant(second));
-                float[] tuned=Tuning(one,two);
-                for(int repeat=0;repeat<3;repeat++)Assert.False(system.UpdateLoadout(alternate));
-                CollectionAssert.AreEqual(tuned,Tuning(one,two));
-                Assert.AreSame(kit,system.Kit);Assert.AreSame(one,system.Kit.Skill1);Assert.AreSame(two,system.Kit.Skill2);
+                for(int repeat=0;repeat<3;repeat++)
+                {
+                    Assert.False(system.UpdateLoadout(alternate));
+                    Assert.False(system.UpdateLoadout(null));
+                }
+                CollectionAssert.AreEqual(original,Tuning(kit.AllAbilities));
+                Assert.AreSame(kit,system.Kit);
+                for(int i=0;i<powers.Length;i++)Assert.AreSame(powers[i],system.Kit.AllAbilities[i]);
                 Assert.AreEqual(banked,kit.UltimateCharge);Assert.AreEqual(11,one.CooldownRemaining);Assert.AreEqual(13,two.CooldownRemaining);
                 Assert.AreEqual(firstCharges,one.ChargesRemaining);Assert.AreEqual(secondCharges,two.ChargesRemaining);
                 Assert.AreEqual(2.5f,one.DurationRemaining,"An ongoing grant must end through its original ability instance.");
-                Assert.True(system.UpdateLoadout(null));
-                CollectionAssert.AreEqual(original,Tuning(one,two));
-                Assert.True(system.UpdateLoadout(alternate));
-                CollectionAssert.AreEqual(tuned,Tuning(one,two));
-                Assert.AreEqual(banked,kit.UltimateCharge);Assert.AreEqual(2.5f,one.DurationRemaining);
+                Assert.AreEqual(HeroLoadoutRules.DefaultFor(hero,1).Id,system.VariantFor(1).Id);
+                Assert.AreEqual(HeroLoadoutRules.DefaultFor(hero,2).Id,system.VariantFor(2).Id);
             }
             finally{Object.DestroyImmediate(owner);}
         }
@@ -81,8 +90,13 @@ namespace TumbangPreso.Tests
             .GetMethod("RebindKitIfHeroChanged",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)
             .Invoke(null,new object[]{motor});
 
-        private static float[] Tuning(HeroAbility a,HeroAbility b)=>new[]{
-            a.Duration,a.TelegraphRadius,a.TelegraphRange,a.AimMaxRange,a.AimRampSeconds,
-            b.Duration,b.TelegraphRadius,b.TelegraphRange,b.AimMaxRange,b.AimRampSeconds};
+        private static float[] Tuning(params HeroAbility[] abilities)
+        {
+            var values=new List<float>();
+            foreach(var ability in abilities)
+                values.AddRange(new[]{ability.Duration,ability.TelegraphRadius,ability.TelegraphRange,
+                                      ability.AimMaxRange,ability.AimRampSeconds});
+            return values.ToArray();
+        }
     }
 }

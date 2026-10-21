@@ -1,0 +1,56 @@
+{
+  "source": "c526bcc5da2943cb2c897197a6364a193ddf40b3",
+  "protocol": 151,
+  "scope": "Two normal visible players on this PC, named profiles; Normal ONLINE controls and host survival during client admission. Not two-machine/WAN acceptance. One parent restores shared input only after BOTH exit.",
+  "artifactManifest": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-c526bcc5d-1005-manifest.json",
+  "roles": {
+    "host": {
+      "pid": 23416,
+      "profile": "pc-pair151-host1005ui",
+      "command": [
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-c526bcc5d-1005\\TumbangPreso.exe",
+        "-force-d3d11",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "1280",
+        "-screen-height",
+        "720",
+        "-tp-framecap",
+        "60",
+        "-tp-profile",
+        "pc-pair151-host1005ui",
+        "-logFile",
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-ui-net1511005\\local-ui-pair\\host\\player.log"
+      ],
+      "settingsRestored": true,
+      "exitCode": 0
+    },
+    "client": {
+      "pid": 23428,
+      "profile": "pc-pair151-client1005ui",
+      "command": [
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-c526bcc5d-1005\\TumbangPreso.exe",
+        "-force-d3d11",
+        "-screen-fullscreen",
+        "0",
+        "-screen-width",
+        "1280",
+        "-screen-height",
+        "720",
+        "-tp-framecap",
+        "60",
+        "-tp-profile",
+        "pc-pair151-client1005ui",
+        "-logFile",
+        "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-ui-net1511005\\local-ui-pair\\client\\player.log"
+      ],
+      "settingsRestored": true,
+      "exitCode": 0
+    }
+  },
+  "inputRestored": true,
+  "runtimeUnchanged": true,
+  "exeUnchanged": true,
+  "terminal": true
+}

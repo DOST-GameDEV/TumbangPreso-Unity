@@ -1,0 +1,9 @@
+{
+  "source": "788ede1217eb4caf8fcf179246c7c8d02d6db160",
+  "protocol": 126,
+  "baseline": "2 failures: F2 changes seat during pause menu and presentation hold",
+  "final": "2/2 passed; fresh F2 works after each release",
+  "inputCount": 753,
+  "inputDrift": [],
+  "toolingRepairs": 0
+}

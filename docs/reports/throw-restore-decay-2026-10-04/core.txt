@@ -1,0 +1,32 @@
+
+Welcome to .NET 9.0!
+---------------------
+SDK Version: 9.0.318
+
+Telemetry
+---------
+The .NET tools collect usage data in order to help us improve your experience. It is collected by Microsoft and shared with the community. You can opt-out of telemetry by setting the DOTNET_CLI_TELEMETRY_OPTOUT environment variable to '1' or 'true' using your favorite shell.
+
+Read more about .NET CLI Tools telemetry: https://aka.ms/dotnet-cli-telemetry
+
+----------------
+Installed an ASP.NET Core HTTPS development certificate.
+To trust the certificate, run 'dotnet dev-certs https --trust'
+Learn about HTTPS: https://aka.ms/dotnet-https
+
+----------------
+Write your first app: https://aka.ms/dotnet-hello-world
+Find out what's new: https://aka.ms/dotnet-whats-new
+Explore documentation: https://aka.ms/dotnet-docs
+Report issues and find source on GitHub: https://github.com/dotnet/core
+Use 'dotnet --help' to see available commands or visit: https://aka.ms/dotnet-cli
+--------------------------------------------------------------------------------------
+  TumbangPreso.Core -> /workspace/scratch/0ed9da4aed7f/tump/Core/bin/Debug/netstandard2.1/TumbangPreso.Core.dll
+  TumbangPreso.Core.Tests -> /workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll
+Test run for /workspace/scratch/0ed9da4aed7f/tump/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 17.14.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 3 ms - TumbangPreso.Core.Tests.dll (net9.0)

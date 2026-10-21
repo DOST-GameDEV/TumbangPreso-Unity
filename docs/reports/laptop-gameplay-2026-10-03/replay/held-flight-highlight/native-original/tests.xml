@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:41:57Z" end-time="2026-10-03 03:42:04Z" duration="7.409343">
+  <test-suite type="TestSuite" id="2680" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1367" result="Failed" site="Child" start-time="2026-10-03 03:41:57Z" end-time="2026-10-03 03:42:04Z" duration="7.409343" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2674" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1367" result="Failed" site="Child" start-time="2026-10-03 03:41:57Z" end-time="2026-10-03 03:42:04Z" duration="7.395329" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6228" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2675" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1367" result="Failed" site="Child" start-time="2026-10-03 03:41:57Z" end-time="2026-10-03 03:42:04Z" duration="7.387505" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2676" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1367" result="Failed" site="Child" start-time="2026-10-03 03:41:57Z" end-time="2026-10-03 03:42:04Z" duration="7.379348" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2137" name="RecordedSlipperHighlightTests" fullname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" classname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 03:41:57Z" end-time="2026-10-03 03:42:04Z" duration="7.360493" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2139" name="CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper" fullname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper" methodname="CurrentLandingHighlightCannotPaintHistoricalFlyingSlipper" classname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" runstate="Runnable" seed="1455942179" result="Failed" start-time="2026-10-03 03:41:57Z" end-time="2026-10-03 03:42:02Z" duration="5.677870" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Current landed rim leaked onto historical InFlight pose.
+  Expected: 0.0d +/- 0.0010000000474974513d
+  But was:  0.85000002384185791d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedSlipperHighlightTests+<HistoricalNonLoose>d__4.MoveNext () [0x0064a] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\RecordedSlipperHighlightTests.cs:88
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2138" name="CurrentLandingHighlightCannotPaintHistoricalHeldSlipper" fullname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests.CurrentLandingHighlightCannotPaintHistoricalHeldSlipper" methodname="CurrentLandingHighlightCannotPaintHistoricalHeldSlipper" classname="TumbangPreso.PlayTests.RecordedSlipperHighlightTests" runstate="Runnable" seed="1789099184" result="Failed" start-time="2026-10-03 03:42:02Z" end-time="2026-10-03 03:42:04Z" duration="1.671130" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Current landed rim leaked onto historical Held pose.
+  Expected: 0.0d +/- 0.0010000000474974513d
+  But was:  0.85000002384185791d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedSlipperHighlightTests+<HistoricalNonLoose>d__4.MoveNext () [0x0064a] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\RecordedSlipperHighlightTests.cs:88
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

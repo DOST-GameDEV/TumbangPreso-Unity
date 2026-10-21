@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.2781723">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.278172" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2195" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.230503" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8680" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2196" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.192752" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2197" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="987" result="Failed" site="Child" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.159500" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1644" name="LobbyRulesPacketTests" fullname="TumbangPreso.Tests.LobbyRulesPacketTests" classname="TumbangPreso.Tests.LobbyRulesPacketTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.076241" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1649" name="RoleAndLeaderGuardsRefuseMalformedRules" fullname="TumbangPreso.Tests.LobbyRulesPacketTests.RoleAndLeaderGuardsRefuseMalformedRules" methodname="RoleAndLeaderGuardsRefuseMalformedRules" classname="TumbangPreso.Tests.LobbyRulesPacketTests" runstate="Runnable" seed="1180728352" result="Passed" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.040189" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1646" name="TruncatedHostBroadcastCannotThrowOrPublishRules" fullname="TumbangPreso.Tests.LobbyRulesPacketTests.TruncatedHostBroadcastCannotThrowOrPublishRules" methodname="TruncatedHostBroadcastCannotThrowOrPublishRules" classname="TumbangPreso.Tests.LobbyRulesPacketTests" runstate="Runnable" seed="1066176183" result="Failed" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.010763" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSyncRulesMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00011] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4655 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRulesPacketTests+<>c__DisplayClass16_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:61 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRulesPacketTests.Deliver (System.String method, System.Byte[] data, System.UInt64 sender) [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:61
+at TumbangPreso.Tests.LobbyRulesPacketTests.BadFrames (System.String method) [0x00019] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:72
+at TumbangPreso.Tests.LobbyRulesPacketTests.TruncatedHostBroadcastCannotThrowOrPublishRules () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:80
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1645" name="TruncatedLeaderRequestCannotThrowOrPublishRules" fullname="TumbangPreso.Tests.LobbyRulesPacketTests.TruncatedLeaderRequestCannotThrowOrPublishRules" methodname="TruncatedLeaderRequestCannotThrowOrPublishRules" classname="TumbangPreso.Tests.LobbyRulesPacketTests" runstate="Runnable" seed="631463026" result="Failed" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.001354" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSelectRulesMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00012] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4623 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyRulesPacketTests+<>c__DisplayClass16_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:61 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRulesPacketTests.Deliver (System.String method, System.Byte[] data, System.UInt64 sender) [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:61
+at TumbangPreso.Tests.LobbyRulesPacketTests.BadFrames (System.String method) [0x00019] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:72
+at TumbangPreso.Tests.LobbyRulesPacketTests.TruncatedLeaderRequestCannotThrowOrPublishRules () [0x0000c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:78
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1648" name="ValidHostBroadcastRetainsTheSupportedCustomWire" fullname="TumbangPreso.Tests.LobbyRulesPacketTests.ValidHostBroadcastRetainsTheSupportedCustomWire" methodname="ValidHostBroadcastRetainsTheSupportedCustomWire" classname="TumbangPreso.Tests.LobbyRulesPacketTests" runstate="Runnable" seed="1916637975" result="Passed" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.002743" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1647" name="ValidLeaderRequestRetainsTheSupportedCustomWire" fullname="TumbangPreso.Tests.LobbyRulesPacketTests.ValidLeaderRequestRetainsTheSupportedCustomWire" methodname="ValidLeaderRequestRetainsTheSupportedCustomWire" classname="TumbangPreso.Tests.LobbyRulesPacketTests" runstate="Runnable" seed="1653792991" result="Passed" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.000823" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1650" name="WideSenderCannotAliasTheLobbyLeader" fullname="TumbangPreso.Tests.LobbyRulesPacketTests.WideSenderCannotAliasTheLobbyLeader" methodname="WideSenderCannotAliasTheLobbyLeader" classname="TumbangPreso.Tests.LobbyRulesPacketTests" runstate="Runnable" seed="1830583858" result="Failed" start-time="2026-10-02 21:07:31Z" end-time="2026-10-02 21:07:31Z" duration="0.001726" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRulesPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:65
+at TumbangPreso.Tests.LobbyRulesPacketTests.WideSenderCannotAliasTheLobbyLeader () [0x00025] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRulesPacketTests.cs:95
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

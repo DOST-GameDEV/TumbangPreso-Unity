@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="56d9fde7-1fd1-43c3-a1bd-2ff26309868f" name="matth@DESKTOP-E4OQK9L 2026-09-30 14:26:39" runUser="DESKTOP-E4OQK9L\matth" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-30T14:26:39.7869108+08:00" queuing="2026-09-30T14:26:39.7869109+08:00" start="2026-09-30T14:26:39.0302881+08:00" finish="2026-09-30T14:26:39.7914269+08:00" />
+  <TestSettings name="default" id="28e92130-8e86-4f58-a337-6489cc397ab2">
+    <Deployment runDeploymentRoot="matth_DESKTOP-E4OQK9L_2026-09-30_14_26_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="142acb40-b7cd-4a5c-8e3b-72f8c1c1ac67" testId="7e25e8c3-dfc3-e277-9a59-fc92a29cab97" testName="TumbangPreso.Core.Tests.MatchRecordTests.ThePressureRadiusIsTheTayasStandingLungeReach" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0040508" startTime="2026-09-30T14:26:39.6812385+08:00" endTime="2026-09-30T14:26:39.6812591+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="142acb40-b7cd-4a5c-8e3b-72f8c1c1ac67" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.MatchRecordTests.ThePressureRadiusIsTheTayasStandingLungeReach" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="7e25e8c3-dfc3-e277-9a59-fc92a29cab97">
+      <Execution id="142acb40-b7cd-4a5c-8e3b-72f8c1c1ac67" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.MatchRecordTests" name="ThePressureRadiusIsTheTayasStandingLungeReach" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7e25e8c3-dfc3-e277-9a59-fc92a29cab97" executionId="142acb40-b7cd-4a5c-8e3b-72f8c1c1ac67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.19)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.23]   Finished:    TumbangPreso.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

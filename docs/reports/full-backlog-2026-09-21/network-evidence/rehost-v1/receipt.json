@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "match_count": 2,
+  "rehost": true,
+  "host_exit": 0,
+  "client_cleanup_after_host_exit": true,
+  "runtime_sha256": "fe2f43df3b1f03a5aeaa4026e01ff6aa1d8b3e89d54a4e495a6a502f9436545f",
+  "source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\net-current-rehost-v1",
+  "limits": "Internal v45 uses detached validation baseline with copied owned inputs, not final coherent release."
+}

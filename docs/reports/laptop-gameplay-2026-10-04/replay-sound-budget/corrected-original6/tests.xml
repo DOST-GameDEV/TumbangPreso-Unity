@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:44:46Z" end-time="2026-10-03 16:44:47Z" duration="0.0923057">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1262" result="Failed" site="Child" start-time="2026-10-03 16:44:46Z" end-time="2026-10-03 16:44:47Z" duration="0.092306" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2549" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1262" result="Failed" site="Child" start-time="2026-10-03 16:44:46Z" end-time="2026-10-03 16:44:47Z" duration="0.078050" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2620" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2550" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1262" result="Failed" site="Child" start-time="2026-10-03 16:44:46Z" end-time="2026-10-03 16:44:47Z" duration="0.070021" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2551" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1262" result="Failed" site="Child" start-time="2026-10-03 16:44:46Z" end-time="2026-10-03 16:44:47Z" duration="0.061092" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2193" name="RecordedClipSoundBudgetTests" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 16:44:46Z" end-time="2026-10-03 16:44:47Z" duration="0.047336" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2200" name="AClipBeyondTheExistingRecorderBudgetStillRefusesCleanly" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.AClipBeyondTheExistingRecorderBudgetStillRefusesCleanly" methodname="AClipBeyondTheExistingRecorderBudgetStillRefusesCleanly" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="169725047" result="Passed" start-time="2026-10-03 16:44:47Z" end-time="2026-10-03 16:44:47Z" duration="0.018262" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2199" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 16:44:47Z" end-time="2026-10-03 16:44:47Z" duration="0.018168" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2194" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(0)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(0)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="1230447674" result="Passed" start-time="2026-10-03 16:44:47Z" end-time="2026-10-03 16:44:47Z" duration="0.006788" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2195" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(1)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(1)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="900636840" result="Passed" start-time="2026-10-03 16:44:47Z" end-time="2026-10-03 16:44:47Z" duration="0.002456" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2196" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(256)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(256)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="1418414343" result="Passed" start-time="2026-10-03 16:44:47Z" end-time="2026-10-03 16:44:47Z" duration="0.003258" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2197" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(257)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(257)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="538383522" result="Failed" label="Error" start-time="2026-10-03 16:44:47Z" end-time="2026-10-03 16:44:47Z" duration="0.002944" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.IO.InvalidDataException : Invalid clip count]]></message>
+                  <stack-trace><![CDATA[  at TumbangPreso.CameraSystem.RecordedMatchClip.Encode () [0x0060f] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Camera\RecordedMatchClip.cs:88 
+  at TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget (System.Int32 count) [0x00007] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\RecordedClipSoundBudgetTests.cs:39 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2198" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(512)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(512)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="216899408" result="Failed" label="Error" start-time="2026-10-03 16:44:47Z" end-time="2026-10-03 16:44:47Z" duration="0.000618" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.IO.InvalidDataException : Invalid clip count]]></message>
+                  <stack-trace><![CDATA[  at TumbangPreso.CameraSystem.RecordedMatchClip.Encode () [0x0060f] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Camera\RecordedMatchClip.cs:88 
+  at TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget (System.Int32 count) [0x00007] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\RecordedClipSoundBudgetTests.cs:39 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

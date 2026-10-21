@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 01:01:17Z" end-time="2026-09-22 01:01:54Z" duration="37.2740149">
+  <test-suite type="TestSuite" id="1685" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="516" result="Failed" site="Child" start-time="2026-09-22 01:01:17Z" end-time="2026-09-22 01:01:54Z" duration="37.274015" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1679" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="516" result="Failed" site="Child" start-time="2026-09-22 01:01:17Z" end-time="2026-09-22 01:01:54Z" duration="37.256741" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9584" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1680" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="516" result="Failed" site="Child" start-time="2026-09-22 01:01:17Z" end-time="2026-09-22 01:01:54Z" duration="37.248899" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1681" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="516" result="Failed" site="Child" start-time="2026-09-22 01:01:17Z" end-time="2026-09-22 01:01:54Z" duration="37.239115" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1438" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-22 01:01:17Z" end-time="2026-09-22 01:01:54Z" duration="37.215841" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1439" name="CurrentSteersOneFlightWithoutStealingCredit" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.CurrentSteersOneFlightWithoutStealingCredit" methodname="CurrentSteersOneFlightWithoutStealingCredit" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1525690033" result="Passed" start-time="2026-09-22 01:01:17Z" end-time="2026-09-22 01:01:27Z" duration="10.572666" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1442" name="InnerAndOuterStairsLetBothModesLeaveTheWater" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.InnerAndOuterStairsLetBothModesLeaveTheWater" methodname="InnerAndOuterStairsLetBothModesLeaveTheWater" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1796897437" result="Failed" start-time="2026-09-22 01:01:27Z" end-time="2026-09-22 01:01:41Z" duration="13.612143" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Classic failed the inner stairs.
+  Expected: greater than or equal to 0.0f
+  But was:  -1.99999988f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RafiExpansionProbe+<InnerAndOuterStairsLetBothModesLeaveTheWater>d__14.MoveNext () [0x0020a] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\RafiExpansionProbe.cs:139
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 0 of 836 renderers, 0 with a roof variant.
+[NearFade] 3194 occluder nodes matched, 34 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1441" name="MirrorAndItsRecordedViewCannotCreateActorsOrEquipment" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.MirrorAndItsRecordedViewCannotCreateActorsOrEquipment" methodname="MirrorAndItsRecordedViewCannotCreateActorsOrEquipment" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="872707069" result="Passed" start-time="2026-09-22 01:01:41Z" end-time="2026-09-22 01:01:47Z" duration="5.603916" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1440" name="WaveCarriesLooseEquipmentWithoutScoringOrMovingHeldEquipment" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.WaveCarriesLooseEquipmentWithoutScoringOrMovingHeldEquipment" methodname="WaveCarriesLooseEquipmentWithoutScoringOrMovingHeldEquipment" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1540686566" result="Passed" start-time="2026-09-22 01:01:47Z" end-time="2026-09-22 01:01:54Z" duration="7.407054" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

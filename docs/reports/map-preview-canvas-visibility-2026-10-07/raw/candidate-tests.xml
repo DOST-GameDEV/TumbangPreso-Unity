@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 01:01:06Z" end-time="2026-10-07 01:01:09Z" duration="2.6297741">
+  <test-suite type="TestSuite" id="3449" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1985" result="Passed" start-time="2026-10-07 01:01:06Z" end-time="2026-10-07 01:01:09Z" duration="2.629774" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3441" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1985" result="Passed" start-time="2026-10-07 01:01:06Z" end-time="2026-10-07 01:01:09Z" duration="2.616046" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="59936" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3442" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1985" result="Passed" start-time="2026-10-07 01:01:06Z" end-time="2026-10-07 01:01:09Z" duration="2.608298" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3445" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1983" result="Passed" start-time="2026-10-07 01:01:06Z" end-time="2026-10-07 01:01:09Z" duration="2.598998" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2062" name="MapPreviewCanvasVisibilityTests" fullname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" classname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 01:01:06Z" end-time="2026-10-07 01:01:08Z" duration="1.778380" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2064" name="CanvasOverlayPausesAndResumesTheOwnedMovie" fullname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests.CanvasOverlayPausesAndResumesTheOwnedMovie" methodname="CanvasOverlayPausesAndResumesTheOwnedMovie" classname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" runstate="Runnable" seed="96004697" result="Passed" start-time="2026-10-07 01:01:06Z" end-time="2026-10-07 01:01:08Z" duration="1.510904" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2063" name="HiddenCanvasKeepsPosterAndDefersItsDecoder" fullname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests.HiddenCanvasKeepsPosterAndDefersItsDecoder" methodname="HiddenCanvasKeepsPosterAndDefersItsDecoder" classname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" runstate="Runnable" seed="1158461131" result="Passed" start-time="2026-10-07 01:01:08Z" end-time="2026-10-07 01:01:08Z" duration="0.252847" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2068" name="MapPreviewInactiveViewTests" fullname="TumbangPreso.PlayTests.MapPreviewInactiveViewTests" classname="TumbangPreso.PlayTests.MapPreviewInactiveViewTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 01:01:08Z" end-time="2026-10-07 01:01:08Z" duration="0.398325" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2070" name="DisabledPreviewComponentDefersDecoderUntilEnabled" fullname="TumbangPreso.PlayTests.MapPreviewInactiveViewTests.DisabledPreviewComponentDefersDecoderUntilEnabled" methodname="DisabledPreviewComponentDefersDecoderUntilEnabled" classname="TumbangPreso.PlayTests.MapPreviewInactiveViewTests" runstate="Runnable" seed="1464363937" result="Passed" start-time="2026-10-07 01:01:08Z" end-time="2026-10-07 01:01:08Z" duration="0.165885" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2069" name="InactiveViewRetainsPosterAndDefersDecoderUntilShown" fullname="TumbangPreso.PlayTests.MapPreviewInactiveViewTests.InactiveViewRetainsPosterAndDefersDecoderUntilShown" methodname="InactiveViewRetainsPosterAndDefersDecoderUntilShown" classname="TumbangPreso.PlayTests.MapPreviewInactiveViewTests" runstate="Runnable" seed="371011128" result="Passed" start-time="2026-10-07 01:01:08Z" end-time="2026-10-07 01:01:08Z" duration="0.177463" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2071" name="MapPreviewMotionSettingsTests" fullname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests" classname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 01:01:08Z" end-time="2026-10-07 01:01:09Z" duration="0.296339" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2073" name="MotionDisabledDuringPreparationKeepsPosterUntilReenabled" fullname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests.MotionDisabledDuringPreparationKeepsPosterUntilReenabled" methodname="MotionDisabledDuringPreparationKeepsPosterUntilReenabled" classname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests" runstate="Runnable" seed="949241558" result="Passed" start-time="2026-10-07 01:01:08Z" end-time="2026-10-07 01:01:08Z" duration="0.131041" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2072" name="VisiblePreviewAdoptsMotionSettingWithoutVisibilityRefresh" fullname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests.VisiblePreviewAdoptsMotionSettingWithoutVisibilityRefresh" methodname="VisiblePreviewAdoptsMotionSettingWithoutVisibilityRefresh" classname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests" runstate="Runnable" seed="1153433616" result="Passed" start-time="2026-10-07 01:01:08Z" end-time="2026-10-07 01:01:09Z" duration="0.137525" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

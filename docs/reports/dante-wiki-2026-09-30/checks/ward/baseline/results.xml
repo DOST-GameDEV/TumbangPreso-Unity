@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.5963009">
+  <test-suite type="TestSuite" id="2259" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1016" result="Failed" site="Child" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.596301" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2253" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1016" result="Failed" site="Child" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.585553" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="201558" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2254" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1016" result="Failed" site="Child" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.581744" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2255" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1016" result="Failed" site="Child" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.578724" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1269" name="DanteWardRuleTests" fullname="TumbangPreso.PlayTests.DanteWardRuleTests" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.558731" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1272" name="AcceptedWardCannotEraseANewerTag" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.AcceptedWardCannotEraseANewerTag" methodname="AcceptedWardCannotEraseANewerTag" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="2025283495" result="Failed" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.260238" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Delayed accepted presentation cannot erase a newer tag.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteWardRuleTests+<AcceptedWardCannotEraseANewerTag>d__9.MoveNext () [0x000bc] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteWardRuleTests.cs:51
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1271" name="FrozenPlayerCanPressUnstoppable" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.FrozenPlayerCanPressUnstoppable" methodname="FrozenPlayerCanPressUnstoppable" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="364289769" result="Failed" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.244908" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A cleanse signature must accept the frozen player's press.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteWardRuleTests+<FrozenPlayerCanPressUnstoppable>d__8.MoveNext () [0x000c1] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteWardRuleTests.cs:42
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1270" name="WardAndBastionMatchCurrentWiki" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.WardAndBastionMatchCurrentWiki" methodname="WardAndBastionMatchCurrentWiki" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="1589329355" result="Failed" start-time="2026-09-30 23:18:39Z" end-time="2026-09-30 23:18:39Z" duration="0.040858" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 11 but was 6. Strings differ at index 0.
+  Expected: "UNSTOPPABLE"
+  But was:  "SHIELD"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteWardRuleTests.WardAndBastionMatchCurrentWiki () [0x00006] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteWardRuleTests.cs:33
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

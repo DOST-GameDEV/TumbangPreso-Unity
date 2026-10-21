@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.1216909">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1336" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.121691" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2645" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1336" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.106137" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22748" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2646" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1336" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.100302" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2647" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1336" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.094834" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1370" name="CompletedMatchDepartureTests" fullname="TumbangPreso.Tests.CompletedMatchDepartureTests" classname="TumbangPreso.Tests.CompletedMatchDepartureTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.063848" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1375" name="APreStartLobbySnapshotIsNotACompletedMatch" fullname="TumbangPreso.Tests.CompletedMatchDepartureTests.APreStartLobbySnapshotIsNotACompletedMatch" methodname="APreStartLobbySnapshotIsNotACompletedMatch" classname="TumbangPreso.Tests.CompletedMatchDepartureTests" runstate="Runnable" seed="985387616" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.031076" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Abandon] HostLost: ABANDONED at round 1 of 4; this peer may no longer resolve anything
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1373" name="CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn" fullname="TumbangPreso.Tests.CompletedMatchDepartureTests.CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn" classname="TumbangPreso.Tests.CompletedMatchDepartureTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.014599" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1371" name="CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn(False)" fullname="TumbangPreso.Tests.CompletedMatchDepartureTests.CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn(False)" methodname="CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn" classname="TumbangPreso.Tests.CompletedMatchDepartureTests" runstate="Runnable" seed="780241254" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.009830" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Abandon] HostLost: connection ended after completed match at round 4 of 4; authority revoked
+]]></output>
+              </test-case>
+              <test-case id="1372" name="CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn(True)" fullname="TumbangPreso.Tests.CompletedMatchDepartureTests.CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn(True)" methodname="CompletedMatchIsRoomClosureEvenAfterLocalRulesReturn" classname="TumbangPreso.Tests.CompletedMatchDepartureTests" runstate="Runnable" seed="1508767946" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.001575" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Abandon] HostLost: connection ended after completed match at round 4 of 4; authority revoked
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1374" name="FreshLiveMatchAfterCompletionStillReportsRealHostLoss" fullname="TumbangPreso.Tests.CompletedMatchDepartureTests.FreshLiveMatchAfterCompletionStillReportsRealHostLoss" methodname="FreshLiveMatchAfterCompletionStillReportsRealHostLoss" classname="TumbangPreso.Tests.CompletedMatchDepartureTests" runstate="Runnable" seed="1422145862" result="Passed" start-time="2026-10-04 22:00:05Z" end-time="2026-10-04 22:00:05Z" duration="0.002233" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Abandon] HostLost: ABANDONED at round 2 of 8; this peer may no longer resolve anything
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

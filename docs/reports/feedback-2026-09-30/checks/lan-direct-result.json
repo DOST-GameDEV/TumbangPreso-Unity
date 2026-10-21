@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "faults": [],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-net-0930\\Logs\\feedback-0930-network\\lan-direct\\demo-clean-direct\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 2450,
+        "travelled": 219.3
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": true,
+        "score": 320,
+        "travelled": 147.9
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 500,
+        "travelled": 221.3
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 300,
+        "travelled": 213.0
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "97",
+    "sampled": "163.0",
+    "round": "2",
+    "active": "True",
+    "defender": "1",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "D34EC66E",
+    "hash": "3F2846CB"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-net-0930\\Logs\\feedback-0930-network\\lan-direct\\demo-clean-direct\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 2450,
+        "travelled": 215.3
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 20,
+        "travelled": 21.2
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 500,
+        "travelled": 213.5
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 200,
+        "travelled": 210.4
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "97",
+    "sampled": "150.0",
+    "round": "2",
+    "active": "True",
+    "defender": "1",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "D34EC66E",
+    "hash": "8859E0FB"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-net-0930\\Builds\\feedback-0930-network\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-net-0930\\Builds\\feedback-0930-network\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "39746f3cfc3c12cb96d3d11e8efda82947d944958cd34c64d0a445122d492718",
+  "clientRuntimeSha256": "39746f3cfc3c12cb96d3d11e8efda82947d944958cd34c64d0a445122d492718",
+  "sharedInputUnchanged": true
+}

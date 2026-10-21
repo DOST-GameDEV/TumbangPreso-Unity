@@ -19,10 +19,21 @@ namespace TumbangPreso.UI
     {
         /// <summary>One slot since the 2026-07-29 input overhaul — the old two-slot bindings
         /// addressed a second slot that no longer exists.</summary>
-        public const string KeysText = "F1-F4 drive · F5 cycle · F6 reset · F7 no cooldowns";
+        ///
+        /// ⚠️ "F12 cloud" IS A TEMPORARY DEMO, CHANGED 2026-10-11 (it read "F12 ice bloom" for a day), TO BE
+        /// REMOVED together with the key in `DebugPlayerSwitcher.Update` and `Visual/CloudDemo.cs`.
+        public const string KeysText = "F1-F4 drive · F5 cycle · F6 reset · F7 no cooldowns · F8 character AO · F12 cloud";
 
         private Text _slots;
         private Text _keys;
+        private Text _fps;
+        private Canvas _canvas;
+        // The frame counter (owner, 2026-10-18: "add an fps counter because it lowkey feels a bit laggy on my end"):
+        // frames a second and the mean frame time over half a second, and that half second's WORST frame, since a
+        // hitch reads as lag even when the mean is fine. Unscaled time, so a pause or slow motion does not fake it.
+        private const float FpsWindow = 0.5f;
+        private float _fpsTime, _fpsWorst;
+        private int _fpsFrames;
 
         private void Awake()
         {
@@ -50,6 +61,28 @@ namespace TumbangPreso.UI
 
         private void OnRoundStarted(int roundNumber, int defenderSlot) => RefreshFromSwitcher();
 
+        private void Update()
+        {
+            // Gameplay seat shortcuts do not belong over a spectator broadcast.
+            if (_canvas != null)
+                _canvas.enabled = !NetAuthority.IsNetworked && !GameLaunch.Spectator
+                    && (Hud.Instance == null || !Hud.Instance.Spectating);
+            CountFrame(Time.unscaledDeltaTime);
+        }
+
+        private void CountFrame(float dt)
+        {
+            _fpsTime += dt; _fpsFrames++;
+            if (dt > _fpsWorst) _fpsWorst = dt;
+            if (_fpsTime < FpsWindow || _fps == null) return;
+            float mean = _fpsTime / _fpsFrames;
+            _fps.text = $"{1f / mean:0} FPS  {mean * 1000f:0.0} ms  worst {_fpsWorst * 1000f:0.0} ms";
+            // Plain warning colours, not the game's: under 50 a second or a worst frame past 33 ms is a hitch you feel.
+            _fps.color = mean > 1f / 30f || _fpsWorst > 0.05f ? new Color(1f, 0.45f, 0.4f)
+                       : mean > 1f / 50f || _fpsWorst > 1f / 30f ? new Color(1f, 0.85f, 0.4f) : Color.white;
+            _fpsTime = 0f; _fpsFrames = 0; _fpsWorst = 0f;
+        }
+
         /// <summary>Called by the switcher. Debug registers with debug; no gameplay script
         /// names either one.</summary>
         public void Refresh(string drivenText)
@@ -68,7 +101,7 @@ namespace TumbangPreso.UI
             var canvasGo = new GameObject("DebugBarCanvas");
             canvasGo.transform.SetParent(transform, false);
 
-            var canvas = canvasGo.AddComponent<Canvas>();
+            var canvas = _canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 500;   // over everything, including the pause overlay
 
@@ -85,6 +118,7 @@ namespace TumbangPreso.UI
             _slots = MakeLabel(strip.transform, "Slots", TextAnchor.MiddleLeft, 8.0f);
             _keys = MakeLabel(strip.transform, "Keys", TextAnchor.MiddleRight, -8.0f);
             _keys.text = KeysText;
+            _fps = MakeLabel(strip.transform, "Fps", TextAnchor.MiddleCenter, 0.0f);
         }
 
         private static Text MakeLabel(Transform parent, string name, TextAnchor align, float xPad)

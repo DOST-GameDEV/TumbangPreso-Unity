@@ -1,0 +1,18 @@
+{
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "protocol": 152,
+  "room": "S6BP",
+  "rowAdmission": true,
+  "readyObservedAtHost": true,
+  "readyStableSeconds": 230.292799949646,
+  "normalClientLeavePreservesHostRoom": true,
+  "codeRejoin": true,
+  "newPeerId": 2,
+  "readyResetOnRejoin": true,
+  "normalHostLeaveRequestedStop": true,
+  "clientHostLostHome": true,
+  "bothOwnGameQuitExit0": true,
+  "sharedPrefsRestoredAfterBothExited": true,
+  "artifactUnchanged": true,
+  "scope": "Two local Windows instances; no match, impairment or true two-machine claim"
+}

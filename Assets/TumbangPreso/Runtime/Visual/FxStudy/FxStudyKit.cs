@@ -1,0 +1,656 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// ⚠️ THE EFFECTS STUDY (2026-10-10). The owner, of the first effects pass on the ultimate cutscenes: "none of the
+    /// effects you added actually look like the references i gave you. can you actually look at the references and give me
+    /// your best shot at recreating the ones u see". The first pass had adapted them loosely, straight into hero
+    /// cutscenes, with a shader that made its masks from noise.
+    ///
+    /// So the effects are built here FIRST, each as itself, on a bare dark floor (`PaeteAbilityFilm.FxBench.cs` films
+    /// them, `tools/cutscene_rework/fxcompare.py` lays the film beside the reference), and only what holds up there is
+    /// worth carrying into a cutscene later. NOTHING IN THIS FOLDER IS USED BY THE GAME YET.
+    ///
+    /// What the references have in common, and what this kit therefore is:
+    ///   * shapes are MESHES with a silhouette (`Sweep`: a ribbon along typed points, `Revolve`, `Ball`);
+    ///   * each wears an AUTHORED greyscale picture (`Mask`, painted by `tools/build_ultimate_fx_textures.py`), scrolled
+    ///     along it and coloured by a ramp, white core through a saturated body to a dark edge (`FxStudyRibbon.shader`);
+    ///   * light is given its halo by hand (`Glow` sprites and the shader's own halo), because nothing blooms here;
+    ///   * every effect is LAYERED IN TIME from one age float: `FxStudyEffect.Sample(age, eye)`.
+    ///
+    /// ⚠️ ONE FLOAT, NO CLOCK OF ITS OWN. An effect is a pure function of the age it is handed: no `Time`, no random
+    /// numbers, nothing kept from one frame to the next. That is what lets a cutscene scrub it, a film step it at sixty
+    /// frames a second outside Play, and every peer draw the same frame.
+    /// </summary>
+    public static class FxStudyKit
+    {
+        public const string RibbonShader = "TumbangPreso/FxStudyRibbon", OrbShader = "TumbangPreso/FxStudyOrb";
+
+        /// <summary>A mask by name, or null (a material without its picture draws a plain shape; it never throws).</summary>
+        public static Texture2D Mask(string name) => string.IsNullOrEmpty(name) ? null : Resources.Load<Texture2D>("Textures/UltimateFx/" + name);
+
+        public static Material Ribbon(string mask, string erode = "erode_streak")
+        {
+            var shader = Shader.Find(RibbonShader);
+            if (shader == null) return null;
+            var material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            var picture = Mask(mask);
+            if (picture != null) material.SetTexture("_MaskTex", picture);
+            var eaten = Mask(erode);
+            if (eaten != null) material.SetTexture("_ErodeTex", eaten);
+            return material;
+        }
+
+        public static Material Orb()
+        {
+            var shader = Shader.Find(OrbShader);
+            if (shader == null) return null;
+            var material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            var eaten = Mask("erode_blobs");
+            if (eaten != null) material.SetTexture("_ErodeTex", eaten);
+            return material;
+        }
+
+        public static float Ease(float t) { t = Mathf.Clamp01(t); return t * t * (3f - 2f * t); }
+        public static float EaseOut(float t) { t = 1f - Mathf.Clamp01(t); return 1f - t * t * t; }
+        public static float EaseIn(float t) { t = Mathf.Clamp01(t); return t * t * t; }
+        /// <summary>0 before `from`, 1 after `to`, a straight run between.</summary>
+        public static float Run(float age, float from, float to) => Mathf.Clamp01((age - from) / Mathf.Max(1e-4f, to - from));
+        /// <summary>Up from `inAt` over `rise`, down from `outAt` over `fall`.</summary>
+        public static float Envelope(float age, float inAt, float rise, float outAt, float fall)
+            => Mathf.Min(Ease(Run(age, inAt, inAt + rise)), 1f - Ease(Run(age, outAt, outAt + fall)));
+        /// <summary>Arrives past its mark and settles back: 0 to 1, overshooting by about `over` on the way.</summary>
+        public static float Pop(float t, float over = 0.18f)
+        {
+            t = Mathf.Clamp01(t) - 1f;
+            float c = 1.70158f * over / 0.1f;
+            return 1f + (c + 1f) * t * t * t + c * t * t;
+        }
+        /// <summary>A fixed number in 0..1 for a whole number: the same every time it is asked.</summary>
+        public static float Hash(int n, int salt = 0)
+        {
+            unchecked
+            {
+                uint x = (uint)(n * 374761393 + salt * 668265263);
+                x = (x ^ (x >> 13)) * 1274126177u;
+                return ((x ^ (x >> 16)) & 0xFFFFFF) / (float)0x1000000;
+            }
+        }
+
+        /// <summary>One typed point of a ribbon's path: where, how wide there, and how far it has rolled about its own
+        /// length (degrees).</summary>
+        public readonly struct Knot
+        {
+            public readonly Vector3 At; public readonly float Width, Roll;
+            public Knot(float x, float y, float z, float width, float roll = 0f) { At = new Vector3(x, y, z); Width = width; Roll = roll; }
+            public Knot(Vector3 at, float width, float roll = 0f) { At = at; Width = width; Roll = roll; }
+        }
+
+        private static Vector3 Spline(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float t)
+            => 0.5f * (2f * b + (c - a) * t + (2f * a - 5f * b + 4f * c - d) * t * t + (3f * b - a - 3f * c + d) * t * t * t);
+
+        /// <summary>
+        /// A ribbon swept along typed knots (the references' "geo sweep curves"). u runs along it from the first knot (0)
+        /// to the last (1) and v across it. `face` is the way its flat side looks before any roll. `cup` bows it across
+        /// its width (a share of its width), which is what makes a wide wisp a blade with a shape and not a strip of
+        /// paper. `tint` may colour it along its length.
+        /// </summary>
+        public static Mesh Sweep(IReadOnlyList<Knot> knots, Vector3 face, int perKnot = 12, int across = 6, float cup = 0f, Func<float, Color> tint = null)
+        {
+            int spans = knots.Count - 1, rings = spans * perKnot + 1, columns = across + 1;
+            var vertices = new Vector3[rings * columns];
+            var uvs = new Vector2[rings * columns];
+            var colours = new Color[rings * columns];
+            var centre = new Vector3[rings];
+            var width = new float[rings];
+            var roll = new float[rings];
+            for (int r = 0; r < rings; r++)
+            {
+                int span = Mathf.Min(spans - 1, r / perKnot);
+                float t = (r - span * perKnot) / (float)perKnot;
+                Knot a = knots[Mathf.Max(0, span - 1)], b = knots[span], c = knots[span + 1], d = knots[Mathf.Min(spans, span + 2)];
+                centre[r] = Spline(a.At, b.At, c.At, d.At, t);
+                // Widths and rolls ease from knot to knot: a spline through them overshoots below nothing at a taper.
+                float s = Ease(t);
+                width[r] = Mathf.Lerp(b.Width, c.Width, s);
+                roll[r] = Mathf.Lerp(b.Roll, c.Roll, s);
+            }
+            for (int r = 0; r < rings; r++)
+            {
+                Vector3 along = (centre[Mathf.Min(rings - 1, r + 1)] - centre[Mathf.Max(0, r - 1)]).normalized;
+                Vector3 side = Vector3.Cross(along, face);
+                if (side.sqrMagnitude < 1e-6f) side = Vector3.Cross(along, Vector3.up);
+                side = Quaternion.AngleAxis(roll[r], along) * side.normalized;
+                Vector3 out_ = Vector3.Cross(side, along);
+                float u = r / (float)(rings - 1);
+                Color colour = tint != null ? tint(u) : Color.white;
+                for (int k = 0; k < columns; k++)
+                {
+                    float v = k / (float)across, off = v - 0.5f;
+                    vertices[r * columns + k] = centre[r] + side * (off * width[r]) + out_ * (cup * width[r] * (1f - 4f * off * off));
+                    uvs[r * columns + k] = new Vector2(u, v);
+                    colours[r * columns + k] = colour;
+                }
+            }
+            var triangles = new int[(rings - 1) * across * 6];
+            int n = 0;
+            for (int r = 0; r < rings - 1; r++)
+                for (int k = 0; k < across; k++)
+                {
+                    int i = r * columns + k;
+                    triangles[n++] = i; triangles[n++] = i + columns; triangles[n++] = i + 1;
+                    triangles[n++] = i + 1; triangles[n++] = i + columns; triangles[n++] = i + columns + 1;
+                }
+            return Finish("FxStudySweep", vertices, uvs, colours, triangles, null);
+        }
+
+        /// <summary>A flat square, one unit across, about its own middle. Upright (facing -Z) or lying on the ground
+        /// (facing up). `uv` picks a part of the picture (x, y, width, height); the whole of it when left out.</summary>
+        public static Mesh Square(bool lying, Rect? uv = null)
+        {
+            Rect part = uv ?? new Rect(0f, 0f, 1f, 1f);
+            var vertices = lying
+                ? new[] { new Vector3(-.5f, 0f, -.5f), new Vector3(.5f, 0f, -.5f), new Vector3(-.5f, 0f, .5f), new Vector3(.5f, 0f, .5f) }
+                : new[] { new Vector3(-.5f, -.5f, 0f), new Vector3(.5f, -.5f, 0f), new Vector3(-.5f, .5f, 0f), new Vector3(.5f, .5f, 0f) };
+            var uvs = new[] { new Vector2(part.xMin, part.yMin), new Vector2(part.xMax, part.yMin), new Vector2(part.xMin, part.yMax), new Vector2(part.xMax, part.yMax) };
+            var white = new[] { Color.white, Color.white, Color.white, Color.white };
+            return Finish("FxStudySquare", vertices, uvs, white, new[] { 0, 2, 1, 1, 2, 3 }, null);
+        }
+
+        /// <summary>A ball, or the part of one between two heights (`from` and `to` are -1 at its foot to 1 at its
+        /// crown: 0 to 1 is a dome). Radius 1. v runs from `from` (0) to `to` (1), u round it.</summary>
+        public static Mesh Ball(int around = 28, int up = 14, float from = -1f, float to = 1f, float twist = 0f)
+        {
+            int columns = around + 1, rows = up + 1;
+            var vertices = new Vector3[columns * rows];
+            var normals = new Vector3[columns * rows];
+            var uvs = new Vector2[columns * rows];
+            var colours = new Color[columns * rows];
+            for (int r = 0; r < rows; r++)
+            {
+                float v = r / (float)up, height = Mathf.Lerp(from, to, v), tilt = Mathf.Asin(Mathf.Clamp(height, -1f, 1f));
+                for (int c = 0; c < columns; c++)
+                {
+                    float turn = c / (float)around * Mathf.PI * 2f;
+                    var p = new Vector3(Mathf.Cos(tilt) * Mathf.Cos(turn), Mathf.Sin(tilt), Mathf.Cos(tilt) * Mathf.Sin(turn));
+                    vertices[r * columns + c] = p; normals[r * columns + c] = p;
+                    // `twist` slides the picture round the ball as it climbs, so a band across the picture becomes a SPIRAL on it.
+                    uvs[r * columns + c] = new Vector2(c / (float)around + v * twist, v);
+                    colours[r * columns + c] = Color.white;
+                }
+            }
+            return Finish("FxStudyBall", vertices, uvs, colours, Grid(rows, columns), normals);
+        }
+
+        /// <summary>A shape turned on a lathe about the upright axis: `profile` is typed (radius, height) points from its
+        /// middle outward. u runs round it, v along the profile. Smooth normals, for `FxStudyOrb`.</summary>
+        public static Mesh Revolve(IReadOnlyList<Vector2> profile, int around = 40)
+        {
+            int columns = around + 1, rows = profile.Count;
+            var vertices = new Vector3[columns * rows];
+            var normals = new Vector3[columns * rows];
+            var uvs = new Vector2[columns * rows];
+            var colours = new Color[columns * rows];
+            for (int r = 0; r < rows; r++)
+            {
+                Vector2 before = profile[Mathf.Max(0, r - 1)], after = profile[Mathf.Min(rows - 1, r + 1)];
+                Vector2 slope = (after - before).normalized, outward = new Vector2(slope.y, -slope.x);
+                for (int c = 0; c < columns; c++)
+                {
+                    float turn = c / (float)around * Mathf.PI * 2f, cos = Mathf.Cos(turn), sin = Mathf.Sin(turn);
+                    vertices[r * columns + c] = new Vector3(profile[r].x * cos, profile[r].y, profile[r].x * sin);
+                    normals[r * columns + c] = new Vector3(-outward.x * cos, -outward.y, -outward.x * sin);
+                    uvs[r * columns + c] = new Vector2(c / (float)around, r / (float)(rows - 1));
+                    colours[r * columns + c] = Color.white;
+                }
+            }
+            return Finish("FxStudyRevolve", vertices, uvs, colours, Grid(rows, columns), normals);
+        }
+
+        /// <summary>
+        /// A SHELL: a broad curved sheet, a patch of a bulb standing on the floor about the upright axis. `profile` is
+        /// typed (radius, height) points the sheet runs through from its foot to its far end; it spans `span` degrees
+        /// round the axis about `centre` degrees, and `twist` degrees further round by its far end. u runs along it (0
+        /// foot, 1 far end), v across it.
+        ///
+        /// ⚠️ A SHELL IS NOT WHAT IS SEEN. It is several times wider than any wisp. What is seen is the picture scrolled
+        /// over it and cut by a threshold, on a surface that is otherwise invisible and fades to nothing toward all four
+        /// of its borders. That is how the references' wisps are made (broad shells with the streak map run over them),
+        /// and it is why theirs change shape as they live: the picture moves, the mesh does not have to.
+        /// </summary>
+        public static Mesh Shell(IReadOnlyList<Vector2> profile, float centre, float span, float twist, int along = 30, int across = 16)
+        {
+            int rows = along + 1, columns = across + 1, last = profile.Count - 1;
+            var vertices = new Vector3[rows * columns]; var uvs = new Vector2[rows * columns]; var colours = new Color[rows * columns];
+            for (int r = 0; r < rows; r++)
+            {
+                float u = r / (float)along, at = u * last;
+                int i = Mathf.Min(last - 1, Mathf.FloorToInt(at));
+                Vector3 p = Spline(profile[Mathf.Max(0, i - 1)], profile[i], profile[i + 1], profile[Mathf.Min(last, i + 2)], at - i);
+                for (int c = 0; c < columns; c++)
+                {
+                    float v = c / (float)across, turn = (centre + (v - 0.5f) * span + twist * u) * Mathf.Deg2Rad;
+                    vertices[r * columns + c] = new Vector3(p.x * Mathf.Cos(turn), p.y, p.x * Mathf.Sin(turn));
+                    uvs[r * columns + c] = new Vector2(u, v);
+                    colours[r * columns + c] = Color.white;
+                }
+            }
+            return Finish("FxStudyShell", vertices, uvs, colours, Grid(rows, columns), null);
+        }
+
+        /// <summary>
+        /// AN ARCH: a strip lying on an egg-shaped dome about `centre`, running from one side of it up over the crown
+        /// and partway down the other (`from` to `to`, degrees from the crown; positive is toward -x before `yaw`
+        /// turns the whole arch), `width` degrees across. u runs along it, v across. A stroke that wraps the middle of
+        /// an effect is drawn on one of these, so that from the camera it bends over the thing it wraps and is never
+        /// a pole standing beside it.
+        /// </summary>
+        public static Mesh Arch(Vector3 centre, Vector3 radii, float from, float to, float width, float yaw, int along = 34, int across = 12)
+        {
+            int rows = along + 1, columns = across + 1;
+            var vertices = new Vector3[rows * columns]; var uvs = new Vector2[rows * columns]; var colours = new Color[rows * columns];
+            var turned = Quaternion.Euler(0f, yaw, 0f);
+            for (int r = 0; r < rows; r++)
+                for (int c = 0; c < columns; c++)
+                {
+                    float u = r / (float)along, v = c / (float)across;
+                    Vector3 out_ = turned * (Quaternion.AngleAxis((v - 0.5f) * width, Vector3.right) * (Quaternion.AngleAxis(Mathf.Lerp(from, to, u), Vector3.forward) * Vector3.up));
+                    vertices[r * columns + c] = centre + Vector3.Scale(out_, radii);
+                    uvs[r * columns + c] = new Vector2(u, v);
+                    colours[r * columns + c] = Color.white;
+                }
+            return Finish("FxStudyArch", vertices, uvs, colours, Grid(rows, columns), null);
+        }
+
+        /// <summary>
+        /// A LUMP: a closed shape turned on the lathe from a typed profile and then pushed about by a slow smooth
+        /// unevenness, so it is a billow with form and not a ball (the references' "geo revolve" then "noise deform").
+        /// `seed` picks the unevenness, so two lumps from one profile do not match; the same seed is the same lump.
+        /// </summary>
+        public static Mesh Lump(IReadOnlyList<Vector2> profile, float seed, float lumpiness = 0.22f, int around = 28, float lift = 0.25f)
+        {
+            var mesh = Revolve(profile, around);
+            var vertices = mesh.vertices; var normals = mesh.normals;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Vector3 p = vertices[i];
+                float push = Mathf.Sin(p.x * 3.1f + seed) * Mathf.Cos(p.z * 2.7f + seed * 1.7f) + 0.6f * Mathf.Sin(p.y * 4.3f + p.x * 2.2f + seed * 2.3f)
+                           + 0.4f * Mathf.Cos(p.z * 5.1f - p.y * 3.3f + seed * 0.7f);
+                // Outward from the axis and a little up: toward the axis itself a lathe's normals are not to be trusted.
+                Vector3 outward = new Vector3(p.x, lift, p.z).normalized;
+                vertices[i] = p + outward * (push * lumpiness * 0.5f);
+            }
+            mesh.vertices = vertices; mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            mesh.name = "FxStudyLump";
+            return mesh;
+        }
+
+        private static int[] Grid(int rows, int columns)
+        {
+            var triangles = new int[(rows - 1) * (columns - 1) * 6];
+            int n = 0;
+            for (int r = 0; r < rows - 1; r++)
+                for (int c = 0; c < columns - 1; c++)
+                {
+                    int i = r * columns + c;
+                    triangles[n++] = i; triangles[n++] = i + columns; triangles[n++] = i + 1;
+                    triangles[n++] = i + 1; triangles[n++] = i + columns; triangles[n++] = i + columns + 1;
+                }
+            return triangles;
+        }
+
+        private static Mesh Finish(string name, Vector3[] vertices, Vector2[] uvs, Color[] colours, int[] triangles, Vector3[] normals)
+        {
+            var mesh = new Mesh { name = name, hideFlags = HideFlags.HideAndDontSave };
+            mesh.vertices = vertices; mesh.uv = uvs; mesh.colors = colours; mesh.triangles = triangles;
+            if (normals != null) mesh.normals = normals; else mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+    }
+
+    /// <summary>One drawn piece of an effect: a mesh, its own material, and the few things set on it per frame.
+    /// Every setter is safe on a piece whose shader was missing (it then draws nothing and says nothing).</summary>
+    public sealed class FxPiece
+    {
+        private static readonly int AgeId = Shader.PropertyToID("_Age"), OpacityId = Shader.PropertyToID("_Opacity"),
+                                    ErodeId = Shader.PropertyToID("_Erode"), WindowId = Shader.PropertyToID("_Window");
+        public readonly GameObject Go;
+        public readonly Transform At;
+        public readonly Material Material;
+        public readonly MeshRenderer Renderer;
+        private float _soft = 0.05f;
+
+        /// <summary>`order` is where it is drawn among the effect's pieces: lower is further back. The pieces overlap
+        /// about one middle, so sorting them by distance would shuffle them from frame to frame.</summary>
+        public FxPiece(string name, Transform parent, Mesh mesh, Material material, int order)
+        {
+            Go = new GameObject(name) { hideFlags = HideFlags.DontSave };
+            At = Go.transform;
+            At.SetParent(parent, false);
+            Go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            Renderer = Go.AddComponent<MeshRenderer>();
+            Material = material;
+            Renderer.sharedMaterial = material;
+            Renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            Renderer.receiveShadows = false;
+            if (material != null) material.renderQueue = 3000 + order;
+            else Renderer.enabled = false;
+        }
+
+        public FxPiece Colours(Color deep, Color body, Color hot, Color halo)
+        {
+            if (Material == null) return this;
+            Material.SetColor("_Deep", deep); Material.SetColor("_Body", body); Material.SetColor("_Hot", hot); Material.SetColor("_HaloColor", halo);
+            return this;
+        }
+        public FxPiece Set(string property, float value) { if (Material != null) Material.SetFloat(property, value); return this; }
+        public FxPiece Set(string property, float x, float y, float z = 0f, float w = 0f) { if (Material != null) Material.SetVector(property, new Vector4(x, y, z, w)); return this; }
+        public FxPiece Set(string property, Color value) { if (Material != null) Material.SetColor(property, value); return this; }
+        /// <summary>How soft the two ends of the open window are (`Open`).</summary>
+        public FxPiece WindowSoft(float soft) { _soft = soft; return this; }
+
+        /// <summary>The per-frame state: the clock, how much of it shows, how far it has eroded.</summary>
+        public void Frame(float age, float opacity, float erode = 0f)
+        {
+            bool shown = opacity > 0.002f && erode < 0.999f && Material != null;
+            if (Go.activeSelf != shown) Go.SetActive(shown);
+            if (!shown) return;
+            Material.SetFloat(AgeId, age); Material.SetFloat(OpacityId, Mathf.Clamp01(opacity)); Material.SetFloat(ErodeId, Mathf.Clamp01(erode));
+        }
+        /// <summary>Only the stretch of the piece from u `tail` to u `head` is drawn: how a wisp is DRAWN along its
+        /// path, head first, and lets go of its root.</summary>
+        public void Open(float tail, float head) { if (Material != null) Material.SetVector(WindowId, new Vector4(tail, head, _soft, 0f)); }
+        /// <summary>Turns an upright square to the eye.</summary>
+        public void Face(Vector3 eye)
+        {
+            Vector3 to = At.position - eye;
+            if (to.sqrMagnitude > 1e-6f) At.rotation = Quaternion.LookRotation(to, Vector3.up);
+        }
+    }
+
+    /// <summary>
+    /// Many small sparks as ONE mesh, rebuilt each frame from where each spark is at that age: a spark is a teardrop
+    /// (the `fleck` mask) laid along the way it is going and turned to the eye. Call `Begin`, `Add` for each, `End`.
+    /// </summary>
+    public sealed class FxFlecks
+    {
+        public readonly FxPiece Piece;
+        private readonly Mesh _mesh;
+        private readonly List<Vector3> _vertices = new List<Vector3>();
+        private readonly List<Vector2> _uvs = new List<Vector2>();
+        private readonly List<Color> _colours = new List<Color>();
+        private readonly List<int> _triangles = new List<int>();
+        private Vector3 _eye;
+
+        /// <summary>How many particles a side the mask sheet holds: 4 for `fleck_sheet` (sixteen different dabs).</summary>
+        public int Grid = 1;
+
+        public FxFlecks(string name, Transform parent, int order, string mask = "fleck")
+        {
+            _mesh = new Mesh { name = name, hideFlags = HideFlags.HideAndDontSave };
+            _mesh.MarkDynamic();
+            Piece = new FxPiece(name, parent, _mesh, FxStudyKit.Ribbon(mask), order);
+            Piece.Set("_Ends", 0f, 0f, 0f).Set("_Halo", 0f).Set("_Add", 1f).Set("_Scroll", 0f, 0f).Set("_Cut", 0.05f, 0.5f).Set("_Stops", 0.3f, 0.6f, 0.95f);
+        }
+
+        public Mesh Mesh => _mesh;
+
+        public void Begin(Vector3 eye)
+        {
+            _eye = Piece.At.InverseTransformPoint(eye);
+            _vertices.Clear(); _uvs.Clear(); _colours.Clear(); _triangles.Clear();
+        }
+
+        /// <summary>A spark with its head at `head` (in the effect's own space), pointing along `going`, this long and
+        /// this wide, this bright (0 to 1).</summary>
+        public void Add(Vector3 head, Vector3 going, float length, float width, float bright) => Add(head, going, length, width, bright, 0, Color.white);
+
+        /// <summary>The same, wearing dab number `cell` of the sheet and tinted `tint`. `bright` thins the dab's mask, so a
+        /// dying spark loses its thin ragged parts first: it frays, it does not shrink.</summary>
+        public void Add(Vector3 head, Vector3 going, float length, float width, float bright, int cell, Color tint)
+        {
+            if (bright <= 0.01f || length <= 1e-4f || going.sqrMagnitude < 1e-8f) return;
+            going.Normalize();
+            Vector3 side = Vector3.Cross(going, _eye - head);
+            if (side.sqrMagnitude < 1e-8f) side = Vector3.Cross(going, Vector3.up);
+            side = side.normalized * (width * 0.5f);
+            Vector3 tail = head - going * length;
+            int i = _vertices.Count;
+            _vertices.Add(tail - side); _vertices.Add(tail + side); _vertices.Add(head - side); _vertices.Add(head + side);
+            int g = Mathf.Max(1, Grid); cell = ((cell % (g * g)) + g * g) % (g * g);
+            float u0 = (cell % g) / (float)g, v0 = (cell / g) / (float)g, step = 1f / g;
+            _uvs.Add(new Vector2(u0, v0)); _uvs.Add(new Vector2(u0, v0 + step)); _uvs.Add(new Vector2(u0 + step, v0)); _uvs.Add(new Vector2(u0 + step, v0 + step));
+            var colour = new Color(tint.r, tint.g, tint.b, Mathf.Clamp01(bright));
+            _colours.Add(colour); _colours.Add(colour); _colours.Add(colour); _colours.Add(colour);
+            _triangles.Add(i); _triangles.Add(i + 2); _triangles.Add(i + 1); _triangles.Add(i + 1); _triangles.Add(i + 2); _triangles.Add(i + 3);
+        }
+
+        public void End(float age)
+        {
+            _mesh.Clear();
+            _mesh.SetVertices(_vertices); _mesh.SetUVs(0, _uvs); _mesh.SetColors(_colours); _mesh.SetTriangles(_triangles, 0);
+            _mesh.RecalculateBounds();
+            Piece.Frame(age, _vertices.Count > 0 ? 1f : 0f);
+        }
+    }
+
+    /// <summary>
+    /// One effect of the study. Built under a parent, played by handing it an age, thrown away with `Dispose`.
+    /// `Shot` and `Floor` are the bench's: where the reference's camera stood for this effect, and which floor it had.
+    /// </summary>
+    public abstract class FxStudyEffect : IDisposable
+    {
+        public static readonly string[] Names = { "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent" };
+
+        public readonly Transform Root;
+        private readonly List<FxPiece> _pieces = new List<FxPiece>();
+        private readonly List<Object> _owned = new List<Object>();
+
+        protected FxStudyEffect(string name, Transform parent)
+        {
+            var go = new GameObject("FxStudy-" + name) { hideFlags = HideFlags.DontSave };
+            Root = go.transform;
+            Root.SetParent(parent, false);
+        }
+
+        /// <summary>By name, or null for a name that is not an effect.</summary>
+        public static FxStudyEffect Create(string name, Transform parent)
+        {
+            switch ((name ?? "").ToLowerInvariant())
+            {
+                case "trails": return new FxStudyTrails(parent);
+                case "wisp": return new FxStudyWisp(parent);
+                // The wisp's shell meshes alone, flat and whole, to check their structure.
+                case "wispshells": return new FxStudyWisp(parent, true);
+                case "smoke": return new FxStudySmokePlumes(parent);
+                case "circle": return new FxStudyCircle(parent);
+                case "lotus": return new FxStudyLotus(parent);
+                case "scorch": return new FxStudyScorch(parent);
+                case "whirlwind": return new FxStudyWhirlwind(parent);
+                // The cloud (`FxCloud`): smoke as solid balls that die by shrinking, on a blue ground; with its thin line; on the dark floor.
+                case "cloud": return new FxStudyCloud(parent);
+                case "cloudline": return new FxStudyCloud(parent, true, FxStudyCloud.Line);
+                case "clouddark": return new FxStudyCloud(parent, false);
+                // The same emitters switched on from nothing and off again, to show both ends.
+                case "cloudburst": return new FxStudyCloud(parent, true, 0f, true);
+                // The cloud with its line on the dark floor.
+                case "cloudlinedark": return new FxStudyCloud(parent, false, FxStudyCloud.Line);
+                case "drift": return new FxStudyDrift(parent);
+                // The landing and jump dust of a match (`CloudPuffField`): small puffs of the cloud.
+                case "landpuff": return new FxStudyLandPuff(parent);
+                // Amihan's FEATHERFALL (`FxStudyFeatherfall`): the gust, the hold with its time left, the landing.
+                case "featherfall": return new FxStudyFeatherfall(parent);
+                // The same from close under her, looking up at the time left.
+                case "featherfallbelow": return new FxStudyFeatherfall(parent, -1f, true, true);
+                case "zackcircuit": return new FxStudyZackCircuit(parent);
+                case "zackbank": return new FxStudyZackBank(parent);
+                case "zackbank1": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Single);
+                case "zackbankout": return new FxStudyZackBank(parent, FxStudyZackBank.Show.RunsOut);
+                case "zackbank8": return new FxStudyZackBank(parent, FxStudyZackBank.Show.EightMetres);
+                case "zackbankb3": return new FxStudyZackBankB3(parent);
+                case "zackbankb4": return new FxStudyZackBankB4(parent);
+                case "zackbankb4x8": return new FxStudyZackBankB4(parent, FxStudyZackBankB4.Show.EightMetres);
+                case "zackbankb5": return new FxStudyZackBankB5(parent);
+                case "zackbankb5x8": return new FxStudyZackBankB5(parent, FxStudyZackBankB5.Show.EightMetres);
+                case "zackbank1x8": return new FxStudyZackBank(parent, FxStudyZackBank.Show.EightMetresSingle);
+                case "zackbankb6": return new FxStudyZackBankB6(parent);
+                case "zackbankb6x8": return new FxStudyZackBankB6(parent, FxStudyZackBankB6.Show.EightMetres);
+                case "zackbankb7": return new FxStudyZackBankB7(parent);
+                case "zackbankb7x8": return new FxStudyZackBankB7(parent, FxStudyZackBankB7.Show.EightMetres);
+                case "zackbankb8": return new FxStudyZackBankB8(parent);
+                case "zackbankb8x8": return new FxStudyZackBankB8(parent, FxStudyZackBankB8.Show.EightMetres);
+                case "zackbankb9": return new FxStudyZackBankB9(parent);
+                case "zackbankb9x8": return new FxStudyZackBankB9(parent, FxStudyZackBankB9.Show.EightMetres);
+                case "zackbankb10": return new FxStudyZackBankB10(parent);
+                case "zackbankb10x8": return new FxStudyZackBankB10(parent, FxStudyZackBankB10.Show.EightMetres);
+                case "zackbankside": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Side);
+                case "zackbankbehind": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Behind);
+                case "zackbankfront": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Front);
+                case "zackbankabove": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Above);
+                case "zackbankb11": return new FxStudyZackBankB11(parent);
+                case "zackbankb11front": return new FxStudyZackBankB11(parent, FxStudyZackBankB11.Show.Front);
+                case "zackbankb11behind": return new FxStudyZackBankB11(parent, FxStudyZackBankB11.Show.Behind);
+                // The whirlwind without its horn: the tapes, the ground and the motes the owner approved, alone.
+                case "whirlwindparts": return new FxStudyWhirlwind(parent, FxStudyWhirlwind.Look.Picture, FxStudyWhirlwind.Horn.None);
+                // The whirlwind with the horn of its first film (wisp shells and trail veins): "the original", kept to go back to.
+                case "whirlwindh1": return new FxStudyWhirlwind(parent, FxStudyWhirlwind.Look.Picture, FxStudyWhirlwind.Horn.Shells);
+                // The whirlwind with the noise horn alone, as in its film h7.
+                case "whirlwindh7": return new FxStudyWhirlwind(parent, FxStudyWhirlwind.Look.Picture, FxStudyWhirlwind.Horn.Noise);
+                // The water wall of Ilyas (`FxStudyRafiWall`): the bench's first water.
+                case "rafiwall": return new FxStudyRafiWall(parent);
+                // The CROSSCURRENT of Ilyas (`FxStudyRafiCurrent`), its whole 6 m, and spent by a slipper 0.55 s in.
+                case "raficurrent": return new FxStudyRafiCurrent(parent);
+                case "raficurrentspent": return new FxStudyRafiCurrent(parent, FxStudyRafiWall.Look.Bench, 0.55f, 0f);
+                // The same wall broken by a slipper 1.6 s in, bursting forward.
+                case "rafiwallsplit": return new FxStudyRafiWall(parent, FxStudyRafiWall.Look.Bench, 1.6f, 1f);
+                // Basilio's BOULDER (`FxStudyDanteBoulder`): the bench's first earth.
+                case "danteboulder": return new FxStudyDanteBoulder(parent);
+                // The model board of that stone (): a turnaround, not an effect.
+                case "danteboulderboard": return new FxStudyDanteBoulderBoard(parent);
+                // Basilio's BASTION, by his BOULDER's method: carved slabs on the rule's line and a molten-rimmed field.
+                case "dantebastion": return new FxStudyDanteBastion(parent);
+                // BASTION by version: b3 (the sample he called ugly, kept to compare), b4, and b4's field candidates.
+                case "dantebastionb3": return new FxStudyDanteBastion(parent);
+                case "dantebastionb4": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.B4);
+                // b5: b4 with magma in the slabs and painted fire on the field ("needs more emmissives and fire effects").
+                case "dantebastionb5": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B5);
+                // b6: b5's magma slabs with columns of heat in place of its flames ("fire is too much ... flashing sticker").
+                case "dantebastionb6": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B6);
+                // The same on a pale warm floor, a stand-in for the sunlit court.
+                case "dantebastionb6day": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B6, true);
+                // b7: three broad soft columns of varying height ("too harsh, do only 3 wide ones"), and on the pale floor.
+                case "dantebastionb7": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B7);
+                case "dantebastionb7day": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B7, true);
+                // b8: b7's columns rising out of the magma ("make them connect"), and on the pale floor.
+                case "dantebastionb8": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B8);
+                case "dantebastionb8day": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B8, true);
+                case "dantebastionboard": return new FxStudyDanteBastionBoard(parent);
+                default: return null;
+            }
+        }
+
+        /// <summary>How long one play of it is.</summary>
+        public abstract float Seconds { get; }
+        /// <summary>Poses every piece for `age`. `eye` is where it is seen from (sprites and sparks turn to it).</summary>
+        public abstract void Sample(float age, Vector3 eye);
+        /// <summary>The reference's camera for this effect.</summary>
+        public abstract void Shot(float age, out Vector3 eye, out Vector3 focus, out float fov);
+        /// <summary>The bench floor this effect was shown on: chequered, or one charcoal with a faint grid.</summary>
+        public virtual bool ChequeredFloor => false;
+        /// <summary>The floor's square, in metres.</summary>
+        public virtual float FloorCell => 1f;
+        /// <summary>The floor's grey and its grid line's, and how far it has dimmed (a share of its grey) by `FloorDimAt` metres.</summary>
+        public virtual Color FloorColour => new Color(0.165f, 0.170f, 0.165f);
+        public virtual Color FloorLine => new Color(0.125f, 0.130f, 0.125f);
+        public virtual float FloorDim => 0.45f;
+        public virtual float FloorDimAt => 7f;
+        /// <summary>How strongly the bench's camera blooms this effect (the bench's own setting, not the game's).</summary>
+        public virtual float BloomIntensity => 0.42f;
+        /// <summary>How far the floor's grid is slid (x, z, metres), to lay its lines where the reference's lie.</summary>
+        public virtual Vector2 FloorOffset => Vector2.zero;
+
+        /// <summary>As `Add`, for a mesh the effect does NOT own: one made once and shared by every copy of the effect, which
+        /// is therefore not freed with it. The material is still the piece's own.</summary>
+        protected FxPiece AddShared(string name, Mesh mesh, Material material, int order, Transform parent = null)
+        {
+            var piece = new FxPiece(name, parent != null ? parent : Root, mesh, material, order);
+            _pieces.Add(piece);
+            if (material != null) _owned.Add(material);
+            return piece;
+        }
+
+        protected FxPiece Add(string name, Mesh mesh, Material material, int order, Transform parent = null)
+        {
+            var piece = new FxPiece(name, parent != null ? parent : Root, mesh, material, order);
+            _pieces.Add(piece);
+            if (mesh != null) _owned.Add(mesh);
+            if (material != null) _owned.Add(material);
+            return piece;
+        }
+
+        /// <summary>A soft round light: white-hot `core` in its middle, `edge` colour round it, nothing covered.
+        /// Upright ones are turned to the eye by whoever poses them (`FxPiece.Face`). This is the bloom the camera
+        /// does not have.</summary>
+        protected FxPiece AddGlow(string name, int order, Color core, Color edge, bool lying = false, string mask = "glow_soft")
+        {
+            var piece = Add(name, FxStudyKit.Square(lying), FxStudyKit.Ribbon(mask), order);
+            piece.Colours(edge * 0.6f, edge, core, edge).Set("_Ends", 0f, 0f, 0f).Set("_Scroll", 0f, 0f).Set("_Halo", 0f).Set("_Add", 1f).Set("_Sprite", 1f).Set("_Emit", 0f)
+                 .Set("_Cut", 0f, 0.55f).Set("_Stops", 0.30f, 0.50f, 0.95f);
+            return piece;
+        }
+
+        /// <summary>A flat piece wearing one picture whole (a flare on the floor, a burst turned to the eye): nothing
+        /// scrolls, nothing fades toward its ends, and its light is its own. Colour and blend are the caller's.</summary>
+        protected FxPiece AddFlat(string name, int order, string mask, bool lying, string erode = "erode_blobs")
+        {
+            var piece = Add(name, FxStudyKit.Square(lying), FxStudyKit.Ribbon(mask, erode), order);
+            piece.Set("_Ends", 0f, 0f, 0f).Set("_Scroll", 0f, 0f).Set("_Halo", 0f).Set("_Add", 1f).Set("_Cut", 0.08f, 0.45f).Set("_Stops", 0.35f, 0.55f, 0.92f);
+            return piece;
+        }
+
+        /// <summary>A mass of smoke: a cluster of rough balls (`FxSmoke`), in the three tones given. `oneMass` lights the
+        /// cluster as one body (the scorch's and the smoke clip's); without it, it is the smoke the wisp was filmed with.</summary>
+        protected FxSmoke AddSmoke(string name, int seed, int count, Color lit, Color mid, Color dark, bool oneMass = false)
+        {
+            var smoke = new FxSmoke(name, Root, seed, count, lit, mid, dark, oneMass);
+            _pieces.Add(smoke.Piece);
+            _owned.Add(smoke.Mesh);
+            if (smoke.Piece.Material != null) _owned.Add(smoke.Piece.Material);
+            return smoke;
+        }
+
+        protected FxFlecks AddFlecks(string name, int order, string mask = "fleck")
+        {
+            var flecks = new FxFlecks(name, Root, order, mask);
+            _pieces.Add(flecks.Piece);
+            _owned.Add(flecks.Mesh);
+            if (flecks.Piece.Material != null) _owned.Add(flecks.Piece.Material);
+            return flecks;
+        }
+
+        protected Transform Group(string name)
+        {
+            var go = new GameObject(name) { hideFlags = HideFlags.DontSave };
+            go.transform.SetParent(Root, false);
+            return go.transform;
+        }
+
+        public void Dispose()
+        {
+            foreach (var thing in _owned) Kill(thing);
+            _owned.Clear(); _pieces.Clear();
+            if (Root != null) Kill(Root.gameObject);
+        }
+
+        private static void Kill(Object thing)
+        {
+            if (thing == null) return;
+            if (Application.isPlaying) Object.Destroy(thing); else Object.DestroyImmediate(thing);
+        }
+    }
+}

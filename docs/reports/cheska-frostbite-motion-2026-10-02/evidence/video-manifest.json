@@ -1,0 +1,14 @@
+[
+  {
+    "source": "baseline-native",
+    "frames_per_view": 51,
+    "first_game_seconds": "0.0116",
+    "last_game_seconds": "2.9454"
+  },
+  {
+    "source": "refined-native",
+    "frames_per_view": 76,
+    "first_game_seconds": "0.0091",
+    "last_game_seconds": "4.0004"
+  }
+]

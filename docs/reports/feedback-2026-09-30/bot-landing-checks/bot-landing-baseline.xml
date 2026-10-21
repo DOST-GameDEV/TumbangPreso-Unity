@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 08:53:52Z" end-time="2026-10-01 08:53:52Z" duration="0.1719276">
+  <test-suite type="TestSuite" id="2387" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1128" result="Failed" site="Child" start-time="2026-10-01 08:53:52Z" end-time="2026-10-01 08:53:52Z" duration="0.171928" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2381" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1128" result="Failed" site="Child" start-time="2026-10-01 08:53:52Z" end-time="2026-10-01 08:53:52Z" duration="0.160232" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22488" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2382" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1128" result="Failed" site="Child" start-time="2026-10-01 08:53:52Z" end-time="2026-10-01 08:53:52Z" duration="0.157315" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2383" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1128" result="Failed" site="Child" start-time="2026-10-01 08:53:52Z" end-time="2026-10-01 08:53:52Z" duration="0.154761" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1130" name="BotLandingPredictionTests" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-01 08:53:52Z" end-time="2026-10-01 08:53:52Z" duration="0.117959" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1131" name="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" methodname="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1577304411" result="Failed" start-time="2026-10-01 08:53:52Z" end-time="2026-10-01 08:53:52Z" duration="0.101169" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A bot heads to the early flight height instead of the actual lower-floor landing.
+  Expected: less than 0.119999997f
+  But was:  2.7299962f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotLandingPredictionTests.AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding () [0x001f8] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotLandingPredictionTests.cs:40
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Predicted=(0.00, 0.00, 1.85) actual=(0.00, 0.05, 4.58)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

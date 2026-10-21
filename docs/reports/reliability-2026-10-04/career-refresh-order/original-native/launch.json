@@ -1,0 +1,26 @@
+{
+  "sourceRef": "a312f26ee0c6ce6c7e9ca942098f6364a8b73f5e",
+  "profile": "pc-career-order-original1004",
+  "filter": "TumbangPreso.Tests.CareerRefreshOrderingTests",
+  "expectedCases": 3,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-nographics",
+    "-tp-profile",
+    "pc-career-order-original1004",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.CareerRefreshOrderingTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\career-refresh-order1004\\original-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\career-refresh-order1004\\original-native\\editor.log"
+  ],
+  "pid": 7932
+}

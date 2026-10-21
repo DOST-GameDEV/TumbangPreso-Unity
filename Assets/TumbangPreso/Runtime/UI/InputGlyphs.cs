@@ -179,6 +179,12 @@ namespace TumbangPreso.UI
             table["LMB"] = new Cell(Sheet.Mouse, 1, 4);
             table["RMB"] = new Cell(Sheet.Mouse, 1, 6);
             table["MMB"] = new Cell(Sheet.Mouse, 0, 8);
+            // ⚠️ THE WHEEL'S TWO DIRECTIONS WERE DRAWN INTO THIS SHEET'S EMPTY CELLS ON 2026-09-27, when
+            // the curve throw moved onto the wheel (the owner's default layout). The pack draws one
+            // wheel and no direction, and the pektus lesson shows both curves side by side, so two
+            // identical wheels would teach nothing. Same palette, bare row then keyline row.
+            table["WHEEL UP"] = new Cell(Sheet.Mouse, 4, 8);
+            table["WHEEL DOWN"] = new Cell(Sheet.Mouse, 5, 8);
 
             // ⚠️⚠️ THE PAD ROWS USED TO BE HERE AND ARE NOW A SHEET OF THEIR OWN. Every gamepad
             // control resolves through `PadColumns` below, off Kenney's PS4 prompts, and this
@@ -376,6 +382,8 @@ namespace TumbangPreso.UI
             if (string.IsNullOrEmpty(label)) return null;
 
             string key = label.Trim().ToUpperInvariant();
+            var authored = ScrollSprite(key) ?? XeluSprite(key, onDark, family ?? CurrentFamily);
+            if (authored != null) return authored;
 
             // ⚠️ THE PAD IS ASKED FIRST. Nothing is in both tables today, and if a keyboard row
             // is ever added whose name collides with a controller one, the controller answer is
@@ -445,7 +453,95 @@ namespace TumbangPreso.UI
             if (string.IsNullOrEmpty(label)) return false;
 
             string key = label.Trim().ToUpperInvariant();
-            return PadColumns.ContainsKey(key) || Table.ContainsKey(key);
+            return key == "MOUSE" || PadColumns.ContainsKey(key) || Table.ContainsKey(key);
+        }
+
+        // Owner-authored135x100 icons: keep the complete, unchanged pixels and aspect.
+        // Consumers grow the width instead of fitting the wider artwork into a square.
+        public static float PromptWidth(Sprite sprite, float height, float normalWidth = -1)
+            => sprite != null && sprite.name.StartsWith("owner-scroll:", System.StringComparison.Ordinal)
+                ? height * sprite.rect.width / sprite.rect.height : normalWidth >= 0 ? normalWidth : height;
+
+        private static Sprite ScrollSprite(string key)
+        {
+            if (key != "WHEEL UP" && key != "WHEEL DOWN") return null;
+            string id = "owner-scroll:" + key;
+            if (Sprites.TryGetValue(id, out var cached)) return cached;
+            string path = key == "WHEEL UP" ? "UI/input/xelu/owner_scroll_up_v2" : "UI/input/xelu/owner_scroll_down_v2";
+            var texture = Resources.Load<Texture2D>(path);
+            if (texture == null) return null;
+            var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
+                Vector2.one * .5f, texture.height, 0, SpriteMeshType.FullRect);
+            sprite.name = id;
+            sprite.hideFlags = HideFlags.DontSave;
+            Sprites[id] = sprite;
+            return sprite;
+        }
+
+        private static Sprite XeluSprite(string key, bool onDark, PadFamily family)
+        {
+            string path = null;
+            string pad = key switch
+            {
+                "BUTTON NORTH" => family == PadFamily.Xbox ? "Y" : "Triangle",
+                "BUTTON EAST" => family == PadFamily.Xbox ? "B" : "Circle",
+                "BUTTON SOUTH" => family == PadFamily.Xbox ? "A" : "Cross",
+                "BUTTON WEST" => family == PadFamily.Xbox ? "X" : "Square",
+                "LEFT SHOULDER" => family == PadFamily.Xbox ? "LB" : "L1",
+                "RIGHT SHOULDER" => family == PadFamily.Xbox ? "RB" : "R1",
+                "LEFT TRIGGER" => family == PadFamily.Xbox ? "LT" : "L2",
+                "RIGHT TRIGGER" => family == PadFamily.Xbox ? "RT" : "R2",
+                "LEFT STICK PRESS" => "Left_Stick_Click", "RIGHT STICK PRESS" => "Right_Stick_Click",
+                "LEFT STICK" => "Left_Stick", "RIGHT STICK" => "Right_Stick",
+                "D-PAD" => "Dpad", "D-PAD/UP" => "Dpad_Up", "D-PAD/DOWN" => "Dpad_Down",
+                "D-PAD/LEFT" => "Dpad_Left", "D-PAD/RIGHT" => "Dpad_Right",
+                "SELECT" => family == PadFamily.Xbox ? "View" : "Share",
+                "START" => family == PadFamily.Xbox ? "Menu" : "Options", _ => null
+            };
+            if (pad != null)
+                path = "UI/input/xelu/" + (family == PadFamily.Xbox ? "xbox/XboxSeriesX_" : "ps/PS5_") + pad;
+            else
+            {
+                string name = XeluKeyName(key);
+                if (name != null)
+                {
+                    string variant = onDark ? "Light" : "Dark";
+                    path = "UI/input/xelu/" + variant.ToLowerInvariant() + "/" + name + "_Key_" + variant;
+                }
+            }
+            if (path == null) return null;
+            string id = "xelu:" + path;
+            if (Sprites.TryGetValue(id, out var cached)) return cached;
+            var texture = Resources.Load<Texture2D>(path);
+            var made = texture != null ? Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
+                Vector2.one * .5f, texture.height) : null;
+            if (made != null) { made.name = id; made.hideFlags = HideFlags.DontSave; }
+            Sprites[id] = made;
+            return made;
+        }
+
+        private static string XeluKeyName(string key)
+        {
+            if (key.Length == 1 && char.IsLetterOrDigit(key[0])) return key;
+            if (key.StartsWith("F") && int.TryParse(key.Substring(1), out int function) && function >= 1 && function <= 12) return key;
+            return key switch
+            {
+                "SHIFT" or "LEFT SHIFT" or "RIGHT SHIFT" => "Shift",
+                "CTRL" or "CONTROL" or "LEFT CTRL" or "RIGHT CTRL" or "LEFT CONTROL" or "RIGHT CONTROL" => "Ctrl",
+                "ALT" or "LEFT ALT" or "RIGHT ALT" => "Alt",
+                "WINDOWS" or "LEFT WINDOWS" or "RIGHT WINDOWS" or "WIN" => "Win",
+                "ESC" or "ESCAPE" => "Esc", "RETURN" or "ENTER" => "Enter",
+                "TAB" => "Tab", "SPACE" or "SPACEBAR" => "Space", "BACKSPACE" => "Backspace",
+                "DELETE" or "DEL" => "Del", "INSERT" => "Insert", "HOME" => "Home", "END" => "End",
+                "PAGEUP" or "PAGE UP" => "Page_Up", "PAGEDOWN" or "PAGE DOWN" => "Page_Down",
+                "CAPSLOCK" or "CAPS LOCK" => "Caps_Lock", "NUMLOCK" or "NUM LOCK" => "Num_Lock",
+                "UPARROW" or "UP ARROW" or "UP" => "Arrow_Up", "DOWNARROW" or "DOWN ARROW" or "DOWN" => "Arrow_Down",
+                "LEFTARROW" or "LEFT ARROW" or "LEFT" => "Arrow_Left", "RIGHTARROW" or "RIGHT ARROW" or "RIGHT" => "Arrow_Right",
+                "MOUSE" => "Mouse_Simple", "LMB" => "Mouse_Left", "RMB" => "Mouse_Right", "MMB" => "Mouse_Middle",
+                "+" => "Plus", "-" => "Minus", "/" => "Slash", ";" => "Semicolon",
+                "[" => "Bracket_Left", "]" => "Bracket_Right", "'" => "Quote", "`" or "~" => "Tilda",
+                _ => null
+            };
         }
 
         /// <summary>
@@ -454,6 +550,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public static IEnumerable<string> KnownLabels()
         {
+            yield return "MOUSE";
             foreach (string key in Table.Keys) yield return key;
             foreach (string key in PadColumns.Keys) yield return key;
         }

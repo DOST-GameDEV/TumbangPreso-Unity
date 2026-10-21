@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:49Z" duration="0.1631748">
+  <test-suite type="TestSuite" id="1946" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="754" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:49Z" duration="0.163175" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1940" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="754" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:49Z" duration="0.151829" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61876" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1941" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="754" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:49Z" duration="0.145555" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1942" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="754" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:49Z" duration="0.139146" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1739" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:49Z" duration="0.101084" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1742" name="ClockRequestsKeepIndependentPeerSequencesWithinTheirWorldScope" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ClockRequestsKeepIndependentPeerSequencesWithinTheirWorldScope" methodname="ClockRequestsKeepIndependentPeerSequencesWithinTheirWorldScope" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="417491696" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:48Z" duration="0.039345" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1741" name="MatchClockCaptureAndRefreshExcludeLocalHitstopAndPreserveAnActiveHold" fullname="TumbangPreso.PlayTests.SkillReceiptTests.MatchClockCaptureAndRefreshExcludeLocalHitstopAndPreserveAnActiveHold" methodname="MatchClockCaptureAndRefreshExcludeLocalHitstopAndPreserveAnActiveHold" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="323768676" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:48Z" duration="0.028425" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1740" name="MatchClockReceiverRejectsStaleScopesSequencesAndTruncatedValues" fullname="TumbangPreso.PlayTests.SkillReceiptTests.MatchClockReceiverRejectsStaleScopesSequencesAndTruncatedValues" methodname="MatchClockReceiverRejectsStaleScopesSequencesAndTruncatedValues" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1565298879" result="Passed" start-time="2026-09-27 14:34:48Z" end-time="2026-09-27 14:34:49Z" duration="0.020626" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

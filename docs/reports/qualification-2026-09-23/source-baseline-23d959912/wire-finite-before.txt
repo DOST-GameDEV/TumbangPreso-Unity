@@ -1,0 +1,3 @@
+  FINDING  OnSyncLataMsg: `float restore` is read off the wire and never checked finite. In C# every comparison against NaN is false, so a range test on it is not a guard; a NaN reaching a Transform makes the object stop replicating and a NaN reaching a clock or a bar makes every later comparison false.
+  FINDING  OnSyncLataMsg: `float protection` is read off the wire and never checked finite. In C# every comparison against NaN is false, so a range test on it is not a guard; a NaN reaching a Transform makes the object stop replicating and a NaN reaching a clock or a bar makes every later comparison false.
+audit_wire_finite: 72 wire handlers, 100 numeric field(s), 2 finding(s).

@@ -1,0 +1,25 @@
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:          ATI
+    VRAM:            8147 MB
+    Driver:          32.0.21043.19003
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[OwnerUiReview] accessibility settings through real preparation route
+[OwnerUiReview] native accessibility save and discard
+[OwnerUiReview] large owner HUD and muted announcer caption in native Hero play
+[OwnerUiReview] larger native training card after local match-chat display check
+[OwnerUiReview] spectator startup through Watch instead
+[OwnerUiReview] spectator autopilot and manual flight takeover
+[OwnerUiReview] real spectator POV of seat 2
+[OwnerUiReview] spectator held-item release and replacement visibility
+[OwnerUiReview] spectator bookmark and tactical pause controls
+[OwnerUiReview] native replay buffer filling from actual camera renders
+[OwnerUiReview] manual replay overlay contains real captured frames
+[OwnerUiReview] replay after changing the actual window to 960x720
+[OwnerUiReview] replay after changing the actual window to 1680x720
+[OwnerUiReview] spectator flight POV restoration and manual replay verified
+[OwnerUiReview] native accessibility options, save-discard and enlarged owner-training-spectator views verified
+[OwnerUiReview] PASS
+CodeReloadManager destroyed

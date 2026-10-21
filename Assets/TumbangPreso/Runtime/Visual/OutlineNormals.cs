@@ -51,14 +51,15 @@ namespace TumbangPreso.Visual
     public static class OutlineNormals
     {
         /// <summary>
-        /// Meshes already welded, by entity id. Keyed on the id rather than the Mesh so a
-        /// destroyed mesh cannot hold a reference alive.
+        /// Completed welds retain only a weak reference. Check the actual live mesh as
+        /// well as its id, so recycled ids cannot reuse another mesh's preparation.
         ///
-        /// ⚠️ `GetEntityId` AND `HashSet<EntityId>`, NOT `GetInstanceID` AND NOT AN `int`. Unity 6.5
+        /// ⚠️ `GetEntityId` AND AN EntityId KEY, NOT `GetInstanceID` AND NOT AN `int`. Unity 6.5
         /// marks BOTH `GetInstanceID` and the `EntityId`-to-`int` cast obsolete as ERRORS rather than
         /// as warnings, so neither compiles here. Storing the `EntityId` itself sidesteps both.
         /// </summary>
-        private static readonly HashSet<EntityId> Welded = new HashSet<EntityId>();
+        private static readonly Dictionary<EntityId, System.WeakReference<Mesh>> Welded =
+            new Dictionary<EntityId, System.WeakReference<Mesh>>();
 
         /// <summary>
         /// ⚠️ POSITIONS ARE QUANTISED BEFORE THEY ARE COMPARED. Two copies of one corner are
@@ -75,16 +76,30 @@ namespace TumbangPreso.Visual
         /// </summary>
         public static void Weld(Renderer renderer)
         {
-            if (renderer == null) return;
+            Weld(MeshFor(renderer));
+        }
 
-            if (renderer is SkinnedMeshRenderer skinned)
+        private static Mesh MeshFor(Renderer renderer)
+        {
+            if (renderer == null) return null;
+            if (renderer is SkinnedMeshRenderer skinned) return skinned.sharedMesh;
+            return renderer.GetComponent<MeshFilter>()?.sharedMesh;
+        }
+
+        private static bool Prepared(Mesh mesh)
+            => mesh != null && Welded.TryGetValue(mesh.GetEntityId(), out var reference)
+                && reference.TryGetTarget(out var prior) && prior != null && prior == mesh;
+
+        public static System.Collections.IEnumerator Warmup(GameObject model)
+        {
+            if (model == null) yield break;
+            foreach (var renderer in model.GetComponentsInChildren<Renderer>(includeInactive: true))
             {
-                Weld(skinned.sharedMesh);
-                return;
+                var mesh = MeshFor(renderer);
+                if (mesh == null || !mesh.isReadable || Prepared(mesh)) continue;
+                yield return null;
+                Weld(mesh);
             }
-
-            var filter = renderer.GetComponent<MeshFilter>();
-            if (filter != null) Weld(filter.sharedMesh);
         }
 
         public static void Weld(Mesh mesh)
@@ -96,7 +111,7 @@ namespace TumbangPreso.Visual
             // than a new fault. `ModelImportSetup` enables it on these rigs.
             if (mesh == null || !mesh.isReadable) return;
 
-            if (!Welded.Add(mesh.GetEntityId())) return;
+            if (Prepared(mesh)) return;
 
             var vertices = mesh.vertices;
             var normals = mesh.normals;
@@ -168,56 +183,31 @@ namespace TumbangPreso.Visual
             }
 
             mesh.tangents = tangents;
+            Welded[mesh.GetEntityId()] = new System.WeakReference<Mesh>(mesh);
         }
 
-        /// <summary>
-        /// Drop a mesh from the welded set, for a caller that is about to destroy it.
-        ///
-        /// ⚠️⚠️ AN ENTITY ID IS ONLY UNIQUE WHILE THE OBJECT IT NAMES IS ALIVE, AND EVERY
-        /// RUNTIME-BUILT MESH IN THIS GAME IS SHORT-LIVED. `ViewmodelArms` builds a fresh box or
-        /// cylinder for every accessory on every character change and throws the old set away, so
-        /// the set would otherwise accumulate one dead id per accessory for the whole session and
-        /// any id the engine handed out a second time would make `Weld` return early on a mesh it
-        /// had never seen. The symptom is the worst kind: an outline that tears on one arm, in
-        /// one session, after enough character switches, and nowhere else.
-        ///
-        /// ⚠️ IT DOES NOT DESTROY ANYTHING. Ownership of a runtime mesh belongs to whoever
-        /// created it; this only forgets that it was welded.
-        /// </summary>
-        /// <summary>
-        /// § WHY THE HANDS TORE ONLY WHEN THE GAME WAS ENTERED THROUGH THE SPLASH SCREEN.
-        ///
-        /// ⚠️⚠️ `EntityId` IS UNIQUE AMONG LIVE OBJECTS, NOT UNIQUE FOREVER, AND THIS SET OUTLIVES
-        /// THE OBJECTS IT NAMES. 🧑 2026-08-28: *"it was working on the eskinita scene directly,
-        /// but when starting from the splashscreen scene its not"*, which is the shape of a static
-        /// that survives a scene load rather than of anything geometric.
-        ///
-        /// Loading Eskinita directly runs with this set empty, so every mesh is welded and every
-        /// border is closed. Reaching it through splash and menu destroys two scenes' worth of
-        /// meshes first, and Unity RECYCLES their ids. `ViewmodelArms` then builds its accessory
-        /// meshes fresh at runtime, one of them draws a recycled id that is already in this set,
-        /// `Weld` sees a hit and returns early, and that mesh keeps its raw split normals. Its
-        /// hull tears at every hard edge while its neighbours are fine, which is the inconsistent
-        /// border, and it lands on a different piece each run because id recycling is not stable.
-        ///
-        /// ⚠️ `Forget` ALONE COULD NOT COVER THIS AND IS STILL WORTH KEEPING. It is called where
-        /// this code destroys a mesh on purpose, which is the accessory teardown. A scene unload
-        /// destroys meshes without asking anybody, so there is no call site to hang it off. The
-        /// only sound rule is that an id from a previous scene means nothing in this one.
-        ///
-        /// ⚠️ CLEARING IS CHEAP AND RE-WELDING IS IDEMPOTENT. The weld is a pure function of the
-        /// mesh, so a mesh that survives the load is simply welded again to the identical answer,
-        /// once, at the cost of one pass over its vertices.
-        /// </summary>
+        // A scene transition retires dead meshes, not completed work on retained roster
+        // assets. Weak references and Prepared's identity check cover recycled ids.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Reset() => Welded.Clear();
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void ForgetEverythingOnSceneLoad()
+        private static void TrackSceneLifetimes()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Welded.Clear();
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            var retired = new List<EntityId>();
+            foreach (var entry in Welded)
+                if (!entry.Value.TryGetTarget(out var mesh) || mesh == null) retired.Add(entry.Key);
+            foreach (var id in retired) Welded.Remove(id);
+        }
 
+        /// <summary>Invalidate before changing or destroying an owned runtime mesh.
+        /// This only forgets the weld; it never destroys or retains the mesh.</summary>
         public static void Forget(Mesh mesh)
         {
             if (mesh == null) return;

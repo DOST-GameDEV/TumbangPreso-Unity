@@ -1,0 +1,8 @@
+{
+  "baseSource": "e3ddc2f2d9eca1a8fcc4b3bfefeef31497badda9",
+  "originalCausalFailures": 2,
+  "originalControls": 2,
+  "candidatePassed": 4,
+  "Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs": "2a8f0f3a414b892c195f958fc588b12396bf9cfcad9dc4bc8eff03952e03d148",
+  "Assets/TumbangPreso/Tests/PlayMode/CatchMatchLifetimeTests.cs": "bfa643fe3ec042b29e5ce4c9bd69de5bed9b2758f7d848ba30b58777caa3ee20"
+}

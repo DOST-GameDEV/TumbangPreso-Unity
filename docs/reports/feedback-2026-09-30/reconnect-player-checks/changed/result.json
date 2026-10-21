@@ -1,0 +1,117 @@
+{
+  "identityUnchangedBeforeRelaunch": true,
+  "passed": false,
+  "faults": [
+    "host inactive/mismatched session"
+  ],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\feedback-reconnect-fixed-player-1001\\rejoin-v2\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 120,
+        "travelled": 0.5
+      },
+      {
+        "seat": 1,
+        "char": 2,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": false,
+        "score": 0,
+        "travelled": 57.5
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 58.6
+      },
+      {
+        "seat": 3,
+        "char": 1,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 100,
+        "travelled": 76.1
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "117",
+    "sampled": "110.0",
+    "round": "1",
+    "active": "False",
+    "defender": "0",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "E2DF775D",
+    "hash": "2C164A81"
+  },
+  "rejoined": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\feedback-reconnect-fixed-player-1001\\rejoin-v2\\client-rejoined.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 120,
+        "travelled": 2.6
+      },
+      {
+        "seat": 1,
+        "char": 2,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 0,
+        "travelled": 0.2
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 18.3
+      },
+      {
+        "seat": 3,
+        "char": 1,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 100,
+        "travelled": 31.3
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "117",
+    "sampled": "45.0",
+    "round": "1",
+    "active": "True",
+    "defender": "0",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "E2DF775D",
+    "hash": "64C959AA"
+  },
+  "originalClientExit": 1,
+  "scope": "Actual abrupt client death, same-identity cold relaunch and retained server character; samples differ in time",
+  "sharedInputUnchanged": true,
+  "runtimeSha256": "d3830cacd058bd683de12a82fa76eb2942c75d9c7d3035a4e74f2f4c77d1c414"
+}

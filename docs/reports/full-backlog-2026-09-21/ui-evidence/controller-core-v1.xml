@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Passed" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.4981996">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.498200" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1675" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.486702" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22804" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1676" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.484860" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1677" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.483516" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1085" name="ControllerSupportTests" fullname="TumbangPreso.Tests.ControllerSupportTests" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.469540" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1094" name="AnUnrecognisedJoystickIsGivenAGamepadToDrive" fullname="TumbangPreso.Tests.ControllerSupportTests.AnUnrecognisedJoystickIsGivenAGamepadToDrive" methodname="AnUnrecognisedJoystickIsGivenAGamepadToDrive" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1410733246" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.087515" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Controller] 'Joystick' is being driven by the generic mapping. Open SETTINGS, CONTROLS, CONTROLLER MAP to see what each button does and to change any of it. See docs/TODO.md § 138.
+]]></output>
+            </test-case>
+            <test-case id="1089" name="EveryCalloutCanDrawAPictureOfItsControl" fullname="TumbangPreso.Tests.ControllerSupportTests.EveryCalloutCanDrawAPictureOfItsControl" methodname="EveryCalloutCanDrawAPictureOfItsControl" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="107886359" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.081751" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1087" name="EveryPadControlTheGameBindsHasASlotOnTheMap" fullname="TumbangPreso.Tests.ControllerSupportTests.EveryPadControlTheGameBindsHasASlotOnTheMap" methodname="EveryPadControlTheGameBindsHasASlotOnTheMap" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="824310802" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.014508" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1096" name="EveryScreenBacksOutThroughTheOneReaderRatherThanAKeyboardLiteral" fullname="TumbangPreso.Tests.ControllerSupportTests.EveryScreenBacksOutThroughTheOneReaderRatherThanAKeyboardLiteral" methodname="EveryScreenBacksOutThroughTheOneReaderRatherThanAKeyboardLiteral" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1985494306" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.257116" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1090" name="NoControlAppearsTwiceInTheRing" fullname="TumbangPreso.Tests.ControllerSupportTests.NoControlAppearsTwiceInTheRing" methodname="NoControlAppearsTwiceInTheRing" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="788736260" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.000502" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1093" name="NoTwoActionsShareOneControlInOneContext" fullname="TumbangPreso.Tests.ControllerSupportTests.NoTwoActionsShareOneControlInOneContext" methodname="NoTwoActionsShareOneControlInOneContext" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="158333888" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.001601" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1091" name="PauseIsARealActionAndNotAKeyboardLiteral" fullname="TumbangPreso.Tests.ControllerSupportTests.PauseIsARealActionAndNotAKeyboardLiteral" methodname="PauseIsARealActionAndNotAKeyboardLiteral" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1908912974" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.001964" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1095" name="SwitchingTheGenericMappingOffRemovesTheStandInPad" fullname="TumbangPreso.Tests.ControllerSupportTests.SwitchingTheGenericMappingOffRemovesTheStandInPad" methodname="SwitchingTheGenericMappingOffRemovesTheStandInPad" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="238502806" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.002972" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Controller] 'Joystick' is being driven by the generic mapping. Open SETTINGS, CONTROLS, CONTROLLER MAP to see what each button does and to change any of it. See docs/TODO.md § 138.
+]]></output>
+            </test-case>
+            <test-case id="1086" name="TheDrawingHasAnAnchorForEveryControlTheMapDrawsACalloutFor" fullname="TumbangPreso.Tests.ControllerSupportTests.TheDrawingHasAnAnchorForEveryControlTheMapDrawsACalloutFor" methodname="TheDrawingHasAnAnchorForEveryControlTheMapDrawsACalloutFor" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1044310378" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.000505" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1092" name="TheTacticalPauseIsNotAlsoOnStart" fullname="TumbangPreso.Tests.ControllerSupportTests.TheTacticalPauseIsNotAlsoOnStart" methodname="TheTacticalPauseIsNotAlsoOnStart" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1793985496" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.000357" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1088" name="TheTwoSticksAreOnTheMapEvenThoughNothingCanRebindThem" fullname="TumbangPreso.Tests.ControllerSupportTests.TheTwoSticksAreOnTheMapEvenThoughNothingCanRebindThem" methodname="TheTwoSticksAreOnTheMapEvenThoughNothingCanRebindThem" classname="TumbangPreso.Tests.ControllerSupportTests" runstate="Runnable" seed="1105372039" result="Passed" start-time="2026-09-21 21:40:40Z" end-time="2026-09-21 21:40:40Z" duration="0.001475" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

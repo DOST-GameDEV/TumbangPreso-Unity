@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:02Z" duration="2.4909952">
+  <test-suite type="TestSuite" id="3050" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1671" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:02Z" duration="2.490995" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3044" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1671" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:02Z" duration="2.479407" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="91325" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3045" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1671" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:02Z" duration="2.474384" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3046" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1671" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:02Z" duration="2.469630" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1662" name="IceWorldSnapshotProbe" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:02Z" duration="2.411067" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1668" name="ArcWallRecordingKeepsRadiusLengthAndRemainingHit" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.ArcWallRecordingKeepsRadiusLengthAndRemainingHit" methodname="ArcWallRecordingKeepsRadiusLengthAndRemainingHit" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="732338958" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:00Z" duration="0.072692" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1669" name="ArcWallSnapshotRejectsAmbiguousShapeAndHitData" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.ArcWallSnapshotRejectsAmbiguousShapeAndHitData" methodname="ArcWallSnapshotRejectsAmbiguousShapeAndHitData" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="972300538" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:00Z" duration="0.037519" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1671" name="RestoredIceKeepsItsRemainingLifeShapeAndCasterResources" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.RestoredIceKeepsItsRemainingLifeShapeAndCasterResources" methodname="RestoredIceKeepsItsRemainingLifeShapeAndCasterResources" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="2141529966" result="Passed" start-time="2026-10-04 12:14:00Z" end-time="2026-10-04 12:14:02Z" duration="2.287183" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

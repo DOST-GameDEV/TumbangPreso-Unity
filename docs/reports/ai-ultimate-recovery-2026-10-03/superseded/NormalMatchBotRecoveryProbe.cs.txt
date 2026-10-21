@@ -1,0 +1,95 @@
+using System;
+using System.Collections;
+using System.IO;
+using NUnit.Framework;
+using TumbangPreso.Core;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
+
+namespace TumbangPreso.PlayTests
+{
+    public sealed class NormalMatchBotRecoveryProbe
+    {
+        private bool _allBots, _spectator, _tutorial, _botsEnabled, _pinned;
+        private int _seat;
+        private CustomRules _rules;
+        private CharacterMotor _actor;
+        private AIController _brain;
+        private string _trace;
+        private void Record(string phase)
+        {
+            string row = $"{Time.realtimeSinceStartup:F2} {phase} slot={_actor?.PlayerSlot} plan={_brain?.Plan} "
+                + $"brain={_brain?.enabled} active={_actor?.gameObject.activeInHierarchy} canAct={_actor?.CanAct()} "
+                + $"round={_actor?.RoundActive} parked={_actor?.Intent.Parked} move={_actor?.Intent.MoveAxis} "
+                + $"pos={_actor?.transform.position} velocity={_actor?.Velocity} "
+                + $"stun={_actor?.StunLeft} root={_actor?.RootedLeft} presentation={PresentationClock.BlocksInput}\n";
+            if (!string.IsNullOrEmpty(_trace)) File.AppendAllText(_trace, row);
+            TestContext.WriteLine(row);
+        }
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _allBots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;_tutorial=GameLaunch.GuidedTutorial;
+            _seat=GameLaunch.SoloSeat;_botsEnabled=AIController.BotsEnabled;
+            _pinned=SceneFlow.RulesPinned;_rules=SceneFlow.SelectedRules.Clone();
+            _trace=Environment.GetEnvironmentVariable("TUMP_NORMAL_BOT_TRACE");
+            yield return PlayModeWorld.Reset();
+            GameLaunch.AllBots=false;GameLaunch.Spectator=false;GameLaunch.GuidedTutorial=false;GameLaunch.SoloSeat=1;
+            AIController.BotsEnabled=true;
+            var rules=CustomGameRules.Defaults(GameMode.Classic);rules.ManualReady=true;SceneFlow.PinSelectedRules(rules);
+            yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+            float until=Time.realtimeSinceStartup+15;
+            ReadyGate gate=null;
+            while(Time.realtimeSinceStartup<until)
+            { gate=Object.FindFirstObjectByType<ReadyGate>();if(gate!=null&&gate.AwaitingReady)break;yield return null; }
+            Assert.IsNotNull(gate,"The actual normal-match ready gate must be constructed.");
+            gate.StartLocalCountdown();
+            while(GameServices.Round?.RoundActive!=true&&Time.realtimeSinceStartup<until)yield return null;
+            Assert.IsTrue(GameServices.Round?.RoundActive==true,"Use the real ready/countdown route, not a direct Round.BeginRound.");
+            _actor=GameServices.Round.PlayerAt(2);_brain=_actor.GetComponent<AIController>();
+            Assert.IsNotNull(_brain);Assert.IsTrue(_brain.isActiveAndEnabled);
+            Assert.IsFalse(_actor.Intent.Parked);Assert.AreEqual(GameMode.Classic,_actor.Mode);
+            // Keep all normal input writers, ready/seat controls and other bots running.
+            Record("normal match started");
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+            GameLaunch.AllBots=_allBots;GameLaunch.Spectator=_spectator;GameLaunch.GuidedTutorial=_tutorial;GameLaunch.SoloSeat=_seat;
+            AIController.BotsEnabled=_botsEnabled;SceneFlow.AdoptRemoteRules(_rules);
+            if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
+        }
+        [UnityTest, Timeout(180000)] public IEnumerator NormalMatchBotKeepsPlayingAfterSharedStatuses()
+        {
+            yield return ObservePhysicalPlay("before any status");
+            foreach(var status in new[]{StatusKind.Chilled,StatusKind.Frozen,StatusKind.Rooted,StatusKind.Tagged,StatusKind.Haunted})
+            {
+                if(status==StatusKind.Chilled)_actor.ApplyChilled(1.2f);
+                if(status==StatusKind.Frozen)_actor.ApplyStagger(1.2f,StunElement.Ice,8);
+                if(status==StatusKind.Rooted)_actor.ApplyRooted(1.2f);
+                if(status==StatusKind.Tagged)_actor.ApplyTagged();
+                if(status==StatusKind.Haunted)_actor.ApplyHaunted(1.2f);
+                Assert.Greater(_actor.StatusLeft(status),0,$"{status} must actually land.");Record(status+" applied");
+                float deadline=Time.realtimeSinceStartup+8;
+                while(_actor.StatusLeft(status)>0&&Time.realtimeSinceStartup<deadline)yield return null;
+                Record(status+" naturally expired");Assert.AreEqual(0,_actor.StatusLeft(status));
+                yield return ObservePhysicalPlay("after "+status);
+            }
+        }
+        private IEnumerator ObservePhysicalPlay(string phase)
+        {
+            Vector3 start=_actor.transform.position;var carrier=_actor.GetComponent<Carrier>();var held=carrier.Held;
+            float deadline=Time.realtimeSinceStartup+12,nextTrace=0;
+            while(Time.realtimeSinceStartup<deadline)
+            {
+                if(Time.realtimeSinceStartup>=nextTrace){Record(phase);nextTrace=Time.realtimeSinceStartup+1;}
+                if(Vector3.Distance(start,_actor.transform.position)>.75f || held!=null&&held.State==SlipperState.InFlight&&carrier.Held==null)
+                {Record(phase+" physical play resumed");yield break;}
+                yield return null;
+            }
+            Record(phase+" STALLED");Assert.Fail("No physical movement or real throw "+phase+" in the live normal match.");
+        }
+    }
+}

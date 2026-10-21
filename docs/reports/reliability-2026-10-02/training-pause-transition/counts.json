@@ -1,0 +1,16 @@
+{
+  "candidate": {
+    "failed": 0,
+    "total": 3,
+    "passed": 3
+  },
+  "protectedInputs": 12527,
+  "protectedChanged": 0,
+  "fixtureToolRepairs": 0,
+  "baseline": {
+    "failed": 1,
+    "total": 3,
+    "intendedFailure": "PauseDuringCompletionBeatKeepsTheLessonUntilResume",
+    "passed": 2
+  }
+}

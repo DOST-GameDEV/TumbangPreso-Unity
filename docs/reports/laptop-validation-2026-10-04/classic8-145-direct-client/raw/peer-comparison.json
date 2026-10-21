@@ -1,0 +1,21 @@
+{
+  "fullHistoryRecordEqual": true,
+  "queueEqual": true,
+  "witnessEqual": true,
+  "matchIdSha256": "38a43300f8b9933b6e3555c815b1509fe459d60e269056c3bca0fc15028f8a5b",
+  "scores": [
+    130,
+    150,
+    2880,
+    3350
+  ],
+  "rounds": 8,
+  "mode": "Classic",
+  "clientExitCode": 0,
+  "clientInputRestored": true,
+  "clientSeedRestored": true,
+  "clientFinalMap": "MatchSetup",
+  "clientFinalActive": "False",
+  "hostOwnerInterrupted": true,
+  "scope": "Actual default eight-round Classic completion and identical saved results; host stopped after completion for owner PC slot priority, final client snapshot is post-end offline"
+}

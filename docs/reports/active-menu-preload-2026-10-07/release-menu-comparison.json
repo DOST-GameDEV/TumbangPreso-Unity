@@ -1,0 +1,74 @@
+{
+  "artifactSource": "6e8e7b89e17d2b1a18c779607498df80edb73dc5",
+  "publicDocByteRepair": "c378cff76843c1e0e737439ac4f2c5c1689926e1",
+  "artifactRuntimeSha256": "301db008d1ef85a56de045fa53c3c4bddd8aa2c5319d3bb81f3aa867b93b9ef6",
+  "artifactFileCount": 261,
+  "artifactBytes": 3572305081,
+  "buildOptions": "None",
+  "buildPid": 54092,
+  "playerPid": 53088,
+  "nativeInputsRestored": 21387,
+  "passedScope": "14-window explicitmenus-only route, no gameplay/results exercise",
+  "baselineSource": "140a25523fac68c200d85ca4a3e1198b37035578",
+  "baselineFirstHeroMaxMs": 4531.743,
+  "firstHeroMaxMs": 118.2793,
+  "repeatHeroMaxMs": 16.6414,
+  "remainingStalls": [
+    {
+      "mode": "00-boot-to-title",
+      "maxMs": 596.4597778320312,
+      "p99Ms": 5.084199905395508,
+      "framesOver50Ms": 3,
+      "framesOver100Ms": 2,
+      "gc0": 9
+    },
+    {
+      "mode": "01-title-to-home",
+      "maxMs": 859.876220703125,
+      "p99Ms": 210.091796875,
+      "framesOver50Ms": 12,
+      "framesOver100Ms": 10,
+      "gc0": 15
+    },
+    {
+      "mode": "menu-HeroButton",
+      "maxMs": 118.279296875,
+      "p99Ms": 17.174699783325195,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 1,
+      "gc0": 7
+    },
+    {
+      "mode": "menu-ModeCard",
+      "maxMs": 179.76829528808594,
+      "p99Ms": 13.678400039672852,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 1,
+      "gc0": 0
+    },
+    {
+      "mode": "menu-settings",
+      "maxMs": 90.87229919433594,
+      "p99Ms": 16.823999404907227,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 0,
+      "gc0": 5
+    }
+  ],
+  "cpuStageLogSha256": "a0a790000c3b81d0f1f2c8fdd6688c997ab8d7b1e357480fc07a0f395545ec4a",
+  "copiedRawSha256": {
+    "launch.json": "215b13befaafa77135e22f4aee073100b858251889fa572245334a75bfc14a36",
+    "runner-result.json": "44062ca199c2e87ee12bd2802eaf60d575104893dc4c3ecbb2335f385ace8a60",
+    "result.json": "2f3a3ac14bc0f034033a23f0af2387868f769d203a57c3bd8d6189a98579a83f",
+    "player.log": "a0a790000c3b81d0f1f2c8fdd6688c997ab8d7b1e357480fc07a0f395545ec4a",
+    "01-title-to-home-frame-times.csv": "faa686219805971bb932b9a6c1f23916150a215226c924d6a4a8e95df72c88c8",
+    "01-title-to-home-frame-context.csv": "0590607ea4e960f192a857ede751500f26de39439695ba7867dc98138a2ea9ce",
+    "menu-HeroButton-frame-times.csv": "2468dc91aa93d768b64e3dafdc3bd30316f041a977c0aea64c8a478c377247c0",
+    "menu-HeroButton-frame-context.csv": "4842557a67655de045032342430593c40370378f5076f59e02767ae6e76e203d",
+    "menu-HeroButton-repeat-frame-times.csv": "d770bf9db3ec250d3d78ad79acae985eb674f25e2845a99b71b282e29d9c4c13",
+    "menu-HeroButton-repeat-frame-context.csv": "75bbb5162c59adf311cdbedfe9c386f1124e2b838d3330c58cab4d2275e62906",
+    "menu-ModeCard-frame-times.csv": "c87355b5b58c592e3e8b0b733baac5e33dee455614b41493076291c8a3f3421b",
+    "menu-ModeCard-frame-context.csv": "87a671c42a60f67906645f5e992019e267b7b7f2ae51469f44f69ac8ff9b2f74"
+  },
+  "limits": "Single hidden1080p Balanced ordinaryRelease comparison; same requested artifact/profile/preset route. No focusedhuman/device/isolatedGPU claim. Allocation counterunavailable. Some stalls movedinto readiness; residualHero/Mode/Settings and loading remainunqualified."
+}

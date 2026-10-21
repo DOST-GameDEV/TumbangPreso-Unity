@@ -1,0 +1,10 @@
+{
+  "sourceEquivalent": "2e87bda16da6043dc5c3baadd4558cbfd182f7f6 plus menu qualification fixture",
+  "question": "real ordinary keyboard key invokes shipped title door; Back/menu retain hub and background route",
+  "expectedCases": 1,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Tests/PlayMode/FeedbackMenuRouteTests.cs": "cb9e511597b7afc25931da0f66dd6a00ed481447a88a1e04c430d86db91acb9a",
+    "Assets/TumbangPreso/Tests/PlayMode/FeedbackMenuRouteTests.cs.meta": "9847a78a4a0ca5d66cb5a10458c5fdc86a204ff1fe9433f7cc463efa55060b4a"
+  }
+}

@@ -129,6 +129,12 @@ namespace TumbangPreso.UI
         {
             if (_canvasRect != null) _canvasRect.gameObject.SetActive(visible);
         }
+        private void HideMarker(){if(_mark!=null)_mark.gameObject.SetActive(false);}
+        private void OnDisable()=>HideMarker();
+        private void LateUpdate()
+        {
+            if(PresentationClock.Held||ScreenTakeover.AnyOpen)HideMarker();
+        }
 
         /// <summary>
         /// Whether the mark is on screen right now, for anything that has to check.
@@ -145,31 +151,23 @@ namespace TumbangPreso.UI
         /// <summary>
         /// Once a frame from the HUD, with the local unit and the tsinelas that answers to it.
         ///
-        /// ⚠️⚠️ THE MARK IS UP FROM THE MOMENT THE SHOE LEAVES THE HAND, NOT FROM THE MOMENT IT
-        /// LANDS, AND THE IN-FLIGHT HALF IS NOT DECORATION. `AIController.MySlipper`'s note
-        /// measured what leaving it out costs a player who cannot see their own throw land:
-        /// *"a version that only considered loose slippers made a bot's slipper invisible to it
-        /// the instant it was released: measured throws 27 → 14"*. A person in first person has a
-        /// narrower cone than that bot does.
-        ///
-        /// ⚠️ THE CAP ONLY APPEARS ONCE THE GRAB WOULD ACTUALLY TAKE IT. In flight the ring is
-        /// drawn alone: there is nothing to press yet, and a button cap over a shoe still in the
-        /// air is the prompt promising something the carrier would refuse. The state clause it
-        /// asks is `Slipper.IsGrabbableIgnoringReach`, the same function the grab itself asks,
-        /// for the reason `Hud.UpdatePickupPrompt` already records: *"a prompt derived from its
-        /// own distance check is a second answer to one question."*
+        /// The circle appears only for a landed, loose slipper. Held and flying
+        /// states stay clear, including received network states. The existing owner,
+        /// role, Haunted and pickup-range rules still decide whether it is useful.
         /// </summary>
         public void Track(CharacterMotor local, Slipper mine)
         {
+            if(PresentationClock.Held||ScreenTakeover.AnyOpen){HideMarker();return;}
             if (_mark == null) return;
 
             var cam = UnityEngine.Camera.main;
 
             bool show = cam != null && local != null && mine != null
+                        && !local.IsHaunted && !local.EyesCovered
                         && !local.IsDefender
                         && mine.gameObject.activeInHierarchy
                         && mine.OwnerSlot == local.PlayerSlot
-                        && !(mine.State == SlipperState.Held && mine.Holder == local);
+                        && mine.State == SlipperState.Loose;
 
             // ⚠️⚠️ THE MARK GOES OUT THE MOMENT THE GRAB IS IN REACH, AND THE RENDER IS WHAT
             // FORCED THAT. The first build had an "in range" state, a thicker yellow ring, and
@@ -234,7 +232,45 @@ namespace TumbangPreso.UI
             _ring.SetVerticesDirty();
 
             PaintCap(mine.IsGrabbableIgnoringReach(local));
+            PaintClock(local, mine);
         }
+
+        private float _returnTotal;
+
+        /// <summary>VISUAL-1.3: the fetch warning, the penalty and a roof or lagoon return,
+        /// drawn on the ring (`SlipperRecallMark.Timer` has the design).</summary>
+        private void PaintClock(CharacterMotor local, Slipper mine)
+        {
+            float returning = 0;
+            if (RooftopRecovery.Instance != null) returning = Mathf.Max(returning, RooftopRecovery.Instance.SecondsUntilReturn(mine));
+            if (LagoonWater.Instance != null) returning = Mathf.Max(returning, LagoonWater.Instance.SecondsUntilReturn(mine));
+            float timer = -1; Color tint = Color.white;
+            if (returning > 0)
+            {
+                // The return clock's full length is not published, so the first reading of an
+                // episode is its length: the ring starts full and drains to the return.
+                _returnTotal = Mathf.Max(_returnTotal, returning);
+                timer = returning / Mathf.Max(.01f, _returnTotal); tint = PlayerIdentity.Colour(local.PlayerSlot);
+            }
+            else
+            {
+                _returnTotal = 0;
+                var round = GameServices.Round;
+                float idle = round != null ? round.AttackerIdleSeconds(local.PlayerSlot) : 0;
+                if (Core.TournamentRules.IsSlipperPenalty(idle)) { timer = 1; tint = UiTheme.Offense; }
+                else if (Core.TournamentRules.IsSlipperWarning(idle))
+                {
+                    float span = Core.Balance.SlipperUnretrievedGracePeriod - Core.Balance.SlipperUnretrievedWarningTime;
+                    timer = (Core.Balance.SlipperUnretrievedGracePeriod - idle) / Mathf.Max(.01f, span);
+                    tint = CourtPresentationPalette.Gold;
+                }
+            }
+            _ring.Timer = timer; _ring.TimerColour = tint;
+        }
+
+        /// <summary>For tests: the ring's clock (below 0 when none) and its colour.</summary>
+        public float ClockFill => _ring != null ? _ring.Timer : -1;
+        public Color ClockColour => _ring != null ? _ring.TimerColour : Color.clear;
 
         /// <summary>
         /// Lifts a mark clamped to the bottom edge above the ability deck.
@@ -270,9 +306,21 @@ namespace TumbangPreso.UI
             // this front end ended up with hand-written offsets in the first place (§ 92.1).
             float reach = RingRadius + SlipperRecallMark.ChevronReach + TumpUiTheme.Current.Gap;
 
-            if (Mathf.Abs(at.x) > TumpPowerReadout.DeckHalfWidth + reach) return at;
+            // ⚠️ VISUAL-1.4: THE DECK IS WHERE IT IS DRAWN, NOT WHERE IT USED TO BE. It moved to
+            // the lower right on keyboard and pad and stays centred on touch, so the mark asks
+            // for the real rectangle instead of the old bottom-centre constants.
+            // ⚠️ 2026-10-20: AND THE ULTIMATE IS ITS OWN RECTANGLE AT THE BOTTOM CENTRE NOW (the
+            // Overwatch split), so the mark clears whichever of the two it is over.
+            at = ClearOf(_deck.DeckRect(), at, reach);
+            return ClearOf(_deck.UltimateRect(), at, reach);
+        }
 
-            float clear = -(canvas.y * 0.5f) + TumpPowerReadout.DeckTop + reach;
+        private static Vector2 ClearOf(Rect deck, Vector2 at, float reach)
+        {
+            if (deck.width <= 0) return at;
+            if (at.x < deck.xMin - reach || at.x > deck.xMax + reach) return at;
+
+            float clear = deck.yMax + reach;
             if (at.y > clear) return at;
 
             at.y = clear;
@@ -316,6 +364,7 @@ namespace TumbangPreso.UI
                 var sprite = InputGlyphs.For(_capLabel, onDark: true);
 
                 _cap.sprite = sprite;
+                _cap.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, InputGlyphs.PromptWidth(sprite, CapSize));
                 _cap.enabled = sprite != null;
                 _capText.enabled = sprite == null;
                 _capText.text = sprite == null ? _capLabel : "";

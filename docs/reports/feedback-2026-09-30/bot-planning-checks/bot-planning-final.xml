@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.3871757">
+  <test-suite type="TestSuite" id="2337" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1081" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.387176" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2331" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1081" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.374314" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9980" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2332" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1081" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.371074" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2333" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1081" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.368200" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1131" name="BotSlipperQueryTests" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.336207" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1135" name="DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" methodname="DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1330826252" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.071080" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1134" name="DisabledComponentsRemainVisibleButInactiveObjectsDoNot" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.DisabledComponentsRemainVisibleButInactiveObjectsDoNot" methodname="DisabledComponentsRemainVisibleButInactiveObjectsDoNot" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1156952849" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.036287" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1136" name="OrdinaryQueriesReadLiveFlightAndOwnershipFromTheRetainedObjects" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.OrdinaryQueriesReadLiveFlightAndOwnershipFromTheRetainedObjects" methodname="OrdinaryQueriesReadLiveFlightAndOwnershipFromTheRetainedObjects" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="285077782" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.042622" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1138" name="PlanningScansFollowLiveActivityFlightAndReplacement" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.PlanningScansFollowLiveActivityFlightAndReplacement" methodname="PlanningScansFollowLiveActivityFlightAndReplacement" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="78947479" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.050188" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1133" name="SeveralOwnersAndDuplicatesRetainTheCurrentNativeSelection" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.SeveralOwnersAndDuplicatesRetainTheCurrentNativeSelection" methodname="SeveralOwnersAndDuplicatesRetainTheCurrentNativeSelection" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1150987906" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.037285" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1132" name="WarmOwnedLookupDoesNotAllocateSceneResultArrays" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.WarmOwnedLookupDoesNotAllocateSceneResultArrays" methodname="WarmOwnedLookupDoesNotAllocateSceneResultArrays" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="2020732768" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.040791" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1137" name="WarmPlanningScansDoNotAllocateSceneArrays" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.WarmPlanningScansDoNotAllocateSceneArrays" methodname="WarmPlanningScansDoNotAllocateSceneArrays" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1276814440" result="Passed" start-time="2026-10-01 05:01:43Z" end-time="2026-10-01 05:01:43Z" duration="0.040359" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

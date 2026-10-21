@@ -1044,7 +1044,7 @@ namespace TumbangPreso.UI
                 case "sean": return "FLAME RUSH  ·  IGNITION CANNON  ·  SUPERNOVA";
                 case "zack": return "BOLT SPRINT  ·  MAGNET  ·  THUNDERSTRIKE";
                 case "nemu": return "PHANTOM VEIL  ·  ASTRAL HIJACK  ·  DEVOURING SEANCE";
-                default: return "HEX  ·  SHADOW BLINK  ·  GRAND COVEN";
+                default: return "TELEPORT  ·  CURSE: DRAIN  ·  CURSE: HEX  ·  VOODOO DOLL";
             }
         }
 
@@ -1124,7 +1124,7 @@ namespace TumbangPreso.UI
 
             var palette = CustomCharacterOutfit.PaletteFor(art.Palette, _editing);
 
-            _preview.Show(art.Model, art.Clips, palette, art.PetModel);
+            _preview.Show(art.Model, art.Clips, palette, art.PetModel, forceRebuild: true);
 
             var subject = _preview.Subject;
             if (subject != null)

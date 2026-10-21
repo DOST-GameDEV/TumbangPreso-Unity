@@ -1,0 +1,210 @@
+{
+  "passed": true,
+  "errors": [],
+  "measured": {
+    "host": {
+      "passed": true,
+      "spectator": false,
+      "error": "",
+      "mode": "Classic",
+      "local": 0,
+      "expected": 0,
+      "changedPixels": 0,
+      "width": 1280,
+      "height": 720,
+      "epoch": 639256445584308606,
+      "owners": [
+        1,
+        2,
+        3
+      ],
+      "drawing": [
+        false,
+        false,
+        false
+      ],
+      "shaded": [
+        false,
+        false,
+        false
+      ],
+      "positions": [
+        -1.5,
+        0.19129520654678345,
+        -1.0,
+        1.5,
+        0.18365779519081116,
+        -1.0,
+        0.0,
+        0.19179999828338623,
+        1.5
+      ],
+      "changedFraction": 0.0,
+      "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+    },
+    "fourth": {
+      "passed": true,
+      "spectator": false,
+      "error": "",
+      "mode": "Classic",
+      "local": 3,
+      "expected": 3,
+      "changedPixels": 617,
+      "width": 1280,
+      "height": 720,
+      "epoch": 639256445584308606,
+      "owners": [
+        1,
+        2,
+        3
+      ],
+      "drawing": [
+        false,
+        false,
+        true
+      ],
+      "shaded": [
+        false,
+        false,
+        true
+      ],
+      "positions": [
+        -1.5,
+        0.19129520654678345,
+        -1.0,
+        1.5,
+        0.18365779519081116,
+        -1.0,
+        0.0,
+        0.19179999828338623,
+        1.5
+      ],
+      "changedFraction": 0.0006694878684356809,
+      "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+    },
+    "owner": {
+      "passed": true,
+      "spectator": false,
+      "error": "",
+      "mode": "Classic",
+      "local": 1,
+      "expected": 1,
+      "changedPixels": 1150,
+      "width": 1280,
+      "height": 720,
+      "epoch": 639256445584308606,
+      "owners": [
+        1,
+        2,
+        3
+      ],
+      "drawing": [
+        true,
+        false,
+        false
+      ],
+      "shaded": [
+        true,
+        false,
+        false
+      ],
+      "positions": [
+        -1.5,
+        0.19129520654678345,
+        -1.0,
+        1.5,
+        0.18365779519081116,
+        -1.0,
+        0.0,
+        0.19179999828338623,
+        1.5
+      ],
+      "changedFraction": 0.0012478298740461469,
+      "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+    },
+    "other": {
+      "passed": true,
+      "spectator": false,
+      "error": "",
+      "mode": "Classic",
+      "local": 2,
+      "expected": 2,
+      "changedPixels": 1397,
+      "width": 1280,
+      "height": 720,
+      "epoch": 639256445584308606,
+      "owners": [
+        1,
+        2,
+        3
+      ],
+      "drawing": [
+        false,
+        true,
+        false
+      ],
+      "shaded": [
+        false,
+        true,
+        false
+      ],
+      "positions": [
+        -1.5,
+        0.19129520654678345,
+        -1.0,
+        1.5,
+        0.18365779519081116,
+        -1.0,
+        0.0,
+        0.19179999828338623,
+        1.5
+      ],
+      "changedFraction": 0.001515842042863369,
+      "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+    },
+    "spectator": {
+      "passed": true,
+      "spectator": true,
+      "error": "",
+      "mode": "Classic",
+      "local": -1,
+      "expected": -1,
+      "changedPixels": 0,
+      "width": 1280,
+      "height": 720,
+      "epoch": 639256445584308606,
+      "owners": [
+        1,
+        2,
+        3
+      ],
+      "drawing": [
+        false,
+        false,
+        false
+      ],
+      "shaded": [
+        false,
+        false,
+        false
+      ],
+      "positions": [
+        -1.5,
+        0.19129520654678345,
+        -1.0,
+        1.5,
+        0.18365779519081116,
+        -1.0,
+        0.0,
+        0.19179999828338623,
+        1.5
+      ],
+      "changedFraction": 0.0,
+      "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+    }
+  },
+  "sharedInputUnchanged": true,
+  "existingFilesRestored": 0,
+  "runtimeSha256": "7f6bfb71a449bbb6c57ac17322b2adb80000f5ac6b6dd98359348474ce0a526a",
+  "scope": "Four playing Windows peers plus an actual fifth-join spectator, transport/ownership and standardized world-camera A/B. Not physical/WAN or human visual approval."
+}

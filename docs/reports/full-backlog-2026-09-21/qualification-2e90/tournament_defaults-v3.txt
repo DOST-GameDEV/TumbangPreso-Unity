@@ -1,0 +1,2 @@
+
+12 tournament modifiers named, 105 exempted with a reason, 12 read cases, 12 write cases, 112 launch switches discovered, 0 finding(s).

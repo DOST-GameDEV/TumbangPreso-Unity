@@ -50,7 +50,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var report = new StringBuilder();
             foreach (string map in new[] { "Eskinita", "BayanPlaza", "IlalimNgTulay" })
             {
-                string path = "Assets/TumbangPreso/Scenes/Maps/" + map + ".unity";
+                string path = IlalimNgTulayBuilder.LegacyScenePath(map);
                 var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
                 report.AppendLine(map + " before ambient=" + RenderSettings.ambientLight + " fog=" + RenderSettings.fogColor);
                 FinishLoadedScene(map,report);
@@ -86,6 +86,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
         public static void FinishLoadedScene(string map, StringBuilder report = null)
         {
+            MapSurfaceAuthor.RestoreLoadedSceneSources();
             if (Surfaces.Count == 0) PrepareMaterials();
             report ??= new StringBuilder();
             var previous = GameObject.Find("NeighborhoodFinish");

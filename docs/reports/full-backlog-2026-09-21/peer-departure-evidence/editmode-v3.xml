@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.1307474">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="583" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.130747" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1679" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="583" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.111619" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28152" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1680" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="583" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.103170" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1681" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="583" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.094812" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1065" name="ChatAndLobbyChromeTests" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.039006" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1071" name="TheProtocolCarriesEveryRosterBump" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump" methodname="TheProtocolCarriesEveryRosterBump" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="354920599" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.020550" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1506" name="PeerDepartureTests" fullname="TumbangPreso.Tests.PeerDepartureTests" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.026241" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1508" name="IntentLengthUsesTheUnreadPayloadAfterTheNgoNameHash" fullname="TumbangPreso.Tests.PeerDepartureTests.IntentLengthUsesTheUnreadPayloadAfterTheNgoNameHash" methodname="IntentLengthUsesTheUnreadPayloadAfterTheNgoNameHash" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="688847954" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.013390" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1509" name="NewTransportClearsNoticeStateAndNamesCannotInjectMarkup" fullname="TumbangPreso.Tests.PeerDepartureTests.NewTransportClearsNoticeStateAndNamesCannotInjectMarkup" methodname="NewTransportClearsNoticeStateAndNamesCannotInjectMarkup" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="534351052" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.009843" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1507" name="OnlyFreshHostNoticesReachThePlayerOnce" fullname="TumbangPreso.Tests.PeerDepartureTests.OnlyFreshHostNoticesReachThePlayerOnce" methodname="OnlyFreshHostNoticesReachThePlayerOnce" classname="TumbangPreso.Tests.PeerDepartureTests" runstate="Runnable" seed="939416525" result="Passed" start-time="2026-09-22 08:36:43Z" end-time="2026-09-22 08:36:43Z" duration="0.000873" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

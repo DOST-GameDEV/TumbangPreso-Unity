@@ -1,0 +1,22 @@
+Input System module state changed to: Initialized.
+[Net] offline
+[Net] connecting to 192.168.1.7:8910
+[Net] connected
+[Net] connected as seat 2
+[Link] Good at 113 ms round trip (client).
+[Link] Poor at 239 ms round trip (client).
+[NetLifecycle] requested-stop server=False relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <b4fb24ee3b0847a8a03bd3a8d9cbb621>:0 
+[Net] offline
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] offline
+[Net] connecting to 192.168.1.7:8910
+[Net] connected
+[Net] connected as seat 2
+[Link] Good at 51 ms round trip (client).
+[NetDisconnect] peer=2 local=2 server=False connected=True
+[Net] disconnected: The host left the game.
+[Abandon] HostLost: ABANDONED at round 0 of 4; this peer may no longer resolve anything
+[NetLifecycle] requested-stop server=False relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <b4fb24ee3b0847a8a03bd3a8d9cbb621>:0 
+[Net] offline
+Input System module state changed to: ShutdownInProgress.
+Input System module state changed to: Shutdown.

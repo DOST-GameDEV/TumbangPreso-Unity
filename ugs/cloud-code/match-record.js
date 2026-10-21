@@ -40,7 +40,7 @@ const ROUND_TIME = 90.0;
 const SCORE_DEFENCE_PER_TICK = 10;
 const DEFENCE_TICK_INTERVAL = 1.0;
 const SCORE_LATA_KNOCKED = 100;
-const SPRINT_SPEED = 4.6 * 1.5;
+const DEFENDER_RUN_SPEED = 7.5;        // Balance.DefenderRunSpeed
 
 // ⚠️⚠️ MIRRORS `RatingRules`. `FUTURE.md` § 9 and `Core.Tests/RatingTests.cs`.
 const START_RATING = 1500.0;
@@ -191,7 +191,7 @@ function normaliseRecord(raw) {
 // hero with no mastery path.
 // ---------------------------------------------------------------------------
 
-const MASTERY_HEROES = ["dante", "cheska", "sean", "zack", "nemu", "phaister"];
+const MASTERY_HEROES = ["dante", "cheska", "sean", "zack", "nemu", "phaister", "rafi", "amihan", "paete"];
 
 const COMPLETION_XP = 100;
 const PLACEMENT_XP = [40, 25, 15, 10];
@@ -589,7 +589,7 @@ function sanityFault(record) {
         if (p.ShoveHits > p.ShoveAttempts) return "MoreHitsThanAttempts";
         if (p.LungeHits > p.LungeAttempts) return "MoreHitsThanAttempts";
         if (passiveDefenceSeconds(p) > defenceCeiling) return "DefenceLongerThanTheMatch";
-        if ((Number(p.DistanceTravelled) || 0) > SPRINT_SPEED * defenceCeiling * 2.0)
+        if ((Number(p.DistanceTravelled) || 0) > DEFENDER_RUN_SPEED * defenceCeiling * 2.0)
             return "ImpossibleTravel";
     }
 
@@ -1074,6 +1074,10 @@ module.exports = async ({ params, context, logger }) => {
         if (!line) throw new Error("this player has no line in that match record");
 
         const profile = (await readJson(api, projectId, playerId, PROFILE_KEY, null)) || emptyProfile(playerId);
+        // Older clients may have queued offline Practice results. Accept and discard them so
+        // they cannot grant career rewards or block later eligible uploads.
+        if (!record.Online)
+            return { profile: JSON.stringify(profile), applied: false, verdict: "offline", rated: false };
         profile.Modes = Array.isArray(profile.Modes) ? profile.Modes : [];
         profile.Characters = Array.isArray(profile.Characters) ? profile.Characters : [];
         profile.Slippers = Array.isArray(profile.Slippers) ? profile.Slippers : [];
@@ -1189,9 +1193,11 @@ module.exports = async ({ params, context, logger }) => {
         }
 
         const history = remember(await readJson(api, projectId, playerId, HISTORY_KEY, []), record);
-        await api.setProtectedItem(projectId, playerId, { key: PROFILE_KEY, value: JSON.stringify(profile) });
+        // Save history before the profile's applied-id marker. If either write fails,
+        // retry still applies the record and remember() keeps the history deduplicated.
         if (applied)
             await api.setProtectedItem(projectId, playerId, { key: HISTORY_KEY, value: JSON.stringify(history) });
+        await api.setProtectedItem(projectId, playerId, { key: PROFILE_KEY, value: JSON.stringify(profile) });
 
         // ⚠️  AN ALREADY-COUNTED RECORD IS A SUCCESS, NOT AN ERROR. The offline queue resubmits,
         // and a client that treated the second answer as a failure would keep the record queued

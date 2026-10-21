@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.2438448">
+  <test-suite type="TestSuite" id="2335" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1079" result="Failed" site="Child" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.243845" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2329" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1079" result="Failed" site="Child" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.231637" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22064" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2330" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1079" result="Failed" site="Child" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.228699" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2331" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1079" result="Failed" site="Child" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.224328" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1113" name="BotCompanionObservationTests" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.182290" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1121" name="TagRankingUsesObservedDepthUntilTheBotReacts" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.176963" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1119" name="TagRankingUsesObservedDepthUntilTheBotReacts(Normal)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts(Normal)" methodname="TagRankingUsesObservedDepthUntilTheBotReacts" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="509894830" result="Failed" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.123948" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Live depth leaked into target ranking before observation.
+  Expected: same as <Observed body 0 (TumbangPreso.CharacterMotor)>
+  But was:  <Observed body 4 (TumbangPreso.CharacterMotor)>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts (TumbangPreso.Core.Difficulty tier) [0x0011a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:76
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1120" name="TagRankingUsesObservedDepthUntilTheBotReacts(Astig)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts(Astig)" methodname="TagRankingUsesObservedDepthUntilTheBotReacts" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="769114565" result="Failed" start-time="2026-10-01 04:53:07Z" end-time="2026-10-01 04:53:07Z" duration="0.037338" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Live depth leaked into target ranking before observation.
+  Expected: same as <Observed body 0 (TumbangPreso.CharacterMotor)>
+  But was:  <Observed body 4 (TumbangPreso.CharacterMotor)>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts (TumbangPreso.Core.Difficulty tier) [0x0011a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:76
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

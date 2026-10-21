@@ -253,6 +253,24 @@ TORSO = [
     ("back-star-l-horiz",      "torso", (-0.136, 0.204, 0.120),  (-0.082, 0.219, 0.130), GOLD),
     ("back-star-r-vert",       "torso", (0.098,  0.195, 0.120),  (0.120, 0.228, 0.130),  GOLD),
     ("back-star-r-horiz",      "torso", (0.082,  0.204, 0.120),  (0.136, 0.219, 0.130),  GOLD),
+
+    # 10. ⚠️ THE MANIKA ON HER LEFT HIP (v25, 2026-09-27, owner: *"u can refine a bit"*; MANIKA MISCHIEF throws this doll).
+    # v24 hung it OUTSIDE the skirt at x 0.19 to 0.24 and the turnaround showed it hidden behind her arm in every view. It
+    # hangs from the FRONT of the belt now, beside the buckle (which ends at x 0.052), facing forward. Clear of the legs:
+    # her walk swings a leg 42 degrees forward about the hip at y 0.176; the thigh's front (z -0.078) at the doll's lowest
+    # y 0.100 then reaches z = -0.078 cos 42 - 0.076 sin 42 = -0.109, so the doll's back face sits at -0.112, in front of it.
+    # Burlap is the skin shadow (`SKIN_DARK`), the only warm tan in her sixteen slots. A hat pin is stuck through it.
+    ("manika-cord",            "torso", (0.118,  0.150, -0.118), (0.126, 0.166, -0.110), GOLD),
+    ("manika-head",            "torso", (0.098,  0.122, -0.150), (0.146, 0.158, -0.112), SKIN_DARK),
+    ("manika-body",            "torso", (0.104,  0.100, -0.144), (0.140, 0.122, -0.116), SKIN_DARK),
+    ("manika-arm-l",           "torso", (0.140,  0.104, -0.138), (0.152, 0.116, -0.122), SKIN_DARK),
+    ("manika-arm-r",           "torso", (0.092,  0.108, -0.138), (0.104, 0.120, -0.122), SKIN_DARK),
+    ("manika-eye-x-l",         "torso", (0.126,  0.138, -0.153), (0.136, 0.148, -0.149), INK),
+    ("manika-eye-x-r",         "torso", (0.108,  0.140, -0.153), (0.116, 0.148, -0.149), INK),
+    ("manika-mouth-stitch",    "torso", (0.110,  0.128, -0.153), (0.134, 0.131, -0.149), INK),
+    ("manika-seam",            "torso", (0.120,  0.102, -0.147), (0.124, 0.120, -0.143), INK),
+    ("manika-pin-shaft",       "torso", (0.132,  0.108, -0.178), (0.138, 0.114, -0.116), GOLD),
+    ("manika-pin-head",        "torso", (0.127,  0.103, -0.192), (0.143, 0.119, -0.178), LILAC_GEM),
 ]
 
 
@@ -447,6 +465,25 @@ HEAD = [
     ("hat-cone-t3",            "head", (-0.110, 0.880, -0.060), (0.110, 0.935, 0.165),  COAT_DARK),
     ("hat-cone-t4",            "head", (-0.065, 0.935, 0.010),  (0.065, 0.975, 0.130),  COAT_DARK),
     ("hat-cone-tip",           "head", (-0.028, 0.975, 0.040),  (0.028, 1.000, 0.105),  COAT_DARK),
+
+    # ⚠️ HAT PINS AND MOTHS (v24, 2026-09-27). The wands already stand on her LEFT, so the pins go in the band on her RIGHT
+    # and lie OUT, not up: upright pins beside the cone read as a second pair of antennae. Three, each its own length,
+    # height, direction and head colour (uneven on purpose, HERO_KIT_METHOD 7: even is unnatural). SPOTLIGHT PIN draws one.
+    ("hatpin-a-shaft",         "head", (-0.300, 0.735, -0.122), (-0.230, 0.745, -0.110), GOLD),
+    ("hatpin-a-head",          "head", (-0.322, 0.728, -0.128), (-0.300, 0.752, -0.104), LILAC_GEM),
+    ("hatpin-b-shaft",         "head", (-0.190, 0.706, -0.252), (-0.110, 0.714, -0.244), GOLD),
+    ("hatpin-b-head",          "head", (-0.212, 0.698, -0.256), (-0.190, 0.722, -0.240), CRIMSON),
+    ("hatpin-c-shaft-in",      "head", (-0.262, 0.720, -0.032), (-0.240, 0.730, -0.020), GOLD),
+    ("hatpin-c-shaft-out",     "head", (-0.284, 0.730, -0.032), (-0.262, 0.740, -0.020), GOLD),
+    ("hatpin-c-head",          "head", (-0.300, 0.736, -0.038), (-0.282, 0.754, -0.014), WHITE),
+    # Two moths resting on the brim (VANISHING ACT's swarm), set at different turns: one front-left facing out, one
+    # back-right lying across it. Lilac wings, a purple body; on the black brim the wings are what reads.
+    ("moth-1-wing-l",          "head", (0.112,  0.680, -0.320), (0.155, 0.692, -0.282), LILAC_GEM),
+    ("moth-1-wing-r",          "head", (0.165,  0.680, -0.320), (0.208, 0.692, -0.282), LILAC_GEM),
+    ("moth-1-body",            "head", (0.155,  0.680, -0.320), (0.165, 0.694, -0.280), CLOTH_PURPLE),
+    ("moth-2-wing-f",          "head", (-0.296, 0.680, 0.170),  (-0.258, 0.691, 0.208),  LILAC_GEM),
+    ("moth-2-wing-b",          "head", (-0.296, 0.680, 0.218),  (-0.258, 0.691, 0.250),  LILAC_GEM),
+    ("moth-2-body",            "head", (-0.294, 0.680, 0.208),  (-0.256, 0.693, 0.218),  CLOTH_PURPLE),
 ]
 
 DONOR_SKULL = "Assets/TumbangPreso/Art/characters/persons/character-female-b.glb"

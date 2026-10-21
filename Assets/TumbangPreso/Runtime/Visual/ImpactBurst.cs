@@ -86,6 +86,7 @@ namespace TumbangPreso.Visual
             // feedback is a spray of bright pink error quads.
             renderer.sharedMaterial = BurstMaterial;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
 
             // Belt and braces alongside stopAction: if the system is stopped by anything else,
@@ -93,7 +94,50 @@ namespace TumbangPreso.Visual
             Object.Destroy(go, Lifetime * 2.0f);
         }
 
+        public static void SpawnTinContact(Vector3 at)
+        {
+            var go = new GameObject("~TinContact");
+            go.transform.position = at;
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            // Local deterministic variation must not consume gameplay's random stream.
+            ps.useAutoRandomSeed = false;
+            ps.randomSeed = 731u;
+            var main = ps.main;
+            main.duration = .24f; main.loop = false; main.playOnAwake = false;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(.12f, .24f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(.65f, 1.5f);
+            main.startSize = new ParticleSystem.MinMaxCurve(.022f, .042f);
+            main.startColor = new ParticleSystem.MinMaxGradient(new Color(.86f, .78f, .55f), new Color(1f, .96f, .82f));
+            main.gravityModifier = .6f;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+            var emission = ps.emission; emission.rateOverTime = 0;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0, 9) });
+            var shape = ps.shape; shape.shapeType = ParticleSystemShapeType.Sphere; shape.radius = .06f;
+            var size = ps.sizeOverLifetime; size.enabled = true;
+            size.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.EaseInOut(0, 1, 1, 0));
+            var renderer = ps.GetComponent<ParticleSystemRenderer>();
+            renderer.sharedMaterial = WorldCueProfile.Current.InkEffects>0 ? TinMaterial : BurstMaterial; renderer.maxParticleSize = .009f;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            ComfortParticles.Configure(ps);
+            ps.Play(); Object.Destroy(go, .55f);
+        }
+
         private static Material _burstMaterial;
+        private static Material _tinMaterial;
+        private static Material TinMaterial
+        {
+            get
+            {
+                if(_tinMaterial==null)
+                {
+                    _tinMaterial=new Material(Shader.Find("TumbangPreso/InkDust")){name="Tin ink chips",hideFlags=HideFlags.DontSave};
+                    _tinMaterial.SetFloat("_Chip",1);
+                }
+                return _tinMaterial;
+            }
+        }
 
         /// <summary>
         /// One shared material for every burst. ⚠️ THE SHADER IS RESOLVED RATHER THAN NAMED

@@ -52,24 +52,20 @@ namespace TumbangPreso.Core
         /// The furthest a lunge started from here can still tag: the dash plus the sweep
         /// radius.
         ///
-        /// ⚠️⚠️ THIS IS 2.30 m AT THE SHIPPING CONSTANTS, AND Design.md REPORTS 3.20 m AS
-        /// MEASURED. Both cannot be true, and the code is the newer half. Design.md's own
-        /// §6 constants TABLE agrees with the code (7.746, "a 1.0 m dash by v²/60"); it is
-        /// the §6 prose and the §2.6 measurement that still describe LUNGE_SPEED 12.247
-        /// and a 2.5 m dash, which is where 2.5 + 1.3 - the charge = 3.20 came from.
-        ///
-        /// So the lunge was cut by more than half at some point, the table was updated,
-        /// and the probe was never re-run. This matters well beyond a doc tidy: the lunge
-        /// is the taya's primary scoring verb, §2.6's "the tag is a lead problem, not a
-        /// reach problem" conclusion was drawn at the old reach, and the tag's share of
-        /// all points is one of the numbers the fairness gate watches.
-        ///
-        /// ⚠️ DO NOT "FIX" EITHER SIDE FROM THIS FILE. Port_Plan.md §7.1 carries it as a
-        /// Phase 1 blocker: decide which is intended in the Godot repo, re-run mech_probe,
-        /// and let the answer arrive here as a constant change.
+        /// Owner feedback, 2026-09-30: the full dash is 3m and standing reach
+        /// is 4.3m. Host sweep, bot approach and pressure stats derive from this solve.
         /// </summary>
         public static float LungeReach(float power = 1.0f) =>
             LungeDash(power) + Balance.LungeTagRadius;
+
+        /// <summary>Tap recovery at minimum power, linearly rising to full-hold recovery.</summary>
+        public static float LungeCooldownFor(float power)
+        {
+            float p = power < Balance.LungeMinPower ? Balance.LungeMinPower : (power > 1 ? 1 : power);
+            float held = (p - Balance.LungeMinPower) / (1 - Balance.LungeMinPower);
+            return Balance.LungeTapCooldown + (Balance.LungeCooldown - Balance.LungeTapCooldown) * held;
+        }
+
 
         // -------------------------------------------------------------------
         // GEOMETRY — the shove and the punch are both a range plus an arc.
@@ -112,11 +108,27 @@ namespace TumbangPreso.Core
         /// Knockback costs the taya POSITION, which is the resource a body block is
         /// actually about, and it cannot lock anybody out of the game.
         /// </summary>
-        public static float BlockKnockbackSpeed(int throwerSlipperIndex, int blockerPersonIndex)
+        public static float BlockKnockbackSpeed(int throwerSlipperIndex, int blockerPersonIndex) =>
+            BlockKnockbackSpeed(throwerSlipperIndex, blockerPersonIndex, GameMode.Classic);
+
+        /// <summary>
+        /// ⚠️⚠️ THE BLOCKER'S GRIT IS MODE-SCOPED AND THIS OVERLOAD IS WHY THE PUBLISHED PAIR
+        /// STOPPED REPRODUCING. `Roster.PersonGritScale` answers a flat 1.0 in Classic, because
+        /// a Classic character is cosmetic now, so the modeless call above divides by 1 for
+        /// every character there is. `CombatVerbs` already passed `victim.Mode` for the tag and
+        /// the shove, so a Hero Strike body block was the one contact left ignoring the grit
+        /// its two neighbours honour: Dante (tatag 5) and Zack (tatag 3) were taking the
+        /// identical push off the identical slipper.
+        ///
+        /// ⚠️ THE SLIPPER'S IMPACT IS NOT MODE-SCOPED AND MUST NOT BE. Equipment is chosen in
+        /// both modes and `Roster.SlipperImpactScale` has no mode to take; the cosmetic
+        /// decision was about the PERSON table, which is the half that got archived.
+        /// </summary>
+        public static float BlockKnockbackSpeed(int throwerSlipperIndex, int blockerPersonIndex, GameMode mode)
         {
             return Balance.BlockKnockbackSpeed
                    * Roster.SlipperImpactScale(throwerSlipperIndex)
-                   / Roster.PersonGritScale(blockerPersonIndex);
+                   / Roster.PersonGritScale(blockerPersonIndex, mode);
         }
 
         // ⚠️⚠️ THE DEFLECT AND THE LATA RECOIL ARE DELIBERATELY NOT MODELLED HERE, AND A

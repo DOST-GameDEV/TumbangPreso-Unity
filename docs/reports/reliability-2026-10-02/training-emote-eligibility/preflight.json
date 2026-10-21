@@ -1,0 +1,7 @@
+{
+  "repairCount": 1,
+  "rejectedBeforeUnity": true,
+  "reason": "Arguments require an exclusive gpu job, not cpu",
+  "originalJobKind": "cpu",
+  "correctedJobKind": "gpu"
+}

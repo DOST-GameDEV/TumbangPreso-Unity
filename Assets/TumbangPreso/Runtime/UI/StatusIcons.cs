@@ -1,0 +1,73 @@
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using UnityEngine;
+
+namespace TumbangPreso.UI
+{
+    /// <summary>
+    /// The current status catalog's icons, drawn by
+    /// `tools/build_ability_icons.py` into `Resources/UI/status-icons`. A status sits on a round
+    /// badge so it never reads as an ability icon: an ability is something you DO, a status is
+    /// something done TO you. The tooltip is the owner's column, verbatim, from `Core.StatusRules`.
+    /// </summary>
+    public static class StatusIcons
+    {
+        private static readonly Dictionary<StatusKind, Sprite> Cache = new Dictionary<StatusKind, Sprite>();
+
+        public static Sprite For(StatusKind kind)
+        {
+            if (kind == StatusKind.None) return null;
+            if (Cache.TryGetValue(kind, out var sprite) && sprite != null) return sprite;
+            sprite = Resources.Load<Sprite>("UI/status-icons/Status" + kind);
+            Cache[kind] = sprite;
+            return sprite;
+        }
+
+        public static string Name(StatusKind kind) => StatusRules.For(kind)?.Name ?? "";
+        public static string Tooltip(StatusKind kind) => StatusRules.For(kind)?.Tooltip ?? "";
+
+        public static System.Collections.IEnumerator Warmup()
+        {
+            foreach (var rule in StatusRules.All)
+            {
+                var kind = rule.Kind;
+                if (kind == StatusKind.None || (Cache.TryGetValue(kind, out var cached) && cached != null)) continue;
+                var request = Resources.LoadAsync<Sprite>("UI/status-icons/Status" + kind);
+                yield return request;
+                if (request.asset is Sprite sprite) Cache[kind] = sprite;
+                yield return null;
+            }
+        }
+
+        /// <summary>The statuses running on a body, strongest first (a hold before a slow).</summary>
+        public static void Live(CharacterMotor body, List<StatusKind> into)
+        {
+            into.Clear();
+            if (body == null) return;
+            if (body.IsTagged) into.Add(StatusKind.Tagged);
+            if (body.IsFrozen) into.Add(StatusKind.Frozen);
+            if (body.IsRooted) into.Add(StatusKind.Rooted);
+            if (body.IsWhirled) into.Add(StatusKind.Whirled);
+            if (body.IsChilled) into.Add(StatusKind.Chilled);
+            // ABILITY-2 (2026-09-26).
+            if (body.IsFeared) into.Add(StatusKind.Feared);
+            if (body.IsConcussed) into.Add(StatusKind.Concussed);
+            if (body.IsDisoriented) into.Add(StatusKind.Disoriented);
+            if (body.IsVulnerable) into.Add(StatusKind.Vulnerable);
+            // HERO-10 v3: Phaister's curses.
+            if (body.IsDrained) into.Add(StatusKind.Drained);
+            if (body.IsHexed) into.Add(StatusKind.Hexed);
+            if (body.IsHaunted) into.Add(StatusKind.Haunted);
+            // Catalogued and applied in play, but never listed, so a zapped player saw locked
+            // powers with no reason or timer. Appended to keep every existing entry's order.
+            if (body.IsZapped) into.Add(StatusKind.Zapped);
+            // Nemu's PRUSISYON (2026-10-11).
+            if (body.IsPossessed) into.Add(StatusKind.Possessed);
+            // Nemu's DON'T LOOK (2026-10-15).
+            if (body.IsBlinded) into.Add(StatusKind.Blinded);
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Reset() => Cache.Clear();
+    }
+}

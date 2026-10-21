@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 10:03:26Z" end-time="2026-09-23 10:03:35Z" duration="8.3471126">
+  <test-suite type="TestSuite" id="1738" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="562" result="Passed" start-time="2026-09-23 10:03:26Z" end-time="2026-09-23 10:03:35Z" duration="8.347113" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1732" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="562" result="Passed" start-time="2026-09-23 10:03:26Z" end-time="2026-09-23 10:03:35Z" duration="8.319827" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13928" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1733" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="562" result="Passed" start-time="2026-09-23 10:03:26Z" end-time="2026-09-23 10:03:35Z" duration="8.309487" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1734" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="562" result="Passed" start-time="2026-09-23 10:03:26Z" end-time="2026-09-23 10:03:35Z" duration="8.300525" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1262" name="LobbyChatStripProbe" fullname="TumbangPreso.PlayTests.LobbyChatStripProbe" classname="TumbangPreso.PlayTests.LobbyChatStripProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-23 10:03:26Z" end-time="2026-09-23 10:03:35Z" duration="8.260165" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1263" name="FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize" fullname="TumbangPreso.PlayTests.LobbyChatStripProbe.FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize" methodname="FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize" classname="TumbangPreso.PlayTests.LobbyChatStripProbe" runstate="Runnable" seed="1835924543" result="Passed" start-time="2026-09-23 10:03:26Z" end-time="2026-09-23 10:03:35Z" duration="8.232032" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] MatchChat-first-line-large-1680x720/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpUiCapture] MatchChat-first-line-large-1680x720 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchChat-first-line-large-960x540/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpUiCapture] MatchChat-first-line-large-960x540 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

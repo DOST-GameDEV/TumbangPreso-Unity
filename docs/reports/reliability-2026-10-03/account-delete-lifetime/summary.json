@@ -1,0 +1,15 @@
+{
+  "compilation": {
+    "Runtime": 0,
+    "Tests": 0,
+    "PlayTests": 0
+  },
+  "scope": "Compile only;8deletion+3fallback+4UI=15nativepending; one enum fixture route correction retained",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs": "f2cb1c21918b19bd04d1e985f6dd098756482e490e094a9a716e7d297beed25c",
+    "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs": "37b454c2161308d24c2af8654694c696ee4e3b1920f0b6c2a7084233a4e45b9e",
+    "Assets/TumbangPreso/Tests/AccountDeleteLifetimeTests.cs": "10971690ac8e1401ac40e93d4f834d1a171b8e6af35f0406762d6c88ac03b1bd",
+    "Assets/TumbangPreso/Tests/AccountInitializationOwnerTests.cs": "a0e4f458e671ac40b49b63e3851c35168de52378e79bb2f4b3ab8a6c9370abb0",
+    "Assets/TumbangPreso/Tests/PlayMode/PlayerHubDeletionLifetimeTests.cs": "aba0cb11155ce149569ff85e8910a3c02d18126ce28ab20e96188376f2ce691b"
+  }
+}

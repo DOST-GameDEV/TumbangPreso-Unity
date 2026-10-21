@@ -44,6 +44,7 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override bool Cancel()
         {
+            if(_hubView!=null)return HubCancel();
             if(_ownerPreparation!=null && _chat!=null && _chat.IsPresented){_chat.SetPresented(false);return true;}
             // ⚠️⚠️ THE HUB ANSWERS ITS OWN ESCAPE AND THIS SCREEN MUST NOT ANSWER THE SAME ONE.
             // `ConvertedScreen.Update` and `PlayerHub.Update` both read `GetKeyDown` on the frame
@@ -530,7 +531,9 @@ namespace TumbangPreso.UI
             // leave to join path can never be reached.
             int port = NetBootstrap.LobbyPort > 0 ? NetBootstrap.LobbyPort : LobbySession.DefaultPort;
 
-            bool ok = await net.StartHostAsync(port);
+            bool ok = NetBootstrap.LobbyOnline
+                ? await net.StartRelayHost()
+                : await net.StartHostAsync(port);
 
             if (this == null) return;
 
@@ -1261,7 +1264,11 @@ namespace TumbangPreso.UI
             // `LobbyChrome.BuildLoadoutButton`: 🧑 could not find the loadout twice, and the answer
             // is the row under the character it belongs to rather than a fifth place to look.
             if (_chrome?.LoadoutButton != null)
+            {
                 _chrome.LoadoutButton.onClick.AddListener(OpenLoadout);
+                // ⚠️ HIDDEN WHILE THE SKILL TREE IS OFF (owner, 2026-09-26: *"JS REMOVE ITS UI FOR NOW"*).
+                _chrome.LoadoutButton.gameObject.SetActive(HeroLoadoutRules.SidegradesOpen);
+            }
 
             // ⚠️ SETTINGS, ON REQUEST. 🧑 2026-09-02: **"cann u also add a settings button in
             // lobby?"**. `LobbyChrome.BuildSettingsButton` is the control and
@@ -2787,6 +2794,9 @@ namespace TumbangPreso.UI
 
             NetSession.LastDisconnectReason = "";
 
+            // ⚠️ UX-1: the hub has no join card to fall back to; it says why and goes HOME.
+            if (HubDisconnected(detail)) { Refresh(); return; }
+
             SetAlert(string.IsNullOrWhiteSpace(detail)
                      ? "The connection to the host ended. Press JOIN to try again."
                      : detail);
@@ -3651,14 +3661,22 @@ namespace TumbangPreso.UI
             try
             {
                 var ips = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName());
+                System.Net.IPAddress linkLocal = null;
                 foreach (var ip in ips)
                 {
                     if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
                         !System.Net.IPAddress.IsLoopback(ip))
                     {
+                        byte[] bytes = ip.GetAddressBytes();
+                        if (bytes[0] == 169 && bytes[1] == 254)
+                        {
+                            linkLocal ??= ip;
+                            continue;
+                        }
                         return $"{ip}:{port}";
                     }
                 }
+                if (linkLocal != null) return $"{linkLocal}:{port}";
             }
             catch (System.Exception e)
             {
@@ -3998,6 +4016,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            if(_chat!=null)_chat.PresentedChanged-=OnRoomChatPresented;
             if(_ownerCustomRules!=null)_ownerCustomRules.RulesChanged-=OwnerRulesChanged;
             if(_ownerPreparation!=null && _queueCard!=null)
             {

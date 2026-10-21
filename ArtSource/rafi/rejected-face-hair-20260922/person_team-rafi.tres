@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://assets/characters/persons/materials/person_palette.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://assets/characters/persons/Textures/colormap.png" id="2"]
+[ext_resource type="Material" path="res://assets/characters/persons/materials/person_outline.tres" id="3"]
+
+[resource]
+resource_name = "person_team-rafi"
+shader = ExtResource("1")
+shader_parameter/source_map = ExtResource("2")
+shader_parameter/albedo_color = Color(1, 1, 1, 0)
+shader_parameter/palette = PackedColorArray(0.188235, 0.239216, 0.341176, 1, 0.145098, 0.188235, 0.278431, 1, 0.270588, 0.556863, 0.678431, 1, 0.937255, 0.882353, 0.745098, 1, 0.337255, 0.521569, 0.396078, 1, 0.243137, 0.396078, 0.294118, 1, 0.176471, 0.156863, 0.164706, 1, 0.274510, 0.337255, 0.450980, 1, 0.129412, 0.105882, 0.129412, 1, 0.466667, 0.341176, 0.215686, 1, 0.913725, 0.537255, 0.282353, 1, 0.447059, 0.788235, 0.768627, 1, 0.905882, 0.792157, 0.639216, 1, 0.721569, 0.505882, 0.317647, 1, 0.666667, 0.447059, 0.274510, 1, 0.721569, 0.505882, 0.317647, 1)
+next_pass = ExtResource("3")

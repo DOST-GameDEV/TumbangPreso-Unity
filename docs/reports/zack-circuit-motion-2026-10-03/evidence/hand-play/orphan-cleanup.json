@@ -1,0 +1,15 @@
+{
+  "reason": "Only orphaned idle compiler/shutdown helpers from this task-owned Unity SDK; no active owned Editor. No files removed.",
+  "beforeCgroup": 4602773504,
+  "afterCgroup": 4538642432,
+  "rssRetiredBytes": 111431680,
+  "processes": [
+    {
+      "pid": 94616,
+      "kind": "shutdown",
+      "ageSeconds": 95.4,
+      "rssBytes": 111431680
+    }
+  ],
+  "completedCompileReceipt": null
+}

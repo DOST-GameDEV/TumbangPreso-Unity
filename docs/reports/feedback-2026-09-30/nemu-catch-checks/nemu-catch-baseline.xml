@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.4013116">
+  <test-suite type="TestSuite" id="2265" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1021" result="Failed" site="Child" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.401312" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2259" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1021" result="Failed" site="Child" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.383189" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24864" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2260" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1021" result="Failed" site="Child" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.374080" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2261" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1021" result="Failed" site="Child" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.365272" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1624" name="NemuCatchContractTests" fullname="TumbangPreso.PlayTests.NemuCatchContractTests" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.336385" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1629" name="AnObservingReplicaCannotGrantObjectiveProtection" fullname="TumbangPreso.PlayTests.NemuCatchContractTests.AnObservingReplicaCannotGrantObjectiveProtection" methodname="AnObservingReplicaCannotGrantObjectiveProtection" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" seed="234798789" result="Passed" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.089497" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1627" name="CancellingCatchPreservesTheIndependentRestoreProtection" fullname="TumbangPreso.PlayTests.NemuCatchContractTests.CancellingCatchPreservesTheIndependentRestoreProtection" methodname="CancellingCatchPreservesTheIndependentRestoreProtection" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" seed="881605499" result="Failed" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.099451" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 5.0d +/- 0.0010000000474974513d
+  But was:  1.25d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuCatchContractTests.CancellingCatchPreservesTheIndependentRestoreProtection () [0x00049] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\NemuCatchContractTests.cs:76
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1626" name="CatchPreventsRealKnockdownForItsExactFiveSecondClockWithoutAModel" fullname="TumbangPreso.PlayTests.NemuCatchContractTests.CatchPreventsRealKnockdownForItsExactFiveSecondClockWithoutAModel" methodname="CatchPreventsRealKnockdownForItsExactFiveSecondClockWithoutAModel" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" seed="801127052" result="Failed" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.032998" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A legal Catch did not protect the actual objective.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuCatchContractTests.CatchPreventsRealKnockdownForItsExactFiveSecondClockWithoutAModel () [0x00028] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\NemuCatchContractTests.cs:62
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1630" name="CatchRecoveryUsesTheRemainingClockWithoutRecastingOrSpending" fullname="TumbangPreso.PlayTests.NemuCatchContractTests.CatchRecoveryUsesTheRemainingClockWithoutRecastingOrSpending" methodname="CatchRecoveryUsesTheRemainingClockWithoutRecastingOrSpending" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" seed="1547917526" result="Failed" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.033259" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: instance of <TumbangPreso.Abilities.IPreparedWorldReplication>
+  But was:  <TumbangPreso.Abilities.NemuHeroKit+KuroGuard>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuCatchContractTests.CatchRecoveryUsesTheRemainingClockWithoutRecastingOrSpending () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\NemuCatchContractTests.cs:95
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1625" name="CatchRejectsADownedCanAndAnAttacker" fullname="TumbangPreso.PlayTests.NemuCatchContractTests.CatchRejectsADownedCanAndAnAttacker" methodname="CatchRejectsADownedCanAndAnAttacker" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" seed="301587971" result="Failed" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.033223" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Catch accepted a downed can.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuCatchContractTests.CatchRejectsADownedCanAndAnAttacker () [0x0004d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\NemuCatchContractTests.cs:53
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1628" name="RoundResetReleasesCatchImmediately" fullname="TumbangPreso.PlayTests.NemuCatchContractTests.RoundResetReleasesCatchImmediately" methodname="RoundResetReleasesCatchImmediately" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" seed="239922564" result="Failed" start-time="2026-09-30 23:17:39Z" end-time="2026-09-30 23:17:39Z" duration="0.031622" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuCatchContractTests.RoundResetReleasesCatchImmediately () [0x00006] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\NemuCatchContractTests.cs:83
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

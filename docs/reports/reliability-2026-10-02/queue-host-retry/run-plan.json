@@ -1,0 +1,15 @@
+{
+  "stoppingCondition": "Baseline/final five nonzero cases and terminal restored guarded jobs",
+  "reserveMb": 2048,
+  "question": "Does transient host startup failure at maximum band leave a stable-list queue permanently without another evaluation?",
+  "waitSeconds": 300,
+  "expectedCases": 5,
+  "sourceSnapshot": "C:\\Users\\matth\\AppData\\Local\\Temp\\tump-queue-host-retry1002-215b7dc6c52047138d508dcf070b62bb",
+  "poolKind": "cpu",
+  "timeoutSeconds": 450,
+  "copyAuthorization": "Only after root releases build/player slot",
+  "profile": "queue-host-retry1002",
+  "memoryMb": 1536,
+  "retryCount": 0,
+  "filter": "TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket"
+}

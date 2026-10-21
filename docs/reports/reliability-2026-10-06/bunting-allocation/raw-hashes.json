@@ -1,0 +1,34 @@
+{
+  "candidate-launch.json": {
+    "bytes": 1023,
+    "sha256": "d0c59fc17b2c1175c407d899cfb52787fe853e28d632768e5e0441597093b386"
+  },
+  "candidate-tests.xml": {
+    "bytes": 5782,
+    "sha256": "748ee35c3af05d031760d59fc407e2dae1bd8d4bcd48e5be83d7d93893b84164"
+  },
+  "original-launch.json": {
+    "bytes": 1019,
+    "sha256": "e02e93182a5fac9b3b9035375371e57bb2b85cd05a215ab94af428f01d508566"
+  },
+  "original-tests.xml": {
+    "bytes": 6937,
+    "sha256": "d9ed6dcb45fcd024ab5f5ed3974e2dee800a8b4ae27ffc864de6555241a1ca59"
+  },
+  "qualification.json": {
+    "bytes": 4012,
+    "sha256": "c38e1f044f653451d79829fbc98cc2914a452e8730a460b377328116427bc11b"
+  },
+  "resize-launch.json": {
+    "bytes": 1125,
+    "sha256": "a57e111a6330a19efe5cca60d5d7e3153c7bc1d780634ffefb878af312eb9f1a"
+  },
+  "resize-tests.xml": {
+    "bytes": 3432,
+    "sha256": "e03ad8adaf897ecb9bb86277d606f8764e4695557031653207e8011b201c420f"
+  },
+  "source-lf-hashes.json": {
+    "bytes": 255,
+    "sha256": "00a465041593f1150431d5e7c328b261796208abd686a197643e4a465c82cdd9"
+  }
+}

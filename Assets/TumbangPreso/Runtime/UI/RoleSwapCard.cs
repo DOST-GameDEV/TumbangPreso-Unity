@@ -35,6 +35,9 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class RoleSwapCard : MonoBehaviour
     {
+        private static RoleSwapCard _current;
+        public static bool Showing => _current != null && _current._canvas != null &&
+                                      _current._canvas.isActiveAndEnabled;
         public const float RevealDelay = 1.2f;
         public const float FightDelay = 2.3f;
         public const float RevealFade = 0.35f;
@@ -52,6 +55,7 @@ namespace TumbangPreso.UI
 
         private void Awake()
         {
+            _current = this;
             _nativeSwap = gameObject.AddComponent<TumpRoundSwapView>();
             _nativeSwap.Build(transform, DismissAndPractice); _canvas = _nativeSwap.Canvas;
             _canvas.gameObject.SetActive(false);
@@ -72,11 +76,19 @@ namespace TumbangPreso.UI
             GameServices.Match.RoundStarted -= OnRoundStarted;
         }
 
+        private void OnDestroy()
+        {
+            if (_current == this) _current = null;
+        }
+
         private void Update()
         {
+            // Root canvases keep their own scaler. Hide drawing for explicit clean
+            // feed without disabling the event owner or losing its break state.
+            if (_canvas != null) _canvas.enabled = Hud.Instance == null || !Hud.Instance.CleanFeedEnabled;
             if (_isBufferActive && _canvas != null && _canvas.gameObject.activeSelf)
             {
-                _bufferRemaining = Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
+                _bufferRemaining = HalftimePresentation.Instance?.Active==true ? HalftimePresentation.Instance.Remaining : Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
                 _nativeSwap?.Remaining(_bufferRemaining);
                 if (_bufferPrompt != null)
                 {
@@ -92,9 +104,9 @@ namespace TumbangPreso.UI
                 // `ControllerSupportTests` guard the whole runtime by reading it as text: a
                 // twelfth screen added next month with its own `GetKeyDown(KeyCode.Escape)` is
                 // exactly as silent as the eleven were, so the check has to be on the shape.
-                if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)
+                if (!HalftimePresentation.Playing && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)
                     || InputLayer.MenuNav.PadSubmitPressed
-                    || InputLayer.MenuNav.CancelPressed)
+                    || InputLayer.MenuNav.CancelPressed))
                 {
                     DismissAndPractice();
                 }
@@ -103,6 +115,7 @@ namespace TumbangPreso.UI
 
         public void DismissAndPractice()
         {
+            if (HalftimePresentation.Playing) return;
             if (_canvas != null)
             {
                 _canvas.gameObject.SetActive(false);
@@ -111,10 +124,18 @@ namespace TumbangPreso.UI
 
         private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
         {
+            // The shared phase already opened the passive card once.
+            if (HalftimePresentation.Playing) return;
+            ShowScheduledBreak(nextRound,nextDefenderSlot,HalftimePresentation.Instance?.Remaining??HalftimePresentation.OrdinaryBreakDuration,null);
+        }
+
+        public void ShowScheduledBreak(int nextRound,int nextDefenderSlot,float remaining,string fallback)
+        {
             if (_nativeSwap != null)
             {
-                _bufferRemaining = Core.Balance.WarmupBufferDuration; _isBufferActive = true;
+                _bufferRemaining = remaining; _isBufferActive = true;
                 _nativeSwap.Show(nextRound, nextDefenderSlot); _nativeSwap.Remaining(_bufferRemaining);
+                _nativeSwap.SetBreakContext(HalftimePresentation.Instance?.IsHalftime==true, fallback);
                 GameServices.Audio?.PlayUi("round_end"); return;
             }
             _title.text = $"END OF ROUND {Mathf.Max(1, nextRound - 1)}";
@@ -134,7 +155,7 @@ namespace TumbangPreso.UI
             _swapPanel.alpha = 0.0f;
             _standingsPanel.alpha = 0.0f;
 
-            _bufferRemaining = Core.Balance.WarmupBufferDuration;
+            _bufferRemaining = remaining;
             _isBufferActive = true;
 
             GameServices.Audio?.PlayUi("round_end");
@@ -162,7 +183,8 @@ namespace TumbangPreso.UI
             yield return StartCoroutine(RevealPanels());
 
             // Hold warmup buffer for remaining duration minus the final fight cue (1.5s)
-            float waitTime = Mathf.Max(1.0f, Core.Balance.WarmupBufferDuration - RevealDelay - RevealFade - 1.5f);
+            float buffer = HalftimePresentation.LiveStageBreak ? HalftimePresentation.OrdinaryBreakDuration : Core.Balance.WarmupBufferDuration;
+            float waitTime = Mathf.Max(1.0f, buffer - RevealDelay - RevealFade - 1.5f);
             yield return new WaitForSeconds(waitTime);
 
             _isBufferActive = false;

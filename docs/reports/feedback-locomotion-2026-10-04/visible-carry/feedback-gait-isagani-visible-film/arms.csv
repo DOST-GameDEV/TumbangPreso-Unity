@@ -1,0 +1,7 @@
+case,frames,amount,strideMin,strideMax,leftFwdMin,leftFwdMax,rightFwdMin,rightFwdMax,leftSpreadMin,rightSpreadMin
+empty-sprint,60,1.00,-1.00,1.00,-34.0,74.0,-34.0,74.0,20.0,20.0
+# empty-sprint layer sprint|-13036|-13040|1.00|zack along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)
+empty-walk,60,1.00,-1.00,1.00,-15.2,14.5,-36.8,41.5,24.0,24.0
+# empty-walk layer walk|-13036|-13040|1.00|zack along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)
+carry-sprint,60,1.00,-1.00,1.00,-34.0,74.0,22.0,46.0,20.0,21.4
+# carry-sprint layer holding-right|-13186|-13190|1.00|zack along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)

@@ -1,0 +1,1 @@
+[FullPoolFxCodec] frames=180 quadsPerFrame=1664 bytes=3085394 encodeMs=875.2107 decodeMs=307.3502 rawSha256=b0e083f696f670dcfd7e1c57bdb1fcb40ff25547c8ddcaed941e0604310f6c5d

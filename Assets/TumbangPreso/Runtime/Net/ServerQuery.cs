@@ -24,6 +24,9 @@ namespace TumbangPreso.Net
         public int MaxPlayers;
         public bool InProgress;
 
+        /// <summary>A LAN host's advertised protocol (beacon v3), or 0 when it did not say or it is online.</summary>
+        public int Protocol;
+
         public bool IsJoinable => !InProgress && Occupied < MaxPlayers;
     }
 
@@ -83,6 +86,7 @@ namespace TumbangPreso.Net
             /// issues nothing of its own.
             /// </summary>
             public string PoolKey = "";
+            public string SkillContract = "";
             public int BandLow;
             public int BandHigh;
             public int SeatLow;
@@ -90,8 +94,18 @@ namespace TumbangPreso.Net
             public bool Backfill;
             public string HostPlayerId = "";
 
+            /// <summary>The room's map id, or empty from an older host. UX-1.6.</summary>
+            public string Map = "";
+
+            /// <summary>`RoomVisibility` as an int: 0 public, 1 friends only, 2 private. The browser
+            /// lists only 0; the code works for all three.</summary>
+            public int Visibility;
+
             public int Players => Seated;
             public bool IsJoinable => !InProgress && Occupied < Capacity;
+
+            public bool MatchesSkillContract(string local)
+                => local != null && local.Length == 64 && string.Equals(SkillContract, local, StringComparison.Ordinal);
 
             /// <summary>This entry as the shape `MatchmakingRules` decides on.</summary>
             public Core.LobbyAdvert AsAdvert() => new Core.LobbyAdvert(
@@ -135,10 +149,14 @@ namespace TumbangPreso.Net
         private readonly Dictionary<string, Entry> _seen = new Dictionary<string, Entry>();
         private string _lastSignature = "";
         private bool _browsing;
+        private long _browseGeneration;
         private float _sinceQuery;
         private float _sinceHeartbeat;
         private string _activeHostLobbyId;
         private bool _queryInFlight;
+        // Browsing and code lookup share the same one-query-per-second player limit.
+        private readonly System.Threading.SemaphoreSlim _lobbyQueryGate = new System.Threading.SemaphoreSlim(1, 1);
+        private float _nextLobbyQueryAt;
 
         // ⚠️⚠️ LOBBY CREATION IS A NETWORK ROUND TRIP AND PLAYERS ARRIVE DURING IT. `NetSession`
         // fires `CreateHostedLobbyAsync` and does not await it, so `_activeHostLobbyId` is null
@@ -152,19 +170,45 @@ namespace TumbangPreso.Net
         private bool _pendingInProgress;
         private HostedAdvert _pendingAdvert;
         private bool _creatingLobby;
+        private Func<Task<bool>> _hostAuthDispatch;
+        private Func<string, int, CreateLobbyOptions, Task<string>> _createHostedIdDispatch;
+        private Func<string, UpdateLobbyOptions, Task> _updateHostedDispatch;
+        private Func<string, Task> _deleteHostedDispatch;
+        private long _hostLobbyRequest;
+        private TaskCompletionSource<string> _hostLobbyCreation;
+        private Task _hostUpdateTask;
+        private UpdateLobbyOptions _pendingHostedUpdate;
 
         public IEnumerable<Entry> Servers => _seen.Values;
+        public string HostedLobbyProblem { get; private set; } = "";
+        public string OnlineBrowserMessage { get; private set; } = "Finding public rooms...";
 
         public void StartBrowsing()
         {
             if (_browsing) return;
 
+            _browseGeneration++;
             _browsing = true;
+            OnlineBrowserMessage = "Finding public rooms...";
             _sinceQuery = QueryInterval; // Query immediately
+        }
+
+        /// <summary>
+        /// The JOIN list's REFRESH: ask UGS on the next frame instead of at the end of the interval.
+        ///
+        /// ⚠️ THE ROWS STAY UNTIL THE ANSWER REPLACES THEM (it already drops lobbies that are gone), and a
+        /// query in flight is not doubled: `QueryLobbiesSpacedAsync` spaces calls for the service's rate
+        /// limit, and a press must not be a way around it.
+        /// </summary>
+        public void RefreshNow()
+        {
+            if (!_browsing) { StartBrowsing(); return; }
+            _sinceQuery = QueryInterval;
         }
 
         public void StopBrowsing()
         {
+            _browseGeneration++;
             _browsing = false;
             lock (_seen)
             {
@@ -202,18 +246,28 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Queries public UGS Lobbies and updates the visible list.
         /// </summary>
-        public async Task RefreshOnlineLobbiesAsync()
+        public Task RefreshOnlineLobbiesAsync()
+            => RefreshOnlineLobbiesWithDispatchAsync(() => NetIdentity.EnsureSignedInAsync(), QueryLobbiesSpacedAsync);
+
+        private async Task RefreshOnlineLobbiesWithDispatchAsync(Func<Task<bool>> authenticate,
+            Func<QueryLobbiesOptions, Task<QueryResponse>> query)
         {
             if (_queryInFlight) return;
             _queryInFlight = true;
+            long generation = _browseGeneration;
 
             try
             {
                 // ⚠ SILENT ON PURPOSE. The reason online is unavailable was logged once, at
                 // boot, by NetIdentity itself. This call awaits that same settled attempt, so
                 // logging here again is what turned one situation into 21 identical warnings.
-                bool authOk = await NetIdentity.EnsureSignedInAsync();
-                if (!authOk) return;
+                bool authOk = await authenticate();
+                if (generation != _browseGeneration) return;
+                if (!authOk)
+                {
+                    OnlineBrowserMessage = "Online services are unavailable. Check your connection and try again.";
+                    return;
+                }
 
                 var options = new QueryLobbiesOptions
                 {
@@ -224,11 +278,13 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                QueryResponse response = await LobbyService.Instance.QueryLobbiesAsync(options);
+                QueryResponse response = await query(options);
+                if (generation != _browseGeneration) return;
                 var freshIds = new HashSet<string>();
 
                 if (response?.Results != null)
                 {
+                    OnlineBrowserMessage = "No public rooms yet. Host one, or join with a code.";
                     lock (_seen)
                     {
                         foreach (var lobby in response.Results)
@@ -273,6 +329,14 @@ namespace TumbangPreso.Net
                                 if (lobby.Data.TryGetValue("Backfill", out var bf)) backfill = bf.Value == "1";
                             }
 
+                            string map = "";
+                            int visibility = 0;
+                            if (lobby.Data != null)
+                            {
+                                if (lobby.Data.TryGetValue("Map", out var mp)) map = mp.Value ?? "";
+                                if (lobby.Data.TryGetValue("Vis", out var vs)) int.TryParse(vs.Value, out visibility);
+                            }
+
                             if (!_seen.TryGetValue(lobby.Id, out var entry))
                             {
                                 entry = new Entry { Id = lobby.Id };
@@ -287,12 +351,16 @@ namespace TumbangPreso.Net
                             entry.Capacity = lobby.MaxPlayers;
                             entry.InProgress = inProgress;
                             entry.PoolKey = poolKey;
+                            entry.SkillContract = lobby.Data != null && lobby.Data.TryGetValue("SkillContract", out var contract)
+                                ? contract.Value ?? "" : "";
                             entry.HostPlayerId = hostPlayerId;
                             entry.BandLow = bandLow;
                             entry.BandHigh = bandHigh;
                             entry.SeatLow = seatLow;
                             entry.SeatHigh = seatHigh;
                             entry.Backfill = backfill;
+                            entry.Map = map;
+                            entry.Visibility = visibility;
                             entry.LastSeen = Time.unscaledTime;
                         }
 
@@ -310,6 +378,8 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (generation == _browseGeneration)
+                    OnlineBrowserMessage = "Could not check online rooms. Retrying...";
                 NetIdentity.ReportServiceCallFailed("Lobby query", e);
             }
             finally
@@ -329,28 +399,39 @@ namespace TumbangPreso.Net
             string code = rawCode.Trim().ToUpperInvariant();
             if (code.Length < LobbySession.JoinCodeLength) return null;
 
-            // 1. Check LAN beacon first
+            // A pasted code or invite can arrive in the frame the browser opens, before
+            // its first LAN advertisement. Give discovery one beacon interval plus margin
+            // instead of prematurely treating a local room as an online lookup.
             var beacon = GetComponent<LanBeacon>() ?? FindFirstObjectByType<LanBeacon>();
             if (beacon != null)
             {
-                foreach (var entry in beacon.Entries)
+                beacon.RequestDiscovery();
+                float until = Time.realtimeSinceStartup + LanBeacon.BeaconInterval * 1.5f;
+                while (true)
                 {
-                    if (string.Equals(entry.JoinCode, code, StringComparison.OrdinalIgnoreCase))
+                    foreach (var entry in beacon.Entries)
                     {
-                        return new ResolvedMatch
+                        if (string.Equals(entry.JoinCode, code, StringComparison.OrdinalIgnoreCase))
                         {
-                            Found = true,
-                            IsLan = true,
-                            Address = entry.Address,
-                            Port = entry.Port,
-                            JoinCode = entry.JoinCode,
-                            HostName = entry.HostName,
-                            Seated = entry.Players,
-                            Occupied = entry.Players,
-                            MaxPlayers = entry.MaxPlayers,
-                            InProgress = entry.InProgress
-                        };
+                            return new ResolvedMatch
+                            {
+                                Found = true,
+                                IsLan = true,
+                                Address = entry.Address,
+                                Port = entry.Port,
+                                JoinCode = entry.JoinCode,
+                                HostName = entry.HostName,
+                                Seated = entry.Players,
+                                Occupied = entry.Players,
+                                MaxPlayers = entry.MaxPlayers,
+                                InProgress = entry.InProgress,
+                                Protocol = entry.Protocol
+                            };
+                        }
                     }
+                    if (!beacon.Listening || Time.realtimeSinceStartup >= until) break;
+                    await Task.Delay(50);
+                    if (this == null || beacon == null) return null;
                 }
             }
 
@@ -369,7 +450,7 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                QueryResponse response = await LobbyService.Instance.QueryLobbiesAsync(options);
+                QueryResponse response = await QueryLobbiesSpacedAsync(options);
                 if (response?.Results != null && response.Results.Count > 0)
                 {
                     var lobby = response.Results[0];
@@ -410,17 +491,39 @@ namespace TumbangPreso.Net
             return null;
         }
 
+        private async Task<QueryResponse> QueryLobbiesSpacedAsync(QueryLobbiesOptions options)
+        {
+            await _lobbyQueryGate.WaitAsync();
+            try
+            {
+                float delay = _nextLobbyQueryAt - Time.realtimeSinceStartup;
+                if (delay > 0) await Task.Delay(Mathf.CeilToInt(delay * 1000));
+                if (this == null) return null;
+                _nextLobbyQueryAt = Time.realtimeSinceStartup + 1.1f;
+                return await LobbyService.Instance.QueryLobbiesAsync(options);
+            }
+            finally { _lobbyQueryGate.Release(); }
+        }
+
         /// <summary>
         /// Registers a new UGS Lobby when hosting online via Relay.
         /// </summary>
         public async Task<string> CreateHostedLobbyAsync(string hostName, string joinCode, string relayCode,
                                                          int seated, int occupied, HostedAdvert advert)
         {
+            if (_hostLobbyCreation != null || !string.IsNullOrEmpty(_activeHostLobbyId))
+                _ = DeleteHostedLobbyAsync();
+            long request = ++_hostLobbyRequest;
+            HostedLobbyProblem = "";
+            var completion = new TaskCompletionSource<string>();
+            _hostLobbyCreation = completion;
+            string createdId = null;
             _creatingLobby = true;
             try
             {
-                bool authOk = await NetIdentity.EnsureSignedInAsync();
-                if (!authOk) return null;
+                bool authOk = _hostAuthDispatch == null
+                    ? await NetIdentity.EnsureSignedInAsync() : await _hostAuthDispatch();
+                if (!authOk || this == null || request != _hostLobbyRequest) return null;
 
                 string lobbyName = string.IsNullOrWhiteSpace(hostName) ? "Tumbang Preso Lobby" : hostName.Trim();
 
@@ -444,12 +547,21 @@ namespace TumbangPreso.Net
                         // read client-side off records the browse loop already has, so indexing
                         // them would spend a scarce slot to save nothing.
                         { "Pool", new DataObject(DataObject.VisibilityOptions.Public, advert.PoolKey ?? "", DataObject.IndexOptions.S3) },
+                        { "SkillContract", new DataObject(DataObject.VisibilityOptions.Public, SkillContractFingerprint.Current) },
                         { "HostId", new DataObject(DataObject.VisibilityOptions.Public, advert.HostPlayerId ?? "") },
                         { "BandLow", new DataObject(DataObject.VisibilityOptions.Public, advert.BandLow.ToString()) },
                         { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
                         { "SeatLow", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatLow.ToString()) },
                         { "SeatHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatHigh.ToString()) },
-                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") }
+                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") },
+
+                        // ⚠️ UX-1.6: the map a custom room is on, and who may SEE it listed. ADDITIVE
+                        // data keys, so an older client ignores them and lists the room as before.
+                        // Visibility is a listing filter rather than `IsPrivate`, because a private
+                        // UGS lobby cannot be found by `ResolveCodeAsync`'s query, and a room whose
+                        // code stops working is a worse private room than one that is merely unlisted.
+                        { "Map", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomMap ?? "") },
+                        { "Vis", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomVisibility.ToString()) }
                     }
                 };
 
@@ -458,10 +570,14 @@ namespace TumbangPreso.Net
                 // `MaxConnections` (12) so spectators can attend a full match; a UGS lobby whose
                 // `MaxPlayers` was also 12 would advertise "2/12" in the browser and would keep
                 // answering the AvailableSlots filter long after all four chairs were taken.
-                Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, LobbySession.MaxPlayers, options);
-                _activeHostLobbyId = lobby.Id;
+                string lobbyId = _createHostedIdDispatch == null
+                    ? (await LobbyService.Instance.CreateLobbyAsync(lobbyName, LobbySession.MaxPlayers, options)).Id
+                    : await _createHostedIdDispatch(lobbyName, LobbySession.MaxPlayers, options);
+                createdId = lobbyId;
+                if (this == null || request != _hostLobbyRequest) return null;
+                _activeHostLobbyId = lobbyId;
                 _sinceHeartbeat = 0.0f;
-                Debug.Log($"[Query] Created UGS Lobby {lobby.Id} with JoinCode {joinCode}");
+                Debug.Log($"[Query] Created UGS Lobby {lobbyId} with JoinCode {joinCode}");
 
                 // Anything that happened while the round trip was in flight is applied now.
                 if (_hasPendingCounts)
@@ -471,16 +587,18 @@ namespace TumbangPreso.Net
                                                  _pendingAdvert);
                 }
 
-                return lobby.Id;
+                return this != null && request == _hostLobbyRequest ? lobbyId : null;
             }
             catch (Exception e)
             {
+                if (this != null && request == _hostLobbyRequest) HostedLobbyProblem = e.Message;
                 NetIdentity.ReportServiceCallFailed("Lobby creation", e);
                 return null;
             }
             finally
             {
-                _creatingLobby = false;
+                if (this != null && request == _hostLobbyRequest) _creatingLobby = false;
+                completion.TrySetResult(createdId);
             }
         }
 
@@ -524,20 +642,49 @@ namespace TumbangPreso.Net
                         // host without the patient host having to say anything. What genuinely
                         // has to be pushed is a seat opening, and that is a count change.
                         { "Pool", new DataObject(DataObject.VisibilityOptions.Public, advert.PoolKey ?? "", DataObject.IndexOptions.S3) },
+                        { "SkillContract", new DataObject(DataObject.VisibilityOptions.Public, SkillContractFingerprint.Current) },
                         { "HostId", new DataObject(DataObject.VisibilityOptions.Public, advert.HostPlayerId ?? "") },
                         { "BandLow", new DataObject(DataObject.VisibilityOptions.Public, advert.BandLow.ToString()) },
                         { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
                         { "SeatLow", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatLow.ToString()) },
                         { "SeatHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatHigh.ToString()) },
-                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") }
+                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") },
+                        { "Map", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomMap ?? "") },
+                        { "Vis", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomVisibility.ToString()) }
                     }
                 };
 
-                await LobbyService.Instance.UpdateLobbyAsync(_activeHostLobbyId, options);
+                // One writer per room: a slow older response must not overwrite newer
+                // counts. While it is in flight, retain only the latest complete advert.
+                _pendingHostedUpdate = options;
+                if (_hostUpdateTask == null || _hostUpdateTask.IsCompleted)
+                    _hostUpdateTask = PublishHostedUpdatesAsync(_activeHostLobbyId, _hostLobbyRequest);
+                await _hostUpdateTask;
             }
             catch (Exception e)
             {
                 NetIdentity.ReportServiceCallFailed("Lobby update", e);
+            }
+        }
+
+        private async Task PublishHostedUpdatesAsync(string lobbyId, long request)
+        {
+            while (this != null && request == _hostLobbyRequest &&
+                   lobbyId == _activeHostLobbyId && _pendingHostedUpdate != null)
+            {
+                var options = _pendingHostedUpdate;
+                _pendingHostedUpdate = null;
+                try
+                {
+                    await (_updateHostedDispatch == null
+                        ? LobbyService.Instance.UpdateLobbyAsync(lobbyId, options)
+                        : _updateHostedDispatch(lobbyId, options));
+                }
+                catch (Exception e)
+                {
+                    if (this != null && request == _hostLobbyRequest)
+                        NetIdentity.ReportServiceCallFailed("Lobby update", e);
+                }
             }
         }
 
@@ -565,17 +712,24 @@ namespace TumbangPreso.Net
             // nobody behind it, which the browser then advertised until the 30 second heartbeat
             // expiry retired it. Waiting for the creation to settle is what makes the delete
             // reach the id that is about to exist.
-            while (_creatingLobby) await Task.Yield();
-
-            if (string.IsNullOrEmpty(_activeHostLobbyId)) return;
-
+            var creation = _hostLobbyCreation;
             string id = _activeHostLobbyId;
+            ++_hostLobbyRequest;
+            _hostLobbyCreation = null;
             _activeHostLobbyId = null;
+            // A replacement room starts its own writer; the retired writer can
+            // finish its issued request but cannot drain this room's pending state.
+            _hostUpdateTask = null;
+            _pendingHostedUpdate = null;
+            _creatingLobby = false;
             _hasPendingCounts = false;
+            if (string.IsNullOrEmpty(id) && creation != null) id = await creation.Task;
+            if (string.IsNullOrEmpty(id)) return;
 
             try
             {
-                await LobbyService.Instance.DeleteLobbyAsync(id);
+                await (_deleteHostedDispatch == null
+                    ? LobbyService.Instance.DeleteLobbyAsync(id) : _deleteHostedDispatch(id));
                 Debug.Log($"[Query] Deleted UGS Lobby {id}");
             }
             catch (Exception e)
@@ -592,6 +746,8 @@ namespace TumbangPreso.Net
                 foreach (var e in _seen.Values)
                 {
                     sb.Append($"{e.Id}:{e.Name}:{e.JoinCode}:{e.Seated}/{e.Occupied}/{e.Capacity}:{e.InProgress};");
+                    sb.Append($"{e.RelayCode}:{e.PoolKey}:{e.SkillContract}:{e.HostPlayerId}:{e.BandLow}/{e.BandHigh}/{e.SeatLow}/{e.SeatHigh}:{e.Backfill};");
+                    sb.Append($"{e.Map}:{e.Visibility};");
                 }
             }
 

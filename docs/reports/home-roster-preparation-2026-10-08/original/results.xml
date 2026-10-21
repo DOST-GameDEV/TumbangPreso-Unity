@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 02:39:19Z" end-time="2026-10-08 02:39:24Z" duration="5.0710262">
+  <test-suite type="TestSuite" id="3658" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2151" result="Failed" site="Child" start-time="2026-10-08 02:39:19Z" end-time="2026-10-08 02:39:24Z" duration="5.071026" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3650" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2151" result="Failed" site="Child" start-time="2026-10-08 02:39:19Z" end-time="2026-10-08 02:39:24Z" duration="5.044120" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="68016" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3651" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2151" result="Failed" site="Child" start-time="2026-10-08 02:39:19Z" end-time="2026-10-08 02:39:24Z" duration="5.029646" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3654" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2149" result="Failed" site="Child" start-time="2026-10-08 02:39:19Z" end-time="2026-10-08 02:39:24Z" duration="5.015383" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1912" name="HomeRosterPreparationTests" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-08 02:39:19Z" end-time="2026-10-08 02:39:24Z" duration="4.946375" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1913" name="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" methodname="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" seed="1874216517" result="Failed" start-time="2026-10-08 02:39:19Z" end-time="2026-10-08 02:39:24Z" duration="4.928534" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Home reports ready while roster meshes still need their first outline bake: body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, ghost-body-core, ghost-body-top-rim, ghost-body-bot-bevel, ghost-eye-l, ghost-eye-glint-l, ghost-eye-pupil-l, ghost-eye-r, ghost-eye-glint-r, ghost-eye-pupil-r, ghost-mouth-dot, ghost-blush-l, ghost-blush-r, ghost-tail-tier1, ghost-tail-tier2, ghost-tail-tier3, ghost-tail-tip-wisp, ghost-tail-tip-glint, KuroCatMouth, KuroCrossLeft, KuroCrossRight, KuroGoofyMouth, KuroPoutMouth, KuroShyEye, KuroHappyEyeL, KuroSleepEyeL, KuroHeartEyeL, KuroSparkleL, KuroHappyEyeR, KuroSleepEyeR, KuroHeartEyeR, KuroSparkleR, KuroOhMouth, KuroGrinMouth, KuroTongue, Cube.002_part0, Cube.002_part1, RageEyeLeft, RageEyeRight, RageFingerLeft0_part0, RageFingerLeft0_part1, RageFingerLeft1_part0, RageFingerLeft1_part1, RageFingerLeft2_part0, RageFingerLeft2_part1, RageFingerRight0_part0, RageFingerRight0_part1, RageFingerRight1_part0, RageFingerRight1_part1, RageFingerRight2_part0, RageFingerRight2_part1, Cube.001_part0, Cube.001_part1, RageHoodWisp_part0, RageHoodWisp_part1, RageJawRim, RageLowerFang0_part0, RageLowerFang0_part1, RageLowerFang1_part0, RageLowerFang1_part1, RageLowerFang2_part0, RageLowerFang2_part1, Cube.003, RageLowerSpirit_part0, RageLowerSpirit_part1, RageMawCavity, Cube.006_part0, Cube.006_part1, Cube.007_part0, Cube.007_part1, Cube.004_part0, Cube.004_part1, Cube.005_part0, Cube.005_part1, RageUpperFang0_part0, RageUpperFang0_part1, RageUpperFang1_part0, RageUpperFang1_part1, RageWristWispLeft_part0, RageWristWispLeft_part1, RageWristWispRight_part0, RageWristWispRight_part1, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, default, default, default, default, default, default, tsinelas_tsinelas, tsinelas_crocs, tsinelas_pantulog, default, tsinelas_spartan, tsinelas_alpombra, tsinelas_pambahay, tsinelas_heels, tsinelas_sandals, tsinelas_loafers
+  Expected: <empty>
+  But was:  < "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "ghost-body-core", "ghost-body-top-rim", "ghost-body-bot-bevel", "ghost-eye-l", "ghost-eye-glint-l", "ghost-eye-pupil-l", "ghost-eye-r", "ghost-eye-glint-r", "ghost-eye-pupil-r", "ghost-mouth-dot", "ghost-blush-l", "ghost-blush-r", "ghost-tail-tier1", "ghost-tail-tier2", "ghost-tail-tier3", "ghost-tail-tip-wisp", "ghost-tail-tip-glint", "KuroCatMouth", "KuroCrossLeft", "KuroCrossRight", "KuroGoofyMouth", "KuroPoutMouth", "KuroShyEye", "KuroHappyEyeL", "KuroSleepEyeL", "KuroHeartEyeL", "KuroSparkleL", "KuroHappyEyeR", "KuroSleepEyeR", "KuroHeartEyeR", "KuroSparkleR", "KuroOhMouth", "KuroGrinMouth", "KuroTongue", "Cube.002_part0", "Cube.002_part1", "RageEyeLeft", "RageEyeRight", "RageFingerLeft0_part0", "RageFingerLeft0_part1", "RageFingerLeft1_part0", "RageFingerLeft1_part1", "RageFingerLeft2_part0", "RageFingerLeft2_part1", "RageFingerRight0_part0", "RageFingerRight0_part1", "RageFingerRight1_part0", "RageFingerRight1_part1", "RageFingerRight2_part0", "RageFingerRight2_part1", "Cube.001_part0", "Cube.001_part1", "RageHoodWisp_part0", "RageHoodWisp_part1", "RageJawRim", "RageLowerFang0_part0", "RageLowerFang0_part1", "RageLowerFang1_part0", "RageLowerFang1_part1", "RageLowerFang2_part0", "RageLowerFang2_part1", "Cube.003", "RageLowerSpirit_part0", "RageLowerSpirit_part1", "RageMawCavity", "Cube.006_part0", "Cube.006_part1", "Cube.007_part0", "Cube.007_part1", "Cube.004_part0", "Cube.004_part1", "Cube.005_part0", "Cube.005_part1", "RageUpperFang0_part0", "RageUpperFang0_part1", "RageUpperFang1_part0", "RageUpperFang1_part1", "RageWristWispLeft_part0", "RageWristWispLeft_part1", "RageWristWispRight_part0", "RageWristWispRight_part1", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "body-mesh", "head-mesh", "default", "default", "default", "default", "default", "default", "tsinelas_tsinelas", "tsinelas_crocs", "tsinelas_pantulog", "default", "tsinelas_spartan", "tsinelas_alpombra", "tsinelas_pambahay", "tsinelas_heels", "tsinelas_sandals", "tsinelas_loafers" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HomeRosterPreparationTests+<ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors>d__2.MoveNext () [0x003e7] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\HomeRosterPreparationTests.cs:49
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

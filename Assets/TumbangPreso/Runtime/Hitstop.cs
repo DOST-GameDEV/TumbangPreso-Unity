@@ -63,6 +63,7 @@ namespace TumbangPreso
         }
 
         public static bool Active => _active;
+        public static float RequestedScale => _active ? _restoreScale : Time.timeScale;
 
         /// <summary>Freeze. Re-entrant calls during a freeze are ignored rather than
         /// extending it — three attackers landing hits together must not stack into a stall.</summary>
@@ -73,7 +74,8 @@ namespace TumbangPreso
         /// presentation can never become a gameplay-length freeze.</summary>
         public static void Trigger(float duration, float timeScale)
         {
-            if (_active) return;
+            if (_active || PresentationClock.Held || PresentationClock.RequestedScale <= 0 ||
+                Settings.SettingsStore.Current.ReducedEffects) return;
 
             _active = true;
             _restoreScale = Time.timeScale;
@@ -94,6 +96,8 @@ namespace TumbangPreso
             // in the past.
             Advance();
 
+            if (_active && Settings.SettingsStore.Current.ReducedEffects) { End(); return; }
+
             if (!_active || _clock < _until) return;
 
             End();
@@ -106,7 +110,7 @@ namespace TumbangPreso
             if (!_active) return;
 
             _active = false;
-            Time.timeScale = _restoreScale <= 0.0f ? 1.0f : _restoreScale;
+            PresentationClock.RequestScale(_restoreScale);
         }
 
         /// <summary>

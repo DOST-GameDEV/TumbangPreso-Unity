@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.3172611">
+  <test-suite type="TestSuite" id="2157" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.317261" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2151" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.304787" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27624" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2152" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.302173" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2153" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.299788" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1097" name="BotSlipperQueryTests" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.271306" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1101" name="DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" methodname="DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1051171300" result="Passed" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.082623" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1100" name="DisabledComponentsRemainVisibleButInactiveObjectsDoNot" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.DisabledComponentsRemainVisibleButInactiveObjectsDoNot" methodname="DisabledComponentsRemainVisibleButInactiveObjectsDoNot" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="308808667" result="Passed" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.035562" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1102" name="OrdinaryQueriesReadLiveFlightAndOwnershipFromTheRetainedObjects" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.OrdinaryQueriesReadLiveFlightAndOwnershipFromTheRetainedObjects" methodname="OrdinaryQueriesReadLiveFlightAndOwnershipFromTheRetainedObjects" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="728957353" result="Failed" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.050286" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Changing ownership must immediately update the rivalry query.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotSlipperQueryTests.OrdinaryQueriesReadLiveFlightAndOwnershipFromTheRetainedObjects () [0x0017c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotSlipperQueryTests.cs:107
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1099" name="SeveralOwnersAndDuplicatesRetainTheCurrentNativeSelection" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.SeveralOwnersAndDuplicatesRetainTheCurrentNativeSelection" methodname="SeveralOwnersAndDuplicatesRetainTheCurrentNativeSelection" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1362205402" result="Passed" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.038232" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1098" name="WarmOwnedLookupDoesNotAllocateSceneResultArrays" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.WarmOwnedLookupDoesNotAllocateSceneResultArrays" methodname="WarmOwnedLookupDoesNotAllocateSceneResultArrays" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1824331081" result="Passed" start-time="2026-09-30 15:08:39Z" end-time="2026-09-30 15:08:39Z" duration="0.047344" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,8 @@
+{
+  "hide": ["east_bldg_119", "east_bldg_119_kit", "east_mirasol_building", "east_bldg_44"],
+  "sites": [
+    {"name": "land_condo", "x": 31.2, "y": 65.3, "replaces": "east_bldg_119", "what": "condo tower under construction with a tower crane"},
+    {"name": "land_deco", "x": 19.1, "y": -142.9, "replaces": "east_mirasol_building", "what": "art deco corner block with a rounded corner and a name fin"},
+    {"name": "land_sixties", "x": 23.25, "y": -114.4, "replaces": "east_bldg_44", "what": "1960s office block with a brise-soleil grid"}
+  ]
+}

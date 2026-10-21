@@ -19,12 +19,29 @@ namespace TumbangPreso
         private void OnEnable()=>Instance=this;
         private void OnDisable(){if(Instance==this)Instance=null;}
         public static bool Contains(Vector3 p)=>p.x>MinX&&p.x<MaxX&&p.z>MinZ&&p.z<MaxZ;
+        /// <summary>
+        /// A MAP'S OWN WATER (2026-10-10, Paete's run: three pools at three heights). The two maps with water each
+        /// have ONE sheet at a height written in code (this roof pool, the Lagoon's sea), so a new map could not have
+        /// any. A map that sets this answers, for a point: is it over one of my swim volumes (at or above its floor),
+        /// and what are that volume's surface and floor. Everything that asks about water goes through the three
+        /// functions below, so a body swims, floats and is slowed in it exactly as in the other two.
+        /// ⚠️ NULL ON EVERY OTHER MAP, where the three functions are what they were. The map that sets it clears it
+        /// when it unloads (`Run.RunMode`).
+        /// </summary>
+        public delegate bool WaterRule(Vector3 p,out float surface,out float floor);
+        public static WaterRule MapWater;
         public static bool TrySurface(Vector3 p,out float y)
         {
+            if(MapWater!=null&&MapWater(p,out y,out _))return true;
+            if(LagoonWater.TrySurface(p,out y))return true;
             y=SurfaceY;
             return Instance!=null&&Instance.Active&&Contains(p);
         }
-        public static bool Swimming(Vector3 p)=>TrySurface(p,out var surface)&&p.y<surface-.72f&&p.y>FloorY-.25f;
+        public static bool Swimming(Vector3 p)
+        {
+            if(MapWater!=null&&MapWater(p,out var mapSurface,out var mapFloor))return p.y<mapSurface-.72f&&p.y>mapFloor-.25f;
+            return TrySurface(p,out var surface)&&p.y<surface-.72f&&p.y>(LagoonWater.Instance!=null&&LagoonWater.Instance.Active?LagoonWater.FloorY:FloorY)-.25f;
+        }
         public static float MovementScale(Vector3 p)
             =>TrySurface(p,out var surface)&&p.y<surface-.18f?.58f:1;
 

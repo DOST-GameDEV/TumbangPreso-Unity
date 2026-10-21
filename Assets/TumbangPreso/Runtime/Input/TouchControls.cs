@@ -204,6 +204,7 @@ namespace TumbangPreso.InputLayer
 
         public bool IsHeld { get; private set; }
 
+        private readonly System.Collections.Generic.HashSet<(int Id, PointerEventData.InputButton Button)> _pointerOwners = new();
         private CanvasGroup _group;
         private WoodCraft.Surface _surface;
         private TumpSurface _nativeSurface;
@@ -371,13 +372,29 @@ namespace TumbangPreso.InputLayer
             _group.alpha = IsHeld ? Mathf.Max(0.45f, _opacity) : _opacity;
         }
 
+        private void SynchronizePointerOwners()
+        {
+            // Global release (including customization) invalidates captured fingers.
+            // Synchronize lifts too, so an old lift cannot restore another old hold.
+            if (!Customising && TouchInput.Pressed(Entry.Verb)) return;
+            _pointerOwners.Clear();
+            if (IsHeld) SetHeld(false);
+        }
+
         public void OnPointerDown(PointerEventData eventData)
         {
+            SynchronizePointerOwners();
             if (Customising) return;
+            _pointerOwners.Add((eventData.pointerId, eventData.button));
             SetHeld(true);
         }
 
-        public void OnPointerUp(PointerEventData eventData) => SetHeld(false);
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            SynchronizePointerOwners();
+            if (_pointerOwners.Count > 0 && !_pointerOwners.Remove((eventData.pointerId, eventData.button))) return;
+            SetHeld(_pointerOwners.Count > 0);
+        }
 
         /// <summary>
         /// Moves this control and records where the player put it.
@@ -474,6 +491,7 @@ namespace TumbangPreso.InputLayer
         /// <summary>Presses this control exactly as a finger does. The probe's only entry point.</summary>
         public void SetHeld(bool held)
         {
+            if (!held) _pointerOwners.Clear();
             IsHeld = held;
             TouchInput.Set(Entry.Verb, held);
             Repaint();
@@ -500,6 +518,7 @@ namespace TumbangPreso.InputLayer
         private RectTransform _knob;
         private float _radius;
         private CanvasGroup _group;
+        private (int Id, PointerEventData.InputButton Button)? _pointerOwner;
 
         public Vector2 Value { get; private set; }
 
@@ -512,16 +531,32 @@ namespace TumbangPreso.InputLayer
             _group = group;
         }
 
-        public void OnPointerDown(PointerEventData eventData) => Move(eventData);
+        private bool OwnsPointer(PointerEventData eventData)
+            => _pointerOwner.HasValue && _pointerOwner.Value.Id == eventData.pointerId
+               && _pointerOwner.Value.Button == eventData.button;
 
-        public void OnDrag(PointerEventData eventData) => Move(eventData);
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (_pointerOwner.HasValue && !OwnsPointer(eventData)) return;
+            _pointerOwner = (eventData.pointerId, eventData.button);
+            Move(eventData);
+        }
 
-        public void OnPointerUp(PointerEventData eventData) => Release();
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (OwnsPointer(eventData)) Move(eventData);
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            if (OwnsPointer(eventData)) Release();
+        }
 
         private void OnDisable() => Release();
 
         private void Release()
         {
+            _pointerOwner = null;
             Value = Vector2.zero;
             TouchInput.Move = Vector2.zero;
             if (_knob != null) _knob.anchoredPosition = Vector2.zero;
@@ -575,6 +610,7 @@ namespace TumbangPreso.InputLayer
         /// <summary>Pushes the stick as a thumb does, in -1..1. The probe's only entry point.</summary>
         public void SetValue(Vector2 value)
         {
+            if (value.x == 0.0f && value.y == 0.0f) _pointerOwner = null;
             Value = Vector2.ClampMagnitude(value, 1.0f);
             TouchInput.Move = Value;
 

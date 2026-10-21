@@ -1,0 +1,112 @@
+[
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/Net/CareerStore.cs",
+    "sha256": "26421FAC6315853827D55805AA618BAF7E5ACCE63660D92B9D59C763E665FBE7"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/Net/SocialStore.cs",
+    "sha256": "43E1746E410FD8BAEB1B42A24F1A97125367BFD89D2C49AF37F6E69828F258B7"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/UI/MatchResult.OwnerPainted.cs",
+    "sha256": "B749C40CE0A4D78563AD016CACFBC2AFE94BB4FFF4F342395861E541C3A77C1D"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/RecentPlayerActionTests.cs",
+    "sha256": "55EF007A1ADE09D3B9023C092420B26E6A07CD4946C004B2B150535DE5C97E12"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/RecentPlayerActionTests.cs.meta",
+    "sha256": "7335B21D26FFD74F789003985D8540189D6D9708805476780810BA82EEDD0D43"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/CareerReportAcknowledgementTests.cs",
+    "sha256": "AB174D1014477EE90B80931F0A89E9ECAE2AD689DE0EEE89F600EA6323C687FA"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/CareerReportAcknowledgementTests.cs.meta",
+    "sha256": "60D8B284BA12175663D5A6418B2642CC5953AF76EBAA251ACBBA04EE242AECD0"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs",
+    "sha256": "D2B280A08DDDF1F8D1BEB9D479F179B781A633FBBAF4B48B2E0CE292B8C2C614"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs.meta",
+    "sha256": "DFD8763F4FDD6FC530167D4A588BA31DF9DFC96B0449DBDA567F3ECF794F42D4"
+  },
+  {
+    "variant": "baseline",
+    "path": "tools/run_unity_guarded.py",
+    "sha256": "E40742EB3BF98C6EE9CA0DE4C2A448080A95CD2F5AA437815CCC8AD5CE3DB9F1"
+  },
+  {
+    "variant": "baseline",
+    "path": "tools/playerprefs_guard.py",
+    "sha256": "431CE58BDDC0787EC9E20B39CF9FC49C1EDA5D81DC67A641F9BC37B92BD0A362"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/Net/CareerStore.cs",
+    "sha256": "26421FAC6315853827D55805AA618BAF7E5ACCE63660D92B9D59C763E665FBE7"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/Net/SocialStore.cs",
+    "sha256": "43E1746E410FD8BAEB1B42A24F1A97125367BFD89D2C49AF37F6E69828F258B7"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/UI/MatchResult.OwnerPainted.cs",
+    "sha256": "3B80AC69C352F3EB6372723377B76AFD3BD0EA56F16102879252DC13F3641986"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/RecentPlayerActionTests.cs",
+    "sha256": "55EF007A1ADE09D3B9023C092420B26E6A07CD4946C004B2B150535DE5C97E12"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/RecentPlayerActionTests.cs.meta",
+    "sha256": "7335B21D26FFD74F789003985D8540189D6D9708805476780810BA82EEDD0D43"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/CareerReportAcknowledgementTests.cs",
+    "sha256": "AB174D1014477EE90B80931F0A89E9ECAE2AD689DE0EEE89F600EA6323C687FA"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/CareerReportAcknowledgementTests.cs.meta",
+    "sha256": "60D8B284BA12175663D5A6418B2642CC5953AF76EBAA251ACBBA04EE242AECD0"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs",
+    "sha256": "D2B280A08DDDF1F8D1BEB9D479F179B781A633FBBAF4B48B2E0CE292B8C2C614"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs.meta",
+    "sha256": "DFD8763F4FDD6FC530167D4A588BA31DF9DFC96B0449DBDA567F3ECF794F42D4"
+  },
+  {
+    "variant": "final",
+    "path": "tools/run_unity_guarded.py",
+    "sha256": "E40742EB3BF98C6EE9CA0DE4C2A448080A95CD2F5AA437815CCC8AD5CE3DB9F1"
+  },
+  {
+    "variant": "final",
+    "path": "tools/playerprefs_guard.py",
+    "sha256": "431CE58BDDC0787EC9E20B39CF9FC49C1EDA5D81DC67A641F9BC37B92BD0A362"
+  }
+]

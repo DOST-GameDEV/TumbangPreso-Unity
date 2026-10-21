@@ -48,9 +48,24 @@ namespace TumbangPreso.UI
 
         /// <summary>The playable arenas, by the names the Godot builders gave them.</summary>
         public const string Eskinita = "Eskinita";
+        // Vaulted from selection and builds October18; keep IDs/assets for rework.
         public const string BayanPlaza = "BayanPlaza";
         public const string IlalimNgTulay = "IlalimNgTulay";
         public const string SaBubong = "SaBubong";
+        /// <summary>⚠️ VAULTED 2026-09-27 (owner: "vault the old lagoon"). The first Lagoon Court,
+        /// replaced in the map list by <see cref="LagoonCove"/>. Its scene now lives at
+        /// Scenes/Vault/Lagoon.unity, out of the registry and the build; the name stays because its
+        /// own builders, water and deck code still key on it.</summary>
+        public const string Lagoon = "Lagoon";
+        /// <summary>The reworked Lagoon Court, built in Blender (docs/LAGOON_REWORK_GUIDE.md).</summary>
+        public const string LagoonCove = "LagoonCove";
+        /// <summary>The city park block, built in Blender (docs/KANTO_DESIGN_GUIDE.md).</summary>
+        public const string Kanto = "Kanto";
+        /// <summary>The game-show arena whose stage rearranges between rounds (docs/ARENA_MAP_BRIEF.md).
+        /// A grey-box until its art exists.</summary>
+        public const string Arena = "Arena";
+        // The Ifugao rice-terrace temple, joined to the pool last (owner, 2026-10-19: "put payo in the map roster"; protocol 173).
+        public const string Payo = "Payo";
 
         /// <summary>
         /// One map's registry row, from `game_launch.gd`'s `MAPS`.
@@ -136,19 +151,34 @@ namespace TumbangPreso.UI
         /// </summary>
         public static readonly MapEntry[] MapRegistry =
         {
-            new MapEntry(Eskinita, "ESKINITA",
+            new MapEntry(Eskinita, "TONDO",
                          "Urban side street. Sari-sari, sampay, kanal.", 0.0f, 22.0f, 16.0f),
 
-            new MapEntry(BayanPlaza, "BAYAN PLAZA",
-                         "Barangay plaza. Church, basketball ring, acacia.", 0.0f, 22.0f, 16.0f),
-
-            new MapEntry(IlalimNgTulay, "ILALIM NG TULAY",
-                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 35.0f, 22.0f, 13.5f),
-            new MapEntry(SaBubong,"SA BUBONG",
-                         "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
+            // The rebuilt court is below an 8 m soffit. Look down the street under it,
+            // rather than through the viaduct deck and the adjacent shop roofs.
+            new MapEntry(IlalimNgTulay, "ERMITA",
+                         "Manila street court. Viaduct pillars and neighbourhood shops.", 0.0f, 22.0f, 5.5f),
+            // ⚠️ THE LAGOON COURT IS THE REWORKED COVE NOW, and Kanto joins the list (owner,
+            // 2026-09-27: "put kanto and lagoon into the selectable map list. vault the old
+            // lagoon"). The owner renamed the cove SITANGKAI October18; the old scene is vaulted (see Lagoon).
+            // Preview shots: the cove from the sea side over the court (its review "court_high"
+            // angle), Kanto from over the park's corner so the facades and streets frame the court.
+            new MapEntry(LagoonCove,"SITANGKAI",
+                         "A cove court in the rocks. Stilt village, reefs and a sunset sea.",0,40,24),
+            new MapEntry(Kanto,"BGC",
+                         "Taguig city park. Jeepney stop, traffic lights, busy streets.",45,24,16),
+            // Maps travel as an index. Removing Bayan Plaza and Sa Bubong requires protocol172.
+            // Preview: high over a corner, so the whole stage and its shaft are in frame. The
+            // stage is 43 m across (walking radius 21.5), not the 28 m the first shot was framed
+            // for: from 34 m back and 24 m up the near edge of the ring was under the frame
+            // (RemadeMapPreviewTests' Arena.png, 2026-10-05). The arrival's wide shot reads these too.
+            new MapEntry(Arena,"THE PHILIPPINE ARENA",
+                         "Game-show stage. It rebuilds each round; mind the edges.",35,40,27),
+            new MapEntry(Payo,"PAYO",
+                         "Ifugao rice-terrace temple. Stones shift each round; night falls at halftime.",35,40,27),
         };
 
-        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong };
+        public static readonly string[] Maps = { Eskinita, IlalimNgTulay, LagoonCove, Kanto, Arena, Payo };
 
         /// <summary>
         /// True while an ARENA is the active scene rather than a menu.
@@ -527,7 +557,7 @@ namespace TumbangPreso.UI
             // both write `Time.timeScale`, and a scene change that happens while either is live
             // carries the frozen scale into the next screen, where nothing ever restores it.
             // The symptom is a menu that responds at one twentieth speed and reads as a hang.
-            Time.timeScale = 1.0f;
+            PresentationClock.RequestScale(1.0f);
 
             // ⚠️⚠️ ONE LOAD PER REQUEST, HOWEVER MANY CALLERS ASK. `SceneManager.LoadScene` is
             // deferred to the end of the frame, so a second call before that point QUEUES A
@@ -547,7 +577,29 @@ namespace TumbangPreso.UI
             _pendingScene = scene;
             _pendingFrame = Time.frameCount;
 
+            if(MapPreviewSurface.DeferTransition(scene))return;
+
+            // Every peer owns its asynchronous arena load; NGO scene management is
+            // disabled. The curtain also owns destination setup and first-draw work.
+            // ⚠️ MENU SCENES HAVE NO CURTAIN, ON PURPOSE. `HubLoading.BeginMenu` put a second
+            // "GETTING READY" screen in front of every menu hop and the hub; request,
+            // 2026-09-30: it was redundant, and all asset and shader loading belongs to the boot
+            // splash, which now retains every arena's assets and the menu art before the title
+            // opens, so a menu hop is a plain scene change again.
+            if (Hub.HubLoading.Begin(scene)) return;
             SceneManager.LoadScene(scene);
+        }
+
+        /// <summary>
+        /// HOME: the hub, the view of the `MatchSetup` scene (`docs/TODO.md` UX-1.1). Offline, with
+        /// no pending lobby route, so it opens on HOME rather than on a room.
+        /// </summary>
+        public static void GoHome()
+        {
+            Networked = false;
+            PlaySelectionScreen.RequestedLobbyMode = null;
+            Hub.TumpHub.PendingEntry = Hub.HubEntry.Home;
+            Go(MatchSetup);
         }
 
         private static string _pendingScene;
@@ -658,11 +710,12 @@ namespace TumbangPreso.UI
                 SelectedMode.ToString(),
                 match != null && match.MatchInProgress ? match.RoundNumber : 0);
 
-            Time.timeScale = 1.0f;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            PresentationClock.RequestScale(1.0f);
+            CursorMode.Release();
 
             Net.NetSession.Instance?.Stop();
+
+            RetireMatchSimulation();
 
             // ⚠️⚠️ THE LAUNCH BLOCK IS CLEARED HERE BECAUSE THIS IS THE SINGLE EXIT, AND IT WAS
             // NOT. `docs/TODO.md` § 149.8: the remaining lifecycle risk is not the first launch,
@@ -687,8 +740,19 @@ namespace TumbangPreso.UI
             // is the one place it must not be set.
             GameLaunch.Reset();
 
-            Networked = false;
-            Go(MainMenu);
+            // ⚠️ UX-1: A MATCH EXITS TO HOME, NOT TO THE TITLE. The title is the boot screen now
+            // (TAP TO START and nothing else), so landing there after a match cost a press that
+            // led straight back to HOME. The session is stopped above either way.
+            GoHome();
+        }
+
+        internal static void RetireMatchSimulation()
+        {
+            // Also used on unexpected host loss before the empty lobby restores
+            // offline authority. No completed result is manufactured by retirement.
+            HalftimePresentation.Instance?.End(false);
+            GameServices.Round?.ResetForNewMatch();
+            GameServices.Match?.ResetForNewMatch();
         }
 
         public static void Quit()

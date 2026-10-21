@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 13:16:03Z" end-time="2026-09-30 13:16:03Z" duration="0.2244262">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 13:16:03Z" end-time="2026-09-30 13:16:03Z" duration="0.224426" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1807" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 13:16:03Z" end-time="2026-09-30 13:16:03Z" duration="0.212886" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12856" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1808" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 13:16:03Z" end-time="2026-09-30 13:16:03Z" duration="0.210271" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1809" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 13:16:03Z" end-time="2026-09-30 13:16:03Z" duration="0.208612" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1082" name="ChatAndLobbyChromeTests" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-30 13:16:03Z" end-time="2026-09-30 13:16:03Z" duration="0.190795" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1083" name="ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello" methodname="ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="204835541" result="Passed" start-time="2026-09-30 13:16:03Z" end-time="2026-09-30 13:16:03Z" duration="0.173590" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=42 approved=False reason=Game version mismatch (network protocol 98)
+[NetApproval] peer=42 approved=False reason=Skill rules differ from the host. Use matching game builds.
+[NetApproval] peer=42 approved=True reason=
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,18 @@
+{
+  "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": "ebbf5726bc471706f3f31c2a48928852f435df62ff65a6cb5097e704a9a4c9d0",
+  "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs": "ac80ca2f86870a945b6eacbb32df3dc2d6b1242212c8410fa0068ae5c3614315",
+  "Assets/TumbangPreso/Runtime/Net/SocialStore.cs": "de6c028b2b552afc0d2c7c08b1a9556f250f8554cd7839527e005535e8eab1e8",
+  "Assets/TumbangPreso/Runtime/Net/WalletStore.cs": "55c0b2ea387df860a86aed6d037d62845f4ea5cf822b3b8bfae5e2c03cbd092d",
+  "Assets/TumbangPreso/Runtime/UI/OwnerPasswordView.cs": "51cb6dfbf078bd3c662dadaf3505b38c0c34e43690b1449ac78d6e804d55051a",
+  "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerPainted.cs": "a1b1c8beeb6636e87ad8146619e03d0377ffea15b5baf66e287625595d718292",
+  "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs": "242d13f56e5ac797a862b1897bebdbbeac484e3e42633f2bd20853b61619be8b",
+  "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs": "8f76c08ac48339c051e840ab4dbb6fd90d47d1dfbe06397d513d894efb72d4a2",
+  "Assets/TumbangPreso/Tests/AccountProofOwnershipTests.cs": "6d956934f13ad47310b1ac3615f6a3d899b1d41efdd2b92d286f3aca4519d252",
+  "Assets/TumbangPreso/Tests/AccountRenameOwnershipTests.cs": "15af1706e2769b436565f6381b032eef9127b2622e664c798859b8d30cdb7279",
+  "Assets/TumbangPreso/Tests/CareerGuestIsolationTests.cs": "c8028fe638c2e2e748c64a493488d21481db1c96d47b77ca7f5ca4ee99e218a3",
+  "Assets/TumbangPreso/Tests/PlayMode/OwnerPasswordLifetimeTests.cs": "6114e13afc6b98b70d0a106d0fce9e8f640a9c2439c2575a834b9cc9969d9e64",
+  "Assets/TumbangPreso/Tests/PlayMode/PlayerHubProfileSaveLifetimeTests.cs": "2b300598cdfdff2249c5cf1804f683b2265469b88ffbc03b531d8eb383561269",
+  "Assets/TumbangPreso/Tests/PlayMode/SignInViewLifetimeTests.cs": "211aaf0f14074d684d5b92347bc8ed96fbd063e1e39f3000823df96d8c107a02",
+  "Assets/TumbangPreso/Tests/SocialGuestIsolationTests.cs": "5f12a40533252b20c652e775139cbf8a57f29146629bd8f6084c90f628df7c2a",
+  "Assets/TumbangPreso/Tests/WalletGuestIsolationTests.cs": "df1f028825432750f062f483b5679b2dc1d566b26cded49fa4647f5a559f19c4"
+}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.2667034">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.266703" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2172" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.250236" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20076" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2173" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.242949" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2174" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.235855" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1493" name="LanRecordIdentityTests" fullname="TumbangPreso.Tests.LanRecordIdentityTests" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.213283" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1494" name="LanHelloCarriesTheCachedLocalProfileWithoutSigningIn" fullname="TumbangPreso.Tests.LanRecordIdentityTests.LanHelloCarriesTheCachedLocalProfileWithoutSigningIn" methodname="LanHelloCarriesTheCachedLocalProfileWithoutSigningIn" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="974486507" result="Failed" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.186807" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 17 but was 0. Strings differ at index 0.
+  Expected: "cached-profile-id"
+  But was:  <string.Empty>
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LanRecordIdentityTests.LanHelloCarriesTheCachedLocalProfileWithoutSigningIn () [0x00009] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LanRecordIdentityTests.cs:56
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1497" name="RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust" fullname="TumbangPreso.Tests.LanRecordIdentityTests.RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust" methodname="RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="1836520134" result="Failed" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.004810" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 16 but was 0. Strings differ at index 0.
+  Expected: "local-profile-id"
+  But was:  <string.Empty>
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LanRecordIdentityTests.RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust () [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LanRecordIdentityTests.cs:73
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1496" name="SignedRelayKeepsItsAccountIdentity" fullname="TumbangPreso.Tests.LanRecordIdentityTests.SignedRelayKeepsItsAccountIdentity" methodname="SignedRelayKeepsItsAccountIdentity" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="1768318013" result="Passed" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.003540" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1495" name="UnsignedRelayDoesNotClaimACachedAccount" fullname="TumbangPreso.Tests.LanRecordIdentityTests.UnsignedRelayDoesNotClaimACachedAccount" methodname="UnsignedRelayDoesNotClaimACachedAccount" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="1510525809" result="Passed" start-time="2026-10-02 17:12:06Z" end-time="2026-10-02 17:12:06Z" duration="0.000838" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

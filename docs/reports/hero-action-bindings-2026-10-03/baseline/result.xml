@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.1086203">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1113" result="Failed" site="Child" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.108620" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2358" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1113" result="Failed" site="Child" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.098187" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="99301" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2359" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1113" result="Failed" site="Child" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.094377" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2360" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1113" result="Failed" site="Child" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.090789" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1376" name="HeroPresentationTests" fullname="TumbangPreso.Tests.HeroPresentationTests" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" testcasecount="24" result="Failed" site="Child" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.058597" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1400" name="EveryActionChainHasAFallbackBehindTheAspirationalClip" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryActionChainHasAFallbackBehindTheAspirationalClip" methodname="EveryActionChainHasAFallbackBehindTheAspirationalClip" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1838946607" result="Failed" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.015068" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  'hero-zack-circuit' has no fallback, so it animates nothing on a rig without it
+  Expected: greater than or equal to 2
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HeroPresentationTests.EveryActionChainHasAFallbackBehindTheAspirationalClip () [0x00014] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/HeroPresentationTests.cs:944
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1392" name="EveryHeroAbilityHasBespokeCastAndViewModelActions" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="889257771" result="Passed" start-time="2026-10-03 12:42:20Z" end-time="2026-10-03 12:42:20Z" duration="0.027080" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

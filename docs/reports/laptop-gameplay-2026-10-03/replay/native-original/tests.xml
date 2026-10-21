@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:26:49Z" end-time="2026-10-03 03:27:02Z" duration="13.1249904">
+  <test-suite type="TestSuite" id="2671" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:26:49Z" end-time="2026-10-03 03:27:02Z" duration="13.124990" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2665" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:26:49Z" end-time="2026-10-03 03:27:02Z" duration="13.117705" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7464" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2666" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:26:49Z" end-time="2026-10-03 03:27:02Z" duration="13.115268" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2667" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1360" result="Failed" site="Child" start-time="2026-10-03 03:26:49Z" end-time="2026-10-03 03:27:02Z" duration="13.113727" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1154" name="BotProducerLifetimeTests" fullname="TumbangPreso.PlayTests.BotProducerLifetimeTests" classname="TumbangPreso.PlayTests.BotProducerLifetimeTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-03 03:26:49Z" end-time="2026-10-03 03:27:00Z" duration="11.774202" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1155" name="DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput" fullname="TumbangPreso.PlayTests.BotProducerLifetimeTests.DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput" methodname="DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput" classname="TumbangPreso.PlayTests.BotProducerLifetimeTests" runstate="Runnable" seed="331412814" result="Failed" start-time="2026-10-03 03:26:49Z" end-time="2026-10-03 03:27:00Z" duration="11.764753" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Old throw windup survived producer disable.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotProducerLifetimeTests+<DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput>d__3.MoveNext () [0x0016b] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\BotProducerLifetimeTests.cs:35
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2131" name="RecordedWorldOwnerSpaceTests" fullname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests" classname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-03 03:27:00Z" end-time="2026-10-03 03:27:02Z" duration="1.303566" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2132" name="TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses" fullname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests.TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses" methodname="TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses" classname="TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests" runstate="Runnable" seed="823195760" result="Failed" start-time="2026-10-03 03:27:00Z" end-time="2026-10-03 03:27:02Z" duration="1.302480" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Recorded roots require a world-identity stage.
+  Expected: null
+  But was:  < < <empty>, <empty>, <empty>, < < < <empty>, <empty>, < <empty>, < <empty> >, <empty> > >, <empty>, <empty> > >, <empty>, < <empty> >, <empty>, <empty>, <empty> > >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests+<TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses>d__2.MoveNext () [0x002c3] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\RecordedWorldOwnerSpaceTests.cs:50
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

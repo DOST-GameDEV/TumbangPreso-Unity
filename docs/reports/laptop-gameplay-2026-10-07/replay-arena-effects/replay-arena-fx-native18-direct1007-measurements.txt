@@ -1,0 +1,3 @@
+[NaturalArenaReplayEffects] frames=13274 totalQuads=2905900 segments=10
+[ShaderClockGPU] cpu=34.63717 level=0 real=85.27697 editor=130.8147575 global=(1.60, 31.95, 63.89, 95.84) gpu=RGBA(0.000, 0.000, 0.000, 0.000)
+[RecordedShaderClock] animation=0.7791036 rewind=0

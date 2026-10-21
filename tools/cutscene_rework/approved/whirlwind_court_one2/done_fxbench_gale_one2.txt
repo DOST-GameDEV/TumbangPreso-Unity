@@ -1,0 +1,11 @@
+map: Assets/TumbangPreso/Scenes/Maps/Eskinita.unity
+road found at y 0.000 on CollisionSolids
+160 frames at 60 a second (2.65 s; the gale's life is 2.50 s), in Logs/paete-ability-film/fxbench_gale_one2_frames
+each frame: rows are third person, caster's eyes, target's eyes; columns are OLD, NEW, NEW with the bench bloom
+the target is 7.5 m down the lane; the band reaches it at 1.13 s
+of the new row, 0.50 is light laid on (the bench's is 0.85)
+a character stands 1.70 m; the row's drawn pieces reach 6.22 m (motes rise above the horn)
+after destroying the new row: 0 meshes and 130 materials more than before it was built
+at 1.2 s   OLD: 22 draw calls, 864 triangles, 22 see-through layers
+           NEW: 16 draw calls, 22240 triangles, 16 see-through layers
+lit by the map's own lighting settings

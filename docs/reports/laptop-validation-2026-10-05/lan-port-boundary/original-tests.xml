@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Failed(Child)" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.1712065">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1384" result="Failed" site="Child" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.171207" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2707" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1384" result="Failed" site="Child" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.157244" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2708" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1384" result="Failed" site="Child" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.146787" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2709" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1384" result="Failed" site="Child" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.134502" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1721" name="LobbyAndSettingsTests" fullname="TumbangPreso.Tests.LobbyAndSettingsTests" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" testcasecount="100" result="Failed" site="Child" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.049104" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1766" name="LanBeaconPreservesValidPortBoundariesAndDefaultPort" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.027546" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1760" name="LanBeaconPreservesValidPortBoundariesAndDefaultPort(1,False)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort(1,False)" methodname="LanBeaconPreservesValidPortBoundariesAndDefaultPort" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="2082605616" result="Passed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.014918" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1761" name="LanBeaconPreservesValidPortBoundariesAndDefaultPort(8910,False)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort(8910,False)" methodname="LanBeaconPreservesValidPortBoundariesAndDefaultPort" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="811779322" result="Passed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000158" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1762" name="LanBeaconPreservesValidPortBoundariesAndDefaultPort(65535,False)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort(65535,False)" methodname="LanBeaconPreservesValidPortBoundariesAndDefaultPort" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="1195769185" result="Passed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000079" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1763" name="LanBeaconPreservesValidPortBoundariesAndDefaultPort(1,True)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort(1,True)" methodname="LanBeaconPreservesValidPortBoundariesAndDefaultPort" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="1883329468" result="Passed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000518" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1764" name="LanBeaconPreservesValidPortBoundariesAndDefaultPort(8910,True)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort(8910,True)" methodname="LanBeaconPreservesValidPortBoundariesAndDefaultPort" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="562611026" result="Passed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000163" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1765" name="LanBeaconPreservesValidPortBoundariesAndDefaultPort(65535,True)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort(65535,True)" methodname="LanBeaconPreservesValidPortBoundariesAndDefaultPort" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="28721157" result="Passed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000105" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1759" name="LanBeaconRejectsPortsThatWouldWrapInTheTransport" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.007613" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1753" name="LanBeaconRejectsPortsThatWouldWrapInTheTransport(65536,False)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport(65536,False)" methodname="LanBeaconRejectsPortsThatWouldWrapInTheTransport" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="1942067866" result="Failed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.005061" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An advertised endpoint must fit the transport's UDP port without truncation.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport (System.Int32 port, System.Boolean currentVersion) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\LobbyAndSettingsTests.cs:719
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1754" name="LanBeaconRejectsPortsThatWouldWrapInTheTransport(65537,False)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport(65537,False)" methodname="LanBeaconRejectsPortsThatWouldWrapInTheTransport" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="193247865" result="Failed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000315" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An advertised endpoint must fit the transport's UDP port without truncation.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport (System.Int32 port, System.Boolean currentVersion) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\LobbyAndSettingsTests.cs:719
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1755" name="LanBeaconRejectsPortsThatWouldWrapInTheTransport(int.MaxValue,False)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport(int.MaxValue,False)" methodname="LanBeaconRejectsPortsThatWouldWrapInTheTransport" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="786305392" result="Failed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000263" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An advertised endpoint must fit the transport's UDP port without truncation.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport (System.Int32 port, System.Boolean currentVersion) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\LobbyAndSettingsTests.cs:719
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1756" name="LanBeaconRejectsPortsThatWouldWrapInTheTransport(65536,True)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport(65536,True)" methodname="LanBeaconRejectsPortsThatWouldWrapInTheTransport" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="2030819068" result="Failed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000326" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An advertised endpoint must fit the transport's UDP port without truncation.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport (System.Int32 port, System.Boolean currentVersion) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\LobbyAndSettingsTests.cs:719
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1757" name="LanBeaconRejectsPortsThatWouldWrapInTheTransport(65537,True)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport(65537,True)" methodname="LanBeaconRejectsPortsThatWouldWrapInTheTransport" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="912943828" result="Failed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000252" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An advertised endpoint must fit the transport's UDP port without truncation.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport (System.Int32 port, System.Boolean currentVersion) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\LobbyAndSettingsTests.cs:719
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1758" name="LanBeaconRejectsPortsThatWouldWrapInTheTransport(int.MaxValue,True)" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport(int.MaxValue,True)" methodname="LanBeaconRejectsPortsThatWouldWrapInTheTransport" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="2112088654" result="Failed" start-time="2026-10-05 11:31:57Z" end-time="2026-10-05 11:31:57Z" duration="0.000199" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An advertised endpoint must fit the transport's UDP port without truncation.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport (System.Int32 port, System.Boolean currentVersion) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\LobbyAndSettingsTests.cs:719
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

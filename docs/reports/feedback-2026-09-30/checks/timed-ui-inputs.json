@@ -1,0 +1,14 @@
+{
+  "sourceEquivalent": "82731889c plus timed UI",
+  "question": "native deck follows duration clock for basic, reactivation and ultimate; clears expired lifetime",
+  "expectedCases": 1,
+  "retry": 1,
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.OwnerDeck.cs": "b107364d32ce72a32a5fbd14169838583373f74d443bc2455cefb78f7257f7c9",
+    "Assets/TumbangPreso/Tests/PlayMode/TimedPowerUiTests.cs": "1c7d76796a5df45ba1b9d1031d959da6c228cb2d633d720a58438b74da28d94e",
+    "Assets/TumbangPreso/Tests/PlayMode/TimedPowerUiTests.cs.meta": "ecc4f8eb0d0f74af2f8d7b306577230cbf3900d968486b028afd56f24a8bc5b4"
+  },
+  "fixtureRepair": "declared abstract NetworkMode; removed mistaken read-only cost assignment before native run",
+  "finalFixtureSha256": "1e447d43392f8e61cb1f4f976c739c6d4466a336a1490983e4ee070beb7fecef",
+  "runtimeDrift": []
+}

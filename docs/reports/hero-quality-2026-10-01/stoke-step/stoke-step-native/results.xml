@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 15:30:02Z" end-time="2026-10-01 15:30:04Z" duration="1.6327549">
+  <test-suite type="TestSuite" id="2485" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1216" result="Passed" start-time="2026-10-01 15:30:02Z" end-time="2026-10-01 15:30:04Z" duration="1.632755" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2479" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1216" result="Passed" start-time="2026-10-01 15:30:02Z" end-time="2026-10-01 15:30:04Z" duration="1.614383" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="328714" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2480" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1216" result="Passed" start-time="2026-10-01 15:30:02Z" end-time="2026-10-01 15:30:04Z" duration="1.598148" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2481" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1216" result="Passed" start-time="2026-10-01 15:30:02Z" end-time="2026-10-01 15:30:04Z" duration="1.583997" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2132" name="StokeStepChecks" fullname="TumbangPreso.PlayTests.StokeStepChecks" classname="TumbangPreso.PlayTests.StokeStepChecks" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 15:30:02Z" end-time="2026-10-01 15:30:04Z" duration="1.559860" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2134" name="ActualBurstCannotSteerAndRecoversWithoutDamageFields" fullname="TumbangPreso.PlayTests.StokeStepChecks.ActualBurstCannotSteerAndRecoversWithoutDamageFields" methodname="ActualBurstCannotSteerAndRecoversWithoutDamageFields" classname="TumbangPreso.PlayTests.StokeStepChecks" runstate="Runnable" seed="225499092" result="Passed" start-time="2026-10-01 15:30:02Z" end-time="2026-10-01 15:30:04Z" duration="1.406146" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2136" name="AgedRecoveryCannotDuplicateImpulseOrExtendGate" fullname="TumbangPreso.PlayTests.StokeStepChecks.AgedRecoveryCannotDuplicateImpulseOrExtendGate" methodname="AgedRecoveryCannotDuplicateImpulseOrExtendGate" classname="TumbangPreso.PlayTests.StokeStepChecks" runstate="Runnable" seed="892952113" result="Passed" start-time="2026-10-01 15:30:04Z" end-time="2026-10-01 15:30:04Z" duration="0.043317" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2133" name="GroundedRefusalAndAnticipationUseRealAcceptedAim" fullname="TumbangPreso.PlayTests.StokeStepChecks.GroundedRefusalAndAnticipationUseRealAcceptedAim" methodname="GroundedRefusalAndAnticipationUseRealAcceptedAim" classname="TumbangPreso.PlayTests.StokeStepChecks" runstate="Runnable" seed="1070454428" result="Passed" start-time="2026-10-01 15:30:04Z" end-time="2026-10-01 15:30:04Z" duration="0.038410" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2135" name="WallBlocksBurstAndWindupTagCannotRelaunch" fullname="TumbangPreso.PlayTests.StokeStepChecks.WallBlocksBurstAndWindupTagCannotRelaunch" methodname="WallBlocksBurstAndWindupTagCannotRelaunch" classname="TumbangPreso.PlayTests.StokeStepChecks" runstate="Runnable" seed="504265522" result="Passed" start-time="2026-10-01 15:30:04Z" end-time="2026-10-01 15:30:04Z" duration="0.054252" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

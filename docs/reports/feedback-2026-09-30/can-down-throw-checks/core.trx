@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="75f4aec2-5da2-44cd-87cc-39fd741ca6b4" name="@0cb6403a4672 2026-10-01 14:42:11" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-01T14:42:11.6060157+08:00" queuing="2026-10-01T14:42:11.6060158+08:00" start="2026-10-01T14:42:10.8746833+08:00" finish="2026-10-01T14:42:11.6108465+08:00" />
+  <TestSettings name="default" id="06060a0f-ef7e-4108-8c22-18ee8f36b5e8">
+    <Deployment runDeploymentRoot="_0cb6403a4672_2026-10-01_14_42_11" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f0deb7f4-65c2-45bc-b0ba-bfe5df6a82ee" testId="5fc7ce9a-1f96-d10d-7ef4-49fe90aa2efa" testName="TumbangPreso.Core.Tests.BalanceTests.CanThrow_RefusesOnEachConditionIndependently" computerName="0cb6403a4672" duration="00:00:00.0042790" startTime="2026-10-01T14:42:11.4803534+08:00" endTime="2026-10-01T14:42:11.4803914+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f0deb7f4-65c2-45bc-b0ba-bfe5df6a82ee" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.BalanceTests.CanThrow_RefusesOnEachConditionIndependently" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="5fc7ce9a-1f96-d10d-7ef4-49fe90aa2efa">
+      <Execution id="f0deb7f4-65c2-45bc-b0ba-bfe5df6a82ee" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.BalanceTests" name="CanThrow_RefusesOnEachConditionIndependently" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5fc7ce9a-1f96-d10d-7ef4-49fe90aa2efa" executionId="f0deb7f4-65c2-45bc-b0ba-bfe5df6a82ee" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.20)
+[xUnit.net 00:00:00.06]   Discovering: TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.16]   Discovered:  TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.16]   Starting:    TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.22]   Finished:    TumbangPreso.Core.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

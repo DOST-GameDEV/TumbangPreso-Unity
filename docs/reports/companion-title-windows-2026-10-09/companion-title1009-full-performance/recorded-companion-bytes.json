@@ -1,0 +1,35 @@
+{
+  "source": "e1c1fd0fee188e8f41b2b30efe914aac7b29e766",
+  "actualPlayerPid": 69040,
+  "segmentsInspected": 190,
+  "companionSegments": [
+    {
+      "file": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\c304cafcdfa16039f8885d0f1ef13aa9abf9550e0298f7f4358d87c0c479f4ce\\Replays\\TUMP-20261008-212612-56dcf8b9426a4cea84c6d77735105504\\000050.tps",
+      "sha256": "c4c258b4469fd52ebd9749d4f5e28130042829f6f5a4d84ad668acba719ca188",
+      "matchId": 639270915720179813,
+      "clipId": 57,
+      "seat": 5,
+      "objects": 11,
+      "bodyFrames": 48,
+      "shoeTracks": 1,
+      "heldSamples": 48
+    }
+  ],
+  "cleanNaturalRecords": [
+    {
+      "matchId": 639270919615968011,
+      "mode": "Classic",
+      "folder": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\c304cafcdfa16039f8885d0f1ef13aa9abf9550e0298f7f4358d87c0c479f4ce\\Replays\\TUMP-20261008-213241-42b2db29279f480c92bf684c8d562474",
+      "segments": 10,
+      "warning": ""
+    },
+    {
+      "matchId": 639270919991397904,
+      "mode": "HeroStrike",
+      "folder": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\c304cafcdfa16039f8885d0f1ef13aa9abf9550e0298f7f4358d87c0c479f4ce\\Replays\\TUMP-20261008-213319-6efb3bcc7b7b43fd9596e93e979dede4",
+      "segments": 10,
+      "warning": ""
+    }
+  ],
+  "scope": "Read-only inspection of actual Windows format15 body and holder tracks, not full field decoding, natural lifecycle seams, viewer image or peer acceptance."
+}

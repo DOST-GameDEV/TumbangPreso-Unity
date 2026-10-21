@@ -138,6 +138,27 @@ namespace TumbangPreso.InputLayer
         /// records, where nine spectator keys sat outside the input map and
         /// nothing in the project could see them.
         /// </summary>
+        public static bool StudioSkipPressed
+        {
+            get
+            {
+                var keys = Keyboard.current;
+                if (keys != null && keys.anyKey.wasPressedThisFrame) return true;
+                var mouse = Mouse.current;
+                if (mouse != null && (mouse.leftButton.wasPressedThisFrame ||
+                    mouse.rightButton.wasPressedThisFrame || mouse.middleButton.wasPressedThisFrame ||
+                    mouse.forwardButton.wasPressedThisFrame || mouse.backButton.wasPressedThisFrame)) return true;
+                var touch = Touchscreen.current;
+                if (touch != null)
+                    foreach (var finger in touch.touches) if (finger.press.wasPressedThisFrame) return true;
+                var pad = Gamepad.current;
+                if (pad != null)
+                    foreach (var control in pad.allControls)
+                        if (control is UnityEngine.InputSystem.Controls.ButtonControl button && button.wasPressedThisFrame) return true;
+                return false;
+            }
+        }
+
         public static bool PadAnyPressed
         {
             get
@@ -153,6 +174,41 @@ namespace TumbangPreso.InputLayer
                        || pad.selectButton.wasPressedThisFrame
                        || pad.leftShoulder.wasPressedThisFrame
                        || pad.rightShoulder.wasPressedThisFrame;
+            }
+        }
+
+        /// <summary>
+        /// True on the frame a keyboard player pressed any key that is not Escape.
+        ///
+        /// ⚠️ THE KEYBOARD HALF OF <see cref="PadAnyPressed"/>, FOR THE SAME ONE SCREEN. Owner,
+        /// 2026-09-26: the title screen "should also continue when pressing any key". Escape is
+        /// excluded for `PadAnyPressed`'s reason: it leaves the game from the title screen
+        /// (`ConvertedMainMenu.CancelTarget`), and one press must not both start and quit.
+        /// ⚠️ A key held with Alt is excluded too, so the window's Alt+Enter fullscreen chord
+        /// resizes the title screen rather than walking past it.
+        /// </summary>
+        public static bool KeyboardAnyPressed
+        {
+            get
+            {
+                var keys = Keyboard.current;
+                if (keys == null || !keys.anyKey.wasPressedThisFrame) return false;
+                if (keys.escapeKey.isPressed || keys.altKey.isPressed) return false;
+                return true;
+            }
+        }
+
+        /// <summary>The current UI Submit must be released before a title transition.</summary>
+        public static bool SubmitHeld
+        {
+            get
+            {
+                var module = Module();
+                var action = module != null ? module.submit?.action : null;
+                if (action != null && action.enabled) return action.IsPressed();
+                var keys = Keyboard.current;
+                return (keys != null && (keys.enterKey.isPressed || keys.numpadEnterKey.isPressed || keys.spaceKey.isPressed))
+                    || (Gamepad.current != null && Gamepad.current.buttonSouth.isPressed);
             }
         }
 

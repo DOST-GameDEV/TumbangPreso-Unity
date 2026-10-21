@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 23:03:13Z" end-time="2026-10-08 23:05:44Z" duration="151.3636695">
+  <test-suite type="TestSuite" id="3671" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2160" result="Passed" start-time="2026-10-08 23:03:13Z" end-time="2026-10-08 23:05:44Z" duration="151.363670" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3663" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2160" result="Passed" start-time="2026-10-08 23:03:13Z" end-time="2026-10-08 23:05:44Z" duration="151.335221" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="74308" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3664" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2160" result="Passed" start-time="2026-10-08 23:03:13Z" end-time="2026-10-08 23:05:44Z" duration="151.316012" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3667" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2158" result="Passed" start-time="2026-10-08 23:03:13Z" end-time="2026-10-08 23:05:44Z" duration="151.292470" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1199" name="ArenaAiObjectiveApproachTests" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 23:03:13Z" end-time="2026-10-08 23:04:01Z" duration="47.529175" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1200" name="OrdinaryBotRetrievesAcrossEachAuthoredRamp" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests.OrdinaryBotRetrievesAcrossEachAuthoredRamp" methodname="OrdinaryBotRetrievesAcrossEachAuthoredRamp" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" seed="1798072371" result="Passed" start-time="2026-10-08 23:03:13Z" end-time="2026-10-08 23:03:43Z" duration="29.612702" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="1201" name="SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests.SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" methodname="SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" seed="683865386" result="Passed" start-time="2026-10-08 23:03:43Z" end-time="2026-10-08 23:04:01Z" duration="17.898557" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1305" name="BotLandingPredictionTests" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.357248" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1312" name="ALoadedSkimPredictionIncludesItsRealGroundContinuation" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.ALoadedSkimPredictionIncludesItsRealGroundContinuation" methodname="ALoadedSkimPredictionIncludesItsRealGroundContinuation" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1459027559" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.062181" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, 0.60) actual=(0.00, 0.02, 0.60)
+]]></output>
+            </test-case>
+            <test-case id="1313" name="ASkimmingSlipperPredictsOnlyItsRemainingContinuation" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.ASkimmingSlipperPredictsOnlyItsRemainingContinuation" methodname="ASkimmingSlipperPredictsOnlyItsRemainingContinuation" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1860385937" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.042973" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, 0.60) actual=(0.00, 0.02, 0.60)
+]]></output>
+            </test-case>
+            <test-case id="1306" name="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" methodname="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1374338876" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.042104" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Predicted=(0.00, 0.02, 4.58) actual=(0.00, 0.05, 4.58)
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1310" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.123286" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1307" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.0f,False)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.0f,False)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="277506265" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.039977" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1308" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.6f,0.65f,False)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.6f,0.65f,False)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="564405150" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.039067" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1309" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.9f,True)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.9f,True)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1076623615" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.042296" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1311" name="RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" methodname="RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="2034621429" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.043907" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1314" name="SkimPredictionStopsAtTheSameSolidWorldCover" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.SkimPredictionStopsAtTheSameSolidWorldCover" methodname="SkimPredictionStopsAtTheSameSolidWorldCover" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="569364222" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:04:01Z" duration="0.038594" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, -0.20) actual=(0.00, 0.02, -0.20)
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2131" name="LooseSlipperSurfaceTests" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:05:44Z" duration="103.122902" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2133" name="NewMapLooseShoesRestOnActualCollisionSurfaces" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests.NewMapLooseShoesRestOnActualCollisionSurfaces" methodname="NewMapLooseShoesRestOnActualCollisionSurfaces" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" seed="1211368696" result="Passed" start-time="2026-10-08 23:04:01Z" end-time="2026-10-08 23:05:23Z" duration="81.760976" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+]]></output>
+            </test-case>
+            <test-case id="2132" name="RestingSupportIsStableAcrossHeldAndTumblingRootRotations" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests.RestingSupportIsStableAcrossHeldAndTumblingRootRotations" methodname="RestingSupportIsStableAcrossHeldAndTumblingRootRotations" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" seed="874469730" result="Passed" start-time="2026-10-08 23:05:23Z" end-time="2026-10-08 23:05:44Z" duration="21.360181" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

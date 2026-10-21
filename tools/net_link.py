@@ -62,6 +62,7 @@ compared against another one. `--seed` defaults to a fixed value for that reason
 sample a different draw, never to make a run pass.
 """
 
+from pathlib import Path
 import argparse
 import heapq
 import itertools
@@ -268,6 +269,8 @@ class Link:
         try:
             while self.running:
                 time.sleep(0.2)
+                if getattr(a,"stop_file",None) and Path(a.stop_file).exists():
+                    break
                 if a.seconds > 0.0 and (time.monotonic() - self.started) >= a.seconds:
                     break
         except KeyboardInterrupt:
@@ -301,6 +304,7 @@ def main():
                    help="seconds after start at which the link goes down")
     p.add_argument("--outage-for", dest="outage_for", type=float, default=0.0,
                    help="how long the outage lasts; 0 means no outage")
+    p.add_argument("--stop-file", help="Exit cleanly and report packet counts when this task-owned file appears.")
     p.add_argument("--seconds", type=float, default=0.0,
                    help="run for this long then report and exit; 0 runs until killed")
     p.add_argument("--seed", type=int, default=20260904,

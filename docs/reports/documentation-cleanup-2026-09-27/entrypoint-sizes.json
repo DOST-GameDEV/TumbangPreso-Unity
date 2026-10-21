@@ -1,0 +1,51 @@
+[
+  {
+    "path": "AGENTS.md",
+    "beforeLines": 233,
+    "afterLines": 108,
+    "beforeBytes": 17434,
+    "afterBytes": 7017
+  },
+  {
+    "path": "CLAUDE.md",
+    "beforeLines": 581,
+    "afterLines": 49,
+    "beforeBytes": 43963,
+    "afterBytes": 3193
+  },
+  {
+    "path": "docs/README.md",
+    "beforeLines": 149,
+    "afterLines": 59,
+    "beforeBytes": 14810,
+    "afterBytes": 5203
+  },
+  {
+    "path": "docs/ACTIVE_REWORK_LEDGER.md",
+    "beforeLines": 825,
+    "afterLines": 81,
+    "beforeBytes": 58080,
+    "afterBytes": 5338
+  },
+  {
+    "path": "docs/TESTING.md",
+    "beforeLines": 382,
+    "afterLines": 112,
+    "beforeBytes": 21382,
+    "afterBytes": 6765
+  },
+  {
+    "path": "docs/CANONICAL_RENDERING_PIPELINE.md",
+    "beforeLines": 148,
+    "afterLines": 84,
+    "beforeBytes": 10736,
+    "afterBytes": 5019
+  },
+  {
+    "path": "docs/WORKSTATION_SETUP.md",
+    "beforeLines": 276,
+    "afterLines": 66,
+    "beforeBytes": 17887,
+    "afterBytes": 3505
+  }
+]

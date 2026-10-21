@@ -52,7 +52,7 @@ namespace TumbangPreso.UI
             var glyph = new GameObject("AbilityGlyph", typeof(RectTransform), typeof(Image)).GetComponent<Image>();
             glyph.transform.SetParent(root, false);
             glyph.sprite = ability != null ? AbilityIcons.For(ability.Glyph) : null;
-            glyph.color = UiTheme.BrandRed; glyph.preserveAspect = true; glyph.raycastTarget = false;
+            glyph.color = AbilityIcons.Tint(glyph.sprite, UiTheme.BrandRed); glyph.preserveAspect = true; glyph.raycastTarget = false;
             BrandPlace(glyph.rectTransform, 980, 370, 120, 120);
 
             var settings = Settings.SettingsStore.Current;

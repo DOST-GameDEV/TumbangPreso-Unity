@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "role": "host",
+  "sourceCommit": "14dfe9e416f5a98698844d9da34ab3c34b849a17",
+  "protocol": 134,
+  "runtimeSha256": "501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806",
+  "exeSha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "coreSha256": "5daeb0974722a23812db50286438b444a8e7ce710eeec4aeb11a10cfe9cd6bcc",
+  "scope": "Normal LAN lobby, ready, natural Hero1/30 completion and own saved career; no physical-input or current source-fix acceptance.",
+  "admission": {
+    "availableMb": 8204,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-03T06:17:39Z"
+  },
+  "pid": 25048,
+  "exitCode": 0,
+  "saved": {
+    "historyCount": 1,
+    "queueCount": 1,
+    "witnessCount": 1,
+    "matchIdSha256": "3d6b47a6df93c82259fc211d5290c3493cf1ea560ea2f6f8dd2d588f7f3770eb",
+    "scores": [
+      130,
+      0,
+      0,
+      150
+    ],
+    "ownHumanLine": true,
+    "twoHumanOrigins": true,
+    "markerCleared": true
+  },
+  "errors": [],
+  "profileSeedsRestored": true,
+  "inputRestored": true,
+  "runtimeUnchanged": true,
+  "terminal": true,
+  "leaseHeld": false
+}

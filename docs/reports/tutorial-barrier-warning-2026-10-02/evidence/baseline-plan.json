@@ -1,0 +1,9 @@
+{
+  "head": "3236d8b33134ccce6da55a19659c05f38d86eb73",
+  "test_sha256": "c4bb94fd9023401d1bdd6c28fc085a9a0cae042fc6ad4a1dca50ae0404f2df90",
+  "question": "Visible protection warning remains, offline hidden practice can does not show a refusal for allowed input",
+  "expected_cases": 1,
+  "expected_failure": "Empty warning assertion after visible control and real CanThrow true",
+  "retry_count": 0,
+  "quality": "Low and mip2 within fixture, restore in finally"
+}

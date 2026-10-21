@@ -1,0 +1,23 @@
+{
+  "exit": 0,
+  "stopped": null,
+  "seconds": 50.03760862350464,
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "6808538",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "6808538",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "runtime_sha256": "abc995622c1c6d85b33b4e0b573d97240141adb8d2a7022afc23755473a4e58a",
+  "scope": "Two-scene offline diagnostic, not network or full-game build"
+}

@@ -1,0 +1,9 @@
+{
+  "Assets/TumbangPreso/Tests/PlayMode/TimedRecoveryTests.cs": "a6d9d6cbf26e9fd152477eb32c0179c1f65cad0b12723597760bcdf86ed5c829",
+  "Assets/TumbangPreso/Runtime/AIController.cs": "073f402cc7550e57990ad484fde4c0cc951d19d9e8799c912afb27be00ccf15e",
+  "Assets/TumbangPreso/Runtime/CharacterMotor.cs": "0dbcb978c14504c81fcdb4cf052b9e2fa1f98fe2d2f9f26662bbc96a0e75b45f",
+  "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs": "07ab7783f4eda71cb13acacc4cca6267d5125157e8bfcd2ff89fce7281c2e54f",
+  "Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs": "185e48f63538290511c4c3cb752a0c305918c64c4e3d255ad347f88b363ade1b",
+  "Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs": "b4b2a813b6b6a406914ffe24ea75285fe595dcff81f1e34f52f91a828931075a",
+  "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs": "5719848182af8106f1fac6218e79809907399f4a1b452fd2e8ed5aa49c247426"
+}

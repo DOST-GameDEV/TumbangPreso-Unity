@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 23:32:21Z" end-time="2026-10-04 23:33:45Z" duration="84.5454636">
+  <test-suite type="TestSuite" id="3126" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1737" result="Passed" start-time="2026-10-04 23:32:21Z" end-time="2026-10-04 23:33:45Z" duration="84.545464" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3118" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1737" result="Passed" start-time="2026-10-04 23:32:21Z" end-time="2026-10-04 23:33:45Z" duration="84.533789" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="176833" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3119" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1737" result="Passed" start-time="2026-10-04 23:32:21Z" end-time="2026-10-04 23:33:45Z" duration="84.530292" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3122" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1735" result="Passed" start-time="2026-10-04 23:32:21Z" end-time="2026-10-04 23:33:45Z" duration="84.526891" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1235" name="CarryTests" fullname="TumbangPreso.PlayTests.CarryTests" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 23:32:21Z" end-time="2026-10-04 23:33:45Z" duration="84.488166" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1240" name="AHeldSlipperSitsOnTheHandNotFloatingAboveIt" fullname="TumbangPreso.PlayTests.CarryTests.AHeldSlipperSitsOnTheHandNotFloatingAboveIt" methodname="AHeldSlipperSitsOnTheHandNotFloatingAboveIt" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="674512980" result="Passed" start-time="2026-10-04 23:32:21Z" end-time="2026-10-04 23:32:40Z" duration="18.882447" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1237" name="AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" fullname="TumbangPreso.PlayTests.CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" methodname="AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="399520241" result="Passed" start-time="2026-10-04 23:32:40Z" end-time="2026-10-04 23:32:57Z" duration="17.256431" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1239" name="RemoteSmoothingLagsTheMeshAndThenCatchesUp" fullname="TumbangPreso.PlayTests.CarryTests.RemoteSmoothingLagsTheMeshAndThenCatchesUp" methodname="RemoteSmoothingLagsTheMeshAndThenCatchesUp" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1102214427" result="Passed" start-time="2026-10-04 23:32:57Z" end-time="2026-10-04 23:33:11Z" duration="14.207396" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1236" name="TheHandAnchorLandsOnTheHandAndRidesIt" fullname="TumbangPreso.PlayTests.CarryTests.TheHandAnchorLandsOnTheHandAndRidesIt" methodname="TheHandAnchorLandsOnTheHandAndRidesIt" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1712438898" result="Passed" start-time="2026-10-04 23:33:11Z" end-time="2026-10-04 23:33:28Z" duration="17.099450" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1238" name="TheViewmodelCarriesItsOwnSlipperInFirstPerson" fullname="TumbangPreso.PlayTests.CarryTests.TheViewmodelCarriesItsOwnSlipperInFirstPerson" methodname="TheViewmodelCarriesItsOwnSlipperInFirstPerson" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1920523072" result="Passed" start-time="2026-10-04 23:33:28Z" end-time="2026-10-04 23:33:45Z" duration="17.027731" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

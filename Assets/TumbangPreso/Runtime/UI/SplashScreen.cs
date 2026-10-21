@@ -8,34 +8,15 @@ using UnityEngine.Video;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// Illustrated boot loading with an optional reading card, then the title.
-    /// The studio video remains a fallback when the illustration is unavailable.
-    ///
-    /// ⚠️ EVERY TIME IS LITERAL. There is no "seen it already" flag and no skip-on-second-launch.
-    /// The requested random reading window runs on each launch.
-    ///
-    /// ⚠️⚠️ THIS IS ALSO THE BOOT LOADING SCREEN, SO INPUT NEVER SKIPS IT. Earlier builds let a
-    /// buffered click jump straight to the menu while shaders, audio and both rosters were still
-    /// cold. That merely moved the wait to the first PLAY or CHARACTER press, where it looked
-    /// like the UI had frozen. The sting now stays up until both its presentation and the preload
-    /// barrier are complete.
-    ///
-    /// ⚠️⚠️ THE CLIP AND THE STING ARE ASSIGNED BY THE IMPORTER, NOT BY HAND. They are
-    /// serialised fields and for the whole first conversion nothing ever set them: the component
-    /// was attached, the coroutine ran, both references were null, and every launch showed three
-    /// seconds of black. `TscnUiImporter.BindSplash` wires them now, so the failure cannot come
-    /// back through somebody rebuilding the scene.
-    ///
-    /// ⚠️ THE MENU LOADS UNDERNEATH. `LoadSceneAsync` with activation held off runs while the
-    /// animation plays, so the handoff is instant instead of a second black frame at the end of
-    /// a three second clip.
+    /// Skippable studio intro, then work-driven loading and the existing menu barrier.
+    /// Skipping only ends the logo presentation; it never bypasses game readiness.
+    /// The importer preserves the authored clip and sting bindings.
     /// </summary>
     public sealed partial class SplashScreen : MonoBehaviour
     {
         /// <summary>When crossed, log that loading is slow but keep the barrier intact.</summary>
         public const float MaxWait = 6.0f;
         private IllustratedBackdrop _illustration;
-        private float _displaySeconds;
         private GameObject _storyRoot;
         private Text _storyText;
         private Button _artButton;
@@ -45,10 +26,8 @@ namespace TumbangPreso.UI
         [SerializeField] private VideoClip _clip;
         [SerializeField] private AudioClip _sting;
 
-        private VideoPlayer _video;
         private RawImage _surface;
 
-        private RenderTexture _target;
         private Image _fade;
         private Text _loadingLabel;
         private Image _loadingFill;
@@ -101,13 +80,15 @@ namespace TumbangPreso.UI
 
             public static int Count => Assets.Count;
 
+            public static void Retain(Object asset)
+            {
+                if (ShouldRetain(asset) && EntityIds.Add(asset.GetEntityId())) Assets.Add(asset);
+            }
+
             public static void CaptureLoadedAssets()
             {
                 foreach (Object asset in Resources.FindObjectsOfTypeAll<Object>())
-                {
-                    if (!ShouldRetain(asset) || !EntityIds.Add(asset.GetEntityId())) continue;
-                    Assets.Add(asset);
-                }
+                    Retain(asset);
             }
 
             private static bool ShouldRetain(Object asset)
@@ -145,44 +126,30 @@ namespace TumbangPreso.UI
 
         private IEnumerator Run()
         {
-            _displaySeconds = LoadingPresentation.ChooseDuration(new System.Random());
-            BuildSurface();
-            // The logo may have its short studio cue. The illustrated loading
-            // screen stays quiet; the menu bed begins only on the visible home.
+            // Startup is logos only. Preparation belongs to the visible title
+            // after account admission, never to an illustrated screen before login.
             GameServices.Music?.StopNow();
-            if(_ownerLoading || _illustration!=null)BootSting.Stop();
+            yield return PlayStudioIntro();
+            ReleaseStudioIntro();
+            BootSting.Stop();
+            SceneFlow.BootedThroughSplash = true;
+            SceneFlow.LoginStepOffered = false;
+            _menu = SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
+            while (_menu != null && !_menu.isDone) yield return null;
+        }
+
+        private IEnumerator RunLegacyPreparation()
+        {
+            GameServices.Music?.StopNow();
+            yield return PlayStudioIntro();
+            BuildSurface();
+            SetFadeColour(Color.white);
+            SetFade(1);
+            ReleaseStudioIntro();
+            BootSting.Stop();
             BeginPreload();
-            // ⚠️ THE MENU IS ACTIVATED ONLY AFTER THE ACCOUNT BARRIER SETTLES. There is no
-            // prompt and no account form here: a fresh player signs in anonymously while the
-            // existing studio/loading screen is already doing its work, and an unreachable
-            // service settles to the local profile inside PlayerAccount's bounded budget.
+            // Presentation skips never bypass asset, account or menu readiness.
             var accountBarrier = GameServices.Account?.InitializeAsync();
-
-            // ⚠️ ONLY IF THE EARLY HOOK DID NOT ALREADY START IT. On a normal launch the sting
-            // is already playing across the Unity logo; this is the fallback for entering the
-            // scene directly in the editor.
-            // ⚠️⚠️ ON THE 2D ROUTE, BECAUSE `AudioSource.PlayClipAtPoint` IS ALWAYS 3D. It
-            // builds a throwaway source with `spatialBlend = 1`, and firing it at `Vector3.zero`
-            // was only ever centred and full-volume because the game's one listener also sat at
-            // the origin. `AudioDirector.LateUpdate` moved the listener onto the camera on
-            // 2026-09-06 (`docs/TODO.md` § 150.7), so this is the eighth non-diegetic site and
-            // the one a `Vector3.zero` grep finds last: it never went through `AudioDirector` at
-            // all. A boot sting that pans is not a boot sting.
-            if (!_ownerLoading && _illustration==null && _sting != null && !BootSting.Started)
-            {
-                var s = Settings.SettingsStore.Current;
-                GameServices.Audio?.PlayClipUi(_sting, Mathf.Clamp01(s.SfxGain));
-            }
-
-            if (_clip != null && _video != null)
-            {
-                _video.clip = _clip;
-                _video.Play();
-            }
-            else if (!_ownerLoading && _illustration == null)
-            {
-                Debug.LogWarning("[Splash] no video clip bound; run Tumbang Preso > Import Godot UI.");
-            }
 
             // ⚠️ The original white fade avoided a black flash after the studio mark
             // (114.2). The illustrated route uses warm paper for the same quiet join.
@@ -210,15 +177,8 @@ namespace TumbangPreso.UI
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
                 SetFade(1.0f - fade);
 
-                bool presentationComplete = _ownerLoading || _illustration != null || _clip == null
-                    ? _elapsed >= 0.5f
-                    : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
-
-                // ⚠️ The illustrated route and reading window were requested after
-                // the studio-only choice in 114.3. Neither route bypasses readiness;
-                // the fallback video still holds its final frame while loading finishes.
-                if (presentationComplete && LoadingPresentation.CanLeave(PreloadComplete, accountReady,
-                        _storyRoot != null && _storyRoot.activeSelf, _elapsed, _displaySeconds)) break;
+                if (LoadingPresentation.CanLeave(PreloadComplete, accountReady,
+                        _storyRoot != null && _storyRoot.activeSelf)) break;
 
                 if (!_slowLoadReported && !PreloadComplete && _elapsed >= MaxWait)
                 {
@@ -229,8 +189,17 @@ namespace TumbangPreso.UI
                 yield return null;
             }
 
+            yield return ActivatePreparedMenu();
+            if (_menuActivationFailed)
+            {
+                while (!_quitAfterMenuFailure && !InputLayer.MenuNav.CancelPressed) yield return null;
+                SceneFlow.Quit();
+                yield break;
+            }
+
             // ⚠️ FULL ONLY ON THE WAY OUT. Everything above is bounded under 1.0 so that a full
             // bar is never a thing the player can sit and look at.
+            Debug.Log($"[Splash] boot loading finished after {_elapsed:F2} s (work-driven, no reading window).");
             SetLoadingStage("ready", 1.0f);
             _shownProgress = 1.0f;
             if (_loadingFill != null) _loadingFill.fillAmount = 1.0f;
@@ -283,7 +252,7 @@ namespace TumbangPreso.UI
         /// ⚠️ THE ASSETS ARE WARMED BEFORE THE HELD MENU LOAD STARTS. Unity serialises scene
         /// operations behind a load whose activation is held at 90%, so starting the menu first
         /// deadlocks every additive arena load queued after it. The menu is deliberately the final
-        /// preload operation; only then is its activation held until the sting finishes.
+        /// preload operation; only then is its activation held until readiness finishes.
         /// </summary>
         private void BeginPreload()
         {
@@ -323,15 +292,16 @@ namespace TumbangPreso.UI
         private const string ShaderWarmupResource = "ShaderWarmup";
 
         /// <summary>
-        /// How many shaders are compiled between two frames.
+        /// Maximum shader variants warmed between two frames.
         ///
         /// ⚠️ SMALL ON PURPOSE. The whole point is that the main thread comes back between
         /// slices, and the target device is a cheap handset rather than this desktop. Ten
-        /// shaders is a slice short enough that Android's five-second ANR watchdog never sees a
-        /// blocked main thread, and the collection is a few hundred shaders, so the stage costs
-        /// a few dozen frames of a screen that is already playing a video.
+        /// variants is a ceiling,not an unconditional batch. Check elapsed time after each
+        /// variant so a slow compilation yields before starting another. One native compile
+        /// can exceed the budget; actual handset slice time still needs measurement.
         /// </summary>
         private const int ShaderWarmupSlice = 10;
+        private const double ShaderWarmupBudgetMs = 2;
 
         private IEnumerator PreloadGameAssets()
         {
@@ -375,27 +345,41 @@ namespace TumbangPreso.UI
             }
             else
             {
-                // ⚠️⚠️ THE LOOP IS BOUNDED BY THE SHADER COUNT AS WELL AS BY THE RETURN VALUE,
-                // AND THE BOUND IS THE HALF THAT MATTERS. `WarmUpProgressively` answers "is there
-                // more to do", and a warm-up that misreads that answer once would spin on the
-                // loading screen for ever: the failure this replaced is a frozen boot, so a fix
-                // whose worst case is also a frozen boot is not a fix. The count cannot be wrong
-                // because the collection knows it.
-                int slices = Mathf.CeilToInt(Mathf.Max(1, warmup.shaderCount) /
-                                             (float)ShaderWarmupSlice);
+                // The API takes variants per call and returns true when the collection is done.
+                // Keep a variant-count bound as protection against a stalled warmup.
+                int callLimit = Mathf.Max(1, warmup.variantCount);
+                var warmupWatch = System.Diagnostics.Stopwatch.StartNew();
+                double maxSliceMs = 0;
+                int warmupCalls = 0, warmupFrames = 0;
+                bool done = false;
 
-                for (int i = 0; i < slices; i++)
+                while (!done && warmupCalls < callLimit)
                 {
-                    bool more = warmup.WarmUpProgressively(ShaderWarmupSlice);
+                    long sliceTick = System.Diagnostics.Stopwatch.GetTimestamp();
+                    double sliceMs;
+                    int frameCalls = 0;
+                    UnityEngine.Profiling.Profiler.BeginSample("TUMP.Boot.ShaderWarmupSlice");
+                    do
+                    {
+                        done = warmup.WarmUpProgressively(1);
+                        warmupCalls++; frameCalls++;
+                        sliceMs = (System.Diagnostics.Stopwatch.GetTimestamp() - sliceTick) * 1000.0 /
+                            System.Diagnostics.Stopwatch.Frequency;
+                    }
+                    while (!done && warmupCalls < callLimit && frameCalls < ShaderWarmupSlice && sliceMs < ShaderWarmupBudgetMs);
+                    UnityEngine.Profiling.Profiler.EndSample();
+                    maxSliceMs = System.Math.Max(maxSliceMs, sliceMs);
+                    warmupFrames++;
 
                     // The bar moves inside the stage rather than only at its boundaries, so the
                     // stage that used to look frozen is now the one that visibly counts down.
                     SetLoadingStage("preparing shaders",
-                                    Mathf.Lerp(0.04f, 0.09f, (i + 1) / (float)slices));
+                                    Mathf.Lerp(0.04f, 0.09f, warmup.warmedUpVariantCount / (float)callLimit));
                     yield return null;
-
-                    if (!more) break;
                 }
+                Debug.Log(System.FormattableString.Invariant($"[SplashShaders] shaders={warmup.shaderCount} variants={warmup.variantCount} warmed={warmup.warmedUpVariantCount} complete={warmup.isWarmedUp} calls={warmupCalls} frames={warmupFrames} budget_ms={ShaderWarmupBudgetMs:F1} elapsed_ms={warmupWatch.Elapsed.TotalMilliseconds:F3} max_slice_ms={maxSliceMs:F3}"));
+                if (!warmup.isWarmedUp)
+                    Debug.LogWarning($"[SplashShaders] bounded warmup incomplete: {warmup.warmedUpVariantCount}/{warmup.variantCount} variants; remaining variants may compile on first use.");
             }
 
             yield return null;
@@ -413,6 +397,7 @@ namespace TumbangPreso.UI
             // ⚠️ THE PROGRESS MOVES INSIDE THE STAGE TOO, rather than only at its boundaries, so
             // the longest stage is not also the flattest part of the bar.
             SetLoadingStage("loading characters", 0.10f);
+            yield return RosterBook.Warmup();
             var book = RosterBook.Load();
             if (book != null)
             {
@@ -427,6 +412,9 @@ namespace TumbangPreso.UI
                             _ = p.Clips;
                             _ = p.Palette;
                             _ = p.PetModel;
+                            yield return Visual.GeneratedMotionAssets.Warmup(p.Model);
+                            yield return Visual.OutlineNormals.Warmup(p.Model);
+                            yield return Visual.OutlineNormals.Warmup(p.PetModel);
                         }
 
                         SetLoadingStage("loading characters",
@@ -439,7 +427,7 @@ namespace TumbangPreso.UI
                 {
                     foreach (var c in book.Cans)
                     {
-                        if (c != null) _ = c.Model;
+                        if (c != null) yield return Visual.OutlineNormals.Warmup(c.Model);
                     }
                 }
                 yield return null;
@@ -448,39 +436,20 @@ namespace TumbangPreso.UI
                 {
                     foreach (var s in book.Slippers)
                     {
-                        if (s != null) _ = s.Model;
+                        if (s != null) yield return Visual.OutlineNormals.Warmup(s.Model);
                     }
                 }
             }
+            yield return CameraSystem.ViewmodelMeshAssets.Warmup(book, done =>
+                SetLoadingStage("preparing first-person meshes", Mathf.Lerp(.22f, .24f, done)));
             SetLoadingStage("loading characters", 0.24f);
             yield return null;
 
-            // 3. Pre-load Audio clips and sound resources
-            //
-            // ⚠️⚠️ THREE FOLDERS WITH A `yield` BETWEEN THEM, NOT ONE `LoadAll("")`. That single
-            // call decodes 100 clips (2 music, 87 sfx, 11 vo, counted 2026-09-01) on one frame and
-            // is the second of the two stages that used to freeze the animation solid. The final
-            // sweep is kept as the safety net for anything outside these three folders and is
-            // nearly free once they are warm, because `Resources.LoadAll` answers from the cache.
-            string[] audioFolders = { "Sfx", "Vo", "Music" };
-            for (int i = 0; i < audioFolders.Length; i++)
-            {
-                SetLoadingStage("loading audio",
-                    Mathf.Lerp(0.24f, 0.34f, (i + 1) / (float)audioFolders.Length));
-                try
-                {
-                    _ = Resources.LoadAll<AudioClip>(audioFolders[i]);
-                }
-                catch (System.Exception) { }
-                yield return null;
-            }
+            SetLoadingStage("preparing nameplate text", 0.24f);
+            yield return Visual.CharacterNameplate.WarmupFont();
 
-            try
-            {
-                _ = Resources.LoadAll<AudioClip>("");
-            }
-            catch (System.Exception) { }
-            yield return null;
+            // 3. Load clip references AND short-cue sample data before first playback.
+            yield return WarmAudioAssets();
 
             // 4. Pre-load Settings & Roster tables
             SetLoadingStage("applying settings", 0.36f);
@@ -501,6 +470,13 @@ namespace TumbangPreso.UI
             if (actions != null) Settings.Rebinding.Load(actions);
             yield return null;
 
+            SetLoadingStage("loading menu artwork", 0.48f);
+            yield return OwnerMenuArt.Warmup();
+            yield return LoadingArtwork.Warmup();
+            yield return Avatars.Warmup();
+            yield return OwnerPortraitArt.Warmup(done =>
+                SetLoadingStage("loading menu artwork", Mathf.Lerp(.48f, .52f, done)));
+
             // 6. Every procedurally baked UI sprite.
             //
             // ⚠️⚠️ THESE ARE PAINTED PIXEL BY PIXEL ON FIRST USE AND THAT IS NOT FREE. Each
@@ -510,12 +486,11 @@ namespace TumbangPreso.UI
             SetLoadingStage("building interface", 0.52f);
             WarmSprites();
             yield return null;
+            // Home's clips, poster and decoder prepare while the login form is
+            // already usable. ConvertedMainMenu owns that asynchronous stage.
 
-            // 7. Every ability glyph.
-            SetLoadingStage("loading abilities", 0.61f);
-            foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
-                AbilityIcons.For(glyph);
-            yield return null;
+            // Gameplay-only caches prepare while login is usable. Shader and
+            // map scene activation stay here because their Awake work is indivisible.
 
             // 8. Both arenas, as a dependency load rather than a scene load.
             //
@@ -526,38 +501,59 @@ namespace TumbangPreso.UI
             // ASSETS instead: everything the scene references is what costs the time, not the
             // scene graph.
             //
-            // ⚠️ BOTH MAPS, NOT THE SELECTED ONE. Nothing has been selected yet at boot, and the
-            // player can change the map on the setup screen without ever returning here.
-            yield return WarmMapAssets();
-
-            // 9. The hero ability layer.
+            // ⚠️ EVERY MAP, NOT THE SELECTED ONE. Nothing has been selected yet at boot, and the
+            // player can change the map on the setup screen without ever returning here. This read
+            // "both maps" and warmed Eskinita and Bayan Plaza only, which was every map when it was
+            // written; Ilalim ng Tulay, Sa Bubong and the Lagoon then loaded cold on PLAY. Owner,
+            // 2026-09-27: every shader and every asset loads behind the loading screen.
             //
-            // ⚠️ CONSTRUCTING EVERY KIT TOUCHES EVERY ABILITY OBJECT, its strings and its glyph,
-            // which is what the character select and the HUD read the instant Hero Strike opens.
-            SetLoadingStage("preparing hero abilities", 0.84f);
-            Visual.AbilityVfx.Warmup();
-            foreach (string heroId in Roster.HeroPeople != null
+            // ⚠️⚠️ UNCONDITIONAL AGAIN. From 2026-09-27 this was skipped whenever the hub was on,
+            // because the hub loaded every arena itself behind a second "GETTING READY" screen
+            // (`HubLoading.PreparePreview`). Request, 2026-09-30: that second screen is
+            // redundant and every asset and shader loads HERE. The hub curtain is gone, so this is
+            // once again the only place the arenas' meshes, textures and materials are read.
+            double mapWarmBegan = Time.realtimeSinceStartupAsDouble;
+            yield return WarmMapAssets();
+            Debug.Log($"[Splash] map asset warmup completed in {Time.realtimeSinceStartupAsDouble - mapWarmBegan:0.00} s.");
+
+            WarmAssetCache.CaptureLoadedAssets();
+            Debug.Log($"[Splash] preload retained {WarmAssetCache.Count} assets in memory.");
+            _ = Net.SkillContractFingerprint.Current;
+
+            // This must remain the final scene operation in the preload chain. Once activation is
+            // held, Unity will not complete an additive load or unload queued behind this one.
+            SetLoadingStage("opening main menu", 0.88f);
+            BeginMenuPreload();
+            _assetsPreloaded = true;
+        }
+
+        internal static IEnumerator WarmGameplayAssets(System.Action<float> completed)
+        {
+            yield return AbilityIcons.Warmup(done=>completed?.Invoke(.2f*done));
+            yield return StatusIcons.Warmup();
+            completed?.Invoke(.25f);
+            yield return Visual.VfxFlipbook.Warmup();
+            completed?.Invoke(.4f);
+            yield return Visual.CheskaIceVisuals.Warmup();
+            yield return Visual.HeroPropAssets.Warmup(done=>completed?.Invoke(.4f+.25f*done));
+            yield return Visual.AbilityVfx.WarmupAssets();
+            completed?.Invoke(.7f);
+            string[] heroes = Roster.HeroPeople != null
                          ? HeroIdsFrom(Roster.HeroPeople)
-                         : new string[0])
+                         : new string[0];
+            for (int i=0;i<heroes.Length;i++)
             {
+                string heroId=heroes[i];
                 var kit = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
                 _ = kit?.Skill1?.Name;
                 _ = kit?.Skill2?.Name;
                 _ = kit?.Ultimate?.Name;
+                _ = Visual.UltimatePerformance.For(heroId);
+                _ = Visual.UltimatePerformance.For(heroId, holdingSlipper: true);
+                completed?.Invoke(.7f+.3f*(i+1)/heroes.Length);
+                yield return null;
             }
-            yield return null;
-
-            WarmAssetCache.CaptureLoadedAssets();
-            Debug.Log($"[Splash] preload retained {WarmAssetCache.Count} assets in memory.");
-
-            // This must remain the final scene operation in the preload chain. Once activation is
-            // held, Unity will not complete an additive load or unload queued behind this one.
-            // ⚠️ 0.88 RATHER THAN 0.92, BECAUSE SIGN-IN NOW OWNS THE TAIL. `SignInSpan` is 0.92
-            // and the account barrier is announced above it, so the scene load has to finish
-            // below that or the two stages would fight over the same eight per cent.
-            SetLoadingStage("opening main menu", 0.88f);
-            BeginMenuPreload();
-            _assetsPreloaded = true;
+            completed?.Invoke(1f);
         }
 
         private static string[] HeroIdsFrom(System.Collections.Generic.IReadOnlyList<RosterEntry> people)
@@ -565,6 +561,45 @@ namespace TumbangPreso.UI
             var ids = new string[people.Count];
             for (int i = 0; i < people.Count; i++) ids[i] = people[i] != null ? people[i].Id : null;
             return ids;
+        }
+
+        private IEnumerator WarmAudioAssets()
+        {
+            string[] folders = { "Sfx", "Vo", "Music" };
+            for (int folder = 0; folder < folders.Length; folder++)
+            {
+                SetLoadingStage("loading audio", Mathf.Lerp(.24f, .34f, folder / (float)folders.Length));
+                yield return null;
+                AudioClip[] clips;
+                try { clips = Resources.LoadAll<AudioClip>(folders[folder]); }
+                catch (System.Exception error)
+                {
+                    Debug.LogWarning($"[SplashAudio] Cannot load {folders[folder]}: {error.Message}");
+                    continue;
+                }
+
+                for (int i = 0; i < clips.Length; i++)
+                {
+                    var clip = clips[i];
+                    WarmAssetCache.Retain(clip);
+                    // Preserve the music/streaming policy. Loading an AudioClip alone does
+                    // not load samples when its importer disables preloadAudioData.
+                    if (clip != null && folders[folder] != "Music" &&
+                        clip.loadType != AudioClipLoadType.Streaming && clip.loadState != AudioDataLoadState.Loaded)
+                    {
+                        yield return null;
+                        if (clip.loadState == AudioDataLoadState.Unloaded) clip.LoadAudioData();
+                        float deadline = Time.realtimeSinceStartup + 10f;
+                        while (clip.loadState == AudioDataLoadState.Loading && Time.realtimeSinceStartup < deadline)
+                            yield return null;
+                        if (clip.loadState != AudioDataLoadState.Loaded)
+                            Debug.LogWarning($"[SplashAudio] {clip.name} sample preparation ended in {clip.loadState}; playback may load late or remain silent.");
+                    }
+                    SetLoadingStage("loading audio", Mathf.Lerp(.24f, .34f,
+                        (folder + (i + 1f) / clips.Length) / folders.Length));
+                }
+                SetLoadingStage("loading audio", Mathf.Lerp(.24f, .34f, (folder + 1f) / folders.Length));
+            }
         }
 
         /// <summary>
@@ -576,7 +611,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private IEnumerator WarmMapAssets()
         {
-            string[] maps = { SceneFlow.Eskinita, SceneFlow.BayanPlaza };
+            string[] maps = SceneFlow.Maps;
 
             // MatchInstaller's setup happens in Start(). Mark these loads as previews before they
             // are requested so no seats, HUD, services or match state are created behind the sting.
@@ -585,14 +620,14 @@ namespace TumbangPreso.UI
 
             try
             {
-                foreach (string map in maps)
+                for (int m = 0; m < maps.Length; m++)
                 {
+                    string map = maps[m];
                     if (!Application.CanStreamedLevelBeLoaded(map)) continue;
 
-                    SetLoadingStage(map == SceneFlow.Eskinita
-                        ? "loading eskinita"
-                        : "loading bayan plaza",
-                        map == SceneFlow.Eskinita ? 0.68f : 0.76f);
+                    // The map stage owns 0.66 to 0.82 of the bar, split evenly across the maps.
+                    SetLoadingStage("loading " + SceneFlow.PreviewFor(map).Name.ToLowerInvariant(),
+                                    Mathf.Lerp(0.66f, 0.82f, m / (float)maps.Length));
 
                     AsyncOperation load = null;
                     try
@@ -791,11 +826,6 @@ namespace TumbangPreso.UI
             bgImg.color = Color.white;
             Stretch(bgImg.rectTransform);
 
-            var surfaceGo = new GameObject("Video");
-            surfaceGo.transform.SetParent(canvasGo.transform, false);
-            _surface = surfaceGo.AddComponent<RawImage>();
-            Stretch(_surface.rectTransform);
-
             var fadeGo = new GameObject("Fade");
             fadeGo.transform.SetParent(canvasGo.transform, false);
             _fade = fadeGo.AddComponent<Image>();
@@ -808,23 +838,7 @@ namespace TumbangPreso.UI
 
             BuildLoadingIndicator(canvasGo.transform);
 
-            _target = new RenderTexture(1280, 720, 0);
-            _surface.texture = _target;
 
-            _video = canvasGo.AddComponent<VideoPlayer>();
-            _video.playOnAwake = false;
-            _video.isLooping = false;
-            _video.renderMode = VideoRenderMode.RenderTexture;
-            _video.targetTexture = _target;
-            _video.audioOutputMode = VideoAudioOutputMode.None; // the sting is its own cue
-
-            // ⚠️⚠️ FIT INSIDE, NOT STRETCH, AND IT WAS STRETCH TO MATCH `expand = true` ON THE
-            // .tscn. That was defensible while the letterbox was black and the difference was
-            // invisible; it is not defensible for a LOGO. `CLAUDE.md` § 6.2c question 2 is
-            // explicit: envelope a background, FIT a logo. A stretched studio mark is a distorted
-            // studio mark on every window that is not 16:9, which is the one 🧑 plays in. The
-            // white Backdrop above is what the fit leaves showing, and it is the same white.
-            _video.aspectRatio = VideoAspectRatio.FitInside;
         }
 
         private void BuildIllustratedSurface()
@@ -1046,24 +1060,9 @@ namespace TumbangPreso.UI
             // playing over the title menu is worse than no sting at all.
             BootSting.Stop();
 
-            if (_target != null)
-            {
-                _video.targetTexture = null;
-                _target.Release();
-            }
-
-            // ⚠️ THE CANVAS IS A ROOT OBJECT NOW, so the scene change does NOT take it with it
-            // on the frame it is torn down; a stale black plate over the title menu is exactly
-            // the failure this file exists to avoid.
-            if (_canvas != null) Destroy(_canvas);
-
-            if (_menu != null)
-            {
-                _menu.allowSceneActivation = true;
-                return;
-            }
-
-            SceneFlow.Go(SceneFlow.MainMenu);
+            _preparedMenu?.CompleteBootLoading();
+            ScreenTakeover.ConsumeEscape();
+            Destroy(gameObject);
         }
     }
 }

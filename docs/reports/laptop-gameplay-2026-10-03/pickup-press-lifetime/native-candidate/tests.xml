@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.3020609">
+  <test-suite type="TestSuite" id="2717" name="TumpWorker-qa-c-dddaa72bc5b9" fullname="TumpWorker-qa-c-dddaa72bc5b9" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.302061" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2711" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-c/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.288234" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="700" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2712" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.285340" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2713" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1397" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.278975" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1197" name="CarrierPickupPressLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.227051" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1200" name="ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" methodname="ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="63949416" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.126356" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1199" name="AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" methodname="AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="1704622739" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.044993" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1198" name="ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" methodname="ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="835818041" result="Passed" start-time="2026-10-03 06:13:59Z" end-time="2026-10-03 06:13:59Z" duration="0.034430" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-c-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

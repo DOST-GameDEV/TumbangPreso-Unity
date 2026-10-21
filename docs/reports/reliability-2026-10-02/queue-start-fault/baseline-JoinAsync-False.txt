@@ -1,0 +1,3 @@
+faulted=True
+state=Joining
+busy=False

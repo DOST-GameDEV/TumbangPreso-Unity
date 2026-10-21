@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 19:27:34Z" end-time="2026-10-01 19:27:36Z" duration="2.1190909">
+  <test-suite type="TestSuite" id="2504" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1230" result="Failed" site="Child" start-time="2026-10-01 19:27:34Z" end-time="2026-10-01 19:27:36Z" duration="2.119091" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2498" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1230" result="Failed" site="Child" start-time="2026-10-01 19:27:34Z" end-time="2026-10-01 19:27:36Z" duration="2.105094" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15716" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2499" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1230" result="Failed" site="Child" start-time="2026-10-01 19:27:34Z" end-time="2026-10-01 19:27:36Z" duration="2.099899" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2500" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1230" result="Failed" site="Child" start-time="2026-10-01 19:27:34Z" end-time="2026-10-01 19:27:36Z" duration="2.094974" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1287" name="CloudRequestTimeoutTests" fullname="TumbangPreso.PlayTests.CloudRequestTimeoutTests" classname="TumbangPreso.PlayTests.CloudRequestTimeoutTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 19:27:34Z" end-time="2026-10-01 19:27:36Z" duration="2.058410" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1288" name="StalledServiceRequestSettlesWithinItsTimeout" fullname="TumbangPreso.PlayTests.CloudRequestTimeoutTests.StalledServiceRequestSettlesWithinItsTimeout" methodname="StalledServiceRequestSettlesWithinItsTimeout" classname="TumbangPreso.PlayTests.CloudRequestTimeoutTests" runstate="Runnable" seed="1286142548" result="Failed" start-time="2026-10-01 19:27:34Z" end-time="2026-10-01 19:27:36Z" duration="2.042969" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="40000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A stalled service request has no bounded completion; its caller remains busy.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CloudRequestTimeoutTests+<Run>d__3.MoveNext () [0x002c1] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\CloudRequestTimeoutTests.cs:48
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

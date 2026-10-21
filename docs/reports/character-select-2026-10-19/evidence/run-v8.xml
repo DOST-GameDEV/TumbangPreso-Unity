@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 08:21:56Z" end-time="2026-10-19 08:22:59Z" duration="62.8917829">
+  <test-suite type="TestSuite" id="3712" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2191" result="Passed" start-time="2026-10-19 08:21:56Z" end-time="2026-10-19 08:22:59Z" duration="62.891783" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3704" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/character-selection-research-4c9055/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2191" result="Passed" start-time="2026-10-19 08:21:56Z" end-time="2026-10-19 08:22:59Z" duration="62.866872" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24492" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3705" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2191" result="Passed" start-time="2026-10-19 08:21:56Z" end-time="2026-10-19 08:22:59Z" duration="62.851906" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3708" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2189" result="Passed" start-time="2026-10-19 08:21:56Z" end-time="2026-10-19 08:22:59Z" duration="62.836710" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2298" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-19 08:21:57Z" end-time="2026-10-19 08:22:59Z" duration="62.622140" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2299" name="CharacterSelectionExplainsItsKitWithoutPausingTheClock" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionExplainsItsKitWithoutPausingTheClock" methodname="CharacterSelectionExplainsItsKitWithoutPausingTheClock" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1348937150" result="Passed" start-time="2026-10-19 08:21:57Z" end-time="2026-10-19 08:22:46Z" duration="49.464234" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-A11y-CharacterSelect-learn-large-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2300" name="CharacterSelectionReviewCaptures" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionReviewCaptures" methodname="CharacterSelectionReviewCaptures" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1094835189" result="Passed" start-time="2026-10-19 08:22:46Z" end-time="2026-10-19 08:22:57Z" duration="11.196644" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[CharacterSelectFloor] nemu/1600x680: feet=0.088 ring=0.099 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1920x1080: feet=0.088 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1280x720: feet=0.089 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/960x540: feet=0.090 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1280x960: feet=0.090 ring=0.099 stage=(712.00, 1030.00)
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/2560x1080: feet=0.094 ring=0.101 stage=(1352.00, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-2560x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/877x482: feet=0.097 ring=0.099 stage=(757.06, 670.00)
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-nemu-877x482 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] dante/1600x680: feet=0.059 ring=0.099 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-dante-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[NetReady] refused peer 0: not in the lobby table
+[CharacterSelectFloor] locked/1600x680: feet=0.059 ring=0.108 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-locked-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] larger/1280x720: feet=0.056 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v8-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v8-larger-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] classic/1600x680: feet=0.073 ring=0.126 stage=(1333.18, 670.00)
+[TumpUiCapture] CharSelect-v8-classic-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] classic/1280x960: feet=0.070 ring=0.125 stage=(712.00, 1030.00)
+[TumpUiCapture] CharSelect-v8-classic-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2301" name="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" methodname="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1294157683" result="Passed" start-time="2026-10-19 08:22:57Z" end-time="2026-10-19 08:22:59Z" duration="1.945494" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+Saving results to: C:/Users/<user>/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

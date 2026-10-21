@@ -1,0 +1,37 @@
+{
+  "passed": false,
+  "role": "host",
+  "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+  "directExecution": true,
+  "protocol": 153,
+  "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+  "exeSha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+  "coreSha256": "339e00fa0469853257a6081a6015736d16db126ccac9152441ea3f76113f823a",
+  "artifactManifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+  "characterPick": 0,
+  "scope": "Normal LAN lobby, ready, natural Hero1/30 completion and own saved career; no physical-input or current source-fix acceptance.",
+  "preparation": {
+    "role": "host",
+    "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+    "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+    "artifactManifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+    "profile": "pc-hostloss-cb5f1007a",
+    "wire": "1|0|1|30|0|3|3|1|0|1|0",
+    "artifactVerified": true,
+    "preparedAtUtc": "2026-10-07T00:37:24.776756+00:00",
+    "startFile": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\combined-peer1007\\hostloss-a-start.signal"
+  },
+  "pid": 40372,
+  "playerStartedAtUtc": "2026-10-07T00:40:18.740082+00:00",
+  "exitCode": 4294967295,
+  "errors": [
+    "[Errno 2] No such file or directory: 'C:\\\\Users\\\\matth\\\\Documents\\\\Codex\\\\work\\\\tump-competition-candidate1003i\\\\Logs\\\\combined-peer1007\\\\pc-laptop-hostloss1007a-host\\\\state.txt'"
+  ],
+  "profileSeedsRestored": true,
+  "inputRestored": true,
+  "runtimeUnchanged": true,
+  "manifestUnchanged": true,
+  "artifactUnchanged": true,
+  "terminal": true,
+  "leaseHeld": false
+}

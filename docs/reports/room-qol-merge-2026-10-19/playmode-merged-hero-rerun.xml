@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 15:40:33Z" end-time="2026-10-19 15:40:36Z" duration="3.1821543">
+  <test-suite type="TestSuite" id="3709" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2186" result="Passed" start-time="2026-10-19 15:40:33Z" end-time="2026-10-19 15:40:36Z" duration="3.182154" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3701" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/game-networking-lan-relay-d56db9/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2186" result="Passed" start-time="2026-10-19 15:40:33Z" end-time="2026-10-19 15:40:36Z" duration="3.155947" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21500" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3702" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2186" result="Passed" start-time="2026-10-19 15:40:33Z" end-time="2026-10-19 15:40:36Z" duration="3.138059" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3705" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2184" result="Passed" start-time="2026-10-19 15:40:33Z" end-time="2026-10-19 15:40:36Z" duration="3.119463" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2381" name="ModelPreviewTests" fullname="TumbangPreso.PlayTests.ModelPreviewTests" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-19 15:40:33Z" end-time="2026-10-19 15:40:36Z" duration="3.063268" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2389" name="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" methodname="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="184071762" result="Passed" start-time="2026-10-19 15:40:33Z" end-time="2026-10-19 15:40:36Z" duration="3.048867" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] preparation-skills-defending-960x540/Symbol: vertices=4, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] preparation-skills-defending-960x540/AbilityPicture: vertices=4, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] preparation-skills-defending-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

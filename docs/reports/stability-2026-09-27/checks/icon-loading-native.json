@@ -1,0 +1,32 @@
+{
+  "base": "8c91589c695c085898a55064da1db32843b8d1f4",
+  "scope": "Yielded icon preparation and minimum-hash default avatar",
+  "result": "Passed",
+  "total": 2,
+  "duration": 0.5315099,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/AbilityIcons.cs",
+      "sha256": "59461C8951BD42658277EA0F7DA6B827E9C097218E35FCBEA5533C312301891D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "1FDC86B9A8BD912409A8C98BE8D8035EA2C40F07148076D6FD034F12592F6FB4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Avatars.cs",
+      "sha256": "616E33FE51B7376DF51F9E15C88D5024E9F3F794D9B72D6209E5CEA2A8499051"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TumpNativePickerTests.cs",
+      "sha256": "6325ECE8FA77A386C1CAC217916A43BB2D67E2A024BD6DBBDEC70C7B76F2407B"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6159544320,
+  "retryCount": 0,
+  "unverified": [
+    "Player hitches",
+    "All UI flows"
+  ]
+}

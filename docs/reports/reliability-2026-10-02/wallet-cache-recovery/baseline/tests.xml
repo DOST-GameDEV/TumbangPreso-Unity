@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.2482455">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.248246" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2123" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.224275" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2124" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.209732" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2125" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.195387" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2017" name="SlipperHandoverTests" fullname="TumbangPreso.Tests.SlipperHandoverTests" classname="TumbangPreso.Tests.SlipperHandoverTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.107173" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2021" name="OnlyForcedRoundHandoverClearsTheSameShoesPickupLock" fullname="TumbangPreso.Tests.SlipperHandoverTests.OnlyForcedRoundHandoverClearsTheSameShoesPickupLock" classname="TumbangPreso.Tests.SlipperHandoverTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.101407" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2018" name="OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(&quot;round-handover&quot;,True)" fullname="TumbangPreso.Tests.SlipperHandoverTests.OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(&quot;round-handover&quot;,True)" methodname="OnlyForcedRoundHandoverClearsTheSameShoesPickupLock" classname="TumbangPreso.Tests.SlipperHandoverTests" runstate="Runnable" seed="1888765818" result="Failed" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.080780" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Only the explicit forced handover may retire the existing pickup delay.
+  Expected: 0.0f
+  But was:  1.25f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SlipperHandoverTests.OnlyForcedRoundHandoverClearsTheSameShoesPickupLock (System.String route, System.Boolean clearsLock) [0x00161] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SlipperHandoverTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2019" name="OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(&quot;duplicate-snapshot&quot;,False)" fullname="TumbangPreso.Tests.SlipperHandoverTests.OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(&quot;duplicate-snapshot&quot;,False)" methodname="OnlyForcedRoundHandoverClearsTheSameShoesPickupLock" classname="TumbangPreso.Tests.SlipperHandoverTests" runstate="Runnable" seed="2071375413" result="Passed" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.005772" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2020" name="OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(&quot;duplicate-pickup&quot;,False)" fullname="TumbangPreso.Tests.SlipperHandoverTests.OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(&quot;duplicate-pickup&quot;,False)" methodname="OnlyForcedRoundHandoverClearsTheSameShoesPickupLock" classname="TumbangPreso.Tests.SlipperHandoverTests" runstate="Runnable" seed="897910996" result="Passed" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.001843" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2104" name="WalletCacheRecoveryTests" fullname="TumbangPreso.Tests.WalletCacheRecoveryTests" classname="TumbangPreso.Tests.WalletCacheRecoveryTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.048405" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2109" name="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary" fullname="TumbangPreso.Tests.WalletCacheRecoveryTests.LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary" classname="TumbangPreso.Tests.WalletCacheRecoveryTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.047458" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2105" name="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;recover&quot;)" fullname="TumbangPreso.Tests.WalletCacheRecoveryTests.LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;recover&quot;)" methodname="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary" classname="TumbangPreso.Tests.WalletCacheRecoveryTests" runstate="Runnable" seed="560578765" result="Failed" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.019603" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A valid backup was lost or another account's wallet was adopted.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.WalletCacheRecoveryTests.LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary (System.String scenario) [0x00243] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\WalletCacheRecoveryTests.cs:63
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Wallet] cache unreadable, starting from the starter set: JSON parse error: Invalid value.
+]]></output>
+              </test-case>
+              <test-case id="2106" name="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;primary&quot;)" fullname="TumbangPreso.Tests.WalletCacheRecoveryTests.LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;primary&quot;)" methodname="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary" classname="TumbangPreso.Tests.WalletCacheRecoveryTests" runstate="Runnable" seed="1871306532" result="Passed" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.012140" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2107" name="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;foreign&quot;)" fullname="TumbangPreso.Tests.WalletCacheRecoveryTests.LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;foreign&quot;)" methodname="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary" classname="TumbangPreso.Tests.WalletCacheRecoveryTests" runstate="Runnable" seed="1327066449" result="Passed" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.010643" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Wallet] cache unreadable, starting from the starter set: JSON parse error: Invalid value.
+]]></output>
+              </test-case>
+              <test-case id="2108" name="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;missing&quot;)" fullname="TumbangPreso.Tests.WalletCacheRecoveryTests.LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary(&quot;missing&quot;)" methodname="LoadRecoversAParseableWalletWithoutCrossingTheAccountBoundary" classname="TumbangPreso.Tests.WalletCacheRecoveryTests" runstate="Runnable" seed="34791059" result="Passed" start-time="2026-10-02 05:29:57Z" end-time="2026-10-02 05:29:57Z" duration="0.004055" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Wallet] cache unreadable, starting from the starter set: JSON parse error: Invalid value.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

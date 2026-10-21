@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 11:40:10Z" end-time="2026-10-01 11:40:20Z" duration="9.3918467">
+  <test-suite type="TestSuite" id="2441" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1178" result="Failed" site="Child" start-time="2026-10-01 11:40:10Z" end-time="2026-10-01 11:40:20Z" duration="9.391847" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2435" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1178" result="Failed" site="Child" start-time="2026-10-01 11:40:10Z" end-time="2026-10-01 11:40:20Z" duration="9.380299" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="299605" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2436" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1178" result="Failed" site="Child" start-time="2026-10-01 11:40:10Z" end-time="2026-10-01 11:40:20Z" duration="9.375108" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2437" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1178" result="Failed" site="Child" start-time="2026-10-01 11:40:10Z" end-time="2026-10-01 11:40:20Z" duration="9.370239" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1510" name="LandingCircleTests" fullname="TumbangPreso.PlayTests.LandingCircleTests" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-01 11:40:10Z" end-time="2026-10-01 11:40:20Z" duration="9.348196" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1515" name="TheRealLocalChargeDrawsOnlyAGroundCircleAndReleaseHidesIt" fullname="TumbangPreso.PlayTests.LandingCircleTests.TheRealLocalChargeDrawsOnlyAGroundCircleAndReleaseHidesIt" methodname="TheRealLocalChargeDrawsOnlyAGroundCircleAndReleaseHidesIt" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" seed="779275790" result="Failed" label="Error" start-time="2026-10-01 11:40:10Z" end-time="2026-10-01 11:40:20Z" duration="9.336279" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> NUnit.Framework.AssertionException :   A populated guide mesh must contribute a readable stroke to the actual camera image.
+  Expected: greater than 100
+  But was:  88
+]]></message>
+                <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.LandingCircleTests+<TheRealLocalChargeDrawsOnlyAGroundCircleAndReleaseHidesIt>d__14.MoveNext () [0x00640] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/LandingCircleTests.cs:135 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 
+--AssertionException
+  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.Greater (System.Int32 arg1, System.Int32 arg2, System.String message, System.Object[] args) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at TumbangPreso.PlayTests.ThrowAimIntegrationProbe.CaptureGuideDifference (UnityEngine.Camera camera, TumbangPreso.TrajectoryPreview guide, System.String folder, System.String name) [0x00172] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ThrowAimIntegrationProbe.cs:211 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <94b103fb80364239bfc0542bee09d001>:0 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Landing review point=(-3.12, 0.12, 0.26) viewport=(0.50, 0.50, 8.35) camera=(-3.00, 1.37, -8.00) facing=(0.00, -0.15, 0.99) rigLocal=True
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

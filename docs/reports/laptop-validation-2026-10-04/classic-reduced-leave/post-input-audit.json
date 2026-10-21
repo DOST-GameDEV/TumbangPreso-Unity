@@ -1,0 +1,15 @@
+{
+  "qualityPostPreserved": true,
+  "qualityRestoredByteExact": true,
+  "inputChanges": {
+    "Assets/TumbangPreso/Resources/Models/FppDetails/inday_left_arm.asset": {
+      "before": "dbc3c77c039a5a5b9ac8affc450abebe0003d1756483b2cba8782bdf2ed8ed32",
+      "after": "57512935bf5d3547b043e19a455d0ffc4c66dd16c4dbcd3e4fd248c639a70400"
+    },
+    "Assets/TumbangPreso/Resources/Models/FppDetails/inday_right_arm.asset": {
+      "before": "e0c2ec3fd953eccc135202f88c796b66307d49df8c8da46090bdfddac0028fef",
+      "after": "300895b83c9bad6de831193e7f4c85831cabe9a29e1a4a9ef941e8cf73487527"
+    }
+  },
+  "limit": "Importer edits are retained and reported, never discarded. A pass is not inferred from compilation or source hashes."
+}

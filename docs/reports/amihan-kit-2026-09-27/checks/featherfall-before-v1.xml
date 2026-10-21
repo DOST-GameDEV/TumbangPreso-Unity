@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 23:56:25Z" end-time="2026-09-26 23:57:05Z" duration="39.3948393">
+  <test-suite type="TestSuite" id="1875" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="689" result="Passed" start-time="2026-09-26 23:56:25Z" end-time="2026-09-26 23:57:05Z" duration="39.394839" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1869" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="689" result="Passed" start-time="2026-09-26 23:56:25Z" end-time="2026-09-26 23:57:05Z" duration="39.387449" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1870" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="689" result="Passed" start-time="2026-09-26 23:56:25Z" end-time="2026-09-26 23:57:05Z" duration="39.386241" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1871" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="689" result="Passed" start-time="2026-09-26 23:56:25Z" end-time="2026-09-26 23:57:05Z" duration="39.385278" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1047" name="AmihanKitPlayProbe" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 23:56:25Z" end-time="2026-09-26 23:57:05Z" duration="39.372764" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1048" name="FilmFeatherfallInAMatch" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FilmFeatherfallInAMatch" methodname="FilmFeatherfallInAMatch" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="474788171" result="Passed" start-time="2026-09-26 23:56:25Z" end-time="2026-09-26 23:57:05Z" duration="39.362191" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Releasing render texture that is set to be RenderTexture.active!
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

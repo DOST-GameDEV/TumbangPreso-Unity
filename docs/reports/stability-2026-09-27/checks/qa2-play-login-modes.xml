@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 22:07:06Z" end-time="2026-09-26 22:07:42Z" duration="36.0169746">
+  <test-suite type="TestSuite" id="1869" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:07:06Z" end-time="2026-09-26 22:07:42Z" duration="36.016975" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:07:06Z" end-time="2026-09-26 22:07:42Z" duration="36.005773" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49288" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:07:06Z" end-time="2026-09-26 22:07:42Z" duration="35.998851" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1865" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="683" result="Passed" start-time="2026-09-26 22:07:06Z" end-time="2026-09-26 22:07:42Z" duration="35.993205" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1222" name="HubFlowTests" fullname="TumbangPreso.PlayTests.HubFlowTests" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-26 22:07:06Z" end-time="2026-09-26 22:07:35Z" duration="29.053706" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1227" name="GamemodeSelectSetsTheModeCardAndOpensTheCustomFlow" fullname="TumbangPreso.PlayTests.HubFlowTests.GamemodeSelectSetsTheModeCardAndOpensTheCustomFlow" methodname="GamemodeSelectSetsTheModeCardAndOpensTheCustomFlow" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="833762283" result="Passed" start-time="2026-09-26 22:07:06Z" end-time="2026-09-26 22:07:26Z" duration="20.154564" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] Hub-GameModes-960x540 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-1280x720 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-1920x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-1280x960 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-1600x680 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-focus-960x540 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-focus-1280x720 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-focus-1920x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-focus-1280x960 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-GameModes-focus-1600x680 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ClassicPopup-960x540 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ClassicPopup-1280x720 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ClassicPopup-1920x1080 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ClassicPopup-1280x960 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ClassicPopup-1600x680 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-CustomPopup-960x540 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-CustomPopup-1280x720 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-CustomPopup-1920x1080 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-CustomPopup-1280x960 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-CustomPopup-1600x680 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-960x540 cream source=252,211,159 pixel=80,62,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-1280x720 cream source=252,211,159 pixel=80,62,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-1920x1080 cream source=252,211,159 pixel=79,61,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-1280x960 cream source=252,211,159 pixel=80,65,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-1600x680 cream source=252,211,159 pixel=74,51,35; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-map-list-960x540 cream source=252,211,159 pixel=54,39,28; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-map-list-1280x720 cream source=252,211,159 pixel=55,39,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-map-list-1920x1080 cream source=252,211,159 pixel=55,39,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-map-list-1280x960 cream source=252,211,159 pixel=55,38,27; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Host-map-list-1600x680 cream source=252,211,159 pixel=51,34,22; isolated UI camera, no ColourGrade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-Join-online-960x540 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-online-1280x720 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-online-1920x1080 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-online-1280x960 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-online-1600x680 cream source=252,211,159 pixel=91,19,17; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-lan-960x540 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-lan-1280x720 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-lan-1920x1080 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-lan-1280x960 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-lan-1600x680 cream source=252,211,159 pixel=91,19,17; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-code-960x540 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-code-1280x720 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-code-1920x1080 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-code-1280x960 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Join-code-1600x680 cream source=252,211,159 pixel=91,19,17; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1224" name="PracticePickerBackAndBothChoicesUseTheirOfflineRoutes" fullname="TumbangPreso.PlayTests.HubFlowTests.PracticePickerBackAndBothChoicesUseTheirOfflineRoutes" methodname="PracticePickerBackAndBothChoicesUseTheirOfflineRoutes" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="1818199244" result="Passed" start-time="2026-09-26 22:07:26Z" end-time="2026-09-26 22:07:35Z" duration="8.887121" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-PracticePopup-960x540 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-PracticePopup-1280x720 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-PracticePopup-1920x1080 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-PracticePopup-1280x960 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-PracticePopup-1600x680 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Net] offline
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Net] offline
+[ArenaPrewarm] drew 20 views in 0.64 s.
+[HubLoading] BayanPlaza ready after 1.18 s.
+[Net] offline
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1487" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 22:07:35Z" end-time="2026-09-26 22:07:42Z" duration="6.898310" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1489" name="StartupLoginStaysSilentUntilGuestRevealsHome" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.StartupLoginStaysSilentUntilGuestRevealsHome" methodname="StartupLoginStaysSilentUntilGuestRevealsHome" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="32875067" result="Passed" start-time="2026-09-26 22:07:35Z" end-time="2026-09-26 22:07:42Z" duration="6.895800" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLogin-v7-create-1920x1080 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-960x540 cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-1280x960 cream source=252,211,159 pixel=244,135,100; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-3440x1440 cream source=252,211,159 pixel=242,140,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-normal cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-large cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpGeometry] Login-consent-checked/AcceptedCheck: vertices=24, cull=False, alpha=1, depth=34, material=1
+[TumpUiCapture] Login-consent-checked cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v8-valid-marks/Disc: vertices=384, cull=False, alpha=0.998, depth=13, material=1
+[TumpGeometry] OwnerLogin-v8-valid-marks/Tick: vertices=24, cull=False, alpha=0.998, depth=14, material=1
+[TumpGeometry] OwnerLogin-v8-valid-marks/AcceptedCheck: vertices=24, cull=False, alpha=1, depth=34, material=1
+[TumpUiCapture] OwnerLogin-v8-valid-marks cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-password-fault/Disc: vertices=384, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] OwnerLogin-password-fault/Tick: vertices=24, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] OwnerLogin-password-fault/AcceptedCheck: vertices=24, cull=False, alpha=1, depth=34, material=1
+[TumpUiCapture] OwnerLogin-password-fault cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v7-signin/Disc: vertices=384, cull=False, alpha=0.003, depth=13, material=1
+[TumpGeometry] OwnerLogin-v7-signin/Tick: vertices=24, cull=False, alpha=0.003, depth=14, material=1
+[TumpUiCapture] OwnerLogin-v7-signin cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

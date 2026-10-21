@@ -1,0 +1,32 @@
+{
+  "job": {
+    "id": "76ac0c78ee4c4f4782ee772391282f4c",
+    "ownerPid": 17576,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T13:18:15Z",
+    "kind": "build",
+    "memoryMb": 4096,
+    "reserveMb": 1536,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-competition-candidate1003i",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-competition-candidate1003i\\library",
+    "profile": "competition-candidate1003i",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-03T13:18:15Z",
+  "status": "refused",
+  "exitCode": 1,
+  "reason": "Project, Library, profile or preference hive is already leased",
+  "endedUtc": "2026-10-03T13:20:15Z",
+  "guardTerminal": true,
+  "preservationCompleted": false,
+  "availableMbAtEnd": 2375,
+  "leaseHeld": false
+}

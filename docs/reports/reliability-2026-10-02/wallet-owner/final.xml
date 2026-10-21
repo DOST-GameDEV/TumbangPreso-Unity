@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.1410287">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="816" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.141029" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1971" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="816" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.129372" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20488" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1972" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="816" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.126915" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1973" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="816" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.124818" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="54" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.071370" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1111" name="WalletAccountNotificationRetiresOnlyAnotherOwnersCache" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletAccountNotificationRetiresOnlyAnotherOwnersCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.040695" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1109" name="WalletAccountNotificationRetiresOnlyAnotherOwnersCache(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletAccountNotificationRetiresOnlyAnotherOwnersCache(False)" methodname="WalletAccountNotificationRetiresOnlyAnotherOwnersCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="606215155" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.024692" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1110" name="WalletAccountNotificationRetiresOnlyAnotherOwnersCache(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletAccountNotificationRetiresOnlyAnotherOwnersCache(True)" methodname="WalletAccountNotificationRetiresOnlyAnotherOwnersCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1647196774" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.007981" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1108" name="WalletResponseCannotBecomeAnotherAccountsBalance" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletResponseCannotBecomeAnotherAccountsBalance" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.005396" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1106" name="WalletResponseCannotBecomeAnotherAccountsBalance(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletResponseCannotBecomeAnotherAccountsBalance(False)" methodname="WalletResponseCannotBecomeAnotherAccountsBalance" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="715663313" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.004025" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1107" name="WalletResponseCannotBecomeAnotherAccountsBalance(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletResponseCannotBecomeAnotherAccountsBalance(True)" methodname="WalletResponseCannotBecomeAnotherAccountsBalance" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2033110568" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.000369" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1112" name="WalletScheduledRefreshWaitsForThePendingRequest" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletScheduledRefreshWaitsForThePendingRequest" methodname="WalletScheduledRefreshWaitsForThePendingRequest" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="504680229" result="Passed" start-time="2026-10-02 01:27:14Z" end-time="2026-10-02 01:27:14Z" duration="0.006818" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

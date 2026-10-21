@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.2267563">
+  <test-suite type="TestSuite" id="1958" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="766" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.226756" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1952" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="766" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.214167" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="58700" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1953" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="766" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.208056" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1954" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="766" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.202081" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1742" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="30" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.163227" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1769" name="UltimateCommitCodecBoundsIdentityAndPreservesTheRequestBodyScope" fullname="TumbangPreso.PlayTests.SkillReceiptTests.UltimateCommitCodecBoundsIdentityAndPreservesTheRequestBodyScope" methodname="UltimateCommitCodecBoundsIdentityAndPreservesTheRequestBodyScope" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="485021105" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.047596" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1770" name="UltimatePreparationAndExecutionRequireTheCommittedHeroAndAbility" fullname="TumbangPreso.PlayTests.SkillReceiptTests.UltimatePreparationAndExecutionRequireTheCommittedHeroAndAbility" methodname="UltimatePreparationAndExecutionRequireTheCommittedHeroAndAbility" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="26084782" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.071941" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1771" name="UltimateReceiverKeepsTheHostDurationWhileTheCasterIsMissing" fullname="TumbangPreso.PlayTests.SkillReceiptTests.UltimateReceiverKeepsTheHostDurationWhileTheCasterIsMissing" methodname="UltimateReceiverKeepsTheHostDurationWhileTheCasterIsMissing" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1248103496" result="Passed" start-time="2026-09-27 16:27:36Z" end-time="2026-09-27 16:27:36Z" duration="0.028566" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

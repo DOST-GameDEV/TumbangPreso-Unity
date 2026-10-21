@@ -11,6 +11,7 @@ namespace TumbangPreso.UI
         {
             _nativeReadout = gameObject.AddComponent<TumpMatchReadout>();
             _nativeReadout.Build(transform); _canvas = _nativeReadout.Canvas; _root = (RectTransform)_canvas.transform;
+            CameraSystem.CatchReconstruction.Attach(gameObject);
             _trainingChrome = GameLaunch.GuidedTutorial;
             var indicators = new GameObject("NativeTargetIndicators"); indicators.transform.SetParent(transform, false);
             _indicators = indicators.AddComponent<OffscreenIndicators>();
@@ -53,7 +54,7 @@ namespace TumbangPreso.UI
             // simply stay on screen. `PopHitmarker`'s note records the identical fault.
             if (_recall != null) _recall.SetVisible(!spectating);
             foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include, FindObjectsSortMode.None)) card.gameObject.SetActive(!spectating);
-            foreach (var card in FindObjectsByType<RoleSwapCard>(FindObjectsInactive.Include, FindObjectsSortMode.None)) card.gameObject.SetActive(!spectating);
+            // The next-taya/standings card describes the match, including for watchers.
         }
     }
 }

@@ -1,0 +1,6 @@
+{
+  "sourceCsvSha256": "0d46f83c0c5d40174f6ee1247d37abbfcb86b88b7f3ba8df191bff032b35e151",
+  "sourceCsv": "Logs/tournament-review1007/cpu-trace-export1008/decoded/01-title-to-home-samples.csv",
+  "evidenceOrigin": "docs/reports/ui-code-preparation-2026-10-08",
+  "interpretation": "Older Development capture; CPU inclusive samples with unsynchronized main/render frame indices. Separate from current ordinary ABA player. No current asset/GPU-duration attribution."
+}

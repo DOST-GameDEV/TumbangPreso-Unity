@@ -1,0 +1,6 @@
+{
+  "source": "61a650049b4949bda2c60d8df8991ff1e8705ed0",
+  "pid": 10264,
+  "rawLogLine": "[Splash] boot loading finished after 18.89 s (work-driven, no reading window).",
+  "scope": "Measured startup observation; not optimization/animation/audio acceptance"
+}

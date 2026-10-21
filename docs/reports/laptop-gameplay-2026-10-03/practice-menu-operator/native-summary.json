@@ -1,0 +1,27 @@
+{
+  "source_baseline": "75de684463693e18daa45c7c6a568b2cedca4533",
+  "job_id": "7a6192343a1f44dc9b322c8a02284ab6",
+  "result": "Passed",
+  "total": 2,
+  "passed": 2,
+  "failed": 0,
+  "duration_seconds": 14.1596926,
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "leaseHeld": false,
+  "fixture_sha256": "e584094f33fd9ecfce726144395d84731411212e7f9ba1032782974cf6c5e3a5",
+  "worker_fixture_matches_frozen_primary": true,
+  "retry_or_fixture_repair_count": 0,
+  "input_level": "Actual visible-target raycasts and uGUI pointer-click/programmatic selected-control Submit handlers; no physical input or MenuNav traversal",
+  "planner_level": "Real restored active brain leaves Idle within one simulated second; no tag/contact/aim-cadence claim",
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.PracticeBotOperatorTests.ClassicPointerMenuRestoresChosenBotAsAttackerAndDefender",
+      "result": "Passed"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PracticeBotOperatorTests.HeroSubmitMenuRestoresChosenBotAsAttackerAndDefender",
+      "result": "Passed"
+    }
+  ]
+}

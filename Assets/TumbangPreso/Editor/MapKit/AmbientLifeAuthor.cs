@@ -23,7 +23,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var report=new StringBuilder();
             foreach(string map in new[]{"Eskinita","BayanPlaza","IlalimNgTulay","SaBubong"})
             {
-                var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
+                var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.LegacyScenePath(map),OpenSceneMode.Single);
                 FinishLoadedScene(map,report);EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
             }
             AssetDatabase.SaveAssets();Directory.CreateDirectory("Logs");File.WriteAllText("Logs/ambient-life-author.txt",report.ToString());
@@ -50,10 +50,10 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             _prepared=true;
         }
-        private static AmbientLife.Animal Animal(string id,Vector3[] route,bool bird)
+        internal static AmbientLife.Animal Animal(string id,Vector3[] route,bool bird)
         {
             string path=Folder+"/"+id+".glb";
-            var clips=AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().ToArray();
+            var clips=AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().OrderBy(c=>c.name,StringComparer.Ordinal).ToArray();
             foreach(string name in bird?new[]{"idle","peck","fly"}:new[]{"idle","walk","run","alert"})
                 if(!clips.Any(c=>c.name==name&&!c.legacy&&c.length>0))throw new InvalidOperationException(id+" lacks a nonzero Mecanim "+name);
             var size=bird?new NativeSize():JsonUtility.FromJson<NativeSize>(File.ReadAllText("MapSource/environment/ambient-life/street-animals/study-v7/"+id+".json"));
@@ -125,7 +125,7 @@ namespace TumbangPreso.EditorTools.MapKit
             root.AddComponent<AmbientLife>().Animals=specs.ToArray();
             report.AppendLine(map+": "+specs.Count+" ambient animals, private cosmetic visits, no gameplay colliders");
         }
-        private static bool Ground(Vector3 near,out Vector3 foot)
+        internal static bool Ground(Vector3 near,out Vector3 foot)
         {
             foot=default;float best=float.NegativeInfinity;
             foreach(var hit in Physics.RaycastAll(near+Vector3.up*.45f,Vector3.down,5,~0,QueryTriggerInteraction.Ignore))
@@ -135,9 +135,9 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             return !float.IsNegativeInfinity(best);
         }
-        private static bool ClearBody(Vector3 at)
+        internal static bool ClearBody(Vector3 at)
             =>Physics.OverlapBox(at+Vector3.up*.5f,new Vector3(.67f,.48f,.67f),Quaternion.identity,~0,QueryTriggerInteraction.Ignore).Length==0;
-        private static bool ClearStep(Vector3 a,Vector3 b)
+        internal static bool ClearStep(Vector3 a,Vector3 b)
         {
             if(Mathf.Abs(a.y-b.y)>.15f)return false;
             var delta=b-a;
@@ -195,7 +195,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
                 return parent;
         }
-        private sealed class SurfaceQueries:IDisposable
+        internal sealed class SurfaceQueries:IDisposable
         {
             private readonly List<MeshCollider> _temporary=new List<MeshCollider>();
             public SurfaceQueries()

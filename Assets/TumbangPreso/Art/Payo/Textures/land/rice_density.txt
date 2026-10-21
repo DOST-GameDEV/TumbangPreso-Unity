@@ -1,0 +1,2 @@
+-1159 -225 214 2554
+# x0 y0 x1 y1 in metres (world = Blender object space of the land), 2 px a metre, row 0 at y1 (north), column 0 at x0; 0 = mud, 1 = rice standing

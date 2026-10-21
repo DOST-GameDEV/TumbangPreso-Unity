@@ -1,0 +1,29 @@
+{
+  "source": "937313108ad55398571b2617f5187eed2ac9d640",
+  "players": {
+    "joined": {
+      "exitCode": 0,
+      "reportWritten": true,
+      "joined": false,
+      "lookupRateLimited": true,
+      "remainedHost": true,
+      "lobbySeen": false
+    },
+    "rejoined": {
+      "exitCode": 0,
+      "reportWritten": true,
+      "joined": false,
+      "lookupRateLimited": true,
+      "remainedHost": true,
+      "lobbySeen": false
+    },
+    "host": {
+      "exitCode": 0,
+      "reportWritten": true
+    }
+  },
+  "code": "F4DR",
+  "sharedInputUnchanged": true,
+  "passed": false,
+  "reason": "Both immediate code entries fell through cold LAN discovery into concurrent Lobby query, returned HTTP429 and stayed self-hosts. Clean process exits are not a join pass."
+}

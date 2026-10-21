@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "source": "f4890bdd43ae8b0129be6ebb9499eb7a54de2d01",
+  "protocol": 146,
+  "files": 258,
+  "bytes": 2565875723,
+  "manifestSha256": "38192bd528af674e84575775d4bcbbf08331ce0b6523d1b98b9366bbb828dafe",
+  "reusedVerifiedFiles": 241,
+  "downloadedFiles": 17,
+  "downloadedBytes": 315137638,
+  "seconds": 55.888415575027466,
+  "destination": "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-f4890bdd4-1004"
+}

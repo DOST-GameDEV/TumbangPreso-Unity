@@ -1,0 +1,44 @@
+{
+  "nativePid": 56940,
+  "baseRef": "d9ead48c1d7644020e7d756641ad1087bbd6390a",
+  "scope": "Actual graphical hidden ModelPreview binding/render/ambient lifecycle and existing three deferred Hero routing controls. No player latency or tournament acceptance inferred.",
+  "source": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ModelPreview.cs",
+      "sha256": "9778e050cdd877470f2ca5e269390a2853984e3754c41edf75b47fa17f71ab39",
+      "bytes": 79239
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubHero.cs",
+      "sha256": "b04c638fcf42a84ac6e65ea4bf504b98494181f41c5222453f24b094f69a7ba6",
+      "bytes": 20184
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/TumpHub.cs",
+      "sha256": "a27dfd32f7a0f6665edd89f2e01c60f3e1c9e1a69620a05ea8550f16fc9e8e4d",
+      "bytes": 18971
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubScreen.cs",
+      "sha256": "066645f70f6dda211f8362ae78dbe647983599584741458380a629b0c95329ec",
+      "bytes": 2194
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HiddenPreviewFrameTests.cs",
+      "sha256": "1580f9c8110fda228e3ebef246e6414e2c930a556c467587c59c86f74b033596",
+      "bytes": 3290
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HiddenPreviewFrameTests.cs.meta",
+      "sha256": "541a90b922cd7f6dea4eb40a5254f1bddd817af4d554f9726c3c5110a4662379",
+      "bytes": 60
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/DeferredHeroViewTests.cs",
+      "sha256": "afa850ccbb5309457937c194f4d303b52170053b9e999bb0c760b5bef0b75e4a",
+      "bytes": 3879
+    }
+  ],
+  "passed": 4,
+  "protectedInputsRestored": 21425
+}

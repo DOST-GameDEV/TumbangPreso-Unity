@@ -1,0 +1,11 @@
+{
+  "terminal": true,
+  "exitCode": 0,
+  "inputs": 19310,
+  "generatedDeltas": 265,
+  "allGeneratedBeforeAfterPreservedAndRestored": true,
+  "playerInputRestored": true,
+  "editorInputRestored": true,
+  "workerInputRestored": true,
+  "layoutsBeforeAfterPreservedAndRestored": true
+}

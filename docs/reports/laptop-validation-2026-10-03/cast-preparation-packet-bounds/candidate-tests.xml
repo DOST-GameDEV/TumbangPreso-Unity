@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.0680713">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1211" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.068071" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2485" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1211" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.060142" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27624" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2486" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1211" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.058144" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2487" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1211" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.055773" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1264" name="CastPreparationPacketBoundsTests" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.039961" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1275" name="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.028590" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1273" name="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;sean&quot;)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;sean&quot;)" methodname="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="241048081" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.023555" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1274" name="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;雨&quot;)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;雨&quot;)" methodname="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="1210046085" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000347" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1276" name="NonHostCannotDecodeEvenAnEmptyPayload" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.NonHostCannotDecodeEvenAnEmptyPayload" methodname="NonHostCannotDecodeEvenAnEmptyPayload" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="145591751" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000716" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1272" name="TrailingBytesRejectTheWholePreparation" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TrailingBytesRejectTheWholePreparation" methodname="TrailingBytesRejectTheWholePreparation" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="1643080070" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000533" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1271" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.002630" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1265" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(8)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(8)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="2132095955" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000727" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1266" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(12)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(12)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="889549138" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000200" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1267" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(18)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(18)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="350959112" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000184" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1268" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(23)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(23)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="64545011" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000166" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1269" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(31)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(31)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="47265654" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1270" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(79)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(79)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="2136380501" result="Passed" start-time="2026-10-03 14:16:58Z" end-time="2026-10-03 14:16:58Z" duration="0.000162" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

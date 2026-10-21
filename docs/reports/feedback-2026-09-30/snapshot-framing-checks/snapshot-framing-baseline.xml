@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 06:07:24Z" end-time="2026-10-01 06:07:26Z" duration="1.9797641">
+  <test-suite type="TestSuite" id="2357" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1101" result="Failed" site="Child" start-time="2026-10-01 06:07:24Z" end-time="2026-10-01 06:07:26Z" duration="1.979764" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2351" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1101" result="Failed" site="Child" start-time="2026-10-01 06:07:24Z" end-time="2026-10-01 06:07:26Z" duration="1.954126" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9516" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2352" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1101" result="Failed" site="Child" start-time="2026-10-01 06:07:24Z" end-time="2026-10-01 06:07:26Z" duration="1.937296" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2353" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1101" result="Failed" site="Child" start-time="2026-10-01 06:07:24Z" end-time="2026-10-01 06:07:26Z" duration="1.920982" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2067" name="SessionRestartTests" fullname="TumbangPreso.PlayTests.SessionRestartTests" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-01 06:07:24Z" end-time="2026-10-01 06:07:26Z" duration="1.824694" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2068" name="EmptySnapshotRequestDoesNotConsumeRefreshBudget" fullname="TumbangPreso.PlayTests.SessionRestartTests.EmptySnapshotRequestDoesNotConsumeRefreshBudget" methodname="EmptySnapshotRequestDoesNotConsumeRefreshBudget" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="41347149" result="Failed" start-time="2026-10-01 06:07:24Z" end-time="2026-10-01 06:07:26Z" duration="1.698166" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Malformed snapshot request consumed the refresh throttle.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SessionRestartTests+<RejectMalformedSnapshotRequest>d__11.MoveNext () [0x00170] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SessionRestartTests.cs:118
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18691, join code 7YYS
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2070" name="TrailingSnapshotBytesDoNotConsumeRefreshBudget" fullname="TumbangPreso.PlayTests.SessionRestartTests.TrailingSnapshotBytesDoNotConsumeRefreshBudget" methodname="TrailingSnapshotBytesDoNotConsumeRefreshBudget" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1438360798" result="Failed" start-time="2026-10-01 06:07:26Z" end-time="2026-10-01 06:07:26Z" duration="0.056230" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Malformed snapshot request consumed the refresh throttle.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SessionRestartTests+<RejectMalformedSnapshotRequest>d__11.MoveNext () [0x00170] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SessionRestartTests.cs:118
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18691, join code 8AS7
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2069" name="UnknownSnapshotMarkerDoesNotConsumeRefreshBudget" fullname="TumbangPreso.PlayTests.SessionRestartTests.UnknownSnapshotMarkerDoesNotConsumeRefreshBudget" methodname="UnknownSnapshotMarkerDoesNotConsumeRefreshBudget" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1204422639" result="Failed" start-time="2026-10-01 06:07:26Z" end-time="2026-10-01 06:07:26Z" duration="0.050642" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Malformed snapshot request consumed the refresh throttle.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SessionRestartTests+<RejectMalformedSnapshotRequest>d__11.MoveNext () [0x00170] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SessionRestartTests.cs:118
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18691, join code S4N8
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

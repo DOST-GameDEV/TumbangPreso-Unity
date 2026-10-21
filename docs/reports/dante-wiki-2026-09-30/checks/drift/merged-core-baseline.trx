@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2773d0aa-7666-4856-bb67-66439ca496cc" name="@0cb6403a4672 2026-10-01 08:28:12" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-01T08:28:12.7809091+08:00" queuing="2026-10-01T08:28:12.7809092+08:00" start="2026-10-01T08:28:12.0662088+08:00" finish="2026-10-01T08:28:12.7868250+08:00" />
+  <TestSettings name="default" id="aac5bca1-f20a-414f-8040-d2b22daa609e">
+    <Deployment runDeploymentRoot="_0cb6403a4672_2026-10-01_08_28_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b918fe68-b2e9-4497-bc09-2e9a1b34d93e" testId="70755510-54d9-f9fa-9d87-4d6d21b798cb" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheSkillTreeIsSwitchedOff" computerName="0cb6403a4672" duration="00:00:00.0009014" startTime="2026-10-01T08:28:12.6725044+08:00" endTime="2026-10-01T08:28:12.6725044+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b918fe68-b2e9-4497-bc09-2e9a1b34d93e" />
+    <UnitTestResult executionId="19fb2110-0ff0-4c1b-a2bf-b0271e9bb93f" testId="61126ad7-dcb6-9670-cee9-a259699bb034" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkStatusesAreTheOwnersAnswers" computerName="0cb6403a4672" duration="00:00:00.0001512" startTime="2026-10-01T08:28:12.6724791+08:00" endTime="2026-10-01T08:28:12.6724791+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19fb2110-0ff0-4c1b-a2bf-b0271e9bb93f" />
+    <UnitTestResult executionId="f2c49f1c-0780-46fd-9f59-ee3ef4f4119f" testId="aecf6f19-8f3f-f39f-cb40-edfe839dfbdf" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkKitsCarryTheOwnersNumbers" computerName="0cb6403a4672" duration="00:00:00.0010556" startTime="2026-10-01T08:28:12.6605422+08:00" endTime="2026-10-01T08:28:12.6605423+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f2c49f1c-0780-46fd-9f59-ee3ef4f4119f" />
+    <UnitTestResult executionId="97b71c09-48e2-4fc9-80f3-6e36919044ff" testId="45d19d1b-6de9-d8e2-98ea-b5cea4ee86c2" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap" computerName="0cb6403a4672" duration="00:00:00.0002602" startTime="2026-10-01T08:28:12.6605824+08:00" endTime="2026-10-01T08:28:12.6605824+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97b71c09-48e2-4fc9-80f3-6e36919044ff" />
+    <UnitTestResult executionId="3de21fcf-29ad-42a1-878a-7db9101e53da" testId="fc483ec4-9eb1-c7a3-c6ea-0f712822bde2" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.StatusesOverlapByMaxNeverAdd" computerName="0cb6403a4672" duration="00:00:00.0001140" startTime="2026-10-01T08:28:12.6724244+08:00" endTime="2026-10-01T08:28:12.6724245+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3de21fcf-29ad-42a1-878a-7db9101e53da" />
+    <UnitTestResult executionId="7f0168c0-59b6-4809-bb3d-52d221dd9e49" testId="97616860-93d8-8bab-f017-7df16637ea40" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheStatusTableIsTheOwnersTable" computerName="0cb6403a4672" duration="00:00:00.0019902" startTime="2026-10-01T08:28:12.6722766+08:00" endTime="2026-10-01T08:28:12.6722768+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f0168c0-59b6-4809-bb3d-52d221dd9e49">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ
+Expected: 11
+Actual:   12</Message>
+          <StackTrace>   at TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheStatusTableIsTheOwnersTable() in /workspace/shared/TumbangPreso-Unity/Core.Tests/StatusAndAmihanRulesTests.cs:line 43
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bbb905b9-90ae-434a-a948-de6cface08a1" testId="8b9db327-5b65-ce26-ca09-56cfbda3c0c6" testName="TumbangPreso.Core.Tests.HauntedRulesTests.HauntedUsesTheCurrentWikiPerceptionContractWithoutRenumberingStatuses" computerName="0cb6403a4672" duration="00:00:00.0084378" startTime="2026-10-01T08:28:12.6568418+08:00" endTime="2026-10-01T08:28:12.6568557+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bbb905b9-90ae-434a-a948-de6cface08a1" />
+    <UnitTestResult executionId="8b99d837-06e0-4fef-befa-dbb19551dbfd" testId="ee34a078-e80b-230c-4491-7b949abe366d" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.ACarryCoversExactlyTheWrittenDistance" computerName="0cb6403a4672" duration="00:00:00.0012805" startTime="2026-10-01T08:28:12.6605017+08:00" endTime="2026-10-01T08:28:12.6605017+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b99d837-06e0-4fef-befa-dbb19551dbfd" />
+    <UnitTestResult executionId="6e688e47-a568-4dcb-81a4-e712ec097fa7" testId="aef284fd-c879-2eea-5474-265bba0d0d6e" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock" computerName="0cb6403a4672" duration="00:00:00.0078841" startTime="2026-10-01T08:28:12.6593221+08:00" endTime="2026-10-01T08:28:12.6593222+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e688e47-a568-4dcb-81a4-e712ec097fa7" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkStatusesAreTheOwnersAnswers" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="61126ad7-dcb6-9670-cee9-a259699bb034">
+      <Execution id="19fb2110-0ff0-4c1b-a2bf-b0271e9bb93f" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheReworkStatusesAreTheOwnersAnswers" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkKitsCarryTheOwnersNumbers" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="aecf6f19-8f3f-f39f-cb40-edfe839dfbdf">
+      <Execution id="f2c49f1c-0780-46fd-9f59-ee3ef4f4119f" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheReworkKitsCarryTheOwnersNumbers" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HauntedRulesTests.HauntedUsesTheCurrentWikiPerceptionContractWithoutRenumberingStatuses" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="8b9db327-5b65-ce26-ca09-56cfbda3c0c6">
+      <Execution id="bbb905b9-90ae-434a-a948-de6cface08a1" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HauntedRulesTests" name="HauntedUsesTheCurrentWikiPerceptionContractWithoutRenumberingStatuses" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheSkillTreeIsSwitchedOff" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="70755510-54d9-f9fa-9d87-4d6d21b798cb">
+      <Execution id="b918fe68-b2e9-4497-bc09-2e9a1b34d93e" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheSkillTreeIsSwitchedOff" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.StatusesOverlapByMaxNeverAdd" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="fc483ec4-9eb1-c7a3-c6ea-0f712822bde2">
+      <Execution id="3de21fcf-29ad-42a1-878a-7db9101e53da" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="StatusesOverlapByMaxNeverAdd" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.ACarryCoversExactlyTheWrittenDistance" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="ee34a078-e80b-230c-4491-7b949abe366d">
+      <Execution id="8b99d837-06e0-4fef-befa-dbb19551dbfd" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="ACarryCoversExactlyTheWrittenDistance" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheStatusTableIsTheOwnersTable" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="97616860-93d8-8bab-f017-7df16637ea40">
+      <Execution id="7f0168c0-59b6-4809-bb3d-52d221dd9e49" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheStatusTableIsTheOwnersTable" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="aef284fd-c879-2eea-5474-265bba0d0d6e">
+      <Execution id="6e688e47-a568-4dcb-81a4-e712ec097fa7" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="45d19d1b-6de9-d8e2-98ea-b5cea4ee86c2">
+      <Execution id="97b71c09-48e2-4fc9-80f3-6e36919044ff" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="70755510-54d9-f9fa-9d87-4d6d21b798cb" executionId="b918fe68-b2e9-4497-bc09-2e9a1b34d93e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="61126ad7-dcb6-9670-cee9-a259699bb034" executionId="19fb2110-0ff0-4c1b-a2bf-b0271e9bb93f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aecf6f19-8f3f-f39f-cb40-edfe839dfbdf" executionId="f2c49f1c-0780-46fd-9f59-ee3ef4f4119f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45d19d1b-6de9-d8e2-98ea-b5cea4ee86c2" executionId="97b71c09-48e2-4fc9-80f3-6e36919044ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc483ec4-9eb1-c7a3-c6ea-0f712822bde2" executionId="3de21fcf-29ad-42a1-878a-7db9101e53da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="97616860-93d8-8bab-f017-7df16637ea40" executionId="7f0168c0-59b6-4809-bb3d-52d221dd9e49" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b9db327-5b65-ce26-ca09-56cfbda3c0c6" executionId="bbb905b9-90ae-434a-a948-de6cface08a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ee34a078-e80b-230c-4491-7b949abe366d" executionId="8b99d837-06e0-4fef-befa-dbb19551dbfd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aef284fd-c879-2eea-5474-265bba0d0d6e" executionId="6e688e47-a568-4dcb-81a4-e712ec097fa7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="8" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.20)
+[xUnit.net 00:00:00.07]   Discovering: TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.16]   Discovered:  TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.17]   Starting:    TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.23]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.23]       Expected: 11
+[xUnit.net 00:00:00.23]       Actual:   12
+[xUnit.net 00:00:00.23]       Stack Trace:
+[xUnit.net 00:00:00.23]         /workspace/shared/TumbangPreso-Unity/Core.Tests/StatusAndAmihanRulesTests.cs(43,0): at TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheStatusTableIsTheOwnersTable()
+[xUnit.net 00:00:00.23]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:00.23]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.23]   Finished:    TumbangPreso.Core.Tests
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="0cb6403a4672" outcome="Error" timestamp="2026-10-01T08:28:12.6715677+08:00">
+        <Text>[xUnit.net 00:00:00.23]     TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheStatusTableIsTheOwnersTable [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

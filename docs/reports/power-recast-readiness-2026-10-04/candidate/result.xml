@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.3298807">
+  <test-suite type="TestSuite" id="1053" name="TUMP Bank Runtime1004" fullname="TUMP Bank Runtime1004" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.329881" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1047" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.323589" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27832" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1048" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.323065" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1049" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.322689" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1003" name="PowerReadoutRecastTests" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.321552" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1008" name="OwnerIconMatchesTheRealSecondCutWindow" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.318656" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1004" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;available&quot;,False)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;available&quot;,False)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="1103874583" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.199657" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;spent-but-cooled&quot;,True)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;spent-but-cooled&quot;,True)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="368094660" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.036983" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;expired&quot;,True)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;expired&quot;,True)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="1560851317" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.035208" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="OwnerIconMatchesTheRealSecondCutWindow(&quot;zapped&quot;,True)" fullname="TumbangPreso.PlayTests.PowerReadoutRecastTests.OwnerIconMatchesTheRealSecondCutWindow(&quot;zapped&quot;,True)" methodname="OwnerIconMatchesTheRealSecondCutWindow" classname="TumbangPreso.PlayTests.PowerReadoutRecastTests" runstate="Runnable" seed="786294488" result="Passed" start-time="2026-10-04 06:09:01Z" end-time="2026-10-04 06:09:01Z" duration="0.037426" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Bank Runtime1004/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

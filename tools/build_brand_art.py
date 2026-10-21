@@ -28,6 +28,8 @@ tsinelas mark are drawn from one palette. docs/TODO.md 133.1 forbids doing this 
 
 import os
 import sys
+import io
+import xml.etree.ElementTree as ET
 
 try:
     from PIL import Image
@@ -152,11 +154,44 @@ def save(img, name):
     print(f"   {name:34s} {img.width:5d} x {img.height:<5d}")
 
 
+def render_vector_masters():
+    """Owner-approved SVGs take precedence over the historical JPEG/recolour path."""
+    if not os.path.isfile(os.path.join(SRC, "tump-logo-colour.svg")):
+        return False
+    variants = {
+        "tump-logo-colour.svg": ("tump_logo.png",),
+        "tsinelas-mark.svg": ("tsinelas_mark.png",),
+        "tsinelas-hit.svg": ("tsinelas_hit.png",),
+        "tump-logo-outline.svg": ("tump_wordmark_ink.png",),
+        "tump-logo-textured.svg": ("tump_wordmark_login.png", "tump_wordmark_lobby.png", "tump_wordmark_stage.png"),
+    }
+    for source in variants:
+        if not os.path.isfile(os.path.join(SRC, source)):
+            sys.exit("Missing current vector master: " + source + "; no artwork was replaced.")
+    try:
+        import cairosvg
+    except ImportError:
+        sys.exit("Current SVG masters require CairoSVG: python -m pip install cairosvg; no artwork was replaced.")
+    for source, names in variants.items():
+        path = os.path.join(SRC, source)
+        _, _, width, height = map(float, ET.parse(path).getroot().get("viewBox").split())
+        scale = 2048 / max(width, height)
+        png = cairosvg.svg2png(url=path, output_width=round(width * scale), output_height=round(height * scale))
+        image = Image.open(io.BytesIO(png)).convert("RGBA")
+        for name in names:
+            save(image, name)
+    return True
+
+
 def main():
     if not os.path.isdir(SRC):
         sys.exit(f"no {SRC}. The artist's files go there and are committed unchanged.")
 
     print("brand art, from", SRC)
+
+    if render_vector_masters():
+        print("Current transparent SVG masters retained; legacy JPEG recolouring skipped.")
+        return
 
     colour = trim(key_page(Image.open(f"{SRC}/tump_logo_colour.jpg")))
     save(colour, "tump_logo.png")

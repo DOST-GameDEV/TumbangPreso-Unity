@@ -1,0 +1,14 @@
+{
+  "sourceEquivalent": "72c7ee64c plus newest Actions request",
+  "question": "latest ordering/defaults preserve saved IDs/actual gameplay inputs",
+  "expectedEditCases": 3,
+  "expectedPlayCases": 1,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Resources/TumbangPreso.inputactions": "ee5991781be2a2fb26d67f3abda30a53514f3478f48ad6a27386b429eb1d8bad",
+    "Assets/TumbangPreso/Runtime/Settings/Rebinding.cs": "dfa73ff56237bb261e699b32f929d3f6a3b072f29f391755a0b0e738d0b6ccd0",
+    "Assets/TumbangPreso/Tests/PlayMode/InputReaderTests.cs": "0732caa5a7a12706a4f52ddf132d6d84213c4de004da9360e82cee8e1da2c589",
+    "Assets/TumbangPreso/Tests/InputMapAndAbilityTests.cs": "b32dce29ef2fbf0b892edd4d78a8036c167b13ff61eb36476b828875d74b8630"
+  },
+  "runtimeDrift": []
+}

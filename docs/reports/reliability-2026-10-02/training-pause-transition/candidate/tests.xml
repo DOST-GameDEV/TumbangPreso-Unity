@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 08:14:00Z" end-time="2026-10-02 08:14:04Z" duration="3.9428111">
+  <test-suite type="TestSuite" id="2562" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1274" result="Passed" start-time="2026-10-02 08:14:00Z" end-time="2026-10-02 08:14:04Z" duration="3.942811" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2556" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1274" result="Passed" start-time="2026-10-02 08:14:00Z" end-time="2026-10-02 08:14:04Z" duration="3.916178" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11752" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2557" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1274" result="Passed" start-time="2026-10-02 08:14:00Z" end-time="2026-10-02 08:14:04Z" duration="3.898042" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2558" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1274" result="Passed" start-time="2026-10-02 08:14:00Z" end-time="2026-10-02 08:14:04Z" duration="3.880271" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2365" name="TrainingPauseTransitionTests" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 08:14:00Z" end-time="2026-10-02 08:14:04Z" duration="3.846807" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2366" name="PauseDuringCompletionBeatKeepsTheLessonUntilResume" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests.PauseDuringCompletionBeatKeepsTheLessonUntilResume" methodname="PauseDuringCompletionBeatKeepsTheLessonUntilResume" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" seed="1435154316" result="Passed" start-time="2026-10-02 08:14:00Z" end-time="2026-10-02 08:14:02Z" duration="1.361044" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2368" name="RepeatedSkipDuringTheBeatAdvancesExactlyOneLesson" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests.RepeatedSkipDuringTheBeatAdvancesExactlyOneLesson" methodname="RepeatedSkipDuringTheBeatAdvancesExactlyOneLesson" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" seed="55778541" result="Passed" start-time="2026-10-02 08:14:02Z" end-time="2026-10-02 08:14:03Z" duration="1.734549" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2367" name="UnpausedCompletionKeepsItsExistingBeatAndAdvances" fullname="TumbangPreso.PlayTests.TrainingPauseTransitionTests.UnpausedCompletionKeepsItsExistingBeatAndAdvances" methodname="UnpausedCompletionKeepsItsExistingBeatAndAdvances" classname="TumbangPreso.PlayTests.TrainingPauseTransitionTests" runstate="Runnable" seed="93588664" result="Passed" start-time="2026-10-02 08:14:03Z" end-time="2026-10-02 08:14:04Z" duration="0.735582" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

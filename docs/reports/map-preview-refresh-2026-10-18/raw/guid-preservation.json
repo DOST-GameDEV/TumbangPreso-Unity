@@ -1,0 +1,82 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-loop.mp4",
+    "guid": "5cb2a82771d94e249a9cd60fe60d1640"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-poster.png",
+    "guid": "5c9cdce9277ffe748a80f63b5ae441eb"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-source.json",
+    "guid": "15ae7ecadcb8418d8bfca865c5a20eb1"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/Eskinita.png",
+    "guid": "805bae5b684d48b1a9bb6d44f2c97eaa"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-loop.mp4",
+    "guid": "5c03691bcc786ea4e90c4ba4330ebe76"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-poster.png",
+    "guid": "c2f85ecf50c5d6645bd3071204f62752"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-source.json",
+    "guid": "442c8610a62d45baaad38815b5258b45"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/IlalimNgTulay.png",
+    "guid": "566ce18e0942400e878a6f49fc934b05"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-loop.mp4",
+    "guid": "314e12ad5a40b3c47b0389065cd5334e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-poster.png",
+    "guid": "27a16702ec2a63a41b8babff3314a4cf"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-source.json",
+    "guid": "e7b22ce7b5d247c180a1c2a48ccfb7b0"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/LagoonCove.png",
+    "guid": "6df32ad5d6c88f04a84a9cbe7e72eb44"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-loop.mp4",
+    "guid": "53fc7bbf2f3d3d34f96cd89b0471f5cf"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-poster.png",
+    "guid": "a00385c01ecc09e499f5064614149325"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-source.json",
+    "guid": "7e6668510d984ba0b5edf78da858cdac"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/Kanto.png",
+    "guid": "0c5a1219907298c4e9a37b1695215d93"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-loop.mp4",
+    "guid": "61b31d6a5a1208d4498b5d54d6726abf"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-poster.png",
+    "guid": "faf12ee896de21344b61bd9f75411eaa"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-source.json",
+    "guid": "368d528f6f9b4828b9495499ebefcdd7"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/Arena.png",
+    "guid": "76cd8d4f63105564ea924c175422ae3e"
+  }
+]

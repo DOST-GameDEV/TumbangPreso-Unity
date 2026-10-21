@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.2687649">
+  <test-suite type="TestSuite" id="2845" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.268765" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2839" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.255123" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5808" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2840" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.246503" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2841" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1501" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.238409" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2179" name="PunchPressOwnershipTests" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.151069" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2183" name="ACooldownBlockedInitialEdgeIsStillAvailableBeforePrediction" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.ACooldownBlockedInitialEdgeIsStillAvailableBeforePrediction" methodname="ACooldownBlockedInitialEdgeIsStillAvailableBeforePrediction" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="120205777" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.069800" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2181" name="CommittingAHeldPressPreventsARepeatedPunchAfterRefusal" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.CommittingAHeldPressPreventsARepeatedPunchAfterRefusal" methodname="CommittingAHeldPressPreventsARepeatedPunchAfterRefusal" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="968808641" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.024401" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2180" name="RefusalCannotReuseTheAlreadyPredictedPunchEdgeBeforeCommit" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.RefusalCannotReuseTheAlreadyPredictedPunchEdgeBeforeCommit" methodname="RefusalCannotReuseTheAlreadyPredictedPunchEdgeBeforeCommit" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="1778851637" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.024993" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2182" name="ReleaseCommitAndFreshPressCanPredictAnotherPunch" fullname="TumbangPreso.PlayTests.PunchPressOwnershipTests.ReleaseCommitAndFreshPressCanPredictAnotherPunch" methodname="ReleaseCommitAndFreshPressCanPredictAnotherPunch" classname="TumbangPreso.PlayTests.PunchPressOwnershipTests" runstate="Runnable" seed="1029168669" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.020867" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2184" name="PunchPressReleaseRecoveryTests" fullname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" classname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.045895" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2185" name="AReleaseObservedDuringStunAllowsAFreshPunchAfterRecovery" fullname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests.AReleaseObservedDuringStunAllowsAFreshPunchAfterRecovery" methodname="AReleaseObservedDuringStunAllowsAFreshPunchAfterRecovery" classname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" runstate="Runnable" seed="2079592062" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.022773" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2186" name="AReleaseObservedInTheAttackerRoleAllowsAFreshDefenderPunch" fullname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests.AReleaseObservedInTheAttackerRoleAllowsAFreshDefenderPunch" methodname="AReleaseObservedInTheAttackerRoleAllowsAFreshDefenderPunch" classname="TumbangPreso.PlayTests.PunchPressReleaseRecoveryTests" runstate="Runnable" seed="1148422526" result="Passed" start-time="2026-10-03 09:30:33Z" end-time="2026-10-03 09:30:33Z" duration="0.021818" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

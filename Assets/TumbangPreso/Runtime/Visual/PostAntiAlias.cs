@@ -79,7 +79,16 @@ namespace TumbangPreso.Visual
         {
             if (_camera == null) return;
 
-            bool wantHdr = AntiAliasModes.RequestedSamples <= 0;
+            // ⚠️ A MAP WITH ITS OWN GLOW KEEPS HDR UNDER MSAA (owner, 2026-10-05, on the Arena with
+            // MSAA 8x picked: "can you figure out why theres no bloom but in the tag replay cam there
+            // is"). An LDR target clamps every lamp, LED row and rim light to 1.0 as it is written,
+            // so nothing reaches the map's bloom threshold (1.7) and the whole glow is gone; the
+            // replay's camera carries no `PostAntiAlias`, kept HDR, and bloomed. On such a map the
+            // glow IS the picture, and its bloom softens the bright edges the clamp was protecting.
+            // Every other map sets no glow (`MapLook.Bloom` 0) and resolves exactly as before.
+            var look = WorldLookPresentation.Current != null ? WorldLookPresentation.Current.Look : null;
+            bool ownGlow = look != null && look.Bloom > 0.0f;
+            bool wantHdr = AntiAliasModes.RequestedSamples <= 0 || ownGlow;
             if (_camera.allowHDR != wantHdr) _camera.allowHDR = wantHdr;
         }
 

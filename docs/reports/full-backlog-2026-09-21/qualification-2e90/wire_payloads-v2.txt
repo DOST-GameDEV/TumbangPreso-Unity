@@ -1,0 +1,89 @@
+message          written  read   note
+--------------------------------------------------------------------------------------------
+BeginCountdown   0        0      
+BeginRematch     0        0      
+CastAccepted     -        0      no writer in this file
+CastDenied       11       11     
+CastPreparation  -        0      no writer in this file
+Chat             1        1      
+ChatLine         2        2      
+CovenEffect      5        5      
+DeclareReady     1        1      
+FamiliarEffect   6        6      
+Flair            5        5      
+Identify         10       10     
+Impact           3        3      
+LataPose         2        2      
+MapVoteTally     2        2      
+MatchBreak       -        0      no writer in this file
+MatchMoment      -        0      no writer in this file
+MatchRecord      1        1      
+MovementWindow   -        0      no writer in this file
+PlayAbility      12       12     
+PlayAction       2        2      
+PlayCue          3        3      
+PlayEmote        2        2      
+RafiWater        -        0      no writer in this file
+ReadyTally       2        2      
+RebindSeat       4        4      
+RematchTally     2        2      
+ReplayBegin      -        0      no writer in this file
+ReplayChunk      -        0      no writer in this file
+ReplayEnd        -        0      no writer in this file
+ReplayReady      -        0      no writer in this file
+ReqAbility       11       11     
+ReqCue           3        3      
+ReqEmote         2        2      
+ReqGrab          2        2      
+ReqLunge         4        4      
+ReqMash          3        3      
+ReqPunch         3        3      
+ReqReset         2        2      
+ReqSeat          1        1      
+ReqShove         3        3      
+ReqSlide         3        3      
+ReqSnapshot      1        0      accepted: one placeholder byte, because the request carries no data and the sender id is the whole message
+ReqThrow         5        5      
+ReqThrowCharge   4        4      
+ReqTime          1        1      
+ReqUltimate      -        0      no writer in this file
+Score            2        2      
+Seating          5        5      
+SelectDiff       1        1      
+SelectLobbyPick  7        7      
+SelectMap        1        1      
+SelectMapVote    1        1      
+SelectMode       1        1      
+SelectRules      1        1      
+SkipBuffer       0        0      
+SkyEffect        5        5      
+SlipperPose      4        4      
+StartMatch       1        1      
+SubmitFamiliar   4        4      
+SubmitMove       6        6      
+SyncAbility      7        7      
+SyncDiff         1        1      
+SyncFamiliar     5        5      
+SyncLata         4        4      
+SyncLobbyPicks   15       15     
+SyncMap          1        1      
+SyncMode         1        1      
+SyncPicks        1        1      
+SyncRules        1        1      
+SyncSlipper      11       11     
+SyncTime         1        1      
+SyncUnit         20       20     
+SyncWorld        13       13     
+Teleport         4        4      
+ThrowCharge      4        4      
+TimedKit         7        7      
+Tsinelas         3        3      
+UltDenied        -        0      no writer in this file
+UltimatePhase    -        0      no writer in this file
+VerbDenied       2        2      
+VoteRematch      0        0      
+WorldFieldBegin  5        5      
+WorldFieldEnd    1        1      
+WorldFieldItem   12       12     
+
+85 named messages, 0 mismatched.

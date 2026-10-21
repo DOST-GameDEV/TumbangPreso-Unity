@@ -1,0 +1,44 @@
+{
+  "rawFiles": {
+    "raw/expired-host/launch.json": "c2de95262cd211b1ba8a58be29364a6160d37975add57c969c41ad8e9906fba9",
+    "raw/expired-host/direct-result.json": "77bea653103f818fe7f4b2dbdf95961ca0d7932a76732f74f257658bdd125ef6",
+    "raw/expired-host/state.txt": "ea4011d5f406b8295a72f7e0a83ca3ff4ffd5a920c8c74e7bb20fd95a97d49af",
+    "raw/expired-host/player.log": "f96a04e49a21138bd179f4621fb6b7826ef73d987d27e537f65a2281a62701cf",
+    "raw/expired-host/pre-input-prefs.json": "6612b97c2295faa90521bc25ba08f58c626bfca300cfbf1a86a72e4e6fd5a217",
+    "raw/expired-host/career-absence.json": "6f016c27903539b2784d1065dfbfb8484ab33cd133a2de230dd3443cc1ee85a9",
+    "raw/expired-host/settings.json": "69c631b270d0cfa32c5a573447ac69b34b5a1e168676bd2dc1b2aae33e1a06bf",
+    "raw/completed-match/launch.json": "f538d3fda4a24f468b1e6e8102d5a1333a097996b9e829c3820291bf8f6d3420",
+    "raw/completed-match/direct-result.json": "d8ae3d859d371860fb2c7a967e7450cef5605cdf99e948037e133a25d444d601",
+    "raw/completed-match/state.txt": "a3ae165e459cb69f997a38266b4ed612125be38d8d30602907dc4669f27841fb",
+    "raw/completed-match/player.log": "257404b54a4e00dbc3a53815a41aa48c09b97b494218f082a5a96e9b06a014bf",
+    "raw/completed-match/pre-input-prefs.json": "6612b97c2295faa90521bc25ba08f58c626bfca300cfbf1a86a72e4e6fd5a217",
+    "raw/completed-match/career.json": "3264cf2f56cc6dd26b44e7c83e2751f792e813d25ece48825e6fb6f8175b5bde",
+    "raw/completed-match/settings.json": "e323bf978db0a9f987f693dbb586713b6b909929514e3eedb525490d3260da75",
+    "raw/client-summary.json": "8c71f05bbd7f4d7a05a02a9e58609c37525f4bff9da416d521e48bf4e10e0e20"
+  },
+  "summary": {
+    "sourceCommit": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+    "protocol": 145,
+    "artifactManifestSha256": "cef828729584c4a1f0e6f6f33bf7ae0a8255bdc018ba8bdb1be6deaffdc3b176",
+    "completedNaturalMatch": true,
+    "matchIdSha256": "d0b3451f831645859c60b3b52ba83f045a8ec55b499f8e1fdf35a9e7f1dd2330",
+    "scores": [
+      20,
+      0,
+      0,
+      150
+    ],
+    "history": 1,
+    "queue": 1,
+    "witness": 1,
+    "marker": "",
+    "inputRestored": true,
+    "profileSeedRestored": true,
+    "exitCode": 0,
+    "finalNetworked": "False",
+    "finalMap": "MatchSetup",
+    "postEndHostClosure": true,
+    "abandonPenaltyCount": 0,
+    "scope": "Normal admission/readiness/natural completed short match and saved results; final client snapshot is post-host-exit offline lobby, not connected completed-match snapshot"
+  }
+}
