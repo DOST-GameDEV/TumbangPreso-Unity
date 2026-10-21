@@ -1,4 +1,5 @@
 import React from 'react';
+import { S } from '../lib/set';
 import { B, bt, K } from '../lib/beats';
 import { Bolt, boltPoints, Crackle, Pt } from '../lib/bolt';
 import { inCubic, kf, outBack } from '../lib/kf';
@@ -89,7 +90,7 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
 
   const under: React.ReactNode[] = [];
   // Backlit: his shadow runs toward the camera, a little left, off the bottom.
-  under.push(<path key="sh" d={`M ${feet[0] - 150} ${feet[1] - 6} L ${feet[0] + 150} ${feet[1] - 6} L ${feet[0] + 80} ${feet[1] + 130} L ${feet[0] - 380} ${feet[1] + 130} Z`} fill="#8E3E2C" opacity={0.42} />);
+  under.push(<path key="sh" d={`M ${feet[0] - 150} ${feet[1] - 6} L ${feet[0] + 150} ${feet[1] - 6} L ${feet[0] + 80} ${feet[1] + 130} L ${feet[0] - 380} ${feet[1] + 130} Z`} fill={S.shadow} opacity={0.42} />);
 
   // The run home: electric skid marks scored along the court behind his feet.
   if (f >= B.arrive && f < B.settle + bt(26)) {
@@ -134,7 +135,7 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
       <Wide f={f} cam={cam} figure={<ActorImage d={d} />} under={under} over={over} />
       <WindStreaks f={f} amount={streaks} />
       {/* The close-up's vignette arrives with the push, not at a cut. */}
-      {f >= B.pushIn && f < B.cu && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignetteSet)" opacity={kf(f, [[B.pushIn, 0], [B.cu, 1, inCubic]])} />}
+      {f >= B.pushIn && f < B.cu && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" opacity={kf(f, [[B.pushIn, 0], [B.cu, 1, inCubic]])} />}
       {/* The dead stop lands with a one-frame flash of the whole screen, not of him: washing the
           figure alone read as a grey ghost in the first draft. */}
       {f === B.settle && <rect x={0} y={0} width={1920} height={1080} fill="#FFF3C8" opacity={0.22} />}

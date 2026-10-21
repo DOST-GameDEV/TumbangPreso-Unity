@@ -1,6 +1,7 @@
 import React from 'react';
-import { P, rl, PS } from './palette';
+import { P } from './palette';
 import { onN } from './time';
+import type { SetLook } from './set';
 
 /**
  * ⚠️ LINE BOIL. Her outlines wobble because they are drawn by hand, and a hand-drawn line
@@ -8,8 +9,13 @@ import { onN } from './time';
  * THREE frames (10 drawings a second), gives that without redrawing anything. Re-seeding every
  * frame reads as shimmer rather than as drawing, and was the first thing tried.
  */
-export const Defs: React.FC<{ frame: number }> = ({ frame }) => {
+// `set`: Zack's loop passes its set palette for the glow, vignette and grain. Phaister's scene
+// passes nothing and keeps the originals.
+export const Defs: React.FC<{ frame: number; set?: SetLook }> = ({ frame, set }) => {
   const seed = onN(frame, 3) / 3;
+  const vig = set?.vignette ?? '#2A0508';
+  const glow = set?.glow ?? ['#FFE08A', '#FFC45A', '#FFA84A', '#FF9440'];
+  const grain = set?.grain ?? [0.42, 0.16, 0.06];
   return (
     <defs>
       <filter id="boil" x="-10%" y="-10%" width="120%" height="120%">
@@ -57,33 +63,28 @@ export const Defs: React.FC<{ frame: number }> = ({ frame }) => {
         </feMerge>
       </filter>
       <radialGradient id="vignette" cx="50%" cy="50%" r="72%">
-        <stop offset="55%" stopColor="#2A0508" stopOpacity={0} />
-        <stop offset="100%" stopColor="#2A0508" stopOpacity={0.6} />
-      </radialGradient>
-      {/* Zack's set: the same vignette in the golden-hour relight (Phaister keeps #vignette) */}
-            <radialGradient id="vignetteSet" cx="50%" cy="50%" r="72%">
-        <stop offset="55%" stopColor={rl('#2A0508')} stopOpacity={0} />
-        <stop offset="100%" stopColor={rl('#2A0508')} stopOpacity={0.6} />
+        <stop offset="55%" stopColor={vig} stopOpacity={0} />
+        <stop offset="100%" stopColor={vig} stopOpacity={0.6} />
       </radialGradient>
       <radialGradient id="sunGlow">
-        <stop offset="0%" stopColor={rl('#FFE08A')} stopOpacity={0.6} />
-        <stop offset="25%" stopColor={rl('#FFC45A')} stopOpacity={0.4} />
-        <stop offset="50%" stopColor={rl('#FFA84A')} stopOpacity={0.18} />
-        <stop offset="75%" stopColor={rl('#FF9440')} stopOpacity={0.06} />
-        <stop offset="100%" stopColor={rl('#FF9440')} stopOpacity={0} />
+        <stop offset="0%" stopColor={glow[0]} stopOpacity={0.6} />
+        <stop offset="25%" stopColor={glow[1]} stopOpacity={0.4} />
+        <stop offset="50%" stopColor={glow[2]} stopOpacity={0.18} />
+        <stop offset="75%" stopColor={glow[3]} stopOpacity={0.06} />
+        <stop offset="100%" stopColor={glow[3]} stopOpacity={0} />
       </radialGradient>
       {/* Her persimmon stripes, off the M: darker diagonal bands on the fill. */}
       <pattern id="stripePersimmon" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)">
-        <rect width="26" height="26" fill={PS.persimmon} />
-        <rect width="9" height="26" fill={PS.persimmonStripe} />
+        <rect width="26" height="26" fill={P.persimmon} />
+        <rect width="9" height="26" fill={P.persimmonStripe} />
       </pattern>
       <pattern id="stripeGolden" width="44" height="44" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
-        <rect width="44" height="44" fill={PS.golden} />
-        <rect width="16" height="44" fill={rl('#FFC94A')} />
+        <rect width="44" height="44" fill={P.golden} />
+        <rect width="16" height="44" fill="#FFC94A" />
       </pattern>
       <pattern id="stripeJacket" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)">
-        <rect width="22" height="22" fill={PS.jacket} />
-        <rect width="6" height="22" fill={rl('#C9C105')} />
+        <rect width="22" height="22" fill={P.jacket} />
+        <rect width="6" height="22" fill="#C9C105" />
       </pattern>
 
       {/* Paper grain, laid over the whole frame at low strength. Warm, never grey. */}
@@ -92,7 +93,7 @@ export const Defs: React.FC<{ frame: number }> = ({ frame }) => {
         <feColorMatrix
           in="g"
           type="matrix"
-          values="0 0 0 0 0.42  0 0 0 0 0.16  0 0 0 0 0.06  0 0 0 0.9 -0.32"
+          values={`0 0 0 0 ${grain[0]}  0 0 0 0 ${grain[1]}  0 0 0 0 ${grain[2]}  0 0 0 0.9 -0.32`}
         />
       </filter>
     </defs>

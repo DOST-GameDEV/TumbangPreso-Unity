@@ -1,6 +1,7 @@
 import React from 'react';
 import { random } from 'remotion';
-import { P, rl, PS } from '../lib/palette';
+import { P } from '../lib/palette';
+import { S } from '../lib/set';
 import { chamfer } from '../lib/shapes';
 
 /**
@@ -57,7 +58,7 @@ export const Burst: React.FC<{
   inner?: number;
   swirl?: string | null;
   shade?: string;
-}> = ({ r, arms = 7, seed = 'b', rot = 0, fill = PS.golden, inner = 0.56, swirl = PS.goldenSwirl, shade = rl('#E0951C') }) => {
+}> = ({ r, arms = 7, seed = 'b', rot = 0, fill = S.parol.fill, inner = 0.56, swirl = S.parol.swirl, shade = S.parol.shade }) => {
   const pts = burstPts(arms, r * inner, r, seed);
   const d = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('') + 'Z';
   // Each arm is split along its spine into a lit half and a shade half: the blocky way to say

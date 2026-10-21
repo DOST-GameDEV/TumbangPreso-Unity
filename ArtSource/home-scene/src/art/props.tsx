@@ -1,6 +1,7 @@
 import React from 'react';
 import { random } from 'remotion';
-import { P, rl, PS } from '../lib/palette';
+import { P } from '../lib/palette';
+import { S } from '../lib/set';
 import { chamfer, polyD, Pt } from '../lib/shapes';
 
 /* The lata, the dust it throws up, and the pieces of the hit. Blocky and lineless. */
@@ -15,19 +16,19 @@ export const Can: React.FC<{ s?: number; lit?: 'left' | 'right' }> = ({ s = 1, l
   const side = lit === 'left' ? [w * 0.62, w * 0.38] : [0, w * 0.38];
   return (
     <g transform={`scale(${s})`}>
-      <rect x={-w / 2} y={-h} width={w} height={h} fill={rl('#E9D6B4')} />
-      <rect x={-w / 2 + side[0]} y={-h} width={side[1]} height={h} fill={rl('#B9A07E')} />
-      <rect x={-w / 2} y={-h * 0.72} width={w} height={h * 0.36} fill={PS.persimmon} />
-      <rect x={-w / 2 + side[0]} y={-h * 0.72} width={side[1]} height={h * 0.36} fill={rl('#C9602A')} />
-      <rect x={-w / 2 + 8} y={-h * 0.6} width={w * 0.38} height={7} fill={PS.honey} />
+      <rect x={-w / 2} y={-h} width={w} height={h} fill="#E9D6B4" />
+      <rect x={-w / 2 + side[0]} y={-h} width={side[1]} height={h} fill="#B9A07E" />
+      <rect x={-w / 2} y={-h * 0.72} width={w} height={h * 0.36} fill={P.persimmon} />
+      <rect x={-w / 2 + side[0]} y={-h * 0.72} width={side[1]} height={h * 0.36} fill="#C9602A" />
+      <rect x={-w / 2 + 8} y={-h * 0.6} width={w * 0.38} height={7} fill={P.honey} />
       {[-h * 0.82, -h * 0.26].map((y, i) => (
-        <rect key={i} x={-w / 2} y={y} width={w} height={5} fill={rl('#A88E6C')} />
+        <rect key={i} x={-w / 2} y={y} width={w} height={5} fill="#A88E6C" />
       ))}
-      <path d={chamfer(-w / 2 - 3, -h - 9, w + 6, 12, 4)} fill={rl('#F6E8CC')} />
-      <rect x={-w / 2 + 4} y={-h - 5} width={w - 8} height={5} fill={rl('#8C7658')} />
+      <path d={chamfer(-w / 2 - 3, -h - 9, w + 6, 12, 4)} fill="#F6E8CC" />
+      <rect x={-w / 2 + 4} y={-h - 5} width={w - 8} height={5} fill="#8C7658" />
       {/* A dent from every other time. */}
-      <rect x={-w / 2 + 12} y={-h * 0.22} width={14} height={9} fill={rl('#C9B48F')} />
-      <rect x={-w / 2 + 2} y={-h} width={4} height={h} fill={PS.golden} opacity={lit === 'left' ? 0.9 : 0} />
+      <rect x={-w / 2 + 12} y={-h * 0.22} width={14} height={9} fill="#C9B48F" />
+      <rect x={-w / 2 + 2} y={-h} width={4} height={h} fill={P.golden} opacity={lit === 'left' ? 0.9 : 0} />
     </g>
   );
 };
@@ -42,7 +43,7 @@ export const Dust: React.FC<{ t: number; x: number; y: number; s?: number; seed:
     const size = (26 + random(`${seed}s${i}`) * 30) * (0.5 + t * 0.9) * (1 - t * 0.5);
     const cx = Math.cos(a) * dist * 1.6;
     const cy = Math.sin(a) * dist * 0.6 - t * 30;
-    out.push(<path key={i} d={chamfer(cx - size / 2, cy - size / 2, size, size, size * 0.3)} fill={i % 3 ? rl('#F2C58E') : rl('#E6AE74')} opacity={1 - t} />);
+    out.push(<path key={i} d={chamfer(cx - size / 2, cy - size / 2, size, size, size * 0.3)} fill={i % 3 ? S.dust[0] : S.dust[1]} opacity={1 - t} />);
   }
   return <g transform={`translate(${x} ${y}) scale(${s})`}>{out}</g>;
 };
@@ -57,7 +58,7 @@ export const Debris: React.FC<{ t: number; x: number; y: number; seed: string; n
     const px = vx * t;
     const py = vy * t + 1400 * t * t;
     const sz = 6 + random(`${seed}z${i}`) * 10;
-    out.push(<rect key={i} x={x + px} y={y + py} width={sz} height={sz} fill={i % 2 ? rl('#FFE3B8') : PS.golden} transform={`rotate(${t * 400 + i * 40} ${x + px} ${y + py})`} opacity={Math.min(1, 1.4 - t)} />);
+    out.push(<rect key={i} x={x + px} y={y + py} width={sz} height={sz} fill={i % 2 ? '#FFE3B8' : P.golden} transform={`rotate(${t * 400 + i * 40} ${x + px} ${y + py})`} opacity={Math.min(1, 1.4 - t)} />);
   }
   return <g>{out}</g>;
 };
@@ -71,7 +72,7 @@ export const SpeedLines: React.FC<{ cx: number; cy: number; r0: number; r1: numb
   n,
   seed,
   opacity = 1,
-  colour = rl('#FFF3C8'),
+  colour = '#FFF3C8',
   w = 10,
 }) => {
   const out: React.ReactNode[] = [];
