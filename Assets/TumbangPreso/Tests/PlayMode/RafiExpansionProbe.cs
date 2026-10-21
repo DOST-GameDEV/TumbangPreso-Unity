@@ -35,7 +35,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator Start(string map=SceneFlow.BayanPlaza,GameMode mode=GameMode.HeroStrike)
         {
             yield return MapRetrievalProbe.Load(map,mode);
-            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(3.6f);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider=new SoloProvider();
             Assert.IsTrue(GameServices.Round.RoundActive,"Fixture did not enter a real active round.");
             foreach(var actor in GameServices.Round.Players)

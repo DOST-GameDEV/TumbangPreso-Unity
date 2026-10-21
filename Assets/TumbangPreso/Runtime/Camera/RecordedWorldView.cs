@@ -39,7 +39,6 @@ namespace TumbangPreso.CameraSystem
         private Light _skyFill;
         private RenderTexture _target;
         private Material _frameMaterial;
-        private Text _state;
         private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
         private readonly Dictionary<int,RecordedFlightStroke> _trails=new Dictionary<int,RecordedFlightStroke>();
         private readonly HashSet<int> _visibleTrails=new HashSet<int>();
@@ -207,25 +206,9 @@ namespace TumbangPreso.CameraSystem
                     _frameMaterial=new Material(frameShader){name="Opaque recorded camera frame",hideFlags=HideFlags.DontSave};
                     picture.material=_frameMaterial;
                 }
-                var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=band.anchorMax=new Vector2(0,1);band.pivot=new Vector2(0,1);
-                band.anchoredPosition=new Vector2(42,-28);band.sizeDelta=new Vector2(426,62);
-                var plate=band.gameObject.AddComponent<CourtPopupGraphic>();plate.Brush=true;plate.color=CourtPresentationPalette.Red;plate.raycastTarget=false;
-                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME / REPLAY",30,OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Fill(label.rectTransform);label.alignment=TextAnchor.MiddleCenter;label.color=CourtPresentationPalette.Paper;
-                var credit=OwnerUiLayout.Rect(_canvas.transform,"RecordedCredit");credit.anchorMin=credit.anchorMax=new Vector2(0,1);credit.pivot=new Vector2(0,1);
-                credit.anchoredPosition=new Vector2(48,-96);credit.sizeDelta=new Vector2(980,44);
-                var words=OwnerUiLayout.Text(credit,"ReplayOutcome",PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER")+
-                    (clip.Subject>=0?" CAUGHT "+PlayerIdentity.Label(clip.Subject)+" · "+(_items.FirstOrDefault(i=>IsBody(i.Track)&&i.Track.Seat==clip.Subject)?.Track.DisplayName??"PLAYER"):" / "+clip.Reason),28,OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Fill(words.rectTransform);words.color=CourtPresentationPalette.Paper;
-                var outline=words.gameObject.AddComponent<Outline>();outline.effectColor=UI.UiTheme.InGameOutline;outline.effectDistance=new Vector2(1.5f,-1.5f);
-                var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=footer.anchorMax=Vector2.zero;footer.pivot=Vector2.zero;
-                footer.anchoredPosition=new Vector2(48,26);footer.sizeDelta=new Vector2(480,48);
-                var footerPlate=footer.gameObject.AddComponent<CourtPopupGraphic>();footerPlate.color=CourtPresentationPalette.Ink;footerPlate.raycastTarget=false;
-                _state=OwnerUiLayout.Text(footer,"RecordedCanState","",25,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Fill(_state.rectTransform);
-                HudReadingLayout.Watch(band);
-                HudReadingLayout.Watch(credit, new Vector2(0,-62));
-                HudReadingLayout.Watch(footer);
-                _state.alignment=TextAnchor.MiddleCenter;_state.color=CourtPresentationPalette.Paper;
+                // The camcorder frame replaces the old band, credit and can-state footer (owner, 2026-10-22).
+                // Halftime's replay is a shared, host-timed package, so it carries no skip prompt.
+                if(!standalone)ReplayOverlay.Build(_canvas.transform,"HIGHLIGHT",false);
                 _audioMix=GameServices.Audio?.EnterReplayMix();
                 Ready=true;
             }
@@ -296,7 +279,6 @@ namespace TumbangPreso.CameraSystem
                 _canLanding.Place(can.Bones[0].position,bottom,new Vector2(.29f,.29f),
                     (elevated?.62f:settle*.62f)*WorldCueProfile.Current.HeroObjects,true);
             }
-            if(can!=null&&_state!=null){int state=can.Track.Pose.StateAt(time).State;_state.text=(state&2)!=0?"CAN PROTECTED":(state&1)!=0?"CAN UPRIGHT":"CAN DOWN  /  RETRIEVE YOUR TSINELAS";}
             foreach(var item in _items)
             {
                 item.Track.Pose.Apply(item.Bones,time);var state=item.Track.Pose.StateAt(time);

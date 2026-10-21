@@ -9,9 +9,18 @@ namespace TumbangPreso.EditorTools
     public sealed class OwnerArtworkQualityImport : AssetPostprocessor
     {
         public const int QualityMaxTextureSize = 8192;
-        public override uint GetVersion() => 5;
+        public override uint GetVersion() => 6;
+
+        /// <summary>The owner's 2026-10-21 hand-made HOME pieces (ArtSource/handmade-lobby).</summary>
+        public const string HandmadeFolder = "Assets/TumbangPreso/Resources/UI/handmade-lobby/";
+
         private void OnPreprocessTexture()
         {
+            if (assetPath.StartsWith(HandmadeFolder, StringComparison.Ordinal))
+            {
+                ApplyHandmade((TextureImporter)assetImporter);
+                return;
+            }
             bool menu = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/owner-menu-edits/", StringComparison.Ordinal);
             bool painted = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/owner-painted/", StringComparison.Ordinal);
             bool legacyBackdrop = assetPath == "Assets/TumbangPreso/Resources/UI/main-menu/MENU BACKDROP.png";
@@ -19,6 +28,39 @@ namespace TumbangPreso.EditorTools
                 || assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/mode-cards/", StringComparison.Ordinal);
             if (!menu && !painted && !legacyBackdrop && !card) return;
             Apply((TextureImporter)assetImporter, assetPath);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE HAND-MADE HOME PIECES ARE DRAWN AT TWICE THE 1920x1080 LAYOUT, so 200 pixels per
+        /// unit makes a sprite's native size its board size, and they are pixel-exact on a 4K screen.
+        /// On a 1080p screen they are shown at half size, which is a DOWNSCALE: mipmaps and trilinear
+        /// filtering keep that clean instead of aliasing (owner, 2026-10-21: "absolutely nothing
+        /// pixelated"). Uncompressed, never capped, alpha as authored: every edge was built with exact
+        /// anti-aliasing and colour bled under the transparent pixels (`tools/build_lobby_art.py`), so
+        /// neither compression nor a smaller cap may touch it.
+        /// </summary>
+        public static void ApplyHandmade(TextureImporter importer)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritePixelsPerUnit = 200;
+            var settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            settings.spriteMeshType = SpriteMeshType.FullRect;
+            settings.spriteGenerateFallbackPhysicsShape = false;
+            importer.SetTextureSettings(settings);
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.crunchedCompression = false;
+            importer.npotScale = TextureImporterNPOTScale.None;
+            ProtectResolution(importer);
+            importer.alphaSource = TextureImporterAlphaSource.FromInput;
+            importer.alphaIsTransparency = true;
+            importer.sRGBTexture = true;
+            importer.mipmapEnabled = true;
+            importer.mipmapFilter = TextureImporterMipFilter.KaiserFilter;
+            importer.filterMode = FilterMode.Trilinear;
+            importer.anisoLevel = 1;
+            importer.wrapMode = TextureWrapMode.Clamp;
         }
 
         public static void Apply(TextureImporter importer, string path)

@@ -1,6 +1,7 @@
 import React from 'react';
 import { random } from 'remotion';
 import { P } from '../lib/palette';
+import { S } from '../lib/set';
 import { LOOP, clamp01, loopNoise, loopSin } from '../lib/time';
 import { chamfer, polyD } from '../lib/shapes';
 import { Burst } from './burst';
@@ -14,6 +15,10 @@ import { Banderitas, Cloud, CloudDrift, Laundry, Pigeon, Plant, Tower, TowerSpec
  * itself to glow against. Dusk gives the values in order: the deep-red sky at the top (dark,
  * and the hub's top bar sits on it), the golden glow on the horizon behind him (lightest), and
  * the towers as silhouettes between. The sun is her burst, set low and straight behind his head.
+ *
+ * ⚠️ THE COLOURS ARE `S` (lib/set.ts), NOT THIS COMMENT. The value order above still holds, but since
+ * the hand-made HOME UI (2026-10-21) the set is drawn in the owner's pick, Rosas: a dusty-rose sky
+ * that sits well above her maroon panels in value. The old deep-red dusk is kept there as `dusk`.
  */
 
 // ⚠️ Upper right, where the owner's own HOME sketch (zip-sketches/20.png, labelled "video(?)")
@@ -21,17 +26,7 @@ import { Banderitas, Cloud, CloudDrift, Laundry, Pigeon, Plant, Tower, TowerSpec
 // it was hidden by his hair and by the towers on both sides, and read as nothing.
 export const SUN = { x: 1570, y: 360, r: 150 };
 
-export const SKY_BANDS: [number, string][] = [
-  [0, '#560815'],
-  [140, '#6A0B1A'],
-  [250, '#84111D'],
-  [340, '#A41F1F'],
-  [418, '#C63520'],
-  [486, '#E05726'],
-  [546, '#EF7B34'],
-  [600, '#F8A043'],
-  [648, '#FCC05A'],
-];
+export const SKY_BANDS: [number, string][] = [0, 140, 250, 340, 418, 486, 546, 600, 648].map((y, i) => [y, S.sky[i]]);
 
 export const Sky: React.FC<{ f: number; w?: number; h?: number }> = ({ f, w = 1920, h = 760 }) => (
   <g>
@@ -59,8 +54,8 @@ export const Stars: React.FC<{ f: number }> = ({ f }) => {
     const r = 3 + random(`st${i}r`) * 4;
     out.push(
       <g key={i} transform={`translate(${x} ${y}) scale(${0.6 + tw * 0.5})`} opacity={0.25 + 0.75 * tw}>
-        <rect x={-r * 0.4} y={-r * 1.8} width={r * 0.8} height={r * 3.6} fill="#FFE7A8" />
-        <rect x={-r * 1.8} y={-r * 0.4} width={r * 3.6} height={r * 0.8} fill="#FFE7A8" />
+        <rect x={-r * 0.4} y={-r * 1.8} width={r * 0.8} height={r * 3.6} fill={S.star} />
+        <rect x={-r * 1.8} y={-r * 0.4} width={r * 3.6} height={r * 0.8} fill={S.star} />
       </g>,
     );
   }
@@ -79,17 +74,17 @@ export const Birds: React.FC<{ f: number }> = ({ f }) => {
     const flap = Math.sin(f * 0.9 + i * 1.3);
     out.push(
       <g key={i}>
-        <polygon points={`${x - 16},${y - flap * 9} ${x},${y} ${x - 4},${y + 4}`} fill="#3B0710" />
-        <polygon points={`${x + 16},${y - flap * 9} ${x},${y} ${x + 4},${y + 4}`} fill="#3B0710" />
+        <polygon points={`${x - 16},${y - flap * 9} ${x},${y} ${x - 4},${y + 4}`} fill={S.bird} />
+        <polygon points={`${x + 16},${y - flap * 9} ${x},${y} ${x + 4},${y + 4}`} fill={S.bird} />
       </g>,
     );
   }
   return <g>{out}</g>;
 };
 
-const far = { fill: '#E27E42', shade: '#D66F3A', win: '#EC9150', lit: '#FFE3A0' };
-const mid = { fill: '#B63622', shade: '#962A1B', win: '#C8472A', lit: '#FFD45E' };
-const near = { fill: '#7E1519', shade: '#621014', win: '#94261E', lit: '#FFC94A' };
+const far = S.towerFar;
+const mid = S.towerMid;
+const near = S.towerNear;
 
 // ⚠️ NOTHING TALL BEHIND HIS HEAD. The sun is there instead. Towers cluster left and right and
 // drop below the horizon glow in the middle, so his silhouette always has clean sky round it.
@@ -136,11 +131,11 @@ export const Hills: React.FC = () => {
     i++;
   }
   d.push('L 1980 700 Z');
-  return <path d={d.join(' ')} fill="#F09A50" />;
+  return <path d={d.join(' ')} fill={S.hills} />;
 };
 
-const HIGH = { fill: '#B8321F', under: '#EE8A42', top: '#9A2419' };
-const LOW = { fill: '#EE8540', under: '#FFC45C', top: '#D96E34' };
+const HIGH = S.cloudHigh;
+const LOW = S.cloudLow;
 
 export const Clouds: React.FC<{ f: number }> = ({ f }) => (
   <g>
@@ -161,7 +156,7 @@ export const Clouds: React.FC<{ f: number }> = ({ f }) => (
 
 /** The horizon bank, in front of the sun's lower part, behind the far city. Never moves. */
 export const Bank: React.FC = () => (
-  <Cloud x={0} y={668} {...LOW} under="#FFD06A"
+  <Cloud x={0} y={668} {...LOW} under={S.bankUnder}
     slabs={[[-40, 0, 2000, 36], [40, -30, 300, 34], [420, -40, 240, 44], [720, -24, 180, 30], [1180, -34, 260, 40], [1520, -44, 300, 48], [1800, -26, 180, 30]]} />
 );
 
@@ -179,15 +174,15 @@ export const SunDisc: React.FC<{ f: number }> = ({ f }) => {
 
 export const Parapet: React.FC<{ top?: number; bottom?: number }> = ({ top = 700, bottom = 800 }) => (
   <g>
-    <rect x={-60} y={top + 16} width={2040} height={bottom - top - 16} fill="#A8492C" />
+    <rect x={-60} y={top + 16} width={2040} height={bottom - top - 16} fill={S.parapet.face} />
     {[250, 610, 1310, 1670].map((x) => (
-      <rect key={x} x={x - 2} y={top + 18} width={5} height={bottom - top - 20} fill="#8E3C25" />
+      <rect key={x} x={x - 2} y={top + 18} width={5} height={bottom - top - 20} fill={S.parapet.seam} />
     ))}
-    <rect x={-60} y={bottom - 22} width={2040} height={22} fill="#8E3C25" />
-    <rect x={-60} y={top} width={2040} height={22} fill="#D0724A" />
-    <rect x={-60} y={top} width={2040} height={5} fill={P.golden} opacity={0.9} />
+    <rect x={-60} y={bottom - 22} width={2040} height={22} fill={S.parapet.seam} />
+    <rect x={-60} y={top} width={2040} height={22} fill={S.parapet.top} />
+    <rect x={-60} y={top} width={2040} height={5} fill={S.parapet.lip} opacity={0.9} />
     {/* Chalk left by the kids who play here: a tally and a heart, not words. */}
-    <g fill="#FFD9A8" opacity={0.7}>
+    <g fill={S.chalk} opacity={0.7}>
       {[0, 12, 24, 36].map((dx) => (
         <rect key={dx} x={1350 + dx} y={752} width={5} height={26} />
       ))}
@@ -205,17 +200,17 @@ export const Floor: React.FC<{ top?: number }> = ({ top = 800 }) => {
     const xb = vx + i * 260;
     const t = (top - vy) / (1080 - vy);
     const xt = vx + (xb - vx) * t;
-    lines.push(<path key={'v' + i} d={polyD([[xt - 1.5, top], [xt + 1.5, top], [xb + 2.5, 1080], [xb - 2.5, 1080]])} fill="#B86A45" />);
+    lines.push(<path key={'v' + i} d={polyD([[xt - 1.5, top], [xt + 1.5, top], [xb + 2.5, 1080], [xb - 2.5, 1080]])} fill={S.floor.seam} />);
   }
-  [848, 912, 1000].forEach((y, i) => lines.push(<rect key={'h' + i} x={-60} y={y} width={2040} height={4} fill="#B86A45" />));
+  [848, 912, 1000].forEach((y, i) => lines.push(<rect key={'h' + i} x={-60} y={y} width={2040} height={4} fill={S.floor.seam} />));
   return (
     <g>
-      <rect x={-60} y={top} width={2040} height={1080 - top + 60} fill="#CC8354" />
-      <rect x={-60} y={top} width={2040} height={46} fill="#E09A5E" />
+      <rect x={-60} y={top} width={2040} height={1080 - top + 60} fill={S.floor.base} />
+      <rect x={-60} y={top} width={2040} height={46} fill={S.floor.band} />
       {lines}
       {/* The throw line in chalk, broken where the chalk ran thin. */}
       {[[520, 70], [608, 40], [672, 90], [790, 50], [870, 110], [1010, 60], [1100, 90], [1220, 40], [1290, 110]].map(([x, w], i) => (
-        <rect key={i} x={x} y={994 + (i % 2)} width={w} height={9} fill="#FFE3B8" opacity={0.85} />
+        <rect key={i} x={x} y={994 + (i % 2)} width={w} height={9} fill={S.floor.chalk} opacity={0.85} />
       ))}
     </g>
   );
@@ -225,26 +220,26 @@ export const Floor: React.FC<{ top?: number }> = ({ top = 800 }) => {
 export const WaterTank: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     {[-100, -40, 40, 100].map((lx, i) => (
-      <rect key={i} x={lx - 6} y={-40} width={12} height={160} fill="#3E0A10" />
+      <rect key={i} x={lx - 6} y={-40} width={12} height={160} fill={S.tank.leg} />
     ))}
-    <rect x={-104} y={56} width={208} height={8} fill="#3E0A10" />
-    <path d={chamfer(-130, -334, 260, 316, 22)} fill="#77701A" />
-    <rect x={-130} y={-312} width={56} height={272} fill="#5E5914" />
+    <rect x={-104} y={56} width={208} height={8} fill={S.tank.leg} />
+    <path d={chamfer(-130, -334, 260, 316, 22)} fill={S.tank.body} />
+    <rect x={-130} y={-312} width={56} height={272} fill={S.tank.shade} />
     {[-250, -170, -90].map((yy) => (
-      <rect key={yy} x={-130} y={yy} width={260} height={8} fill="#5E5914" />
+      <rect key={yy} x={-130} y={yy} width={260} height={8} fill={S.tank.shade} />
     ))}
-    <path d={chamfer(-122, -352, 244, 28, 10)} fill="#9A9124" />
-    <rect x={-22} y={-372} width={44} height={22} fill="#77701A" />
-    <rect x={120} y={-312} width={6} height={270} fill={P.golden} opacity={0.9} />
-    <rect x={62} y={-280} width={12} height={40} fill="#A89E2C" transform="rotate(-30 68 -260)" />
-    <rect x={86} y={-284} width={12} height={40} fill="#A89E2C" transform="rotate(-30 92 -264)" />
+    <path d={chamfer(-122, -352, 244, 28, 10)} fill={S.tank.cap} />
+    <rect x={-22} y={-372} width={44} height={22} fill={S.tank.body} />
+    <rect x={120} y={-312} width={6} height={270} fill={S.rim} opacity={0.9} />
+    <rect x={62} y={-280} width={12} height={40} fill={S.tank.mark} transform="rotate(-30 68 -260)" />
+    <rect x={86} y={-284} width={12} height={40} fill={S.tank.mark} transform="rotate(-30 92 -264)" />
   </g>
 );
 
 export const Pole: React.FC<{ x: number; top: number; bottom: number }> = ({ x, top, bottom }) => (
   <g>
-    <rect x={x - 7} y={top} width={14} height={bottom - top} fill="#4A0A12" />
-    <rect x={x + 3} y={top} width={4} height={bottom - top} fill={P.golden} opacity={0.6} />
+    <rect x={x - 7} y={top} width={14} height={bottom - top} fill={S.pole} />
+    <rect x={x + 3} y={top} width={4} height={bottom - top} fill={S.rim} opacity={0.6} />
   </g>
 );
 
@@ -263,7 +258,7 @@ export const Motes: React.FC<{ f: number; n?: number }> = ({ f, n = 46 }) => {
     const edge = clamp01(y / 180) * clamp01((H - 120 - y) / 180);
     const tw = 0.5 + 0.5 * loopSin(f, 8 + (i % 7), i * 1.3);
     const sz = 3 + random(`mo${i}s`) * 5;
-    out.push(<rect key={i} x={x} y={y} width={sz} height={sz} fill={i % 4 ? '#FFD98A' : '#FFF3C8'} opacity={edge * (0.25 + 0.5 * tw)} transform={`rotate(45 ${x + sz / 2} ${y + sz / 2})`} />);
+    out.push(<rect key={i} x={x} y={y} width={sz} height={sz} fill={i % 4 ? S.motes[0] : S.motes[1]} opacity={edge * (0.25 + 0.5 * tw)} transform={`rotate(45 ${x + sz / 2} ${y + sz / 2})`} />);
   }
   return <g>{out}</g>;
 };
@@ -308,15 +303,15 @@ export const WideSet: React.FC<{ f: number; layer: 'sky' | 'city' | 'mid' }> = (
         b={{ x: 1800, y: 470 }}
         sag={46}
         items={[
-          { t: 0.13, kind: 'towel', w: 64, h: 110, fill: P.golden, shade: '#D69414', stripe: P.rimRed },
-          { t: 0.34, kind: 'shirt', w: 92, h: 104, fill: P.honey, shade: '#E6B57C', stripe: P.persimmon },
-          { t: 0.56, kind: 'shorts', w: 70, h: 70, fill: P.chartreuse, shade: '#AFA800' },
-          { t: 0.72, kind: 'sock', w: 22, h: 44, fill: P.persimmon, shade: '#D9622B' },
-          { t: 0.86, kind: 'sando', w: 66, h: 92, fill: '#FFE7C0', shade: '#E8C696' },
+          { t: 0.13, kind: 'towel', w: 64, h: 110, ...S.laundry[0] },
+          { t: 0.34, kind: 'shirt', w: 92, h: 104, ...S.laundry[1] },
+          { t: 0.56, kind: 'shorts', w: 70, h: 70, ...S.laundry[2] },
+          { t: 0.72, kind: 'sock', w: 22, h: 44, ...S.laundry[3] },
+          { t: 0.86, kind: 'sando', w: 66, h: 92, ...S.laundry[4] },
         ]}
       />
       <Plant f={f} x={560} y={704} s={0.9} seed="p1" />
-      <Plant f={f} x={1470} y={704} s={0.75} seed="p2" leaves={6} pot={P.persimmon} potShade="#C9602A" />
+      <Plant f={f} x={1470} y={704} s={0.75} seed="p2" leaves={6} pot={S.plant.pot2} potShade={S.plant.pot2Shade} />
       <Pigeon f={f} x={1290} y={702} s={0.9} seed="pg1" />
       <Pigeon f={f} x={1360} y={702} s={0.8} flip seed="pg2" />
       <Banderitas f={f} seed="bd" a={{ x: 250, y: 240 }} b={{ x: 1800, y: 240 }} sag={58} n={21} size={44} />

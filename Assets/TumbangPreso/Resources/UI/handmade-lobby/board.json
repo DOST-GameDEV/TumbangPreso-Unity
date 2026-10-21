@@ -1,0 +1,510 @@
+{
+ "sprites": [
+  {
+   "name": "art_window",
+   "x": 1498.0,
+   "y": 648.5,
+   "w": 376.0,
+   "h": 149.5
+  },
+  {
+   "name": "avatar_frame_face",
+   "x": 16.5,
+   "y": 16.5,
+   "w": 133.0,
+   "h": 142.0
+  },
+  {
+   "name": "avatar_frame_slab",
+   "x": 16.5,
+   "y": 16.5,
+   "w": 133.0,
+   "h": 142.0
+  },
+  {
+   "name": "avatar_well",
+   "x": 30.0,
+   "y": 30.5,
+   "w": 106.5,
+   "h": 106.5
+  },
+  {
+   "name": "cancel_button_face",
+   "x": 1052.0,
+   "y": 23.0,
+   "w": 58.5,
+   "h": 55.0
+  },
+  {
+   "name": "currency_bar_face",
+   "x": 1421.0,
+   "y": 25.0,
+   "w": 379.5,
+   "h": 102.0
+  },
+  {
+   "name": "currency_bar_slab",
+   "x": 1421.0,
+   "y": 25.0,
+   "w": 379.5,
+   "h": 102.0
+  },
+  {
+   "name": "currency_field",
+   "x": 1518.5,
+   "y": 38.5,
+   "w": 191.5,
+   "h": 64.0
+  },
+  {
+   "name": "glyph_chevron",
+   "x": 1834.5,
+   "y": 809.5,
+   "w": 40.5,
+   "h": 56.0
+  },
+  {
+   "name": "glyph_level",
+   "x": 172.0,
+   "y": 34.5,
+   "w": 55.5,
+   "h": 50.5
+  },
+  {
+   "name": "glyph_menu",
+   "x": 1824.5,
+   "y": 41.5,
+   "w": 65.0,
+   "h": 61.0
+  },
+  {
+   "name": "glyph_plus",
+   "x": 1731.5,
+   "y": 54.0,
+   "w": 37.0,
+   "h": 37.0
+  },
+  {
+   "name": "glyph_x",
+   "x": 1059.0,
+   "y": 28.0,
+   "w": 46.0,
+   "h": 45.0
+  },
+  {
+   "name": "icon_coin",
+   "x": 1398.5,
+   "y": 8.5,
+   "w": 122.5,
+   "h": 120.5
+  },
+  {
+   "name": "icon_hero",
+   "x": 56.8,
+   "y": 391.7,
+   "w": 123.5,
+   "h": 166.5
+  },
+  {
+   "name": "icon_item",
+   "x": 40.3,
+   "y": 620.6,
+   "w": 132.5,
+   "h": 126.0
+  },
+  {
+   "name": "icon_shop",
+   "x": 53.9,
+   "y": 797.4,
+   "w": 173.0,
+   "h": 194.5
+  },
+  {
+   "name": "icon_task",
+   "x": 322.3,
+   "y": 889.6,
+   "w": 103.0,
+   "h": 112.0
+  },
+  {
+   "name": "menu_button_face",
+   "x": 1804.0,
+   "y": 25.5,
+   "w": 106.5,
+   "h": 102.0
+  },
+  {
+   "name": "menu_button_slab",
+   "x": 1804.0,
+   "y": 25.5,
+   "w": 106.5,
+   "h": 102.0
+  },
+  {
+   "name": "mode_art_casual",
+   "x": 1498.0,
+   "y": 648.5,
+   "w": 376.0,
+   "h": 149.5
+  },
+  {
+   "name": "mode_art_classic",
+   "x": 1498.0,
+   "y": 648.5,
+   "w": 376.0,
+   "h": 149.5
+  },
+  {
+   "name": "mode_art_ranked",
+   "x": 1498.0,
+   "y": 648.5,
+   "w": 376.0,
+   "h": 149.5
+  },
+  {
+   "name": "mode_card_face",
+   "x": 1466.5,
+   "y": 580.0,
+   "w": 435.5,
+   "h": 312.5
+  },
+  {
+   "name": "mode_card_slab",
+   "x": 1466.5,
+   "y": 580.0,
+   "w": 435.5,
+   "h": 312.5
+  },
+  {
+   "name": "name_plate_face",
+   "x": 159.0,
+   "y": 13.5,
+   "w": 310.5,
+   "h": 145.5
+  },
+  {
+   "name": "name_plate_slab",
+   "x": 159.0,
+   "y": 13.5,
+   "w": 310.5,
+   "h": 145.5
+  },
+  {
+   "name": "play_face",
+   "x": 1463.0,
+   "y": 889.0,
+   "w": 446.0,
+   "h": 174.5
+  },
+  {
+   "name": "play_slab",
+   "x": 1463.0,
+   "y": 889.0,
+   "w": 446.0,
+   "h": 174.5
+  },
+  {
+   "name": "plus_button_face",
+   "x": 1712.5,
+   "y": 37.5,
+   "w": 77.0,
+   "h": 72.0
+  },
+  {
+   "name": "plus_button_slab",
+   "x": 1712.5,
+   "y": 37.5,
+   "w": 77.0,
+   "h": 72.0
+  },
+  {
+   "name": "queue_plate_face",
+   "x": 744.5,
+   "y": -8.0,
+   "w": 422.5,
+   "h": 118.5
+  },
+  {
+   "name": "spark_dot_lime",
+   "x": -3.0,
+   "y": -3.0,
+   "w": 38.0,
+   "h": 38.0
+  },
+  {
+   "name": "spark_dot_peach",
+   "x": -3.0,
+   "y": -3.0,
+   "w": 38.0,
+   "h": 38.0
+  },
+  {
+   "name": "spark_star_honey",
+   "x": -3.0,
+   "y": -3.0,
+   "w": 38.0,
+   "h": 38.0
+  },
+  {
+   "name": "spark_star_peach",
+   "x": -3.0,
+   "y": -3.0,
+   "w": 38.0,
+   "h": 38.0
+  },
+  {
+   "name": "tile_hero_face",
+   "x": 19.0,
+   "y": 441.5,
+   "w": 180.0,
+   "h": 156.0
+  },
+  {
+   "name": "tile_hero_slab",
+   "x": 23.0,
+   "y": 447.0,
+   "w": 200.0,
+   "h": 167.5
+  },
+  {
+   "name": "tile_item_face",
+   "x": 19.0,
+   "y": 631.0,
+   "w": 180.0,
+   "h": 156.0
+  },
+  {
+   "name": "tile_item_slab",
+   "x": 25.5,
+   "y": 635.0,
+   "w": 200.0,
+   "h": 168.0
+  },
+  {
+   "name": "tile_shop_face",
+   "x": 17.0,
+   "y": 824.0,
+   "w": 237.0,
+   "h": 216.5
+  },
+  {
+   "name": "tile_shop_slab",
+   "x": 22.0,
+   "y": 827.5,
+   "w": 260.0,
+   "h": 235.5
+  },
+  {
+   "name": "tile_task_face",
+   "x": 301.5,
+   "y": 899.0,
+   "w": 148.0,
+   "h": 147.0
+  },
+  {
+   "name": "tile_task_slab",
+   "x": 309.0,
+   "y": 905.5,
+   "w": 159.0,
+   "h": 157.5
+  },
+  {
+   "name": "xp_fill",
+   "x": 186.0,
+   "y": 92.5,
+   "w": 254.5,
+   "h": 43.5
+  },
+  {
+   "name": "xp_track",
+   "x": 186.0,
+   "y": 92.5,
+   "w": 254.5,
+   "h": 43.5
+  }
+ ],
+ "labels": [
+  {
+   "key": "play",
+   "text": "play",
+   "x": 1524.5,
+   "y": 899.4,
+   "w": 324.2,
+   "h": 109.4,
+   "size": 92.15,
+   "colour": "#0f5913",
+   "align": "center",
+   "font": "display",
+   "upper": true,
+   "baseline": 993.56
+  },
+  {
+   "key": "shop",
+   "text": "shop",
+   "x": 58.5,
+   "y": 976.2,
+   "w": 166.7,
+   "h": 52.0,
+   "size": 44.04,
+   "colour": "#0f5913",
+   "align": "center",
+   "font": "display",
+   "upper": true,
+   "baseline": 1021.21
+  },
+  {
+   "key": "item",
+   "text": "item",
+   "x": 30.4,
+   "y": 733.1,
+   "w": 166.7,
+   "h": 44.2,
+   "size": 37.37,
+   "colour": "#a86d43",
+   "align": "center",
+   "font": "display",
+   "upper": true,
+   "baseline": 771.21
+  },
+  {
+   "key": "hero",
+   "text": "hero",
+   "x": 28.7,
+   "y": 545.1,
+   "w": 166.7,
+   "h": 44.2,
+   "size": 37.37,
+   "colour": "#a86d43",
+   "align": "center",
+   "font": "display",
+   "upper": true,
+   "baseline": 583.21
+  },
+  {
+   "key": "classic",
+   "text": "classic",
+   "x": 1463.7,
+   "y": 786.9,
+   "w": 326.9,
+   "h": 82.1,
+   "size": 68.97,
+   "colour": "#e1d2b7",
+   "align": "center",
+   "font": "display",
+   "upper": true,
+   "baseline": 857.5
+  },
+  {
+   "key": "00:00",
+   "text": "00:00",
+   "x": 848.4,
+   "y": 8.7,
+   "w": 188.6,
+   "h": 74.9,
+   "size": 62.95,
+   "colour": "#e1d2b7",
+   "align": "center",
+   "font": "display",
+   "upper": false,
+   "baseline": 73.03
+  },
+  {
+   "key": "task",
+   "text": "task",
+   "x": 337.5,
+   "y": 994.6,
+   "w": 74.3,
+   "h": 39.3,
+   "size": 33.21,
+   "colour": "#9a474c",
+   "align": "center",
+   "font": "display",
+   "upper": true,
+   "baseline": 1028.28
+  },
+  {
+   "key": "000,000",
+   "text": "000,000",
+   "x": 1527.1,
+   "y": 51.5,
+   "w": 225.1,
+   "h": 41.9,
+   "size": 35.53,
+   "colour": "#55071d",
+   "align": "start",
+   "font": "digits",
+   "upper": false,
+   "baseline": 81.86
+  },
+  {
+   "key": "01",
+   "text": "01",
+   "x": 174.7,
+   "y": 49.5,
+   "w": 53.0,
+   "h": 25.1,
+   "size": 21.42,
+   "colour": "#000000",
+   "align": "center",
+   "font": "digits",
+   "upper": false,
+   "baseline": 67.92
+  },
+  {
+   "key": "Tump_ID",
+   "text": "Tump_ID",
+   "x": 229.8,
+   "y": 29.9,
+   "w": 195.8,
+   "h": 32.5,
+   "size": 27.43,
+   "colour": "#e1d2b7",
+   "align": "start",
+   "font": "display",
+   "upper": false,
+   "baseline": 57.95
+  },
+  {
+   "key": "#1234",
+   "text": "#1234",
+   "x": 230.6,
+   "y": 67.4,
+   "w": 44.8,
+   "h": 17.0,
+   "size": 14.83,
+   "colour": "#e1d2b7",
+   "align": "start",
+   "font": "tag",
+   "upper": false,
+   "baseline": 86.67
+  },
+  {
+   "key": "xp",
+   "text": "xp",
+   "x": 230.6,
+   "y": 104.9,
+   "w": 145.2,
+   "h": 27.0,
+   "size": 22.92,
+   "colour": "#000000",
+   "align": "center",
+   "font": "digits",
+   "upper": true,
+   "baseline": 124.44
+  },
+  {
+   "key": "GAMEMODE",
+   "text": "GAMEMODE",
+   "x": 1506.8,
+   "y": 601.1,
+   "w": 240.7,
+   "h": 55.7,
+   "size": 46.67,
+   "colour": "#e1d2b7",
+   "align": "center",
+   "font": "heading",
+   "upper": false,
+   "baseline": 640.33
+  }
+ ]
+}

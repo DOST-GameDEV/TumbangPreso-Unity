@@ -6,8 +6,14 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI.Hub
 {
     /// <summary>
-    /// Loading stays on one surface: rotating game-world illustrations, the destination map,
-    /// progress and an inline tip. The artwork is illustrative, not a live map preview.
+    /// Loading is the destination map's own title card, full screen, with the title screen's
+    /// thin white rail under it (`HomeCourtView`), and nothing else. Owner, 2026-10-22: show
+    /// the map pictures "with no more like tool tips and other stuff", the bar from the screen
+    /// you first load into, then fade once loaded. The card carries the map's name.
+    ///
+    /// ⚠️ THE CARDS ARE STORED UNCOMPRESSED AND WITHOUT MIPMAPS, on the owner's request that they
+    /// not "lose quality ingame". That is 8 MB a card, so only the card on screen is resident:
+    /// see <see cref="CardFor"/>.
     ///
     /// ⚠️⚠️ IT LIFTS WHEN THE WORK IS DONE, NOT ON A CLOCK. The stages are the scene load (0 to
     /// 60 per cent), the match installing (60 to 75) and `Visual.ArenaPrewarm` drawing the
@@ -27,7 +33,9 @@ namespace TumbangPreso.UI.Hub
     public sealed class HubLoading : MonoBehaviour
     {
         private static HubLoading _current;
-        private Text _percent, _tip;
+        private Image _fill;
+        private float _target, _shown;
+        private static Sprite _railSprite;
         private Canvas _canvas;
         private string _scene;
         private float _began;
@@ -37,9 +45,28 @@ namespace TumbangPreso.UI.Hub
         private Button _returnButton;
         private bool _ownsSceneLoad, _revealing;
         public string FailureReason { get; private set; }
+        /// <summary>How far the work behind the curtain has got, 0 to 1. The rail eases toward it.</summary>
+        public float Progress => _target;
         public static bool Visible => _current != null;
         // Camera ownership may transfer under the still-opaque curtain after prewarm.
         public static bool Preparing => _current != null && !_current._revealing;
+
+        private static string _cardScene;
+        private static Texture2D _card;
+
+        /// <summary>
+        /// The card for a map, or null when none was made for it. Only one card is held: asking
+        /// for another releases the previous one, whose curtain has already been cancelled
+        /// (<see cref="Begin"/> cancels before it builds), so nothing on screen still draws it.
+        /// </summary>
+        public static Texture2D CardFor(string scene)
+        {
+            if (_cardScene == scene && _card != null) return _card;
+            if (_card != null) Resources.UnloadAsset(_card);
+            _cardScene = scene;
+            _card = Resources.Load<Texture2D>("UI/map-loading/" + scene);
+            return _card;
+        }
 
         /// <summary>True when <paramref name="scene"/> is an arena, the only kind of load this covers.</summary>
         public static bool Covers(string scene) => System.Array.IndexOf(SceneFlow.Maps, scene) >= 0;
@@ -106,69 +133,74 @@ namespace TumbangPreso.UI.Hub
             DontDestroyOnLoad(canvas.gameObject);
             var root = (RectTransform)canvas.transform;
             var blocker = canvas.gameObject.AddComponent<Image>();
-            blocker.color = HubStyle.Night; blocker.raycastTarget = true;
-
-            HubPattern.Ground(root, HubStyle.Night, 81);
-            var artwork = LoadingArtwork.Install(root);
-            // Keep the illustrated backdrop above the quiet pattern but under all loading text.
-            artwork.transform.SetSiblingIndex(1);
+            // The hand-made HOME board's deepest maroon (2026-10-22), seen only round a card that
+            // does not fill the window, or behind a map that has no card.
+            var deep = HubBoard.Colour("#2A0611");
+            blocker.color = deep; blocker.raycastTarget = true;
             root.gameObject.AddComponent<HubVignetteHolder>();
-            var vignette = HubKit.Stretch(HubKit.Rect(root, "Vignette")).gameObject.AddComponent<HubVignette>();
-            vignette.raycastTarget = false;
 
-            var map = SceneFlow.PreviewFor(_scene);
-            var name = HubKit.Text(root, "Heading", map.Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
-            var outline = name.gameObject.AddComponent<Outline>();
-            outline.effectColor = HubStyle.Ink; outline.effectDistance = new Vector2(6, -6);
-            HubKit.Fit(name, 1600);
-            var tagline = HubKit.Text(root, "Tagline", map.Tagline, HubStyle.Label, false, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(tagline.rectTransform, HubKit.Centre, new Vector2(0, -40), new Vector2(1400, 50));
-            tagline.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
-
-            _percent = HubKit.Text(root, "Percent", "0%", HubStyle.Display, true, HubStyle.Golden, TextAnchor.MiddleCenter);
-            HubKit.Place(_percent.rectTransform, HubKit.Centre, new Vector2(0, -130), new Vector2(400, 100));
-            _percent.gameObject.AddComponent<Outline>().effectColor = HubStyle.Ink;
-
-            // The tip band along the bottom, the way the sketch draws it.
-            var band = HubKit.Span(HubKit.Rect(root, "TipBand"), Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, -150));
-            var bandFill = band.gameObject.AddComponent<Image>();
-            bandFill.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, 0.9f);
-            bandFill.raycastTarget = false;
-            var tipLabel = HubKit.Text(band, "TipLabel", "TIP", HubStyle.Label, true, HubStyle.Persimmon, TextAnchor.MiddleLeft);
-            HubKit.Place(tipLabel.rectTransform, HubKit.Left, new Vector2(HubKit.Margin, 0), new Vector2(120, 60));
-            _tip = HubKit.Text(band, "Tip", LoadingPresentation.Tips[0], HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_tip.rectTransform, HubKit.Left, new Vector2(HubKit.Margin + 130, 0), new Vector2(1300, 100));
-            artwork.BindTip(_tip);
-
-            var mark = HubKit.Picture(band, "StudioMark", Resources.Load<Sprite>("UI/brand/bh_studios_logo"));
-            if (mark.sprite == null)
+            var card = OwnerUiLayout.Rect(root, "MapCard").gameObject.AddComponent<RawImage>();
+            card.raycastTarget = false;
+            card.rectTransform.anchorMin = card.rectTransform.anchorMax = card.rectTransform.pivot = Vector2.one * .5f;
+            var fitter = card.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            card.texture = CardFor(_scene);
+            if (card.texture != null) fitter.aspectRatio = card.texture.width / (float)card.texture.height;
+            else
             {
-                var texture = Resources.Load<Texture2D>("UI/brand/bh_studios_logo");
-                if (texture != null) mark.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), HubKit.Centre);
-                mark.color = mark.sprite != null ? Color.white : new Color(0, 0, 0, 0);
+                // A map without a card still says where the match is.
+                card.enabled = false;
+                var name = HubKit.Text(root, "Heading", SceneFlow.PreviewFor(_scene).Name, 150, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
+                HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
+                HubKit.Fit(name, 1600);
             }
-            HubKit.Place(mark.rectTransform, HubKit.Right, new Vector2(-HubKit.Margin, 0), new Vector2(220, 110));
+
+            // The title screen's rail (HomeCourtView), at the same size and place on the same
+            // 1920x1080 design, so a match load reads as the loader the game opens with.
+            var design = OwnerUiLayout.DesignArea(root, "MapLoadingComposition");
+            if (_railSprite == null)
+            {
+                var white = Texture2D.whiteTexture;
+                _railSprite = Sprite.Create(white, new Rect(0, 0, white.width, white.height), Vector2.one * .5f);
+                _railSprite.hideFlags = HideFlags.DontSave;
+            }
+            var sprite = _railSprite;
+            var rail = OwnerUiLayout.Rect(design, "LoadingProgressTrack").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Place(rail.rectTransform, 775, 1018, 370, 7); rail.sprite = sprite;
+            rail.color = new Color(1, 1, 1, .24f); rail.raycastTarget = false;
+            _fill = OwnerUiLayout.Rect(design, "ActualProgress").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Place(_fill.rectTransform, 775, 1018, 370, 7);
+            _fill.sprite = sprite; _fill.color = Color.white; _fill.raycastTarget = false;
+            _fill.type = Image.Type.Filled; _fill.fillMethod = Image.FillMethod.Horizontal; _fill.fillAmount = 0;
 
             var failure = HubKit.Rect(root, "LoadingFailure"); HubKit.Stretch(failure);
             _failureControls = failure.gameObject; _failureControls.SetActive(false);
             var message = HubKit.Text(failure, "Error", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(message.rectTransform, HubKit.Centre, new Vector2(0, -205), new Vector2(1300, 70));
+            message.gameObject.AddComponent<Outline>().effectColor = HubStyle.Ink;
             var back = HubKit.Button(failure, "LoadingReturn", "RETURN TO MENU", HubStyle.Honey,
                 SceneFlow.LeaveMatchToMainMenu, HubStyle.Label);
             _returnButton = back;
             HubKit.Place((RectTransform)back.transform, HubKit.Centre, new Vector2(0, -315), new Vector2(560, 144));
         }
 
+        /// <summary>Moves the target only forward; <see cref="Update"/> eases the rail toward it.</summary>
+        private void Advance(float progress) => _target = Mathf.Max(_target, Mathf.Clamp01(progress));
+
+        private void Update()
+        {
+            // The splash's rate-based ease: never teleports between stages, never overshoots.
+            _shown = Mathf.Lerp(_shown, _target, 1.0f - Mathf.Exp(-4.0f * Time.unscaledDeltaTime));
+            if (_fill != null) _fill.fillAmount = _shown;
+        }
+
         private IEnumerator Follow(AsyncOperation load)
         {
-            float shown = 0;
             if (load != null)
             {
                 while (!load.isDone)
                 {
-                    shown = Mathf.Max(shown, Mathf.Clamp01(load.progress / 0.9f) * 60f);
-                    _percent.text = Mathf.RoundToInt(shown) + "%";
+                    Advance(Mathf.Clamp01(load.progress / 0.9f) * .6f);
                     if (Time.realtimeSinceStartup - _began > 120)
                     { Fail("The match did not finish loading."); yield break; }
                     yield return null;
@@ -185,8 +217,7 @@ namespace TumbangPreso.UI.Hub
                 }
             }
 
-            shown = Mathf.Max(shown, 60f);
-            _percent.text = "60%";
+            Advance(.6f);
 
             var destination = SceneManager.GetActiveScene();
             float until = Time.realtimeSinceStartup + 60;
@@ -221,15 +252,10 @@ namespace TumbangPreso.UI.Hub
                 yield return null;
             }
             KantoTraffic.Covered = false;
-            shown = Mathf.Max(shown, 75f);
-            _percent.text = "75%";
+            Advance(.75f);
 
             // Retain introduction setup before drawing the arena and releasing input.
-            _prewarm = PrepareMatchVisuals(done =>
-            {
-                shown = Mathf.Max(shown, Mathf.Lerp(75f, 99f, done));
-                _percent.text = Mathf.RoundToInt(shown) + "%";
-            });
+            _prewarm = PrepareMatchVisuals(done => Advance(Mathf.Lerp(.75f, .99f, done)));
             while (true)
             {
                 bool next = false;
@@ -247,17 +273,19 @@ namespace TumbangPreso.UI.Hub
             }
             ReleasePrewarm();
             _revealing = true;
-            _percent.text = "100%";
+            Advance(1);
             Debug.Log($"[HubLoading] {_scene} ready after {Time.realtimeSinceStartup - _began:F2} s.");
-            yield return null;
+            // Let the rail visibly reach the end (bounded, so it never becomes a fixed wait).
+            for (float t = 0; t < .25f && _shown < .995f; t += Time.unscaledDeltaTime) yield return null;
+            _shown = 1; _fill.fillAmount = 1;
 
             // OwnerUiLayout creates a scene-root canvas bound by CanvasLifetime, not a child.
             // Keep the actual canvas so a real arena load can dismiss the curtain.
             var group = _canvas.gameObject.AddComponent<CanvasGroup>();
             group.blocksRaycasts = false;
-            for (float t = 0; t < 0.3f; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < 0.5f; t += Time.unscaledDeltaTime)
             {
-                group.alpha = 1 - t / 0.3f;
+                group.alpha = 1 - t / 0.5f;
                 yield return null;
             }
             Destroy(gameObject);
@@ -295,7 +323,6 @@ namespace TumbangPreso.UI.Hub
         private void Fail(string message)
         {
             FailureReason = message;
-            _percent.text = "!";
             _failureControls.GetComponentInChildren<Text>(true).text = message;
             _failureControls.SetActive(true);
             CursorMode.Release();

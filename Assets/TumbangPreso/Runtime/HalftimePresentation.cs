@@ -43,13 +43,15 @@ namespace TumbangPreso
         private RecordedWorldView _view;
         private RecordedMatchClip _clip;
         private bool _attempted,_standings,_stageShow;
+        private const float ReplayEndAge=5.8f,ReplaySlowdown=.43f;
+        private float _replayBegan;
         private Scene _scene;
         // PAYO FORCES A HALF TIME (owner, 2026-10-12, of the map that turns to night at half time: "force it to have").
-        // A match shorter than six rounds has no middle break on any other map; on a map that sets this lower it has one
+        // Four-round matches also play their middle break (owner, 2026-10-21). On a map that sets this lower it has one
         // at its middle whatever its length (2 rounds: after round 1). It is set by the MAP when its scene loads
-        // (`Map.PayoNight`), on every peer alike, and put back to 6 when the scene goes: nothing is sent, the host's
+        // (`Map.PayoNight`), on every peer alike, and put back to the default when the scene goes: nothing is sent, the host's
         // stamp and every peer's check of it (`Receive`) read the same number because they stand in the same scene.
-        public const int DefaultMiddleBreakMinRounds=6;
+        public const int DefaultMiddleBreakMinRounds=4;
         public static int MiddleBreakMinRounds=DefaultMiddleBreakMinRounds;
         public static bool IsMiddleBreak(int completed,int total)=>total>=MiddleBreakMinRounds&&completed==total/2&&completed>=1&&completed<total;
         public static HalftimePresentation Ensure()
@@ -90,7 +92,7 @@ namespace TumbangPreso
             if(LiveStageBreak&&(!halftime||SharedUltimatePhase.Now-began>=Map.ArenaStage.HalftimeLeadSeconds))_frame.SetImageVisible(false);
             SharedUltimatePhase.Instance?.Cancel();
             MatchId=match;CompletedRound=completed;NextTaya=nextTaya;Began=began;ClipId=clip;IsHalftime=halftime;
-            _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;_stageShow=false;FallbackReason=null;
+            _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;_stageShow=false;_replayBegan=.35f;FallbackReason=null;
             PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();
             if(!halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(completed+1,nextTaya,Remaining,null);
             return true;
@@ -114,32 +116,38 @@ namespace TumbangPreso
             }
             if(!_attempted&&age>=.2f)
             {
-                _attempted=true;
                 var archive=FindAnyObjectByType<MatchReplayArchive>();
                 if(archive!=null)foreach(var retained in archive.Clips)if(retained.Clip.Id==ClipId&&retained.Clip.MatchId==MatchId)_clip=retained.Clip;
                 if(_clip==null)_clip=Net.MatchRpc.Instance?.ReceivedReplay(ClipId);
-                if(age<=.6f&&_clip!=null&&_clip.Duration<=4.5f&&!Settings.SettingsStore.Current.ReducedUiMotion)
+                // The host timestamp can already be old when a peer receives the
+                // break. Keep looking for its nominated bytes while footage can
+                // still fit; receipt latency is not evidence of an invalid clip.
+                bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+                if(_clip==null&&ClipId>0&&!reduced&&age<ReplayEndAge-ReplaySlowdown)return;
+                _attempted=true;
+                if(_clip!=null&&_clip.Duration<=4.5f&&age+_clip.Duration+ReplaySlowdown<=ReplayEndAge&&!reduced)
                 {
                     try
                     {
                         _view=new RecordedWorldView(transform,_clip);
-                        if(SharedUltimatePhase.Now-Began>1){_view.Dispose();_view=null;}
+                        _replayBegan=Mathf.Max(.35f,(float)(SharedUltimatePhase.Now-Began));
+                        if(_replayBegan+_clip.Duration+ReplaySlowdown>ReplayEndAge){_view.Dispose();_view=null;}
                     }
                     catch(Exception failure){Debug.LogWarning("[Replay] View unavailable: "+failure.Message);}
                 }
                 if(_view?.Ready!=true)
                 { Debug.Log("[Replay] clip="+ClipId+" unavailable: "+(_clip==null?"canonical bytes missing":_view?.UnavailableReason??"view preference or scene"));_view?.Dispose();_view=null;FallbackReason=ClipId==0?"No complete highlight this half":"Replay unavailable on this screen"; }
             }
-            if(_view?.Ready==true&&age<5.8f)
+            if(_view?.Ready==true&&age<ReplayEndAge)
             {
                 // Real-time setup, a brief contact slowdown, then full consequence.
-                float elapsed=Mathf.Max(0,age-.35f),before=_clip.Contact-_clip.Start-.18f;
+                float elapsed=Mathf.Max(0,age-_replayBegan),before=_clip.Contact-_clip.Start-.18f;
                 float offset=elapsed<=before?elapsed:elapsed<=before+.86f?before+(elapsed-before)*.5f:elapsed-.43f;
                 try{_view.Draw(_clip.Start+offset);}
                 catch(Exception failure){Debug.LogWarning("[Replay] Recorded view failed: "+failure.Message);_view.Dispose();_view=null;FallbackReason="Replay unavailable on this screen";}
             }
-            _frame.SetImageVisible(_view?.Ready!=true||age>=5.8f);
-            if(!_standings&&_attempted&&(_view==null||age>=5.8f))
+            _frame.SetImageVisible(_view?.Ready!=true||age>=ReplayEndAge);
+            if(!_standings&&_attempted&&(_view==null||age>=ReplayEndAge))
             {
                 _standings=true;_view?.Dispose();_view=null;
                 FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(CompletedRound+1,NextTaya,Remaining,FallbackReason);

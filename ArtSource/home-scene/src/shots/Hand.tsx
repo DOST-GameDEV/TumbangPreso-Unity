@@ -1,4 +1,5 @@
 import React from 'react';
+import { S } from '../lib/set';
 import { B, bt, K } from '../lib/beats';
 import { Crackle } from '../lib/bolt';
 import { kf, outBack, outCubic } from '../lib/kf';
@@ -63,7 +64,7 @@ export const Hand: React.FC<{ f: number }> = ({ f }) => {
           <WideSet f={f} layer="city" />
           <WideSet f={f} layer="mid" />
         </g>
-        <rect x={-200} y={-200} width={2320} height={1480} fill="#3A0610" opacity={0.3} />
+        <rect x={-200} y={-200} width={2320} height={1480} fill={S.dim} opacity={0.3} />
         {eyes.map((e, i) => <circle key={i} cx={e[0]} cy={e[1]} r={40} fill="#E8F53A" opacity={0.4} filter="url(#glowBig)" />)}
         <ActorImage d={d} />
         {sparks}

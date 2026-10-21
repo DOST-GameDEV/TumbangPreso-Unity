@@ -522,13 +522,6 @@ namespace TumbangPreso
                         {
                             _tayaCampTickAccum -= Balance.TournamentPenaltyInterval;
                             GameServices.Match.AddScore(defenderSlot, ScoreEvent.TayaCampPenalty);
-
-                            // ⚠️ NO WORD, FOR THE REASON SPELLED OUT ON THE SLIPPER PENALTY
-                            // BELOW. Same shape exactly: the lata card already reads `LEAVE CAN
-                            // RING 1.4s` and then `CAMPING · DEFENSE SCORE PAUSED` for as long as
-                            // the taya stays, so a callout once a second repeats a line that is
-                            // already on screen and cannot say anything new.
-                            UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Defense, "⚠️");
                         }
                     }
                 }
@@ -602,27 +595,6 @@ namespace TumbangPreso
                         {
                             _attackerIdleTickAccum[slot] -= Balance.TournamentPenaltyInterval;
                             GameServices.Match.AddScore(slot, ScoreEvent.UnretrievedSlipperPenalty);
-
-                            // ⚠️⚠️ NO WORD. THE OBJECTIVE CARD ALREADY SAYS IT, PERMANENTLY, AND
-                            // THIS FIRED ONCE A SECOND ON TOP OF IT. 🧑 2026-08-27 with a
-                            // screenshot of both at once: *"redundant as fuck -5a fetch slipper
-                            // pls figure out which stay"*. Three surfaces were reporting one
-                            // penalty every `TournamentPenaltyInterval`: this callout, a `-5
-                            // SLIPPER IDLE` toast from `Hud.OnScored`, and the lata card's second
-                            // line reading `FETCH SLIPPER · -5 / SECOND`.
-                            //
-                            // ⚠️ THE CARD LINE IS THE ONE THAT STAYS, AND IT IS NOT A TOSS-UP.
-                            // It is the only one of the three that is a STATE rather than an
-                            // event: it appears the moment the grace period lapses, says the rate
-                            // rather than one tick of it, and goes away when the player picks the
-                            // tsinelas up. A per-second flash cannot tell a player anything the
-                            // second one did not, and it repeats for as long as the mistake does.
-                            //
-                            // ⚠️ THE HITMARKER STAYS BECAUSE IT IS NOT A WORD. It is the one
-                            // non-text signal of the tick landing, which is what 🧑 asked to keep
-                            // in the same breath as cutting the text: *"js remove some of the
-                            // words that pop up"*.
-                            UI.Hud.Instance?.PopHitmarker(UI.UiTheme.Offense, "⚠️");
                         }
                     }
                 }
@@ -770,25 +742,34 @@ namespace TumbangPreso
             // the stamina refill and the teleport below are decisions; `Visual.MatchFlair` draws
             // and touches no state. A client that could stun a body from a message is a client
             // that decides, which is `CLAUDE.md` § 4.
-            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Tag,
-                                       taya.PlayerSlot, victim.PlayerSlot,
-                                       victim.transform.position);
+            // ⚠️ THE RULE FINISHES WHATEVER THE PRESENTATION DOES (owner 2026-10-21: a tag that left the victim where they
+            // were caught). The refill and the teleport are in the `finally` below, so a throwing piece of presentation
+            // still sends them home.
+            try
+            {
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Tag,
+                                           taya.PlayerSlot, victim.PlayerSlot,
+                                           victim.transform.position);
 
-            // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THE CALLER OPENS WITH `ShouldResolve()` AND THE TAG
-            // IS THE TAYA'S ENTIRE PAYOFF. 🧑 2026-08-29: *"non hosts dont have sfx in some
-            // plarts"*. `tools/audit_audio_reach.py` reported this line clean and it was not:
-            // the audit looks for a gate at the SAME brace depth, and this method has none —
-            // the gate is in the caller. Every sound reached by a host-resolved verb one call
-            // deep has the same shape. See `docs/TODO.md` § 83.12.
-            NetCue.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
+                // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THE CALLER OPENS WITH `ShouldResolve()` AND THE TAG
+                // IS THE TAYA'S ENTIRE PAYOFF. 🧑 2026-08-29: *"non hosts dont have sfx in some
+                // plarts"*. `tools/audit_audio_reach.py` reported this line clean and it was not:
+                // the audit looks for a gate at the SAME brace depth, and this method has none —
+                // the gate is in the caller. Every sound reached by a host-resolved verb one call
+                // deep has the same shape. See `docs/TODO.md` § 83.12.
+                NetCue.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
 
-            // ⚠️ THE ANNOUNCER AND THE STYLE AWARD MOVED INTO `MatchFlair.PlayTag` WITH THE REST
-            // OF THE PRESENTATION, so each peer speaks its own line off the event rather than
-            // hearing the host's. `NetCue`'s header is explicit that a commentary track must not
-            // be relayed as a world sound, and this is how that rule is kept while still reaching
-            // everybody.
-            victim.Stamina.RefillAndClearFatigue();
-            victim.Teleport(SafeZonePointFor(victim));
+                // ⚠️ THE ANNOUNCER AND THE STYLE AWARD MOVED INTO `MatchFlair.PlayTag` WITH THE REST
+                // OF THE PRESENTATION, so each peer speaks its own line off the event rather than
+                // hearing the host's. `NetCue`'s header is explicit that a commentary track must not
+                // be relayed as a world sound, and this is how that rule is kept while still reaching
+                // everybody.
+            }
+            finally
+            {
+                victim.Stamina.RefillAndClearFatigue();
+                victim.Teleport(SafeZonePointFor(victim));
+            }
         }
 
         /// <summary>

@@ -150,7 +150,18 @@ namespace TumbangPreso.Visual
             // ⚠️ IT AWARDS NOTHING. `Diagnostics.MatchHighlights` cannot reach `AddScore` and no
             // caller of it can either, which is `docs/VISION.md` § 4 kept rather than restated.
             RecordHighlight(kind, actor, subject, at, strength);
-            Presented?.Invoke(kind, actor, subject, at, strength);
+            // ⚠️⚠️ EACH LISTENER ON ITS OWN, AND A THROWING ONE IS LOGGED AND PASSED (owner 2026-10-21: *"when tagged it
+            // doesnt teleport the character back to the safezone"*). The callers announce BEFORE they finish the rule: the
+            // tag stuns, announces, then refills and teleports; the block announces, then knocks back. A plain `Invoke`
+            // let one broken HUD piece (`UI.MatchEventFeed`, stale across an editor play session) throw out of every tag
+            // and block, so the victim stayed where they were caught. Presentation may fail; it may never cancel a rule.
+            var listeners = Presented;
+            if (listeners != null)
+                foreach (System.Action<Kind, int, int, Vector3, float> listener in listeners.GetInvocationList())
+                {
+                    try { listener(kind, actor, subject, at, strength); }
+                    catch (System.Exception failure) { Debug.LogException(failure); }
+                }
 
             switch (kind)
             {

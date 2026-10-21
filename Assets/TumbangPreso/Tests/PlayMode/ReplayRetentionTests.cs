@@ -12,6 +12,201 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
         [UnityTest]
+        public IEnumerator DelayedHalftimeCanOpenAnAlreadyRetainedHighlight()=>DelayedHalftime(false);
+        [UnityTest]
+        public IEnumerator HalftimeWaitsForItsNominatedHighlightBytes()=>DelayedHalftime(true);
+        [UnityTest]
+        public IEnumerator MissingNominatedHighlightStillFallsBackWithinTheSharedBreak()=>DelayedHalftime(true,true);
+        [UnityTest]
+        public IEnumerator HalftimeRetainedBlindfoldHighlightDrawsUntilStandings()=>DelayedHalftime(false,false,true);
+        [UnityTest]
+        public IEnumerator FourRoundHostNominatesReplayAtItsMiddleAndAdvancesAfterStandings()
+        {
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion=false;
+                yield return MapRetrievalProbe.Load("Eskinita");
+                Object.FindAnyObjectByType<MatchArrivalPresentation>()?.Cancel();
+                var rules=UI.SceneFlow.SelectedRules.Clone();rules.Rounds=4;UI.SceneFlow.PinSelectedRules(rules);
+                var round=GameServices.Round;var match=GameServices.Match;
+                round.BeginRound();
+                foreach(var actor in round.Players)actor.Teleport(new Vector3(6,.12f,-6+actor.PlayerSlot*3));
+                var defender=round.PlayerAt(0);var victim=round.PlayerAt(1);
+                defender.Teleport(new Vector3(0,.12f,-4));victim.Teleport(new Vector3(0,.12f,-3));
+                defender.transform.forward=Vector3.forward;
+                yield return new WaitForSeconds(2.5f);
+                Assert.IsTrue(defender.GetComponent<CombatVerbs>().HostResolvePunch(defender.transform.position,defender.transform.forward));
+                yield return new WaitForSeconds(1.6f);
+                var archive=Object.FindAnyObjectByType<MatchReplayArchive>();
+                Assert.IsNotEmpty(archive.Clips,archive.LastSkip);
+                long nominated=archive.Clips[0].Clip.Id;
+                round.EndRound();match.AdvanceRound();yield return null;
+                round.EndRound();RoundBreakFreezeTests.DrawFrame();match.BeginIntermission();
+                var phase=HalftimePresentation.Instance;
+                Assert.IsTrue(phase.Active);Assert.IsTrue(phase.IsHalftime,"A four-round host must schedule halftime after round two.");
+                Assert.AreEqual(2,phase.CompletedRound);Assert.AreEqual(nominated,phase.ClipId);
+                double began=phase.Began;bool captured=false;
+                while(SharedUltimatePhase.Now-began<5.6)
+                {
+                    Assert.IsNull(phase.FallbackReason);
+                    if(SharedUltimatePhase.Now-began>=1)
+                    {
+                        Assert.IsTrue(phase.HasReplay,"The normal host break must draw its nominated footage.");
+                        if(!captured){SaveReplayFrame(phase.ReplayFrame,"four-round-host-highlight.png");captured=true;}
+                    }
+                    yield return null;
+                }
+                while(SharedUltimatePhase.Now-began<6)yield return null;
+                Assert.IsTrue(UI.RoleSwapCard.Showing);Assert.IsNull(phase.FallbackReason);
+                Assert.AreEqual(2,match.RoundNumber);Assert.IsTrue(PresentationClock.Held);
+                while(phase.Active&&SharedUltimatePhase.Now-began<10.5)yield return null;
+                Assert.AreEqual(3,match.RoundNumber);Assert.IsFalse(phase.Active);Assert.IsFalse(PresentationClock.Held);
+                round.EndRound();match.AdvanceRound();yield return null;
+                round.EndRound();match.BeginIntermission();
+                Assert.IsFalse(match.MatchInProgress);Assert.IsFalse(phase.Active,"The final round cannot start another halftime.");
+            }
+            finally {Settings.SettingsStore.Current.ReducedUiMotion=reduced;}
+        }
+        [UnityTest,Explicit]
+        public IEnumerator CapturedOwnerHighlightRendersEveryRecordedFrame()
+        {
+            string path=System.Environment.GetEnvironmentVariable("TUMP_REPLAY_CLIP");
+            Assert.IsTrue(System.IO.File.Exists(path),"Set TUMP_REPLAY_CLIP to the saved failing canonical clip.");
+            Assert.IsTrue(RecordedMatchClip.TryDecode(System.IO.File.ReadAllBytes(path),out var clip,out string error),error);
+            yield return MapRetrievalProbe.Load(clip.Map,clip.Mode);
+            Object.FindAnyObjectByType<MatchArrivalPresentation>()?.Cancel();
+            var owner=new GameObject("Owner highlight playback proof");
+            try
+            {
+                using(var view=new RecordedWorldView(owner.transform,clip,true))
+                {
+                    Assert.IsTrue(view.Ready,view.UnavailableReason);
+                    foreach(var frame in clip.FieldFrames)view.Draw(Mathf.Clamp(frame.Time,clip.Start,clip.End));
+                    view.Draw(clip.Contact);
+                    var previous=RenderTexture.active;Texture2D image=null;
+                    try
+                    {
+                        RenderTexture.active=view.Target;
+                        image=new Texture2D(view.Target.width,view.Target.height,TextureFormat.RGB24,false);
+                        image.ReadPixels(new Rect(0,0,image.width,image.height),0,0);image.Apply();
+                        string folder=System.IO.Path.GetFullPath("Logs/halftime-live-1021");System.IO.Directory.CreateDirectory(folder);
+                        System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder,"actual-owner-highlight.png"),image.EncodeToPNG());
+                    }
+                    finally {RenderTexture.active=previous;if(image!=null)Object.DestroyImmediate(image);}
+                    Assert.IsNotNull(view.Target);Assert.IsTrue(view.Target.IsCreated());
+                }
+            }
+            finally {Object.DestroyImmediate(owner);}
+        }
+        private static IEnumerator DelayedHalftime(bool delayedBytes,bool missingBytes=false,bool blindfold=false)
+        {
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion=false;
+                yield return MapRetrievalProbe.Load("Eskinita");
+                Object.FindAnyObjectByType<MatchArrivalPresentation>()?.Cancel();
+                var round=GameServices.Round;var match=GameServices.Match;
+                round.BeginRound();
+                if(blindfold)
+                {
+                    Abilities.NemuBlindfold.Place(new Vector3(4,0,4),Vector3.forward,1,1);
+                    var shoe=round.PlayerAt(3).GetComponent<Carrier>().Held;
+                    Assert.IsNotNull(shoe);
+                    Assert.IsTrue(shoe.HostLoadTimedAffinity(SlipperAffinity.Concussed,Core.GeoRules.BoulderLoadSeconds));
+                }
+                foreach(var actor in round.Players)
+                    actor.Teleport(new Vector3(6,.12f,-6+actor.PlayerSlot*3));
+                var defender=round.PlayerAt(0);var victim=round.PlayerAt(1);
+                defender.Teleport(new Vector3(0,.12f,-4));victim.Teleport(new Vector3(0,.12f,-3));
+                defender.transform.forward=Vector3.forward;
+                yield return new WaitForSeconds(2.5f);
+                Assert.IsTrue(defender.GetComponent<CombatVerbs>().HostResolvePunch(defender.transform.position,defender.transform.forward));
+                yield return new WaitForSeconds(1.6f);
+                var archive=Object.FindAnyObjectByType<MatchReplayArchive>();
+                Assert.IsNotEmpty(archive.Clips,archive.LastSkip);
+                var retained=archive.Clips[0];var clip=retained.Clip;
+                if(blindfold)Assert.IsTrue(clip.FieldFrames.Any(f=>f.Fields.Any(s=>s.State.Type==Net.WorldEffectSnapshot.Kind.Blindfold)),
+                    "The regression needs the actual captured effect that broke the owner's replay.");
+                if(blindfold)
+                {
+                    var shoe=round.PlayerAt(3).GetComponent<Carrier>().Held;
+                    Assert.IsTrue(shoe.GetComponentsInChildren<Transform>(true).Any(t=>t.name=="BoulderStone"),"The actual loaded shoe must build its runtime shape.");
+                    var recorded=clip.Objects.Single(o=>o.Kind==RecordedObjectKind.Slipper&&o.Seat==3);
+                    Assert.IsTrue(recorded.Pose.Paths.Any(p=>p=="BoulderStone"||p.Contains("/BoulderStone")),
+                        "Record the runtime shape under the equipped skin's actual hierarchy: "+string.Join(",",recorded.Pose.Paths));
+                }
+                while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();yield return null;}
+                round.EndRound();
+                RoundBreakFreezeTests.DrawFrame();
+                var phase=HalftimePresentation.Ensure();
+                // A peer receives the host's timestamp, not a fresh local start.
+                var clips=(System.Collections.Generic.List<MatchReplayArchive.Retained>)typeof(MatchReplayArchive)
+                    .GetField("_clips",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(archive);
+                if(delayedBytes)clips.Clear();
+                double began=SharedUltimatePhase.Now-(delayedBytes ? .25 : .8);
+                Assert.IsTrue(phase.Receive(match.PresentationMatchId,4,0,began,clip.Id,true,1));
+                yield return null;yield return null;
+                if(delayedBytes)
+                {
+                    Assert.IsNull(phase.FallbackReason,"A first missing-byte check cannot abandon the nominated clip.");
+                    Assert.IsFalse(phase.HasReplay);
+                    yield return new WaitForSecondsRealtime(.9f);
+                    Assert.IsNull(phase.FallbackReason,"A short transport delay cannot abandon footage that still fits.");
+                    if(!missingBytes)clips.Add(retained);
+                    yield return null;yield return null;
+                }
+                if(missingBytes)
+                {
+                    while(phase.FallbackReason==null&&SharedUltimatePhase.Now-began<5.8)yield return null;
+                    Assert.IsFalse(phase.HasReplay);
+                    Assert.AreEqual("Replay unavailable on this screen",phase.FallbackReason);
+                    Assert.Less(SharedUltimatePhase.Now-began,phase.Duration,"Missing bytes cannot extend the break.");
+                }
+                else
+                {
+                    Assert.IsTrue(phase.HasReplay,"A complete highlight was rejected solely because the break arrived late: "+phase.FallbackReason);
+                    Assert.IsNull(phase.FallbackReason);
+                    if(blindfold)
+                    {
+                        bool captured=false;
+                        while(SharedUltimatePhase.Now-began<5.6)
+                        {
+                            Assert.IsTrue(phase.HasReplay,phase.FallbackReason);
+                            Assert.IsNull(phase.FallbackReason);
+                            if(!captured&&SharedUltimatePhase.Now-began>=3)
+                            {SaveReplayFrame(phase.ReplayFrame,"new-halftime-highlight.png");captured=true;}
+                            yield return null;
+                        }
+                        while(SharedUltimatePhase.Now-began<6)yield return null;
+                        Assert.IsNull(phase.FallbackReason,"Drawing a later recorded field cannot abandon the clip.");
+                        Assert.IsTrue(UI.RoleSwapCard.Showing,"The complete replay must yield to standings.");
+                    }
+                }
+                Assert.AreEqual(began,phase.Began,"Opening footage cannot restart the shared break deadline.");
+                Assert.IsTrue(PresentationClock.Held);
+                phase.End(false);
+                Assert.IsFalse(PresentationClock.Held);
+            }
+            finally { Settings.SettingsStore.Current.ReducedUiMotion=reduced; }
+        }
+        private static void SaveReplayFrame(RenderTexture target,string name)
+        {
+            var previous=RenderTexture.active;
+            var resolved=RenderTexture.GetTemporary(target.width,target.height,0,RenderTextureFormat.ARGB32);
+            Texture2D image=null;
+            try
+            {
+                Graphics.Blit(target,resolved);RenderTexture.active=resolved;
+                image=new Texture2D(target.width,target.height,TextureFormat.RGB24,false);
+                image.ReadPixels(new Rect(0,0,image.width,image.height),0,0);image.Apply();
+                string folder=System.IO.Path.GetFullPath("Logs/halftime-live-1021");System.IO.Directory.CreateDirectory(folder);
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder,name),image.EncodeToPNG());
+            }
+            finally {RenderTexture.active=previous;RenderTexture.ReleaseTemporary(resolved);if(image!=null)Object.DestroyImmediate(image);}
+        }
+        [UnityTest]
         public IEnumerator RetainedCatchPreservesVictimCoatHeldPropAndSeparateWorldAudio()
         {
             yield return MapRetrievalProbe.Load("Eskinita");
@@ -41,7 +236,8 @@ namespace TumbangPreso.PlayTests
             QualitySettings.globalTextureMipmapLimit=2;
             try
             {
-                Assert.IsFalse(HalftimePresentation.IsMiddleBreak(2,4));
+                Assert.IsTrue(HalftimePresentation.IsMiddleBreak(2,4));
+                Assert.IsFalse(HalftimePresentation.IsMiddleBreak(1,2));
                 Assert.IsTrue(HalftimePresentation.IsMiddleBreak(3,6));
                 Assert.IsTrue(HalftimePresentation.IsMiddleBreak(4,8));
                 Assert.IsFalse(HalftimePresentation.IsMiddleBreak(8,8));

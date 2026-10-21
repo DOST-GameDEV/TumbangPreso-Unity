@@ -118,7 +118,7 @@ namespace TumbangPreso.UI.Hub
         // ------------------------------------------------------------------ surfaces
 
         public static HubShape Shape(Transform parent, string name, Color fill, bool pressable, int seed,
-                                     float outline = 5.0f, float corner = 18.0f)
+                                     float outline = 5.0f, float corner = 18.0f, bool dress = true)
         {
             var shape = Rect(parent, name).gameObject.AddComponent<HubShape>();
             shape.Fill = fill;
@@ -128,6 +128,9 @@ namespace TumbangPreso.UI.Hub
             shape.Corner = corner;
             shape.raycastTarget = false;
             if (!pressable) shape.ShadowOffset = Vector2.zero;
+            // ⚠️ THE OWNER'S BOARD PIECES ON EVERY SCREEN (2026-10-22, `HubBoardSkin`). A button dresses
+            // itself in `Button`, where its slab can sit outside the part that moves.
+            if (dress) HubBoardSkin.Dress(shape, null);
             return shape;
         }
 
@@ -180,12 +183,13 @@ namespace TumbangPreso.UI.Hub
 
             var body = Stretch(Rect(root, "Body"));
             button.Body = body;
-            var shape = Shape(body, "Sticker", fill, true, seed == 0 ? name.GetHashCode() : seed);
+            var shape = Shape(body, "Sticker", fill, true, seed == 0 ? name.GetHashCode() : seed, dress: false);
             Stretch(shape.rectTransform);
+            HubBoardSkin.Dress(shape, root);
             button.Shape = shape;
-            button.Shimmer = IsPrimary(fill);
+            button.Shimmer = IsPrimary(fill) && shape.Skin == HubSkin.None;
 
-            Color ink = HubStyle.TextOn(fill);
+            Color ink = shape.Skin != HubSkin.None ? HubBoardSkin.Ink(shape.Skin) : HubStyle.TextOn(fill);
             if (icon != HubGlyph.Mark.None)
             {
                 var glyph = Glyph(body, "Icon", icon, ink);
@@ -208,7 +212,7 @@ namespace TumbangPreso.UI.Hub
                 label.rectTransform.anchorMin = new Vector2(0, 0.12f);
                 label.rectTransform.offsetMin = new Vector2(icon != HubGlyph.Mark.None ? 72 : 18, 4);
                 label.rectTransform.offsetMax = new Vector2(-18, -6);
-                Letterpress(label, fill);
+                Letterpress(label, fill, shape.Skin != HubSkin.None);
             }
 
             if (onClick != null) button.onClick.AddListener(() => onClick());
@@ -220,7 +224,7 @@ namespace TumbangPreso.UI.Hub
                                            Action onClick, int seed = 0)
         {
             var button = Button(parent, name, null, fill, onClick, HubStyle.Label, seed);
-            var glyph = Glyph(button.Body, "Icon", mark, HubStyle.TextOn(fill), 0.11f);
+            var glyph = Glyph(button.Body, "Icon", mark, button.Shape.Skin != HubSkin.None ? HubBoardSkin.Ink(button.Shape.Skin) : HubStyle.TextOn(fill), 0.11f);
             Stretch(glyph.rectTransform, 14);
             return button;
         }
@@ -240,11 +244,20 @@ namespace TumbangPreso.UI.Hub
             if (button == null || button.Shape == null) return;
             button.Shape.Fill = fill;
             button.Shape.Redraw();
-            button.Shimmer = IsPrimary(fill);
+            button.Shimmer = IsPrimary(fill) && button.Shape.Skin == HubSkin.None;
+            bool board = button.Shape.Skin != HubSkin.None;
             var label = LabelOf(button);
-            if (label != null) Letterpress(label, fill);
+            if (label != null) Letterpress(label, fill, board);
             var icon = button.Body.Find("Icon")?.GetComponent<HubGlyph>();
-            if (icon != null) icon.color = HubStyle.TextOn(fill);
+            if (icon != null) icon.color = board ? HubBoardSkin.Ink(HubBoardSkin.For(fill, true)) : HubStyle.TextOn(fill);
+        }
+
+        /// <summary>Her board's ink on the piece a <paramref name="fill"/> sticker becomes (`HubBoardSkin`),
+        /// for lettering a board screen draws itself (HERO's ability captions).</summary>
+        public static Color InkOn(Color fill)
+        {
+            var skin = HubBoardSkin.For(fill, true);
+            return skin != HubSkin.None ? HubBoardSkin.Ink(skin) : HubStyle.TextOn(fill);
         }
 
         private static bool IsPrimary(Color fill) =>
@@ -256,7 +269,9 @@ namespace TumbangPreso.UI.Hub
         /// lettering, so a light word on a dark sticker sits ON it like the logo's letters do. Ink
         /// lettering on a light sticker gets none (a shadow under ink only thickens it).
         /// </summary>
-        public static void Letterpress(Text label, Color fill)
+        public static void Letterpress(Text label, Color fill) => Letterpress(label, fill, false);
+
+        public static void Letterpress(Text label, Color fill, bool board)
         {
             // ⚠️⚠️ LIGHT LETTERS WITH AN INK OUTLINE ON EVERY SATURATED OR DARK STICKER (2026-09-23).
             // Brawl Stars and Fall Guys (inspected, `research.md`) letter their buttons in white with
@@ -264,10 +279,19 @@ namespace TumbangPreso.UI.Hub
             // holds on any fill and over any moving background, and it is what made the plain ink
             // "PLAY" on chartreuse look like a form button. PAPER stickers (honey and its tints) keep
             // ink lettering: dark on light is already the strongest pair and an outline only clogs it.
-            Color.RGBToHSV(fill, out _, out float s, out float v);
-            bool paper = s < 0.5f && v > 0.8f;
             Outline edge = null;
             foreach (var e in label.GetComponents<Outline>()) edge = e;
+            // ⚠️ ON HER PIECES, HER LETTERING: the board's own ink, flat, no outline (her HOME labels
+            // have none; an outline on knit only muddies it).
+            var skin = board ? HubBoardSkin.For(fill, true) : HubSkin.None;
+            if (skin != HubSkin.None)
+            {
+                label.color = HubBoardSkin.Ink(skin);
+                if (edge != null) edge.enabled = false;
+                return;
+            }
+            Color.RGBToHSV(fill, out _, out float s, out float v);
+            bool paper = s < 0.5f && v > 0.8f;
             if (paper)
             {
                 label.color = HubStyle.Ink;

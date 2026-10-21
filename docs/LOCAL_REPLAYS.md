@@ -24,6 +24,17 @@ Replay data itself is not an MP4 export.
 
 ## Data and lifetime
 
+Four-round matches include halftime after round two in Classic and Hero Strike.
+Six- and eight-round matches keep their middle break. Ordinary two-round matches
+have no halftime; Payo retains its map-specific two-round halftime exception.
+
+Halftime uses the host's existing shared deadline. A delayed break message does
+not invalidate a complete nominated highlight. Playback waits for nominated clip
+bytes while the replay window is open, then checks whether the actual clip and
+contact slowdown fit before standings. Its recorded lead-in starts when the view
+is ready. Missing or incompatible footage keeps the frozen court fallback and
+never extends the break. The local match library is a separate recording path.
+
 Clip format15 records summoned doll bodies in their companion seats4-7 and
 records their slippers with the same holder identity. Playback copies the
 authored doll model, poses and glow without running its AI or gameplay scripts.
@@ -79,6 +90,13 @@ segment absent, while earlier committed segments remain browseable.
 Playback loads map geometry through a replay-only `MatchInstaller` route. It
 creates no live players, bots, match runner or score/reward flow. Recorded render
 copies, lighting, fields, props and cues are drawn at the chosen replay time.
+Blindfold's existing recorded field uses a disabled playback-only ghost drawing,
+sampled from its recorded spot, facing and age. It must not enter the live ghost
+registry, trip a victim, recast a skill or play cast audio. Accepted recorded
+fields need an actual drawing path; successful view construction alone does not
+establish that the clip's later fields can play.
+Generated prop hierarchy changes refresh the pose track and use the existing
+unsafe-window fence; a matching root alone does not establish compatible bones.
 Current compatible game art is required; changed or missing recorded art fails
 with an explanation. Keep the tournament build alongside its replay folders
 when preserving footage across future map or character revisions.

@@ -6,16 +6,17 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// ⚠️⚠️ BLINDFOLD, THE GHOST DON'T LOOK LEAVES WAITING (owner 2026-10-15, `NecroRules.DontLook*`). *"place a ghost in an area and
-    /// it becomes invisible after 3 seconds and then if anyone goes near that area the ghost would lunge at their eyes and
-    /// cover it for 2 secondns and slow them"*. Gekko's way of fighting: a creature of her own does the work while she is
-    /// elsewhere. One per Nemu (`Place` retires her last one).
+    /// ⚠️⚠️ BLINDFOLD, THE GHOST PEEKER LEAVES WAITING (owner 2026-10-15 as DON'T LOOK, retuned 2026-10-21, `NecroRules.DontLook*`).
+    /// *"place a ghost in an area and it becomes invisible after"* 1.5 s (owner's second pass, from 2.5 s), *"and then if anyone goes near that area the ghost would
+    /// lunge at their eyes"*, covering them and slowing them 25 % for 2.5 s. Gekko's way of fighting: a creature of her own
+    /// does the work while she is elsewhere. One per Nemu (`Place` retires her last one).
     ///
     ///  * WAITING: Blindfold itself (`Visual.BlindfoldGhostModel`, the owner's approved mockup: an icy ghost child with a
     ///    cloth tied over its eyes), floating low over the spot, facing down Nemu's aim. Every screen sees it rise out of the
-    ///    ground; over its first 3 s it fades to a faint shimmer, still there for anyone who looks hard (Killjoy's traps,
+    ///    ground; over its first 1.5 s it fades to a faint shimmer, still there for anyone who looks hard (Killjoy's traps,
     ///    owner on v4: *"invisible but like medyo kita"*). Nemu keeps a clearer copy so she knows where it is.
-    ///  * SPRUNG: the first other player within 1.8 m once it is armed. ONLY THE HOST DECIDES: it writes BLINDED
+    ///  * Its trigger ring, `NecroRules.DontLookTriggerRadius` (2 m), is drawn on the court for everyone (`Visual.NemuGhostRings`).
+    ///  * SPRUNG: the first other player within 2 m once it is armed. ONLY THE HOST DECIDES: it writes BLINDED
     ///    (`CharacterMotor.ApplyBlinded`), and `SyncUnit` carries that clock to every peer. Protocol163's ghost frame names
     ///    the exact lifetime and victim, including their movement epoch; peers never guess from a nearby status edge.
     ///  * THE LUNGE: visible to everyone, its cloth drops to its neck, its cyan pinpoint eyes open, and it shoots at the
@@ -24,7 +25,9 @@ namespace TumbangPreso.Abilities
     ///  * THE VICTIM'S OWN CAMERA sees the same ghost jump into their lens and cling there, alive (`PoseForLens`), with the
     ///    dark closing round it (`Shaders/DontLookBlind`). Owner on v4: a face drawn over the screen *"looks wrong"*, *"bat
     ///    parang slideshoww"*; *"wont it be nicer if the ghost jumps at u"*.
-    ///  * Untripped, it goes after 30 s. A rejoiner gets the waiting ghost at the same age (`WorldEffectSnapshot.Kind.Blindfold`).
+    ///  * Untripped, it goes after 15 s. A rejoiner gets the waiting ghost at the same age (`WorldEffectSnapshot.Kind.Blindfold`).
+    ///  * SOULBOUND: when it is done (it let go of its victim, or its 15 s ran out) the host leaves a dormant Peeker where it
+    ///    ended (`NemuDormant`), and the skill's cooldown waits until Nemu reclaims it.
     ///
     /// The host's bounded complete ghost frames also hydrate late arrivals and retire replaced lifetimes.
     /// </summary>
@@ -43,6 +46,8 @@ namespace TumbangPreso.Abilities
         public float Age => _age;
         public bool Armed => _age >= NecroRules.DontLookArmSeconds;
         public bool Sprung => _state != State.Waiting;
+        /// <summary>Going (sinking away unsprung, or flying off its victim).</summary>
+        public bool Retiring => _state == State.Leaving;
         public CharacterMotor Victim => _victim;
         public float Remaining => Sprung ? 0.0f : Mathf.Max(0.0f, NecroRules.DontLookLifeSeconds - _age);
 
@@ -50,6 +55,8 @@ namespace TumbangPreso.Abilities
         private float _age, _stateAge;
         private CharacterMotor _victim;
         private Vector3 _lungeFrom;
+        /// <summary>Where the host leaves its dormant ghost once it has gone (null: recast or cleared, no dormant ghost).</summary>
+        private Vector3? _dormantAt;
         private NemuSmokeBatch _smoke;
         private MeshFilter _mesh;
         private MeshRenderer _body;
@@ -73,7 +80,7 @@ namespace TumbangPreso.Abilities
         public static NemuBlindfold Place(Vector3 at, Vector3 facing, int ownerSlot, float age = 0.0f)
         {
             for (int i = Live.Count - 1; i >= 0; i--)
-                if (Live[i] != null && Live[i].OwnerSlot == ownerSlot && !Live[i].Sprung) Live[i].Retire();
+                if (Live[i] != null && Live[i].OwnerSlot == ownerSlot && !Live[i].Sprung) Live[i].Retire(null);
             var go = new GameObject("NemuBlindfold");
             var spot = VfxShapes.GroundPoint(at);
             go.transform.position = spot;
@@ -114,11 +121,20 @@ namespace TumbangPreso.Abilities
             _block = new MaterialPropertyBlock();
         }
 
-        /// <summary>Gone without springing (recast elsewhere, or round over): it sinks back into the ground.</summary>
-        public void Retire()
+        /// <summary>Gone without springing (recast elsewhere, or its time ran out): it sinks back into the ground, leaving a
+        /// dormant ghost at <paramref name="dormantAt"/> if there is one.</summary>
+        public void Retire(Vector3? dormantAt)
         {
             if (_state == State.Leaving) return;
             _victim = null;
+            _dormantAt = dormantAt;
+            _state = State.Leaving; _stateAge = 0.0f;
+        }
+
+        /// <summary>Done with its victim: it lets go and flies off, and its dormant ghost is left where they stood.</summary>
+        private void LetGo()
+        {
+            _dormantAt = _victim != null ? _victim.transform.position : Spot;
             _state = State.Leaving; _stateAge = 0.0f;
         }
 
@@ -129,7 +145,7 @@ namespace TumbangPreso.Abilities
             Owner = OwnerSlot,
         };
 
-        private void OnEnable() { Live.Add(this); DeadWeightRings.Ensure(); Camera.onPreCull += HideFromVictim; Camera.onPostRender += ShowAgain; }
+        private void OnEnable() { Live.Add(this); NemuGhostRings.Ensure(); Camera.onPreCull += HideFromVictim; Camera.onPostRender += ShowAgain; }
         private void OnDisable() { Live.Remove(this); Camera.onPreCull -= HideFromVictim; Camera.onPostRender -= ShowAgain; }
 
         /// <summary>
@@ -142,8 +158,16 @@ namespace TumbangPreso.Abilities
         {
             if (_victim == null || camera == null || _body == null) return;
             // A camera at their eyes is theirs (their first person, or a spectator riding it), whoever's seat this is.
-            Vector3 eyes = _victim.transform.position + Vector3.up * 1.25f;
-            if ((camera.transform.position - eyes).sqrMagnitude >= 1.5f * 1.5f) return;
+            Vector3 at = camera.transform.position;
+            float mine = (at - EyesOf(_victim)).sqrMagnitude;
+            if (mine >= 1.5f * 1.5f) return;
+            // ⚠️ ONLY ITS OWN VICTIM'S (owner 2026-10-21: *"it tries to attach to other players"*). Anyone standing beside the
+            // victim has their own camera within that reach too, and it jumped into their lens as well. A camera belongs to the
+            // body whose eyes are nearest it, so the ghost clings only to the view that is the victim's.
+            var round = GameServices.Round;
+            if (round != null)
+                foreach (var p in round.Players)
+                    if (p != null && p != _victim && p.gameObject.activeInHierarchy && (at - EyesOf(p)).sqrMagnitude < mine) return;
             PoseForLens(camera);
         }
 
@@ -193,6 +217,8 @@ namespace TumbangPreso.Abilities
             body.localScale = Vector3.one * scale;
         }
 
+        private static Vector3 EyesOf(CharacterMotor body) => body.transform.position + Vector3.up * 1.25f;
+
         private void ShowAgain(Camera camera)
         {
             if (_posedForLens && _body != null)
@@ -211,6 +237,32 @@ namespace TumbangPreso.Abilities
         }
 
         private bool _drawn;
+        private bool _recorded;
+
+        // A replay field carries the waiting ghost's spot, facing and age. Build its
+        // authored drawing without Place, live registration, audio or a trigger loop.
+        public static NemuBlindfold Recorded(Transform parent, Net.WorldEffectSnapshot.Field field)
+        {
+            var go = new GameObject("RecordedBlindfold");
+            go.SetActive(false);
+            go.transform.SetParent(parent, false);
+            var ghost = go.AddComponent<NemuBlindfold>();
+            ghost.enabled = false;
+            ghost._recorded = true;
+            ghost.OwnerSlot = field.Owner;
+            ghost.Spot = field.Position;
+            ghost.Facing = field.Forward;
+            ghost._smoke = new NemuSmokeBatch(go.transform, "Blindfold", 1, 4, 1);
+            ghost.BuildBody();
+            go.SetActive(true);
+            return ghost;
+        }
+
+        public void StepRecorded(float age)
+        {
+            _age = Mathf.Clamp(age, 0f, NecroRules.DontLookLifeSeconds);
+            Draw();
+        }
 
         private void OnDestroy() { _smoke?.Dispose(); _smoke = null; }
 
@@ -240,11 +292,11 @@ namespace TumbangPreso.Abilities
             switch (_state)
             {
                 case State.Waiting:
-                    if (_age >= NecroRules.DontLookLifeSeconds) { Retire(); GameServices.Audio?.PlayAt("sfx_nemu_dontlook_fade", Spot); break; }
+                    if (_age >= NecroRules.DontLookLifeSeconds) { Retire(Spot); GameServices.Audio?.PlayAt("sfx_nemu_dontlook_fade", Spot); break; }
                     if (Armed) Watch();
                     break;
                 case State.Lunging:
-                    if (_victim == null || !_victim.gameObject.activeInHierarchy) { Retire(); break; }
+                    if (_victim == null || !_victim.gameObject.activeInHierarchy) { Retire(Spot); break; }
                     if (_stateAge >= NecroRules.DontLookLungeSeconds) { _state = State.Covering; _stateAge = 0.0f; }
                     break;
                 case State.Covering:
@@ -252,10 +304,20 @@ namespace TumbangPreso.Abilities
                     // replicated on this peer), then it lets go.
                     if (_victim == null || !_victim.gameObject.activeInHierarchy || !_victim.EyesCovered ||
                         _stateAge >= NecroRules.DontLookBlindSeconds + .5f)
-                    { _state = State.Leaving; _stateAge = 0.0f; }
+                        LetGo();
                     break;
                 case State.Leaving:
-                    if (_stateAge >= LeaveSeconds) { Destroy(gameObject); return; }
+                    if (_stateAge >= LeaveSeconds)
+                    {
+                        // ⚠️ THE GATE IS WRITTEN OUT, NOT HOISTED: `tools/audit_ability_authority.py` reads it by brace depth.
+                        if (NetAuthority.ShouldResolve())
+                        {
+                            if (_dormantAt.HasValue && !_recorded)
+                                NemuDormant.Spawn(NemuDormant.Ghost.Peeker, _dormantAt.Value, Facing, OwnerSlot);
+                        }
+                        Destroy(gameObject);
+                        return;
+                    }
                     break;
             }
             Draw();
@@ -399,7 +461,7 @@ namespace TumbangPreso.Abilities
             {
                 // The pet mouse darts round its hiding spot while it waits; the moment it springs it is back on the point (the
                 // lunge starts from there). Drawing only: the spot and the trigger radius do not move.
-                _flight.Apply(ref at, ref facing, _age, _state == State.Waiting && !sprung ? 1f : 0f, Time.deltaTime);
+                _flight.Apply(ref at, ref facing, _age, _state == State.Waiting && !sprung ? 1f : 0f, _recorded ? 0f : Time.deltaTime);
                 _block.SetVector(TrailId, _flight.TrailLocal);
             }
             var mesh = sprung ? BlindfoldGhostModel.Sprung : BlindfoldGhostModel.Waiting;

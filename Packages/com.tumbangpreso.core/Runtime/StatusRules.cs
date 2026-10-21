@@ -76,8 +76,8 @@ namespace TumbangPreso.Core
         /// <summary>Nemu's LET THEM IN (owner 2026-10-11): a ghost rides the body for 15 s and contests its steering
         /// (`NemuRules`). Control is kept: no stun, no lost actions, the camera stays the player's.</summary>
         Possessed = 14,
-        /// <summary>Nemu's DON'T LOOK (owner 2026-10-15): a ghost covers the eyes for 2 s, and a slow that starts at 50 % wears
-        /// off over 5 s (`NecroRules.DontLookSpeedScale`). One clock: blind while more than 3 s of it remain.</summary>
+        /// <summary>Nemu's PEEKER (owner 2026-10-21): a ghost covers the eyes and slows by 25 % for 2.5 s
+        /// (`NecroRules.DontLookSpeedScale`). One clock for both.</summary>
         Blinded = 15,
     }
 

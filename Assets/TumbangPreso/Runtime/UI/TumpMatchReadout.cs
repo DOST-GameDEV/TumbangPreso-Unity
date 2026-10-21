@@ -11,6 +11,7 @@ namespace TumbangPreso.UI
     public sealed partial class TumpMatchReadout : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
+        private CanvasGroup _openingUi;
         private RectTransform _root, _scoreRoot, _clockRoot, _canRoot, _personalRoot, _promptRoot;
         private Text _clock, _round, _canState, _canHint, _role, _stock, _prompt, _context, _toast, _countdown, _spectator, _sandbox;
         // VISUAL-1.6: a Graphic, so the court HUD's drawn `HudReticle` and the older
@@ -184,7 +185,9 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
-            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.ArenaIntro.HidesUi;
+            RefreshOpeningVisibility();
+            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.ArenaIntro.HidesUi
+                             && !(spectating && SpectatorCutscene.Hides);
             float dt = Time.unscaledDeltaTime;
             if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }
             if (_hitLeft > 0)
@@ -221,8 +224,16 @@ namespace TumbangPreso.UI
             Sandbox();
         }
 
+        private void RefreshOpeningVisibility()
+        {
+            if (_openingUi == null) return;
+            _openingUi.alpha = ReadyGate.HudAlpha;
+            _openingUi.interactable = _openingUi.blocksRaycasts = _openingUi.alpha >= 1;
+        }
+
         private void LateUpdate()
         {
+            RefreshOpeningVisibility();
             PaintScoreMoments();
             SizePromptPlate();
             PaintToast();
@@ -414,11 +425,7 @@ namespace TumbangPreso.UI
             if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
             {
                 if (!local.CanAct()) return;
-                if (carrier == null || !carrier.HasResetTarget)
-                {
-                    _prompt.text = "Get close to the can to reset";
-                    return;
-                }
+                if (carrier == null || !carrier.HasResetTarget) return;
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
                 string cue = Hud.PressCue("Grab");
                 if (carrier.ChannelRatio > 0)
@@ -440,6 +447,7 @@ namespace TumbangPreso.UI
                 _context.text = Mathf.Abs(spin) > .08f ? $"Pektus {(spin < 0 ? "left" : "right")} · {Mathf.RoundToInt(Mathf.Abs(spin) * 100)}%" : "Move the aim sideways for pektus";
                 Progress(carrier.ChargeRatio); return;
             }
+            if (ReclaimPrompt(local)) return;
             // ⚠️ VISUAL-1.1: DANGER IS THE SCREEN-EDGE FRAME (`HudDangerFrame`), NOT A SENTENCE.
             // The older builders, which have no frame, keep the words.
             if (_reticle == null && local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
@@ -486,6 +494,24 @@ namespace TumbangPreso.UI
                 }
             }
         }
+        /// <summary>
+        /// SOULBOUND (owner 2026-10-21): next to one of her dormant ghosts, Nemu's Grab reads like the can's reset and the
+        /// slipper's retrieve, with the button's icon: "Retrieve Peeker", "Retrieve Fetcher" or "Retrieve Keeper", then
+        /// "Retrieving ..." and its bar while she holds it. `NemuHeroKit` has already given the button to a slipper or a fallen
+        /// can first, so this never hides those prompts.
+        /// </summary>
+        private bool ReclaimPrompt(CharacterMotor local)
+        {
+            if (!(local.AbilitySystem?.Kit is Abilities.NemuHeroKit nemu) || nemu.ReclaimTarget == null || !local.CanAct()) return false;
+            string name = nemu.ReclaimTarget.Name;
+            float ratio = nemu.ReclaimRatio;
+            if (ratio > 0) _prompt.text = "Retrieving " + name;
+            else BindingPrompt("Grab", "Retrieve " + name);
+            if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
+            if (ratio > 0) Progress(ratio);
+            return true;
+        }
+
         private void BindingPrompt(string action, string label)
         {
             if (_bindingGlyph != null)

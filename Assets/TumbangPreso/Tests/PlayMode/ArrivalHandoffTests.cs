@@ -129,5 +129,67 @@ namespace TumbangPreso.PlayTests
             typeof(CharacterNameplate).GetMethod("LateUpdate", Private).Invoke(plate, null);
             Assert.IsTrue(label.gameObject.activeSelf); yield return null;
         }
+
+        [UnityTest] public IEnumerator MatchHudFadesInBeforeTheOpeningCountdown()
+        {
+            GameServices.Ensure();
+            var root = Make("Opening HUD visibility");
+            var readout = root.AddComponent<UI.TumpMatchReadout>(); readout.Build(root.transform);
+            var gate = root.AddComponent<ReadyGate>();
+            var touch = root.AddComponent<InputLayer.TouchHud>();
+            bool forcedTouch = InputLayer.TouchHud.ForceVisible;
+            var ticks = new List<string>();
+            gate.CountdownTick += tick => { ticks.Add(tick); readout.Countdown(tick); };
+            gate.CountdownHidden += () => readout.Countdown("");
+            var score = readout.Canvas.transform.Find("MatchScores/ScoreRow0/Score").GetComponent<CanvasRenderer>();
+            var countdown = readout.Canvas.transform.Find("Countdown").GetComponent<Text>();
+            try
+            {
+                InputLayer.TouchHud.ForceVisible = true;
+                gate.Open(null);
+                yield return null;
+                Canvas.ForceUpdateCanvases();
+                Assert.IsTrue(MatchArrivalPresentation.Active);
+                Assert.AreEqual(0, score.GetInheritedAlpha(), "The scoreboard leaked over the opening.");
+                Assert.IsFalse(touch.ShouldBeOnScreen, "Touch controls leaked over the opening.");
+
+                // The host can cut a slower peer's film to the shared countdown.
+                gate.StartLocalCountdown();
+                float revealStarted = Time.realtimeSinceStartup;
+                Assert.IsEmpty(ticks, "The first cue must wait for the HUD fade.");
+                Assert.Less(ReadyGate.HudAlpha, .1f);
+                bool sawFade = false;
+                float deadline = Time.realtimeSinceStartup + 6;
+                while (gate.CountingDown && Time.realtimeSinceStartup < deadline)
+                {
+                    yield return null;
+                    Canvas.ForceUpdateCanvases();
+                    if (!gate.CountingDown) break;
+                    float alpha = score.GetInheritedAlpha();
+                    Assert.That(alpha, Is.InRange(0f, 1f));
+                    if (alpha > 0 && alpha < 1) sawFade = true;
+                    Assert.That(touch.Canvas.GetComponent<CanvasGroup>().alpha, Is.EqualTo(alpha).Within(.1f));
+                    if (ticks.Count == 0)
+                    {
+                        Assert.IsFalse(countdown.enabled);
+                        continue;
+                    }
+                    Assert.GreaterOrEqual(Time.realtimeSinceStartup - revealStarted, ReadyGate.HudRevealSeconds);
+                    Assert.AreEqual(1, alpha, "The HUD must finish fading before 3 appears.");
+                    Assert.IsTrue(touch.ShouldBeOnScreen);
+                    Assert.IsTrue(countdown.enabled);
+                    Assert.AreEqual(1, countdown.canvasRenderer.GetInheritedAlpha());
+                }
+                Assert.IsFalse(gate.CountingDown, "The countdown did not complete.");
+                Assert.IsTrue(sawFade, "The HUD appeared instantly instead of fading.");
+                CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
+                yield return null;
+                Canvas.ForceUpdateCanvases();
+                Assert.AreEqual(1, score.GetInheritedAlpha());
+                Assert.IsTrue(touch.ShouldBeOnScreen);
+                Assert.IsFalse(countdown.enabled);
+            }
+            finally { InputLayer.TouchHud.ForceVisible = forcedTouch; gate.enabled = false; }
+        }
     }
 }

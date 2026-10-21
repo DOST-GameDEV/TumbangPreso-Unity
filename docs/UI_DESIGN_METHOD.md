@@ -89,6 +89,10 @@ changes. [Evidence](reports/feedback-2026-09-30/hud-readability.md). Physical-de
 approval remains separate. The existing practice status sits above the larger deck
 and its hint so neither can obscure the ability controls.
 
+October 21, 2026: the defender's reset prompt stays empty outside the can's
+interaction reach. Remove the distant-can instruction; keep the reachable Reset
+Can binding, touch emphasis, channel progress and cancel feedback.
+
 The25percent revision supersedes the earlier50percent target. Saved keyboard/pad
 bindings drive the glyph; touch retains the action label and emphasis. Ongoing
 reset progress/cancel wording stays intact. Real pickup, channel cancellation and
@@ -113,6 +117,28 @@ pointer/touch clicks retain the same entry route with a frame boundary. A fresh
 Submit remains usable on Home. [Focused evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).
 
 ## Current Feedback HUD layout
+
+Tournament penalty tick markers and sounds belong only to the scored local seat.
+`Hud.OnScored` handles both host awards and received score events; the simulation
+loop must not flash the current HUD for another player's penalty. Spectators get
+no personal penalty cue. Existing warning banners explain the local camping or
+unretrieved-slipper timer before and during a penalty, clearing with its cause.
+
+Warning banners display both lines in uppercase: DIN Bold for the title and
+DIN Light for the reason, with subtle 0.65-unit letter spacing. Reserve spacing
+before wrapping and centre each wrapped line independently. The darker reason
+band follows the outer panel's shear so its left/right insets remain equal.
+`CANNOT CAST` uses the recorded outcome: `ABILITY IS ON COOLDOWN` for Cooling,
+`X MORE OBJECTIVE POINTS REQUIRED` for NoCharge (the current ultimate deficit,
+rounded up), and `ABILITY MUST MEET REQUIREMENTS` for other refusals. A filled
+meter clears the point warning; a successful cast clears any cast refusal.
+The complete warning group is scaled to 90 percent before accessibility scaling.
+Each hidden-to-visible appearance, including the same text returning, restarts
+the short shake and plays the existing `ui_error` cue when available. A fresh
+ability refusal already supplies that cue, so the banner avoids doubling it.
+Continuous display does not repeat the shake/sound; Reduced UI Motion still
+disables shaking.
+[Native warning previews and scoped checks](reports/warning-banner-2026-10-21/README.md).
 
 Harry's mockup separates status cards at bottom-left, the action and contained
 progress centrally below aim, and a dark-red warning above aim. Persistent
@@ -186,6 +212,13 @@ inspect actual-size native frames; geometry is scalable but is still rasterized
 by the display. Do not replace authored rough silhouettes merely to smooth edges.
 
 ## Match HUD: the glass HUD, Overwatch's simple shape (2026-10-20)
+
+The gameplay HUD and touch controls stay hidden during every map's opening and
+the loaded-peer wait. They then fade in together over 0.5 seconds, reaching full
+opacity before the first 3 cue. The simulation stays held through that fade and
+the existing 3, 2, 1, GO sequence. The ready gate owns the shared reveal clock;
+camera direction and the durations of the countdown cues stay unchanged.
+[Implementation and validation limits](reports/opening-hud-2026-10-22.md).
 
 Request, 2026-10-20: "overhaul the ingame ui. make it similar to overwatch's simple
 ingame hud." This supersedes the Toy Block surfaces below for the live match

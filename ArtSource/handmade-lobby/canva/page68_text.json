@@ -1,0 +1,210 @@
+[
+ {
+  "text": "play",
+  "box": [
+   1524.5,
+   899.4,
+   324.2,
+   109.4
+  ],
+  "size": 92.15,
+  "colour": "#0f5913",
+  "align": "center",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "shop",
+  "box": [
+   58.5,
+   976.2,
+   166.7,
+   52.0
+  ],
+  "size": 44.04,
+  "colour": "#0f5913",
+  "align": "center",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "item",
+  "box": [
+   30.4,
+   733.1,
+   166.7,
+   44.2
+  ],
+  "size": 37.37,
+  "colour": "#a86d43",
+  "align": "center",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "hero",
+  "box": [
+   28.7,
+   545.1,
+   166.7,
+   44.2
+  ],
+  "size": 37.37,
+  "colour": "#a86d43",
+  "align": "center",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "classic",
+  "box": [
+   1463.7,
+   786.9,
+   326.9,
+   82.1
+  ],
+  "size": 68.97,
+  "colour": "#e1d2b7",
+  "align": "center",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "00:00",
+  "box": [
+   848.4,
+   8.7,
+   188.6,
+   74.9
+  ],
+  "size": 62.95,
+  "colour": "#e1d2b7",
+  "align": "center",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "task",
+  "box": [
+   337.5,
+   994.6,
+   74.3,
+   39.3
+  ],
+  "size": 33.21,
+  "colour": "#9a474c",
+  "align": "center",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "000,000",
+  "box": [
+   1527.1,
+   51.5,
+   225.1,
+   41.9
+  ],
+  "size": 35.53,
+  "colour": "#55071d",
+  "align": "start",
+  "font": "digits",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "01",
+  "box": [
+   174.7,
+   49.5,
+   53.0,
+   25.1
+  ],
+  "size": 21.42,
+  "colour": "#000000",
+  "align": "center",
+  "font": "digits",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": -0.073
+ },
+ {
+  "text": "Tump_ID",
+  "box": [
+   229.8,
+   29.9,
+   195.8,
+   32.5
+  ],
+  "size": 27.43,
+  "colour": "#e1d2b7",
+  "align": "start",
+  "font": "display",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "#1234",
+  "box": [
+   230.6,
+   67.4,
+   44.8,
+   17.0
+  ],
+  "size": 14.83,
+  "colour": "#e1d2b7",
+  "align": "start",
+  "font": "tag",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "xp",
+  "box": [
+   230.6,
+   104.9,
+   145.2,
+   27.0
+  ],
+  "size": 22.92,
+  "colour": "#000000",
+  "align": "center",
+  "font": "digits",
+  "bold": false,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ },
+ {
+  "text": "GAMEMODE",
+  "box": [
+   1506.8,
+   601.1,
+   240.7,
+   55.7
+  ],
+  "size": 46.67,
+  "colour": "#e1d2b7",
+  "align": "center",
+  "font": "heading",
+  "bold": true,
+  "lineHeight": 1.4,
+  "letterSpacing": 0
+ }
+]

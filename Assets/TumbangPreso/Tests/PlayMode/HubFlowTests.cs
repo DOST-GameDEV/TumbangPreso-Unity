@@ -717,7 +717,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
                 Assert.AreEqual(1, HubHome.Choice);
                 Assert.AreEqual(GameMode.Classic, SceneFlow.SelectedMode);
-                Assert.IsTrue(TumpHub.Current.Canvas.GetComponentsInChildren<Text>().Any(t => t.name == "ModeSubtitle" && t.text == "CLASSIC"));
+                Assert.IsTrue(TumpHub.Current.Canvas.GetComponentsInChildren<Text>().Any(t => t.name == "ModeTitle" && t.text.ToUpperInvariant() == "CLASSIC"));
 
                 // CUSTOM is a popup with HOST and JOIN, and each leads to its screen.
                 yield return Press("ModeCard");

@@ -1,3 +1,105 @@
+# Opening HUD checkpoint, October22
+
+Original hide-through-GO source published as 1bd559dd1 to origin/BugFix.
+Owner revised it to a 0.5 second fade immediately before 3. Shared HUD and touch
+now read the same unscaled reveal clock; the gate holds simulation during the
+new half-second lead, followed by the original countdown cue durations.
+ArrivalHandoffTests checks the intermediate fade and full opacity at 3;
+ReadyCountdownAbandonTests covers the pre-cue hold and abandonment after GO.
+Existing test/probe setup waits account for the new half-second lead only.
+Evidence: docs/reports/opening-hud-2026-10-22.md. Direct compiler job session40769
+is terminal: runtime, PlayTests and Tests all exit0. Logs/opening-hud-fade-1022.
+Existing Editor session remains untouched; Pipeline read timed out. No profile
+mutation or build. Preserve concurrent map/visual, Hub and Auditor edits.
+Next: publish only this follow-up to origin/BugFix and
+verify remote HEAD. Native follow-up remains TODO OPENING-HUD-1022.
+
+# Four-round halftime checkpoint, October21
+
+Owner corrected current symptom to no replay, not HIGHLIGHT UNAVAILABLE, in the
+Unity Editor. Actual Eskinita round2/4 opens Active=true, IsHalftime=false, ClipId0
+despite retained footage. Old default minimum6 explains this ordinary break.
+Owner explicitly approved halftime in four-round matches. Default minimum now4;
+Payo retains2. New native case calls the real host BeginIntermission path and
+checks nomination, drawing, standings, round3 and final-round exclusion. Existing
+eight-round shared-deadline control remains. Evidence:
+docs/reports/four-round-halftime-2026-10-21.md.
+Native guarded job session54758 is terminal, profile halftime-four-round-1021,
+Logs/halftime-followup-1021/four-round-fixed.xml/.log:2/2 passed, no failures or
+skips. Inspected native replay frame. Guard exit0 restored1 shared Editor input
+preference; the new named profile had no existing files. Concurrent Nemu edits,
+staged deletions/renames, Auditor and Recovery are unrelated and preserved.
+No player build. The two owned source/test file hashes stayed unchanged.
+Passive observer stopped. Normal Editor was clean and idle on SplashScreen,
+closed for tests; reopen after the guard restores profiles/preferences.
+Next: publish only owned halftime files to origin/BugFix, verify remote HEAD and
+reopen the normal Editor. Actual peers and saved older-clip art remain open.
+
+# Actual halftime rendering checkpoint, October21
+
+BugFix after184bc9612. Actual owner host log reproduces Unsupported recorded
+field with saved Blindfold data. Added disabled playback-only Blindfold drawing
+and refreshed prop pose tracks when generated hierarchy changes; combined native
+test exposed live Boulder children missing from the old root-only track.
+Final graphics PlayMode5/5 pass, including combined highlight through standings,
+registry/seek isolation and three timing/fallback controls. Inspected native PNG.
+Evidence: docs/reports/halftime-live-blindfold-2026-10-21.md;
+XML: Logs/halftime-live-1021/complete-fixed.xml. All test jobs terminal; guarded
+session97884 restored72 profile files and1 shared Editor input preference.
+No build. Actual new host/joiner acceptance remains open. Standalone saved clips
+still hit preserved changed-Dante/missing-Boulder art guards; not claimed fixed.
+Unrelated ProjectAuditorSettings and Assets/_Recovery remain untouched.
+HALFTIME-HIGHLIGHT-1021 stays IN PROGRESS. Owner Editor was closed idle on
+SplashScreen for tests. Next: publish this coherent fix to origin/BugFix, verify
+remote HEAD and reopen the normal Editor without entering Play.
+
+# Train announcement removal checkpoint, October21
+
+Owner requests deleting all train/Overclock announcement code, including the
+Hero Strike advance warning. BugFix after490e628e8 removes Announce,
+OnWindowOpened, their calls and all three toast strings from LrtTrainFlyby.
+Train/audio/shake and OverheadPassWindow cooldown behavior remain unchanged.
+Owner also requested removing the distant-can reset instruction. Its assignment
+is deleted; the existing reach/touch/channel test now expects an empty prompt
+outside reach, with the reachable Reset Can and cancellation checks retained.
+Final runtime direct compilation exits0; source absence/diff checks pass.
+No Unity launch or native-test/player acceptance; preserve the recorded reservation.
+All compiler jobs are terminal. Log: Logs/train-toast-removal-1021/compile-final.log.
+Unrelated Nemu/replay, ProjectAuditorSettings and Assets/_Recovery stay untouched.
+TRAIN-TOAST-REMOVAL-1021 is DONE. Evidence:
+docs/reports/hud-text-removal-2026-10-21.md.
+Next: publish this coherent removal to origin/BugFix and verify remote HEAD.
+
+# Personal penalty feedback checkpoint, October21
+
+Owner reports unexplained penalty markers, including attacker orange while
+defending. BugFix source now routes penalty markers/sound through Hud.OnScored
+after local-slot/spectator checks, instead of flashing every simulation penalty
+on the current HUD. Timers, scoring, warning copy and assets are unchanged.
+Original-source native baseline: 2/4 failed (other defender's marker on attacker;
+missing received-own marker). Fixed-source controlled native checks: 5/5 pass,
+including both roles' own warning/clearing, correct score ownership and spectator
+suppression. Named profile 27 files and one input preference restored. No build
+or real-peer claim. PENALTY-FEEDBACK-1021 is DONE. Evidence:
+docs/reports/penalty-feedback-2026-10-21.md. All penalty test jobs are terminal;
+last fixed run session23779, XML Logs/penalty-feedback-1021/fixed.xml.
+Unrelated ProjectAuditorSettings, Assets/_Recovery and ReplayRetentionTests work
+remain untouched. The other contributor reserves the next Unity slot for their
+halftime investigation; keep the Editor closed for that reservation.
+Next action: publish this coherent fix to origin/BugFix and verify remote HEAD.
+
+# Halftime highlight timing checkpoint, October21
+
+On BugFix after3bc970443, owner reports Online/LAN HIGHLIGHT UNAVAILABLE every
+halftime. Actual retained catch plus0.8s-old host stamp reproduces rejection.
+Removed0.6s receipt/1s setup rejection in favor of actual footage fitting before
+the unchanged5.8s standings boundary; retry nominated bytes and preserve lead-in.
+Final native4/4 pass: delayed stamp, delayed bytes, missing bytes, shared end.
+Separate existing throw control failed before replay and is retained in report.
+Named profile48 files and1 shared input preference restored. No player build.
+Next: real host/joiner retest of the reported match, HALFTIME-HIGHLIGHT-1021.
+[Evidence](reports/halftime-highlight-2026-10-21.md).
+
 # Main integration and all-map preview checkpoint, October20
 
 Owner explicitly requests main integration and every preview current/working.

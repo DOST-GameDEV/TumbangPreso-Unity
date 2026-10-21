@@ -172,9 +172,9 @@ namespace TumbangPreso.UI
             // stage is 43 m across (walking radius 21.5), not the 28 m the first shot was framed
             // for: from 34 m back and 24 m up the near edge of the ring was under the frame
             // (RemadeMapPreviewTests' Arena.png, 2026-10-05). The arrival's wide shot reads these too.
-            new MapEntry(Arena,"THE PHILIPPINE ARENA",
+            new MapEntry(Arena,"PHILIPPINE ARENA",
                          "Game-show stage. It rebuilds each round; mind the edges.",35,40,27),
-            new MapEntry(Payo,"PAYO",
+            new MapEntry(Payo,"BANAUE",
                          "Ifugao rice-terrace temple. Stones shift each round; night falls at halftime.",35,40,27),
         };
 

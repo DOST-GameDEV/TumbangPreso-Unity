@@ -167,12 +167,16 @@ long Z line. The geometry gives each kit a use and no kit ownership of the map.
 
 ### 3.5 The train, as a mechanic rather than a backdrop
 
+October 21, 2026 HUD update: all approaching-train and Overclock toast
+announcements and their generating methods are removed in both modes. Train
+movement, sound, camera shake and cooldown recovery stay unchanged.
+
 It shipped as a model sliding along Z with one whoosh: a screensaver, since nothing on the
 street changed for having seen it. A map's one recurring event is the cheapest depth there is,
 because every player learns its period inside a single round.
 
 ```
-WARNING  3.0 s   toast, rail hum, the shadow sweeping in from the south
+WARNING  3.0 s   approach state, rail hum, the shadow sweeping in from the south
 OVERHEAD 2.70 s  nose entering the south wall through tail leaving the north wall
 idle     rest    back to Interval = 24 s
 ```

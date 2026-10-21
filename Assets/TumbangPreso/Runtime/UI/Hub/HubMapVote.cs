@@ -7,6 +7,7 @@ namespace TumbangPreso.UI.Hub
     /// <summary>Preview a court before explicitly submitting a host-owned ballot.</summary>
     public sealed class HubMapVote : HubScreen
     {
+        public override bool WearsBoard => true;
         public override bool ShowsQueuePlate=>false;
         public override float CourtShade=>0;
         public override bool Back()=>true;

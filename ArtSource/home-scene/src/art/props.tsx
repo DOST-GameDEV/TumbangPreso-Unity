@@ -1,6 +1,7 @@
 import React from 'react';
 import { random } from 'remotion';
 import { P } from '../lib/palette';
+import { S } from '../lib/set';
 import { chamfer, polyD, Pt } from '../lib/shapes';
 
 /* The lata, the dust it throws up, and the pieces of the hit. Blocky and lineless. */
@@ -42,7 +43,7 @@ export const Dust: React.FC<{ t: number; x: number; y: number; s?: number; seed:
     const size = (26 + random(`${seed}s${i}`) * 30) * (0.5 + t * 0.9) * (1 - t * 0.5);
     const cx = Math.cos(a) * dist * 1.6;
     const cy = Math.sin(a) * dist * 0.6 - t * 30;
-    out.push(<path key={i} d={chamfer(cx - size / 2, cy - size / 2, size, size, size * 0.3)} fill={i % 3 ? '#F2C58E' : '#E6AE74'} opacity={1 - t} />);
+    out.push(<path key={i} d={chamfer(cx - size / 2, cy - size / 2, size, size, size * 0.3)} fill={i % 3 ? S.dust[0] : S.dust[1]} opacity={1 - t} />);
   }
   return <g transform={`translate(${x} ${y}) scale(${s})`}>{out}</g>;
 };

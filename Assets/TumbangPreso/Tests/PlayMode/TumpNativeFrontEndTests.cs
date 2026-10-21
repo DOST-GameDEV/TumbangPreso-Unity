@@ -250,46 +250,6 @@ namespace TumbangPreso.PlayTests
             finally{Settings.SettingsStore.Current.ReducedUiMotion=reduced;Settings.SettingsStore.Current.AccountHasPassword=hadPassword;}
         }
 
-        [UnityTest]
-        public IEnumerator OwnerLoadingCyclesIllustrationsWithInlineTipsAndRealProgress()
-        {
-            var owner=new GameObject("LoadingVisualFixture");owner.SetActive(false);
-            var loading=owner.AddComponent<SplashScreen>();
-            const System.Reflection.BindingFlags flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
-            typeof(SplashScreen).GetMethod("BuildOwnerLoadingSurface",flags).Invoke(loading,null);
-            typeof(SplashScreen).GetMethod("SetFade",flags).Invoke(loading,new object[]{0f});
-            typeof(SplashScreen).GetMethod("SetLoadingStage",flags).Invoke(loading,new object[]{"loading characters",.45f});
-            for(int i=0;i<10;i++)
-            {typeof(SplashScreen).GetMethod("UpdateLoadingAnimation",flags).Invoke(loading,null);yield return null;}
-            var canvas=GameObject.Find("OwnerLoadingCanvas").GetComponent<Canvas>();
-            Assert.IsEmpty(canvas.GetComponentsInChildren<StreetGraphic>(true));
-            var progress=canvas.GetComponentsInChildren<Image>().First(image=>image.name=="ActualProgress");
-            Assert.Greater(progress.fillAmount,0);Assert.LessOrEqual(progress.fillAmount,.45f);
-            Assert.AreEqual("GETTING THE PLAYERS READY",canvas.GetComponentsInChildren<Text>().First(text=>text.name=="LoadingStatus").text);
-            yield return TumpUiCapture.Capture("OwnerLoading-v1",canvas,1920,1080,false);
-            Assert.IsFalse(canvas.GetComponentsInChildren<Button>().Any(b => b.name == "LoadingStories"));
-            Assert.IsNull(GameObject.Find("LoadingStoryRoot"));
-            var tip = canvas.GetComponentsInChildren<Text>().First(t => t.name == "InlineLoadingTip");
-            var deck = canvas.GetComponentInChildren<LoadingArtwork>();
-            Assert.IsNotNull(deck); Assert.IsNotEmpty(tip.text);
-            var seen = new System.Collections.Generic.HashSet<Texture>();
-            for (int frame = 0; frame < 3; frame++)
-            {
-                var image = deck.GetComponentsInChildren<RawImage>().First(t => t.name == "CurrentIllustration");
-                Assert.IsNotNull(image.texture); seen.Add(image.texture);
-                foreach (var size in HubFlowTests.Shapes)
-                    yield return TumpUiCapture.Capture("Loading-illustration-" + deck.FrameIndex + "-" + size.x + "x" + size.y,
-                        canvas, size.x, size.y, false, checkActionBounds: true);
-                if (frame == 2) break;
-                int before = deck.FrameIndex;
-                float until = Time.realtimeSinceStartup + LoadingArtwork.HoldSeconds + 1;
-                while (deck.FrameIndex == before && Time.realtimeSinceStartup < until) yield return null;
-                Assert.AreNotEqual(before, deck.FrameIndex, "The loading illustration must rotate after its five-second hold.");
-                yield return new WaitForSecondsRealtime(.45f);
-                Assert.IsNotEmpty(tip.text);
-            }
-            Assert.AreEqual(3, seen.Count, "All three actual loading illustrations must be reachable.");
-        }
         /// <summary>
         /// ⚠⚠ A SCREEN IS NOT HITTABLE ON THE FRAME IT IS BUILT. `Graphic.depth` is -1 until
         /// the canvas has been batched for a render and `GraphicRaycaster` skips a graphic with

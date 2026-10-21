@@ -232,7 +232,10 @@ namespace TumbangPreso.CameraSystem
         {
             Prop entry=null;
             for(int i=0;i<_props.Count;i++)
-                if(_props[i].Source==source&&_props[i].Track.Source==model){entry=_props[i];break;}
+                // Generated weapon geometry can join an existing model after its
+                // first sample. Start a fresh track and keep the usual unsafe-window
+                // fence rather than labeling the old root-only history complete.
+                if(_props[i].Source==source&&_props[i].Track.MatchesHierarchy(model)){entry=_props[i];break;}
             if(entry==null){changed=true;entry=new Prop{Source=source,Kind=kind,Seat=seat,Skin=skin,Person=person,
                 Track=new MatchPoseHistory.Track(round.BodyAt(seat)??round.PlayerAt(0),model)};}
             _desiredProps.Add(entry);

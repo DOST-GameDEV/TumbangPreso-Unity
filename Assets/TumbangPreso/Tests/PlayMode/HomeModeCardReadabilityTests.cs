@@ -53,7 +53,7 @@ namespace TumbangPreso.PlayTests
                 var title = card.GetComponentsInChildren<Text>().Single(t => t.name == "ModeTitle");
                 var poster = window.GetComponentsInChildren<Image>().Single(i => i.name == "Poster");
                 Assert.IsNotNull(poster.sprite, "The selected mode poster is missing.");
-                Assert.AreEqual(choice == 0 ? "RANKED" : "CASUAL", title.text);
+                Assert.AreEqual(HubHome.TitleFor(choice), title.text);
                 foreach (int width in new[] { 1280, 1920 })
                     yield return TumpUiCapture.Capture("Home-mode-card-" + choice + "-" + width,
                         hub.Canvas, width, width == 1280 ? 720 : 1080, false,

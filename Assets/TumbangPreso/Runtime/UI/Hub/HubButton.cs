@@ -134,6 +134,13 @@ namespace TumbangPreso.UI.Hub
 
         private bool _forceHatch;
 
+        /// <summary>Where hover/focus (1) and press (1) are heading. A sticker with no
+        /// <see cref="Shape"/> (the hand-made HOME pieces) animates itself from these in
+        /// <see cref="HubStickerFeel"/>, so the four states stay this one class's decision.</summary>
+        public float LiftTarget => _liftTarget;
+        public float PressTarget => _pressTarget;
+        public bool HasPadFocus => _focused;
+
         /// <summary>Hatch a control that is still pressable: an unowned item opens its popup (to buy)
         /// but must still read as not yours.</summary>
         public bool Hatched
@@ -204,9 +211,23 @@ namespace TumbangPreso.UI.Hub
             if (Body != null)
             {
                 Vector2 rest = _restShadow;
-                Body.anchoredPosition = new Vector2(0, _lift * 4.0f) + rest * _press * 0.6f;
-                float s = 1.0f - _press * 0.03f;
-                Body.localScale = new Vector3(s, s, 1);
+                bool board = Shape != null && Shape.Skin != HubSkin.None && Shape.SkinSlab != null;
+                if (board)
+                {
+                    // ⚠️ ON HER PIECES HOVER GROWS FACE AND SLAB TOGETHER (both fill the root, so they share
+                    // a centre); lifting the face alone split it from its slab. Press sinks the face into it.
+                    float grow = 1.0f + _lift * 0.035f;
+                    Body.anchoredPosition = rest * _press * 0.6f;
+                    float s = grow * (1.0f - _press * 0.03f);
+                    Body.localScale = new Vector3(s, s, 1);
+                    Shape.SkinSlab.rectTransform.localScale = new Vector3(grow, grow, 1);
+                }
+                else
+                {
+                    Body.anchoredPosition = new Vector2(0, _lift * 4.0f) + rest * _press * 0.6f;
+                    float s = 1.0f - _press * 0.03f;
+                    Body.localScale = new Vector3(s, s, 1);
+                }
             }
         }
 

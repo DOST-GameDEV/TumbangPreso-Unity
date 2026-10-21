@@ -30,8 +30,11 @@ display/accent fonts, source Lydian files, GUIDs and permission records remain.
 
 The owner supplied DIN Next LT Arabic Light and Bold and requested DIN throughout
 in-game interface text. Bold carries headings, scores, status names and actions;
-Light carries descriptions and reading text. Only the central match clock named
-TimeLeft (TimerLabel in the legacy HUD) keeps Darumadrop One. Front-end typography
+Light carries descriptions and reading text. The central match clock named
+TimeLeft (TimerLabel in the legacy HUD) keeps Darumadrop One. As requested on
+October 21, the round-break RoundHeadline (NEXT ROUND and HALFTIME) and match-end
+ResultHeadline (winner or draw) also use Darumadrop One. Other scoreboard text
+retains DIN. Front-end typography
 retains its existing roles. Font-drawn reticle and offscreen direction symbols
 retain their symbol-capable face. World TextMesh nameplates are separate from
 the interface.

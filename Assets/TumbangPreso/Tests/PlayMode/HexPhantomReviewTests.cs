@@ -20,7 +20,7 @@ namespace TumbangPreso.PlayTests
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
             var ready = Object.FindFirstObjectByType<ReadyGate>();
             ready.enabled = true; ready.StartLocalCountdown();
-            yield return new WaitForSeconds(3.6f);
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             _victim = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
             // Match capture fixtures explicitly stage the viewed seat as human;
             // disabling its AI component alone does not change the motor's bot flag.

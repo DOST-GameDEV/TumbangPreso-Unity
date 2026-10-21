@@ -87,6 +87,42 @@ namespace TumbangPreso.UI.Hub
         /// <summary>Extra outline weight the button adds on hover ("the pen pressed harder").</summary>
         public float OutlineBoost;
 
+        // ------------------------------------------------------------------ the owner's board skin
+
+        /// <summary>
+        /// When set, the body is the owner's board piece (`HubBoardSkin`): <see cref="SkinFace"/> is a
+        /// child Image filling this rect and <see cref="SkinSlab"/> sits behind it. This graphic then
+        /// draws only the focus ring, under the face, and <see cref="SkinHatch"/> carries the hatch
+        /// above it, so focus and NOT AVAILABLE still read exactly as on every other sticker.
+        /// </summary>
+        public HubSkin Skin;
+        public Image SkinFace, SkinSlab;
+        public HubShape SkinHatch;
+
+        /// <summary>Her knit borders need room: under 48 by 40 units (a progress bar, a tag) the piece
+        /// cannot be cut without losing a corner, so the sticker draws as it always did.</summary>
+        private bool SkinShown
+        {
+            get { var r = rectTransform.rect; return Skin != HubSkin.None && r.width >= 48 && r.height >= 40; }
+        }
+
+        private void LateUpdate()
+        {
+            if (Skin == HubSkin.None) return;
+            bool shown = SkinShown;
+            if (SkinFace != null && SkinFace.enabled != shown)
+            {
+                SkinFace.enabled = shown;
+                if (SkinSlab != null) SkinSlab.enabled = shown;
+                if (SkinHatch != null) SkinHatch.enabled = shown;
+                Redraw();
+            }
+            // SetFill can move a skinned sticker to another role (HERO's primary goes chartreuse to honey).
+            var want = HubBoardSkin.For(Fill, Pressable);
+            if (want != HubSkin.None && want != Skin) { Skin = want; HubBoardSkin.Apply(this); }
+            if (SkinHatch != null && SkinHatch.Hatched != Hatched) { SkinHatch.Hatched = Hatched; SkinHatch.Redraw(); }
+        }
+
         // ------------------------------------------------------------------ the pressable finish
 
         /// <summary>
@@ -136,6 +172,16 @@ namespace TumbangPreso.UI.Hub
             vh.Clear();
             Rect r = GetPixelAdjustedRect();
             if (r.width < 2 || r.height < 2) return;
+            if (SkinShown)
+            {
+                if (RingWidth > 0.0f)
+                {
+                    float c = Mathf.Min(Corner, Mathf.Min(r.width, r.height) * 0.45f);
+                    Build(Outer, Grow(r, RingWidth), c + RingWidth, 0.0f);
+                    SmoothFan(vh, Outer, RingColor * color);
+                }
+                return;
+            }
 
             float width = (OutlineWidth + OutlineBoost) * HubStyle.OutlineScale;
             float corner = Mathf.Min(Corner, Mathf.Min(r.width, r.height) * 0.45f);

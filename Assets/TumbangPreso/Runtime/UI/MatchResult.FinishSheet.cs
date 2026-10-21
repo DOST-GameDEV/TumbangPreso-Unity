@@ -37,12 +37,19 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed partial class MatchResult
     {
+        // ⚠️ THE HAND-MADE HOME BOARD'S COLOURS ON THE FINISH SHEET (2026-10-22): her deepest maroon
+        // dims the court, her peach inlay #FCD39F carries the rows (no cream sheet), her #E1D2B7 is the
+        // type over the court. Kept here, not in `CourtPresentationPalette`, which the in-match HUD shares.
+        private static readonly Color SheetGround = new Color32(42, 6, 17, 255);
+        private static readonly Color SheetCard = new Color32(252, 211, 159, 255);
+        private static readonly Color SheetType = new Color32(225, 210, 183, 255);
+
         private void BuildNativeResult()
         {
             _nativeResult = true; _canvas = OwnerUiLayout.Canvas(transform, "OwnerResultCanvas", 400);
             if (Hud.Instance != null) { _canvas.transform.SetParent(Hud.Instance.CleanFeedRoot, false); OwnerUiLayout.Fill((RectTransform)_canvas.transform); }
             var backdrop = OwnerUiLayout.Rect(_canvas.transform, "FinishSheetGround").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(backdrop.rectTransform); backdrop.color = new Color(HudDraw.Plate.r, HudDraw.Plate.g, HudDraw.Plate.b, .62f);
+            OwnerUiLayout.Fill(backdrop.rectTransform); backdrop.color = new Color(SheetGround.r, SheetGround.g, SheetGround.b, .80f);
             backdrop.raycastTarget = true; // the click blocker the cream sheet used to be
             var root = OwnerUiLayout.DesignArea(_canvas.transform, "ResultsComposition");
             HubScenery.Bunting(root, 11, -6, 0.35f);
@@ -75,7 +82,7 @@ namespace TumbangPreso.UI
 
             var details = OwnerUiLayout.Rect(root, "MatchDetailsPage"); OwnerUiLayout.Fill(details); _nativePages[1] = details.gameObject;
             var detailCard = OwnerUiLayout.Rect(details, "MatchNotes").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(detailCard.rectTransform, 110, 318, 1700, 560); detailCard.color = CourtPresentationPalette.Paper; detailCard.Radius = 22; detailCard.raycastTarget = false;
+            OwnerUiLayout.Place(detailCard.rectTransform, 110, 318, 1700, 560); detailCard.color = SheetCard; detailCard.Radius = 22; detailCard.raycastTarget = false;
             var content = OwnerScrollColumn.Build(details, "MatchDetails", new Rect(150, 348, 1620, 500), out var detailScroll);
             _ownerEmptyDetails = OwnerUiLayout.Text(content, "EmptyMatchDetails", "No match summary was recorded for this game.", 31);
             _ownerEmptyDetails.color = HudDraw.CardInk; _ownerEmptyDetails.gameObject.AddComponent<TumpParagraph>();
@@ -97,7 +104,7 @@ namespace TumbangPreso.UI
 
             var people = OwnerUiLayout.Rect(root, "RecentPeoplePage"); OwnerUiLayout.Fill(people); _nativePages[2] = people.gameObject;
             var peopleCard = OwnerUiLayout.Rect(people, "PeoplePaper").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(peopleCard.rectTransform, 110, 318, 1700, 560); peopleCard.color = CourtPresentationPalette.Paper; peopleCard.Radius = 22; peopleCard.raycastTarget = false;
+            OwnerUiLayout.Place(peopleCard.rectTransform, 110, 318, 1700, 560); peopleCard.color = SheetCard; peopleCard.Radius = 22; peopleCard.raycastTarget = false;
             _nativePeople = OwnerScrollColumn.Build(people, "RecentPlayers", new Rect(150, 348, 1620, 500), out var peopleScroll);
 
             // The one obvious next action, then the two quiet ones.
@@ -139,7 +146,7 @@ namespace TumbangPreso.UI
         private static void Keel(Text text)
         {
             if (text == null) return;
-            text.color = CourtPresentationPalette.Paper;
+            text.color = SheetType;
             var edge = text.gameObject.AddComponent<Outline>(); edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(1.5f, -1.5f);
         }
 
@@ -149,7 +156,7 @@ namespace TumbangPreso.UI
             for (int i = 0; i < 4; i++)
             {
                 var row = OwnerUiLayout.Rect(page, "FinisherTicket" + i); OwnerUiLayout.Place(row, 0, i * 132, 1138, 120);
-                var card = _finishTickets[i] = row.gameObject.AddComponent<HudCard>(); card.color = CourtPresentationPalette.Paper; card.Radius = 20; card.raycastTarget = false;
+                var card = _finishTickets[i] = row.gameObject.AddComponent<HudCard>(); card.color = SheetCard; card.Radius = 20; card.raycastTarget = false;
                 _finishFades[i] = row.gameObject.AddComponent<CanvasGroup>(); _finishFades[i].blocksRaycasts = false; _finishRowOrigins[i] = row.anchoredPosition;
                 var place = OwnerUiLayout.Text(row, "FinisherPlace" + i, "", 48, OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Place(place.rectTransform, 14, 14, 86, 92); place.alignment = TextAnchor.MiddleCenter;

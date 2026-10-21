@@ -37,7 +37,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
-            yield return new WaitForSeconds(3.6f);
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider = new SoloProvider();
             foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
             foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { S } from '../lib/set';
 import { random } from 'remotion';
 import { noise2D } from '@remotion/noise';
 import { B, bt, K } from '../lib/beats';
@@ -160,8 +161,8 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
         </g>
         <ParapetPigeons f={f} scatter={clamp01(after / 26)} />
         {/* His shadow, cast forward toward the can by the sun behind us. */}
-        <path d="M 120 1080 L 820 1080 L 960 760 L 700 740 Z" fill="#9E5A36" opacity={0.35} />
-        <ellipse cx={SEAN_AT.x} cy={SEAN_AT.y} rx={70} ry={14} fill="#8E3E2C" opacity={0.4} />
+        <path d="M 120 1080 L 820 1080 L 960 760 L 700 740 Z" fill={S.shadow} opacity={0.35} />
+        <ellipse cx={SEAN_AT.x} cy={SEAN_AT.y} rx={70} ry={14} fill={S.shadow} opacity={0.4} />
         <ActorImage d={s} />
         {/* The lata. */}
         <g transform={`translate(${canPos[0]} ${canPos[1]}) rotate(${ff >= B.tump ? canRot : 0})`}>

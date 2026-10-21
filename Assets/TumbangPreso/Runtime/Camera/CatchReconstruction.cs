@@ -24,8 +24,9 @@ namespace TumbangPreso.CameraSystem
         private RenderTexture _target;
         private Canvas _canvas;
         private RawImage _picture;
-        private Text _caption;
-        private float _contact, _began, _duration;
+        private ReplayOverlay _overlay;
+        private float _contact, _began, _duration, _fade = FadeDuration;
+        private bool _skipHeld;
         private float _shotSide;
         private Vector3 _shotFocus;
         private readonly RaycastHit[] _shotHits = new RaycastHit[32];
@@ -48,6 +49,8 @@ namespace TumbangPreso.CameraSystem
         public const float AnimationDuration = 2.5f;
         public const float FreezeDuration = 1.25f;
         public const float FadeDuration = .18f;
+        // A skipped tag replay crossfades back to the live recovery view rather than cutting.
+        public const float SkipFadeDuration = .35f;
         public const float ReplayDuration = AnimationDuration + FreezeDuration + FadeDuration;
         // Keep the recorded hand at its settled tag reach, before retraction.
         private const float Followthrough = .18f;
@@ -130,6 +133,7 @@ namespace TumbangPreso.CameraSystem
             if (_actorCopy == null || _victimCopy == null) { End(); return; }
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim; _rig = rig;
             _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(ReplayDuration, victim.StunLeft - FadeDuration);
+            _fade = FadeDuration; _skipHeld = victim.Intent.Pressed(Verb.Interact);
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
             _matchId = GameServices.Match != null ? GameServices.Match.PresentationMatchId : 0;
             _clipStart = Mathf.Max(contact - (AnimationDuration - Followthrough), actor.Oldest, victimTrack.Oldest);
@@ -209,12 +213,8 @@ namespace TumbangPreso.CameraSystem
             var focus = _canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
             _picture = OwnerUiLayout.Rect(_canvas.transform, "RecordedCatch").gameObject.AddComponent<RawImage>();
             OwnerUiLayout.Fill(_picture.rectTransform); _picture.texture = _target; _picture.raycastTarget = false;
-            _caption = OwnerUiLayout.Text(_canvas.transform, "CatchIdentity", "CAUGHT BY " + PlayerIdentity.Label(_actorTrack.Actor.PlayerSlot),
-                34, OwnerUiLayout.TypeRole.Display);
-            _caption.alignment = TextAnchor.MiddleCenter; _caption.color = PlayerIdentity.Colour(_actorTrack.Actor.PlayerSlot);
-            var rect = _caption.rectTransform; rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f, 0);
-            rect.anchoredPosition = new Vector2(0, 62); rect.sizeDelta = new Vector2(900, 62);
-            var outline = _caption.gameObject.AddComponent<Outline>(); outline.effectColor = Color.black; outline.effectDistance = new Vector2(2, -2);
+            // The camcorder frame is the only thing over the picture (owner, 2026-10-22): no CAUGHT BY caption.
+            _overlay = ReplayOverlay.Build(_canvas.transform, "TAGGED", true);
         }
         private void LateUpdate()
         {
@@ -227,7 +227,13 @@ namespace TumbangPreso.CameraSystem
                 GameServices.Match == null || GameServices.Match.RoundNumber != _round ||
                 GameServices.Match.PresentationMatchId != _matchId || elapsed >= _duration)
             { End(); return; }
-            _picture.color = new Color(1, 1, 1, Mathf.Clamp01((_duration - elapsed) / FadeDuration));
+            // A fresh Interact press leaves the replay: it shortens to one crossfade from now.
+            bool skip = _victim.Intent.Pressed(Verb.Interact);
+            if (skip && !_skipHeld && _duration - elapsed > SkipFadeDuration) { _fade = SkipFadeDuration; _duration = elapsed + SkipFadeDuration; }
+            _skipHeld = skip;
+            float alpha = Mathf.Clamp01((_duration - elapsed) / _fade);
+            _picture.color = new Color(1, 1, 1, alpha);
+            _overlay.Alpha = alpha;
             // Hold the complete captured image, including its background. All
             // interruption guards above still run; the live match never pauses.
             if (_freezeCaptured)
@@ -408,7 +414,7 @@ namespace TumbangPreso.CameraSystem
             if (_target != null) { _target.Release(); Destroy(_target); }
             if (_camera != null) Destroy(_camera.gameObject);
             if (_stage != null) Destroy(_stage);
-            _stage = null; _canvas = null; _target = null; _camera = null; _picture = null;
+            _stage = null; _canvas = null; _target = null; _camera = null; _picture = null; _overlay = null;
             _actorCopy = _victimCopy = null; _actorTrack = _victimTrack = null; _victim = null;
             _actorClip = _victimClip = null; _followthroughCaptured = _freezeCaptured = false;
             _copiedItems = null; _hidden.Clear(); _previous.Clear(); _seen.Clear(); _scratch.Clear();

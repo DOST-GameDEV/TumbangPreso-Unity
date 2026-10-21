@@ -1,3 +1,81 @@
+### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)
+
+Owner 2026-10-21 on branch `Reworks`: passive SOULBOUND (dormant ghosts, reclaim with Grab within 1 m for 1.5 s, cooldowns
+start after reclaim), PEEKER (2.5 s fade, 15 s wait, 2 m ring drawn, blind and 25 % slow for 2.5 s), FETCHER (no taya
+drop), KEEPER (15 s, stands the can up 1.5 s after every knockdown, no scare), all 20 s cooldowns. Protocol175.
+Second pass the same day: 15 s cooldowns, Peeker fades in 1.5 s, reclaim within 1.5 m, Fetcher lingers 1 s after the
+hand-over, Keeper takes the reset away from the taya while it minds the can, dormant ghosts as glowing soul-globes (Gekko as
+a reference, not a copy), and Peeker clings only to its own victim's camera. Third pass: no "Retrieve" tile (it
+overflowed); the tile counts a 10 s dormant window, reclaimed in time gives 15 s, missed gives 25 s; the slipper's recall
+ring rides the globe with that clock; the globe drifts after her and stops beside her; Fetcher ends at the hand-over.
+Keeper finishes a lift under way before it expires (an expiry mid-lift left the can down with no RESET CAN prompt).
+- [x] Rules, kit, `NemuDormant`, reclaim wire and prompt; Core.Tests 797/797; direct Roslyn compile of Runtime, Tests and
+  PlayTests clean.
+- [ ] Unity import and the Nemu EditMode/PlayMode suites (the editor was open on the project, so batch runs were not made).
+- [ ] Owner look at the dormant ghosts, Peeker's ring and the reclaim prompt in play; bots reclaim without walking back.
+
+### SCOREBOARD-FONT-1021: Darumadrop banner headings (DONE)
+
+- [x] Owner requested Darumadrop One for NEXT ROUND, HALFTIME and the final winner banner.
+- [x] Scope the existing match font router exception to RoundHeadline and ResultHeadline; other scoreboard labels keep DIN.
+- [x] Source routing and whitespace checks pass. Native rendering was not run; no player build produced.
+
+### TRAIN-TOAST-REMOVAL-1021: remove train announcements and distant reset hint (DONE)
+
+- [x] Delete all train/Overclock toast strings, generating methods and calls in both modes.
+  Owner clarified this includes the Hero Strike approaching-train warning.
+- [x] Preserve train movement, audio, camera shake and the existing cooldown window.
+- [x] Remove the distant-can reset instruction, retaining the reachable action,
+  progress and cancel feedback. Update the existing reach test's expected prompt.
+- [x] Final runtime direct compilation exits0, and the source/diff checks pass.
+  The updated native test has not been run; no player build was produced.
+- Evidence: [HUD text removal](reports/hud-text-removal-2026-10-21.md).
+
+### HALFTIME-HIGHLIGHT-1021: timing, recorded ghosts and four-round scheduling (IN PROGRESS)
+
+- [x] Reproduce a complete recorded catch rejected solely by a halftime stamp0.8s old.
+- [x] Admit delayed playback using its actual duration, wait for nominated bytes and
+  preserve the recorded lead-in, standings boundary and host's shared end.
+- [x] Four focused native graphics cases pass, including late bytes, missing bytes
+  and the original shared deadline. Preserve the separate existing throw-control failure.
+- [x] Owner retest still fails on LagoonCove. Native reproduction with the actual
+  saved field throws Unsupported recorded field: accepted Blindfold data has no renderer.
+- [x] Add playback-only Blindfold drawing and refresh prop tracks when generated
+  geometry changes. Five native cases pass, including combined Blindfold/Boulder
+  halftime through standings and an inspected rendered frame.
+- [x] Capture the corrected no-replay symptom: a four-round match opens an ordinary
+  break after round two because the old halftime minimum is six. Owner approved
+  including four-round matches; default minimum is now four, preserving Payo's two.
+- [x] Two native cases pass: normal four-round host nomination, rendered replay,
+  standings, shared deadline and final-round exclusion, plus the existing
+  eight-round deadline control. Captured frame inspected; preferences restored.
+- [ ] Resolve standalone saved-owner-clip reconstruction: clip 44 has a changed
+  Dante art key; clip 42 lacks catalog Boulder art. Guards remain intact and both
+  failures are preserved. Complete saved-clip playback is not established.
+- [ ] Retest the reported online/LAN match on actual host and joiner. The native
+  delay simulation is not paired network acceptance. No new player build produced.
+- Evidence: [halftime highlight timing](reports/halftime-highlight-2026-10-21.md).
+- Actual-match failure: [Blindfold rendering investigation](reports/halftime-live-blindfold-2026-10-21.md).
+- Four-round scheduling: [live decision and validation](reports/four-round-halftime-2026-10-21.md).
+
+### PENALTY-FEEDBACK-1021: another seat's penalty flashes the local crosshair (DONE)
+
+- [x] Trace the report: RoundDirector flashes the current HUD for every seat's penalty,
+  while the warning correctly reads only the local seat. Penalty sound also bypasses ownership.
+- [x] Move the marker to Hud.OnScored, gated by scored seat and spectator state, including
+  received network events. Preserve scoring, timers, warning copy and cue assets.
+- [x] Five focused native cases pass: other attacker/defender, own warnings and clearing,
+  received own/other score events and spectator suppression. Named profile/preferences restored.
+- Evidence: [penalty feedback ownership](reports/penalty-feedback-2026-10-21.md).
+
+### WARNING-BANNER-1021: warning typography and final feedback retouch (DONE)
+
+- [x] Uppercase lines, DIN Bold titles, regular reasons, subtle spacing and equal reason-band side insets.
+- [x] Specific cooldown, missing objective points and generic requirement cast refusals.
+- [x] Whole banner 10 percent smaller; each appearance restarts the shake and reuses the existing error cue without doubling fresh ability refusals.
+- [x] Native controlled UI checks and screenshots; no broad gameplay or physical-device acceptance claimed.
+- Evidence: [warning banner previews and checks](reports/warning-banner-2026-10-21/README.md).
+
 ### BUILDS-FOLDER-1020: every player in the main checkout's Builds/, enforced in code (DONE)
 
 - [x] `GameBuilder.BuildsRoot` finds the MAIN checkout through `git rev-parse --git-common-dir`, so every default (Windows, Android, macOS, WebGL) lands in its `Builds/<platform>` even from a worktree. A relative `-buildOutput` is read from the main checkout and any output outside its `Builds/` fails the build before the target switch. This replaces the AGENTS.md October 20 note that the Windows and Android defaults "still default to the Desktop".
@@ -1140,6 +1218,19 @@ Nothing was deleted or renumbered.
 - Section numbers are not unique (§ 53, 63, 64, 65 repeat). Search by title too.
 
 ## CURRENT IMPLEMENTATION QUEUE
+
+### OPENING-HUD-1022: fade gameplay chrome in before the countdown
+
+- [x] Revised owner direction: hide the shared HUD and touch controls during
+  map arrival and the loaded-peer wait, then fade both in over 0.5 seconds before 3.
+  The existing countdown cue durations and gameplay hold remain intact.
+- [x] Revised fade runtime, PlayTests and Tests direct compilation passed.
+  Earlier temporary native Canvas check confirmed the opacity primitive;
+  changed-source fade playback remains unverified.
+- [ ] Run `ArrivalHandoffTests.MatchHudFadesInBeforeTheOpeningCountdown`
+  with a named isolated profile, then inspect a normal Tondo opening. The owner's
+  existing Editor remains in Play on Arena with its normal profile; do not interrupt it.
+  [Evidence and precise check](reports/opening-hud-2026-10-22.md).
 
 ### CHAR-REDESIGN-1: Dante (Dante) redesign prototype, Blender only
 

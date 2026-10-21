@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, continueRender, delayRender, staticFile, useCurrentFrame } from 'remotion';
 import { Defs } from './lib/Defs';
+import { S } from './lib/set';
 import { Textures } from './lib/texture';
 import { B } from './lib/beats';
 import { WideActs } from './shots/WideActs';
@@ -47,9 +48,9 @@ export const HomeScene: React.FC = () => {
   const f = useCurrentFrame();
   const shot = shotAt(f);
   return (
-    <AbsoluteFill style={{ backgroundColor: '#560815' }}>
+    <AbsoluteFill style={{ backgroundColor: S.bg }}>
       <svg width={1920} height={1080} viewBox="0 0 1920 1080">
-        <Defs frame={f} />
+        <Defs frame={f} set={S} />
         <defs>
           <Textures colours={FILL_COLOURS} />
         </defs>

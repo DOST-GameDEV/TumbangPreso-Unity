@@ -865,22 +865,13 @@ namespace TumbangPreso.UI
             if (MatchRules.IsChainBonus(e)) return; // The earned-moment channel owns bonus recognition.
             if (e == ScoreEvent.DefenseTick) return;
 
-            // ⚠️⚠️ AND THE TWO TOURNAMENT PENALTIES ARE TICKS TOO, WHICH THE GUARD ABOVE MISSED.
-            // 🧑 2026-08-27, off a screenshot with `-5 SLIPPER IDLE` toasting over a card reading
-            // `FETCH SLIPPER · -5 / SECOND`: *"redundant as fuck ... pls figure out which stay"*.
-            //
-            // `TayaCampPenalty` and `UnretrievedSlipperPenalty` both fire once every
-            // `Balance.TournamentPenaltyInterval` for as long as the violation lasts, which is
-            // exactly the shape the `DefenseTick` guard was written for: *"a message that never
-            // leaves the screen and says nothing while it is there"*. The difference is that
-            // these two ALSO have a permanent line of their own on the lata card naming the rate,
-            // so the toast is not merely uninformative, it is the third copy.
-            //
-            // ⚠️ THE SOUND AND THE HITMARKER BOTH SURVIVE. `RoundDirector` still pops a marker on
-            // every tick and the award sting below still plays, so a player who is being
-            // penalised still hears and feels it once a second. What went is the reading.
+            // Penalty ticks are personal feedback. Use the scored seat on both the host
+            // and receiving clients; another player's penalty must not flash or sound here.
+            // The persistent warning already explains the cause, so keep the tick wordless.
             if (e == ScoreEvent.TayaCampPenalty || e == ScoreEvent.UnretrievedSlipperPenalty)
             {
+                if (_spectating || _local == null || _local.PlayerSlot != slot) return;
+                PopHitmarker(e == ScoreEvent.TayaCampPenalty ? UiTheme.Defense : UiTheme.Offense, "⚠️");
                 GameServices.Audio?.PlayUiVaried("score_award", 0.78f, 0.86f, 0.65f);
                 return;
             }
@@ -1412,6 +1403,9 @@ namespace TumbangPreso.UI
             // rows genuinely have nothing to say and are the ones that stay off.
             if (_spectating)
             {
+                // The watcher's own lines step aside for every cutscene (SpectatorCutscene).
+                if (_spectatorStatus != null && SpectatorCutscene.Hides == _spectatorStatus.enabled && _spectatorControlsVisible && !_cleanFeed)
+                    SetSpectatorReadoutEnabled(!SpectatorCutscene.Hides);
                 UpdateTimer(dt);
                 UpdateScores();
                 UpdateScorePulses(dt);
@@ -2646,6 +2640,7 @@ namespace TumbangPreso.UI
             // `Slipper.Holder` are two halves of one relationship (`Slipper.HostGrab`'s note),
             // and reading the half the marker is about cannot go stale against the other.
             _recall?.Track(_local, _ownSlipper);
+            TrackDormantMarks();
         }
 
         private float _ownSlipperScanAt = -99.0f;

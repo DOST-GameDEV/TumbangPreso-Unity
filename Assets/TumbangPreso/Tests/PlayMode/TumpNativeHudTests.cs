@@ -436,7 +436,7 @@ namespace TumbangPreso.PlayTests
                 TouchInput.Active = true; TouchInput.Move = Vector2.right; LastInputDevice.Sample(); TouchInput.Move = Vector2.zero;
                 local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius + 1));
                 yield return new WaitForSeconds(.35f);
-                Assert.AreEqual("Get close to the can to reset", prompt.text);
+                Assert.IsEmpty(prompt.text, "An unreachable can must not display a reset instruction.");
                 Assert.AreEqual(1, grab.transform.localScale.x, .001f, "An unreachable can must not pulse a dead action.");
                 local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius * .8f));
                 SettingsStore.Current.ToggleRestore = false;
@@ -927,6 +927,48 @@ namespace TumbangPreso.PlayTests
             finally{SettingsStore.Current.HudScale=scale;}
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator CastRefusalsExplainCooldownAndRemainingObjectivePoints()
+        {
+            yield return Open(GameMode.HeroStrike);
+            var round=GameServices.Round;var local=round.PlayerAt(GameLaunch.SoloSeat);
+            local.GetComponent<PlayerInputReader>().enabled=false;
+            local.GetComponent<Carrier>().enabled=false;local.enabled=false;round.enabled=false;
+            local.Intent.Clear();local.Intent.Parked=false;Assert.IsTrue(local.CanAct());
+            var powers=local.AbilitySystem;powers.BindHero("dante");powers.enabled=false;
+            var update=typeof(HeroAbilitySystem).GetMethod("Update",BindingFlags.Instance|BindingFlags.NonPublic);
+            var view=Object.FindFirstObjectByType<TumpMatchReadout>();
+
+            powers.Kit.Skill1.ApplyNetworkSnapshot(5,0);
+            local.Intent.Set(Verb.Skill1,true);update.Invoke(powers,null);
+            Assert.AreEqual(HeroKit.CastOutcome.Cooling,powers.LastAnswer(HeroAbilitySystem.Slot.Skill1));
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - ABILITY IS ON COOLDOWN",view.WarningText);
+
+            local.Intent.Set(Verb.Skill1,false);update.Invoke(powers,null);yield return null;
+            powers.Kit.AddUltimateCharge(powers.Kit.UltimateCost-3);
+            local.Intent.Set(Verb.Ultimate,true);update.Invoke(powers,null);
+            Assert.AreEqual(HeroKit.CastOutcome.NoCharge,powers.LastAnswer(HeroAbilitySystem.Slot.Ultimate));
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - 3 MORE OBJECTIVE POINTS REQUIRED",view.WarningText);
+            powers.Kit.AddUltimateCharge(2);view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - 1 MORE OBJECTIVE POINTS REQUIRED",view.WarningText);
+            powers.Kit.AddUltimateCharge(1);view.Tick(local,false,false,false,false);
+            Assert.AreEqual("",view.WarningText,"A filled meter must not show zero points required.");
+
+            local.Intent.Set(Verb.Ultimate,false);update.Invoke(powers,null);yield return null;
+            powers.Kit.Skill1.ApplyNetworkSnapshot(5,0);
+            local.Intent.Set(Verb.Skill1,true);update.Invoke(powers,null);
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - ABILITY IS ON COOLDOWN",view.WarningText);
+            local.Intent.Set(Verb.Skill1,false);update.Invoke(powers,null);yield return null;
+            powers.Kit.Skill1.ApplyNetworkSnapshot(0,0);
+            local.Intent.Set(Verb.Skill1,true);update.Invoke(powers,null);
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,powers.LastAnswer(HeroAbilitySystem.Slot.Skill1));
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("",view.WarningText,"A successful cast clears cooldown refusals too.");
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion()
         {
@@ -1077,8 +1119,19 @@ namespace TumbangPreso.PlayTests
                         var warning = (RectTransform)root.Find("WarningMessage");
                         // Guide p.12: a thin opaque title strip, with its reason on its own line beneath.
                         var title = (RectTransform)warning.Find("WarningText");
+                        Assert.AreEqual("CANNOT THROW", title.GetComponent<Text>().text);
+                        Assert.AreEqual(InGameTypography.Bold, title.GetComponent<Text>().font);
+                        var reason=warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>();
+                        Assert.AreEqual(InGameTypography.Reading,reason.font);
+                        Assert.AreEqual(FontStyle.Normal,reason.fontStyle);
+                        Assert.Greater(title.GetComponent<OwnerUiTracking>().Spacing,0);
+                        Assert.Greater(reason.GetComponent<OwnerUiTracking>().Spacing,0);
+                        var band=warning.Find("WarningReasonPlate").GetComponent<HudCard>();
+                        var bandCentre=warning.InverseTransformPoint(band.rectTransform.TransformPoint(band.rectTransform.rect.center));
+                        Assert.AreEqual(bandCentre.y*warning.Find("WarningTitlePlate").GetComponent<HudCard>().Slant,
+                            bandCentre.x,.1f,"The reason band must follow the outer panel's shear, keeping equal side insets.");
                         Assert.LessOrEqual(title.rect.height, 64, "Ordinary warnings should be a thin strip.");
-                        Assert.AreEqual("Must be outside danger zone", warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>().text);
+                        Assert.AreEqual("MUST BE OUTSIDE DANGER ZONE", warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>().text);
                         yield return TumpUiCapture.Capture("Warning-strip-" + scale + "-" + size.x,
                             view.Canvas, size.x, size.y, false, false, inspectViewport: () =>
                             {
@@ -1097,6 +1150,31 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual("", view.WarningText);
             }
             finally { SettingsStore.Current.HudScale = oldScale; }
+        }
+
+        [UnityTest,Timeout(60000)]
+        public IEnumerator ReturningWarningRestartsItsShakeWithoutRepeatingEveryTick()
+        {
+            yield return Open(GameMode.Classic);yield return new WaitForSeconds(1.4f);
+            var round=GameServices.Round;round.enabled=false;
+            var local=round.PlayerAt(GameLaunch.SoloSeat);
+            local.GetComponent<PlayerInputReader>().enabled=false;
+            local.GetComponent<Carrier>().enabled=false;local.enabled=false;local.Intent.Clear();
+            local.Teleport(new Vector3(0,.1f,2));local.Intent.Set(Verb.SpecialAbility,true);
+            var view=Object.FindFirstObjectByType<TumpMatchReadout>();
+            var stamp=typeof(TumpMatchReadout).GetField("_warningShookAt",BindingFlags.Instance|BindingFlags.NonPublic);
+            view.Tick(local,false,false,false,false);
+            string words=view.WarningText;Assert.That(words,Does.Contain("OUTSIDE DANGER ZONE"));
+            float first=(float)stamp.GetValue(view);
+            var root=view.Canvas.transform.Find("WarningMessage");
+            float reading=Mathf.Max(GameSettings.ValidHudScale(SettingsStore.Current.HudScale),SettingsStore.Current.LargerText?1.2f:1f);
+            Assert.AreEqual(.9f*reading,root.localScale.x,.001f);
+            yield return null;view.Tick(local,false,false,false,false);
+            Assert.AreEqual(first,(float)stamp.GetValue(view),"A continuous warning must not restart every tick.");
+            view.Tick(local,true,false,false,false);Assert.AreEqual("",view.WarningText);
+            yield return null;view.Tick(local,false,false,false,false);
+            Assert.AreEqual(words,view.WarningText);
+            Assert.Greater((float)stamp.GetValue(view),first,"The same warning returning must restart its shake.");
         }
 
         [UnityTest,Timeout(60000)]

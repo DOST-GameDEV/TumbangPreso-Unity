@@ -112,7 +112,7 @@ namespace TumbangPreso.PlayTests
             int low=System.Array.IndexOf(QualitySettings.names,"Low");if(low>=0)QualitySettings.SetQualityLevel(low,true);
             GraphicsProfiles.Apply(0);QualitySettings.globalTextureMipmapLimit=2;
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,GameMode.HeroStrike);
-            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(3.6f);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider=new SoloProvider();Assert.IsTrue(GameServices.Round.RoundActive);
             foreach(var actor in GameServices.Round.Players)
             {actor.Intent.Clear();actor.Intent.Parked=true;actor.Teleport(new Vector3(7,.12f,7+actor.PlayerSlot));}

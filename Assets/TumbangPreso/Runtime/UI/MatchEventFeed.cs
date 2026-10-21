@@ -125,10 +125,15 @@ namespace TumbangPreso.UI
                              GameServices.Match != null && !GameServices.Match.IsWarmupBuffer;
         private void OnCanState(bool upright)
         {
+            if (this == null || _rows[0] == null) return;
             if (upright && Live) Add(GameServices.Match.DefenderSlot, -1, "RESTORED LATA", "restore", HudBadge.Glyph.Restore, UiTheme.Defense, 0);
         }
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
+            // A feed destroyed without its OnDisable (an editor session with domain reload off keeps static listeners)
+            // lets go of the event instead of throwing on every tag; one whose rows were never built draws nothing.
+            if (this == null) { MatchFlair.Presented -= OnMoment; return; }
+            if (_rows[0] == null) return;
             Bind();
             if (!Live) return;
             switch (kind)

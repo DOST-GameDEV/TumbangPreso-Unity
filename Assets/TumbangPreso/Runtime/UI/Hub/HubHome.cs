@@ -6,42 +6,38 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI.Hub
 {
     /// <summary>
-    /// HOME, as the owner drew it on 2026-09-23 (`ArtSource/front-end-flow-20260923/home-final-wireframe.png`).
+    /// HOME, as the owner's hand-made board draws it (Canva TUMP page 68, 2026-10-21; before it,
+    /// the 2026-09-23 wireframe `ArtSource/front-end-flow-20260923/home-final-wireframe.png`).
     ///
-    /// ⚠️⚠️ THE LAYOUT IS THE OWNER'S AND IS NOT A SUGGESTION. Square avatar top left (its own door:
-    /// the picture), the name plate beside it (its own door: profile settings), THE SKILL TREE under
-    /// the plate, HERO / LOADOUT / a larger SHOP with TASK beside it down the left, the queue plate top
-    /// centre only while queued, currency with + and the hamburger top right, and the mode card above
-    /// a big PLAY bottom right. The mode card is the door to GAMEMODE SELECT.
+    /// ⚠️⚠️ THE LAYOUT AND THE LOOK ARE THE OWNER'S AND ARE NOT A SUGGESTION. Every sticker, picture
+    /// and label sits where her board has it, at its size, in its face and colour: <see cref="HubBoard"/>
+    /// reads them from `Resources/UI/handmade-lobby/board.json`, which `ArtSource/handmade-lobby/tools/`
+    /// measures off her export. Owner: "exact font colors, positioning and sizes", "no white shit",
+    /// "absolutely nothing pixelated". The pieces she had not finished (the avatar frame, the name
+    /// plate, the currency bar, the menu, the queue plate, the mode card) are finished in her good
+    /// tiles' manner: the same knit, an extruded slab, the same exact silhouettes.
+    ///
+    /// The doors, as before: square avatar top left (the picture), the name plate beside it (profile),
+    /// HERO / ITEM (loadout) / a larger SHOP with TASK beside it down the left, the queue plate top
+    /// centre only while queued, currency with + and the hamburger top right, and the GAMEMODE card
+    /// above a big PLAY bottom right. The mode card is the door to GAMEMODE SELECT.
     ///
     /// THE FOUR ANSWERS (`CLAUDE.md` § 6.2):
-    ///   the one thing   PLAY, bottom right, the largest and the only chartreuse object
+    ///   the one thing   PLAY, bottom right, the largest and the only striped green object
     ///   first press     PLAY; the mode card above it says what PLAY will do before it is pressed
     ///   not needed now  everything else is one sticker; nothing opens by default
-    ///   out             Escape leaves to the title screen (after cancelling a queue, if any)
+    ///   out             Escape opens the menu (after cancelling a queue, if any)
     ///
-    /// ⚠️ THE MIDDLE IS EMPTY ON PURPOSE. It is the court now and the owner's animated scene later,
-    /// and every sticker sits in a corner so that picture is never covered.
+    /// ⚠️ THE MIDDLE IS EMPTY ON PURPOSE: it is the animated HOME scene, and every sticker sits in a
+    /// corner so that picture is never covered.
     /// </summary>
     public sealed class HubHome : HubScreen
     {
-        private Text _name, _tag, _level, _mapName, _modeTitle, _modeSub;
-        private RectTransform _xpFill;
-        private Image _avatar, _heroFace, _shoeFace, _canFace;
-        private HubShape _modeShape;
+        private Text _name, _tag, _level, _modeTitle, _playLabel, _xpLabel;
+        private Image _xpFill, _avatar, _modePoster;
         private HubButton _play;
         private GameObject _skillNotice, _taskNotice;
-        private RectTransform _modeFaces;
-        private Image _modePoster;
-        private AspectRatioFitter _modePosterFit;
-        private GameObject _modeVeil;
-
-        /// <summary>Card lettering that must hold over a picture: the ink outline the posters use.</summary>
-        private static void Outlined(Text text)
-        {
-            var edge = text.gameObject.AddComponent<Outline>();
-            edge.effectColor = HubStyle.Ink; edge.effectDistance = new Vector2(2.5f, -3f); edge.useGraphicAlpha = false;
-        }
+        private HubBoard.LabelSpec _nameSpec, _modeSpec, _playSpec;
 
         public override void Build()
         {
@@ -57,191 +53,94 @@ namespace TumbangPreso.UI.Hub
 
         private void BuildIdentity()
         {
-            float m = HubKit.Margin;
-
-            var avatar = HubKit.Button(Root, "AvatarButton", null, Door, () => Hub.Push<HubAvatar>(), 0, 101);
-            HubKit.Place((RectTransform)avatar.transform, HubKit.TopLeft, new Vector2(m, -m), new Vector2(150, 150));
-            _avatar = HubKit.Picture(avatar.Body, "Face", null);
-            HubKit.Stretch(_avatar.rectTransform, 14);
+            // AVATAR: the frame, the peach well, the player's picture inset in the well.
+            var avatar = HubBoard.Sticker(Root, "AvatarButton", HubKit.TopLeft, "avatar_frame", () => Hub.Push<HubAvatar>(), out var avatarFace, out var avatarGroup);
+            HubBoard.Picture(avatarFace, avatarGroup, "avatar_well", "Well");
+            var well = HubBoard.Spec("avatar_well");
+            var pic = HubKit.Rect(avatarFace, "Face");
+            HubBoard.At(pic, avatarGroup, new Rect(well.x + 9, well.y + 9, well.w - 18, well.h - 18));
+            pic.SetParent(avatarFace, true);
+            _avatar = pic.gameObject.AddComponent<Image>();
+            _avatar.raycastTarget = false; _avatar.preserveAspect = true;
+            HubBoard.Feel(avatar, avatarFace, HubBoard.Depth("avatar_frame"), 0.1f, false, pic);
             HubSlap.On(avatar.transform, 0.00f);
 
-            var plate = HubKit.Button(Root, "NamePlate", null, Door, () => Hub.Host.OpenProfile(), 0, 102);
-            HubKit.Place((RectTransform)plate.transform, HubKit.TopLeft, new Vector2(m + 168, -m), new Vector2(480, 150));
-            var body = plate.Body;
-
-            var badge = HubKit.Shape(body, "LevelBadge", HubStyle.Persimmon, false, 7, 4, 40);
-            HubKit.Place(badge.rectTransform, HubKit.Left, new Vector2(20, 14), new Vector2(84, 84));
-            _level = HubKit.Text(badge.transform, "Level", "1", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleCenter);
-            HubKit.Stretch(_level.rectTransform, 4);
-
-            _name = HubKit.Text(body, "PlayerName", "", HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(122, -14), new Vector2(330, 60));
-            _tag = HubKit.Text(body, "PlayerTag", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(_tag.rectTransform, HubKit.TopLeft, new Vector2(124, -70), new Vector2(330, 44));
-
-            // ⚠️ THE TRACK HAS A HONEY RIM. With an ink rim on the dark plate, an empty level-one bar
-            // read as a black slot rather than a bar waiting to fill (2026-09-23 UI review).
-            var track = HubKit.Shape(body, "XpTrack", HubStyle.Night, false, 8, 3, 13);
-            track.Outline = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.55f);
-            HubKit.Place(track.rectTransform, HubKit.BottomLeft, new Vector2(122, 18), new Vector2(330, 16));
-            _xpFill = HubKit.Rect(track.transform, "XpFill");
-            _xpFill.anchorMin = Vector2.zero; _xpFill.anchorMax = new Vector2(0, 1);
-            _xpFill.offsetMin = new Vector2(4, 4); _xpFill.offsetMax = new Vector2(0, -4);
-            var fill = _xpFill.gameObject.AddComponent<Image>();
-            fill.color = HubStyle.Chartreuse; fill.raycastTarget = false;
+            // NAME PLATE: level hexagon with its number, name, tag, XP bar with its lettering.
+            var plate = HubBoard.Sticker(Root, "NamePlate", HubKit.TopLeft, "name_plate", () => Hub.Host.OpenProfile(), out var plateFace, out var plateGroup);
+            var hex = HubBoard.Picture(plateFace, plateGroup, "glyph_level", "LevelBadge");
+            _level = HubBoard.Lettering(plateFace, plateGroup, "01", "Level");
+            _level.rectTransform.SetParent(hex, true);
+            _nameSpec = HubBoard.Label("Tump_ID");
+            _name = HubBoard.Lettering(plateFace, plateGroup, "Tump_ID", "PlayerName");
+            _tag = HubBoard.Lettering(plateFace, plateGroup, "#1234", "PlayerTag");
+            HubBoard.Picture(plateFace, plateGroup, "xp_track", "XpTrack");
+            var fill = HubBoard.Picture(plateFace, plateGroup, "xp_fill", "XpFill");
+            _xpFill = fill.GetComponent<Image>();
+            _xpFill.type = Image.Type.Filled; _xpFill.fillMethod = Image.FillMethod.Horizontal;
+            _xpFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            _xpLabel = HubBoard.Lettering(plateFace, plateGroup, "xp", "XpLabel");
+            HubBoard.Feel(plate, plateFace, HubBoard.Depth("name_plate"), 0.3f, false, hex);
             HubSlap.On(plate.transform, 0.04f, -2);
 
-            var tree = HubKit.Button(Root, "SkillTreeButton", null, Door, () => Hub.Push<HubSkillTree>(), 0, 103);
-            HubKit.Place((RectTransform)tree.transform, HubKit.TopLeft, new Vector2(m, -(m + 150 + 24)), new Vector2(420, 124));
-            Well(tree.Body, HubStyle.Golden, HubKit.Left, new Vector2(12, 4), new Vector2(100, 96));
-            var treeGlyph = HubKit.Glyph(tree.Body, "Icon", HubGlyph.Mark.Tree, HubStyle.Ink, 0.12f);
-            HubKit.Place(treeGlyph.rectTransform, HubKit.Left, new Vector2(20, 4), new Vector2(84, 84));
-            var the = HubKit.Text(tree.Body, "Eyebrow", "THE", HubStyle.Floor, true, HubStyle.Golden, TextAnchor.LowerLeft);
-            HubKit.Place(the.rectTransform, HubKit.TopLeft, new Vector2(130, -12), new Vector2(120, 34));
-            var treeWords = HubKit.Text(tree.Body, "Label", "SKILL TREE", HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(treeWords.rectTransform, HubKit.BottomLeft, new Vector2(128, 18), new Vector2(280, 66));
-            HubKit.Letterpress(treeWords, Door);
-            _skillNotice = HubKit.Notice(tree.Body);
-            HubSlap.On(tree.transform, 0.08f);
-            // ⚠️ THE SKILL TREE IS OFF (owner, 2026-09-26: *"JS REMOVE ITS UI FOR NOW"*); the door is
-            // built and hidden so turning `HeroLoadoutRules.SidegradesOpen` back on restores it whole.
-            tree.gameObject.SetActive(HeroLoadoutRules.SidegradesOpen);
-        }
-
-        // ------------------------------------------------------------------ the door family
-
-        /// <summary>
-        /// Every secondary door on HOME wears this one warm dark.
-        ///
-        /// ⚠️⚠️ ONE FAMILY, ONE PRIMARY, COLOUR IN THE WELLS (owner, 2026-09-23: "their colors are
-        /// ugly as fuck", "they arent even in theme or in color scheme"). Seven doors used to be six
-        /// unrelated flood fills (Golden, ArmyDeep, Army, Persimmon, Golden, DeepRed, ArmyDeep) at
-        /// equal weight over a saturated animated sunset, so nothing led and the olives went to mud
-        /// against the warm reds. Now: most of the chrome is warm dark sticker (Nintendo's
-        /// low-chroma ground, and the same silhouette-against-the-sky role the scene's own skyline
-        /// plays), honey carries rims and lettering, and colour is the small remainder, of which the
-        /// one big saturated slab is chartreuse PLAY. Each door keeps its identity in a coloured
-        /// WELL behind its picture, drawn only from the sunset's warm analogues (persimmon, golden,
-        /// rim red, honey): `docs/reports/ui-hud-review-2026-09-23/research.md` findings 6 and 7.
-        /// </summary>
-        private static Color Door => HubStyle.Night;
-
-        /// <summary>The coloured window behind a door's picture: rounded (furniture, not pressable),
-        /// thin ink edge, flat.</summary>
-        private static void Well(RectTransform body, Color colour, Vector2 anchor, Vector2 at, Vector2 size)
-        {
-            var well = HubKit.Shape(body, "Well", colour, false, 90 + (int)(at.x + size.x), 3, 16);
-            HubKit.Place(well.rectTransform, anchor, at, size);
+            // THE SKILL TREE stays off (owner, 2026-09-26: "JS REMOVE ITS UI FOR NOW"). Its old door is
+            // not rebuilt on the board; turning `HeroLoadoutRules.SidegradesOpen` back on needs a board
+            // piece for it first. The notice field stays so RefreshNotices has one rule.
+            _skillNotice = new GameObject("SkillTreeNotice"); _skillNotice.transform.SetParent(Root, false);
+            _skillNotice.SetActive(false);
         }
 
         // ------------------------------------------------------------------ left column
 
         private void BuildDoors()
         {
-            float m = HubKit.Margin;
+            var hero = HubBoard.Sticker(Root, "HeroButton", HubKit.BottomLeft, "tile_hero", () => Hub.Push<HubHero>(), out var heroFace, out var heroGroup, "icon_hero");
+            var heroPic = HubBoard.Picture(heroFace, heroGroup, "icon_hero", "Face");
+            HubBoard.Lettering(heroFace, heroGroup, "hero", "Label");
+            HubBoard.Feel(hero, heroFace, HubBoard.Depth("tile_hero"), 0.15f, false, heroPic);
+            HubSlap.On(hero.transform, 0.08f, -2);
 
-            var shop = HubKit.Button(Root, "ShopButton", null, Door, () => Hub.Push<HubShopPopup>(), 0, 104);
-            HubKit.Place((RectTransform)shop.transform, HubKit.BottomLeft, new Vector2(m, m), new Vector2(300, 214));
-            Well(shop.Body, HubStyle.RimRed, HubKit.Top, new Vector2(0, -12), new Vector2(272, 128));
-            var stall = HubKit.Glyph(shop.Body, "Icon", HubGlyph.Mark.Shop, HubStyle.Honey, 0.1f);
-            HubKit.Place(stall.rectTransform, HubKit.Top, new Vector2(0, -18), new Vector2(116, 116));
-            var shopWords = HubKit.Text(shop.Body, "Label", "SHOP", HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(shopWords.rectTransform, HubKit.Bottom, new Vector2(0, 14), new Vector2(260, 62));
-            HubKit.Letterpress(shopWords, Door);
+            var item = HubBoard.Sticker(Root, "LoadoutButton", HubKit.BottomLeft, "tile_item", () => Hub.Push<HubLoadout>(), out var itemFace, out var itemGroup, "icon_item");
+            var itemPic = HubBoard.Picture(itemFace, itemGroup, "icon_item", "Picture");
+            HubBoard.Lettering(itemFace, itemGroup, "item", "Label");
+            HubBoard.Feel(item, itemFace, HubBoard.Depth("tile_item"), 0.55f, false, itemPic);
+            HubSlap.On(item.transform, 0.12f, 2);
+
+            var shop = HubBoard.Sticker(Root, "ShopButton", HubKit.BottomLeft, "tile_shop", () => Hub.Push<HubShopPopup>(), out var shopFace, out var shopGroup, "icon_shop");
+            var shopPic = HubBoard.Picture(shopFace, shopGroup, "icon_shop", "Icon");
+            HubBoard.Lettering(shopFace, shopGroup, "shop", "Label");
+            HubBoard.Feel(shop, shopFace, HubBoard.Depth("tile_shop"), 0.8f, false, shopPic);
             HubSlap.On(shop.transform, 0.16f, -3);
 
-            var task = HubKit.Button(Root, "TaskButton", null, Door, () => Hub.Push<HubTasks>(), 0, 105);
-            HubKit.Place((RectTransform)task.transform, HubKit.BottomLeft, new Vector2(m + 320, m), new Vector2(164, 164));
-            Well(task.Body, HubStyle.Golden, HubKit.Top, new Vector2(0, -10), new Vector2(140, 92));
-            var check = HubKit.Glyph(task.Body, "Icon", HubGlyph.Mark.Task, HubStyle.Ink, 0.12f);
-            HubKit.Place(check.rectTransform, HubKit.Top, new Vector2(0, -14), new Vector2(80, 80));
-            var taskWords = HubKit.Text(task.Body, "Label", "TASK", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(taskWords.rectTransform, HubKit.Bottom, new Vector2(0, 14), new Vector2(140, 50));
-            HubKit.Letterpress(taskWords, Door);
-            _taskNotice = HubKit.Notice(task.Body);
+            var task = HubBoard.Sticker(Root, "TaskButton", HubKit.BottomLeft, "tile_task", () => Hub.Push<HubTasks>(), out var taskFace, out var taskGroup, "icon_task");
+            var taskPic = HubBoard.Picture(taskFace, taskGroup, "icon_task", "Icon");
+            HubBoard.Lettering(taskFace, taskGroup, "task", "Label");
+            _taskNotice = HubKit.Notice(taskFace);
+            HubBoard.Feel(task, taskFace, HubBoard.Depth("tile_task"), 0.35f, false, taskPic);
             HubSlap.On(task.transform, 0.2f, 3);
-
-            var loadout = HubKit.Button(Root, "LoadoutButton", null, Door, () => Hub.Push<HubLoadout>(), 0, 106);
-            HubKit.Place((RectTransform)loadout.transform, HubKit.BottomLeft, new Vector2(m, m + 214 + 22), new Vector2(250, 178));
-            Well(loadout.Body, HubStyle.Honey, HubKit.Top, new Vector2(0, -12), new Vector2(226, 102));
-            _shoeFace = HubKit.Picture(loadout.Body, "Tsinelas", null);
-            HubKit.Place(_shoeFace.rectTransform, HubKit.TopLeft, new Vector2(8, 10), new Vector2(136, 136));
-            _canFace = HubKit.Picture(loadout.Body, "Lata", null);
-            HubKit.Place(_canFace.rectTransform, HubKit.TopRight, new Vector2(-10, 6), new Vector2(118, 118));
-            var loadoutWords = HubKit.Text(loadout.Body, "Label", "LOADOUT", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(loadoutWords.rectTransform, HubKit.Bottom, new Vector2(0, 12), new Vector2(230, 48));
-            HubKit.Letterpress(loadoutWords, Door);
-            HubSlap.On(loadout.transform, 0.12f, 2);
-
-            var hero = HubKit.Button(Root, "HeroButton", null, Door, () => Hub.Push<HubHero>(), 0, 107);
-            HubKit.Place((RectTransform)hero.transform, HubKit.BottomLeft, new Vector2(m, m + 214 + 22 + 178 + 22), new Vector2(250, 178));
-            Well(hero.Body, HubStyle.Persimmon, HubKit.Top, new Vector2(0, -12), new Vector2(226, 102));
-            // ⚠️ THE FACE BREAKS OUT OF THE STICKER'S TOP. A portrait boxed inside its card reads as a
-            // thumbnail; one that pokes out reads as a person standing behind a sign, which is the
-            // street's own joke and the one flourish on this screen.
-            // ⚠️ AND IT STOPS ABOVE THE LABEL (2026-09-23 UI review). At 170 units it reached down to
-            // 38 units from the sticker's bottom, so "HERO" was lettered across the portrait's dark
-            // torso and read as part of the picture. 146 units raised to break out by 38 ends 70
-            // units up, clear of the 8 to 56 label band, which is how LOADOUT beside it already works.
-            _heroFace = HubKit.Picture(hero.Body, "Face", null);
-            HubKit.Place(_heroFace.rectTransform, HubKit.Top, new Vector2(0, 38), new Vector2(146, 146));
-            var heroWords = HubKit.Text(hero.Body, "Label", "HERO", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(heroWords.rectTransform, HubKit.Bottom, new Vector2(0, 12), new Vector2(230, 48));
-            HubKit.Letterpress(heroWords, Door);
-            HubSlap.On(hero.transform, 0.08f, -2);
         }
 
         // ------------------------------------------------------------------ bottom right
 
         private void BuildPlay()
         {
-            float m = HubKit.Margin;
-
-            _play = HubKit.Button(Root, "PlayButton", "PLAY", HubStyle.Chartreuse, Play, HubStyle.Hero, 110);
-            HubKit.Place((RectTransform)_play.transform, HubKit.BottomRight, new Vector2(-m, m), new Vector2(520, 168));
-            _play.Shape.OutlineWidth = 7;
-            _play.Shape.BandFraction = 0.13f;
-            _play.Shape.ShadowOffset = new Vector2(9, -11);
+            _play = HubBoard.Sticker(Root, "PlayButton", HubKit.BottomRight, "play", Play, out var playFace, out var playGroup);
+            _playSpec = HubBoard.Label("play");
+            _playLabel = HubBoard.Lettering(playFace, playGroup, "play", "Label");
+            HubBoard.Feel(_play, playFace, HubBoard.Depth("play"), 0.0f, true);
             HubSlap.On(_play.transform, 0.18f, -3);
 
-            var card = HubKit.Button(Root, "ModeCard", null, HubStyle.DeepRed, () => Hub.Push<HubModeSelect>(), 0, 111);
-            HubKit.Place((RectTransform)card.transform, HubKit.BottomRight, new Vector2(-m, m + 168 + 24), new Vector2(520, 300));
-            _modeShape = card.Shape;
-
-            // Keep the authored poster in the upper section and give the mode its own dark caption
-            // below. A small corner thumbnail cleared the text but made the cast too small to read.
-            var window = HubKit.Rect(card.Body, "PosterWindow");
-            HubKit.Place(window, HubKit.TopRight, new Vector2(-60, -7), new Vector2(453, 206));
-            window.gameObject.AddComponent<RectMask2D>();
-            // Fit the poster to this artwork section without stretching or resampling its source.
+            var card = HubBoard.Sticker(Root, "ModeCard", HubKit.BottomRight, "mode_card", () => Hub.Push<HubModeSelect>(), out var cardFace, out var cardGroup);
+            HubBoard.Lettering(cardFace, cardGroup, "GAMEMODE", "ModeCaption");
+            var window = HubBoard.Picture(cardFace, cardGroup, "art_window", "PosterWindow");
             _modePoster = HubKit.Picture(window, "Poster", null, false);
-            var posterRect = _modePoster.rectTransform;
-            posterRect.anchorMin = new Vector2(1, 0); posterRect.anchorMax = new Vector2(1, 1); posterRect.pivot = new Vector2(1, 0.5f);
-            posterRect.anchoredPosition = Vector2.zero; posterRect.sizeDelta = Vector2.zero;
-            _modePosterFit = _modePoster.gameObject.AddComponent<AspectRatioFitter>();
-            _modePosterFit.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
-            var veil = HubKit.Stretch(HubKit.Rect(window, "Veil")).gameObject.AddComponent<Image>();
-            veil.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, 0.22f); veil.raycastTarget = false;
-            _modeVeil = veil.gameObject;
-
-            // ⚠️ THE CAST STANDS IN THE TOP RIGHT, OVER THE MAP NAME'S ROW AND CLEAR OF THE MODE WORD.
-            // The first capture put them along the bottom and the faces sat on CASUAL: the one word
-            // on this card the player must read was the one thing the picture covered.
-            _modeFaces = HubKit.Rect(card.Body, "Faces");
-            HubKit.Place(_modeFaces, HubKit.TopRight, new Vector2(-62, -8), new Vector2(200, 150));
-
-            _mapName = HubKit.Text(card.Body, "MapName", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_mapName.rectTransform, HubKit.TopLeft, new Vector2(28, -20), new Vector2(300, 48));
-            Outlined(_mapName);
-            _modeTitle = HubKit.Text(card.Body, "ModeTitle", "", 60, true, HubStyle.Honey, TextAnchor.LowerLeft);
-            HubKit.Place(_modeTitle.rectTransform, HubKit.BottomLeft, new Vector2(24, 39), new Vector2(460, 45));
-            _modeTitle.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
-            _modeTitle.GetComponent<Shadow>().effectDistance = new Vector2(4, -4);
-            _modeSub = HubKit.Text(card.Body, "ModeSubtitle", "", HubStyle.Label, true, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(_modeSub.rectTransform, HubKit.BottomLeft, new Vector2(28, 6), new Vector2(460, 30));
-            Outlined(_modeSub);
-            var change = HubKit.Glyph(card.Body, "ChangeIcon", HubGlyph.Mark.Right, HubStyle.Honey, 0.14f);
-            HubKit.Place(change.rectTransform, HubKit.TopRight, new Vector2(-18, -18), new Vector2(48, 48));
+            HubKit.Stretch(_modePoster.rectTransform);
+            _modeSpec = HubBoard.Label("classic");
+            _modeTitle = HubBoard.Lettering(cardFace, cardGroup, "classic", "ModeTitle");
+            // the art window's sprite (with its 3 unit transparent pad) ends at board y 798.5; the
+            // title's box starts below it, so the window never reaches into the headline's rect
+            HubBoard.StartBelow(_modeTitle, _modeSpec, 799f);
+            var chevron = HubBoard.Picture(cardFace, cardGroup, "glyph_chevron", "ChangeIcon");
+            HubBoard.Feel(card, cardFace, HubBoard.Depth("mode_card"), 0.65f, false, chevron);
             HubSlap.On(card.transform, 0.14f, 2);
         }
 
@@ -287,6 +186,19 @@ namespace TumbangPreso.UI.Hub
             }
         }
 
+        /// <summary>The card's title and its window art for a choice: the owner's board names the
+        /// MODE ("CLASSIC"), so ranked reads RANKED and the two casual playlists read their rulesets.</summary>
+        /// <summary>
+        /// ⚠️ THE MODE NAME FITS INSIDE THE CARD. Her Canva text box (x 1463.7, 326.9 wide, centred)
+        /// starts left of the card; CLASSIC is narrow enough to land inside it, HERO STRIKE is not.
+        /// The room is her box narrowed about its own centre to the card's inner edge (the art
+        /// window's x 1501), so CLASSIC keeps its exact place and longer names shrink to fit.
+        /// </summary>
+        public const float ModeTitleRoom = 2f * (1463.7f + 326.9f / 2f - 1501f);
+
+        public static string TitleFor(int choice) => choice == 0 ? "RANKED" : choice == 1 ? "CLASSIC" : "HERO STRIKE";
+        public static string ArtFor(int choice) => choice == 0 ? "mode_art_ranked" : choice == 1 ? "mode_art_classic" : "mode_art_casual";
+
         public override void Resumed() => Refresh();
 
         public override Selectable FirstFocus => _play;
@@ -298,14 +210,11 @@ namespace TumbangPreso.UI.Hub
         {
             bool queueing = HubQueueWatch.QueueRoom;
             // ⚠️ THE BUTTON STAYS PRESSABLE WHILE IT READS IN QUEUE, AND A PRESS LEAVES THE QUEUE.
-            // It used to go non-interactable, so the one control the player's hand was already on
-            // did nothing and the way out was a small X on the queue plate (owner, 2026-09-26:
-            // "should be able to cancel queue when pressing in queue button"). See `Play`.
+            // (owner, 2026-09-26: "should be able to cancel queue when pressing in queue button").
             if (_playShowsQueue != queueing)
             {
                 _playShowsQueue = queueing;
-                HubKit.SetLabel(_play, queueing ? "IN QUEUE" : "PLAY");
-                HubKit.LabelOf(_play).fontSize = HubStyle.Size(queueing ? HubStyle.Display : HubStyle.Hero);
+                HubBoard.SetWords(_playLabel, queueing ? "IN QUEUE" : "PLAY", _playSpec);
             }
             if (Time.unscaledTime > _nextRefresh) { _nextRefresh = Time.unscaledTime + 1.0f; RefreshNotices(); }
         }
@@ -318,93 +227,36 @@ namespace TumbangPreso.UI.Hub
 
             string name = account != null && !string.IsNullOrWhiteSpace(account.DisplayName) ? account.DisplayName
                         : !string.IsNullOrWhiteSpace(settings.PlayerName) ? settings.PlayerName : "PLAYER";
-            _name.text = name.ToUpperInvariant();
-            _name.fontSize = HubStyle.Size(HubStyle.Title);
-            HubKit.Fit(_name, 330);
+            HubBoard.SetWords(_name, name, _nameSpec);
             string tag = account != null ? account.Discriminator : "";
             _tag.text = account != null && account.IsGuest ? "GUEST" : string.IsNullOrEmpty(tag) ? "OFFLINE" : "#" + tag;
 
             var profile = GameServices.Career?.Profile;
             int level = profile != null ? Mathf.Max(1, profile.Level) : 1;
-            _level.text = level.ToString();
-            HubKit.Fit(_level, 76);
+            _level.text = level.ToString("00");
             float into = profile != null ? ProgressionRules.XpIntoLevel(profile.Xp) / (float)ProgressionRules.XpPerLevel : 0;
-            _xpFill.anchorMax = new Vector2(Mathf.Clamp01(into), 1);
+            _xpFill.fillAmount = Mathf.Clamp01(into);
 
             _avatar.sprite = Avatars.Get(string.IsNullOrEmpty(settings.AvatarId) ? Avatars.DefaultFor(name) : settings.AvatarId);
-            _avatar.color = Color.white;
-
-            var people = Roster.GetPeople(SceneFlow.SelectedMode);
-            var person = Roster.At(people, Mathf.Max(0, settings.CharacterPick));
-            SetFace(_heroFace, person?.Id);
-            SetFace(_shoeFace, Roster.At(Roster.Slippers, Mathf.Max(0, settings.SlipperPick))?.Id);
-            SetFace(_canFace, Roster.At(Roster.Cans, Mathf.Max(0, settings.CanPick))?.Id);
+            _avatar.color = _avatar.sprite != null ? Color.white : new Color(0, 0, 0, 0);
 
             RefreshModeCard();
             RefreshNotices();
         }
 
-        private static void SetFace(Image image, string id)
-        {
-            image.sprite = HubKit.Portrait(id);
-            image.color = image.sprite != null ? Color.white : new Color(0, 0, 0, 0);
-        }
-
         private void RefreshModeCard()
         {
-            var map = SceneFlow.PreviewFor(SceneFlow.SelectedMap);
-            _mapName.text = map.Name;
-            HubKit.Fit(_mapName, 300);
-
             int choice = Choice;
-            // ⚠️ THE TITLE IS THE STAKE AND THE LINE UNDER IT IS THE RULESET, the owner's own
-            // "RANKED / HERO STRIKE". The casual playlist is the card called CLASSIC on GAMEMODE
-            // SELECT, but writing CLASSIC / CLASSIC here would name two different things one word.
-            _modeTitle.text = choice == 0 ? "RANKED" : "CASUAL";
-            _modeSub.text = choice == 1 ? "CLASSIC" : "HERO STRIKE";
-
-            // ⚠️ THE LADDER TIER RIDES ON THE RANKED CARD. The old board drew it on its own plate
-            // (`RefreshOwnerRank`); here it is the second half of the line that already says what
-            // PLAY will do, so a ranked player sees where they stand before they queue.
-            if (choice == 0)
-            {
-                var rank = GameServices.Career?.Profile?.Rank;
-                string tier = rank == null || rank.MatchesThisSeason == 0 ? "UNRANKED"
-                            : RatingRules.TierName(RatingRules.TierFor(rank.Rating));
-                _modeSub.text = "HERO STRIKE  ·  " + tier;
-            }
-            HubKit.Fit(_modeSub, 460);
-            // Ranked is the one stake worth marking; Classic and Casual share the door family's dark
-            // (ArmyDeep went to mud beside the sunset, see `Door`).
-            _modeShape.Fill = choice == 0 ? HubStyle.DeepRed : HubStyle.Night;
-            _modeShape.Redraw();
-
-            var poster = OwnerPortraitArt.Get("UI/mode-cards/" + (choice == 0 ? "RankedCard" : choice == 1 ? "ClassicChoice" : "HeroStrikeChoice"));
-            _modePoster.sprite = poster;
-            _modePoster.color = poster != null ? Color.white : new Color(0, 0, 0, 0);
-            if (poster != null) _modePosterFit.aspectRatio = poster.rect.width / poster.rect.height;
-            _modeVeil.SetActive(poster != null);
-
-            // Three of the cast who play this mode peek out of the card's right side (no poster only).
-            for (int i = _modeFaces.childCount - 1; i >= 0; i--) Destroy(_modeFaces.GetChild(i).gameObject);
-            if (poster != null) return;
-            var cast = Roster.GetPeople(ChoiceMode);
-            int[] pick = choice == 1 ? new[] { 1, 3, 9 } : new[] { 2, 0, 1 };
-            for (int i = 0; i < pick.Length; i++)
-            {
-                var face = HubKit.Picture(_modeFaces, "Face" + i, HubKit.Portrait(Roster.At(cast, pick[i])?.Id));
-                HubKit.Place(face.rectTransform, HubKit.BottomRight, new Vector2(-i * 70, i == 1 ? 10 : 0), new Vector2(140, 140));
-                face.transform.SetAsFirstSibling();
-                var group = face.gameObject.AddComponent<CanvasGroup>();
-                group.alpha = i == 0 ? 1 : 0.72f;
-                group.blocksRaycasts = false;
-            }
+            HubBoard.SetWords(_modeTitle, TitleFor(choice), _modeSpec, ModeTitleRoom);
+            var art = HubBoard.Art(ArtFor(choice));
+            _modePoster.sprite = art;
+            _modePoster.color = art != null ? Color.white : new Color(0, 0, 0, 0);
         }
 
         private void RefreshNotices()
         {
             _taskNotice.SetActive(GameServices.Wallet != null && GameServices.Wallet.AnyClaimable);
-            _skillNotice.SetActive(HubSkillTree.AnythingNew());
+            _skillNotice.SetActive(false);
         }
 
         // ------------------------------------------------------------------ actions
@@ -427,12 +279,9 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// ⚠️⚠️ BACK ON HOME OPENS THE MENU, IT DOES NOT LEAVE FOR THE TITLE SCREEN. Owner,
-        /// 2026-09-26: "should not be able to return to the click anywhere to continue page when
-        /// pressing esc from the menu". The title screen is a door INTO the game, not a place a
-        /// player backs out to, and one Escape too many dropped them on it. BACK now opens the
-        /// hamburger MENU (a second BACK closes it), which is where BACK TO TITLE and every other
-        /// way out already live, so leaving is still one deliberate press and never a dead key.
+        /// ⚠️⚠️ BACK ON HOME OPENS THE MENU, IT DOES NOT LEAVE FOR THE TITLE SCREEN (owner, 2026-09-26).
+        /// BACK opens the hamburger MENU (a second BACK closes it), which is where BACK TO TITLE and
+        /// every other way out already live.
         /// </summary>
         public override bool Back()
         {

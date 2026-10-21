@@ -117,7 +117,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
-            yield return new WaitForSeconds(3.6f);
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
             foreach (var input in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) input.enabled = false;
             foreach (var actor in GameServices.Round.Players)

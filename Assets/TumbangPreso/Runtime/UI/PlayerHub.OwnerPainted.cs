@@ -49,6 +49,8 @@ namespace TumbangPreso.UI
                 var mark=OwnerUiLayout.Art(button.transform,"SelectedTab",OwnerUiTheme.Piece.LeftRule);OwnerUiLayout.Place(mark.rectTransform,61,68,242,6);_tabs.Add(tab,button);
             }
             var paper=OwnerUiLayout.Rect(design,"HubPagePaper").gameObject.AddComponent<OwnerUiPaper>();OwnerUiLayout.Place(paper.rectTransform,91,406,1740,491);paper.raycastTarget=false;
+            // The hand-made HOME board's colours (2026-10-22): her peach inlay on her maroon, no pale sheet.
+            paper.FaceOverride=new Color32(252,211,159,255);paper.RimOverride=new Color32(86,7,29,255);
             _ownerPageTitle=OwnerUiLayout.Text(design,"HubPageTitle","",32,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Place(_ownerPageTitle.rectTransform,126,418,1640,52);
             _list=OwnerScrollColumn.Build(design,"HubRows",new Rect(126,486,1655,373),out _scroll);
             _list.GetComponent<VerticalLayoutGroup>().padding.bottom=24;

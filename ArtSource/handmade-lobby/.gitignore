@@ -1,0 +1,8 @@
+# Scratch previews, audits and comparisons: regenerate with tools/compose_preview.py
+work/
+# Built pieces: regenerate with tools/build_lobby_art.py, build_mode_art.py, canva_groups.py.
+# The game's copies live in Assets/TumbangPreso/Resources/UI/handmade-lobby (tools/export_board.py).
+out/
+__pycache__/
+# Her originals placed on the board grid, before assembly: tools/extract_originals.py, refine_unfinished.py
+out_src/

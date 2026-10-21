@@ -9,6 +9,8 @@ namespace TumbangPreso.UI
         {
             Canvas = OwnerUiLayout.Canvas(owner, "OwnerMatchCanvas", 100);
             Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = (RectTransform)Canvas.transform;
+            _openingUi = Canvas.gameObject.AddComponent<CanvasGroup>();
+            RefreshOpeningVisibility();
             _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build(_root);
             // VISUAL-1.4: the match bar replaces the corner score slabs and the clock box.
             // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for

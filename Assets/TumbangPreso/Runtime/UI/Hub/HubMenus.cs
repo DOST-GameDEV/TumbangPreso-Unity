@@ -18,6 +18,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubMenu : HubScreen
     {
+        public override bool WearsBoard => true;
         public override bool IsPopup => true;
 
         public override void Build()
@@ -48,11 +49,11 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(plate.rectTransform);
             plate.ShadowOffset = new Vector2(10, -12);
 
-            var close = HubKit.IconButton(panel, "CloseButton", HubGlyph.Mark.Close, HubStyle.Honey, () => Hub.Back(), 132);
+            var close = HubKit.IconButton(panel, "CloseButton", HubGlyph.Mark.Close, HubStyle.DeepRed, () => Hub.Back(), 132);
             HubKit.Place((RectTransform)close.transform, HubKit.TopRight, new Vector2(-24, -24), new Vector2(84, 84));
             var prompt = HubKit.BackPrompt(close.transform);
             HubKit.Place((RectTransform)prompt.transform, HubKit.BottomLeft, new Vector2(-16, -16), new Vector2(40, 40));
-            var heading = HubKit.Text(panel, "Heading", "MENU", HubStyle.Display, true, HubStyle.Honey, TextAnchor.MiddleLeft);
+            var heading = HubKit.Text(panel, "Heading", "MENU", HubStyle.Display, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleLeft);
             HubKit.Place(heading.rectTransform, HubKit.TopLeft, new Vector2(34, -24), new Vector2(340, 96));
 
             for (int i = 0; i < names.Length; i++)
@@ -100,6 +101,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubAvatar : HubScreen
     {
+        public override bool WearsBoard => true;
         public override bool IsPopup => true;
         private Image _big;
         private readonly System.Collections.Generic.List<HubButton> _tiles = new System.Collections.Generic.List<HubButton>();
@@ -174,6 +176,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubShopPopup : HubScreen
     {
+        public override bool WearsBoard => true;
         public override bool IsPopup => true;
 
         public override void Build()

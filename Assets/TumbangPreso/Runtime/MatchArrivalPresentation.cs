@@ -123,7 +123,12 @@ namespace TumbangPreso
             // map, and false when there is none to play here: then nothing below is different. The
             // hold, the input, the curtain and the camera's return stay this component's (`Finish`).
             var opening = Map.ArenaIntro.Ensure();
-            if (opening != null && _rigActive && opening.Begin(_camera, _players, _position, _rotation, _fov, reduced))
+            // ⚠️ A SPECTATOR SEES THE OPENING TOO (owner, 2026-10-22: "spectator didnt see the cutscene or
+            // walking shit in arena"). It was gated on the player rig, which a watcher's camera never has,
+            // so a spectator got the plain arrival. The film needs only the camera, and SpectatorCamera
+            // already stands still while the clock is held; only the rig's handoff below is a player's.
+            bool watcherView = _spectator != null && _spectator.enabled && _camera.enabled;
+            if (opening != null && (_rigActive || watcherView) && opening.Begin(_camera, _players, _position, _rotation, _fov, reduced))
             {
                 Trace($"arena opening prepared ({opening.Timeline.End:F1} s, full={opening.Timeline.Full})");
                 _ink.color = Color.clear; _captionGroup.alpha = 0;

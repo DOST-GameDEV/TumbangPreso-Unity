@@ -361,7 +361,8 @@ namespace TumbangPreso.Map
 
             Fireworks(fx, dt);
             if (stage.Applied != _layout && !stage.Travelling) Adopt(stage);
-            bool still = !stage.Travelling && stage.Applied == _layout;
+            // Nothing drips from decks the match's opening has not built yet.
+            bool still = !stage.Travelling && stage.Applied == _layout && !ArenaIntro.StageUnbuilt;
 
             Bodies(stage, fx, dt);
             if (still) { Pads(fx); Pickups(fx, dt); Emitters(fx, dt, eye, centre, reduced); }

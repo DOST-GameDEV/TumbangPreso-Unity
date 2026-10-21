@@ -40,6 +40,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubCharacterSelect : HubScreen
     {
+        public override bool WearsBoard => true;
         public override float CourtShade => 0.78f;
         public override bool ShowsQueuePlate => false;
 

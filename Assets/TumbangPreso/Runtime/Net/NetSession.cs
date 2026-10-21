@@ -659,7 +659,10 @@ namespace TumbangPreso.Net
         // an OPEN seat the two would disagree about which bodies exist: they may not meet. The room branch appended the
         // field without a number because an older parser ignores the suffix; that keeps the rules readable, not the
         // match the same. Windows and Android rebuilt from the same commit and shipped together.
-        public const int ProtocolVersion = 174;
+        // 175 (2026-10-21): Nemu's rework (SOULBOUND). Her ghost frames carry a fourth kind, the dormant ghost, a reclaim
+        // request ("ReqReclaim") joins the wire, and Peeker/Fetcher/Keeper's timings change. A 174 peer rejects the frames
+        // and judges the ghosts on the old clocks: the two may not meet.
+        public const int ProtocolVersion = 175;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -14,7 +14,7 @@ namespace TumbangPreso.Tests
         {
             var expected = new[] { SceneFlow.Eskinita, SceneFlow.IlalimNgTulay,
                 SceneFlow.LagoonCove, SceneFlow.Kanto, SceneFlow.Arena, SceneFlow.Payo };
-            var names = new[] { "TONDO", "ERMITA", "SITANGKAI", "BGC", "THE PHILIPPINE ARENA", "PAYO" };
+            var names = new[] { "TONDO", "ERMITA", "SITANGKAI", "BGC", "PHILIPPINE ARENA", "BANAUE" };
             CollectionAssert.AreEqual(expected, SceneFlow.Maps);
             Assert.AreEqual(expected.Length, SceneFlow.MapRegistry.Length);
             Assert.AreEqual(expected.Length, GameLaunch.Maps.Length);

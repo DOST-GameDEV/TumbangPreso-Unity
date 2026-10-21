@@ -6,6 +6,8 @@ namespace TumbangPreso.UI
     {
         private TumpMatchReadout _nativeReadout;
         private SlipperRecall _recall;
+        /// <summary>SOULBOUND: the recall mark again, one per dormant ghost Nemu can have waiting at once.</summary>
+        private readonly SlipperRecall[] _dormantMarks = new SlipperRecall[3];
         public bool NativePresentation => _nativeReadout != null;
         private void BuildNative()
         {
@@ -22,6 +24,12 @@ namespace TumbangPreso.UI
             var recall = new GameObject("NativeRecallMark"); recall.transform.SetParent(transform, false);
             _recall = recall.AddComponent<SlipperRecall>();
             _recall.Build(recall.transform);
+            for (int i = 0; i < _dormantMarks.Length; i++)
+            {
+                var mark = new GameObject("NativeDormantMark" + i); mark.transform.SetParent(transform, false);
+                _dormantMarks[i] = mark.AddComponent<SlipperRecall>();
+                _dormantMarks[i].Build(mark.transform);
+            }
             if (NetAuthority.IsNetworked)
             {
                 _chat = LobbyChat.Attach(_root, true);
@@ -53,8 +61,23 @@ namespace TumbangPreso.UI
             // that at all while spectating, so a mark drawn on the last played frame would
             // simply stay on screen. `PopHitmarker`'s note records the identical fault.
             if (_recall != null) _recall.SetVisible(!spectating);
+            foreach (var mark in _dormantMarks) if (mark != null) mark.SetVisible(!spectating);
             foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include, FindObjectsSortMode.None)) card.gameObject.SetActive(!spectating);
             // The next-taya/standings card describes the match, including for watchers.
+        }
+    
+        /// <summary>One recall mark per dormant ghost of the local Nemu (`SlipperRecall.TrackDormant`); spare marks hide.</summary>
+        private void TrackDormantMarks()
+        {
+            int used = 0;
+            if (_local != null)
+                foreach (var ghost in Abilities.NemuDormant.Live)
+                {
+                    if (used >= _dormantMarks.Length) break;
+                    if (ghost == null || ghost.Reclaimed || ghost.Expired || ghost.OwnerSlot != _local.PlayerSlot) continue;
+                    _dormantMarks[used++]?.TrackDormant(_local, ghost);
+                }
+            for (int i = used; i < _dormantMarks.Length; i++) _dormantMarks[i]?.Hide();
         }
     }
 }

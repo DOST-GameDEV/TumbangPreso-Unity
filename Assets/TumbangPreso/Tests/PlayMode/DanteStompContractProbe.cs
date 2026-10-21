@@ -112,7 +112,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator FissureLaunchesForwardTargetsWhileItsCasterAndRearStaySafe()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,GameMode.HeroStrike);
-            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(3.6f);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider=new SoloProvider();var round=GameServices.Round;
             var caster=round.PlayerAt(1);var forward=round.PlayerAt(2);var rear=round.PlayerAt(3);
             foreach(var player in round.Players){player.Intent.Clear();player.Intent.Parked=false;player.ClearStun();player.ClearTrip();}

@@ -84,6 +84,12 @@ offscreen with Three.js and places each one into the SVG shot as an image. The s
 - **Her palette still rules the set** (`src/lib/palette.ts`): the logo's seven, her burst for
   impacts, **no blue in anything drawn in code** (`CLAUDE.md` § 6.4). The tsinelas keeps the
   game model's own colours: it is authored art, and § 6.0 forbids repainting it.
+- **The set has its own palette** (`src/lib/set.ts`, one named colour per element; `src/lib/look.ts`
+  picks the look). Since the hand-made HOME UI (2026-10-21) the loop is drawn in **Rosas**, the
+  owner's pick of three directions: a dusty-rose sky that sits well above her maroon panels
+  (#56071D) in value, with no large gold, orange or deep-red area to swallow her tiles. A filter
+  over the old colours was rejected; every set colour is chosen. Zack, his lightning, the actors,
+  the lata and the logo keep `P`. The old deep-red dusk stays in `LOOKS` as `dusk` for reference.
 - **The camera is never still**, even at rest (🧑: *"dynamic camera movement"*): idle drift,
   a dutch push-in on the wind, whip pans between shots, a whip-in on the run home.
 

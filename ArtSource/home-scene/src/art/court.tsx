@@ -1,6 +1,7 @@
 import React from 'react';
 import { random } from 'remotion';
 import { P } from '../lib/palette';
+import { S } from '../lib/set';
 import { clamp01, loopNoise } from '../lib/time';
 import { chamfer, polyD, Pt } from '../lib/shapes';
 import { Plant } from './set';
@@ -18,15 +19,7 @@ export const HORIZON = 560;
 export const CAN_AT = { x: 1180, y: 642 };
 export const SEAN_AT = { x: 1372, y: 660 };
 
-const BANDS: [number, string][] = [
-  [0, '#3A0612'],
-  [130, '#4C0917'],
-  [240, '#661020'],
-  [330, '#851A25'],
-  [410, '#A82E2A'],
-  [480, '#C84C33'],
-  [530, '#DA6A3C'],
-];
+const BANDS: [number, string][] = [0, 130, 240, 330, 410, 480, 530].map((y, i) => [y, S.skyEast[i]]);
 
 export const EastSky: React.FC<{ f: number }> = ({ f }) => (
   <g>
@@ -47,8 +40,8 @@ export const EastSky: React.FC<{ f: number }> = ({ f }) => (
       const r = 3 + random(`es${i}r`) * 4;
       return (
         <g key={i} transform={`translate(${x} ${y})`} opacity={0.3 + 0.7 * tw}>
-          <rect x={-r * 0.4} y={-r * 1.8} width={r * 0.8} height={r * 3.6} fill="#FFE7A8" />
-          <rect x={-r * 1.8} y={-r * 0.4} width={r * 3.6} height={r * 0.8} fill="#FFE7A8" />
+          <rect x={-r * 0.4} y={-r * 1.8} width={r * 0.8} height={r * 3.6} fill={S.star} />
+          <rect x={-r * 1.8} y={-r * 0.4} width={r * 3.6} height={r * 0.8} fill={S.star} />
         </g>
       );
     })}
@@ -81,7 +74,7 @@ const EAST: T[] = [
 export const EastCity: React.FC<{ f: number }> = ({ f }) => (
   <g>
     {/* Low far city first, in the haze. */}
-    <path d={polyD([[-60, HORIZON], [-60, 470], [140, 470], [140, 490], [380, 490], [380, 460], [600, 460], [600, 480], [900, 480], [900, 455], [1250, 455], [1250, 485], [1560, 485], [1560, 465], [1980, 465], [1980, HORIZON]])} fill="#C8603A" />
+    <path d={polyD([[-60, HORIZON], [-60, 470], [140, 470], [140, 490], [380, 490], [380, 460], [600, 460], [600, 480], [900, 480], [900, 455], [1250, 455], [1250, 485], [1560, 485], [1560, 465], [1980, 465], [1980, HORIZON]])} fill={S.east.haze} />
     {EAST.map((t) => {
       const h = HORIZON - t.top;
       const cols = Math.max(2, Math.round(t.w / 26));
@@ -92,18 +85,18 @@ export const EastCity: React.FC<{ f: number }> = ({ f }) => (
         for (let c = 0; c < cols; c++) {
           const k = `${t.seed}-${r}-${c}`;
           const on = random(k) > 0.7 ? clamp01(0.5 + 0.9 * loopNoise(k, f, 0.9)) : 0;
-          wins.push(<rect key={k} x={t.x + c * gx + gx * 0.26} y={t.top + 22 + r * 22} width={gx * 0.48} height={9} fill={on > 0.3 ? '#FFE9A8' : '#D9774A'} />);
+          wins.push(<rect key={k} x={t.x + c * gx + gx * 0.26} y={t.top + 22 + r * 22} width={gx * 0.48} height={9} fill={on > 0.3 ? S.east.lit : S.east.win} />);
         }
       const crown =
-        t.crown === 'step' ? <rect x={t.x + t.w * 0.2} y={t.top - 24} width={t.w * 0.6} height={26} fill="#F2A160" /> :
-        t.crown === 'tank' ? <rect x={t.x + t.w * 0.5} y={t.top - 20} width={t.w * 0.3} height={20} fill="#C4552F" /> :
-        t.crown === 'mast' ? <rect x={t.x + t.w / 2 - 3} y={t.top - 64} width={6} height={64} fill="#C4552F" /> : null;
+        t.crown === 'step' ? <rect x={t.x + t.w * 0.2} y={t.top - 24} width={t.w * 0.6} height={26} fill={S.east.crown} /> :
+        t.crown === 'tank' ? <rect x={t.x + t.w * 0.5} y={t.top - 20} width={t.w * 0.3} height={20} fill={S.east.side} /> :
+        t.crown === 'mast' ? <rect x={t.x + t.w / 2 - 3} y={t.top - 64} width={6} height={64} fill={S.east.side} /> : null;
       return (
         <g key={t.seed}>
           {crown}
-          <rect x={t.x} y={t.top} width={t.w} height={h} fill="#F09A58" />
-          <rect x={t.x + t.w * 0.7} y={t.top} width={t.w * 0.3} height={h} fill="#C4552F" />
-          <rect x={t.x} y={t.top} width={t.w} height={5} fill="#FFD27A" />
+          <rect x={t.x} y={t.top} width={t.w} height={h} fill={S.east.front} />
+          <rect x={t.x + t.w * 0.7} y={t.top} width={t.w * 0.3} height={h} fill={S.east.side} />
+          <rect x={t.x} y={t.top} width={t.w} height={5} fill={S.east.top} />
           {wins}
         </g>
       );
@@ -117,42 +110,42 @@ export const Court: React.FC<{ f: number }> = ({ f }) => {
   for (let i = -8; i <= 10; i++) {
     const xb = vp[0] + i * 300;
     const t = (HORIZON + 60 - vp[1]) / (1080 - vp[1]);
-    seams.push(<path key={i} d={polyD([[vp[0] + (xb - vp[0]) * t - 1, HORIZON + 60], [vp[0] + (xb - vp[0]) * t + 1, HORIZON + 60], [xb + 2.5, 1080], [xb - 2.5, 1080]])} fill="#D08A58" />);
+    seams.push(<path key={i} d={polyD([[vp[0] + (xb - vp[0]) * t - 1, HORIZON + 60], [vp[0] + (xb - vp[0]) * t + 1, HORIZON + 60], [xb + 2.5, 1080], [xb - 2.5, 1080]])} fill={S.court.seam} />);
   }
-  [680, 760, 880].forEach((y, i) => seams.push(<rect key={'h' + i} x={-60} y={y} width={2040} height={3 + i} fill="#D08A58" />));
+  [680, 760, 880].forEach((y, i) => seams.push(<rect key={'h' + i} x={-60} y={y} width={2040} height={3 + i} fill={S.court.seam} />));
   return (
     <g>
       {/* The far parapet, lit. */}
-      <rect x={-60} y={HORIZON} width={2040} height={60} fill="#E4905A" />
-      <rect x={-60} y={HORIZON} width={2040} height={16} fill="#F6B97C" />
-      <rect x={-60} y={HORIZON + 50} width={2040} height={10} fill="#C4703F" />
+      <rect x={-60} y={HORIZON} width={2040} height={60} fill={S.court.parapet} />
+      <rect x={-60} y={HORIZON} width={2040} height={16} fill={S.court.parapetTop} />
+      <rect x={-60} y={HORIZON + 50} width={2040} height={10} fill={S.court.parapetBase} />
       {/* The floor, gold where the last sun lies on it. */}
-      <rect x={-60} y={HORIZON + 60} width={2040} height={600} fill="#E8A56B" />
+      <rect x={-60} y={HORIZON + 60} width={2040} height={600} fill={S.court.floor} />
       {seams}
       {/* The taya box in chalk, in perspective round the can, and the can's own circle. */}
-      <path d={polyD([[980, 668], [1392, 668], [1470, 770], [900, 770]])} fill="none" stroke="#FFEAC4" strokeWidth={8} strokeLinejoin="miter" opacity={0.85} />
-      <path d={chamfer(CAN_AT.x - 62, CAN_AT.y - 14, 124, 28, 12)} fill="none" stroke="#FFEAC4" strokeWidth={7} opacity={0.9} />
+      <path d={polyD([[980, 668], [1392, 668], [1470, 770], [900, 770]])} fill="none" stroke={S.court.chalk} strokeWidth={8} strokeLinejoin="miter" opacity={0.85} />
+      <path d={chamfer(CAN_AT.x - 62, CAN_AT.y - 14, 124, 28, 12)} fill="none" stroke={S.court.chalk} strokeWidth={7} opacity={0.9} />
       {/* The throw line, under his feet, broken where the chalk ran thin. */}
       {[[380, 170], [580, 90], [700, 220], [960, 120], [1110, 260], [1400, 160]].map(([x, w], i) => (
-        <rect key={i} x={x} y={948 + i * 3} width={w} height={11} fill="#FFEAC4" opacity={0.8} />
+        <rect key={i} x={x} y={948 + i * 3} width={w} height={11} fill={S.court.chalk} opacity={0.8} />
       ))}
       {/* A residents' water tank far left, plastic chairs and a plant far right. */}
       <g transform="translate(270 612)">
-        <rect x={-52} y={-40} width={10} height={40} fill="#6E3A22" />
-        <rect x={42} y={-40} width={10} height={40} fill="#6E3A22" />
-        <path d={chamfer(-62, -150, 124, 112, 12)} fill="#A09528" />
-        <rect x={30} y={-150} width={32} height={112} fill="#7C7420" />
-        <rect x={-62} y={-150} width={124} height={6} fill="#D8CC4A" />
+        <rect x={-52} y={-40} width={10} height={40} fill={S.court.tank.leg} />
+        <rect x={42} y={-40} width={10} height={40} fill={S.court.tank.leg} />
+        <path d={chamfer(-62, -150, 124, 112, 12)} fill={S.court.tank.body} />
+        <rect x={30} y={-150} width={32} height={112} fill={S.court.tank.shade} />
+        <rect x={-62} y={-150} width={124} height={6} fill={S.court.tank.top} />
       </g>
       {[1610, 1700].map((x, i) => (
         <g key={i} transform={`translate(${x} ${660 + i * 6})`}>
-          <rect x={-30} y={-70} width={60} height={46} fill={P.rimRed} />
-          <rect x={-34} y={-30} width={68} height={12} fill="#E0502A" />
-          <rect x={-30} y={-18} width={8} height={18} fill="#9A220A" />
-          <rect x={22} y={-18} width={8} height={18} fill="#9A220A" />
+          <rect x={-30} y={-70} width={60} height={46} fill={S.chair.back} />
+          <rect x={-34} y={-30} width={68} height={12} fill={S.chair.seat} />
+          <rect x={-30} y={-18} width={8} height={18} fill={S.chair.leg} />
+          <rect x={22} y={-18} width={8} height={18} fill={S.chair.leg} />
         </g>
       ))}
-      <Plant f={f} x={1830} y={680} s={0.7} seed="rp1" pot={P.persimmon} potShade="#C9602A" />
+      <Plant f={f} x={1830} y={680} s={0.7} seed="rp1" pot={S.plant.pot2} potShade={S.plant.pot2Shade} />
     </g>
   );
 };

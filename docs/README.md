@@ -1,5 +1,25 @@
 # Documentation: Start Here
 
+Opening HUD half-second fade before the countdown:
+[implementation, compiler checks and pending native regression](reports/opening-hud-2026-10-22.md).
+
+Four-round halftime scheduling:
+[live ordinary-break diagnosis and owner-approved change](reports/four-round-halftime-2026-10-21.md).
+
+Actual halftime Blindfold rendering failure:
+[saved owner footage and playback investigation](reports/halftime-live-blindfold-2026-10-21.md).
+
+Removed train/Overclock announcements and distant can-reset instruction:
+[scope and compilation evidence](reports/hud-text-removal-2026-10-21.md).
+
+Delayed halftime highlights: [reproduction, timing correction and native checks](reports/halftime-highlight-2026-10-21.md).
+
+Penalty crosshair ownership and warnings:
+[investigation and focused validation](reports/penalty-feedback-2026-10-21.md).
+
+Warning banner typography, size, repeat appearance and error cue:
+[native previews and checks](reports/warning-banner-2026-10-21/README.md).
+
 Main integration and all six current previews: [branch history and preview validation](reports/main-merge-preview-2026-10-20.md).
 
 Current five-map pool and refreshed video previews: [source receipts, native playback and selection layout](reports/map-preview-refresh-2026-10-18/README.md).

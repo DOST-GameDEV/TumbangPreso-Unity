@@ -47,7 +47,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator Start()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,GameMode.HeroStrike);
-            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(3.6f);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider=new SoloProvider();GraphicsProfiles.Apply(0);
             Object.FindFirstObjectByType<TumbangPreso.CameraSystem.CameraRig>().SetAimSource(TumbangPreso.CameraSystem.AimSource.Movement);
             Assert.IsTrue(GameServices.Round.RoundActive);

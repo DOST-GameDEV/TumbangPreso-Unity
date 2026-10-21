@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    /// <summary>DIN for match text; the central match clock keeps Darumadrop.</summary>
+    /// <summary>DIN for match text; the clock and scoreboard headlines keep Darumadrop.</summary>
     public static class InGameTypography
     {
         private static Font _reading, _bold, _clock;
@@ -26,7 +26,8 @@ namespace TumbangPreso.UI
             bool match = IsMatchScene(scene) ||
                 (scene.name == "DontDestroyOnLoad" && IsMatchScene(SceneManager.GetActiveScene()));
             if (!match) return original;
-            if (label.name == "TimeLeft" || label.name == "TimerLabel")
+            if (label.name == "TimeLeft" || label.name == "TimerLabel" ||
+                label.name == "RoundHeadline" || label.name == "ResultHeadline")
                 return Clock != null ? Clock : original;
             // Keep font-drawn reticle symbols in their existing symbol-capable face.
             if (label.name == "Reticle" || label.name == "HitConfirmation") return original;
