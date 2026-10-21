@@ -4,18 +4,18 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// Letter-spacing for a single-line label, because legacy `Text` has none.
+    /// Letter-spacing for legacy `Text`. Wrapped labels opt into per-line centring
+    /// and must reserve the added width before the text generator wraps.
     ///
-    /// ⚠️⚠️ IT EXISTS FOR ONE MEASURED DISAGREEMENT, NOT AS A TYPE FEATURE. Her
+    /// Originally added for one measured disagreement: the sign-in
     /// tab captions measure 107 units wide for SIGN UP and Paalalabas at the size
     /// that matches her cap height draws 96, so she tracked them out by about two
     /// units a gap. Every other caption on the screen came out inside five units
-    /// of hers untouched, which is why nothing else carries this.
+    /// of hers untouched. Warning banners now use subtle tracking at the owner's request.
     ///
-    /// ⚠️ IT MOVES QUADS, IT DOES NOT RE-WRAP. `Text` emits four vertices per
-    /// character in reading order, so shifting each quad by its index times the
-    /// spacing is exact for one line and wrong for two. Everything it is applied
-    /// to is a single centred caption; do not put it on a paragraph.
+    /// It moves quads, it does not re-wrap. Warning banners reserve the added
+    /// width in their layout and use PerLine so wrapped reasons stay centred.
+    /// Existing sign-in captions keep their original single-line treatment.
     ///
     /// ⚠️ THE ROW IS RE-CENTRED BY HALF THE TOTAL so a centred caption stays
     /// centred. Without that, tracking a label out pushes it right by the whole
@@ -26,12 +26,14 @@ namespace TumbangPreso.UI
     public sealed class OwnerUiTracking : BaseMeshEffect
     {
         public float Spacing;
+        public bool PerLine;
 
-        public static void Apply(Text label, float spacing)
+        public static void Apply(Text label, float spacing, bool perLine = false)
         {
             var tracking = label.gameObject.GetComponent<OwnerUiTracking>();
             if (tracking == null) tracking = label.gameObject.AddComponent<OwnerUiTracking>();
             tracking.Spacing = spacing;
+            tracking.PerLine = perLine;
             label.SetVerticesDirty();
         }
 
@@ -42,16 +44,37 @@ namespace TumbangPreso.UI
             if (glyphs < 2) return;
 
             var text = GetComponent<Text>();
-            float total = Spacing * (glyphs - 1);
+            if (PerLine)
+            {
+                // CrispUiText preserves native wrapping. Line starts therefore address
+                // these same character quads, without counting the generator's sentinel.
+                glyphs = Mathf.Min(glyphs, text.text.Length);
+                var lines = text.cachedTextGenerator.lines;
+                for (int line = 0; line < lines.Count; line++)
+                {
+                    int first = lines[line].startCharIdx;
+                    int end = line + 1 < lines.Count ? Mathf.Min(glyphs, lines[line + 1].startCharIdx) : glyphs;
+                    while (end > first && char.IsWhiteSpace(text.text[end - 1])) end--;
+                    TrackLine(helper, text, first, end);
+                }
+                return;
+            }
+            TrackLine(helper, text, 0, glyphs);
+        }
+
+        private void TrackLine(VertexHelper helper, Text text, int first, int end)
+        {
+            if (end - first < 2) return;
+            float total = Spacing * (end - first - 1);
             float start = text.alignment == TextAnchor.UpperCenter || text.alignment == TextAnchor.MiddleCenter
                           || text.alignment == TextAnchor.LowerCenter ? -total * .5f
                         : text.alignment == TextAnchor.UpperRight || text.alignment == TextAnchor.MiddleRight
                           || text.alignment == TextAnchor.LowerRight ? -total : 0;
 
             var vertex = new UIVertex();
-            for (int glyph = 0; glyph < glyphs; glyph++)
+            for (int glyph = first; glyph < end; glyph++)
             {
-                float shift = start + Spacing * glyph;
+                float shift = start + Spacing * (glyph - first);
                 for (int corner = 0; corner < 4; corner++)
                 {
                     int index = glyph * 4 + corner;

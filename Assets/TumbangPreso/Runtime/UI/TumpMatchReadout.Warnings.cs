@@ -17,6 +17,8 @@ namespace TumbangPreso.UI
         /// <summary>The exact refusal sentence the rules produced, whatever the two lines draw.</summary>
         public string WarningText => _warningRoot != null && _warningRoot.gameObject.activeSelf ? _warningWords ?? "" : "";
         private const float WarningTitleHeight = 48, WarningReasonHeight = 38, WarningInset = 7, TextSlack = 12;
+        private const float WarningTracking = .65f;
+        private const string CastWarningPrefix = "CANNOT CAST - ";
 
         // ⚠️ UI REVAMP 2026-10-06 (guide p.12): ONE RED TOY TILE. The short title sits on the red
         // face and the reason in a darker band inset into the same tile, so the pair can never be
@@ -37,11 +39,15 @@ namespace TumbangPreso.UI
             _reasonPlate=OwnerUiLayout.Rect(_warningRoot,"WarningReasonPlate").gameObject.AddComponent<HudCard>();
             _reasonPlate.Glass(HudDraw.AlarmDeep,HudDraw.Lean,2,0).raycastTarget=false;_reasonPlate.BorderWidth=0;_reasonPlate.FollowContrast=false;
             _warningText=OwnerUiLayout.Text(_warningRoot,"WarningText","",38,OwnerUiLayout.TypeRole.Reading);
+            if(InGameTypography.Bold!=null)_warningText.font=InGameTypography.Bold;
+            else _warningText.fontStyle=FontStyle.Bold;
             _warningText.color=Color.white;_warningText.alignment=TextAnchor.MiddleCenter;
             _warningText.horizontalOverflow=HorizontalWrapMode.Wrap;_warningText.verticalOverflow=VerticalWrapMode.Overflow;
+            OwnerUiTracking.Apply(_warningText,WarningTracking,perLine:true);
             _warningReason=OwnerUiLayout.Text(_reasonPlate.transform,"WarningReason","",28,OwnerUiLayout.TypeRole.Reading);
             _warningReason.color=new Color32(255,226,220,255);_warningReason.alignment=TextAnchor.MiddleCenter;
             _warningReason.horizontalOverflow=HorizontalWrapMode.Wrap;_warningReason.verticalOverflow=VerticalWrapMode.Overflow;
+            OwnerUiTracking.Apply(_warningReason,WarningTracking,perLine:true);
             _warningRoot.gameObject.SetActive(false);
         }
 
@@ -50,20 +56,34 @@ namespace TumbangPreso.UI
             float limit=Mathf.Max(260,Mathf.Min(_statusPromptMaxWidth,1000));
             bool reason=!string.IsNullOrEmpty(_warningReason.text);
             float width=Mathf.Min(limit,Mathf.Max(_titleWidth,_reasonWidth)+56);
-            OwnerUiLayout.Place(_warningText.rectTransform,20,0,width-40,WarningTitleHeight);
+            PlaceWarningText(_warningText,20,0,width-40,WarningTitleHeight);
             float titleHeight=Mathf.Max(WarningTitleHeight,_warningText.preferredHeight+10);
-            _warningText.rectTransform.sizeDelta=new Vector2(width-40,titleHeight);
+            _warningText.rectTransform.sizeDelta=new Vector2(_warningText.rectTransform.sizeDelta.x,titleHeight);
             if(_reasonPlate.gameObject.activeSelf!=reason)_reasonPlate.gameObject.SetActive(reason);
             float reasonHeight=0;
             if(reason)
             {
                 OwnerUiLayout.Place(_reasonPlate.rectTransform,WarningInset,titleHeight,width-WarningInset*2,WarningReasonHeight);
-                OwnerUiLayout.Place(_warningReason.rectTransform,14,0,width-WarningInset*2-28,WarningReasonHeight);
+                PlaceWarningText(_warningReason,14,0,width-WarningInset*2-28,WarningReasonHeight);
                 reasonHeight=Mathf.Max(WarningReasonHeight,_warningReason.preferredHeight+6);
                 _reasonPlate.rectTransform.sizeDelta=new Vector2(width-WarningInset*2,reasonHeight);
-                _warningReason.rectTransform.sizeDelta=new Vector2(width-WarningInset*2-28,reasonHeight);
+                _warningReason.rectTransform.sizeDelta=new Vector2(_warningReason.rectTransform.sizeDelta.x,reasonHeight);
+                // Both panels shear around their own centre. Move the lower band onto the
+                // outer panel's slope so the visible inset stays equal on both sides.
+                _reasonPlate.rectTransform.anchoredPosition=new Vector2(
+                    WarningInset+(WarningInset-titleHeight)*.5f*_warningPlate.Slant,-titleHeight);
             }
             _warningRoot.sizeDelta=new Vector2(width,titleHeight+(reason?reasonHeight+WarningInset:4));
+        }
+
+        private static float TrackingWidth(Text text)=>Mathf.Max(0,text.text.Length-1)*WarningTracking;
+
+        private static void PlaceWarningText(Text text,float x,float y,float width,float height)
+        {
+            // Reserve the full line's added spacing before the generator wraps. Each drawn
+            // line then expands around its own centre, within the original padded area.
+            float extra=TrackingWidth(text);
+            OwnerUiLayout.Place(text.rectTransform,x+extra*.5f,y,Mathf.Max(1,width-extra),height);
         }
 
         /// <summary>One measurement per sentence, without wrapping, plus slack.</summary>
@@ -71,7 +91,18 @@ namespace TumbangPreso.UI
         {
             var mode=text.horizontalOverflow;text.horizontalOverflow=HorizontalWrapMode.Overflow;
             float width=text.preferredWidth;text.horizontalOverflow=mode;
-            return string.IsNullOrEmpty(text.text)?0:Mathf.Ceil(width)+TextSlack;
+            return string.IsNullOrEmpty(text.text)?0:Mathf.Ceil(width+TrackingWidth(text))+TextSlack;
+        }
+
+        private static string CastWarning(HeroKit.CastOutcome answer,HeroKit kit)
+        {
+            if(answer==HeroKit.CastOutcome.Cooling)return CastWarningPrefix+"ABILITY IS ON COOLDOWN";
+            if(answer==HeroKit.CastOutcome.NoCharge&&kit!=null)
+            {
+                int missing=Mathf.CeilToInt(Mathf.Max(0,kit.UltimateCost-kit.UltimateCharge));
+                return missing>0?CastWarningPrefix+missing+" MORE OBJECTIVE POINTS REQUIRED":null;
+            }
+            return CastWarningPrefix+"ABILITY MUST MEET REQUIREMENTS";
         }
 
         private void Warnings(CharacterMotor local,bool spectating)
@@ -115,10 +146,12 @@ namespace TumbangPreso.UI
                         var slot=(HeroAbilitySystem.Slot)i;float age=powers.SecondsSinceAnswer(slot);
                         if(age<newest){newest=age;answer=powers.LastAnswer(slot);}
                     }
-                    if(newest<1.25f&&answer==HeroKit.CastOutcome.Cast&&_recentWarning=="CANNOT CAST - ABILITY MUST MEET REQUIREMENTS")
-                    {_recentWarning=null;_warningUntil=0;}
-                    else if(newest<1.25f&&answer!=HeroKit.CastOutcome.Cast&&answer!=HeroKit.CastOutcome.Missing)
-                        refusal="CANNOT CAST - ABILITY MUST MEET REQUIREMENTS";
+                    if(newest<1.25f&&answer!=HeroKit.CastOutcome.Missing)
+                    {
+                        refusal=answer==HeroKit.CastOutcome.Cast?null:CastWarning(answer,powers.Kit);
+                        if(refusal==null&&_recentWarning!=null&&_recentWarning.StartsWith(CastWarningPrefix,System.StringComparison.Ordinal))
+                        {_recentWarning=null;_warningUntil=0;}
+                    }
                 }
                 if(refusal!=null){_recentWarning=refusal;_warningUntil=Time.unscaledTime+1.25f;}
                 if(Time.unscaledTime<_warningUntil)text=_recentWarning;

@@ -114,9 +114,14 @@ Submit remains usable on Home. [Focused evidence](reports/hero-quality-2026-10-0
 
 ## Current Feedback HUD layout
 
-Warning banners display both the warning title and its reason in uppercase,
-including camping/idling penalties and action refusals. Preserve the rule text
-and measure the displayed uppercase text for wrapping.
+Warning banners display both lines in uppercase: DIN Bold for the title and
+DIN Light for the reason, with subtle 0.65-unit letter spacing. Reserve spacing
+before wrapping and centre each wrapped line independently. The darker reason
+band follows the outer panel's shear so its left/right insets remain equal.
+`CANNOT CAST` uses the recorded outcome: `ABILITY IS ON COOLDOWN` for Cooling,
+`X MORE OBJECTIVE POINTS REQUIRED` for NoCharge (the current ultimate deficit,
+rounded up), and `ABILITY MUST MEET REQUIREMENTS` for other refusals. A filled
+meter clears the point warning; a successful cast clears any cast refusal.
 
 Harry's mockup separates status cards at bottom-left, the action and contained
 progress centrally below aim, and a dark-red warning above aim. Persistent

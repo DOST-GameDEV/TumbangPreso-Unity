@@ -927,6 +927,48 @@ namespace TumbangPreso.PlayTests
             finally{SettingsStore.Current.HudScale=scale;}
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator CastRefusalsExplainCooldownAndRemainingObjectivePoints()
+        {
+            yield return Open(GameMode.HeroStrike);
+            var round=GameServices.Round;var local=round.PlayerAt(GameLaunch.SoloSeat);
+            local.GetComponent<PlayerInputReader>().enabled=false;
+            local.GetComponent<Carrier>().enabled=false;local.enabled=false;round.enabled=false;
+            local.Intent.Clear();local.Intent.Parked=false;Assert.IsTrue(local.CanAct());
+            var powers=local.AbilitySystem;powers.BindHero("dante");powers.enabled=false;
+            var update=typeof(HeroAbilitySystem).GetMethod("Update",BindingFlags.Instance|BindingFlags.NonPublic);
+            var view=Object.FindFirstObjectByType<TumpMatchReadout>();
+
+            powers.Kit.Skill1.ApplyNetworkSnapshot(5,0);
+            local.Intent.Set(Verb.Skill1,true);update.Invoke(powers,null);
+            Assert.AreEqual(HeroKit.CastOutcome.Cooling,powers.LastAnswer(HeroAbilitySystem.Slot.Skill1));
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - ABILITY IS ON COOLDOWN",view.WarningText);
+
+            local.Intent.Set(Verb.Skill1,false);update.Invoke(powers,null);yield return null;
+            powers.Kit.AddUltimateCharge(powers.Kit.UltimateCost-3);
+            local.Intent.Set(Verb.Ultimate,true);update.Invoke(powers,null);
+            Assert.AreEqual(HeroKit.CastOutcome.NoCharge,powers.LastAnswer(HeroAbilitySystem.Slot.Ultimate));
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - 3 MORE OBJECTIVE POINTS REQUIRED",view.WarningText);
+            powers.Kit.AddUltimateCharge(2);view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - 1 MORE OBJECTIVE POINTS REQUIRED",view.WarningText);
+            powers.Kit.AddUltimateCharge(1);view.Tick(local,false,false,false,false);
+            Assert.AreEqual("",view.WarningText,"A filled meter must not show zero points required.");
+
+            local.Intent.Set(Verb.Ultimate,false);update.Invoke(powers,null);yield return null;
+            powers.Kit.Skill1.ApplyNetworkSnapshot(5,0);
+            local.Intent.Set(Verb.Skill1,true);update.Invoke(powers,null);
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT CAST - ABILITY IS ON COOLDOWN",view.WarningText);
+            local.Intent.Set(Verb.Skill1,false);update.Invoke(powers,null);yield return null;
+            powers.Kit.Skill1.ApplyNetworkSnapshot(0,0);
+            local.Intent.Set(Verb.Skill1,true);update.Invoke(powers,null);
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,powers.LastAnswer(HeroAbilitySystem.Slot.Skill1));
+            view.Tick(local,false,false,false,false);
+            Assert.AreEqual("",view.WarningText,"A successful cast clears cooldown refusals too.");
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion()
         {
@@ -1078,6 +1120,16 @@ namespace TumbangPreso.PlayTests
                         // Guide p.12: a thin opaque title strip, with its reason on its own line beneath.
                         var title = (RectTransform)warning.Find("WarningText");
                         Assert.AreEqual("CANNOT THROW", title.GetComponent<Text>().text);
+                        Assert.AreEqual(InGameTypography.Bold, title.GetComponent<Text>().font);
+                        var reason=warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>();
+                        Assert.AreEqual(InGameTypography.Reading,reason.font);
+                        Assert.AreEqual(FontStyle.Normal,reason.fontStyle);
+                        Assert.Greater(title.GetComponent<OwnerUiTracking>().Spacing,0);
+                        Assert.Greater(reason.GetComponent<OwnerUiTracking>().Spacing,0);
+                        var band=warning.Find("WarningReasonPlate").GetComponent<HudCard>();
+                        var bandCentre=warning.InverseTransformPoint(band.rectTransform.TransformPoint(band.rectTransform.rect.center));
+                        Assert.AreEqual(bandCentre.y*warning.Find("WarningTitlePlate").GetComponent<HudCard>().Slant,
+                            bandCentre.x,.1f,"The reason band must follow the outer panel's shear, keeping equal side insets.");
                         Assert.LessOrEqual(title.rect.height, 64, "Ordinary warnings should be a thin strip.");
                         Assert.AreEqual("MUST BE OUTSIDE DANGER ZONE", warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>().text);
                         yield return TumpUiCapture.Capture("Warning-strip-" + scale + "-" + size.x,
