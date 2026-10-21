@@ -1,3 +1,24 @@
+# Four-round halftime checkpoint, October21
+
+Owner corrected current symptom to no replay, not HIGHLIGHT UNAVAILABLE, in the
+Unity Editor. Actual Eskinita round2/4 opens Active=true, IsHalftime=false, ClipId0
+despite retained footage. Old default minimum6 explains this ordinary break.
+Owner explicitly approved halftime in four-round matches. Default minimum now4;
+Payo retains2. New native case calls the real host BeginIntermission path and
+checks nomination, drawing, standings, round3 and final-round exclusion. Existing
+eight-round shared-deadline control remains. Evidence:
+docs/reports/four-round-halftime-2026-10-21.md.
+Native guarded job session54758 is terminal, profile halftime-four-round-1021,
+Logs/halftime-followup-1021/four-round-fixed.xml/.log:2/2 passed, no failures or
+skips. Inspected native replay frame. Guard exit0 restored1 shared Editor input
+preference; the new named profile had no existing files. Concurrent Nemu edits,
+staged deletions/renames, Auditor and Recovery are unrelated and preserved.
+No player build. The two owned source/test file hashes stayed unchanged.
+Passive observer stopped. Normal Editor was clean and idle on SplashScreen,
+closed for tests; reopen after the guard restores profiles/preferences.
+Next: publish only owned halftime files to origin/BugFix, verify remote HEAD and
+reopen the normal Editor. Actual peers and saved older-clip art remain open.
+
 # Actual halftime rendering checkpoint, October21
 
 BugFix after184bc9612. Actual owner host log reproduces Unsupported recorded

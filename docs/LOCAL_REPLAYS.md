@@ -24,6 +24,10 @@ Replay data itself is not an MP4 export.
 
 ## Data and lifetime
 
+Four-round matches include halftime after round two in Classic and Hero Strike.
+Six- and eight-round matches keep their middle break. Ordinary two-round matches
+have no halftime; Payo retains its map-specific two-round halftime exception.
+
 Halftime uses the host's existing shared deadline. A delayed break message does
 not invalidate a complete nominated highlight. Playback waits for nominated clip
 bytes while the replay window is open, then checks whether the actual clip and
