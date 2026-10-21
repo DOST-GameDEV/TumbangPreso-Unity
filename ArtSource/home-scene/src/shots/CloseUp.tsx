@@ -5,7 +5,7 @@ import { B, bt, K } from '../lib/beats';
 import { Crackle, Pt } from '../lib/bolt';
 import { kf, outBack, outCubic } from '../lib/kf';
 import { easeInOut, onN } from '../lib/time';
-import { P } from '../lib/palette';
+import { P, rl } from '../lib/palette';
 import { ActorImage, addPose, drawActor, DUSK, EYE_L, EYE_R, Face, HEAD_TOP, mixPose, Pose, useActor } from '../three/actor';
 import { gathered } from '../three/zackWide';
 import { Cam, layerTransform, Wide, ZACK_AT, zackAnchor } from './Wide';
@@ -137,10 +137,10 @@ export const CloseUp: React.FC<{ f: number }> = ({ f }) => {
   return (
     <g>
       <Wide f={f} cam={cam} figure={<ActorImage d={d} />} over={over} />
-      {powered && <rect x={0} y={0} width={1920} height={1080} fill="#3A0610" opacity={0.12} />}
+      {powered && <rect x={0} y={0} width={1920} height={1080} fill={rl('#3A0610')} opacity={0.12} />}
       <WindStreaks f={f} amount={1} />
       {open > 0 && <rect x={0} y={0} width={1920} height={1080} fill="#FFF3C8" opacity={open} />}
-      <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" />
+      <rect x={0} y={0} width={1920} height={1080} fill="url(#vignetteSet)" />
     </g>
   );
 };

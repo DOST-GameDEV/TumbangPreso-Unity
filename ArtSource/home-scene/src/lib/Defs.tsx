@@ -1,5 +1,5 @@
 import React from 'react';
-import { P } from './palette';
+import { P, rl, PS } from './palette';
 import { onN } from './time';
 
 /**
@@ -60,25 +60,30 @@ export const Defs: React.FC<{ frame: number }> = ({ frame }) => {
         <stop offset="55%" stopColor="#2A0508" stopOpacity={0} />
         <stop offset="100%" stopColor="#2A0508" stopOpacity={0.6} />
       </radialGradient>
+      {/* Zack's set: the same vignette in the golden-hour relight (Phaister keeps #vignette) */}
+            <radialGradient id="vignetteSet" cx="50%" cy="50%" r="72%">
+        <stop offset="55%" stopColor={rl('#2A0508')} stopOpacity={0} />
+        <stop offset="100%" stopColor={rl('#2A0508')} stopOpacity={0.6} />
+      </radialGradient>
       <radialGradient id="sunGlow">
-        <stop offset="0%" stopColor="#FFE08A" stopOpacity={0.6} />
-        <stop offset="25%" stopColor="#FFC45A" stopOpacity={0.4} />
-        <stop offset="50%" stopColor="#FFA84A" stopOpacity={0.18} />
-        <stop offset="75%" stopColor="#FF9440" stopOpacity={0.06} />
-        <stop offset="100%" stopColor="#FF9440" stopOpacity={0} />
+        <stop offset="0%" stopColor={rl('#FFE08A')} stopOpacity={0.6} />
+        <stop offset="25%" stopColor={rl('#FFC45A')} stopOpacity={0.4} />
+        <stop offset="50%" stopColor={rl('#FFA84A')} stopOpacity={0.18} />
+        <stop offset="75%" stopColor={rl('#FF9440')} stopOpacity={0.06} />
+        <stop offset="100%" stopColor={rl('#FF9440')} stopOpacity={0} />
       </radialGradient>
       {/* Her persimmon stripes, off the M: darker diagonal bands on the fill. */}
       <pattern id="stripePersimmon" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)">
-        <rect width="26" height="26" fill={P.persimmon} />
-        <rect width="9" height="26" fill={P.persimmonStripe} />
+        <rect width="26" height="26" fill={PS.persimmon} />
+        <rect width="9" height="26" fill={PS.persimmonStripe} />
       </pattern>
       <pattern id="stripeGolden" width="44" height="44" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
-        <rect width="44" height="44" fill={P.golden} />
-        <rect width="16" height="44" fill="#FFC94A" />
+        <rect width="44" height="44" fill={PS.golden} />
+        <rect width="16" height="44" fill={rl('#FFC94A')} />
       </pattern>
       <pattern id="stripeJacket" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)">
-        <rect width="22" height="22" fill={P.jacket} />
-        <rect width="6" height="22" fill="#C9C105" />
+        <rect width="22" height="22" fill={PS.jacket} />
+        <rect width="6" height="22" fill={rl('#C9C105')} />
       </pattern>
 
       {/* Paper grain, laid over the whole frame at low strength. Warm, never grey. */}

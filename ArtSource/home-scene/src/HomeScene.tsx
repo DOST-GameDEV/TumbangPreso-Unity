@@ -1,3 +1,4 @@
+import { rl } from './lib/palette';
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, continueRender, delayRender, staticFile, useCurrentFrame } from 'remotion';
 import { Defs } from './lib/Defs';
@@ -47,7 +48,7 @@ export const HomeScene: React.FC = () => {
   const f = useCurrentFrame();
   const shot = shotAt(f);
   return (
-    <AbsoluteFill style={{ backgroundColor: '#560815' }}>
+    <AbsoluteFill style={{ backgroundColor: rl('#560815') }}>
       <svg width={1920} height={1080} viewBox="0 0 1920 1080">
         <Defs frame={f} />
         <defs>

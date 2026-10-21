@@ -1,6 +1,6 @@
 import React from 'react';
 import { random } from 'remotion';
-import { P } from '../lib/palette';
+import { P, rl, PS } from '../lib/palette';
 import { loopNoise, loopSin, LOOP, clamp01 } from '../lib/time';
 import { flutter, wind } from '../lib/wind';
 import { chamfer, polyD, Pt } from '../lib/shapes';
@@ -109,7 +109,7 @@ export const Tower: React.FC<{ t: TowerSpec; f: number; sunX?: number; rim?: num
         return (
           <g>
             <rect x={t.x + t.w / 2 - 3} y={t.top - 70} width={6} height={70} fill={t.shade} />
-            <rect x={t.x + t.w / 2 - 6} y={t.top - 78} width={12} height={10} fill={blink ? P.rimRed : t.shade} />
+            <rect x={t.x + t.w / 2 - 6} y={t.top - 78} width={12} height={10} fill={blink ? PS.rimRed : t.shade} />
           </g>
         );
       }
@@ -125,7 +125,7 @@ export const Tower: React.FC<{ t: TowerSpec; f: number; sunX?: number; rim?: num
       <rect x={t.x} y={t.top} width={t.w} height={h} fill={t.fill} />
       <rect x={litRight ? t.x : t.x + t.w * 0.72} y={t.top} width={t.w * 0.28} height={h} fill={t.shade} />
       {wins}
-      {rim > 0 && <rect x={litRight ? t.x + t.w - 5 : t.x} y={t.top} width={5} height={h} fill={P.golden} opacity={rim} />}
+      {rim > 0 && <rect x={litRight ? t.x + t.w - 5 : t.x} y={t.top} width={5} height={h} fill={PS.golden} opacity={rim} />}
     </g>
   );
 };
@@ -139,11 +139,11 @@ export const Tower: React.FC<{ t: TowerSpec; f: number; sunX?: number; rim?: num
  */
 export const Banderitas: React.FC<{ f: number; a: XY; b: XY; sag: number; n: number; size: number; seed: string }> = ({ f, a, b, sag, n, size, seed }) => {
   const fills: [string, string][] = [
-    [P.chartreuse, '#AFA800'],
-    [P.persimmon, '#D9622B'],
-    [P.honey, '#E6B57C'],
-    [P.golden, '#D69414'],
-    [P.rimRed, '#9A220A'],
+    [PS.chartreuse, rl('#AFA800')],
+    [PS.persimmon, rl('#D9622B')],
+    [PS.honey, rl('#E6B57C')],
+    [PS.golden, rl('#D69414')],
+    [PS.rimRed, rl('#9A220A')],
   ];
   const pt = (t: number) => ({
     x: a.x + (b.x - a.x) * t,
@@ -173,7 +173,7 @@ export const Banderitas: React.FC<{ f: number; a: XY; b: XY; sag: number; n: num
   }
   return (
     <g>
-      <path d={d.join('')} fill="none" stroke="#3A0610" strokeWidth={3.5} />
+      <path d={d.join('')} fill="none" stroke={rl('#3A0610')} strokeWidth={3.5} />
       {flags}
     </g>
   );
@@ -211,7 +211,7 @@ export const Laundry: React.FC<{ f: number; a: XY; b: XY; sag: number; items: (G
   }
   return (
     <g>
-      <path d={d.join('')} fill="none" stroke="#3A0610" strokeWidth={3} />
+      <path d={d.join('')} fill="none" stroke={rl('#3A0610')} strokeWidth={3} />
       {items.map((g, i) => {
         const p = pt(g.t);
         const lean = 8 + 22 * wind(f) + flutter(f, `${seed}-${i}`, 1.3, 10);
@@ -223,7 +223,7 @@ export const Laundry: React.FC<{ f: number; a: XY; b: XY; sag: number; items: (G
             {/* Backlit cloth: the half away from the sun is the shade. */}
             <path d={polyD(pts.map(([x, y]) => [Math.max(x, g.w * 0.08), y] as Pt))} fill={g.shade} />
             {g.stripe && <rect x={-g.w * 0.5} y={g.h * 0.45} width={g.w} height={g.h * 0.16} fill={g.stripe} opacity={0.9} />}
-            <rect x={-5} y={-8} width={10} height={14} fill={P.golden} />
+            <rect x={-5} y={-8} width={10} height={14} fill={PS.golden} />
           </g>
         );
       })}
@@ -240,8 +240,8 @@ export const Plant: React.FC<{ f: number; x: number; y: number; s: number; seed:
   s: sc,
   seed,
   leaves = 7,
-  pot = P.rimRed,
-  potShade = '#8E220A',
+  pot = PS.rimRed,
+  potShade = rl('#8E220A'),
 }) => {
   const ls: React.ReactNode[] = [];
   for (let i = 0; i < leaves; i++) {
@@ -251,8 +251,8 @@ export const Plant: React.FC<{ f: number; x: number; y: number; s: number; seed:
     // Angular leaves: a long diamond, lit half and shade half.
     ls.push(
       <g key={i} transform={`rotate(${base + sway})`}>
-        <polygon points={`0,0 -14,${-len * 0.45} 0,${-len}`} fill={i % 2 ? '#9A9020' : '#7C7418'} />
-        <polygon points={`0,0 14,${-len * 0.45} 0,${-len}`} fill={i % 2 ? '#6E6814' : '#5C5610'} />
+        <polygon points={`0,0 -14,${-len * 0.45} 0,${-len}`} fill={i % 2 ? rl('#9A9020') : rl('#7C7418')} />
+        <polygon points={`0,0 14,${-len * 0.45} 0,${-len}`} fill={i % 2 ? rl('#6E6814') : rl('#5C5610')} />
       </g>,
     );
   }
@@ -261,8 +261,8 @@ export const Plant: React.FC<{ f: number; x: number; y: number; s: number; seed:
       <g transform="translate(0 -52)">{ls}</g>
       <path d={polyD([[-46, -58], [46, -58], [36, 0], [-36, 0]])} fill={pot} />
       <path d={polyD([[14, -58], [46, -58], [36, 0], [10, 0]])} fill={potShade} />
-      <rect x={-52} y={-68} width={104} height={16} fill={P.persimmon} />
-      <rect x={-52} y={-72} width={104} height={5} fill={P.golden} opacity={0.8} />
+      <rect x={-52} y={-68} width={104} height={16} fill={PS.persimmon} />
+      <rect x={-52} y={-72} width={104} height={5} fill={PS.golden} opacity={0.8} />
     </g>
   );
 };
@@ -275,18 +275,18 @@ export const Pigeon: React.FC<{ f: number; x: number; y: number; s: number; flip
   const bob = loopSin(f, 23, random(seed + 'b') * 6) * 1.5;
   return (
     <g transform={`translate(${x} ${y + bob}) scale(${flip ? -sc : sc} ${sc})`}>
-      <path d={chamfer(-30, -34, 58, 34, 12)} fill="#8E6A5A" />
-      <path d={chamfer(-30, -34, 58, 12, 6)} fill="#A88070" />
-      <polygon points="-30,-22 -48,-14 -30,-6" fill="#6E4E44" />
-      <rect x={-14} y={-26} width={28} height={10} fill="#6E4E44" />
+      <path d={chamfer(-30, -34, 58, 34, 12)} fill={rl('#8E6A5A')} />
+      <path d={chamfer(-30, -34, 58, 12, 6)} fill={rl('#A88070')} />
+      <polygon points="-30,-22 -48,-14 -30,-6" fill={rl('#6E4E44')} />
+      <rect x={-14} y={-26} width={28} height={10} fill={rl('#6E4E44')} />
       <g transform={`translate(22 -38) rotate(${peck * 48})`}>
-        <rect x={-10} y={-12} width={20} height={20} fill="#9A7464" />
-        <rect x={2} y={-6} width={5} height={5} fill={P.ink} />
-        <rect x={10} y={-2} width={9} height={5} fill={P.golden} />
-        <rect x={-10} y={4} width={20} height={4} fill="#B98A5C" />
+        <rect x={-10} y={-12} width={20} height={20} fill={rl('#9A7464')} />
+        <rect x={2} y={-6} width={5} height={5} fill={PS.ink} />
+        <rect x={10} y={-2} width={9} height={5} fill={PS.golden} />
+        <rect x={-10} y={4} width={20} height={4} fill={rl('#B98A5C')} />
       </g>
-      <rect x={-8} y={0} width={4} height={9} fill={P.rimRed} />
-      <rect x={6} y={0} width={4} height={9} fill={P.rimRed} />
+      <rect x={-8} y={0} width={4} height={9} fill={PS.rimRed} />
+      <rect x={6} y={0} width={4} height={9} fill={PS.rimRed} />
     </g>
   );
 };

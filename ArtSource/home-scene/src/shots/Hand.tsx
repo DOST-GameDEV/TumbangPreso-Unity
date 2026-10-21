@@ -1,3 +1,4 @@
+import { rl } from '../lib/palette';
 import React from 'react';
 import { B, bt, K } from '../lib/beats';
 import { Crackle } from '../lib/bolt';
@@ -63,13 +64,13 @@ export const Hand: React.FC<{ f: number }> = ({ f }) => {
           <WideSet f={f} layer="city" />
           <WideSet f={f} layer="mid" />
         </g>
-        <rect x={-200} y={-200} width={2320} height={1480} fill="#3A0610" opacity={0.3} />
+        <rect x={-200} y={-200} width={2320} height={1480} fill={rl('#3A0610')} opacity={0.3} />
         {eyes.map((e, i) => <circle key={i} cx={e[0]} cy={e[1]} r={40} fill="#E8F53A" opacity={0.4} filter="url(#glowBig)" />)}
         <ActorImage d={d} />
         {sparks}
         {/* A single arc jumps from his fist to the sole as the grip closes. */}
         {jump > 0 && <Crackle a={fist} b={tip} seed={`hj${step}`} w={14} branches={3} glow={1.4} opacity={jump} />}
-        <rect x={-200} y={-200} width={2320} height={1480} fill="url(#vignette)" />
+        <rect x={-200} y={-200} width={2320} height={1480} fill="url(#vignetteSet)" />
       </g>
     </Whip>
   );
