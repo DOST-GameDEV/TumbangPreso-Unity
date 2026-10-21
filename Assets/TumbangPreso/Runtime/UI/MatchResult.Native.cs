@@ -24,7 +24,7 @@ namespace TumbangPreso.UI
                 TumpUiFactory.Stretch((RectTransform)_canvas.transform);
             }
             var root = (RectTransform)_canvas.transform; var f = TumpUiTheme.Current;
-            TumpUiFactory.Ground(root, f.Cream);
+            TumpUiFactory.Ground(root, SheetGround);
             var composition = TumpUiFactory.Rect(root, "ResultsComposition");
             TumpUiFactory.Anchor(composition, new Vector2(.5f, .5f), Vector2.zero, new Vector2(1920, 1080));
             _message = TumpUiFactory.Text(composition, "ResultHeadline", "", 62, true);

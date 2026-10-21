@@ -51,7 +51,7 @@ namespace TumbangPreso.UI
             for(int i=0;i<4;i++)
             {
                 bool best=hasWinner&&order[i]==winner;
-                _finishTickets[i].Style(CourtPresentationPalette.Paper,best?CourtPresentationPalette.Gold:Color.clear,best?5:0,
+                _finishTickets[i].Style(SheetCard,best?CourtPresentationPalette.Gold:Color.clear,best?5:0,
                     order[i]==mine?CourtPresentationPalette.Gold:Color.clear,order[i]==mine?5:0);
                 if(_finishSwatches[i]!=null)_finishSwatches[i].color=PlayerIdentity.Colour(order[i]);
                 if(_finishCrowns[i]!=null)_finishCrowns[i].Show(best?HudBadge.Glyph.Crown:HudBadge.Glyph.None,CourtPresentationPalette.Gold,Color.clear);
