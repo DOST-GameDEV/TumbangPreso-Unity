@@ -19,6 +19,55 @@ namespace TumbangPreso.PlayTests
         public IEnumerator MissingNominatedHighlightStillFallsBackWithinTheSharedBreak()=>DelayedHalftime(true,true);
         [UnityTest]
         public IEnumerator HalftimeRetainedBlindfoldHighlightDrawsUntilStandings()=>DelayedHalftime(false,false,true);
+        [UnityTest]
+        public IEnumerator FourRoundHostNominatesReplayAtItsMiddleAndAdvancesAfterStandings()
+        {
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion=false;
+                yield return MapRetrievalProbe.Load("Eskinita");
+                Object.FindAnyObjectByType<MatchArrivalPresentation>()?.Cancel();
+                var rules=UI.SceneFlow.SelectedRules.Clone();rules.Rounds=4;UI.SceneFlow.PinSelectedRules(rules);
+                var round=GameServices.Round;var match=GameServices.Match;
+                round.BeginRound();
+                foreach(var actor in round.Players)actor.Teleport(new Vector3(6,.12f,-6+actor.PlayerSlot*3));
+                var defender=round.PlayerAt(0);var victim=round.PlayerAt(1);
+                defender.Teleport(new Vector3(0,.12f,-4));victim.Teleport(new Vector3(0,.12f,-3));
+                defender.transform.forward=Vector3.forward;
+                yield return new WaitForSeconds(2.5f);
+                Assert.IsTrue(defender.GetComponent<CombatVerbs>().HostResolvePunch(defender.transform.position,defender.transform.forward));
+                yield return new WaitForSeconds(1.6f);
+                var archive=Object.FindAnyObjectByType<MatchReplayArchive>();
+                Assert.IsNotEmpty(archive.Clips,archive.LastSkip);
+                long nominated=archive.Clips[0].Clip.Id;
+                round.EndRound();match.AdvanceRound();yield return null;
+                round.EndRound();RoundBreakFreezeTests.DrawFrame();match.BeginIntermission();
+                var phase=HalftimePresentation.Instance;
+                Assert.IsTrue(phase.Active);Assert.IsTrue(phase.IsHalftime,"A four-round host must schedule halftime after round two.");
+                Assert.AreEqual(2,phase.CompletedRound);Assert.AreEqual(nominated,phase.ClipId);
+                double began=phase.Began;bool captured=false;
+                while(SharedUltimatePhase.Now-began<5.6)
+                {
+                    Assert.IsNull(phase.FallbackReason);
+                    if(SharedUltimatePhase.Now-began>=1)
+                    {
+                        Assert.IsTrue(phase.HasReplay,"The normal host break must draw its nominated footage.");
+                        if(!captured){SaveReplayFrame(phase.ReplayFrame,"four-round-host-highlight.png");captured=true;}
+                    }
+                    yield return null;
+                }
+                while(SharedUltimatePhase.Now-began<6)yield return null;
+                Assert.IsTrue(UI.RoleSwapCard.Showing);Assert.IsNull(phase.FallbackReason);
+                Assert.AreEqual(2,match.RoundNumber);Assert.IsTrue(PresentationClock.Held);
+                while(phase.Active&&SharedUltimatePhase.Now-began<10.5)yield return null;
+                Assert.AreEqual(3,match.RoundNumber);Assert.IsFalse(phase.Active);Assert.IsFalse(PresentationClock.Held);
+                round.EndRound();match.AdvanceRound();yield return null;
+                round.EndRound();match.BeginIntermission();
+                Assert.IsFalse(match.MatchInProgress);Assert.IsFalse(phase.Active,"The final round cannot start another halftime.");
+            }
+            finally {Settings.SettingsStore.Current.ReducedUiMotion=reduced;}
+        }
         [UnityTest,Explicit]
         public IEnumerator CapturedOwnerHighlightRendersEveryRecordedFrame()
         {
@@ -187,7 +236,8 @@ namespace TumbangPreso.PlayTests
             QualitySettings.globalTextureMipmapLimit=2;
             try
             {
-                Assert.IsFalse(HalftimePresentation.IsMiddleBreak(2,4));
+                Assert.IsTrue(HalftimePresentation.IsMiddleBreak(2,4));
+                Assert.IsFalse(HalftimePresentation.IsMiddleBreak(1,2));
                 Assert.IsTrue(HalftimePresentation.IsMiddleBreak(3,6));
                 Assert.IsTrue(HalftimePresentation.IsMiddleBreak(4,8));
                 Assert.IsFalse(HalftimePresentation.IsMiddleBreak(8,8));

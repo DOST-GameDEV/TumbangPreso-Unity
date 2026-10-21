@@ -1,5 +1,8 @@
 # Documentation: Start Here
 
+Four-round halftime scheduling:
+[live ordinary-break diagnosis and owner-approved change](reports/four-round-halftime-2026-10-21.md).
+
 Actual halftime Blindfold rendering failure:
 [saved owner footage and playback investigation](reports/halftime-live-blindfold-2026-10-21.md).
 

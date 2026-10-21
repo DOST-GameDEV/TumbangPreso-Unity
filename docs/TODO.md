@@ -9,7 +9,7 @@
   The updated native test has not been run; no player build was produced.
 - Evidence: [HUD text removal](reports/hud-text-removal-2026-10-21.md).
 
-### HALFTIME-HIGHLIGHT-1021: delayed playback and missing recorded ghost rendering (IN PROGRESS)
+### HALFTIME-HIGHLIGHT-1021: timing, recorded ghosts and four-round scheduling (IN PROGRESS)
 
 - [x] Reproduce a complete recorded catch rejected solely by a halftime stamp0.8s old.
 - [x] Admit delayed playback using its actual duration, wait for nominated bytes and
@@ -21,6 +21,12 @@
 - [x] Add playback-only Blindfold drawing and refresh prop tracks when generated
   geometry changes. Five native cases pass, including combined Blindfold/Boulder
   halftime through standings and an inspected rendered frame.
+- [x] Capture the corrected no-replay symptom: a four-round match opens an ordinary
+  break after round two because the old halftime minimum is six. Owner approved
+  including four-round matches; default minimum is now four, preserving Payo's two.
+- [x] Two native cases pass: normal four-round host nomination, rendered replay,
+  standings, shared deadline and final-round exclusion, plus the existing
+  eight-round deadline control. Captured frame inspected; preferences restored.
 - [ ] Resolve standalone saved-owner-clip reconstruction: clip 44 has a changed
   Dante art key; clip 42 lacks catalog Boulder art. Guards remain intact and both
   failures are preserved. Complete saved-clip playback is not established.
@@ -28,6 +34,7 @@
   delay simulation is not paired network acceptance. No new player build produced.
 - Evidence: [halftime highlight timing](reports/halftime-highlight-2026-10-21.md).
 - Actual-match failure: [Blindfold rendering investigation](reports/halftime-live-blindfold-2026-10-21.md).
+- Four-round scheduling: [live decision and validation](reports/four-round-halftime-2026-10-21.md).
 
 ### PENALTY-FEEDBACK-1021: another seat's penalty flashes the local crosshair (DONE)
 
