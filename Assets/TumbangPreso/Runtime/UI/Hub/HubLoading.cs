@@ -106,9 +106,12 @@ namespace TumbangPreso.UI.Hub
             DontDestroyOnLoad(canvas.gameObject);
             var root = (RectTransform)canvas.transform;
             var blocker = canvas.gameObject.AddComponent<Image>();
-            blocker.color = HubStyle.Night; blocker.raycastTarget = true;
+            // The hand-made HOME board's colours (2026-10-22): her deepest maroon under the map's art,
+            // her text colour and peach on top, her maroon tip band.
+            var deep = HubBoard.Colour("#2A0611");
+            blocker.color = deep; blocker.raycastTarget = true;
 
-            HubPattern.Ground(root, HubStyle.Night, 81);
+            HubPattern.Ground(root, deep, 81);
             var artwork = LoadingArtwork.Install(root);
             // Keep the illustrated backdrop above the quiet pattern but under all loading text.
             artwork.transform.SetSiblingIndex(1);
@@ -117,27 +120,27 @@ namespace TumbangPreso.UI.Hub
             vignette.raycastTarget = false;
 
             var map = SceneFlow.PreviewFor(_scene);
-            var name = HubKit.Text(root, "Heading", map.Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
+            var name = HubKit.Text(root, "Heading", map.Name, 150, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
             HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
             var outline = name.gameObject.AddComponent<Outline>();
-            outline.effectColor = HubStyle.Ink; outline.effectDistance = new Vector2(6, -6);
+            outline.effectColor = deep; outline.effectDistance = new Vector2(6, -6);
             HubKit.Fit(name, 1600);
-            var tagline = HubKit.Text(root, "Tagline", map.Tagline, HubStyle.Label, false, HubStyle.Honey, TextAnchor.MiddleCenter);
+            var tagline = HubKit.Text(root, "Tagline", map.Tagline, HubStyle.Label, false, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
             HubKit.Place(tagline.rectTransform, HubKit.Centre, new Vector2(0, -40), new Vector2(1400, 50));
-            tagline.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
+            tagline.gameObject.AddComponent<Shadow>().effectColor = deep;
 
-            _percent = HubKit.Text(root, "Percent", "0%", HubStyle.Display, true, HubStyle.Golden, TextAnchor.MiddleCenter);
+            _percent = HubKit.Text(root, "Percent", "0%", HubStyle.Display, true, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleCenter);
             HubKit.Place(_percent.rectTransform, HubKit.Centre, new Vector2(0, -130), new Vector2(400, 100));
-            _percent.gameObject.AddComponent<Outline>().effectColor = HubStyle.Ink;
+            _percent.gameObject.AddComponent<Outline>().effectColor = deep;
 
             // The tip band along the bottom, the way the sketch draws it.
             var band = HubKit.Span(HubKit.Rect(root, "TipBand"), Vector2.zero, new Vector2(1, 0), Vector2.zero, new Vector2(0, -150));
             var bandFill = band.gameObject.AddComponent<Image>();
-            bandFill.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, 0.9f);
+            var maroon = HubBoard.Colour("#56071D"); bandFill.color = new Color(maroon.r, maroon.g, maroon.b, 0.92f);
             bandFill.raycastTarget = false;
-            var tipLabel = HubKit.Text(band, "TipLabel", "TIP", HubStyle.Label, true, HubStyle.Persimmon, TextAnchor.MiddleLeft);
+            var tipLabel = HubKit.Text(band, "TipLabel", "TIP", HubStyle.Label, true, HubBoard.Colour("#A5B93D"), TextAnchor.MiddleLeft);
             HubKit.Place(tipLabel.rectTransform, HubKit.Left, new Vector2(HubKit.Margin, 0), new Vector2(120, 60));
-            _tip = HubKit.Text(band, "Tip", LoadingPresentation.Tips[0], HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleLeft);
+            _tip = HubKit.Text(band, "Tip", LoadingPresentation.Tips[0], HubStyle.Body, false, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleLeft);
             HubKit.Place(_tip.rectTransform, HubKit.Left, new Vector2(HubKit.Margin + 130, 0), new Vector2(1300, 100));
             artwork.BindTip(_tip);
 

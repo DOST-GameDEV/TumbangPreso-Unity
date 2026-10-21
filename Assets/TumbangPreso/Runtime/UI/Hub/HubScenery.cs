@@ -55,14 +55,31 @@ namespace TumbangPreso.UI.Hub
         // ------------------------------------------------------------------ grounds
 
         /// <summary>
-        /// ⚠️ A BOARD SCREEN'S GROUND IS HER ROOFTOP (owner-approved HERO direction, 2026-10-22): the hub's
-        /// own HOME scene shows through a maroon wash, under `TumpHub`'s court shade, so the screen reads
-        /// as a page laid over HOME. Screens not yet restyled (`HubScreen.WearsBoard`) keep their ground.
+        /// ⚠️ A BOARD SCREEN'S GROUND IS ITS OWN, AND IT IS QUIET (owner, 2026-10-22: character select
+        /// "ang gulo, di ko makita", then "create bg for everything ... that should have it"). HOME's
+        /// animated scene behind a wash was too busy to read a page over. Every board screen now stands
+        /// on her maroon: an opaque deep ground, a softer bloom of her #56071D in the middle, a faint
+        /// halftone for tooth, and where a screen shows one person (character select) a warm peach pool
+        /// of light behind them. Screens not yet restyled (`HubScreen.WearsBoard`) keep their ground.
         /// </summary>
-        private static void Wash(RectTransform root)
+        private static void Wash(RectTransform root, Vector2? light = null, Vector2 lightSize = default)
         {
-            if (root.GetComponent<HubOverHomeScene>() == null) root.gameObject.AddComponent<HubOverHomeScene>();
-            Fill(root, new Color(0x56 / 255f, 0x07 / 255f, 0x1D / 255f, 0.30f));
+            Fill(root, new Color(0x2A / 255f, 0x06 / 255f, 0x11 / 255f, 1f));
+            var bloom = HubKit.Rect(root, "Bloom").gameObject.AddComponent<HubGlow>();
+            bloom.color = new Color(0x7A / 255f, 0x18 / 255f, 0x30 / 255f, 0.85f);
+            bloom.raycastTarget = false;
+            bloom.rectTransform.anchorMin = bloom.rectTransform.anchorMax = new Vector2(0.5f, 0.55f);
+            bloom.rectTransform.sizeDelta = new Vector2(2600, 1500);
+            var tooth = Surface(root, HubSurface.Kind.Halftone, 7);
+            tooth.color = new Color(1, 1, 1, 0.18f);
+            if (light.HasValue)
+            {
+                var pool = HubKit.Rect(root, "Light").gameObject.AddComponent<HubGlow>();
+                pool.color = new Color(0xFC / 255f, 0xD3 / 255f, 0x9F / 255f, 0.30f);
+                pool.raycastTarget = false;
+                pool.rectTransform.anchorMin = pool.rectTransform.anchorMax = light.Value;
+                pool.rectTransform.sizeDelta = lightSize;
+            }
         }
 
         private static RectTransform Fill(RectTransform root, Color colour)
@@ -140,7 +157,7 @@ namespace TumbangPreso.UI.Hub
         /// SELECT it hung straight through the hero's name, which is the one thing that screen says.</summary>
         public static void NightCourtGround(RectTransform root, int seed, Vector2 lightAnchor, Vector2 lightSize)
         {
-            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
+            if (HubBoardSkin.Wears(root)) { Wash(root, lightAnchor, lightSize); return; }
             Fill(root, HubStyle.Night);
             var road = Surface(root, HubSurface.Kind.Aggregate, seed);
             road.color = new Color(1, 1, 1, 0.7f);
@@ -192,6 +209,8 @@ namespace TumbangPreso.UI.Hub
             rect.anchoredPosition = at;
             rect.sizeDelta = new Vector2(length, 46);
             rect.localRotation = Quaternion.Euler(0, 0, degrees);
+            // Her board pieces are not taped down: on a board screen the strip is built but hidden.
+            if (HubBoardSkin.Wears(parent)) tape.gameObject.SetActive(false);
             return rect;
         }
 

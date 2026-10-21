@@ -199,6 +199,7 @@ namespace TumbangPreso.UI.Hub
             // with a word on it. Now the fiesta arrives: rays burst out over the court, the band
             // slams down too big and jolts the screen once, and the bunting drops in on its
             // strings. 1.6 seconds, no decision on it, and reduced motion keeps it all still.
+            HubScenery.PosterGround(Root);
             var rays = HubScenery.Burst(Root, "Rays", new Color(HubStyle.Golden.r, HubStyle.Golden.g, HubStyle.Golden.b, 0.22f), 9, 24);
             HubKit.Place(rays.rectTransform, HubKit.Centre, new Vector2(0, 40), new Vector2(40, 40));
             HubScenery.Bunting(Root, 3, 0, 0.12f);
