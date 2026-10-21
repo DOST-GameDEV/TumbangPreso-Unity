@@ -133,7 +133,10 @@ namespace TumbangPreso.UI.Hub
             DontDestroyOnLoad(canvas.gameObject);
             var root = (RectTransform)canvas.transform;
             var blocker = canvas.gameObject.AddComponent<Image>();
-            blocker.color = HubStyle.Night; blocker.raycastTarget = true;
+            // The hand-made HOME board's deepest maroon (2026-10-22), seen only round a card that
+            // does not fill the window, or behind a map that has no card.
+            var deep = HubBoard.Colour("#2A0611");
+            blocker.color = deep; blocker.raycastTarget = true;
             root.gameObject.AddComponent<HubVignetteHolder>();
 
             var card = OwnerUiLayout.Rect(root, "MapCard").gameObject.AddComponent<RawImage>();
@@ -147,7 +150,7 @@ namespace TumbangPreso.UI.Hub
             {
                 // A map without a card still says where the match is.
                 card.enabled = false;
-                var name = HubKit.Text(root, "Heading", SceneFlow.PreviewFor(_scene).Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
+                var name = HubKit.Text(root, "Heading", SceneFlow.PreviewFor(_scene).Name, 150, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
                 HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
                 HubKit.Fit(name, 1600);
             }

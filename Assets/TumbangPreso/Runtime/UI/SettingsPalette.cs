@@ -16,19 +16,20 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class SettingsPalette
     {
-        // UI revamp 2026-10-06: the match HUD's toy family. The owner's dark workspace stays dark,
-        // now the warm brown of the clock tile; cream words and honey for the live choice.
-        public static readonly Color Background = new Color32(44, 27, 17, 255);
-        public static readonly Color Surface = new Color32(58, 37, 24, 255);
-        public static readonly Color Control = new Color32(80, 53, 35, 255);
-        public static readonly Color Ink = new Color32(255, 245, 224, 255);
-        public static readonly Color Muted = new Color32(214, 190, 160, 255);
-        public static readonly Color Accent = new Color32(255, 196, 64, 255);
-        public static readonly Color Rule = new Color32(112, 80, 56, 255);
-        public static readonly Color Pressed = new Color32(255, 222, 150, 255);
+        // 2026-10-22: the owner's hand-made HOME board. The workspace stays dark, now in her maroon
+        // (#56071D surface on a deeper ground), her text colour #E1D2B7 for words and her peach inlay
+        // #FCD39F for the live choice, so settings reads as the same game as HOME.
+        public static readonly Color Background = new Color32(42, 6, 17, 255);
+        public static readonly Color Surface = new Color32(86, 7, 29, 255);
+        public static readonly Color Control = new Color32(122, 24, 48, 255);
+        public static readonly Color Ink = new Color32(225, 210, 183, 255);
+        public static readonly Color Muted = new Color32(201, 169, 150, 255);
+        public static readonly Color Accent = new Color32(252, 211, 159, 255);
+        public static readonly Color Rule = new Color32(142, 52, 72, 255);
+        public static readonly Color Pressed = new Color32(255, 228, 192, 255);
 
         /// <summary>The dark lettering drawn ON the accent (the filled SAVE, a listening keycap).</summary>
-        public static readonly Color OnAccent = new Color32(56, 33, 20, 255);
+        public static readonly Color OnAccent = new Color32(85, 7, 29, 255);
 
         /// <summary>The live row's band: accent at 18 per cent over the surface (see
         /// `SettingsControlFocus` for why 9 per cent was not enough).</summary>

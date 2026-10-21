@@ -219,13 +219,14 @@ namespace TumbangPreso.UI.Hub
             ReleaseTarget();
         }
 
-        private static bool AtHome => TumpHub.Current == null || TumpHub.Current.ShowingHome;
+        private static bool AtHome => TumpHub.Current == null || TumpHub.Current.ShowingHomeScene;
 
         private void Update()
         {
             if (_preloading) { _image.enabled = false; return; }
-            // HOME only, in every state: the poster before the clip prepares, with reduced motion, and
-            // after a decode failure too, or a hub opened straight into the lobby would cover its map.
+            // HOME and the pages laid over it (TumpHub.ShowingHomeScene), in every state: the poster before
+            // the clip prepares, with reduced motion, and after a decode failure too. Never the lobby or
+            // the map vote, or it would cover their map.
             bool home = AtHome;
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
             _image.texture = !reduced && FirstFrameReady && _target != null ? _target : _poster;

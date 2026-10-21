@@ -1403,6 +1403,9 @@ namespace TumbangPreso.UI
             // rows genuinely have nothing to say and are the ones that stay off.
             if (_spectating)
             {
+                // The watcher's own lines step aside for every cutscene (SpectatorCutscene).
+                if (_spectatorStatus != null && SpectatorCutscene.Hides == _spectatorStatus.enabled && _spectatorControlsVisible && !_cleanFeed)
+                    SetSpectatorReadoutEnabled(!SpectatorCutscene.Hides);
                 UpdateTimer(dt);
                 UpdateScores();
                 UpdateScorePulses(dt);

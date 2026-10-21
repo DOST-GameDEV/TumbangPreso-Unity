@@ -27,6 +27,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubHero : HubScreen
     {
+        public override bool WearsBoard => true;
         public override float CourtShade => 1.0f;
 
         /// <summary>Opened from the SHOP: start on the first hero this player does not own.</summary>
@@ -77,9 +78,15 @@ namespace TumbangPreso.UI.Hub
             // The stage: the left half, a Persimmon sticker the hero stands on.
             var stage = HubKit.Span(HubKit.Rect(Root, "Stage"), new Vector2(0, 0), new Vector2(0.46f, 1),
                                     new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(0, HubKit.Margin + 110));
-            var plate = HubKit.Shape(stage, "StagePlate", HubStyle.Persimmon, false, 301, 6, 32);
+            // ⚠️ HER PIECES (owner-approved HERO direction, 2026-10-22): the stage is her maroon plate
+            // with a peach inlay, and the persimmon burst the hero stands in sits inside the inlay.
+            var plate = HubKit.Shape(stage, "StagePlate", HubStyle.Maroon, false, 301, 0, 32);
             HubKit.Stretch(plate.rectTransform);
-            var rays = HubKit.Stretch(HubKit.Rect(stage, "Rays"), 18);
+            var inlay = HubKit.Shape(stage, "StageInlay", HubStyle.Honey, false, 302, 0, 22);
+            HubKit.Stretch(inlay.rectTransform, 28);
+            var art = HubKit.Shape(stage, "StageArt", HubStyle.Persimmon, false, 303, 0, 18);
+            HubKit.Stretch(art.rectTransform, 38);
+            var rays = HubKit.Stretch(HubKit.Rect(stage, "Rays"), 40);
             rays.gameObject.AddComponent<RectMask2D>();
             var burst = HubScenery.Burst(rays, "Burst", new Color(1f, 0.93f, 0.62f, 0.26f), 2.5f, 20);
             HubKit.Place(burst.rectTransform, HubKit.Bottom, new Vector2(0, 90), new Vector2(40, 40));
@@ -90,38 +97,42 @@ namespace TumbangPreso.UI.Hub
             _preview.CentreSubject();
             yield return null;
 
-            var previous = HubKit.IconButton(stage, "PreviousHero", HubGlyph.Mark.Left, HubStyle.Honey, () => Step(-1), 311);
-            HubKit.Place((RectTransform)previous.transform, HubKit.Left, new Vector2(-30, 0), new Vector2(96, 96));
-            var next = HubKit.IconButton(stage, "NextHero", HubGlyph.Mark.Right, HubStyle.Honey, () => Step(1), 312);
-            HubKit.Place((RectTransform)next.transform, HubKit.Right, new Vector2(30, 0), new Vector2(96, 96));
+            var previous = HubKit.IconButton(stage, "PreviousHero", HubGlyph.Mark.Left, HubStyle.DeepRed, () => Step(-1), 311);
+            HubKit.Place((RectTransform)previous.transform, HubKit.Left, new Vector2(-30, 0), new Vector2(84, 84));
+            HubChrome.Chevron(previous, true);
+            var next = HubKit.IconButton(stage, "NextHero", HubGlyph.Mark.Right, HubStyle.DeepRed, () => Step(1), 312);
+            HubKit.Place((RectTransform)next.transform, HubKit.Right, new Vector2(30, 0), new Vector2(84, 84));
+            HubChrome.Chevron(next, false);
 
             HubChrome.Back(Root, Hub);
+            HubChrome.Title(Root, "HERO");
             HubChrome.TopRight(Root, Hub);
             yield return null;
 
             // The right side: a column that starts at the stage's edge and ends at the margin.
             var side = HubKit.Span(HubKit.Rect(Root, "Details"), new Vector2(0.46f, 0), new Vector2(1, 1),
                                    new Vector2(70, HubKit.Margin), new Vector2(HubKit.Margin, 190));
-            _roleTag = HubKit.Shape(side, "RoleTag", HubStyle.DeepRed, false, 331, 4, 8);
-            HubKit.Place(_roleTag.rectTransform, HubKit.TopLeft, new Vector2(-14, 4), new Vector2(400, 60));
-            _roleTag.rectTransform.localRotation = Quaternion.Euler(0, 0, 2.5f);
-            _role = HubKit.Text(side, "Role", "", HubStyle.Label, false, HubStyle.Paper, TextAnchor.MiddleLeft);
-            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(8, 0), new Vector2(800, 56));
-            _role.rectTransform.localRotation = Quaternion.Euler(0, 0, 2.5f);
-            _name = HubKit.Text(side, "Heading", "", HubStyle.Hero, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(-4, -56), new Vector2(820, 150));
-            var nameShadow = _name.gameObject.AddComponent<Shadow>();
-            nameShadow.effectColor = HubStyle.Ink; nameShadow.effectDistance = new Vector2(6, -7);
+            // her maroon plate behind the whole column, ending above the primary
+            var panel = HubKit.Shape(side, "DetailsPanel", HubStyle.Maroon, false, 330, 0, 30);
+            HubKit.Stretch(panel.rectTransform);
+            panel.rectTransform.offsetMin = new Vector2(-40, 150);
+            panel.rectTransform.offsetMax = new Vector2(0, 30);
+            _roleTag = HubKit.Shape(side, "RoleTag", HubStyle.Honey, false, 331, 0, 8);
+            HubKit.Place(_roleTag.rectTransform, HubKit.TopLeft, new Vector2(-6, -6), new Vector2(400, 60));
+            _role = HubKit.Text(side, "Role", "", HubStyle.Label, false, HubBoard.Colour("#55071D"), TextAnchor.MiddleLeft);
+            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(18, -8), new Vector2(800, 56));
+            _name = HubKit.Text(side, "Heading", "", HubStyle.Hero, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleLeft);
+            HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(-4, -64), new Vector2(820, 150));
             yield return null;
 
             _abilities = HubKit.Place(HubKit.Rect(side, "Abilities"), HubKit.TopLeft, new Vector2(0, -210), new Vector2(820, 150));
 
-            var bioHead = HubKit.Text(side, "BiographyLabel", "//  BIOGRAPHY", HubStyle.Label, false, HubStyle.Golden, TextAnchor.MiddleLeft);
+            var bioHead = HubKit.Text(side, "BiographyLabel", "BIOGRAPHY", HubStyle.Label, false, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleLeft);
             HubKit.Place(bioHead.rectTransform, HubKit.TopLeft, new Vector2(0, -392), new Vector2(800, 56));
-            _bio = HubKit.Text(side, "Biography", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.UpperLeft);
+            _bio = HubKit.Text(side, "Biography", "", HubStyle.Body, false, HubBoard.Colour("#E1D2B7"), TextAnchor.UpperLeft);
             HubKit.Place(_bio.rectTransform, HubKit.TopLeft, new Vector2(0, -456), new Vector2(780, 150));
             _story = HubKit.Button(side, "StoryButton", "READ THE STORY", HubStyle.Honey, OpenStory, HubStyle.Body, 325, HubGlyph.Mark.Book);
-            HubKit.Place((RectTransform)_story.transform, HubKit.TopLeft, new Vector2(0, -606), new Vector2(360, 84));
+            HubKit.Place((RectTransform)_story.transform, HubKit.TopLeft, new Vector2(0, -560), new Vector2(360, 84));
             yield return null;
 
             _primary = HubKit.Button(Root, "HeroPrimary", "", HubStyle.Chartreuse, Primary, HubStyle.Title, 321);
@@ -129,7 +140,7 @@ namespace TumbangPreso.UI.Hub
             _primary.Shape.BandFraction = 0.12f;
             _try = HubKit.Button(Root, "TryInPractice", "TRY IN PRACTICE", HubStyle.Honey, TryInPractice, HubStyle.Body, 322, HubGlyph.Mark.Play);
             HubKit.Place((RectTransform)_try.transform, HubKit.BottomRight, new Vector2(-(HubKit.Margin + 460 + 24), HubKit.Margin + 14), new Vector2(360, 96));
-            _ownedTag = HubKit.Text(Root, "OwnedTag", "YOUR HERO", HubStyle.Label, true, HubStyle.Chartreuse, TextAnchor.MiddleRight).gameObject;
+            _ownedTag = HubKit.Text(Root, "OwnedTag", "YOUR HERO", HubStyle.Label, true, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleRight).gameObject;
             HubKit.Place((RectTransform)_ownedTag.transform, HubKit.BottomRight, new Vector2(-(HubKit.Margin + 460 + 24), HubKit.Margin + 40), new Vector2(380, 50));
             _status = HubKit.Text(Root, "Status", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleRight);
             // ⚠️ THE STATUS IS THE SHOP'S ANSWER, SO IT SITS ON THE PRIMARY IT ANSWERS, NOT UNDER THE
@@ -190,7 +201,7 @@ namespace TumbangPreso.UI.Hub
             var hero = Heroes[_index];
             string tagline = ConvertedCharacterSelect.TaglineFor(hero.Id) ?? "";
             string[] parts = tagline.Split('\n');
-            _role.text = "//  " + (parts.Length > 0 ? parts[0] : "HERO");
+            _role.text = parts.Length > 0 ? parts[0] : "HERO";
             _roleTag.rectTransform.sizeDelta = new Vector2(_role.preferredWidth + 48, 60);
             _name.text = hero.Name;
             _name.fontSize = HubStyle.Size(HubStyle.Hero);
@@ -251,7 +262,7 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Place(symbol.rectTransform, HubKit.Top, new Vector2(0, four ? -8 : -12), new Vector2(glyph, glyph));
                 // A role kit's middle tiles name their role; the key is the same for both.
                 string caption = four && !screenSlots[i].IsUltimate && i > 0 ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
-                var key = HubKit.Text(tile.Body, "Key", caption, HubStyle.Floor, true, HubStyle.Ink, TextAnchor.MiddleCenter);
+                var key = HubKit.Text(tile.Body, "Key", caption, HubStyle.Floor, true, HubKit.InkOn(HubStyle.Honey), TextAnchor.MiddleCenter);
                 float keyWidth = tileWidth - (four ? 16 : 14);
                 HubKit.Place(key.rectTransform, HubKit.Bottom, new Vector2(0, four ? 4 : 8),
                              new Vector2(keyWidth, four ? 40 : 36));
@@ -329,6 +340,7 @@ namespace TumbangPreso.UI.Hub
     /// <summary>One ability's details, over the HERO screen.</summary>
     public sealed class HubAbilityPopup : HubScreen
     {
+        public override bool WearsBoard => true;
         public override bool IsPopup => true;
         public string Hero;
         public int Slot;

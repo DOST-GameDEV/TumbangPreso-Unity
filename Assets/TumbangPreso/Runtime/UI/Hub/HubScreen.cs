@@ -20,6 +20,15 @@ namespace TumbangPreso.UI.Hub
         /// <summary>The top-centre queue plate is drawn over this screen while queued.</summary>
         public virtual bool ShowsQueuePlate => true;
 
+        /// <summary>
+        /// This screen wears the owner's hand-made board pieces (`HubBoardSkin`): her stickers for its
+        /// kit buttons and plates, her BACK and title plate, and HOME's scene behind a maroon wash.
+        /// ⚠️ OPT-IN, SCREEN BY SCREEN (owner, 2026-10-22): a screen turns this on only once its restyle
+        /// has been captured and shown to her. Turning it on for every screen at once dressed the PLAY
+        /// path and the custom lobby in half-fitting pieces she called broken.
+        /// </summary>
+        public virtual bool WearsBoard => false;
+
         /// <summary>How much of the live court shows through: 0 is the full court, 1 is none.</summary>
         public virtual float CourtShade => 0.0f;
 

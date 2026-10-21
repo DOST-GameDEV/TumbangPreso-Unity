@@ -36,7 +36,8 @@ namespace TumbangPreso.UI.Hub
         public bool Primary;
         public float Phase;
 
-        private Vector2 _faceRest;
+        private Vector2 _faceRest, _slabRest;
+        private RectTransform _slab;
         private Vector2[] _pictureRest = new Vector2[0];
         private float _lift, _liftV, _press, _pressV, _wobble, _wobbleV, _pop, _popV;
         private float _lastLiftTarget;
@@ -51,6 +52,8 @@ namespace TumbangPreso.UI.Hub
         {
             if (Face == null) return;
             _faceRest = Face.anchoredPosition;
+            _slab = Button != null ? Button.transform.Find("Slab") as RectTransform : null;
+            if (_slab != null) _slabRest = _slab.anchoredPosition;
             _pictureRest = new Vector2[Pictures.Length];
             for (int i = 0; i < Pictures.Length; i++) if (Pictures[i] != null) _pictureRest[i] = Pictures[i].anchoredPosition;
             var faceImage = Face.GetComponent<Image>();
@@ -115,13 +118,23 @@ namespace TumbangPreso.UI.Hub
         {
             if (Face == null) return;
             bool still = HubStyle.ReducedMotion;
-            Vector2 away = Depth.sqrMagnitude > 0 ? -Depth.normalized : Vector2.up;
-            Face.anchoredPosition = _faceRest + away * (3.5f * _lift) + Depth * (0.8f * _press);
+            // ⚠️ HOVER MOVES THE WHOLE STICKER, FACE AND SLAB AS ONE (owner, 2026-10-22: PLAY "separated
+            // from itself whenever u hover over it ... the shadow seemed separate"). Lifting the face alone
+            // opened a gap over her slab. Hover now grows and tilts both about the face's centre; only a
+            // PRESS moves the face, down into its slab, which is the button being pushed.
             float breathe = Primary && !still ? Mathf.Sin(t * 2.4f + Phase * 6.28f) * 0.012f * (1f - _lift) : 0f;
-            float sx = 1f + 0.03f * _lift + 0.04f * _press + breathe;
-            float sy = 1f + 0.03f * _lift - 0.055f * _press + breathe;
-            Face.localScale = new Vector3(sx, sy, 1);
-            Face.localRotation = Quaternion.Euler(0, 0, _wobble * 0.04f);
+            float grow = 1f + 0.035f * _lift + breathe;
+            float tilt = _wobble * 0.04f;
+            Face.anchoredPosition = _faceRest + Depth * (0.8f * _press);
+            Face.localScale = new Vector3(grow + 0.04f * _press, grow - 0.055f * _press, 1);
+            Face.localRotation = Quaternion.Euler(0, 0, tilt);
+            if (_slab != null)
+            {
+                Vector2 off = (Vector2)(Quaternion.Euler(0, 0, tilt) * (Vector3)(_slabRest - _faceRest)) * grow;
+                _slab.anchoredPosition = _faceRest + off;
+                _slab.localScale = new Vector3(grow, grow, 1);
+                _slab.localRotation = Quaternion.Euler(0, 0, tilt);
+            }
 
             for (int i = 0; i < Pictures.Length; i++)
             {

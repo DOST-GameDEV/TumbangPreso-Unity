@@ -15,8 +15,64 @@ namespace TumbangPreso.UI.Hub
     {
         public const float BarHeight = 96.0f;
 
-        /// <summary>BACK with its device prompt, top left.</summary>
+        /// <summary>
+        /// BACK with its device prompt, top left: her red menu-button sticker carrying her own chevron,
+        /// turned to point back (owner-approved HERO direction, 2026-10-22).
+        /// </summary>
         public static HubButton Back(RectTransform root, TumpHub hub, System.Action onBack = null)
+        {
+            if (!HubBoardSkin.Wears(root)) return OldBack(root, hub, onBack);
+            var back = HubKit.IconButton(root, "BackButton", HubGlyph.Mark.Back, HubStyle.DeepRed,
+                                         onBack ?? hub.Back, 5);
+            HubKit.Place((RectTransform)back.transform, HubKit.TopLeft,
+                         new Vector2(HubKit.Margin, -HubKit.Margin), new Vector2(BarHeight, BarHeight));
+            Chevron(back, true);
+            var prompt = HubKit.BackPrompt(back.transform);
+            HubKit.Place((RectTransform)prompt.transform, HubKit.BottomRight, new Vector2(18, -18), new Vector2(46, 46));
+            return back;
+        }
+
+        /// <summary>Swaps a red icon sticker's drawn arrow for her own chevron (40.5 x 56 board units),
+        /// mirrored when it points back.</summary>
+        public static void Chevron(HubButton button, bool pointsBack)
+        {
+            var mark = button.Body.Find("Icon");
+            if (mark != null) mark.gameObject.SetActive(false);
+            var chevron = HubKit.Rect(button.Body, "Chevron").gameObject.AddComponent<Image>();
+            chevron.sprite = HubBoard.Art("glyph_chevron");
+            chevron.raycastTarget = false;
+            var size = ((RectTransform)button.transform).sizeDelta.y;
+            HubKit.Place(chevron.rectTransform, HubKit.Centre, new Vector2(pointsBack ? -2 : 2, 3), new Vector2(size * 0.36f, size * 0.49f));
+            if (pointsBack) chevron.rectTransform.localScale = new Vector3(-1, 1, 1);
+        }
+
+        /// <summary>
+        /// The screen's name beside BACK: Darumadrop in her text colour on her maroon plate, sized to
+        /// the word, as the HERO mock-up she approved.
+        /// </summary>
+        public static Text Title(RectTransform root, string words, string second = null)
+        {
+            if (!HubBoardSkin.Wears(root)) return OldTitle(root, words, second);
+            float x = HubKit.Margin + BarHeight + 24;
+            var plate = HubKit.Shape(root, "TitlePlate", HubStyle.Maroon, false, 77, 0, 18);
+            // "ScreenTitle", not "Heading": a board screen's own heading (HERO's hero name) keeps that name.
+            var title = HubKit.Text(root, "ScreenTitle", words, HubStyle.Display, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
+            title.horizontalOverflow = HorizontalWrapMode.Overflow;
+            float width = Mathf.Clamp(title.preferredWidth + 96, 220, 900);
+            HubKit.Place(plate.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin), new Vector2(width, BarHeight));
+            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin - 4), new Vector2(width, BarHeight - 8));
+            HubKit.Fit(title, width - 60);
+            if (!string.IsNullOrEmpty(second))
+            {
+                var sub = HubKit.Text(root, "SubTitle", second, HubStyle.Label, true, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleLeft);
+                HubKit.Place(sub.rectTransform, HubKit.TopLeft,
+                             new Vector2(x + 8, -HubKit.Margin - BarHeight - 12), new Vector2(700, 50));
+            }
+            return title;
+        }
+
+        // The chrome as it was, for screens not yet restyled onto her pieces.
+        private static HubButton OldBack(RectTransform root, TumpHub hub, System.Action onBack = null)
         {
             var back = HubKit.IconButton(root, "BackButton", HubGlyph.Mark.Back, HubStyle.Honey,
                                          onBack ?? hub.Back, 5);
@@ -27,8 +83,7 @@ namespace TumbangPreso.UI.Hub
             return back;
         }
 
-        /// <summary>The screen's name beside BACK, in the display face.</summary>
-        public static Text Title(RectTransform root, string words, string second = null)
+        private static Text OldTitle(RectTransform root, string words, string second = null)
         {
             var title = HubKit.Text(root, "Heading", words, HubStyle.Display, true, HubStyle.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(title.rectTransform, HubKit.TopLeft,
