@@ -1,5 +1,8 @@
 # Documentation: Start Here
 
+Removed train/Overclock announcements and distant can-reset instruction:
+[scope and compilation evidence](reports/hud-text-removal-2026-10-21.md).
+
 Delayed halftime highlights: [reproduction, timing correction and native checks](reports/halftime-highlight-2026-10-21.md).
 
 Penalty crosshair ownership and warnings:

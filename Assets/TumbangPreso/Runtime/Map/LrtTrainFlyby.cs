@@ -1,5 +1,4 @@
 using TumbangPreso.Core;
-using TumbangPreso.UI;
 using TumbangPreso.Visual;
 using UnityEngine;
 
@@ -16,7 +15,7 @@ namespace TumbangPreso
     ///
     /// What it does now, in three phases:
     ///
-    ///   WARNING  (3.0 s)  the toast and the shadow sweeping in from the south
+    ///   WARNING  (3.0 s)  approach state and the shadow sweeping in from the south
     ///   OVERHEAD (2.7 s)  the pass itself
     ///   idle     (rest)   back to `Interval`
     ///
@@ -257,7 +256,6 @@ namespace TumbangPreso
             {
                 _warned = true;
                 OverheadPassWindow.SetWarning(true);
-                Announce();
             }
 
             bool overhead = court >= -OverheadHalfZ && court <= OverheadHalfZ;
@@ -270,7 +268,6 @@ namespace TumbangPreso
                 if (overhead)
                 {
                     OverheadPassWindow.SetWarning(false);
-                    OnWindowOpened();
                 }
             }
 
@@ -524,51 +521,5 @@ namespace TumbangPreso
             if (_clack != null && _clack.isPlaying) _clack.Stop();
         }
 
-        /// <summary>
-        /// ⚠️ THE WARNING IS A TOAST, NOT A COMIC POPUP. A popup is placed in the world and
-        /// competes for the four-slot callout budget that `ComicPopup` evicts against; the
-        /// train is a whole-map event with no position on the street, and it fires every 24 s.
-        /// Spending a callout slot on it every cycle would push out the score and cast callouts
-        /// that the budget exists to protect.
-        /// </summary>
-        private void Announce()
-        {
-            // ⚠️⚠️ THIS READ `"ui_move"`, WHICH IS NOT A CUE AND NEVER WAS. There is no
-            // `ui_move.wav` anywhere in the project and no entry for it in `AudioCues.Live`, so
-            // every pass logged `[Audio] no cue registered for 'ui_move'` and played nothing.
-            // The map's signature 24 s event, the thing a player is meant to learn the period
-            // of, had no sound for its whole life. `AudioCueCheck` could not see it either,
-            // because it compared DECLARED cues against files and never call sites against
-            // declarations; it does now.
-            // ⚠️⚠️ THE DISTANT ONE-SHOT THAT USED TO FIRE HERE IS DELETED, AND THE ANNOUNCEMENT
-            // IS NOW THE RECORDING ITSELF. The old pair was a synthesised warning played from a
-            // fixed point plus a synthesised bed on the moving source; the note above §THE PASS
-            // argued they were "a different cue doing a different job". With ONE real recording
-            // that argument inverts: playing the same 10.55 s of audio twice, a few tenths apart,
-            // is a flam rather than an announcement. The recording has its own approach, and the
-            // consist is already 54 m out and audible when this fires.
-            //
-            // ⚠️ THE TOAST STAYS AND IS NOW THE ONLY THING THIS METHOD DOES. It is the readable
-            // half of the warning, and the Hero Strike overclock window hangs off it.
-            if (Hud.Instance == null) return;
-
-            Hud.Instance.ShowToast(SceneFlow.SelectedMode == GameMode.HeroStrike
-                ? "PARATING NA  ·  OVERCLOCK WINDOW"
-                : "PARATING NA  ·  ILALIM NG TULAY",
-                WarningLead * 0.9f);
-        }
-
-        private void OnWindowOpened()
-        {
-            if (SceneFlow.SelectedMode == GameMode.HeroStrike)
-            {
-                if (Hud.Instance != null)
-                    Hud.Instance.ShowToast("OVERCLOCK  ·  COOLDOWNS x2", 1.6f);
-
-                return;
-            }
-
-
-        }
     }
 }

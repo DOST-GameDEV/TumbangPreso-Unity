@@ -89,6 +89,10 @@ changes. [Evidence](reports/feedback-2026-09-30/hud-readability.md). Physical-de
 approval remains separate. The existing practice status sits above the larger deck
 and its hint so neither can obscure the ability controls.
 
+October 21, 2026: the defender's reset prompt stays empty outside the can's
+interaction reach. Remove the distant-can instruction; keep the reachable Reset
+Can binding, touch emphasis, channel progress and cancel feedback.
+
 The25percent revision supersedes the earlier50percent target. Saved keyboard/pad
 bindings drive the glyph; touch retains the action label and emphasis. Ongoing
 reset progress/cancel wording stays intact. Real pickup, channel cancellation and

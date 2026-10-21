@@ -1,3 +1,14 @@
+### TRAIN-TOAST-REMOVAL-1021: remove train announcements and distant reset hint (DONE)
+
+- [x] Delete all train/Overclock toast strings, generating methods and calls in both modes.
+  Owner clarified this includes the Hero Strike approaching-train warning.
+- [x] Preserve train movement, audio, camera shake and the existing cooldown window.
+- [x] Remove the distant-can reset instruction, retaining the reachable action,
+  progress and cancel feedback. Update the existing reach test's expected prompt.
+- [x] Final runtime direct compilation exits0, and the source/diff checks pass.
+  The updated native test has not been run; no player build was produced.
+- Evidence: [HUD text removal](reports/hud-text-removal-2026-10-21.md).
+
 ### HALFTIME-HIGHLIGHT-1021: delayed peers reject complete highlights (IN PROGRESS)
 
 - [x] Reproduce a complete recorded catch rejected solely by a halftime stamp0.8s old.

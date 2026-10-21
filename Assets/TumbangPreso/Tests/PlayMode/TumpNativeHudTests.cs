@@ -436,7 +436,7 @@ namespace TumbangPreso.PlayTests
                 TouchInput.Active = true; TouchInput.Move = Vector2.right; LastInputDevice.Sample(); TouchInput.Move = Vector2.zero;
                 local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius + 1));
                 yield return new WaitForSeconds(.35f);
-                Assert.AreEqual("Get close to the can to reset", prompt.text);
+                Assert.IsEmpty(prompt.text, "An unreachable can must not display a reset instruction.");
                 Assert.AreEqual(1, grab.transform.localScale.x, .001f, "An unreachable can must not pulse a dead action.");
                 local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius * .8f));
                 SettingsStore.Current.ToggleRestore = false;

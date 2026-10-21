@@ -1,3 +1,20 @@
+# Train announcement removal checkpoint, October21
+
+Owner requests deleting all train/Overclock announcement code, including the
+Hero Strike advance warning. BugFix after490e628e8 removes Announce,
+OnWindowOpened, their calls and all three toast strings from LrtTrainFlyby.
+Train/audio/shake and OverheadPassWindow cooldown behavior remain unchanged.
+Owner also requested removing the distant-can reset instruction. Its assignment
+is deleted; the existing reach/touch/channel test now expects an empty prompt
+outside reach, with the reachable Reset Can and cancellation checks retained.
+Final runtime direct compilation exits0; source absence/diff checks pass.
+No Unity launch or native-test/player acceptance; preserve the recorded reservation.
+All compiler jobs are terminal. Log: Logs/train-toast-removal-1021/compile-final.log.
+Unrelated Nemu/replay, ProjectAuditorSettings and Assets/_Recovery stay untouched.
+TRAIN-TOAST-REMOVAL-1021 is DONE. Evidence:
+docs/reports/hud-text-removal-2026-10-21.md.
+Next: publish this coherent removal to origin/BugFix and verify remote HEAD.
+
 # Personal penalty feedback checkpoint, October21
 
 Owner reports unexplained penalty markers, including attacker orange while

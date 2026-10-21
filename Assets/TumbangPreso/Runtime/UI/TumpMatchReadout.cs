@@ -414,11 +414,7 @@ namespace TumbangPreso.UI
             if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
             {
                 if (!local.CanAct()) return;
-                if (carrier == null || !carrier.HasResetTarget)
-                {
-                    _prompt.text = "Get close to the can to reset";
-                    return;
-                }
+                if (carrier == null || !carrier.HasResetTarget) return;
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
                 string cue = Hud.PressCue("Grab");
                 if (carrier.ChannelRatio > 0)
