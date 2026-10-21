@@ -1,5 +1,8 @@
 # Documentation: Start Here
 
+Penalty crosshair ownership and warnings:
+[investigation and focused validation](reports/penalty-feedback-2026-10-21.md).
+
 Warning banner typography, size, repeat appearance and error cue:
 [native previews and checks](reports/warning-banner-2026-10-21/README.md).
 

@@ -1,3 +1,13 @@
+### PENALTY-FEEDBACK-1021: another seat's penalty flashes the local crosshair (DONE)
+
+- [x] Trace the report: RoundDirector flashes the current HUD for every seat's penalty,
+  while the warning correctly reads only the local seat. Penalty sound also bypasses ownership.
+- [x] Move the marker to Hud.OnScored, gated by scored seat and spectator state, including
+  received network events. Preserve scoring, timers, warning copy and cue assets.
+- [x] Five focused native cases pass: other attacker/defender, own warnings and clearing,
+  received own/other score events and spectator suppression. Named profile/preferences restored.
+- Evidence: [penalty feedback ownership](reports/penalty-feedback-2026-10-21.md).
+
 ### WARNING-BANNER-1021: warning typography and final feedback retouch (DONE)
 
 - [x] Uppercase lines, DIN Bold titles, regular reasons, subtle spacing and equal reason-band side insets.

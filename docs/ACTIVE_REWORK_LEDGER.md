@@ -1,3 +1,21 @@
+# Personal penalty feedback checkpoint, October21
+
+Owner reports unexplained penalty markers, including attacker orange while
+defending. BugFix source now routes penalty markers/sound through Hud.OnScored
+after local-slot/spectator checks, instead of flashing every simulation penalty
+on the current HUD. Timers, scoring, warning copy and assets are unchanged.
+Original-source native baseline: 2/4 failed (other defender's marker on attacker;
+missing received-own marker). Fixed-source controlled native checks: 5/5 pass,
+including both roles' own warning/clearing, correct score ownership and spectator
+suppression. Named profile 27 files and one input preference restored. No build
+or real-peer claim. PENALTY-FEEDBACK-1021 is DONE. Evidence:
+docs/reports/penalty-feedback-2026-10-21.md. All penalty test jobs are terminal;
+last fixed run session23779, XML Logs/penalty-feedback-1021/fixed.xml.
+Unrelated ProjectAuditorSettings, Assets/_Recovery and ReplayRetentionTests work
+remain untouched. The other contributor reserves the next Unity slot for their
+halftime investigation; keep the Editor closed for that reservation.
+Next action: publish this coherent fix to origin/BugFix and verify remote HEAD.
+
 # Main integration and all-map preview checkpoint, October20
 
 Owner explicitly requests main integration and every preview current/working.

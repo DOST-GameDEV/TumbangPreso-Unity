@@ -114,6 +114,12 @@ Submit remains usable on Home. [Focused evidence](reports/hero-quality-2026-10-0
 
 ## Current Feedback HUD layout
 
+Tournament penalty tick markers and sounds belong only to the scored local seat.
+`Hud.OnScored` handles both host awards and received score events; the simulation
+loop must not flash the current HUD for another player's penalty. Spectators get
+no personal penalty cue. Existing warning banners explain the local camping or
+unretrieved-slipper timer before and during a penalty, clearing with its cause.
+
 Warning banners display both lines in uppercase: DIN Bold for the title and
 DIN Light for the reason, with subtle 0.65-unit letter spacing. Reserve spacing
 before wrapping and centre each wrapped line independently. The darker reason
