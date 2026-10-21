@@ -9,6 +9,8 @@ namespace TumbangPreso.UI
         {
             Canvas = OwnerUiLayout.Canvas(owner, "OwnerMatchCanvas", 100);
             Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = (RectTransform)Canvas.transform;
+            _openingUi = Canvas.gameObject.AddComponent<CanvasGroup>();
+            RefreshOpeningVisibility();
             _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build(_root);
             // VISUAL-1.4: the match bar replaces the corner score slabs and the clock box.
             // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
@@ -33,6 +35,8 @@ namespace TumbangPreso.UI
             _toast.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
             BuildScorePops();
             _countdown = Ink(_root, "Countdown", "", 108, true);
+            // The countdown remains readable while the rest of the HUD waits for GO to finish.
+            _countdown.gameObject.AddComponent<CanvasGroup>().ignoreParentGroups = true;
             Pin(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180)); _countdown.enabled = false;
             // VISUAL-1.6: a drawn reticle that carries charge, pektus, cooldown, refusal and
             // (for the taya) reach, instead of a "+" in the display face.

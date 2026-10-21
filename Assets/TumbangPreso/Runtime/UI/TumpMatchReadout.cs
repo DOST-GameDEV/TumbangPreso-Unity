@@ -11,6 +11,7 @@ namespace TumbangPreso.UI
     public sealed partial class TumpMatchReadout : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
+        private CanvasGroup _openingUi;
         private RectTransform _root, _scoreRoot, _clockRoot, _canRoot, _personalRoot, _promptRoot;
         private Text _clock, _round, _canState, _canHint, _role, _stock, _prompt, _context, _toast, _countdown, _spectator, _sandbox;
         // VISUAL-1.6: a Graphic, so the court HUD's drawn `HudReticle` and the older
@@ -184,6 +185,7 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
+            RefreshOpeningVisibility();
             Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.ArenaIntro.HidesUi
                              && !(spectating && SpectatorCutscene.Hides);
             float dt = Time.unscaledDeltaTime;
@@ -222,8 +224,17 @@ namespace TumbangPreso.UI
             Sandbox();
         }
 
+        private void RefreshOpeningVisibility()
+        {
+            if (_openingUi == null) return;
+            bool visible = !ReadyGate.HidesHud;
+            _openingUi.alpha = visible ? 1 : 0;
+            _openingUi.interactable = _openingUi.blocksRaycasts = visible;
+        }
+
         private void LateUpdate()
         {
+            RefreshOpeningVisibility();
             PaintScoreMoments();
             SizePromptPlate();
             PaintToast();

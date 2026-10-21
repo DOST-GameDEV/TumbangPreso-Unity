@@ -1,3 +1,18 @@
+# Opening HUD checkpoint, October22
+
+Owner requested BugFix after a0acf36a9. Shared ready-gate visibility now hides
+match chrome and touch through arrival, peer wait and the final GO cue, while
+the countdown keeps its original layout and timing. Regression added to
+ArrivalHandoffTests. Runtime and PlayTests direct compilation both exit0;
+temporary native Canvas check returns HUD alpha0/countdown alpha1. Native
+regression and normal Tondo playback remain pending, not claimed passed.
+Evidence: docs/reports/opening-hud-2026-10-22.md; logs in Logs/opening-hud-1022.
+Existing Editor PID21120 is actively playing Arena under the normal owner
+profile; no interruption, profile mutation or build. All compiler jobs terminal.
+Unrelated HubChrome, HubCustom and ProjectAuditorSettings edits are preserved.
+Next: publish only this unit to origin/BugFix, verify remote HEAD. Native follow-up
+is TODO OPENING-HUD-1022 when the existing play session is available.
+
 # Four-round halftime checkpoint, October21
 
 Owner corrected current symptom to no replay, not HIGHLIGHT UNAVAILABLE, in the

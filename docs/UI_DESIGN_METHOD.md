@@ -213,6 +213,12 @@ by the display. Do not replace authored rough silhouettes merely to smooth edges
 
 ## Match HUD: the glass HUD, Overwatch's simple shape (2026-10-20)
 
+The gameplay HUD and touch controls stay hidden during every map's opening,
+the loaded-peer wait and the complete 3, 2, 1, GO sequence. The countdown remains
+visible on its own; gameplay chrome returns after GO clears. This uses the
+ready gate's presentation state without changing match timing or camera direction.
+[Implementation and validation limits](reports/opening-hud-2026-10-22.md).
+
 Request, 2026-10-20: "overhaul the ingame ui. make it similar to overwatch's simple
 ingame hud." This supersedes the Toy Block surfaces below for the live match
 HUD (`TumpMatchReadout`, `TumpPowerReadout`, `MatchEventFeed`,

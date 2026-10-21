@@ -684,7 +684,7 @@ namespace TumbangPreso.InputLayer
         /// layer with no match running, and both say so explicitly.
         /// </summary>
         public bool ShouldBeOnScreen
-            => ForceVisible || (SpectatorMode ? SpectatorCanOperate : (_local != null && !_local.Intent.Parked));
+            => !ReadyGate.HidesHud && (ForceVisible || (SpectatorMode ? SpectatorCanOperate : (_local != null && !_local.Intent.Parked)));
 
         private void Update()
         {

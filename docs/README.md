@@ -1,5 +1,8 @@
 # Documentation: Start Here
 
+Opening HUD visibility through the final GO cue:
+[implementation, compiler checks and pending native regression](reports/opening-hud-2026-10-22.md).
+
 Four-round halftime scheduling:
 [live ordinary-break diagnosis and owner-approved change](reports/four-round-halftime-2026-10-21.md).
 

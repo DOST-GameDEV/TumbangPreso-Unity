@@ -1205,6 +1205,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### OPENING-HUD-1022: hide gameplay chrome until GO clears
+
+- [x] BugFix implementation hides the shared HUD and touch controls throughout
+  map arrival, the loaded-peer wait and every countdown cue; countdown stays visible.
+- [x] Direct runtime and PlayTests compilation passed; temporary native Canvas
+  check confirmed hidden HUD alpha0 and independent countdown alpha1.
+- [ ] Run `ArrivalHandoffTests.MatchHudWaitsForTheCompleteOpeningCountdown`
+  with a named isolated profile, then inspect a normal Tondo opening. The owner's
+  existing Editor remains in Play on Arena with its normal profile; do not interrupt it.
+  [Evidence and precise check](reports/opening-hud-2026-10-22.md).
+
 ### CHAR-REDESIGN-1: Dante (Dante) redesign prototype, Blender only
 
 Owner, 2026-10-05: *"can you try redesigning one of the normal blocky character models? add

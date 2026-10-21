@@ -29,6 +29,12 @@ namespace TumbangPreso
     /// </summary>
     public sealed class ReadyGate : MonoBehaviour
     {
+        private static ReadyGate _active;
+
+        /// <summary>Keep gameplay chrome hidden through the opening, peer wait and final GO cue.</summary>
+        public static bool HidesHud => MatchArrivalPresentation.Active ||
+            (_active != null && (_active._awaitingLocalReady || _active._countingDown));
+
         /// <summary>Raised when the countdown completes and the round should actually start.
         /// In Godot this called `MatchManager.begin_next_round()`.</summary>
         public event Action RoundShouldBegin;
@@ -209,11 +215,13 @@ namespace TumbangPreso
         }
         private void OnDisable()
         {
+            if (_active == this) _active = null;
             StopAllCoroutines(); _arrival = null;
             GetComponent<MatchArrivalPresentation>()?.Cancel();
             ReleaseStartHold();
         }
         private void OnDestroy() => OnDisable();
+        private void OnEnable() => _active = this;
         private CharacterMotor _local;
 
         public bool AwaitingReady => _awaitingLocalReady;
