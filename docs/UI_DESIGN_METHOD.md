@@ -122,6 +122,13 @@ band follows the outer panel's shear so its left/right insets remain equal.
 `X MORE OBJECTIVE POINTS REQUIRED` for NoCharge (the current ultimate deficit,
 rounded up), and `ABILITY MUST MEET REQUIREMENTS` for other refusals. A filled
 meter clears the point warning; a successful cast clears any cast refusal.
+The complete warning group is scaled to 90 percent before accessibility scaling.
+Each hidden-to-visible appearance, including the same text returning, restarts
+the short shake and plays the existing `ui_error` cue when available. A fresh
+ability refusal already supplies that cue, so the banner avoids doubling it.
+Continuous display does not repeat the shake/sound; Reduced UI Motion still
+disables shaking.
+[Native warning previews and scoped checks](reports/warning-banner-2026-10-21/README.md).
 
 Harry's mockup separates status cards at bottom-left, the action and contained
 progress centrally below aim, and a dark-red warning above aim. Persistent

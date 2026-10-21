@@ -30,6 +30,7 @@ namespace TumbangPreso.UI
         {
             _warningRoot=OwnerUiLayout.Rect(_root,"WarningMessage");
             Pin(_warningRoot,new Vector2(.5f,.66f),Vector2.zero,new Vector2(900,WarningTitleHeight+WarningReasonHeight+WarningInset));
+            _warningRoot.localScale=Vector3.one*.9f;
             _warningPlate=OwnerUiLayout.Rect(_warningRoot,"WarningTitlePlate").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Fill(_warningPlate.rectTransform);
             // ⚠️ 2026-10-20 OVERHAUL: the same one red tile, now a flat leaning panel like every other
@@ -112,7 +113,7 @@ namespace TumbangPreso.UI
             var round=GameServices.Round;
             if(local==null||spectating||round==null||!round.RoundActive||ReadyWindow||ScreenTakeover.AnyOpen)
             {_warningRoot.gameObject.SetActive(false);_warningUntil=0;return;}
-            string text=null;
+            string text=null;bool abilitySoundPlayed=false;
             if(local.IsDefender&&round.IsTayaCampWarningActive)
                 text=round.IsTayaCampPenaltyActive&&local.CanAct()
                     ?"DO NOT CAMP - MOVE AWAY FROM CAN IMMEDIATELY":"DO NOT CAMP - MOVE AWAY FROM CAN";
@@ -149,6 +150,8 @@ namespace TumbangPreso.UI
                     if(newest<1.25f&&answer!=HeroKit.CastOutcome.Missing)
                     {
                         refusal=answer==HeroKit.CastOutcome.Cast?null:CastWarning(answer,powers.Kit);
+                        // HeroAbilitySystem already sounds a fresh refusal on the local body.
+                        abilitySoundPlayed=refusal!=null&&newest<.1f&&!local.IsBot;
                         if(refusal==null&&_recentWarning!=null&&_recentWarning.StartsWith(CastWarningPrefix,System.StringComparison.Ordinal))
                         {_recentWarning=null;_warningUntil=0;}
                     }
@@ -156,12 +159,25 @@ namespace TumbangPreso.UI
                 if(refusal!=null){_recentWarning=refusal;_warningUntil=Time.unscaledTime+1.25f;}
                 if(Time.unscaledTime<_warningUntil)text=_recentWarning;
             }
+            PresentWarning(text,abilitySoundPlayed);
+        }
+
+        private void PresentWarning(string text,bool abilitySoundPlayed=false)
+        {
             bool show=!string.IsNullOrEmpty(text);
+            bool appeared=show&&(!_warningRoot.gameObject.activeSelf||_warningWords!=text);
             _warningRoot.gameObject.SetActive(show);
             if(!show)return;
+            if(appeared)
+            {
+                _warningShookAt=Time.unscaledTime;
+                var audio=GameServices.Audio;
+                if(!abilitySoundPlayed&&audio!=null&&audio.TryGetClip("ui_error",out _,out _))
+                    audio.PlayUi("ui_error",.55f);
+            }
             if(_warningWords!=text)
             {
-                _warningWords=text;_warningShookAt=Time.unscaledTime;
+                _warningWords=text;
                 int split=text.IndexOf(" - ",System.StringComparison.Ordinal);
                 _warningText.text=(split>=0?text.Substring(0,split):text).ToUpperInvariant();
                 _warningReason.text=split>=0?text.Substring(split+3).ToUpperInvariant():"";

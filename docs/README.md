@@ -1,5 +1,8 @@
 # Documentation: Start Here
 
+Warning banner typography, size, repeat appearance and error cue:
+[native previews and checks](reports/warning-banner-2026-10-21/README.md).
+
 Main integration and all six current previews: [branch history and preview validation](reports/main-merge-preview-2026-10-20.md).
 
 Current five-map pool and refreshed video previews: [source receipts, native playback and selection layout](reports/map-preview-refresh-2026-10-18/README.md).

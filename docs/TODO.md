@@ -1,3 +1,11 @@
+### WARNING-BANNER-1021: warning typography and final feedback retouch (DONE)
+
+- [x] Uppercase lines, DIN Bold titles, regular reasons, subtle spacing and equal reason-band side insets.
+- [x] Specific cooldown, missing objective points and generic requirement cast refusals.
+- [x] Whole banner 10 percent smaller; each appearance restarts the shake and reuses the existing error cue without doubling fresh ability refusals.
+- [x] Native controlled UI checks and screenshots; no broad gameplay or physical-device acceptance claimed.
+- Evidence: [warning banner previews and checks](reports/warning-banner-2026-10-21/README.md).
+
 ### MAIN-MAP-PREVIEW-1020: branch integration and current Tondo footage (DONE)
 
 - [x] Integrate current QoLUpdates and its ASTRAReworks ancestry; retain the backup archive as recoverable history without replacing current source with old main.

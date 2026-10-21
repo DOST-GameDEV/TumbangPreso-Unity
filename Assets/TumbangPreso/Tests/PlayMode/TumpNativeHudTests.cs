@@ -1153,6 +1153,31 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest,Timeout(60000)]
+        public IEnumerator ReturningWarningRestartsItsShakeWithoutRepeatingEveryTick()
+        {
+            yield return Open(GameMode.Classic);yield return new WaitForSeconds(1.4f);
+            var round=GameServices.Round;round.enabled=false;
+            var local=round.PlayerAt(GameLaunch.SoloSeat);
+            local.GetComponent<PlayerInputReader>().enabled=false;
+            local.GetComponent<Carrier>().enabled=false;local.enabled=false;local.Intent.Clear();
+            local.Teleport(new Vector3(0,.1f,2));local.Intent.Set(Verb.SpecialAbility,true);
+            var view=Object.FindFirstObjectByType<TumpMatchReadout>();
+            var stamp=typeof(TumpMatchReadout).GetField("_warningShookAt",BindingFlags.Instance|BindingFlags.NonPublic);
+            view.Tick(local,false,false,false,false);
+            string words=view.WarningText;Assert.That(words,Does.Contain("OUTSIDE DANGER ZONE"));
+            float first=(float)stamp.GetValue(view);
+            var root=view.Canvas.transform.Find("WarningMessage");
+            float reading=Mathf.Max(GameSettings.ValidHudScale(SettingsStore.Current.HudScale),SettingsStore.Current.LargerText?1.2f:1f);
+            Assert.AreEqual(.9f*reading,root.localScale.x,.001f);
+            yield return null;view.Tick(local,false,false,false,false);
+            Assert.AreEqual(first,(float)stamp.GetValue(view),"A continuous warning must not restart every tick.");
+            view.Tick(local,true,false,false,false);Assert.AreEqual("",view.WarningText);
+            yield return null;view.Tick(local,false,false,false,false);
+            Assert.AreEqual(words,view.WarningText);
+            Assert.Greater((float)stamp.GetValue(view),first,"The same warning returning must restart its shake.");
+        }
+
+        [UnityTest,Timeout(60000)]
         public IEnumerator RevisedWarningsFollowRefusedInputsAndHideForSpectators()
         {
             yield return Open(GameMode.Classic);yield return new WaitForSeconds(1.4f);
