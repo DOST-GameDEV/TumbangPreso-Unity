@@ -147,8 +147,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(NemuLookout.Live.Any(g => g.isActiveAndEnabled));
             Assert.IsFalse(NemuBlindfold.Live.Any(g => g.isActiveAndEnabled));
         }
-        /// <summary>SOULBOUND and PEEKER's ring (owner 2026-10-21): a dormant ghost holds its skill's cooldown full until it is
-        /// reclaimed, rides the host's ghost frames to every peer, and Peeker's 2 m trigger ring is drawn while it waits.
+        /// <summary>SOULBOUND and PEEKER's ring (owner 2026-10-21): a dormant ghost's skill counts its 10 s window down, takes
+        /// 15 s when reclaimed and 25 s when the window runs out, rides the host's ghost frames to every peer (faded and
+        /// reclaimed apart), and Peeker's 2 m trigger ring is drawn while it waits.
         /// Bodies stand at x = 0 (Nemu), 3, 6 and 9.</summary>
         [UnityTest] public IEnumerator DormantGhostsHoldTheirSkillRideTheFramesAndPeekerDrawsItsRing()
         {
@@ -159,7 +160,7 @@ namespace TumbangPreso.PlayTests
             var dormant = NemuDormant.Spawn(NemuDormant.Ghost.Peeker, new Vector3(1.5f, 0, 1.5f), Vector3.forward, 0);
             yield return null;
             kit.Tick(context, 5f);
-            Assert.AreEqual(NecroRules.DontLookCooldown, kit.Skill1.CooldownRemaining, 1e-4f, "Its cooldown ran while it lay dormant.");
+            Assert.AreEqual(dormant.TimeLeft, kit.Skill1.CooldownRemaining, .05f, "The tile should count the dormant window down.");
             Assert.AreEqual(0f, kit.AttackingSkill.CooldownRemaining, "Another skill's clock was touched.");
 
             var frame = (NemuGhostFrame)typeof(MatchRpc).GetMethod("CaptureNemuGhosts", Hidden).Invoke(_rpc, new object[] { 0 });
@@ -168,7 +169,7 @@ namespace TumbangPreso.PlayTests
 
             dormant.Reclaim();
             kit.Tick(context, 1f);
-            Assert.AreEqual(NecroRules.DontLookCooldown - 1f, kit.Skill1.CooldownRemaining, 1e-3f, "Reclaimed, its cooldown starts.");
+            Assert.AreEqual(NecroRules.DontLookCooldown, kit.Skill1.CooldownRemaining, 1e-3f, "Reclaimed in time: the normal cooldown.");
 
             NemuBlindfold.Place(new Vector3(4.5f, 0, 6), Vector3.forward, 0, 4f);
             yield return null;
@@ -181,6 +182,17 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(NemuDormant.Ghost.Peeker, replica.Kind);
             Assert.AreEqual("Peeker", replica.Name);
             Assert.IsTrue(replica.GetComponentsInChildren<Renderer>().Any(r => r.enabled && r.sharedMaterial != null), "A dormant ghost had no drawable renderer.");
+
+            // Its window runs out on the host: the faded frame reaches the owner, whose skill takes the longer cooldown.
+            kit.Tick(context, .01f);
+            Assert.AreEqual(replica.TimeLeft, kit.Skill1.CooldownRemaining, .05f);
+            var faded = frame; faded.Sequence = 2; faded.Ghosts = (NemuGhostPose[])frame.Ghosts.Clone();
+            faded.Ghosts[0].Phase = 3; faded.Ghosts[0].PhaseAge = .05f; faded.Ghosts[0].Age = NemuRules.DormantSeconds - .2f;
+            Assert.IsTrue(faded.IsValid);
+            Deliver(faded); yield return null;
+            Assert.IsTrue(replica.Expired);
+            kit.Tick(context, .01f);
+            Assert.AreEqual(NecroRules.SoulboundMissedCooldown, kit.Skill1.CooldownRemaining, .02f, "Missed, the skill should take 25 s.");
         }
         [Test] public void ExpiredHydrationAndChangedGhostKindsCannotResurrectOldState()
         {

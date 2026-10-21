@@ -43,7 +43,7 @@ namespace TumbangPreso.Abilities
                     "Retrieving your own thrown slipper makes your next throw charge 25% faster, once within 4 seconds. Maximum power is unchanged.");
                 // NemuDormant and NemuHeroKit.StepReclaim (owner 2026-10-21, replacing DEAD WEIGHT).
                 case "nemu": return new Passive("SOULBOUND",
-                    "When a ghost's time is up it stays where it was, dormant. Hold Grab within 1 m of it for 1.5 s to reclaim it.",
+                    "When a ghost's time is up it stays where it was, dormant. Hold Grab within 1.5 m of it for 1.5 s to reclaim it.",
                     "A skill's cooldown starts only once its ghost is reclaimed.");
                 // CharacterMotor.Voodoo: the curse mark's speed exchange.
                 case "phaister": return new Passive("VOODOO",

@@ -130,6 +130,7 @@ namespace TumbangPreso.UI
             if (_canvasRect != null) _canvasRect.gameObject.SetActive(visible);
         }
         private void HideMarker(){if(_mark!=null)_mark.gameObject.SetActive(false);}
+        public void Hide() => HideMarker();
         private void OnDisable()=>HideMarker();
         private void LateUpdate()
         {
@@ -199,6 +200,37 @@ namespace TumbangPreso.UI
                 return;
             }
 
+            if (!Place(cam, mine.transform.position + ScreenTrack.ChestHeight)) return;
+
+            PaintCap(mine.IsGrabbableIgnoringReach(local));
+            PaintClock(local, mine);
+        }
+
+        /// <summary>
+        /// SOULBOUND (owner 2026-10-21, third pass: *"show like the circle thingy time that comes out of the slipper"*). The
+        /// same mark rides one of Nemu's dormant ghosts on her own screen: the ring on its globe (clamped to the edge when it
+        /// is off screen, like the slipper's), the Grab cap once she is in reach, and its 10 s window draining on the ring in
+        /// the ghost's own colour. The HUD keeps one of these per dormant ghost (`Hud.TrackDormantMarks`).
+        /// ⚠️ AND IT HANDS OFF LIKE THE SLIPPER'S (owner 2026-10-21): the moment the crosshair's "Retrieve ..." prompt is up
+        /// for this ghost (`NemuHeroKit.ReclaimTarget`, the same question `TumpMatchReadout.ReclaimPrompt` asks), the ring goes.
+        /// </summary>
+        public void TrackDormant(CharacterMotor local, Abilities.NemuDormant ghost)
+        {
+            if (PresentationClock.Held || ScreenTakeover.AnyOpen) { HideMarker(); return; }
+            if (_mark == null) return;
+            var cam = UnityEngine.Camera.main;
+            bool show = cam != null && local != null && ghost != null && !ghost.Reclaimed && !ghost.Expired
+                        && ghost.OwnerSlot == local.PlayerSlot && !local.IsHaunted && !local.EyesCovered;
+            if (show && local.AbilitySystem?.Kit is Abilities.NemuHeroKit nemu && nemu.ReclaimTarget == ghost) show = false;
+            if (!show) { HideMarker(); return; }
+            if (!Place(cam, ghost.Centre)) return;
+            PaintCap(true);
+            _ring.Timer = ghost.TimeLeftRatio; _ring.TimerColour = ghost.Colour;
+        }
+
+        /// <summary>Puts the mark on <paramref name="world"/>, or clamps it to the edge; false (hidden) when off the view.</summary>
+        private bool Place(UnityEngine.Camera cam, Vector3 world)
+        {
             // ⚠️ THE CAMERA'S OWN PIXELS, NOT `Screen`. `ScreenTrack.Project`'s note has the
             // argument: the two agree in play and disagree under every render probe.
             var viewport = new Vector2(cam.pixelWidth, cam.pixelHeight);
@@ -213,15 +245,13 @@ namespace TumbangPreso.UI
             // frame-exit distance to about 1.69 m, which is where `Balance.PickupRadius` already
             // is. Widening this band pushes the mark out of the frame while it still has
             // something to say.
-            var track = ScreenTrack.Project(cam,
-                                            mine.transform.position + ScreenTrack.ChestHeight,
-                                            canvas, viewport,
+            var track = ScreenTrack.Project(cam, world, canvas, viewport,
                                             OffscreenIndicators.EdgeMargin + RingRadius);
 
             if (!track.Visible)
             {
                 if (_mark.gameObject.activeSelf) _mark.gameObject.SetActive(false);
-                return;
+                return false;
             }
 
             if (!_mark.gameObject.activeSelf) _mark.gameObject.SetActive(true);
@@ -230,9 +260,7 @@ namespace TumbangPreso.UI
 
             _ring.Bearing = track.Clamped ? track.Bearing : (float?)null;
             _ring.SetVerticesDirty();
-
-            PaintCap(mine.IsGrabbableIgnoringReach(local));
-            PaintClock(local, mine);
+            return true;
         }
 
         private float _returnTotal;

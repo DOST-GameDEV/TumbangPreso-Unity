@@ -1059,6 +1059,8 @@ namespace TumbangPreso
                 if (_motor != null && _motor.IsWhirled) return false;
                 var lata = GameServices.Round?.Lata;
                 if (lata == null || lata.IsUpright) return false;
+                // Nemu's Keeper is standing it up: no prompt and no channel of the taya's own.
+                if (Abilities.NemuLookout.Keeping(lata)) return false;
                 var offset = transform.position - lata.transform.position; offset.y = 0;
                 return offset.magnitude <= Balance.InteractionRadius;
             }

@@ -9,7 +9,7 @@ namespace TumbangPreso.PlayTests
     /// <summary>
     /// FETCHER (owner 2026-10-21, renaming SKITTER, which replaced KURO: FETCH!): a ghost of hers fetches her loose slipper;
     /// protocol95's delivery rules unchanged, but the taya no longer makes it drop it. When it is done it lies dormant and its
-    /// 20 s cooldown waits for her to reclaim it (SOULBOUND). These put Skitter's hands on the spot.
+    /// 15 s cooldown waits for her to reclaim it (SOULBOUND). These put Skitter's hands on the spot.
     /// </summary>
     public sealed class NemuFetchContractTests
     {
@@ -86,7 +86,7 @@ namespace TumbangPreso.PlayTests
         {
             Assert.That(_kit.AttackingSkill.Name, Is.EqualTo("FETCHER"));
             Assert.That(_kit.AttackingSkill.Id, Is.EqualTo("nemu_skill2"));
-            Assert.That(_kit.AttackingSkill.Cooldown, Is.EqualTo(20f));
+            Assert.That(_kit.AttackingSkill.Cooldown, Is.EqualTo(15f));
         }
 
         [Test]
@@ -107,8 +107,10 @@ namespace TumbangPreso.PlayTests
             using (NetCue.SuppressRelay()) Assert.That(_shoe.HostGrab(_motor), Is.True);
             using (NetCue.SuppressRelay()) _kit.Tick(_context, 0.01f);
             Assert.That(_shoe.Holder, Is.SameAs(_motor));
+            // Owner 2026-10-21, third pass: it expires the moment she has the slipper, and lies dormant beside her.
             Assert.That(_kit.AttackingSkill.IsActive, Is.False);
-            Assert.That(Ghost, Is.Null, "Skitter should be leaving once she has taken it.");
+            Assert.That(Ghost, Is.Null, "Fetcher should be leaving once she has taken it.");
+            Assert.That(NemuDormant.For(0, NemuDormant.Ghost.Fetcher), Is.Not.Null, "Then it lies dormant.");
         }
 
         [Test]
@@ -165,7 +167,8 @@ namespace TumbangPreso.PlayTests
             Assert.That(Ghost, Is.Null);
             Assert.That(NemuDormant.For(0, NemuDormant.Ghost.Fetcher), Is.Not.Null, "Its time up, Fetcher should lie dormant.");
             using (NetCue.SuppressRelay()) _kit.Tick(_context, 3f);
-            Assert.That(_kit.AttackingSkill.CooldownRemaining, Is.EqualTo(20f).Within(1e-3f), "The cooldown ran before Fetcher was reclaimed.");
+            Assert.That(_kit.AttackingSkill.CooldownRemaining, Is.EqualTo(NemuDormant.For(0, NemuDormant.Ghost.Fetcher).TimeLeft).Within(.05f),
+                "While it lies dormant the tile counts its window down.");
         }
 
         [Test]

@@ -109,12 +109,12 @@ namespace TumbangPreso.Net
             foreach (var pose in frame.Ghosts)
             {
                 // A delayed hydration cannot resurrect a lifetime that expired in simulation time.
-                // A dormant ghost (kind 4) waits as long as it takes her to come back for it.
+                // A dormant ghost (kind 4) waits its window; faded (phase 3) it is leaving like any other.
                 float limit = pose.Kind == 1 ? (pose.Phase == 1 ? Core.NecroRules.DontLookLifeSeconds :
                     pose.Phase == 2 ? Core.NecroRules.DontLookLungeSeconds + Core.NecroRules.DontLookBlindSeconds + .45f :
                     Core.NecroRules.DontLookBlindSeconds + .45f) : pose.Kind == 2 ? Core.NecroRules.FetchSeconds + .45f
-                    : pose.Kind == 3 ? Core.NecroRules.LookoutSeconds + .6f : float.PositiveInfinity;
-                if (pose.Phase == 4 ? pose.PhaseAge + elapsed >= (pose.Kind == 3 ? .6f : .45f)
+                    : pose.Kind == 3 ? Core.NecroRules.LookoutSeconds + Core.NecroRules.LookoutRestoreSeconds + .6f : Core.NemuRules.DormantSeconds + .1f;
+                if (pose.Phase == 4 || pose.Kind == 4 && pose.Phase == 3 ? pose.PhaseAge + elapsed >= (pose.Kind == 3 ? .6f : .45f)
                     : (pose.Kind == 1 && pose.Phase != 1 ? pose.PhaseAge : pose.Age) + elapsed >= limit) continue;
                 missing.Remove(pose.Id);
                 replicas.TryGetValue(pose.Id, out var replica);

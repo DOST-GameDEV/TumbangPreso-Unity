@@ -9,7 +9,7 @@ namespace TumbangPreso.Abilities
 {
     /// <summary>
     /// Nemu (owner rework 2026-10-21): SOULBOUND passive, PEEKER signature (a hidden ghost, `NemuBlindfold`), FETCHER and
-    /// KEEPER role skills. Each ghost that ends leaves a dormant ghost (`NemuDormant`) and its skill's 20 s cooldown waits
+    /// KEEPER role skills. Each ghost that ends leaves a dormant ghost (`NemuDormant`) and its skill's 15 s cooldown waits
     /// until she reclaims it. LET THEM IN possesses every other player for 15 s (`CharacterMotor.Possession.cs`).
     /// </summary>
     public sealed class NemuHeroKit : HeroKit
@@ -131,7 +131,7 @@ namespace TumbangPreso.Abilities
 
         private static NemuDormant FirstDormant(int slot)
         {
-            foreach (var d in NemuDormant.Live) if (d != null && !d.Reclaimed && d.OwnerSlot == slot) return d;
+            foreach (var d in NemuDormant.Live) if (d != null && !d.Reclaimed && !d.Expired && d.OwnerSlot == slot) return d;
             return null;
         }
 
@@ -159,12 +159,42 @@ namespace TumbangPreso.Abilities
             public override bool CanActivate(AbilityContext ctx)
                 => base.CanActivate(ctx) && NemuDormant.For(ctx.Motor.PlayerSlot, Ghost) == null;
 
+            /// <summary>The dormant ghost this skill is waiting on, to read how its window ended.</summary>
+            private NemuDormant _dormant;
+
+            /// <summary>
+            /// The skill's clock follows its ghost (owner's third pass, 2026-10-21): held full while the ghost is out; while it
+            /// lies dormant the tile counts down its 10 s window (`NemuRules.DormantSeconds`); reclaimed in time it takes the
+            /// normal 15 s, left to fade it takes 25 s (`NecroRules.SoulboundMissedCooldown`). Every peer sees the ghost and
+            /// its end (the frames carry reclaimed and faded apart), and the host's own clock reaches the owner's tray anyway.
+            /// </summary>
             public override void Tick(AbilityContext ctx, float dt)
             {
                 base.Tick(ctx, dt);
                 int slot = ctx?.Motor != null ? ctx.Motor.PlayerSlot : -1;
-                if (slot >= 0 && CooldownRemaining > 0f && (IsActive || GhostOut(slot) || NemuDormant.For(slot, Ghost) != null))
-                    CooldownRemaining = Cooldown;
+                if (slot < 0) return;
+                if (_dormant != null)
+                {
+                    if (_dormant.Reclaimed) { CooldownRemaining = Cooldown; _dormant = null; }
+                    else if (_dormant.Expired) { CooldownRemaining = NecroRules.SoulboundMissedCooldown; _dormant = null; }
+                    else CooldownRemaining = Mathf.Max(_dormant.TimeLeft, .01f);
+                    return;
+                }
+                _dormant = null; // a destroyed one (the round ended, or a frame retired it) leaves no verdict
+                var waiting = NemuDormant.For(slot, Ghost);
+                if (waiting != null)
+                {
+                    _dormant = waiting;
+                    CooldownRemaining = Mathf.Max(waiting.TimeLeft, .01f);
+                    return;
+                }
+                if (CooldownRemaining > 0f && (IsActive || GhostOut(slot))) CooldownRemaining = Cooldown;
+            }
+
+            public override void Reset()
+            {
+                base.Reset();
+                _dormant = null;
             }
 
             /// <summary>The host leaves her dormant ghost where this one ended.</summary>
@@ -180,7 +210,7 @@ namespace TumbangPreso.Abilities
 
         /// <summary>
         /// PEEKER (owner 2026-10-21, retuning DON'T LOOK, the overhaul of KURO: SIT!: *"a tripwire blind"*). Hold to aim,
-        /// release: Blindfold, one of her ghosts, waits at the spot and fades from sight over 2.5 s; its 2 m trigger ring stays
+        /// release: Blindfold, one of her ghosts, waits at the spot and fades from sight over 1.5 s; its 2 m trigger ring stays
         /// drawn on the court. Whoever comes inside it first has it lunge at their eyes (BLINDED: covered and 25 % slower for
         /// 2.5 s). Untripped, it goes after 15 s. Either way it then lies dormant until she reclaims it (SOULBOUND).
         /// ⚠️ The ID is Sit's, kept for saves, mastery and the wire. The cast is host-confirmed and only the host springs it.
@@ -285,7 +315,8 @@ namespace TumbangPreso.Abilities
                 {
                     // A normal pickup or round ownership change wins over an old
                     // fetch. Never reposition equipment that is now held or thrown.
-                    // She took it out of its claws (her interact): the hand-over, its happy spin on every peer.
+                    // She took it out of its claws (her interact): the hand-over, its happy spin on every peer. It ends the
+                    // moment she has it (owner 2026-10-21, third pass) and goes dormant beside her.
                     if (_carrying && _shoe != null && _shoe.State == SlipperState.Held && _shoe.Holder == ctx.Motor)
                         _ghost?.Leave(delivered: true);
                     _carrying = false;
@@ -377,8 +408,9 @@ namespace TumbangPreso.Abilities
         /// <summary>
         /// KEEPER (owner 2026-10-21, retuning LOOKOUT, the overhaul of KURO: CATCH!: *"spawn siya ghost na tutulungan siya
         /// magdefend (pede ren magtayo lata)"*). A small lantern ghost of hers (`NemuLookout`) minds the can for 15 s. Every
-        /// time the can is down it stands it back up in 1.5 s, as often as it is knocked, until its time is up. Attackers no
-        /// longer scare it off or undo its progress. Then it lies dormant until she reclaims it (SOULBOUND).
+        /// time the can is down it stands it back up in 1.5 s, as often as it is knocked, until its time is up; a lift under
+        /// way when its time runs out is finished first. Attackers no longer scare it off or undo its progress. Then it lies
+        /// dormant until she reclaims it (SOULBOUND).
         /// ⚠️ The ID is Catch's, kept for saves, mastery and the wire. Host-confirmed: peers receive its lift/cheer state.
         /// Only the host stands the can up (`Lata.HostRestore`, then the usual can broadcast).
         /// </summary>
@@ -441,7 +473,11 @@ namespace TumbangPreso.Abilities
                 var near = NearestAttacker(ctx, _can.transform.position);
                 if (_ghost != null) _ghost.Watching = near != null ? near.transform.position : (Vector3?)null;
                 if (_can.IsUpright) { _lift = 0f; if (_ghost != null) _ghost.Lift = 0f; return; }
-                if (ctx.Round == null || !ctx.Round.RoundActive || PresentationClock.Held) return;
+                if (ctx.Round == null || !ctx.Round.RoundActive) return;
+                // ⚠️ IT FINISHES THE LIFT BEFORE IT GOES (owner 2026-10-21: a Keeper that expired mid-lift left the can down
+                // with no RESET CAN prompt). While the can is down its clock cannot run out; it ends just after the can is up.
+                DurationRemaining = Mathf.Max(DurationRemaining, .01f);
+                if (PresentationClock.Held) return;
                 // The can is down: it stands it up, whoever is near (owner 2026-10-21: attackers no longer undo it).
                 _lift += dt;
                 if (_ghost != null) _ghost.Lift = _lift / NecroRules.LookoutRestoreSeconds;

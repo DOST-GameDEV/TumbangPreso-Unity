@@ -92,6 +92,18 @@ namespace TumbangPreso.Abilities
             return lookout;
         }
 
+        /// <summary>
+        /// A Keeper is on the job at this can (owner 2026-10-21: *"when Keeper is resetting the can it wont prompt you and you cant
+        /// like reset it too"*): the can is its to stand up, so the taya gets no RESET CAN prompt and no channel while it minds it
+        /// (`Carrier.HasResetTarget`, and the host's `MatchRpc.HostMayChannelReset`). Every peer runs the ghost, so all agree.
+        /// </summary>
+        public static bool Keeping(Lata can)
+        {
+            if (can == null) return false;
+            foreach (var l in Live) if (l != null && !l._leaving && l._can == can.transform) return true;
+            return false;
+        }
+
         public static NemuLookout OwnedBy(int ownerSlot)
         {
             foreach (var l in Live) if (l != null && l.OwnerSlot == ownerSlot && !l.Leaving) return l;

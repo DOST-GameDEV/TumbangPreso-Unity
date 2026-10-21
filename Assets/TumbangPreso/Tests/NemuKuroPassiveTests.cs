@@ -42,7 +42,7 @@ namespace TumbangPreso.Tests
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(2)]
-        public void AcceptedBasicCastStartsOnlyItsOwnTwentySecondCooldown(int abilityIndex)
+        public void AcceptedBasicCastStartsOnlyItsOwnFifteenSecondCooldown(int abilityIndex)
         {
             var go = new GameObject("Nemu accepted cooldown contract");
             var kit = new NemuHeroKit();
@@ -55,9 +55,9 @@ namespace TumbangPreso.Tests
                 // Accepted observer playback calls Activate directly.
                 using (NetCue.SuppressRelay()) ability.Activate(context);
 
-                Assert.That(kit.Skill1.CooldownRemaining, Is.EqualTo(abilityIndex == 0 ? 20f : 0f));
-                Assert.That(kit.AttackingSkill.CooldownRemaining, Is.EqualTo(abilityIndex == 1 ? 20f : 0f));
-                Assert.That(kit.DefendingSkill.CooldownRemaining, Is.EqualTo(abilityIndex == 2 ? 20f : 0f));
+                Assert.That(kit.Skill1.CooldownRemaining, Is.EqualTo(abilityIndex == 0 ? 15f : 0f));
+                Assert.That(kit.AttackingSkill.CooldownRemaining, Is.EqualTo(abilityIndex == 1 ? 15f : 0f));
+                Assert.That(kit.DefendingSkill.CooldownRemaining, Is.EqualTo(abilityIndex == 2 ? 15f : 0f));
                 Assert.That(kit.Ultimate.CooldownRemaining, Is.Zero);
                 Assert.That(kit.UltimateCharge, Is.EqualTo(banked));
             }

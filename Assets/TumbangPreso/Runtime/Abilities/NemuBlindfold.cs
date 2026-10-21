@@ -7,13 +7,13 @@ namespace TumbangPreso.Abilities
 {
     /// <summary>
     /// ⚠️⚠️ BLINDFOLD, THE GHOST PEEKER LEAVES WAITING (owner 2026-10-15 as DON'T LOOK, retuned 2026-10-21, `NecroRules.DontLook*`).
-    /// *"place a ghost in an area and it becomes invisible after"* 2.5 s, *"and then if anyone goes near that area the ghost would
+    /// *"place a ghost in an area and it becomes invisible after"* 1.5 s (owner's second pass, from 2.5 s), *"and then if anyone goes near that area the ghost would
     /// lunge at their eyes"*, covering them and slowing them 25 % for 2.5 s. Gekko's way of fighting: a creature of her own
     /// does the work while she is elsewhere. One per Nemu (`Place` retires her last one).
     ///
     ///  * WAITING: Blindfold itself (`Visual.BlindfoldGhostModel`, the owner's approved mockup: an icy ghost child with a
     ///    cloth tied over its eyes), floating low over the spot, facing down Nemu's aim. Every screen sees it rise out of the
-    ///    ground; over its first 2.5 s it fades to a faint shimmer, still there for anyone who looks hard (Killjoy's traps,
+    ///    ground; over its first 1.5 s it fades to a faint shimmer, still there for anyone who looks hard (Killjoy's traps,
     ///    owner on v4: *"invisible but like medyo kita"*). Nemu keeps a clearer copy so she knows where it is.
     ///  * Its trigger ring, `NecroRules.DontLookTriggerRadius` (2 m), is drawn on the court for everyone (`Visual.NemuGhostRings`).
     ///  * SPRUNG: the first other player within 2 m once it is armed. ONLY THE HOST DECIDES: it writes BLINDED
@@ -158,8 +158,16 @@ namespace TumbangPreso.Abilities
         {
             if (_victim == null || camera == null || _body == null) return;
             // A camera at their eyes is theirs (their first person, or a spectator riding it), whoever's seat this is.
-            Vector3 eyes = _victim.transform.position + Vector3.up * 1.25f;
-            if ((camera.transform.position - eyes).sqrMagnitude >= 1.5f * 1.5f) return;
+            Vector3 at = camera.transform.position;
+            float mine = (at - EyesOf(_victim)).sqrMagnitude;
+            if (mine >= 1.5f * 1.5f) return;
+            // ⚠️ ONLY ITS OWN VICTIM'S (owner 2026-10-21: *"it tries to attach to other players"*). Anyone standing beside the
+            // victim has their own camera within that reach too, and it jumped into their lens as well. A camera belongs to the
+            // body whose eyes are nearest it, so the ghost clings only to the view that is the victim's.
+            var round = GameServices.Round;
+            if (round != null)
+                foreach (var p in round.Players)
+                    if (p != null && p != _victim && p.gameObject.activeInHierarchy && (at - EyesOf(p)).sqrMagnitude < mine) return;
             PoseForLens(camera);
         }
 
@@ -208,6 +216,8 @@ namespace TumbangPreso.Abilities
             body.SetPositionAndRotation(at, facing);
             body.localScale = Vector3.one * scale;
         }
+
+        private static Vector3 EyesOf(CharacterMotor body) => body.transform.position + Vector3.up * 1.25f;
 
         private void ShowAgain(Camera camera)
         {

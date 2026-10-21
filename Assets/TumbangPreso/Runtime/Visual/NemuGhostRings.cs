@@ -81,7 +81,7 @@ namespace TumbangPreso.Visual
             foreach (var g in NemuBlindfold.Live) if (g != null && !g.Sprung && !g.Retiring) Mark(g, g.Spot, NecroRules.DontLookTriggerRadius);
             bool spectating = GameLaunch.Spectator;
             foreach (var g in NemuDormant.Live)
-                if (g != null && !g.Reclaimed && !spectating && g.OwnerSlot == NetAuthority.LocalSlot) Mark(g, g.Position, NemuRules.ReclaimRadius);
+                if (g != null && !g.Reclaimed && !g.Expired && !spectating && g.OwnerSlot == NetAuthority.LocalSlot) Mark(g, g.Position, NemuRules.ReclaimRadius);
 
             float dt = Time.deltaTime;
             _gone.Clear();

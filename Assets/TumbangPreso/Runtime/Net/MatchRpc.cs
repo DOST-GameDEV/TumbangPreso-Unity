@@ -3182,6 +3182,7 @@ namespace TumbangPreso.Net
 
             if (lata == null || who == null || lata.IsUpright) return false;
             if (!who.IsDefender || !who.CanAct() || who.IsWhirled) return false;
+            if (Abilities.NemuLookout.Keeping(lata)) return false;
 
             Vector3 a = who.transform.position;
             Vector3 b = lata.transform.position;

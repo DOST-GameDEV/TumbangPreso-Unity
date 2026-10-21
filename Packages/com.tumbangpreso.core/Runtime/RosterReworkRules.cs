@@ -100,21 +100,25 @@ namespace TumbangPreso.Core
         public const float BasicCooldown = 25.0f;
 
         /// <summary>
-        /// SOULBOUND (owner 2026-10-21): her three ghosts no longer share one clock. Each skill's cooldown is 20 s, and it only
-        /// starts once she has reclaimed that skill's dormant ghost (`NemuRules.ReclaimRadius`, `NemuRules.ReclaimSeconds`).
+        /// SOULBOUND (owner 2026-10-21): her three ghosts no longer share one clock. Each skill's cooldown is 15 s (owner's
+        /// second pass, from 20), and it only starts once she has reclaimed that skill's dormant ghost (`NemuRules.ReclaimRadius`,
+        /// `NemuRules.ReclaimSeconds`).
         /// </summary>
-        public const float SoulboundCooldown = 20.0f;
+        public const float SoulboundCooldown = 15.0f;
+
+        /// <summary>The cooldown a skill takes instead when its dormant ghost was not reclaimed in time and faded away.</summary>
+        public const float SoulboundMissedCooldown = 25.0f;
 
         /// <summary>
         /// PEEKER (owner 2026-10-21, retuning DON'T LOOK, which replaced KURO: SIT!). Peeker, one ghost, is left at an aimed spot
-        /// up to 7 m away. It fades from everyone but Nemu over its first 2.5 s, then waits up to 15 s. The first other player
+        /// up to 7 m away. It fades from everyone but Nemu over its first 1.5 s, then waits up to 15 s. The first other player
         /// within 2 m (its trigger ring is drawn on the court) springs it: BLINDED, eyes covered and 25 % slower for 2.5 s.
         /// One ghost out at a time.
         /// </summary>
         public const float DontLookCooldown = SoulboundCooldown;
         public const float DontLookMinRange = 2.0f;
         public const float DontLookMaxRange = TerrifyMaxRange;
-        public const float DontLookArmSeconds = 2.5f;
+        public const float DontLookArmSeconds = 1.5f;
         public const float DontLookLifeSeconds = 15.0f;
         public const float DontLookTriggerRadius = 2.0f;
         public const float DontLookBlindSeconds = 2.5f;

@@ -128,22 +128,22 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void KeeperStandsTheCanUpIn1Point5SecondsFor15Seconds()
         {
-            // Owner, 2026-10-21: 15 s, stands the can up in 1.5 s every time, 20 s cooldown after it is reclaimed.
+            // Owner, 2026-10-21: 15 s, stands the can up in 1.5 s every time, 15 s cooldown after it is reclaimed.
             Assert.Equal(15.0f, NecroRules.LookoutSeconds);
             Assert.Equal(1.5f, NecroRules.LookoutRestoreSeconds);
-            Assert.Equal(20.0f, NecroRules.LookoutCooldown);
+            Assert.Equal(15.0f, NecroRules.LookoutCooldown);
         }
 
         [Fact]
         public void PeekerIsTheOwnersTripwire()
         {
-            // Owner, 2026-10-21: fades over 2.5 s, waits up to 15 s, a 2 m trigger, blind and 25 % slower for 2.5 s.
-            Assert.Equal(2.5f, NecroRules.DontLookArmSeconds);
+            // Owner, 2026-10-21: fades over 1.5 s, waits up to 15 s, a 2 m trigger, blind and 25 % slower for 2.5 s.
+            Assert.Equal(1.5f, NecroRules.DontLookArmSeconds);
             Assert.Equal(15.0f, NecroRules.DontLookLifeSeconds);
             Assert.Equal(2.0f, NecroRules.DontLookTriggerRadius);
             Assert.Equal(2.5f, NecroRules.DontLookBlindSeconds);
             Assert.Equal(2.5f, NecroRules.DontLookSlowSeconds);
-            Assert.Equal(20.0f, NecroRules.DontLookCooldown);
+            Assert.Equal(15.0f, NecroRules.DontLookCooldown);
             // A flat 25 % slow for as long as it lasts, none once it runs out.
             Assert.Equal(0.75f, NecroRules.DontLookSpeedScale(2.5f), 4);
             Assert.Equal(0.75f, NecroRules.DontLookSpeedScale(0.1f), 4);
@@ -158,7 +158,8 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void FetcherWaitsForItsReclaimedGhost()
         {
-            Assert.Equal(20.0f, NecroRules.FetchCooldown);
+            Assert.Equal(15.0f, NecroRules.FetchCooldown);
+            Assert.Equal(25.0f, NecroRules.SoulboundMissedCooldown);
             Assert.Equal(8.0f, NecroRules.FetchSeconds);
         }
 

@@ -24,10 +24,41 @@ namespace TumbangPreso.Core
         /// <summary>
         /// SOULBOUND, Nemu's passive (owner, 2026-10-21, replacing DEAD WEIGHT's slow): a ghost whose time is up does not go
         /// away. It stays where it ended as a dormant ghost, and that skill's cooldown does not start until Nemu reclaims it:
-        /// within this flat distance of it, holding Grab (RETRIEVE SLIPPER / RESET CAN) for this long.
+        /// within this flat distance of it (owner's second pass: 1.5 m, from 1 m), holding Grab (RETRIEVE SLIPPER / RESET CAN)
+        /// for this long.
         /// </summary>
-        public const float ReclaimRadius = 1.0f;
+        public const float ReclaimRadius = 1.5f;
         public const float ReclaimSeconds = 1.5f;
+
+        /// <summary>
+        /// Owner's third pass, 2026-10-21: a dormant ghost waits this long. Reclaimed in time, its skill takes the normal
+        /// `NecroRules.SoulboundCooldown`; left to fade, it is gone and the skill takes `NecroRules.SoulboundMissedCooldown`.
+        /// Meanwhile the skill's tile counts this window down.
+        /// </summary>
+        public const float DormantSeconds = 10.0f;
+
+        /// <summary>
+        /// The dormant globe drifts after her (owner 2026-10-21): 1.5 m/s from 5 m out (`DormantFarSpeed`,
+        /// `DormantFarDistance`), easing to 1.25 m/s by 3.5 m (`DormantFollowSpeed`, `DormantSlowDistance`), then slowing more
+        /// and more as it nears her and stopping dead beside her (`DormantStopDistance`, inside her reach).
+        /// </summary>
+        public const float DormantFarSpeed = 1.5f;
+        public const float DormantFarDistance = 5.0f;
+        public const float DormantFollowSpeed = 1.25f;
+        public const float DormantStopDistance = 1.0f;
+        public const float DormantSlowDistance = 3.5f;
+
+        /// <summary>How fast the globe drifts toward her when this far away (flat metres).</summary>
+        public static float DormantFollowSpeedAt(float flatDistance)
+        {
+            if (!(flatDistance > DormantStopDistance)) return 0.0f;
+            if (flatDistance >= DormantFarDistance) return DormantFarSpeed;
+            if (flatDistance >= DormantSlowDistance)
+                return DormantFollowSpeed + (DormantFarSpeed - DormantFollowSpeed)
+                    * (flatDistance - DormantSlowDistance) / (DormantFarDistance - DormantSlowDistance);
+            float u = (flatDistance - DormantStopDistance) / (DormantSlowDistance - DormantStopDistance);
+            return DormantFollowSpeed * u * u * (3.0f - 2.0f * u);
+        }
 
         /// <summary>Owner, 2026-10-11: *"pls limit ult to below 6 seconds"*. The cutscene's authored length.</summary>
         public const float ProcessionSeconds = 5.8f;

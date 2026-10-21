@@ -10,7 +10,7 @@ namespace TumbangPreso.PlayTests
     /// <summary>
     /// KEEPER (owner 2026-10-21, retuning LOOKOUT, which replaced KURO: CATCH!): a small ghost minds the can for 15 s and stands
     /// it back up 1.5 s after every knockdown; attackers no longer stop it. Only the host stands the can up. When its time is
-    /// up it lies dormant and the skill's 20 s cooldown waits for Nemu to reclaim it (SOULBOUND).
+    /// up it lies dormant and the skill's 15 s cooldown waits for Nemu to reclaim it (SOULBOUND).
     /// (Replaces `NemuCatchContractTests` and `NemuGuardMotionTests`: Catch's knock-proof can is gone.)
     /// </summary>
     public sealed class NemuLookoutTests
@@ -79,7 +79,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual("KEEPER", _kit.DefendingSkill.Name);
             Assert.AreEqual("nemu_skill2d", _kit.DefendingSkill.Id);
             Assert.AreEqual(15f, _kit.DefendingSkill.Duration, .001f);
-            Assert.AreEqual(20f, _kit.DefendingSkill.Cooldown, .001f);
+            Assert.AreEqual(15f, _kit.DefendingSkill.Cooldown, .001f);
             _motor.IsDefender = false;
             Assert.IsFalse(_kit.DefendingSkill.CanActivate(_context), "Keeper is the defender's skill.");
         }
@@ -104,6 +104,36 @@ namespace TumbangPreso.PlayTests
             Tick(NecroRules.LookoutRestoreSeconds + .1f);
             Assert.IsTrue(_can.IsUpright, "Keeper should keep standing the can up until its time is up.");
             Assert.IsTrue(_kit.Skill2.IsActive, "Keeper went before its 15 s were up.");
+        }
+
+        [Test] public void WhileItMindsTheCanTheTayaCannotResetIt()
+        {
+            // Owner 2026-10-21: *"when Keeper is resetting the can it wont prompt you and you cant like reset it too"*.
+            var carrier = _motor.gameObject.AddComponent<Carrier>(); carrier.enabled = false;
+            _motor.transform.position = _can.transform.position + Vector3.right * .5f;
+            KnockDown();
+            Assert.IsTrue(carrier.HasResetTarget, "Without Keeper the taya at the can may reset it.");
+            Cast();
+            Assert.IsTrue(NemuLookout.Keeping(_can));
+            Assert.IsFalse(carrier.HasResetTarget, "Keeper is on the can: no RESET CAN prompt or channel.");
+            Tick(NecroRules.LookoutSeconds + .2f);
+            Assert.IsFalse(NemuLookout.Keeping(_can), "Gone, it no longer holds the can.");
+        }
+
+        [Test] public void ALiftUnderWayWhenItsTimeRunsOutIsFinishedFirst()
+        {
+            // Owner 2026-10-21: an expiring Keeper left the can down and the taya without a prompt.
+            Cast();
+            Tick(NecroRules.LookoutSeconds - .5f);
+            KnockDown();
+            Tick(1.0f);
+            Assert.IsTrue(_kit.Skill2.IsActive, "Keeper expired with the can still down.");
+            Assert.IsFalse(_can.IsUpright);
+            Tick(NecroRules.LookoutRestoreSeconds - 1.0f + .1f);
+            Assert.IsTrue(_can.IsUpright, "Keeper should finish standing the can up.");
+            Tick(.1f);
+            Assert.IsFalse(_kit.Skill2.IsActive, "With the can up and its time gone, Keeper should go.");
+            Assert.IsNotNull(NemuDormant.For(0, NemuDormant.Ghost.Keeper));
         }
 
         [Test] public void AnAttackerAtTheCanNoLongerStopsIt()
@@ -133,7 +163,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(_kit.Skill2.IsActive);
             Assert.IsNotNull(NemuDormant.For(0, NemuDormant.Ghost.Keeper), "Its time up, Keeper should lie dormant.");
             Tick(3f);
-            Assert.AreEqual(NecroRules.LookoutCooldown, _kit.Skill2.CooldownRemaining, 1e-3f, "The cooldown ran before the ghost was reclaimed.");
+            Assert.AreEqual(NemuDormant.For(0, NemuDormant.Ghost.Keeper).TimeLeft, _kit.Skill2.CooldownRemaining, .05f,
+                "While it lies dormant the tile counts its window down.");
             Assert.IsFalse(_kit.Skill2.CanActivate(_context), "A dormant Keeper must be reclaimed before it is cast again.");
             NemuDormant.For(0, NemuDormant.Ghost.Keeper).Reclaim();
             Tick(1f);

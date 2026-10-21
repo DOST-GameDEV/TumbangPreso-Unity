@@ -9,7 +9,7 @@ using UnityEngine.TestTools;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// Nemu's PEEKER (owner 2026-10-21, retuning DON'T LOOK, which replaced KURO: SIT!): the ghost waits, hides after 2.5 s, and
+    /// Nemu's PEEKER (owner 2026-10-21, retuning DON'T LOOK, which replaced KURO: SIT!): the ghost waits, hides after 1.5 s, and
     /// only the host springs it on the first other player within 2 m: BLINDED, eyes covered and 25 % slower for 2.5 s. When it is
     /// done it lies dormant where it ended (SOULBOUND).
     /// </summary>
@@ -62,7 +62,7 @@ namespace TumbangPreso.PlayTests
         {
             Assert.AreEqual("nemu_skill1", _kit.Skill1.Id);
             Assert.AreEqual("PEEKER", _kit.Skill1.Name);
-            Assert.AreEqual(20f, _kit.Skill1.Cooldown);
+            Assert.AreEqual(15f, _kit.Skill1.Cooldown);
             Assert.AreEqual(AbilityNetworkMode.HostConfirmed, _kit.Skill1.NetworkMode);
             Assert.IsFalse(_kit.Skill1.CanReactivate, "There is no teleport back any more.");
         }
@@ -84,7 +84,7 @@ namespace TumbangPreso.PlayTests
             var blindfold = NemuBlindfold.Place(new Vector3(0, 0, 5), Vector3.forward, 0);
             _players[1].transform.position = new Vector3(0.5f, 0, 5.5f);
             yield return null; yield return null;
-            Assert.IsFalse(_players[1].IsBlinded, "It sprang before its 2.5 s were up.");
+            Assert.IsFalse(_players[1].IsBlinded, "It sprang before its 1.5 s were up.");
 
             var armed = NemuBlindfold.Place(new Vector3(0, 0, 5), Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
             yield return null; yield return null;
@@ -167,8 +167,11 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(dormant, "Its time up, Peeker should lie dormant.");
             Assert.Less(Vector2.Distance(new Vector2(dormant.Position.x, dormant.Position.z), new Vector2(spot.x, spot.z)), .01f);
             _kit.Skill1.Tick(_ctx, 2f);
-            Assert.AreEqual(NecroRules.DontLookCooldown, _kit.Skill1.CooldownRemaining, 1e-3f, "The cooldown ran before Peeker was reclaimed.");
+            Assert.AreEqual(dormant.TimeLeft, _kit.Skill1.CooldownRemaining, .05f, "While it lies dormant the tile counts its window down.");
+            Assert.Greater(_kit.Skill1.CooldownRemaining, NemuRules.DormantSeconds - 1.5f);
             dormant.Reclaim();
+            _kit.Skill1.Tick(_ctx, 2f);
+            Assert.AreEqual(NecroRules.DontLookCooldown, _kit.Skill1.CooldownRemaining, 1e-3f, "Reclaimed in time: the normal cooldown.");
             _kit.Skill1.Tick(_ctx, 2f);
             Assert.AreEqual(NecroRules.DontLookCooldown - 2f, _kit.Skill1.CooldownRemaining, 1e-3f);
         }

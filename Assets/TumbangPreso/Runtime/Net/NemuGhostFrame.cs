@@ -10,7 +10,7 @@ namespace TumbangPreso.Net
     public struct NemuGhostPose : INetworkSerializable
     {
         public const int WireBytes = 67;
-        public byte Kind, Phase, Flags; // 1 Blindfold, 2 Skitter, 3 Lookout, 4 dormant (Flags: its skill); phase4 leaves
+        public byte Kind, Phase, Flags; // 1 Blindfold, 2 Skitter, 3 Lookout, 4 dormant (Flags: its skill; phase3 faded); phase4 leaves
         public long Id;
         public Vector3 Position, Forward, Auxiliary;
         public float Age, PhaseAge, Progress;
@@ -23,7 +23,7 @@ namespace TumbangPreso.Net
                 : Target >= -1 && Target < Balance.PlayerCount && Target != owner && TargetEpoch >= 0
                     && (Phase == 4 || Target >= 0))
                 : Target == -1 && TargetEpoch == 0 && (Kind == 2 ? Phase != 3 && Flags <= 15
-                    : Kind == 3 ? Phase != 3 && Flags <= 3 : (Phase == 1 || Phase == 4) && Flags >= 1 && Flags <= 3));
+                    : Kind == 3 ? Phase != 3 && Flags <= 3 : Phase != 2 && Flags >= 1 && Flags <= 3));
         private static bool Clock(float value) => float.IsFinite(value) && value >= 0 && value <= 60;
         private static bool Finite(Vector3 value) => float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z)
             && Mathf.Abs(value.x) <= 20000 && Mathf.Abs(value.y) <= 20000 && Mathf.Abs(value.z) <= 20000;
