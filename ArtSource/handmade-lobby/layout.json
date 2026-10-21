@@ -1,0 +1,356 @@
+{
+ "note": "HOME layout in 1920x1080 reference units, top-left origin, y down. 'at' is where the drawn shape's top-left sits (sprite PAD excluded). HubHome mirrors these numbers.",
+ "stickers": {
+  "avatar": {
+   "sprite": "avatar_frame",
+   "at": [
+    22,
+    18
+   ]
+  },
+  "plate": {
+   "sprite": "name_plate",
+   "at": [
+    160,
+    18
+   ]
+  },
+  "currency": {
+   "sprite": "currency_bar",
+   "at": [
+    1490,
+    30
+   ]
+  },
+  "plus": {
+   "sprite": "plus_button",
+   "at": [
+    1690,
+    43
+   ]
+  },
+  "menu": {
+   "sprite": "menu_button",
+   "at": [
+    1802,
+    30
+   ]
+  },
+  "queue": {
+   "sprite": "queue_plate",
+   "at": [
+    755,
+    3
+   ]
+  },
+  "cancel": {
+   "sprite": "cancel_button",
+   "at": [
+    1060,
+    24
+   ]
+  },
+  "hero": {
+   "sprite": "tile_hero",
+   "at": [
+    24,
+    446
+   ]
+  },
+  "item": {
+   "sprite": "tile_item",
+   "at": [
+    24,
+    634
+   ]
+  },
+  "shop": {
+   "sprite": "tile_shop",
+   "at": [
+    22,
+    826
+   ]
+  },
+  "task": {
+   "sprite": "tile_task",
+   "at": [
+    296,
+    900
+   ]
+  },
+  "mode": {
+   "sprite": "mode_card",
+   "at": [
+    1466,
+    598
+   ]
+  },
+  "play": {
+   "sprite": "play",
+   "at": [
+    1466,
+    900
+   ]
+  }
+ },
+ "inlays": {
+  "avatar_well": {
+   "sprite": "avatar_well",
+   "at": [
+    34,
+    30
+   ]
+  },
+  "xp_track": {
+   "sprite": "xp_track",
+   "at": [
+    182,
+    106
+   ]
+  },
+  "xp_fill": {
+   "sprite": "xp_fill",
+   "at": [
+    182,
+    106
+   ]
+  },
+  "level": {
+   "sprite": "glyph_level",
+   "at": [
+    176,
+    30
+   ]
+  },
+  "currency_field": {
+   "sprite": "currency_field",
+   "at": [
+    1532,
+    41
+   ]
+  },
+  "art_window": {
+   "sprite": "art_window",
+   "at": [
+    1491,
+    620
+   ]
+  },
+  "plus_glyph": {
+   "sprite": "glyph_plus",
+   "at": [
+    1705,
+    54
+   ]
+  },
+  "menu_glyph": {
+   "sprite": "glyph_menu",
+   "at": [
+    1820,
+    48
+   ]
+  },
+  "x_glyph": {
+   "sprite": "glyph_x",
+   "at": [
+    1068,
+    30
+   ],
+   "scale": 0.9
+  },
+  "chevron": {
+   "sprite": "glyph_chevron",
+   "at": [
+    1846,
+    778
+   ]
+  }
+ },
+ "icons": {
+  "coin": {
+   "sprite": "icon_coin",
+   "at": [
+    1428,
+    12
+   ],
+   "scale": 0.86
+  },
+  "hero": {
+   "sprite": "icon_hero",
+   "at": [
+    52,
+    380
+   ],
+   "scale": 0.88
+  },
+  "item": {
+   "sprite": "icon_item",
+   "at": [
+    46,
+    598
+   ],
+   "scale": 0.86
+  },
+  "shop": {
+   "sprite": "icon_shop",
+   "at": [
+    62,
+    780
+   ],
+   "scale": 0.82
+  },
+  "task": {
+   "sprite": "icon_task",
+   "at": [
+    318,
+    868
+   ],
+   "scale": 0.8
+  }
+ },
+ "mode_art": {
+  "ranked": "mode_art_ranked",
+  "casual": "mode_art_casual",
+  "classic": "mode_art_classic"
+ },
+ "labels": {
+  "name": {
+   "text": "MATTHEW",
+   "at": [
+    234,
+    24
+   ],
+   "size": 38,
+   "colour": "#FCD39F"
+  },
+  "tag": {
+   "text": "#2401",
+   "at": [
+    236,
+    64
+   ],
+   "size": 28,
+   "colour": "#E9B57D",
+   "font": "reading"
+  },
+  "level": {
+   "text": "7",
+   "at": [
+    200,
+    53
+   ],
+   "size": 28,
+   "colour": "#56071D",
+   "anchor": "mm"
+  },
+  "coins": {
+   "text": "1,250",
+   "at": [
+    1607,
+    72
+   ],
+   "size": 36,
+   "colour": "#56071D",
+   "anchor": "mm"
+  },
+  "queue": {
+   "text": "SEARCHING  0:42",
+   "at": [
+    900,
+    48
+   ],
+   "size": 32,
+   "colour": "#FCD39F",
+   "anchor": "mm"
+  },
+  "hero": {
+   "text": "HERO",
+   "at": [
+    108,
+    572
+   ],
+   "size": 40,
+   "colour": "#A84A12",
+   "anchor": "ms"
+  },
+  "item": {
+   "text": "ITEM",
+   "at": [
+    108,
+    760
+   ],
+   "size": 40,
+   "colour": "#A84A12",
+   "anchor": "ms"
+  },
+  "shop": {
+   "text": "SHOP",
+   "at": [
+    135,
+    1010
+   ],
+   "size": 46,
+   "colour": "#174D33",
+   "anchor": "ms"
+  },
+  "task": {
+   "text": "TASK",
+   "at": [
+    362,
+    1016
+   ],
+   "size": 34,
+   "colour": "#8A330B",
+   "anchor": "ms"
+  },
+  "map": {
+   "text": "SA BUBONG",
+   "at": [
+    1505,
+    632
+   ],
+   "size": 28,
+   "colour": "#FCD39F",
+   "outline": "#2E0310"
+  },
+  "mode": {
+   "text": {
+    "ranked": "RANKED",
+    "casual": "CASUAL",
+    "classic": "CASUAL"
+   },
+   "at": [
+    1491,
+    832
+   ],
+   "size": 50,
+   "colour": "#FCD39F",
+   "anchor": "ls"
+  },
+  "sub": {
+   "text": {
+    "ranked": "HERO STRIKE  ·  UNRANKED",
+    "casual": "HERO STRIKE",
+    "classic": "CLASSIC"
+   },
+   "at": [
+    1493,
+    868
+   ],
+   "size": 26,
+   "colour": "#F5B521",
+   "font": "reading",
+   "anchor": "ls"
+  },
+  "play": {
+   "text": "PLAY",
+   "at": [
+    1681,
+    1000
+   ],
+   "size": 96,
+   "colour": "#1D5A14",
+   "anchor": "ms"
+  }
+ }
+}

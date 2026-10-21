@@ -52,14 +52,13 @@ namespace TumbangPreso.UI.Hub
         /// </summary>
         public static HubWalletChip TopRight(RectTransform root, TumpHub hub)
         {
-            var menu = HubKit.IconButton(root, "MenuButton", HubGlyph.Mark.Menu, HubStyle.Honey,
-                                         () => hub.Push<HubMenu>(), 8);
-            HubKit.Place((RectTransform)menu.transform, HubKit.TopRight,
-                         new Vector2(-HubKit.Margin, -HubKit.Margin), new Vector2(BarHeight, BarHeight));
+            // ⚠️ THE OWNER'S BOARD PIECES (2026-10-21), on every screen that shows the chrome, so what
+            // a player learns on HOME is the same sticker everywhere (`HubBoard`).
+            var menu = HubBoard.Sticker(root, "MenuButton", HubKit.TopRight, "menu_button", () => hub.Push<HubMenu>(), out var menuFace, out var menuGroup);
+            var lines = HubBoard.Picture(menuFace, menuGroup, "glyph_menu", "Icon");
+            HubBoard.Feel(menu, menuFace, HubBoard.Depth("menu_button"), 0.45f, false, lines);
 
             var chip = HubWalletChip.Build(root, hub);
-            HubKit.Place((RectTransform)chip.transform, HubKit.TopRight,
-                         new Vector2(-(HubKit.Margin + BarHeight + 20), -HubKit.Margin), new Vector2(340, BarHeight));
             return chip;
         }
     }
@@ -69,24 +68,31 @@ namespace TumbangPreso.UI.Hub
     {
         private Text _amount;
         private GameObject _notice;
+        private HubBoard.LabelSpec _spec;
 
         public static HubWalletChip Build(RectTransform parent, TumpHub hub)
         {
-            var root = HubKit.Rect(parent, "WalletChip");
+            // The bar is furniture (not pressable); its + is its own sticker. The coin overlaps the
+            // bar's left end, as on the board.
+            var group = HubBoard.Bounds("currency_bar_slab", "currency_bar_face", "icon_coin", "plus_button_slab");
+            var root = HubBoard.Hang(HubKit.Rect(parent, "WalletChip"), HubKit.TopRight, group);
             var chip = root.gameObject.AddComponent<HubWalletChip>();
+            HubBoard.Place(root, group, "currency_bar_slab", "PlateSlab");
+            HubBoard.Place(root, group, "currency_bar_face", "Plate");
+            HubBoard.Place(root, group, "currency_field", "Field");
+            chip._amount = HubBoard.Write(root, group, "000,000", "Balance");
+            chip._spec = HubBoard.Label("000,000");
 
-            var plate = HubKit.Shape(root, "Plate", HubStyle.Night, false, 21, 5, 30);
-            HubKit.Stretch(plate.rectTransform);
+            var plus = HubBoard.Sticker(root, "EarnButton", new Vector2(0, 1), "plus_button", () => hub.Push<HubTasks>(), out var plusFace, out var plusGroup);
+            // the + hangs inside the chip: re-anchor it to the chip's own top-left
+            var plusRect = (RectTransform)plus.transform;
+            plusRect.anchoredPosition = new Vector2(plusGroup.x - group.x, -(plusGroup.y - group.y));
+            var glyph = HubBoard.Picture(plusFace, plusGroup, "glyph_plus", "Icon");
+            HubBoard.Feel(plus, plusFace, HubBoard.Depth("plus_button"), 0.7f, false, glyph);
+            chip._notice = HubKit.Notice(plusFace);
 
-            var cap = HubKit.Glyph(root, "CapIcon", HubGlyph.Mark.Cap, HubStyle.Golden, 0.1f);
-            HubKit.Place(cap.rectTransform, HubKit.Left, new Vector2(14, 0), new Vector2(66, 66));
-
-            chip._amount = HubKit.Text(root, "Balance", "", HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(chip._amount.rectTransform, HubKit.Left, new Vector2(90, 2), new Vector2(160, 80));
-
-            var plus = HubKit.IconButton(root, "EarnButton", HubGlyph.Mark.Plus, HubStyle.Golden, () => hub.Push<HubTasks>(), 22);
-            HubKit.Place((RectTransform)plus.transform, HubKit.Right, new Vector2(-8, 0), new Vector2(80, 80));
-            chip._notice = HubKit.Notice(plus.Body);
+            var coin = HubBoard.Place(root, group, "icon_coin", "CapIcon");
+            coin.gameObject.AddComponent<HubCoinSpin>();
             chip.Refresh();
             return chip;
         }
@@ -107,10 +113,22 @@ namespace TumbangPreso.UI.Hub
             if (_amount == null) return;
             var wallet = GameServices.Wallet;
             int balance = wallet != null ? wallet.Balance : -1;
-            _amount.text = balance < 0 ? "--" : balance.ToString("N0");
-            _amount.fontSize = HubStyle.Size(HubStyle.Title);
-            HubKit.Fit(_amount, 160);
+            HubBoard.SetWords(_amount, balance < 0 ? "--" : balance.ToString("N0"), _spec);
             if (_notice != null) _notice.SetActive(wallet != null && wallet.AnyClaimable);
+        }
+    }
+
+    /// <summary>The coin turns a quarter and back every few seconds, the one moving thing in the corner.</summary>
+    public sealed class HubCoinSpin : MonoBehaviour
+    {
+        private void Update()
+        {
+            if (HubStyle.ReducedMotion) { transform.localRotation = Quaternion.identity; return; }
+            float t = Mathf.Repeat(Time.unscaledTime, 5.0f);
+            float k = t < 0.6f ? Mathf.Sin(t / 0.6f * Mathf.PI) : 0f;
+            transform.localRotation = Quaternion.Euler(0, 0, -18f * k);
+            float s = 1f + 0.06f * k;
+            transform.localScale = new Vector3(s, s, 1);
         }
     }
 }

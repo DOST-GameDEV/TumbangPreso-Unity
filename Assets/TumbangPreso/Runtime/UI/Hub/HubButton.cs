@@ -134,6 +134,13 @@ namespace TumbangPreso.UI.Hub
 
         private bool _forceHatch;
 
+        /// <summary>Where hover/focus (1) and press (1) are heading. A sticker with no
+        /// <see cref="Shape"/> (the hand-made HOME pieces) animates itself from these in
+        /// <see cref="HubStickerFeel"/>, so the four states stay this one class's decision.</summary>
+        public float LiftTarget => _liftTarget;
+        public float PressTarget => _pressTarget;
+        public bool HasPadFocus => _focused;
+
         /// <summary>Hatch a control that is still pressable: an unowned item opens its popup (to buy)
         /// but must still read as not yours.</summary>
         public bool Hatched

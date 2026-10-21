@@ -100,6 +100,7 @@ namespace TumbangPreso.UI.Hub
         private TumpHub _hub;
         private RectTransform _root;
         private Text _clock, _line;
+        private HubBoard.LabelSpec _clockSpec;
         private HubButton _cancel, _bots;
         private int _shownSecond = -1;
 
@@ -111,36 +112,33 @@ namespace TumbangPreso.UI.Hub
             var holder = HubKit.Stretch(HubKit.Rect(parent, "QueuePlateHolder"));
             var plate = holder.gameObject.AddComponent<HubQueuePlate>();
             bool larger = Settings.SettingsStore.Current.LargerText;
-            var root = HubKit.Place(HubKit.Rect(holder, "QueuePlate"), HubKit.Top, new Vector2(0, -24), new Vector2(540, larger ? 148 : 118));
+            // ⚠️ THE OWNER'S BOARD PLATE (2026-10-21): her own knit trapezoid (drawn flat, no slab) hanging off the top edge, the
+            // elapsed time in the display face and a red X, nothing else on it. The mode and the
+            // refusal line hang just under it, because a refusal must still be read.
+            var group = HubBoard.Bounds("queue_plate_face", "cancel_button_face");
+            var root = HubBoard.Hang(HubKit.Rect(holder, "QueuePlate"), HubKit.Top, group);
             plate._hub = hub;
             plate._root = root;
+            HubBoard.Place(root, group, "queue_plate_face", "Ticket");
+            plate._clockSpec = HubBoard.Label("00:00");
+            plate._clock = HubBoard.Write(root, group, "00:00", "Elapsed");
 
-            // A hanging ticket: the dark night sticker, cut at the corners, no shadow (it is hung,
-            // not stuck down), with a persimmon keel along its bottom.
-            var shape = HubKit.Shape(root, "Ticket", HubStyle.Night, true, 44, 5, 26);
-            HubKit.Stretch(shape.rectTransform);
-            shape.ShadowOffset = new Vector2(0, -8);
-            shape.BandFraction = 0.12f;
-            shape.Outline = HubStyle.Ink;
+            plate._line = HubKit.Text(root, "QueueLine", "SEARCHING", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleCenter);
+            HubKit.Place(plate._line.rectTransform, HubKit.Bottom, new Vector2(0, -(larger ? 50 : 42)), new Vector2(520, larger ? 44 : 36));
+            var edge = plate._line.gameObject.AddComponent<Outline>();
+            edge.effectColor = HubBoard.Colour("#2E0310"); edge.effectDistance = new Vector2(2, -2);
 
-            var clockIcon = HubKit.Glyph(root, "ClockIcon", HubGlyph.Mark.Clock, HubStyle.Golden);
-            HubKit.Place(clockIcon.rectTransform, HubKit.Left, new Vector2(26, 8), new Vector2(46, 46));
-
-            plate._clock = HubKit.Text(root, "Elapsed", "0:00", HubStyle.Display, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(plate._clock.rectTransform, HubKit.Left, new Vector2(84, larger ? 24 : 12), new Vector2(210, larger ? 92 : 84));
-
-            plate._line = HubKit.Text(root, "QueueLine", "SEARCHING", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(plate._line.rectTransform, HubKit.BottomLeft, new Vector2(30, larger ? 6 : 10), new Vector2(390, larger ? 44 : 36));
-
-            plate._cancel = HubKit.IconButton(root, "CancelQueue", HubGlyph.Mark.Close, HubStyle.DeepRed, () => hub.Host.CancelQueue(), 71);
-            HubKit.Place((RectTransform)plate._cancel.transform, HubKit.Right, new Vector2(-24, 4), new Vector2(84, 84));
+            plate._cancel = HubBoard.Sticker(root, "CancelQueue", new Vector2(0, 1), "cancel_button", () => hub.Host.CancelQueue(), out var xFace, out var xGroup);
+            ((RectTransform)plate._cancel.transform).anchoredPosition = new Vector2(xGroup.x - group.x, -(xGroup.y - group.y));
+            var x = HubBoard.Picture(xFace, xGroup, "glyph_x", "Icon");
+            HubBoard.Feel(plate._cancel, xFace, HubBoard.Depth("cancel_button"), 0.2f, false, x);
 
             plate._bots = HubKit.Button(holder, "PlayWithBots", "PLAY WITH BOTS", HubStyle.Golden, () =>
             {
                 HubQueueWatch.AcceptBots();
                 hub.Host.AcceptBots();
             }, HubStyle.Body, 72, HubGlyph.Mark.Bots);
-            HubKit.Place((RectTransform)plate._bots.transform, HubKit.Top, new Vector2(0, larger ? -196 : -156), new Vector2(360, 76));
+            HubKit.Place((RectTransform)plate._bots.transform, HubKit.Top, new Vector2(0, larger ? -206 : -178), new Vector2(360, 76));
 
             root.gameObject.SetActive(false);
             plate._bots.gameObject.SetActive(false);
@@ -169,7 +167,7 @@ namespace TumbangPreso.UI.Hub
             int seconds = Mathf.FloorToInt(Time.unscaledTime - HubQueueWatch.StartedAt);
             if (seconds == _shownSecond) return;
             _shownSecond = seconds;
-            _clock.text = $"{seconds / 60}:{seconds % 60:00}";
+            HubBoard.SetWords(_clock, $"{seconds / 60:00}:{seconds % 60:00}", _clockSpec);
 
             var host = _hub.Host;
             string mode = HubQueueWatch.Stake == QueueStake.Ranked ? "RANKED"
