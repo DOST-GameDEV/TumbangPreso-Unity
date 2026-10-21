@@ -134,7 +134,7 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
       <Wide f={f} cam={cam} figure={<ActorImage d={d} />} under={under} over={over} />
       <WindStreaks f={f} amount={streaks} />
       {/* The close-up's vignette arrives with the push, not at a cut. */}
-      {f >= B.pushIn && f < B.cu && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" opacity={kf(f, [[B.pushIn, 0], [B.cu, 1, inCubic]])} />}
+      {f >= B.pushIn && f < B.cu && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignetteSet)" opacity={kf(f, [[B.pushIn, 0], [B.cu, 1, inCubic]])} />}
       {/* The dead stop lands with a one-frame flash of the whole screen, not of him: washing the
           figure alone read as a grey ghost in the first draft. */}
       {f === B.settle && <rect x={0} y={0} width={1920} height={1080} fill="#FFF3C8" opacity={0.22} />}

@@ -266,7 +266,7 @@ export const Chase: React.FC<{ f: number }> = ({ f }) => {
           return <rect key={i} x={xx} y={y} width={len} height={5 + random(`ch${i}`) * 6} fill="#FFE6B0" opacity={0.3} />;
         })}
       {/* Slow motion reads as a held breath: the frame darkens a touch and the edges close in. */}
-      {((f >= B.scoop && f < B.turn) || (f >= B.lunge && f < B.lunge + bt(14))) && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" />}
+      {((f >= B.scoop && f < B.turn) || (f >= B.lunge && f < B.lunge + bt(14))) && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignetteSet)" />}
       <MotionBlurDef amount={blur} />
     </g>
   );
