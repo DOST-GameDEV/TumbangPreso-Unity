@@ -1,3 +1,21 @@
+# Actual halftime rendering checkpoint, October21
+
+BugFix after184bc9612. Actual owner host log reproduces Unsupported recorded
+field with saved Blindfold data. Added disabled playback-only Blindfold drawing
+and refreshed prop pose tracks when generated hierarchy changes; combined native
+test exposed live Boulder children missing from the old root-only track.
+Final graphics PlayMode5/5 pass, including combined highlight through standings,
+registry/seek isolation and three timing/fallback controls. Inspected native PNG.
+Evidence: docs/reports/halftime-live-blindfold-2026-10-21.md;
+XML: Logs/halftime-live-1021/complete-fixed.xml. All test jobs terminal; guarded
+session97884 restored72 profile files and1 shared Editor input preference.
+No build. Actual new host/joiner acceptance remains open. Standalone saved clips
+still hit preserved changed-Dante/missing-Boulder art guards; not claimed fixed.
+Unrelated ProjectAuditorSettings and Assets/_Recovery remain untouched.
+HALFTIME-HIGHLIGHT-1021 stays IN PROGRESS. Owner Editor was closed idle on
+SplashScreen for tests. Next: publish this coherent fix to origin/BugFix, verify
+remote HEAD and reopen the normal Editor without entering Play.
+
 # Train announcement removal checkpoint, October21
 
 Owner requests deleting all train/Overclock announcement code, including the

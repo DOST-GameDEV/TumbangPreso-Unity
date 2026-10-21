@@ -86,6 +86,13 @@ segment absent, while earlier committed segments remain browseable.
 Playback loads map geometry through a replay-only `MatchInstaller` route. It
 creates no live players, bots, match runner or score/reward flow. Recorded render
 copies, lighting, fields, props and cues are drawn at the chosen replay time.
+Blindfold's existing recorded field uses a disabled playback-only ghost drawing,
+sampled from its recorded spot, facing and age. It must not enter the live ghost
+registry, trip a victim, recast a skill or play cast audio. Accepted recorded
+fields need an actual drawing path; successful view construction alone does not
+establish that the clip's later fields can play.
+Generated prop hierarchy changes refresh the pose track and use the existing
+unsafe-window fence; a matching root alone does not establish compatible bones.
 Current compatible game art is required; changed or missing recorded art fails
 with an explanation. Keep the tournament build alongside its replay folders
 when preserving footage across future map or character revisions.

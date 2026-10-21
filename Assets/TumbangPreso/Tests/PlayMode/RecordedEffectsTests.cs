@@ -15,6 +15,48 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
         [UnityTest]
+        public IEnumerator RecordedBlindfoldDrawsWithoutRegisteringOrTriggeringALiveGhost()
+        {
+            var live=NemuBlindfold.Place(new Vector3(2,0,2),Vector3.forward,0,1);
+            var field=WorldField(live);
+            var stage=new GameObject("Recorded Blindfold proof");
+            RecordedFieldView view=null;
+            try
+            {
+                int ghosts=NemuBlindfold.Live.Count;
+                var random=Random.state;float sourceAge=live.Age;
+                Assert.IsTrue(RecordedSpecialFields.Valid(field));
+                view=new RecordedFieldView(stage.transform,field);
+                var copy=view.Root.GetComponentInChildren<NemuBlindfold>(true);
+                Assert.IsNotNull(copy);Assert.IsFalse(copy.enabled);
+                Assert.IsFalse(NemuBlindfold.Live.Contains(copy));
+                Assert.IsEmpty(view.Root.GetComponentsInChildren<Collider>(true));
+                var body=view.Root.GetComponentsInChildren<MeshFilter>(true).First(m=>m.name=="BlindfoldBody");
+                Vector3 atOne=Vector3.zero;
+                foreach(float age in new[]{0f,.2f,1f,3f,20f,29f,1f})
+                {
+                    field.Remaining=field.Duration-age;view.Sample(field,0);view.Visible(true);
+                    if(age==1f)
+                    {
+                        if(atOne!=Vector3.zero)Assert.AreEqual(atOne,body.transform.position,"Seeking back must reproduce the recorded pose.");
+                        atOne=body.transform.position;
+                    }
+                    Assert.AreEqual(ghosts,NemuBlindfold.Live.Count);
+                    Assert.AreEqual(sourceAge,live.Age,"Playback cannot advance the real ghost.");
+                    Assert.AreEqual(random,Random.state);
+                }
+                yield return null;
+                Assert.AreSame(live,NemuBlindfold.OwnedBy(0));
+                Assert.IsFalse(NemuBlindfold.Live.Contains(copy));
+                Assert.IsFalse(copy.Sprung);
+            }
+            finally { view?.Dispose();Object.DestroyImmediate(stage);if(live!=null)Object.DestroyImmediate(live.gameObject); }
+        }
+
+        private static Net.WorldEffectSnapshot.Field WorldField(NemuBlindfold live)
+            =>Net.WorldEffectSnapshot.Capture().Single(f=>f.Source==live.gameObject);
+
+        [UnityTest]
         public IEnumerator FlightCapturePreservesTrailDataAcrossObjectLifecycle()
         {
             var roots = new System.Collections.Generic.List<GameObject>();

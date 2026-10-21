@@ -1,5 +1,8 @@
 # Documentation: Start Here
 
+Actual halftime Blindfold rendering failure:
+[saved owner footage and playback investigation](reports/halftime-live-blindfold-2026-10-21.md).
+
 Removed train/Overclock announcements and distant can-reset instruction:
 [scope and compilation evidence](reports/hud-text-removal-2026-10-21.md).
 

@@ -67,6 +67,14 @@ namespace TumbangPreso.CameraSystem
             public bool Ready => _count >= 2;
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;
             public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
+            internal bool MatchesHierarchy(GameObject source)
+            {
+                if(Source!=source||source==null)return false;
+                var bones=StableTransforms(source);
+                if(bones.Length!=_bones.Length)return false;
+                for(int i=0;i<bones.Length;i++)if(bones[i]!=_bones[i])return false;
+                return true;
+            }
             public Track(CharacterMotor actor, GameObject source)
             {
                 Actor = actor; Source = source; _bones = StableTransforms(source);

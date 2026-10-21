@@ -9,16 +9,25 @@
   The updated native test has not been run; no player build was produced.
 - Evidence: [HUD text removal](reports/hud-text-removal-2026-10-21.md).
 
-### HALFTIME-HIGHLIGHT-1021: delayed peers reject complete highlights (IN PROGRESS)
+### HALFTIME-HIGHLIGHT-1021: delayed playback and missing recorded ghost rendering (IN PROGRESS)
 
 - [x] Reproduce a complete recorded catch rejected solely by a halftime stamp0.8s old.
 - [x] Admit delayed playback using its actual duration, wait for nominated bytes and
   preserve the recorded lead-in, standings boundary and host's shared end.
 - [x] Four focused native graphics cases pass, including late bytes, missing bytes
   and the original shared deadline. Preserve the separate existing throw-control failure.
+- [x] Owner retest still fails on LagoonCove. Native reproduction with the actual
+  saved field throws Unsupported recorded field: accepted Blindfold data has no renderer.
+- [x] Add playback-only Blindfold drawing and refresh prop tracks when generated
+  geometry changes. Five native cases pass, including combined Blindfold/Boulder
+  halftime through standings and an inspected rendered frame.
+- [ ] Resolve standalone saved-owner-clip reconstruction: clip 44 has a changed
+  Dante art key; clip 42 lacks catalog Boulder art. Guards remain intact and both
+  failures are preserved. Complete saved-clip playback is not established.
 - [ ] Retest the reported online/LAN match on actual host and joiner. The native
   delay simulation is not paired network acceptance. No new player build produced.
 - Evidence: [halftime highlight timing](reports/halftime-highlight-2026-10-21.md).
+- Actual-match failure: [Blindfold rendering investigation](reports/halftime-live-blindfold-2026-10-21.md).
 
 ### PENALTY-FEEDBACK-1021: another seat's penalty flashes the local crosshair (DONE)
 

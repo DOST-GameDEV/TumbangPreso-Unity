@@ -211,6 +211,32 @@ namespace TumbangPreso.Abilities
         }
 
         private bool _drawn;
+        private bool _recorded;
+
+        // A replay field carries the waiting ghost's spot, facing and age. Build its
+        // authored drawing without Place, live registration, audio or a trigger loop.
+        public static NemuBlindfold Recorded(Transform parent, Net.WorldEffectSnapshot.Field field)
+        {
+            var go = new GameObject("RecordedBlindfold");
+            go.SetActive(false);
+            go.transform.SetParent(parent, false);
+            var ghost = go.AddComponent<NemuBlindfold>();
+            ghost.enabled = false;
+            ghost._recorded = true;
+            ghost.OwnerSlot = field.Owner;
+            ghost.Spot = field.Position;
+            ghost.Facing = field.Forward;
+            ghost._smoke = new NemuSmokeBatch(go.transform, "Blindfold", 1, 4, 1);
+            ghost.BuildBody();
+            go.SetActive(true);
+            return ghost;
+        }
+
+        public void StepRecorded(float age)
+        {
+            _age = Mathf.Clamp(age, 0f, NecroRules.DontLookLifeSeconds);
+            Draw();
+        }
 
         private void OnDestroy() { _smoke?.Dispose(); _smoke = null; }
 
@@ -399,7 +425,7 @@ namespace TumbangPreso.Abilities
             {
                 // The pet mouse darts round its hiding spot while it waits; the moment it springs it is back on the point (the
                 // lunge starts from there). Drawing only: the spot and the trigger radius do not move.
-                _flight.Apply(ref at, ref facing, _age, _state == State.Waiting && !sprung ? 1f : 0f, Time.deltaTime);
+                _flight.Apply(ref at, ref facing, _age, _state == State.Waiting && !sprung ? 1f : 0f, _recorded ? 0f : Time.deltaTime);
                 _block.SetVector(TrailId, _flight.TrailLocal);
             }
             var mesh = sprung ? BlindfoldGhostModel.Sprung : BlindfoldGhostModel.Waiting;
