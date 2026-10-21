@@ -20,6 +20,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubTasks : HubScreen
     {
+        public override bool WearsBoard => true;
         public override float CourtShade => 1.0f;
         private RectTransform _daily, _weekly;
         private Text _note;
@@ -46,9 +47,7 @@ namespace TumbangPreso.UI.Hub
             var board = HubScenery.Cardboard(columns, "Listahan", 41);
             // ⚠️ 720 TALL, NOT 790: at 790 the board covered the offline note on the wall under it.
             HubKit.Place(board, HubKit.Top, new Vector2(0, 44), new Vector2(1800, 720));
-            board.localRotation = Quaternion.Euler(0, 0, -0.8f);
             var row = HubKit.Place(HubKit.Rect(columns, "Row"), HubKit.Top, Vector2.zero, new Vector2(1720, 720));
-            row.localRotation = Quaternion.Euler(0, 0, -0.8f);
             HubSlap.On(board, 0, -2);
             _daily = Column(row, "Daily", "TODAY", new Vector2(0, 0));
             _weekly = Column(row, "Weekly", "THIS WEEK", new Vector2(880, 0));

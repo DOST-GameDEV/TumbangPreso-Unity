@@ -339,6 +339,21 @@ namespace TumbangPreso.UI.Hub
         /// `AtHome` and hid the owner's HOME loop the moment the hamburger MENU opened, which swapped
         /// the background behind the menu for the live court (owner, 2026-09-26).
         /// </summary>
+        /// <summary>
+        /// HOME, or a page laid over HOME's scene (one whose ground is the HubScenery maroon wash,
+        /// 2026-10-22): the owner's animated HOME scene plays behind it instead of the live court.
+        /// </summary>
+        public bool ShowingHomeScene
+        {
+            get
+            {
+                for (int i = _stack.Count - 1; i >= 0; i--)
+                    if (!_stack[i].IsPopup)
+                        return _stack[i] is HubHome || (_stack[i].Root != null && _stack[i].Root.GetComponent<HubOverHomeScene>() != null);
+                return false;
+            }
+        }
+
         public bool ShowingHome
         {
             get
@@ -352,15 +367,19 @@ namespace TumbangPreso.UI.Hub
         private void RefreshChrome()
         {
             float shade = 0;
-            bool plate = true;
+            bool plate = true, board = false;
             for (int i = _stack.Count - 1; i >= 0; i--)
             {
                 if (_stack[i].IsPopup) continue;
                 shade = _stack[i].CourtShade;
                 plate = _stack[i].ShowsQueuePlate;
+                board = _stack[i].WearsBoard;
                 break;
             }
-            _shade.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, shade * 0.88f);
+            // ⚠️ A DIM, NOT A WALL, ON A BOARD SCREEN (2026-10-22): HOME's scene stays visible, pushed back
+            // in her maroon's deepest tone under the screen's maroon wash. Other screens keep the night shade.
+            _shade.color = board ? new Color(0.165f, 0.016f, 0.063f, shade * 0.40f)
+                                 : new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, shade * 0.88f);
             _plate.Allowed = plate && !(Top != null && Top.IsPopup && !Top.ShowsQueuePlate);
         }
 
@@ -387,13 +406,19 @@ namespace TumbangPreso.UI.Hub
             if (_lobbyEntryPending) ShowLobby();
 
             HubQueueWatch.Tick(this);
-            if (Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting &&
+            // ⚠️ A SPECTATOR HAS NO SEAT, SO NO PICK AND NO BALLOT (owner, 2026-10-22: "ur a spectator,
+            // its weird af that u still do character select"). The host counts only seated players for
+            // both (`MatchRpc.HostDeclareReady`, `HostReceiveQueueMapVote`), so nothing waits on them; a
+            // spectator stays on the lobby, which says what the players are doing.
+            bool watching = Host.Spectating;
+            if (Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting && !watching &&
                 (!(Top is HubCharacterSelect selection) || !selection.Timed))
             {
                 Home();
                 Push<HubCharacterSelect>(screen => screen.Timed = true);
             }
-            if (Host.MapVoting && !(Top is HubMapVote))
+            if (watching && Host.InRoom && (Top is HubCharacterSelect || Top is HubMapVote)) ShowLobby();
+            if (Host.MapVoting && !watching && !(Top is HubMapVote))
             {
                 Home();
                 Push<HubMapVote>();

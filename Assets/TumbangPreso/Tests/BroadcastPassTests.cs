@@ -365,7 +365,7 @@ namespace TumbangPreso.Tests
         {
             var expected = new Dictionary<string, string>
             {
-                { "dante", "EARTHQUAKE" },
+                { "dante", "CONTINENTAL DRIFT" },
                 { "cheska", "ABSOLUTE ZERO" },
                 { "sean", "SUPERNOVA" },
                 { "zack", "THUNDERSTRIKE" },

@@ -54,6 +54,17 @@ namespace TumbangPreso.UI.Hub
 
         // ------------------------------------------------------------------ grounds
 
+        /// <summary>
+        /// ⚠️ A BOARD SCREEN'S GROUND IS HER ROOFTOP (owner-approved HERO direction, 2026-10-22): the hub's
+        /// own HOME scene shows through a maroon wash, under `TumpHub`'s court shade, so the screen reads
+        /// as a page laid over HOME. Screens not yet restyled (`HubScreen.WearsBoard`) keep their ground.
+        /// </summary>
+        private static void Wash(RectTransform root)
+        {
+            if (root.GetComponent<HubOverHomeScene>() == null) root.gameObject.AddComponent<HubOverHomeScene>();
+            Fill(root, new Color(0x56 / 255f, 0x07 / 255f, 0x1D / 255f, 0.30f));
+        }
+
         private static RectTransform Fill(RectTransform root, Color colour)
         {
             var fill = HubKit.Stretch(HubKit.Rect(root, "Ground")).gameObject.AddComponent<Image>();
@@ -74,6 +85,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>The road: warm asphalt with its aggregate, and a court someone chalked long ago.</summary>
         public static void AsphaltGround(RectTransform root, int seed)
         {
+            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
             Fill(root, Asphalt);
             Surface(root, HubSurface.Kind.Aggregate, seed);
         }
@@ -81,6 +93,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>Corrugated yero sheets, painted maroon, streaked where the rain runs.</summary>
         public static void YeroGround(RectTransform root, int seed)
         {
+            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
             Fill(root, HubStyle.Maroon);
             Surface(root, HubSurface.Kind.Corrugated, seed);
         }
@@ -88,6 +101,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>A hollow-block wall, blocks and mortar, painted over once.</summary>
         public static void BlockGround(RectTransform root, int seed)
         {
+            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
             Fill(root, HubStyle.Maroon);
             Surface(root, HubSurface.Kind.Blocks, seed);
         }
@@ -95,6 +109,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>A painted plaster wall with the paint chipping off it and dirt along its foot.</summary>
         public static void PaintedGround(RectTransform root, int seed)
         {
+            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
             Fill(root, HubStyle.Maroon);
             Surface(root, HubSurface.Kind.Chipped, seed);
         }
@@ -102,6 +117,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>The sari-sari store: a stained plank front with the striped awning over it.</summary>
         public static void StoreGround(RectTransform root, int seed, float awningHeight)
         {
+            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
             Fill(root, Plank);
             Surface(root, HubSurface.Kind.Planks, seed);
             var awning = HubKit.Rect(root, "Awning").gameObject.AddComponent<HubAwning>();
@@ -115,6 +131,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>A printed poster's ground: the evening maroon with a halftone screen over it.</summary>
         public static void PosterGround(RectTransform root)
         {
+            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
             Fill(root, HubStyle.Maroon);
             Surface(root, HubSurface.Kind.Halftone, 1);
         }
@@ -123,6 +140,7 @@ namespace TumbangPreso.UI.Hub
         /// SELECT it hung straight through the hero's name, which is the one thing that screen says.</summary>
         public static void NightCourtGround(RectTransform root, int seed, Vector2 lightAnchor, Vector2 lightSize)
         {
+            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
             Fill(root, HubStyle.Night);
             var road = Surface(root, HubSurface.Kind.Aggregate, seed);
             road.color = new Color(1, 1, 1, 0.7f);
@@ -209,6 +227,12 @@ namespace TumbangPreso.UI.Hub
             var board = HubKit.Shape(parent, name, Kraft, false, seed, 3, 6);
             board.ShadowOffset = new Vector2(10, -12);
             board.ShadowColor = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.55f);
+            // On her peach field (HubBoardSkin) the board is her piece: no fibres, no tape.
+            if (board.Skin != HubSkin.None)
+            {
+                board.ShadowColor = new Color(0, 0, 0, 0);
+                return board.rectTransform;
+            }
             var fibres = HubKit.Stretch(HubKit.Rect(board.transform, "Fibres"), 8).gameObject.AddComponent<HubSurface>();
             fibres.Texture = HubSurface.Kind.Fibres;
             fibres.Seed = seed;
@@ -228,9 +252,14 @@ namespace TumbangPreso.UI.Hub
         /// a wall, so a title painted on a hub wall is the same act. An ink outline, a soft overspray
         /// in persimmon, and paint running down from a few letters.
         /// </summary>
+        private static bool OnBoardPlate(Text title) =>
+            title.transform.parent != null && title.transform.parent.Find("TitlePlate") != null;
+
         public static void SprayTitle(Text title)
         {
             if (title == null) return;
+            // A title on her maroon plate (HubChrome.Title, 2026-10-22) keeps her lettering: no paint, no chalk.
+            if (OnBoardPlate(title)) return;
             foreach (var old in title.GetComponents<Shadow>()) Object.Destroy(old);
             title.color = HubStyle.Honey;
             var outline = title.gameObject.AddComponent<Outline>();
@@ -252,6 +281,8 @@ namespace TumbangPreso.UI.Hub
         public static void ChalkTitle(Text title)
         {
             if (title == null) return;
+            // A title on her maroon plate (HubChrome.Title, 2026-10-22) keeps her lettering: no paint, no chalk.
+            if (OnBoardPlate(title)) return;
             foreach (var old in title.GetComponents<Shadow>()) Object.Destroy(old);
             title.color = Chalk;
             var rough = title.gameObject.AddComponent<Shadow>();
@@ -955,4 +986,7 @@ namespace TumbangPreso.UI.Hub
 
         private void SetAlpha(float a) => HubKit.Ensure<CanvasGroup>(gameObject).alpha = a;
     }
+
+    /// <summary>Marks a screen whose ground is the maroon wash, so HOME's scene plays behind it.</summary>
+    public sealed class HubOverHomeScene : MonoBehaviour { }
 }

@@ -25,7 +25,8 @@ namespace TumbangPreso.InputLayer
             {
                 _spectatorModeShown = watching; TouchInput.ReleaseAll(); ApplyLayout();
             }
-            bool visible = watching && SpectatorCanOperate;
+            // Nothing to operate while a cutscene owns the screen (SpectatorCutscene).
+            bool visible = watching && SpectatorCanOperate && !SpectatorCutscene.Hides;
             if (visible && _spectatorStrip == null) BuildSpectatorControls();
             if (_spectatorStripShown != visible)
             {

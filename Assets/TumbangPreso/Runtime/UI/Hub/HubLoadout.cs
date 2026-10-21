@@ -63,6 +63,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubLoadout : HubScreen
     {
+        public override bool WearsBoard => true;
         public override float CourtShade => 1.0f;
 
         /// <summary>Opened from the SHOP: start on the UNOWNED tab.</summary>

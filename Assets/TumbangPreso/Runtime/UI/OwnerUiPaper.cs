@@ -9,6 +9,9 @@ namespace TumbangPreso.UI
     {
         public enum Treatment { Reading, Note, Dialog }
         public Treatment Style;
+        /// <summary>A reading sheet's rim and face, when a screen wears the hand-made HOME board's
+        /// colours instead of the theme's (the profile, 2026-10-22). Clear keeps the theme.</summary>
+        public Color RimOverride = Color.clear, FaceOverride = Color.clear;
         protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper h)
         {
             h.Clear();var r=GetPixelAdjustedRect();
@@ -28,8 +31,8 @@ namespace TumbangPreso.UI
             }
             else
             {
-                Sheet(h,r,theme.Peach,Style);Inset(ref r,7,8,9,7);
-                Sheet(h,r,theme.Paper,Style);
+                Sheet(h,r,RimOverride.a>0?RimOverride:theme.Peach,Style);Inset(ref r,7,8,9,7);
+                Sheet(h,r,FaceOverride.a>0?FaceOverride:theme.Paper,Style);
             }
         }
         private static void Inset(ref Rect r,float left,float top,float right,float bottom)

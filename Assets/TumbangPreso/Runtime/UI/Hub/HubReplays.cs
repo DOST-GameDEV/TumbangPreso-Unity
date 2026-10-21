@@ -10,6 +10,7 @@ namespace TumbangPreso.UI.Hub
 {
     public sealed class HubReplays : HubScreen
     {
+        public override bool WearsBoard => true;
         private InputField _folder;
         private Text _status;
         private RectTransform _rows;

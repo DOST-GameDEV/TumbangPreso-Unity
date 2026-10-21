@@ -20,6 +20,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubHost : HubScreen
     {
+        public override bool WearsBoard => true;
         public override float CourtShade => 0.62f;
 
         private InputField _name;
@@ -140,6 +141,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubJoin : HubScreen
     {
+        public override bool WearsBoard => true;
         public override float CourtShade => 0.9f;
         public string JoinCodeOnOpen { get; set; }
         private int _source;     // 0 internet, 1 LAN, 2 code
@@ -445,6 +447,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubLobby : HubScreen
     {
+        public override bool WearsBoard => true;
         internal const float RoomContentWidth = 1808;
         internal const float RoomSeatWidth = 900;
         internal const float RoomColumnGap = 24;
@@ -531,7 +534,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place(_status.rectTransform, HubKit.Bottom, new Vector2(0, HubKit.Margin + 140), new Vector2(1200, 48));
 
             // Bottom right: character and loadout, settings, chat. Each a square sticker with its name.
-            Door("CharacterDoor", HubGlyph.Mark.Person, "CHARACTER", 0, () => Hub.Push<HubCharacterSelect>(c => c.Timed = false));
+            _characterDoor = Door("CharacterDoor", HubGlyph.Mark.Person, "CHARACTER", 0, () => Hub.Push<HubCharacterSelect>(c => c.Timed = false));
             Door("SettingsDoor", HubGlyph.Mark.Gear, "RULES", 1, () => Hub.Host.OpenCustomRules());
             Door("ChatDoor", HubGlyph.Mark.Friends, "CHAT", 2, () => Hub.Host.ToggleChat());
 
@@ -568,7 +571,9 @@ namespace TumbangPreso.UI.Hub
                 if (shape.Depth <= 0.0f) shape.Depth = shape.Pressable ? ButtonDepth : RowDepth;
         }
 
-        private void Door(string name, HubGlyph.Mark mark, string words, int index, System.Action action)
+        private HubButton _characterDoor;
+
+        private HubButton Door(string name, HubGlyph.Mark mark, string words, int index, System.Action action)
         {
             var door = HubKit.Button(Root, name, null, HubStyle.Honey, () =>
             {
@@ -582,6 +587,7 @@ namespace TumbangPreso.UI.Hub
             var label = HubKit.Text(door.Body, "Label", words, HubStyle.Floor, true, HubStyle.Ink, TextAnchor.MiddleCenter);
             HubKit.Place(label.rectTransform, HubKit.Bottom, new Vector2(0, 10), new Vector2(164, 40));
             HubKit.Fit(label, 160);
+            return door;
         }
 
         public void SetChatPresented(bool shown)
@@ -690,6 +696,7 @@ namespace TumbangPreso.UI.Hub
             var seats = host.Seats();
             string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult + HubQueueWatch.QueueRoom;
             key += host.CanEditBots;
+            key += Net.MatchRpc.Instance != null && (Net.MatchRpc.Instance.CharacterSelecting || Net.MatchRpc.Instance.QueueMapVoting);
             foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + ":" + host.CanTakeSeat(s.Slot) + "|";
             if (!force && key == _drawn) return;
             _drawn = key;
@@ -810,15 +817,30 @@ namespace TumbangPreso.UI.Hub
                 // ⚠️ ALWAYS PRESSABLE FOR THE HOST. A custom room starts with whoever is in it,
                 // and an OPEN seat is an empty chair (`ConvertedMatchSetup.StartGame`).
                 HubKit.SetLabel(_primary, "START GAME");
+                _primary.gameObject.SetActive(true);
                 _primary.interactable = true;
                 _status.text = "";
+            }
+            else if (host.Spectating)
+            {
+                // ⚠️ A SPECTATOR HAS NOTHING TO READY: the host refuses a spectator's READY
+                // (`MatchRpc.HostDeclareReady`), so the button was a press that did nothing.
+                _primary.gameObject.SetActive(false);
+                _status.text = "You're watching. The match plays out in front of you once the host starts it.";
             }
             else
             {
                 HubKit.SetLabel(_primary, host.LocalReady ? "READY  ✓" : "READY");
+                _primary.gameObject.SetActive(true);
                 _primary.interactable = true;
                 _status.text = host.LocalReady ? "Waiting for the host." : "The host starts the match.";
             }
+            if (host.Spectating && Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting)
+                _status.text = "The players are choosing their heroes.";
+            else if (host.Spectating && Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.QueueMapVoting)
+                _status.text = "The players are voting for the map.";
+            // A spectator has no seat, so no hero to choose.
+            if (_characterDoor != null) _characterDoor.gameObject.SetActive(!host.Spectating);
             if (host.SeatSwapOffer != null && !host.SeatSwapOffer.Incoming)
                 _status.text = "Waiting for the other player to accept the seat switch.";
             else if (!string.IsNullOrEmpty(host.SeatSwapResult)) _status.text = host.SeatSwapResult;

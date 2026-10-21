@@ -23,6 +23,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubModeSelect : HubScreen
     {
+        public override bool WearsBoard => true;
         public override float CourtShade => 1.0f;
 
         public override void Build()
@@ -83,6 +84,7 @@ namespace TumbangPreso.UI.Hub
     /// <summary>PRACTICE's two existing local routes, without a room or queue.</summary>
     public sealed class HubPracticePopup : HubScreen
     {
+        public override bool WearsBoard => true;
         private HubButton _tutorial;
         public override bool IsPopup => true;
         public override Selectable FirstFocus => _tutorial;
@@ -138,6 +140,7 @@ namespace TumbangPreso.UI.Hub
     /// <summary>CUSTOM's HOST / JOIN popup, "POPUP, not its own screen".</summary>
     public sealed class HubCustomPopup : HubScreen
     {
+        public override bool WearsBoard => true;
         public override bool IsPopup => true;
 
         public override void Build()

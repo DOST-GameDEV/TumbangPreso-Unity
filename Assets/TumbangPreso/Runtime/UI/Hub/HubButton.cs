@@ -211,9 +211,23 @@ namespace TumbangPreso.UI.Hub
             if (Body != null)
             {
                 Vector2 rest = _restShadow;
-                Body.anchoredPosition = new Vector2(0, _lift * 4.0f) + rest * _press * 0.6f;
-                float s = 1.0f - _press * 0.03f;
-                Body.localScale = new Vector3(s, s, 1);
+                bool board = Shape != null && Shape.Skin != HubSkin.None && Shape.SkinSlab != null;
+                if (board)
+                {
+                    // ⚠️ ON HER PIECES HOVER GROWS FACE AND SLAB TOGETHER (both fill the root, so they share
+                    // a centre); lifting the face alone split it from its slab. Press sinks the face into it.
+                    float grow = 1.0f + _lift * 0.035f;
+                    Body.anchoredPosition = rest * _press * 0.6f;
+                    float s = grow * (1.0f - _press * 0.03f);
+                    Body.localScale = new Vector3(s, s, 1);
+                    Shape.SkinSlab.rectTransform.localScale = new Vector3(grow, grow, 1);
+                }
+                else
+                {
+                    Body.anchoredPosition = new Vector2(0, _lift * 4.0f) + rest * _press * 0.6f;
+                    float s = 1.0f - _press * 0.03f;
+                    Body.localScale = new Vector3(s, s, 1);
+                }
             }
         }
 
