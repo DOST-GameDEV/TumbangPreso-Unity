@@ -16,6 +16,18 @@ remain untouched. The other contributor reserves the next Unity slot for their
 halftime investigation; keep the Editor closed for that reservation.
 Next action: publish this coherent fix to origin/BugFix and verify remote HEAD.
 
+# Halftime highlight timing checkpoint, October21
+
+On BugFix after3bc970443, owner reports Online/LAN HIGHLIGHT UNAVAILABLE every
+halftime. Actual retained catch plus0.8s-old host stamp reproduces rejection.
+Removed0.6s receipt/1s setup rejection in favor of actual footage fitting before
+the unchanged5.8s standings boundary; retry nominated bytes and preserve lead-in.
+Final native4/4 pass: delayed stamp, delayed bytes, missing bytes, shared end.
+Separate existing throw control failed before replay and is retained in report.
+Named profile48 files and1 shared input preference restored. No player build.
+Next: real host/joiner retest of the reported match, HALFTIME-HIGHLIGHT-1021.
+[Evidence](reports/halftime-highlight-2026-10-21.md).
+
 # Main integration and all-map preview checkpoint, October20
 
 Owner explicitly requests main integration and every preview current/working.

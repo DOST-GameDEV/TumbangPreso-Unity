@@ -12,6 +12,72 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
         [UnityTest]
+        public IEnumerator DelayedHalftimeCanOpenAnAlreadyRetainedHighlight()=>DelayedHalftime(false);
+        [UnityTest]
+        public IEnumerator HalftimeWaitsForItsNominatedHighlightBytes()=>DelayedHalftime(true);
+        [UnityTest]
+        public IEnumerator MissingNominatedHighlightStillFallsBackWithinTheSharedBreak()=>DelayedHalftime(true,true);
+        private static IEnumerator DelayedHalftime(bool delayedBytes,bool missingBytes=false)
+        {
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion=false;
+                yield return MapRetrievalProbe.Load("Eskinita");
+                Object.FindAnyObjectByType<MatchArrivalPresentation>()?.Cancel();
+                var round=GameServices.Round;var match=GameServices.Match;
+                round.BeginRound();
+                foreach(var actor in round.Players)
+                    actor.Teleport(new Vector3(6,.12f,-6+actor.PlayerSlot*3));
+                var defender=round.PlayerAt(0);var victim=round.PlayerAt(1);
+                defender.Teleport(new Vector3(0,.12f,-4));victim.Teleport(new Vector3(0,.12f,-3));
+                defender.transform.forward=Vector3.forward;
+                yield return new WaitForSeconds(2.5f);
+                Assert.IsTrue(defender.GetComponent<CombatVerbs>().HostResolvePunch(defender.transform.position,defender.transform.forward));
+                yield return new WaitForSeconds(1.6f);
+                var archive=Object.FindAnyObjectByType<MatchReplayArchive>();
+                Assert.IsNotEmpty(archive.Clips,archive.LastSkip);
+                var retained=archive.Clips[0];var clip=retained.Clip;
+                while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();yield return null;}
+                round.EndRound();
+                RoundBreakFreezeTests.DrawFrame();
+                var phase=HalftimePresentation.Ensure();
+                // A peer receives the host's timestamp, not a fresh local start.
+                var clips=(System.Collections.Generic.List<MatchReplayArchive.Retained>)typeof(MatchReplayArchive)
+                    .GetField("_clips",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(archive);
+                if(delayedBytes)clips.Clear();
+                double began=SharedUltimatePhase.Now-(delayedBytes ? .25 : .8);
+                Assert.IsTrue(phase.Receive(match.PresentationMatchId,4,0,began,clip.Id,true,1));
+                yield return null;yield return null;
+                if(delayedBytes)
+                {
+                    Assert.IsNull(phase.FallbackReason,"A first missing-byte check cannot abandon the nominated clip.");
+                    Assert.IsFalse(phase.HasReplay);
+                    yield return new WaitForSecondsRealtime(.9f);
+                    Assert.IsNull(phase.FallbackReason,"A short transport delay cannot abandon footage that still fits.");
+                    if(!missingBytes)clips.Add(retained);
+                    yield return null;yield return null;
+                }
+                if(missingBytes)
+                {
+                    while(phase.FallbackReason==null&&SharedUltimatePhase.Now-began<5.8)yield return null;
+                    Assert.IsFalse(phase.HasReplay);
+                    Assert.AreEqual("Replay unavailable on this screen",phase.FallbackReason);
+                    Assert.Less(SharedUltimatePhase.Now-began,phase.Duration,"Missing bytes cannot extend the break.");
+                }
+                else
+                {
+                    Assert.IsTrue(phase.HasReplay,"A complete highlight was rejected solely because the break arrived late: "+phase.FallbackReason);
+                    Assert.IsNull(phase.FallbackReason);
+                }
+                Assert.AreEqual(began,phase.Began,"Opening footage cannot restart the shared break deadline.");
+                Assert.IsTrue(PresentationClock.Held);
+                phase.End(false);
+                Assert.IsFalse(PresentationClock.Held);
+            }
+            finally { Settings.SettingsStore.Current.ReducedUiMotion=reduced; }
+        }
+        [UnityTest]
         public IEnumerator RetainedCatchPreservesVictimCoatHeldPropAndSeparateWorldAudio()
         {
             yield return MapRetrievalProbe.Load("Eskinita");

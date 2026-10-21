@@ -1,3 +1,14 @@
+### HALFTIME-HIGHLIGHT-1021: delayed peers reject complete highlights (IN PROGRESS)
+
+- [x] Reproduce a complete recorded catch rejected solely by a halftime stamp0.8s old.
+- [x] Admit delayed playback using its actual duration, wait for nominated bytes and
+  preserve the recorded lead-in, standings boundary and host's shared end.
+- [x] Four focused native graphics cases pass, including late bytes, missing bytes
+  and the original shared deadline. Preserve the separate existing throw-control failure.
+- [ ] Retest the reported online/LAN match on actual host and joiner. The native
+  delay simulation is not paired network acceptance. No new player build produced.
+- Evidence: [halftime highlight timing](reports/halftime-highlight-2026-10-21.md).
+
 ### PENALTY-FEEDBACK-1021: another seat's penalty flashes the local crosshair (DONE)
 
 - [x] Trace the report: RoundDirector flashes the current HUD for every seat's penalty,

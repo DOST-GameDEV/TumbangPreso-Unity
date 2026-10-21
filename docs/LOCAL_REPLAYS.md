@@ -24,6 +24,13 @@ Replay data itself is not an MP4 export.
 
 ## Data and lifetime
 
+Halftime uses the host's existing shared deadline. A delayed break message does
+not invalidate a complete nominated highlight. Playback waits for nominated clip
+bytes while the replay window is open, then checks whether the actual clip and
+contact slowdown fit before standings. Its recorded lead-in starts when the view
+is ready. Missing or incompatible footage keeps the frozen court fallback and
+never extends the break. The local match library is a separate recording path.
+
 Clip format15 records summoned doll bodies in their companion seats4-7 and
 records their slippers with the same holder identity. Playback copies the
 authored doll model, poses and glow without running its AI or gameplay scripts.

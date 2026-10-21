@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Delayed halftime highlights: [reproduction, timing correction and native checks](reports/halftime-highlight-2026-10-21.md).
+
 Penalty crosshair ownership and warnings:
 [investigation and focused validation](reports/penalty-feedback-2026-10-21.md).
 
