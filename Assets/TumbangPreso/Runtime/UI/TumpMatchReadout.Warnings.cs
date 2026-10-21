@@ -21,7 +21,7 @@ namespace TumbangPreso.UI
         // ⚠️ UI REVAMP 2026-10-06 (guide p.12): ONE RED TOY TILE. The short title sits on the red
         // face and the reason in a darker band inset into the same tile, so the pair can never be
         // read apart, hidden behind one another or left floating outlined over the sky. The words
-        // are the rule's own sentence split at its dash and set in sentence case; nothing is
+        // are the rule's own sentence split at its dash and set in uppercase; nothing is
         // reworded. Widths are measured once per sentence, with slack, because a box exactly as
         // wide as its measurement wraps the last word under the supersampled text renderer.
         private void BuildWarnings()
@@ -44,9 +44,6 @@ namespace TumbangPreso.UI
             _warningReason.horizontalOverflow=HorizontalWrapMode.Wrap;_warningReason.verticalOverflow=VerticalWrapMode.Overflow;
             _warningRoot.gameObject.SetActive(false);
         }
-
-        private static string WarningSentence(string words)
-            => string.IsNullOrEmpty(words)?"":char.ToUpperInvariant(words[0])+words.Substring(1).ToLowerInvariant();
 
         private void LayoutWarning()
         {
@@ -133,8 +130,8 @@ namespace TumbangPreso.UI
             {
                 _warningWords=text;_warningShookAt=Time.unscaledTime;
                 int split=text.IndexOf(" - ",System.StringComparison.Ordinal);
-                _warningText.text=WarningSentence(split>=0?text.Substring(0,split):text);
-                _warningReason.text=split>=0?WarningSentence(text.Substring(split+3)):"";
+                _warningText.text=(split>=0?text.Substring(0,split):text).ToUpperInvariant();
+                _warningReason.text=split>=0?text.Substring(split+3).ToUpperInvariant():"";
                 _titleWidth=Measure(_warningText);_reasonWidth=Measure(_warningReason);
             }
             LayoutWarning();

@@ -1077,8 +1077,9 @@ namespace TumbangPreso.PlayTests
                         var warning = (RectTransform)root.Find("WarningMessage");
                         // Guide p.12: a thin opaque title strip, with its reason on its own line beneath.
                         var title = (RectTransform)warning.Find("WarningText");
+                        Assert.AreEqual("CANNOT THROW", title.GetComponent<Text>().text);
                         Assert.LessOrEqual(title.rect.height, 64, "Ordinary warnings should be a thin strip.");
-                        Assert.AreEqual("Must be outside danger zone", warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>().text);
+                        Assert.AreEqual("MUST BE OUTSIDE DANGER ZONE", warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>().text);
                         yield return TumpUiCapture.Capture("Warning-strip-" + scale + "-" + size.x,
                             view.Canvas, size.x, size.y, false, false, inspectViewport: () =>
                             {

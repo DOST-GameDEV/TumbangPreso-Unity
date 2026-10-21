@@ -114,6 +114,10 @@ Submit remains usable on Home. [Focused evidence](reports/hero-quality-2026-10-0
 
 ## Current Feedback HUD layout
 
+Warning banners display both the warning title and its reason in uppercase,
+including camping/idling penalties and action refusals. Preserve the rule text
+and measure the displayed uppercase text for wrapping.
+
 Harry's mockup separates status cards at bottom-left, the action and contained
 progress centrally below aim, and a dark-red warning above aim. Persistent
 penalties and short input refusals no longer replace the action instruction.
