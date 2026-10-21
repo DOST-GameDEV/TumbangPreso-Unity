@@ -1,3 +1,9 @@
+### SCOREBOARD-FONT-1021: Darumadrop banner headings (DONE)
+
+- [x] Owner requested Darumadrop One for NEXT ROUND, HALFTIME and the final winner banner.
+- [x] Scope the existing match font router exception to RoundHeadline and ResultHeadline; other scoreboard labels keep DIN.
+- [x] Source routing and whitespace checks pass. Native rendering was not run; no player build produced.
+
 ### TRAIN-TOAST-REMOVAL-1021: remove train announcements and distant reset hint (DONE)
 
 - [x] Delete all train/Overclock toast strings, generating methods and calls in both modes.
