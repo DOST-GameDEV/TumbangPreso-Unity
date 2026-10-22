@@ -61,7 +61,10 @@ namespace TumbangPreso.Visual
                 if(catchable)
                 {
                     _readBlock.SetColor("_RimColor",UI.UiTheme.Defense);
-                    _readBlock.SetFloat("_RimStrength",.72f*WorldCueProfile.Current.TayaTarget);
+                    // It PULSES (owner, 2026-10-22): a tag-able attacker throbs in the taya's colour rather than
+                    // wearing a flat rim, so the open target reads in motion and at a glance.
+                    float throb=Settings.SettingsStore.Current.ReducedUiMotion?1:.78f+.32f*Mathf.Sin(Time.unscaledTime*6.5f);
+                    _readBlock.SetFloat("_RimStrength",.72f*throb*WorldCueProfile.Current.TayaTarget);
                     var capsule=_readActor.GetComponent<CharacterController>();
                     float height=capsule!=null?capsule.height:1.6f;
                     _readBlock.SetVector("_CueHeight",new Vector4(_readActor.transform.position.y,height,0,0));
