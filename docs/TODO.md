@@ -33,11 +33,16 @@ replay and the whole match read poorly ("everything has to be animated").
   replay frame differs from the live pose); `RosterTag_sean_To_zack` 0.047 m against 0.045 (Rago is locked);
   `RecordedApproach...` copy still moves 0.106 m: the test's walk is not recorded even when placed past the
   CharacterController, so the motor restores its own position some other way (harness, not replay timeline).
-- [ ] Can moment (owner: *"panget ren can raise animation men di halata"*): the raise follows the hands' lift with a
+- [x] Can moment (owner: *"panget ren can raise animation men di halata"*): the raise follows the hands' lift with a
   grip rattle; restored, the drawn can hops to its mark with a spin, slams, squashes and rings the road; a chalk
   seal draws itself round it for the protection window. Knocked, it clatters in three bounces; CAN DOWN slams in
   the thrower's seat colour with an edge pulse (`UI.CanDownStamp`); the HUD can icon flips. Every peer, from the
-  replicated state and flair.
+  replicated state and flair. `CanMomentTests` traces the drawn can through a real channel: 88 degrees lying, 60 at half
+  the channel, 7 by 85 per cent; the clatter is three distinct hops. Review frames are captured after LateUpdate
+  (`LateFrameShot`): the can is put back in Update, so coroutine-time shots always showed it flat.
+- [ ] `TumpNativeHudTests.CanResetTouchCueUsesTheActualReachAndRestoreSetting` reads an empty prompt where it expects
+  "Reset Can". It makes the local seat a stand-in taya (`IsDefender = true`) while the real taya is seat 0; the same
+  prompt passes for the real taya (`RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions`). Untouched by the can work.
 - [ ] Presentation pass continues: can down, taya identity, cast callouts and feed, HUD motion, round flow,
   spectator broadcast; then every non-Arena map gets its own intro film (see the handoff in chat, 2026-10-22).
 - [ ] Test harness: the whole `TumpNativeHudTests` class stalls in `ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow`

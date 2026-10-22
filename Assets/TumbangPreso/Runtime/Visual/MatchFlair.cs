@@ -191,6 +191,7 @@ namespace TumbangPreso.Visual
 
                 case Kind.LataDown:
                     PlayCanConfirmation(Seat(actor), at);
+                    UI.CanDownStamp.Play(actor);
                     break;
 
                 case Kind.Throw:

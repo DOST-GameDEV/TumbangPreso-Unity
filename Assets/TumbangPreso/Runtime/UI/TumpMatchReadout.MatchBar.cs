@@ -34,6 +34,9 @@ namespace TumbangPreso.UI
         private readonly HudBadge[] _crowns = new HudBadge[4];
         private readonly Text[] _seatTags = new Text[4];
         private HudBadge _canGlyph;
+        private bool? _canShownUpright;
+        private float _canFlipAt = -1;
+        private const float CanFlipSeconds = .34f;
         private HudRing _canRing;
         private HudPips _pips;
         private RectTransform _roundTrack;
@@ -344,8 +347,18 @@ namespace TumbangPreso.UI
 
         private void MatchBarCan(Lata lata)
         {
-            if (lata == null) { _canGlyph.Show(HudBadge.Glyph.None, Color.clear, Color.clear); _canRing.Set(0); return; }
-            if (lata.IsUpright) _canGlyph.Show(HudBadge.Glyph.Can, HudDraw.Ivory, Color.clear);
+            if (lata == null) { _canGlyph.Show(HudBadge.Glyph.None, Color.clear, Color.clear); _canRing.Set(0); _canShownUpright = null; return; }
+            // The icon FLIPS over when the can changes state (owner, 2026-10-22: everything animated): it turns edge-on,
+            // swaps face at the halfway point, and lands a size too big before settling.
+            if (_canShownUpright == null) _canShownUpright = lata.IsUpright;
+            else if (_canShownUpright != lata.IsUpright && _canFlipAt < 0) _canFlipAt = Time.unscaledTime;
+            float flip = _canFlipAt < 0 || Settings.SettingsStore.Current.ReducedUiMotion ? 1 : Mathf.Clamp01((Time.unscaledTime - _canFlipAt) / CanFlipSeconds);
+            if (flip >= .5f && _canShownUpright != lata.IsUpright) _canShownUpright = lata.IsUpright;
+            if (flip >= 1) _canFlipAt = -1;
+            float edgeOn = flip < .5f ? Mathf.Cos(flip * Mathf.PI) : -Mathf.Cos(flip * Mathf.PI);
+            float land = flip >= .5f && flip < 1 ? .3f * Mathf.Sin((flip - .5f) * 2 * Mathf.PI) : 0;
+            _canGlyph.rectTransform.localScale = new Vector3(Mathf.Max(.04f, edgeOn) * (1 + land), 1 + land, 1);
+            if (_canShownUpright == true) _canGlyph.Show(HudBadge.Glyph.Can, HudDraw.Ivory, Color.clear);
             else _canGlyph.Show(HudBadge.Glyph.CanDown, HudDraw.Alarm, Color.clear);
             _canRing.Set(lata.IsProtected ? lata.ProtectionLeft / Mathf.Max(.01f, Balance.ThrowRestoreCooldown) : 0);
         }

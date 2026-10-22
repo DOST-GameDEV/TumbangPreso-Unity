@@ -746,6 +746,65 @@ namespace TumbangPreso
 
         }
 
+        // THE CHALK SEAL (owner, 2026-10-22). While the stood-up can is protected, a chalk ring is drawn around it on the
+        // road, closing in a third of a second like a hand chalking it, and it scuffs away when the protection ends. It
+        // reads the gameplay timer (`IsProtected`) and changes nothing.
+        private LineRenderer _seal;
+        private Material _sealMaterial;
+        private float _sealDraw, _sealFade;
+        private const int SealPoints = 48;
+        private const float SealRadius = .5f, SealDrawSeconds = .32f, SealFadeSeconds = .3f;
+
+        private void StepChalkSeal()
+        {
+            var round = GameServices.Round;
+            bool want = _isUpright && IsProtected && round != null && round.RoundActive;
+            if (want)
+            {
+                if (_seal == null)
+                {
+                    var go = new GameObject("~CanChalkSeal");
+                    go.transform.SetParent(transform, false);
+                    _seal = go.AddComponent<LineRenderer>();
+                    _seal.useWorldSpace = true; _seal.numCapVertices = 2;
+                    _seal.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; _seal.receiveShadows = false;
+                    _sealMaterial = new Material(Shader.Find("TumbangPreso/InkContact")) { name = "Can chalk seal" };
+                    Visual.VfxRenderTag.Own(go, _sealMaterial);
+                    _seal.sharedMaterial = _sealMaterial;
+                    _sealDraw = 0;
+                }
+                if (_sealFade > 0) { _sealFade = 0; _sealDraw = 0; }
+                _sealDraw = Settings.SettingsStore.Current.ReducedUiMotion ? 1 : Mathf.Min(1, _sealDraw + Time.deltaTime / SealDrawSeconds);
+            }
+            else if (_seal != null)
+            {
+                _sealFade += Time.deltaTime / SealFadeSeconds;
+                if (_sealFade >= 1 || round == null || !round.RoundActive) { Destroy(_seal.gameObject); _seal = null; _sealFade = 0; return; }
+            }
+            if (_seal == null) return;
+            _seal.enabled = true;
+            float drawn = 1 - (1 - _sealDraw) * (1 - _sealDraw);
+            int count = Mathf.Max(2, Mathf.CeilToInt(SealPoints * drawn) + 1);
+            _seal.positionCount = count;
+            _seal.loop = drawn >= 1;
+            if (_seal.loop) _seal.positionCount = count = SealPoints;
+            // Chalk is not a perfect circle: a fixed wobble per point, and the stroke thins as it scuffs.
+            Vector3 c = new Vector3(transform.position.x, _mark.y + .015f, transform.position.z);
+            float pulse = 1 + .06f * Mathf.Max(0, 1 - _sealDraw * 3f) + .03f * _protectionPulse;
+            for (int i = 0; i < count; i++)
+            {
+                float k = _seal.loop ? i / (float)SealPoints : i / (float)(count - 1) * drawn;
+                float a = k * Mathf.PI * 2 + .6f;
+                float r = SealRadius * pulse * (1 + .035f * Mathf.Sin(a * 5 + 1.3f) + .02f * Mathf.Sin(a * 11));
+                _seal.SetPosition(i, c + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * r);
+            }
+            float alpha = (1 - _sealFade) * .9f;
+            _seal.startColor = _seal.endColor = new Color(.97f, .95f, .86f, alpha);
+            _seal.widthMultiplier = Mathf.Lerp(.05f, .02f, _sealFade);
+            _sealMaterial.SetFloat("_Age", _sealFade);
+            _sealMaterial.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
+        }
+
         private void StepStatePresentation()
         {
             if (_restoreProtectionLeft > 0.0f)
@@ -765,6 +824,7 @@ namespace TumbangPreso
 
             }
             else if (_protectionShell != null) ClearProtectionShell();
+            StepChalkSeal();
 
             // ⚠️ THE WHOLE MARKER NO LONGER SCALES, ONLY THE COLLAR DOES. Scaling the parent
             // scaled the shaft's HEIGHT along with everything else, which is part of why the old
@@ -860,7 +920,7 @@ namespace TumbangPreso
         {
             RestoreRaisePresentation();
             try { StepRoll(); }
-            finally { ApplyRaisePresentation(); }
+            finally { ApplyRaisePresentation(); NoteDrawnDownPose(); StepSetRing(); }
         }
 
         // ⚠️⚠️ THE CAN RISES UNDER THE TAYA'S HANDS, IN THE DRAWING ONLY.
@@ -881,8 +941,108 @@ namespace TumbangPreso
         private Quaternion _raiseMeshRot;
         /// <summary>The settle after the can is stood up: a squash and a little rebound, in the mesh only.</summary>
         private float _clunkLeft;
-        private const float ClunkSeconds = .28f;
+        private const float ClunkSeconds = .36f;
         private bool _clunkSubscribed;
+
+        // 🧑 2026-10-22: *"panget ren can raise animation men di halata"*. The stand-up was a
+        // teleport from where the can lay to its mark plus a squash, so the payoff of the taya's
+        // longest commitment was missed. Now the drawn can HOPS from its last drawn pose to the
+        // mark (an arc with a spin), slams, squashes and rings the road. Every peer runs this
+        // off its own upright edge; the transform, the state and the score are untouched.
+        private const float HopSeconds = .3f;
+        private float _hopLeft;
+        private Vector3 _hopFromPos, _drawnDownPos;
+        private Quaternion _hopFromRot, _drawnDownRot;
+        private float _drawnDownAt = -100;
+        private LineRenderer _setRing;
+        private Material _setRingMaterial;
+        private float _setRingAge = -1;
+        private const float SetRingLife = .5f;
+
+        private const float ClatterSeconds = .62f;
+        // Three hops, each a real parabola: off the hit, then two shrinking rebounds (seconds, metres). A smooth
+        // decaying wave read as a wobble on the road (Logs/can-moment, 2026-10-22); distinct hops read as a can.
+        private static readonly float[] ClatterHops = { .26f, .2f, .16f }, ClatterHeights = { .26f, .11f, .04f };
+
+        private static float ClatterBounce(float t)
+        {
+            for (int i = 0; i < ClatterHops.Length; i++)
+            {
+                if (t < ClatterHops[i]) { float k = t / ClatterHops[i]; return 4.0f * ClatterHeights[i] * k * (1.0f - k); }
+                t -= ClatterHops[i];
+            }
+            return 0.0f;
+        }
+        private float _clatterLeft, _clatterSpinSign = 1;
+
+        private void OnUprightPresented(bool up)
+        {
+            if (!up)
+            {
+                _hopLeft = 0;
+                _clatterLeft = Settings.SettingsStore.Current.ReducedUiMotion ? 0 : ClatterSeconds;
+                _clatterSpinSign = -_clatterSpinSign;
+                return;
+            }
+            _clatterLeft = 0;
+            bool fresh = Time.time - _drawnDownAt < .5f;
+            _drawnDownAt = -100;
+            if (fresh && !Settings.SettingsStore.Current.ReducedUiMotion) { _hopLeft = HopSeconds; _hopFromPos = _drawnDownPos; _hopFromRot = _drawnDownRot; }
+            else { _hopLeft = 0; LandRestore(); }
+        }
+
+        /// <summary>Where the downed can was last DRAWN, raise and all, which is where the hop takes off from.</summary>
+        private void NoteDrawnDownPose()
+        {
+            if (_isUpright || !ResolveRaiseMesh()) return;
+            _drawnDownPos = _raiseMesh.position; _drawnDownRot = _raiseMesh.rotation; _drawnDownAt = Time.time;
+        }
+
+        private void LandRestore()
+        {
+            _clunkLeft = ClunkSeconds;
+            var round = GameServices.Round;
+            if (round == null || !round.RoundActive) return;
+            Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .04f);
+            if (Settings.SettingsStore.Current.EffectiveFlashIntensity <= .001f) return;
+            if (_setRing == null)
+            {
+                var go = new GameObject("~CanSetRing");
+                go.transform.SetParent(transform, false);
+                _setRing = go.AddComponent<LineRenderer>();
+                _setRing.useWorldSpace = true; _setRing.loop = true; _setRing.positionCount = 32;
+                _setRing.numCapVertices = 0; _setRing.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                _setRing.receiveShadows = false;
+                _setRingMaterial = new Material(Shader.Find("TumbangPreso/InkContact")) { name = "Can set ring" };
+                Visual.VfxRenderTag.Own(go, _setRingMaterial);
+                _setRing.sharedMaterial = _setRingMaterial;
+            }
+            _setRing.enabled = true; _setRingAge = 0;
+            StepSetRing();
+        }
+
+        /// <summary>A gold ring that runs out along the road from the planted can and thins away.</summary>
+        private void StepSetRing()
+        {
+            if (_setRing == null || _setRingAge < 0) return;
+            float u = _setRingAge / SetRingLife;
+            _setRingAge += Time.deltaTime;
+            var round = GameServices.Round;
+            if (u >= 1 || round == null || !round.RoundActive) { _setRing.enabled = false; _setRingAge = -1; return; }
+            float ease = 1 - (1 - u) * (1 - u) * (1 - u);
+            float radius = Mathf.Lerp(.18f, .85f, ease);
+            var colour = new Color(1, .77f, .26f, (1 - u) * .85f * Settings.SettingsStore.Current.EffectiveFlashIntensity);
+            _setRing.startColor = _setRing.endColor = colour;
+            _setRing.widthMultiplier = Mathf.Lerp(.07f, .015f, u);
+            _setRingMaterial.SetFloat("_Age", u);
+            _setRingMaterial.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
+            Vector3 c = new Vector3(transform.position.x, _mark.y + .02f, transform.position.z);
+            for (int i = 0; i < 32; i++)
+            {
+                float a = i / 32f * Mathf.PI * 2;
+                _setRing.SetPosition(i, c + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * radius);
+            }
+        }
 
         private void RestoreRaisePresentation()
         {
@@ -896,7 +1056,27 @@ namespace TumbangPreso
 
         private void ApplyRaisePresentation()
         {
-            if (!_clunkSubscribed) { _clunkSubscribed = true; UprightChanged += up => { if (up) _clunkLeft = ClunkSeconds; }; }
+            if (!_clunkSubscribed) { _clunkSubscribed = true; UprightChanged += OnUprightPresented; }
+            if (_isUpright && _hopLeft > 0.0f)
+            {
+                if (!ResolveRaiseMesh()) { _hopLeft = 0.0f; return; }
+                _hopLeft = Mathf.Max(0.0f, _hopLeft - Time.deltaTime);
+                _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
+                _raiseApplied = true;
+                float u = 1.0f - _hopLeft / HopSeconds;
+                Vector3 restPos = _raiseMesh.position; Quaternion restRot = _raiseMesh.rotation;
+                float travel = Vector3.Distance(_hopFromPos, restPos);
+                // Up fast, hang, down hard: the arc peaks early and the fall is the accent.
+                float s = Mathf.SmoothStep(0.0f, 1.0f, u);
+                float arc = (.24f + .22f * Mathf.Clamp01(travel / 1.5f)) * Mathf.Sin(Mathf.Pow(u, .8f) * Mathf.PI);
+                float spin = 360.0f * (1.0f - (1.0f - u) * (1.0f - u));
+                _raiseMesh.position = Vector3.Lerp(_hopFromPos, restPos, s) + Vector3.up * arc;
+                _raiseMesh.rotation = Quaternion.AngleAxis(spin, Vector3.up) * Quaternion.Slerp(_hopFromRot, restRot, 1.0f - (1.0f - u) * (1.0f - u));
+                float stretch = Mathf.Sin(u * Mathf.PI) * .14f;
+                _raiseMesh.localScale = new Vector3(_raiseMeshScale.x * (1 - stretch * .5f), _raiseMeshScale.y * (1 + stretch), _raiseMeshScale.z * (1 - stretch * .5f));
+                if (_hopLeft <= 0.0f) LandRestore();
+                return;
+            }
             if (_isUpright)
             {
                 // ⚠️ SATISFYING, NOT JUST CORRECT (🧑 2026-09-24): the can lands with a CLUNK, squashing into the
@@ -905,11 +1085,28 @@ namespace TumbangPreso
                 _clunkLeft = Mathf.Max(0.0f, _clunkLeft - Time.deltaTime);
                 if (!ResolveRaiseMesh()) return;
                 float u = 1.0f - _clunkLeft / ClunkSeconds;
-                float squash = Mathf.Sin(u * Mathf.PI * 2.0f) * Mathf.Exp(-4.0f * u) * 0.16f;
+                float squash = Mathf.Sin(u * Mathf.PI * 2.0f) * Mathf.Exp(-3.5f * u) * 0.26f;
                 _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
                 _raiseApplied = true;
                 var sc = _raiseMeshScale;
                 _raiseMesh.localScale = new Vector3(sc.x * (1 + squash * 0.6f), sc.y * (1 - squash), sc.z * (1 + squash * 0.6f));
+                return;
+            }
+            if (_clatterLeft > 0.0f)
+            {
+                // KNOCKED: the drawn can jumps off the hit and clatters to rest in three shrinking bounces, spinning
+                // down, while the transform carries the real topple underneath it.
+                _clatterLeft = Mathf.Max(0.0f, _clatterLeft - Time.deltaTime);
+                if (!ResolveRaiseMesh()) return;
+                _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
+                _raiseApplied = true;
+                float u = 1.0f - _clatterLeft / ClatterSeconds;
+                float bounce = ClatterBounce(u * ClatterSeconds);
+                float spin = 360.0f * (1.0f - (1.0f - u) * (1.0f - u));
+                var clatterPivot = transform.position;
+                var spinTurn = Quaternion.AngleAxis(spin * _clatterSpinSign, Vector3.up);
+                _raiseMesh.position = clatterPivot + spinTurn * (_raiseMesh.position - clatterPivot) + Vector3.up * bounce;
+                _raiseMesh.rotation = spinTurn * _raiseMesh.rotation;
                 return;
             }
             if (!RaiseTurn(out var turn, out float drop)) return;
@@ -940,10 +1137,15 @@ namespace TumbangPreso
                 }
             // Nemu's LOOKOUT heaves it up the same way, in the drawing only (owner on v1: *"make it look liek its actually
             // lifting the can man"*); `Abilities.NemuLookout` keeps its hands on the rising rim (`PresentedEnds`).
-            progress = Mathf.Max(progress, Abilities.NemuLookout.LiftFor(this));
-            if (progress <= 0.0f) return false;
-            // Down to 80 per cent of the way up with the channel; the last of it is the host's restore.
-            float shown = Mathf.Lerp(_toppleAngle, 0.0f, 0.8f * Mathf.SmoothStep(0.0f, 1.0f, progress));
+            float lookout = Abilities.NemuLookout.LiftFor(this);
+            if (progress <= 0.0f && lookout <= 0.0f) return false;
+            // 🧑 2026-10-22 *"di halata"*: the can rose on its own smooth ramp, out of step with the hands, and stopped
+            // at 80 per cent. It now follows the body's own lift (`CanRaiseShape.Rise`) to 92 per cent, so the hands
+            // visibly carry it, and it rattles under the grip before it gives. The host's restore does the rest.
+            float up = progress > 0.0f ? .92f * Visual.CanRaiseShape.Rise(progress) : 0.0f;
+            float rattle = progress > 0.0f ? 5.0f * Visual.CanRaiseShape.Crouch(progress) * Mathf.Clamp01(progress / .18f) * Mathf.Sin(Time.time * 41.0f) : 0.0f;
+            up = Mathf.Max(up, 0.8f * Mathf.SmoothStep(0.0f, 1.0f, lookout));
+            float shown = Mathf.Lerp(_toppleAngle, 0.0f, up) + rattle;
             turn = transform.rotation * Quaternion.AngleAxis(shown - _toppleAngle, Vector3.right) * Quaternion.Inverse(transform.rotation);
             drop = DownedLift * (Mathf.Abs(Mathf.Sin(shown * Mathf.Deg2Rad)) - Mathf.Abs(Mathf.Sin(_toppleAngle * Mathf.Deg2Rad)));
             return true;
