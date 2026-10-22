@@ -118,11 +118,12 @@ namespace TumbangPreso
             var map = SceneFlow.PreviewFor(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
             PrepareShots(map);
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
-            // ARENA-INTRO begin. The Arena has its own opening in place of these shots (`Map.ArenaIntro`:
-            // the tunnel, the glare, the taya on the screens, the stage built). Null on every other
-            // map, and false when there is none to play here: then nothing below is different. The
-            // hold, the input, the curtain and the camera's return stay this component's (`Finish`).
-            var opening = Map.ArenaIntro.Ensure();
+            // MAP-OPENING begin. The map's own film in place of these shots (`Map.MatchOpening`): the Arena's
+            // stadium opening (`Map.ArenaIntro`: the tunnel, the glare, the taya on the screens, the stage built), or
+            // this map's film (`Map.MapFilm`: Tondo, Ermita, Sitangkai, BGC, Banaue). Null on a map with neither, and
+            // false when there is none to play here: then nothing below is different. The hold, the input, the
+            // curtain and the camera's return stay this component's (`Finish`).
+            var opening = Map.MatchOpening.For(_viewerSeat);
             // ⚠️ A SPECTATOR SEES THE OPENING TOO (owner, 2026-10-22: "spectator didnt see the cutscene or
             // walking shit in arena"). It was gated on the player rig, which a watcher's camera never has,
             // so a spectator got the plain arrival. The film needs only the camera, and SpectatorCamera
@@ -130,23 +131,23 @@ namespace TumbangPreso
             bool watcherView = _spectator != null && _spectator.enabled && _camera.enabled;
             if (opening != null && (_rigActive || watcherView) && opening.Begin(_camera, _players, _position, _rotation, _fov, reduced))
             {
-                Trace($"arena opening prepared ({opening.Timeline.End:F1} s, full={opening.Timeline.Full})");
+                Trace($"map opening prepared ({opening.Duration:F1} s, full={opening.Full})");
                 _ink.color = Color.clear; _captionGroup.alpha = 0;
                 while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
                 _shownAt = Time.realtimeSinceStartup;
                 opening.Roll();
-                Trace("arena opening rolling");
+                Trace("map opening rolling");
                 while (opening != null && opening.Playing)
                 {
                     if (!Current(generation)) yield break;
                     // The same single handoff as below: the rig is live again for the last of the return.
-                    if (opening.Age >= Mathf.Lerp(opening.Timeline.Handoff, opening.Timeline.End, .7f) && MayReturnToGameplay()) _rig.SetActive(true);
+                    if (opening.Age >= Mathf.Lerp(opening.Handoff, opening.Duration, .7f) && MayReturnToGameplay()) _rig.SetActive(true);
                     yield return null;
                 }
                 yield break;
             }
-            // ARENA-INTRO end.
-            if (opening != null) Trace("arena opening refused (rig=" + _rigActive + "), playing the arrival instead");
+            // MAP-OPENING end.
+            if (opening != null) Trace("map opening refused (rig=" + _rigActive + "), playing the arrival instead");
             PrepareDirection(map, reduced);
             Sample(0, reduced, map);
             Trace($"arrival prepared ({Duration:F1} s, directed={_directed}, rig={_rigActive}, closes on " +
@@ -362,8 +363,8 @@ namespace TumbangPreso
                 Trace(_shownAt < 0 ? how + " before it was shown"
                     : $"{how} after {Time.realtimeSinceStartup - _shownAt:F1} s on screen");
             _shownAt = -1; _viewerSeat = -1;
-            // ARENA-INTRO: the Arena's opening, if one is up, puts back everything it posed. A no-op elsewhere.
-            Map.ArenaIntro.Stop();
+            // MAP-OPENING: the map's opening, if one is up, puts back everything it posed. A no-op elsewhere.
+            Map.MatchOpening.Stop();
             RestoreDirection();
             if (_active == this) _active = null;
             for (int i = 0; i < _poses.Length; i++)

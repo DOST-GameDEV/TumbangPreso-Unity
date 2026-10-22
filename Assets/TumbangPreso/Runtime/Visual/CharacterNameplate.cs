@@ -312,8 +312,9 @@ namespace TumbangPreso.Visual
 
             // ⚠️ AND NOBODY'S TAG WHILE DON'T LOOK HAS YOUR EYES: the dark round its face must not carry names through.
             bool blind = UI.TumpHudEffects.EyesCoveredOnScreen;
-            // Nor under bodies standing on an Arena stage the opening has not built yet.
-            if (_ring != null) _ring.gameObject.SetActive(!mine && !blind && !Map.ArenaIntro.StageUnbuilt);
+            // Nor under bodies standing on an Arena stage the opening has not built yet, nor through a map's film: its
+            // models walk in from elsewhere (the ring stays on the mark) and the taya's colour would tell the count.
+            if (_ring != null) _ring.gameObject.SetActive(!mine && !blind && !Map.ArenaIntro.StageUnbuilt && !Map.MapFilm.HidesUi);
             bool introducing = MatchArrivalPresentation.Active;
             _label.gameObject.SetActive(!mine && !introducing && !blind);
 

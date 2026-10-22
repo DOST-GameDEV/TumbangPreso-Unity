@@ -71,17 +71,35 @@ replay and the whole match read poorly ("everything has to be animated").
   there on their own: the ReadyUp glyph is 58 high, not 64, and the plant pull prompt reads empty. Run that class by
   test name until this is fixed.
 - [ ] Map intro films, each with its own mood, built to `Map/ArenaIntro`'s quality (full and short cuts, attacker
-  YOU end shots, skip, reduced motion, one shared clock, everything restored at the end):
-  - Tondo (Eskinita), nostalgic and playful: dusk barangay, the camera slides under drying laundry lines, a kid
-    chalks the box, each player steps out of their own doorway, the taya chosen with a "Maiba taya" chant.
-  - Ermita (IlalimNgTulay), tense underground rivalry: under the viaduct at night, a train roars overhead and its
-    window light strobes across the players between the pillars; the beat drops as it passes.
-  - Sitangkai (LagoonCove), calm wonder: golden-hour glide over the reef, players arrive by banca, kids cheer from the
+  YOU end shots, skip, reduced motion, one shared clock, everything restored at the end). Method, bars and code map:
+  [MAP_FILM_METHOD](MAP_FILM_METHOD.md). Owner, 2026-10-23: emotion, expressiveness and readability are a top bar.
+  - [x] Shared base `Map/MapFilm*.cs` (clock, cast posing, acting layer, extras, ghosts, props, light moods, overlay,
+    skip ring, YOU / taya close, restore) and the hook `Map/MatchOpening.cs` (`ArenaIntro` wrapped, not edited;
+    `TumpMatchReadout`, `SpectatorCutscene` and `CharacterNameplate` read `MatchOpening`/`MapFilm`).
+  - [ ] Tondo (Eskinita) `TondoFilm`: built (sampay, chalk kid, four doors, gather, acted "Maiba taya" count and
+    reaction, taya plate, scatter), score and cues synthesised. Native: `TondoPlaysIntoTheRound` and
+    `TondoRecording` pass; beat review r4 notes still open: shoot the count from inside the ring looking up at the
+    four faces (outside it shows backs), reaction from high on the north side, chalk trail still faint, a neighbour
+    still in front of the YOU shot. Video: Logs/map-films/Tondo_intro_film.mp4.
+  - [ ] Ermita (IlalimNgTulay) `ErmitaFilm`: built (under the viaduct, standoff walk-in, LRT pass with window strobe and
+    the drop, sodium lamp on the taya), score and cues synthesised, acted (glare, brace, defiant, arms crossed).
+    `ErmitaPlaysIntoTheRound` and `ErmitaRecording` pass. Review notes open: the ghost consist does not show in the
+    train and drop shots, the drop frame washes grey, night reads dusk-purple, the walkers sit small at the edges.
+    Video: Logs/map-films/Ermita_intro_film.mp4.
+  - [ ] `MapFilmTests` beat/short/close cases fail on harness grounds (2026-10-23 run 4): with the ready gate
+    disabled the tests no longer hold `PresentationClock`, so physics and visual smoothing move the bodies and roots
+    under the film; the close case ends the film mid-way and expects the camera home (the arrival restores it, not
+    the film); `StatusBadge*`/`LataClock` renderers toggle on their own. Fix the harness (hold the clock as
+    `DirectedMapArrivalTests.ClosingBeat` does), then rerun by exact name.
+  - [ ] Nameplate label "P1 · TAYA" and the taya's ground marker still show in the test frames (the label hides under an
+    active arrival; the marker is `CharacterNameplate`'s ring): confirm in the natural flow and guard both on `MapFilm.HidesUi`.
+  - [ ] Sitangkai (LagoonCove), calm wonder: golden-hour glide over the reef, players arrive by banca, kids cheer from the
     stilt houses, a lola sets the can down.
-  - BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower
+  - [ ] BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower
     billboard shows the VS cards, a traffic light turning green means go.
-  - Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches
+  - [ ] Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches
     light the ring, a carved stone glyph glows to reveal the taya.
+  - [ ] Owner look at both films in play (feel, length, acting); the LAN and online peers on one clock.
 
 ### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)
 

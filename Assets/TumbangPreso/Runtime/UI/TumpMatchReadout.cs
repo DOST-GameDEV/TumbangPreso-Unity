@@ -186,7 +186,7 @@ namespace TumbangPreso.UI
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
             RefreshOpeningVisibility();
-            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.ArenaIntro.HidesUi
+            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.MatchOpening.HidesUi
                              && !(spectating && SpectatorCutscene.Hides);
             float dt = Time.unscaledDeltaTime;
             if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }

@@ -12,7 +12,7 @@ namespace TumbangPreso
     public static class SpectatorCutscene
     {
         public static bool Hides =>
-            Map.ArenaIntro.HidesUi || MatchArrivalPresentation.OwnsCamera || HalftimePresentation.Playing ||
+            Map.MatchOpening.HidesUi || MatchArrivalPresentation.OwnsCamera || HalftimePresentation.Playing ||
             UI.RoleSwapCard.Showing || SharedUltimatePhase.BlocksActions;
     }
 }
