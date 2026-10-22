@@ -1,3 +1,20 @@
+### TOURNAMENT-FEEDBACK-1022: post-tournament balance, Nemu ring, spectators, unique heroes (IN PROGRESS)
+
+Owner 2026-10-22 after the tournament, on branch `BugFix`: ultimates were rare in four-round matches; Paete's Bakya
+Bloom decided matches; Nemu carried a purple ring everyone saw; spectators could not find their controls or see many
+effects; a leading taya left the can down to stall; custom rooms let players pre-pick and share heroes; tags, the tag
+replay and the whole match read poorly ("everything has to be animated").
+- [x] Four-round matches pay double ultimate charge (`Balance.UltimateChargeScale`); eight rounds unchanged.
+- [x] Bakya Bloom: at most 3 seeded random throws in a 30 s life, 35 % aimed true, 50 s cooldown (`PaeteRules`).
+- [x] Can left down: taya warned at 2.5 s, -5 a second after 5 s while free to stand it up (`ScoreEvent.CanDownPenalty`).
+- [x] Nemu ring: the remote landed-cast flash was never ticked (`HeroAbilitySystem`, `GroundReticle`).
+- [x] Spectators: Tab shows the whole control list (follow moved to G); Peeker drawn to spectators as to Nemu.
+- [x] Networked rooms pick heroes only in character select; one hero per seat (`EconomyRules.UniqueSeatPicks`).
+- [x] Core.Tests 803/803.
+- [ ] Unity import, compile and the touched EditMode/PlayMode suites (Paete kit, spectator, lobby).
+- [ ] Owner LAN check: four-round ult pace, Paete plant feel, can-down warning, Tab card, unique picks.
+- [ ] Presentation clarity plan (tag moment, tag replay, can down, taya identity, casts, spectator feed), then implement.
+
 ### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)
 
 Owner 2026-10-21 on branch `Reworks`: passive SOULBOUND (dormant ghosts, reclaim with Grab within 1 m for 1.5 s, cooldowns
