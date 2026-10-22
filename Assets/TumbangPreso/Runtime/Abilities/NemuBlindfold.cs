@@ -387,7 +387,9 @@ namespace TumbangPreso.Abilities
 
         private float Visibility(float age)
         {
-            bool mine = NetAuthority.LocalSlot == OwnerSlot && !GameLaunch.Spectator;
+            // A spectator is told everything, as Nemu is (owner, October 22: skills were not visible to spectators);
+            // only the players she is hiding it from get the faint shimmer.
+            bool mine = GameLaunch.Spectator || NetAuthority.LocalSlot == OwnerSlot;
             float fade = 1.0f - Mathf.SmoothStep(0f, 1f, (age - (NecroRules.DontLookArmSeconds - .8f)) / .8f);
             return Mathf.Max(fade, mine ? OwnerSeen : ShimmerSeen);
         }

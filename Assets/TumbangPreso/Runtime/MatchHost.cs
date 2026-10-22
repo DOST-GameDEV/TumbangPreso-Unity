@@ -110,6 +110,8 @@ namespace TumbangPreso
             if (_spectator != null) return;
 
             var go = new GameObject("Spectator");
+            // Billboards, overhead badges and popups face `Camera.main`; an untagged spectator camera left them facing nothing.
+            go.tag = "MainCamera";
             go.transform.SetParent(transform, false);
             _spectator = go.AddComponent<CameraSystem.SpectatorCamera>();
 
