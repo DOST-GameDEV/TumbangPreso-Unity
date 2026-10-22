@@ -241,6 +241,7 @@ namespace TumbangPreso.UI
             ArrangeMessageLanes();
             PaintHitMark();
             PaintScorePops();
+            PaintMotion();
             PaintRecede();
             if(_crosshair==null || !_crosshair.enabled)return;
             var anchor=new Vector2(.5f,.5f);
@@ -274,6 +275,7 @@ namespace TumbangPreso.UI
                 int score = match.ScoreFor(slot);
                 if (!_hasScoreValue[i] || _lastScoreValues[i] != score)
                 {
+                    if (_hasScoreValue[i]) StartScoreRoll(i, _scores[i].text);
                     _hasScoreValue[i] = true;
                     _lastScoreValues[i] = score;
                     PaintScoreValue(_scores[i], score);

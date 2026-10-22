@@ -15,9 +15,10 @@ namespace TumbangPreso.UI
         private int _scoreMomentRound;
         private const float ScoreMomentLife = .62f;
 
-        private void OnEnable() => BindScoreEvents();
+        private void OnEnable() { BindScoreEvents(); BindFlights(true); }
         private void OnDisable()
         {
+            BindFlights(false);
             if (_scoreEvents != null) _scoreEvents.Scored -= OnScoreMoment;
             _scoreEvents = null; ClearScoreMoments();
         }

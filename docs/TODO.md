@@ -59,6 +59,10 @@ replay and the whole match read poorly ("everything has to be animated").
 - [x] Break card tells the round: each standings chip counts up what its seat earned this round, the chips drop in and
   slide from the last break's ranks, the next-taya ticket turns over and its badge stamps (`TumpRoundSwapView.CourtBreak`,
   `RoundBreakStoryTests`). The drafted separate round-summary strip was dropped: it stood over this card.
+- [x] Match bar motion: totals roll in like an odometer (the label always holds the true score), the crown slides between
+  leaders, a tag's or knockdown's points fly into the scorer's chip; the last 10 s already pulse (`TumpMatchReadout.Motion`).
+  Spectators get each seat's ult meter and a TAYA tab, and keep the event feed (`TumpMatchReadout.Spectator`,
+  `HudMotionTests`). The autopilot already cuts to tags, knocks and ults (`SpectatorInterest`).
 - [ ] Presentation pass continues: can down, taya identity, cast callouts and feed, HUD motion, round flow,
   spectator broadcast; then every non-Arena map gets its own intro film (see the handoff in chat, 2026-10-22).
 - [ ] Test harness: the whole `TumpNativeHudTests` class stalls in `ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow`

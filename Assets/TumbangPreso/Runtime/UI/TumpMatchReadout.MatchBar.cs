@@ -213,6 +213,8 @@ namespace TumbangPreso.UI
             _scores[i].verticalOverflow = VerticalWrapMode.Overflow;
             var scoreEdge = _scores[i].gameObject.AddComponent<Outline>(); scoreEdge.effectColor = UiTheme.InGameOutline;
             scoreEdge.effectDistance = new Vector2(1.5f, -1.5f);
+            BuildScoreGhost(i, row);
+            BuildSpectatorCard(i, row);
 
             // YOU: a honey bar along the chip's foot. The label object is kept (and silent) because
             // the honey bar plus the honey score already say it without a word.
@@ -376,7 +378,8 @@ namespace TumbangPreso.UI
             if (_scores[i].color != scoreInk) _scores[i].color = scoreInk;
             if (_chipSwatches[i].color != seat) _chipSwatches[i].color = seat;
             _roleBadges[i].Show(HudBadge.Glyph.None, Color.clear, Color.clear);
-            _crowns[i].Show(leader ? HudBadge.Glyph.Crown : HudBadge.Glyph.None, HudDraw.Honey, Color.clear);
+            PaintCrown(i, leader);
+            NoteSpectatorCard(i, actor, defender, spectating);
 
             // Guide p.10: the thrower's slipper is whole in hand and half when away; the taya's
             // can is whole upright and half when down. A stun or a swim overrides both, because
