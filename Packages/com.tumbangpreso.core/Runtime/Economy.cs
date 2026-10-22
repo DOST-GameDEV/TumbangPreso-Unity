@@ -229,6 +229,39 @@ namespace TumbangPreso.Core
         }
 
         /// <summary>
+        /// Owner, October 22: *"no one can pick same character kasi ang weird nun"*. Every seat's final
+        /// character from what each wanted: people first in seat order (the lower seat keeps a hero two
+        /// people both hold), then bots, each moved forward to the next unlocked entry nobody has yet.
+        /// A negative want means "no pick" and starts from <paramref name="fallback"/>. A pure function
+        /// of its inputs, so every peer installs the same four characters.
+        /// </summary>
+        public static int[] UniqueSeatPicks(IReadOnlyList<RosterEntry> people, int[] wanted, bool[] person, int[] fallback)
+        {
+            int seats = wanted != null ? wanted.Length : 0;
+            var result = new int[seats];
+            if (people == null || people.Count == 0) return result;
+            var taken = new HashSet<int>();
+            for (int pass = 0; pass < 2; pass++)
+                for (int seat = 0; seat < seats; seat++)
+                {
+                    bool isPerson = person != null && seat < person.Length && person[seat];
+                    if (isPerson != (pass == 0)) continue;
+                    int want = wanted[seat] >= 0 ? PlayablePick(people, wanted[seat])
+                        : fallback != null && seat < fallback.Length ? fallback[seat] : 0;
+                    int pick = want;
+                    if (taken.Contains(pick) || !IsHeroUnlocked(Roster.At(people, pick)?.Id ?? ""))
+                        for (int step = 1; step <= people.Count; step++)
+                        {
+                            int candidate = (((want + step) % people.Count) + people.Count) % people.Count;
+                            if (!taken.Contains(candidate) && IsHeroUnlocked(people[candidate].Id)) { pick = candidate; break; }
+                        }
+                    result[seat] = pick;
+                    taken.Add(pick);
+                }
+            return result;
+        }
+
+        /// <summary>
         /// MIRROR's character of the week, chosen among the UNLOCKED entries only. For a list with
         /// nothing locked (Classic) it is exactly `CustomGameRules.MirrorIndex`.
         /// </summary>

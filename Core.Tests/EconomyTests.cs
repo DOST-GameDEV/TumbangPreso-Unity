@@ -14,6 +14,23 @@ namespace TumbangPreso.Core.Tests
     /// </summary>
     public sealed class EconomyTests
     {
+        [Fact]
+        public void NoTwoSeatsInstallTheSameCharacter()
+        {
+            // Owner, October 22: "no one can pick same character". Two people share a saved pick; the
+            // lower seat keeps it, the other moves, and the bots take what is left, all unlocked.
+            var people = Roster.GetPeople(GameMode.HeroStrike);
+            int nemu = -1;
+            for (int i = 0; i < people.Count; i++) if (people[i].Id == "nemu") nemu = i;
+            Assert.True(nemu >= 0);
+            var fallback = new[] { nemu, nemu, nemu, nemu };
+            var picks = EconomyRules.UniqueSeatPicks(people, new[] { -1, nemu, -1, nemu }, new[] { false, true, false, true }, fallback);
+            Assert.Equal(nemu, picks[1]);
+            Assert.Equal(4, new System.Collections.Generic.HashSet<int>(picks).Count);
+            foreach (int p in picks) Assert.True(EconomyRules.IsHeroUnlocked(people[p].Id));
+        }
+
+
         private static EarnedMatch Played(string id, int day, int placement = 2, bool afk = false,
                                           string mode = "HeroStrike", int knocks = 1, int tags = 0)
             => new EarnedMatch

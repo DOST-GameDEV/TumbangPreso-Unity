@@ -1020,6 +1020,10 @@ namespace TumbangPreso
                 motor.CharacterIndex = AiCharacterIndex(slot);
             }
 
+            // Owner, October 22: nobody in a room plays the same character. Every peer resolves the
+            // same four from the replicated seat picks (`EconomyRules.UniqueSeatPicks`).
+            if (isNetworked) motor.CharacterIndex = UniqueNetworkPick(slot);
+
             // ⚠⚠ PHASE 12, MIRROR: EVERY SEAT PLAYS THE SAME CHARACTER, DECIDED BY THE WEEK.
             // `docs/Formats.md` § 2. It is applied HERE, after every other rule has decided what
             // each seat brought, because that is what makes it *"one line of lobby logic"*
@@ -1918,6 +1922,25 @@ namespace TumbangPreso
         }
 
         private static readonly int[] AiPersonSpread = { 0, 3, 6, 9 };
+
+        /// <summary>This seat's character once every seat in the networked room is made unique.</summary>
+        private static int UniqueNetworkPick(int slot)
+        {
+            var people = Roster.GetPeople(SceneFlow.SelectedMode);
+            int seats = Balance.PlayerCount;
+            var wanted = new int[seats];
+            var person = new bool[seats];
+            var fallback = new int[seats];
+            for (int i = 0; i < seats; i++)
+            {
+                var info = Net.MatchRpc.Instance?.GetSeatInfo(i);
+                person[i] = info != null && info.Occupied && !info.Spectator;
+                wanted[i] = person[i] ? info.CharacterPick : -1;
+                fallback[i] = ResolveAiCharacterIndex(i, -1, SceneFlow.SelectedMode);
+            }
+            var unique = EconomyRules.UniqueSeatPicks(people, wanted, person, fallback);
+            return slot >= 0 && slot < unique.Length ? unique[slot] : 0;
+        }
 
         /// <summary>The seat's name for a toast. Falls back to the seat label when the slot is
         /// genuinely nameless, which is what a disconnect looks like before the AI takes over.</summary>

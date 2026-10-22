@@ -935,9 +935,26 @@ namespace TumbangPreso.Net
             SetPicks(peerId,character,can,slipper);
         }
 
+        /// <summary>
+        /// Owner, October 22: no two seated players on one character. True when a seated player other
+        /// than <paramref name="peerId"/> already holds <paramref name="character"/>; a spectator holds nothing.
+        /// </summary>
+        public bool CharacterHeldByAnotherSeat(int peerId, int character)
+        {
+            if (character < 0) return false;
+            foreach (var pair in _peers)
+                if (pair.Key != peerId && pair.Value.Seat >= 0 && !pair.Value.Spectator && pair.Value.CharacterPick == character)
+                    return true;
+            return false;
+        }
+
         public void SetPicks(int peerId, int character, int can, int slipper)
         {
             if (!_peers.TryGetValue(peerId, out var record)) return;
+            // A character another seat holds is refused: this seat keeps the one it had.
+            if (character != record.CharacterPick && !MatchInProgress && UI.SceneFlow.SelectedFormat != MatchFormat.Mirror
+                && CharacterHeldByAnotherSeat(peerId, character))
+                character = record.CharacterPick;
 
             record.CharacterPick = Validate(character, Roster.People.Count);
             record.CanPick = Validate(can, Roster.Cans.Count);

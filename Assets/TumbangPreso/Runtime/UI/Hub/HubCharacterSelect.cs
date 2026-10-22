@@ -11,8 +11,10 @@ namespace TumbangPreso.UI.Hub
     /// in the chalk circle in the middle, the faces and SELECT on the right, the four seats along
     /// the bottom. The owner's reference is Valorant's agent select.
     ///
-    /// ⚠️⚠️ THE PICK RULES ARE TODAY'S, UNCHANGED. A pick is `SelectLobbyPickServerRpc`, exactly what
-    /// the old picker sent, so duplicates are allowed as they are now and a Classic pick is a cosmetic
+    /// ⚠️⚠️ ONE HERO PER SEAT (owner, October 22: *"no one can pick same character kasi ang weird nun"*).
+    /// A pick is `SelectLobbyPickServerRpc`; a hero another seat holds is drawn taken and refused here,
+    /// the host refuses it too (`LobbySession.SetPicks`), and the match installs unique characters
+    /// (`EconomyRules.UniqueSeatPicks`, the lower seat keeping a shared one). A Classic pick is a cosmetic
     /// with neutral stats (`VISION.md` § 1). SELECT locks in with the lobby's own ready message
     /// (`DeclareReadyServerRpc`), whose tally every peer already receives, and the HOST starts when
     /// every human is locked or the clock runs out. No new message, no protocol bump.
@@ -279,9 +281,34 @@ namespace TumbangPreso.UI.Hub
             return HubOwnership.OwnsHeroInRoom(person.Id);
         }
 
+        /// <summary>
+        /// Another seated player holds this hero. Switching to one somebody holds is refused; a hero two
+        /// people already share (saved picks) belongs to the lower seat, as the installer decides.
+        /// </summary>
+        private bool TakenByOther(int index)
+        {
+            if (Net.NetSession.Instance == null || !Net.NetSession.Instance.IsNetworked
+                || SceneFlow.SelectedFormat == MatchFormat.Mirror) return false;
+            var seats = Hub.Host.Seats();
+            int mine = -1;
+            foreach (var s in seats) if (s.Mine) mine = s.Slot;
+            foreach (var s in seats)
+            {
+                if (s.Mine || !s.Occupied || s.Bot || s.CharacterPick != index) continue;
+                if (index != _pick || mine < 0 || s.Slot < mine) return true;
+            }
+            return false;
+        }
+
         private void Pick(int index)
         {
             if (_locked) return;
+            if (index != _pick && TakenByOther(index))
+            {
+                MenuSfx.Error();
+                Hub.Toast("Another player already has this hero.");
+                return;
+            }
             _pick = index;
             var settings = Settings.SettingsStore.Current;
             settings.CharacterPick = index;
@@ -303,6 +330,7 @@ namespace TumbangPreso.UI.Hub
         private void Select()
         {
             if (!Usable(_pick)) { MenuSfx.Error(); Hub.Toast("This hero is locked. Pick a hero without stripes."); return; }
+            if (TakenByOther(_pick)) { MenuSfx.Error(); Hub.Toast("Another player already has this hero. Pick someone else."); return; }
             Hub.Host.PublishPicks();
             if (!Timed) { Close(); return; }
             _locked = true;
@@ -362,9 +390,16 @@ namespace TumbangPreso.UI.Hub
                 InspectAbility(Mathf.Min(_inspectedAbility, count - 1));
             }
 
+            PaintCells();
+            _shownSeats = "";
+        }
+
+        /// <summary>The grid, SELECT and the hint, repainted when a pick changes here or at another seat.</summary>
+        private void PaintCells()
+        {
             for (int i = 0; i < _cells.Count; i++)
             {
-                bool usable = Usable(i);
+                bool usable = Usable(i) && !TakenByOther(i);
                 bool picked = i == _pick;
                 HubKit.SetFill(_cells[i], picked ? HubStyle.Persimmon : HubStyle.Honey);
                 _cells[i].Hatched = !usable;
@@ -379,14 +414,15 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Ensure<CanvasGroup>(_cells[i].gameObject).alpha = _locked && !picked ? 0.42f : 1.0f;
             }
 
-            bool can = Usable(_pick);
+            bool taken = TakenByOther(_pick);
+            bool can = Usable(_pick) && !taken;
             HubKit.SetLabel(_select, _locked ? "LOCKED IN" : Timed ? "SELECT" : "DONE");
             HubKit.LabelOf(_select).fontSize = HubStyle.Size(HubStyle.Display);
             _select.interactable = !_locked;
             HubKit.SetFill(_select, can ? HubStyle.Chartreuse : HubStyle.Honey);
-            _hint.text = !can ? "This hero is locked."
+            _hint.text = !Usable(_pick) ? "This hero is locked."
+                       : taken ? "Another player has this hero. Pick someone else."
                        : _locked ? "Waiting for everyone to lock in." : "";
-            _shownSeats = "";
         }
 
         /// <summary>
@@ -549,6 +585,8 @@ namespace TumbangPreso.UI.Hub
             if (key == _shownSeats) return;
             bool first = _shownSeats.Length == 0 && _seats.childCount == 0;
             _shownSeats = key;
+            // Another seat's pick changes which faces are taken here.
+            if (_cells.Count > 0 && _select != null) PaintCells();
 
             for (int i = _seats.childCount - 1; i >= 0; i--) Destroy(_seats.GetChild(i).gameObject);
             for (int i = 0; i < seats.Length; i++)

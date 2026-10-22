@@ -839,8 +839,11 @@ namespace TumbangPreso.UI.Hub
                 _status.text = "The players are choosing their heroes.";
             else if (host.Spectating && Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.QueueMapVoting)
                 _status.text = "The players are voting for the map.";
-            // A spectator has no seat, so no hero to choose.
-            if (_characterDoor != null) _characterDoor.gameObject.SetActive(!host.Spectating);
+            // A spectator has no seat, so no hero to choose. In a networked room heroes are chosen together
+            // in character select after START (owner, October 22: "baket u can pick character na agad?").
+            if (_characterDoor != null)
+                _characterDoor.gameObject.SetActive(!host.Spectating
+                    && !(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked));
             if (host.SeatSwapOffer != null && !host.SeatSwapOffer.Incoming)
                 _status.text = "Waiting for the other player to accept the seat switch.";
             else if (!string.IsNullOrEmpty(host.SeatSwapResult)) _status.text = host.SeatSwapResult;
