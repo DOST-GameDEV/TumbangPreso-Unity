@@ -170,7 +170,7 @@ namespace TumbangPreso.Net
                     && field.Duration <= Core.AmihanRules.WhirlwindSeconds + .05f;
             if (field.Type == Kind.Plant)
                 return field.Owner >= 0 && field.Duration <= Core.PaeteRules.PlantLifeSeconds + .05f
-                    && field.FirstScale >= 0 && field.FirstScale <= Core.PaeteRules.PlantReloadSeconds + .05f;
+                    && field.FirstScale >= 0 && field.FirstScale <= Core.PaeteRules.PlantLifeSeconds + .05f;
             if (field.Type == Kind.Thorns)
                 return field.Owner >= 0 && field.Duration <= Core.PaeteRules.ThornConstructSeconds + .05f;
             if (field.Type == Kind.Sentry)

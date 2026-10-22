@@ -66,6 +66,9 @@ namespace TumbangPreso.Core
         LateKnockdownBonus,
         MultiKnockdownBonus,
         MultiCatch,
+
+        /// <summary>Owner, October 22: the taya left the can down past the grace period. Appended for the wire.</summary>
+        CanDownPenalty,
     }
 
     /// <summary>
@@ -109,6 +112,7 @@ namespace TumbangPreso.Core
                 case ScoreEvent.DefenseTick: return Balance.ScoreDefensePerTick;
                 case ScoreEvent.TayaCampPenalty: return Balance.ScoreTayaCampPenalty;
                 case ScoreEvent.UnretrievedSlipperPenalty: return Balance.ScoreUnretrievedPenalty;
+                case ScoreEvent.CanDownPenalty: return Balance.ScoreCanDownPenalty;
 
                 // ⚠️ IT IS A KNOCKDOWN'S WORTH AND IT IS READ FROM `CustomGameRules`, NOT
                 // COPIED. That file's own note is the argument: a format that pays in its own
@@ -166,6 +170,12 @@ namespace TumbangPreso.Core
 
         public static bool IsSlipperPenalty(float seconds)
             => seconds >= Balance.SlipperUnretrievedGracePeriod;
+
+        public static bool IsCanDownWarning(float seconds)
+            => seconds >= Balance.CanDownWarningTime;
+
+        public static bool IsCanDownPenalty(float seconds)
+            => seconds >= Balance.CanDownGracePeriod;
     }
 
     /// <summary>

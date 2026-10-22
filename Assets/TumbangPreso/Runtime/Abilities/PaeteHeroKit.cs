@@ -193,7 +193,7 @@ namespace TumbangPreso.Abilities
 
             public PunlangTsinelas()
                 : base("paete_skill2", "BAKYA BLOOM",
-                       "Attacking. Plant a sapling that automatically lobs wooden slippers at the upright lata every 5 s after growing. Uprootable after 15 s.",
+                       "Attacking. Plant a sapling that lobs up to 3 wooden slippers at the upright lata at random moments over 30 s. Its aim is wild. Uprootable after 15 s.",
                        PaeteRules.PlantCooldown, PaeteRules.PlantLifeSeconds, AbilityGlyph.PaeteSprout,
                        summary: "A sapling grows wooden slippers and throws them for you.",
                        telegraphRadius: 0.6f, telegraphRange: PaeteRules.PlantThrowRange,

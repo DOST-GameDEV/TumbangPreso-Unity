@@ -473,7 +473,11 @@ namespace TumbangPreso.Abilities
 
             if (UsesNetworkAim)
             {
+                // ⚠️ OWNER, OCTOBER 22 TOURNAMENT: *"she perma had this purple circle in front of her that everyone
+                // saw"*. A remote caster's landed-cast flash (`FlashCastTarget`, on every peer) was never ticked on
+                // this path, and `Hide` keeps a running flash alive, so the ring rode in front of her forever.
                 _reticle?.Hide();
+                _reticle?.Tick(dt);
                 EndOwnAim();
                 UpdateBodyAim();
                 return;
@@ -482,7 +486,7 @@ namespace TumbangPreso.Abilities
             var intent = _motor.Intent;
             if (intent == null)
             {
-                if (_reticle != null) _reticle.Hide();
+                if (_reticle != null) { _reticle.Hide(); _reticle.Tick(dt); }
                 ClearAimPresentation();
                 return;
             }
@@ -1487,7 +1491,8 @@ namespace TumbangPreso.Abilities
 
         private void GrantObjectiveIncome(float amount)
         {
-            Kit.AddUltimateCharge(amount);
+            // Short matches pay more per objective so an ultimate is still reachable (Balance.UltimateChargeScale).
+            Kit.AddUltimateCharge(amount * Balance.UltimateChargeScale(GameServices.Match?.TotalRounds ?? Balance.HeroStrikeRounds));
             if (NetAuthority.IsHost)
             {
                 Kit.OnObjectiveAwarded(amount);

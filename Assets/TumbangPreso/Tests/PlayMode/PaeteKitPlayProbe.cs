@@ -176,7 +176,7 @@ namespace TumbangPreso.PlayTests
             yield return Press(who, Verb.Skill2);
             var plant = PaetePlant.OwnedBy(1); Assert.IsNotNull(plant);
             Vector3 muzzle = plant.Muzzle;
-            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds + .5f);
+            yield return new WaitForSeconds(plant.ShotIn + .5f);
             var shots = WoodenShots();
             Assert.AreEqual(1, shots.Length, "The grown plant must lob at the upright can without another Skill2 press.");
             Assert.Greater(Vector3.Distance(Flat(muzzle), Flat(shots[0].transform.position)), 2f);
@@ -184,20 +184,34 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator AutonomousLobsWaitForMaturityAndRepeatAtFiveSeconds()
+        public IEnumerator AutonomousLobsAreCappedAtThreeAndWaitForTheirSchedule()
         {
-            // A long clear lane keeps this cadence check independent of can knockdown.
-            var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
-            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds - .25f);
-            Assert.AreEqual(0, WoodenShots().Length, "The seedling fired before maturity.");
-            yield return new WaitForSeconds(.4f);
-            Assert.AreEqual(1, WoodenShots().Length, "A mature plant did not automatically fire.");
-            Assert.IsFalse(plant.ShotReady);
-            yield return new WaitForSeconds(4.5f);
-            Assert.AreEqual(0, WoodenShots().Length, "The next lob fired before its five-second interval.");
-            yield return new WaitForSeconds(.5f);
-            Assert.AreEqual(1, WoodenShots().Length, "The plant did not make its next lob after five seconds.");
+            WoodenShotsFired = 0;
+            PaetePlant.AutomaticShotFired += CountShot;
+            try { yield return CappedLobs(); } finally { PaetePlant.AutomaticShotFired -= CountShot; }
         }
+
+        private IEnumerator CappedLobs()
+        {
+            // Owner, October 22: at most three randomly timed throws in its life. A long clear lane keeps
+            // this check independent of can knockdown.
+            var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
+            plant.AdoptInstance(4242);
+            for (int i = 0; i < PaeteRules.PlantMaxShots; i++)
+            {
+                float wait = plant.ShotIn;
+                Assert.GreaterOrEqual(wait, i == 0 ? PaeteRules.PlantFirstShotSeconds - .1f : PaeteRules.PlantMinShotGap - 1f);
+                yield return new WaitForSeconds(Mathf.Max(0f, wait - .25f));
+                Assert.AreEqual(i, WoodenShotsFired, "The plant threw before its scheduled moment.");
+                yield return new WaitForSeconds(.4f);
+                Assert.AreEqual(i + 1, WoodenShotsFired, "The plant missed its scheduled throw.");
+            }
+            Assert.AreEqual(0, plant.ShotsLeft);
+            Assert.IsFalse(plant.ShotReady);
+        }
+
+        private int WoodenShotsFired;
+        private void CountShot(PaetePlant plant, Vector3 target) => WoodenShotsFired++;
 
         [UnityTest]
         public IEnumerator NoUprightTargetKeepsTheGrownSlipperReady()
@@ -205,7 +219,7 @@ namespace TumbangPreso.PlayTests
             var can = GameServices.Round.Lata;
             can.ApplySnapshotState(can.transform.position, can.transform.rotation, false, can.SkinIndex);
             var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
-            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds + .25f);
+            yield return new WaitForSeconds(plant.ShotIn + .25f);
             Assert.AreEqual(0, WoodenShots().Length);
             Assert.IsTrue(plant.ShotReady, "No target must not consume the grown slipper.");
             can.ApplySnapshotState(can.transform.position, Quaternion.identity, true, can.SkinIndex);
@@ -247,7 +261,7 @@ namespace TumbangPreso.PlayTests
             NetAuthority.Provider = new PlantReplicaProvider();
             var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
             plant.AdoptInstance(901);
-            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds + .2f);
+            yield return new WaitForSeconds(plant.ShotIn + .2f);
             Assert.AreEqual(0, WoodenShots().Length, "A nonhost must not invent autonomous shots.");
             var method = typeof(PaetePlant).GetMethod("ApplyAutomaticShot");
             Assert.IsNotNull(method, "The accepted automatic-shot delivery path is missing.");
@@ -286,7 +300,7 @@ namespace TumbangPreso.PlayTests
             yield return Press(paete, Verb.Skill2);
             var plant = PaetePlant.OwnedBy(paete.PlayerSlot);
             Assert.IsNotNull(plant);
-            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds + .5f);
+            yield return new WaitForSeconds(plant.ShotIn + .5f);
             Assert.IsTrue(plant.ShotReady);
             Vector3 muzzle = plant.Muzzle;
             paete.Intent.AimPoint = muzzle + Vector3.forward * 8f;
@@ -342,7 +356,7 @@ namespace TumbangPreso.PlayTests
             Note("plant_spawned", plant != null);
             Assert.IsNotNull(plant, "Bakya Bloom planted nothing.");
 
-            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds);
+            yield return new WaitForSeconds(plant.ShotIn + .1f);
             Assert.IsTrue(plant.ShotReady, "The seedling never grew its first wooden slipper.");
             var lata = GameServices.Round.Lata;
             paete.Intent.AimPoint = lata.transform.position;

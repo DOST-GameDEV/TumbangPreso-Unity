@@ -151,6 +151,7 @@ namespace TumbangPreso.Visual
 
         /// <summary>Seconds of post-cast confirmation left, and what it started at.</summary>
         private float _flashLeft;
+        private float _flashEndsAt;
         private float _flashTotal;
 
         private CharacterMotor _owner;
@@ -435,6 +436,8 @@ namespace TumbangPreso.Visual
         {
             _held = false;
             if (_beaconGo != null) _beaconGo.SetActive(false);
+            // A flash nobody ticks must still end: it is a moment, never a standing mark (October 22).
+            if (_flashLeft > 0.0f && Time.time > _flashEndsAt) _flashLeft = 0.0f;
             if (_flashLeft <= 0.0f && gameObject.activeSelf) gameObject.SetActive(false);
         }
 
@@ -451,6 +454,7 @@ namespace TumbangPreso.Visual
             _colour = colour;
             _flashTotal = Mathf.Max(0.05f, seconds);
             _flashLeft = _flashTotal;
+            _flashEndsAt = Time.time + _flashTotal + 0.5f;
             Place(worldPos);
         }
 

@@ -64,16 +64,76 @@ namespace TumbangPreso.Core
         /// <summary>The seed's throw range, from his feet.</summary>
         public const float PlantThrowRange = 6.0f;
 
-        /// <summary>Cooldown on planting, from the cast. One plant at a time: a new one replaces the old.</summary>
-        public const float PlantCooldown = 30.0f;
+        /// <summary>
+        /// Cooldown on planting, from the cast. One plant at a time: a new one replaces the old.
+        /// Owner, October 22 tournament feedback: the plant decided matches, so its cooldown rose from 30 s.
+        /// </summary>
+        public const float PlantCooldown = 50.0f;
 
-        /// <summary>From landing to its first wooden slipper: the pop-up and the first one growing.</summary>
+        /// <summary>From landing to the earliest moment its first wooden slipper can be grown.</summary>
         public const float PlantFirstShotSeconds = 3.0f;
 
         /// <summary>
-        /// Owner, October 4: the mature plant automatically lobs a slipper every five seconds.
+        /// How long a wooden slipper visibly grows in the pod before it is ready. Owner, October 4,
+        /// made the lob automatic; the October 22 nerf replaced the fixed five-second cadence with
+        /// <see cref="PlantShotAt"/>, and this stays the pod's growth window.
         /// </summary>
         public const float PlantReloadSeconds = 5.0f;
+
+        /// <summary>
+        /// Owner, October 22 tournament feedback: *"randomly throws a maximum of 3 shots in the 30
+        /// seconds that its up"*. It used to throw one every five seconds, eight in a life.
+        /// </summary>
+        public const int PlantMaxShots = 3;
+
+        /// <summary>Owner, October 22: *"lower the hit rate of his turret"*. The share of throws aimed true.</summary>
+        public const float PlantHitChance = 0.35f;
+
+        /// <summary>A throw that is not aimed true lands this far from the can (min, max), so it visibly misses.</summary>
+        public const float PlantMissMin = 1.3f, PlantMissMax = 2.4f;
+
+        /// <summary>Consecutive throws are never closer than this, even with a manual command in between.</summary>
+        public const float PlantMinShotGap = 2.0f;
+
+        /// <summary>
+        /// When the plant's <paramref name="index"/>th throw (0-based) is due, in seconds of its age. The
+        /// window from <see cref="PlantFirstShotSeconds"/> to two seconds before it withers is cut into
+        /// <see cref="PlantMaxShots"/> equal slots and each throw falls at a random point inside its slot,
+        /// so they are unpredictable but never bunched. Deterministic in <paramref name="seed"/> so every
+        /// peer and the replay agree.
+        /// </summary>
+        public static float PlantShotAt(long seed, int index)
+        {
+            if (index < 0 || index >= PlantMaxShots) return float.PositiveInfinity;
+            float window = PlantLifeSeconds - 2.0f - PlantFirstShotSeconds;
+            float slot = window / PlantMaxShots;
+            float pad = System.Math.Min(1.0f, slot * 0.25f);
+            return PlantFirstShotSeconds + slot * index + pad + Unit(seed, index, 1) * (slot - 2.0f * pad);
+        }
+
+        /// <summary>
+        /// Where the <paramref name="index"/>th throw actually goes when aimed at (x, z): true for
+        /// <see cref="PlantHitChance"/> of throws, otherwise a deterministic miss around the target.
+        /// </summary>
+        public static void PlantShotAim(long seed, int index, ref float x, ref float z)
+        {
+            if (Unit(seed, index, 2) < PlantHitChance) return;
+            double angle = Unit(seed, index, 3) * System.Math.PI * 2.0;
+            float d = PlantMissMin + Unit(seed, index, 4) * (PlantMissMax - PlantMissMin);
+            x += (float)System.Math.Cos(angle) * d;
+            z += (float)System.Math.Sin(angle) * d;
+        }
+
+        /// <summary>A stable 0..1 value for (seed, index, salt); the same on every machine and runtime.</summary>
+        public static float Unit(long seed, int index, int salt)
+        {
+            unchecked
+            {
+                ulong h = (ulong)seed * 0x9E3779B97F4A7C15UL ^ (ulong)(index + 1) * 0xC2B2AE3D27D4EB4FUL ^ (ulong)(salt + 7) * 0x165667B19E3779F9UL;
+                h ^= h >> 33; h *= 0xFF51AFD7ED558CCDUL; h ^= h >> 33; h *= 0xC4CEB9FE1A85EC53UL; h ^= h >> 33;
+                return (float)((h >> 40) / (double)(1UL << 24));
+            }
+        }
 
         /// <summary>
         /// Owner, 2026-09-25: *"invincible for the first 15 seconds but after that make a visual
@@ -82,11 +142,10 @@ namespace TumbangPreso.Core
         public const float PlantRootedSeconds = 15.0f;
 
         /// <summary>
-        /// ⚠️ NOT GIVEN BY THE OWNER. How long it lives in all. After its 15 rooted seconds it
-        /// loosens visibly for 25 more and then withers on its own. The October 4 automatic
-        /// five-second lob directive preserves this existing forty-second lifetime.
+        /// How long it lives in all. After its 15 rooted seconds it loosens visibly and then withers
+        /// on its own. Owner, October 22: *"in the 30 seconds that its up"* (it was 40 s).
         /// </summary>
-        public const float PlantLifeSeconds = 40.0f;
+        public const float PlantLifeSeconds = 30.0f;
 
         /// <summary>How close an opponent must stand to pull it out, and how long they hold Interact.</summary>
         public const float PlantPullReach = 1.5f;

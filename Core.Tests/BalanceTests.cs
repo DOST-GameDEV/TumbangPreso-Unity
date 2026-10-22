@@ -24,6 +24,26 @@ namespace TumbangPreso.Core.Tests
     {
         private const float Tol = 0.001f;
 
+        [Fact]
+        public void LeavingTheCanDownCostsTheTayaAfterFiveSeconds()
+        {
+            Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.CanDownPenalty));
+            Assert.False(TournamentRules.IsCanDownPenalty(4.9f));
+            Assert.True(TournamentRules.IsCanDownPenalty(5.0f));
+            Assert.True(TournamentRules.IsCanDownWarning(2.5f));
+            Assert.False(MatchRules.IsChainBonus(ScoreEvent.CanDownPenalty));
+            Assert.Equal((int)ScoreEvent.MultiCatch + 1, (int)ScoreEvent.CanDownPenalty); // appended for the wire
+        }
+
+        [Fact]
+        public void ShortMatchesChargeUltimatesFasterAndEightRoundsAreUnchanged()
+        {
+            Assert.Equal(1.0f, Balance.UltimateChargeScale(8), 3);
+            Assert.Equal(2.0f, Balance.UltimateChargeScale(4), 3); // October 22: ults were rare in 4 rounds.
+            Assert.Equal(1.0f, Balance.UltimateChargeScale(0), 3);
+            Assert.True(Balance.UltimateChargeScale(1) <= 3.0f);
+        }
+
         // ===================================================================
         // STAMINA
         // ===================================================================

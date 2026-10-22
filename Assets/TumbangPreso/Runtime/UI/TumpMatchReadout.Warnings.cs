@@ -117,6 +117,9 @@ namespace TumbangPreso.UI
             if(local.IsDefender&&round.IsTayaCampWarningActive)
                 text=round.IsTayaCampPenaltyActive&&local.CanAct()
                     ?"DO NOT CAMP - MOVE AWAY FROM CAN IMMEDIATELY":"DO NOT CAMP - MOVE AWAY FROM CAN";
+            else if(local.IsDefender&&round.IsCanDownWarningActive)
+                text=round.IsCanDownPenaltyActive&&local.CanAct()
+                    ?"STAND THE CAN UP - LOSING POINTS":"STAND THE CAN UP";
             else if(!local.IsDefender&&!local.HoldingSlipper&&TournamentRules.IsSlipperWarning(round.AttackerIdleSeconds(local.PlayerSlot)))
                 text=TournamentRules.IsSlipperPenalty(round.AttackerIdleSeconds(local.PlayerSlot))&&local.CanAct()
                     ?"DO NOT IDLE - RETRIEVE YOUR SLIPPER IMMEDIATELY":"DO NOT IDLE - RETRIEVE YOUR SLIPPER";

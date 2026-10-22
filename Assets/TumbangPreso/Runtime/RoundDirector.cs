@@ -70,6 +70,7 @@ namespace TumbangPreso
         private readonly List<CharacterMotor> _players = new List<CharacterMotor>();
         private float _defenseTickAccum;
         private float _tayaCampTimer;
+        private float _canDownTimer, _canDownTickAccum;
         private float _tayaCampTickAccum;
         private bool _tayaInsideCampZone;
         private readonly float[] _attackerIdleTimer = new float[Balance.PlayerCount];
@@ -179,6 +180,10 @@ namespace TumbangPreso
             Destroy(companion.gameObject);
         }
         public float TayaCampSeconds => _tayaCampTimer;
+        /// <summary>How long the can has lain down while the taya was free to stand it up (October 22 anti-stall).</summary>
+        public float CanDownSeconds => _canDownTimer;
+        public bool IsCanDownWarningActive => TournamentRules.IsCanDownWarning(_canDownTimer);
+        public bool IsCanDownPenaltyActive => TournamentRules.IsCanDownPenalty(_canDownTimer);
         public bool IsTayaCampWarningActive => TournamentRules.IsCampWarning(_tayaCampTimer);
         public bool IsTayaCampPenaltyActive => TournamentRules.IsCampPenalty(_tayaCampTimer);
 
@@ -364,6 +369,8 @@ namespace TumbangPreso
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
             _tayaInsideCampZone = false;
+            _canDownTimer = 0.0f;
+            _canDownTickAccum = 0.0f;
             System.Array.Clear(_attackerIdleTimer, 0, _attackerIdleTimer.Length);
             System.Array.Clear(_attackerIdleTickAccum, 0, _attackerIdleTickAccum.Length);
             _shoveCredit.Clear();
@@ -409,6 +416,8 @@ namespace TumbangPreso
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
             _tayaInsideCampZone = false;
+            _canDownTimer = 0.0f;
+            _canDownTickAccum = 0.0f;
             System.Array.Clear(_attackerIdleTimer, 0, _attackerIdleTimer.Length);
             System.Array.Clear(_attackerIdleTickAccum, 0, _attackerIdleTickAccum.Length);
             _shoveCredit.Clear();
@@ -542,6 +551,35 @@ namespace TumbangPreso
                 _tayaCampTimer = 0.0f;
                 _tayaCampTickAccum = 0.0f;
                 _tayaInsideCampZone = false;
+            }
+
+            // 1b. CAN LEFT DOWN (owner, October 22: *"give a small deduction per second after 5 seconds of can
+            // being down"*). While the can is down nobody may throw or tag, so a taya who is ahead could leave it
+            // lying there and run the clock out. The clock holds while the taya cannot act or is already channelling
+            // the stand-up, and clears the moment the can is upright again.
+            if (taya != null && Lata != null && !Lata.IsUpright)
+            {
+                var tayaCarrier = taya.GetComponent<Carrier>();
+                bool restoring = tayaCarrier != null && tayaCarrier.ChannelRatio > 0.0f;
+                if (tayaCanAct && !restoring)
+                {
+                    _canDownTimer += dt;
+                    if (TournamentRules.IsCanDownPenalty(_canDownTimer) && NetAuthority.ShouldResolve())
+                    {
+                        _canDownTickAccum += dt;
+                        while (_canDownTickAccum >= Balance.TournamentPenaltyInterval)
+                        {
+                            _canDownTickAccum -= Balance.TournamentPenaltyInterval;
+                            GameServices.Match.AddScore(defenderSlot, ScoreEvent.CanDownPenalty);
+                        }
+                    }
+                }
+                else _canDownTickAccum = 0.0f;
+            }
+            else
+            {
+                _canDownTimer = 0.0f;
+                _canDownTickAccum = 0.0f;
             }
 
             // 2. UNRETRIEVED SLIPPER IDLE MONITOR

@@ -301,6 +301,8 @@ namespace TumbangPreso.Abilities
         {
             if (instanceId <= 0) return;
             InstanceId = instanceId;
+            // The accepted cast id is the shared seed: re-plan the throws nobody has seen yet.
+            if (_shots == 0 && _age < PaeteRules.PlantFirstShotSeconds) ScheduleNextShot();
             FollowRetirementScope();
             if (OwnerSlot >= 0 && OwnerSlot < RetiredInstances.Length && instanceId <= RetiredInstances[OwnerSlot])
             {
@@ -312,10 +314,22 @@ namespace TumbangPreso.Abilities
         public float Age => _age;
         public bool Landed => _age >= 0f;
         public bool Pullable => _age >= PaeteRules.PlantRootedSeconds && !IsRetiring;
-        public bool ShotReady => Landed && !IsRetiring && _age >= _nextShot;
+        public bool ShotReady => Landed && !IsRetiring && _shots < PaeteRules.PlantMaxShots && _age >= _nextShot;
+        /// <summary>Owner, October 22: at most `PaeteRules.PlantMaxShots` throws in its life.</summary>
+        public int ShotsLeft => Mathf.Max(0, PaeteRules.PlantMaxShots - _shots);
+        // The schedule and aim scatter are seeded by the accepted cast, so every peer agrees.
+        private long Seed => InstanceId > 0 ? InstanceId : _localSeed;
+        private long _localSeed;
+        private int _shots;
+
+        private void ScheduleNextShot()
+        {
+            _nextShot = _shots >= PaeteRules.PlantMaxShots ? float.PositiveInfinity
+                : Mathf.Max(PaeteRules.PlantShotAt(Seed, _shots), _age + PaeteRules.PlantMinShotGap);
+        }
 
         /// <summary>Seconds until the next clog has grown (the deck's countdown for the command, `PunlangTsinelas`).</summary>
-        public float ShotIn => Mathf.Max(0f, _nextShot - _age);
+        public float ShotIn => _shots >= PaeteRules.PlantMaxShots ? 0f : Mathf.Max(0f, _nextShot - _age);
         /// <summary>How far the next wooden slipper has grown, 0 to 1, for the pod.</summary>
         public float ShotGrowth => Mathf.Clamp01(1f - (_nextShot - _age) / PaeteRules.PlantReloadSeconds);
 
@@ -335,7 +349,8 @@ namespace TumbangPreso.Abilities
             var plant = go.AddComponent<PaetePlant>();
             plant.OwnerSlot = ownerSlot;
             plant._age = -Mathf.Max(0f, flightSeconds);
-            plant._nextShot = PaeteRules.PlantFirstShotSeconds;
+            plant._localSeed = (ownerSlot + 1) * 7919L + System.Environment.TickCount;
+            plant._nextShot = PaeteRules.PlantShotAt(plant.Seed, 0);
             plant._body = PaetePlantBody.Build(go.transform);
             if (flightSeconds > 0f) PaeteSeedArc.Throw(from, at, flightSeconds, 0.14f, false);
             Live.Add(plant);
@@ -363,13 +378,18 @@ namespace TumbangPreso.Abilities
         public bool Fire(Vector3 aimPoint)
             => Fire(aimPoint, approvedReplay: false);
 
-        internal bool Fire(Vector3 aimPoint, bool approvedReplay)
+        internal bool Fire(Vector3 aimPoint, bool approvedReplay, bool alreadyScattered = false)
         {
             bool replay = approvedReplay && NetAuthority.IsNetworked && !NetAuthority.IsHost;
             if (IsRetiring || (!ShotReady && !replay)) return false;
-            _nextShot = _age + PaeteRules.PlantReloadSeconds;
-            _recoil = 0f;
             Vector3 target = aimPoint;
+            // Owner, October 22: *"lower the hit rate of his turret"*. Most throws land wide of the aim,
+            // deterministically per throw, so every peer sees the same clog fly. The host's automatic
+            // throw is scattered once and relayed as the final target.
+            if (!alreadyScattered) PaeteRules.PlantShotAim(Seed, _shots, ref target.x, ref target.z);
+            _shots++;
+            ScheduleNextShot();
+            _recoil = 0f;
             // Look only: the pitcher whips round to the shot and coughs a puff out after the clog.
             _body.AimAt(target - transform.position);
             PaeteBloomFx.Spit(Muzzle, target);
@@ -383,7 +403,7 @@ namespace TumbangPreso.Abilities
             if (!NetAuthority.IsNetworked || NetAuthority.IsHost || instanceId <= 0) return false;
             var plant = OwnedBy(ownerSlot);
             if (plant == null || plant.InstanceId != instanceId) return false;
-            return plant.Fire(aimPoint, approvedReplay: true);
+            return plant.Fire(aimPoint, approvedReplay: true, alreadyScattered: true);
         }
 
         private void StepAutomaticShot()
@@ -396,7 +416,8 @@ namespace TumbangPreso.Abilities
             // This attacking construct keeps its existing objective: knocking down the lata.
             // Waiting for a valid upright can does not consume the grown slipper.
             Vector3 target = lata.transform.position;
-            if (Fire(target)) AutomaticShotFired?.Invoke(this, target);
+            PaeteRules.PlantShotAim(Seed, _shots, ref target.x, ref target.z);
+            if (Fire(target, approvedReplay: false, alreadyScattered: true)) AutomaticShotFired?.Invoke(this, target);
         }
 
         public void Wither()
@@ -461,7 +482,7 @@ namespace TumbangPreso.Abilities
             Type = Net.WorldEffectSnapshot.Kind.Plant, Source = gameObject, Position = transform.position,
             Forward = Vector3.forward, Duration = PaeteRules.PlantLifeSeconds,
             Remaining = Mathf.Clamp(PaeteRules.PlantLifeSeconds - Mathf.Max(0f, _age), 0f, PaeteRules.PlantLifeSeconds),
-            Radius = 1f, Owner = OwnerSlot, FirstScale = Mathf.Max(0f, _nextShot - _age),
+            Radius = 1f, Owner = OwnerSlot, FirstScale = Mathf.Clamp(_nextShot - _age, 0f, PaeteRules.PlantLifeSeconds),
             InstanceId = InstanceId,
         };
 
@@ -473,8 +494,12 @@ namespace TumbangPreso.Abilities
         {
             var plant = Spawn(at, at, ownerSlot, 0f);
             plant._age = Mathf.Max(0.5f, age);
-            plant._nextShot = plant._age + Mathf.Clamp(untilShot, 0f, PaeteRules.PlantReloadSeconds);
             plant.AdoptInstance(instanceId);
+            // Throws already due before this age were spent; the snapshot carries when the next one is.
+            while (plant._shots < PaeteRules.PlantMaxShots && PaeteRules.PlantShotAt(plant.Seed, plant._shots) < plant._age - 0.05f) plant._shots++;
+            if (untilShot >= PaeteRules.PlantLifeSeconds - 0.01f) plant._shots = PaeteRules.PlantMaxShots;
+            plant._nextShot = plant._shots >= PaeteRules.PlantMaxShots ? float.PositiveInfinity
+                : plant._age + Mathf.Clamp(untilShot, 0f, PaeteRules.PlantLifeSeconds);
             return plant;
         }
 

@@ -868,10 +868,10 @@ namespace TumbangPreso.UI
             // Penalty ticks are personal feedback. Use the scored seat on both the host
             // and receiving clients; another player's penalty must not flash or sound here.
             // The persistent warning already explains the cause, so keep the tick wordless.
-            if (e == ScoreEvent.TayaCampPenalty || e == ScoreEvent.UnretrievedSlipperPenalty)
+            if (e == ScoreEvent.TayaCampPenalty || e == ScoreEvent.UnretrievedSlipperPenalty || e == ScoreEvent.CanDownPenalty)
             {
                 if (_spectating || _local == null || _local.PlayerSlot != slot) return;
-                PopHitmarker(e == ScoreEvent.TayaCampPenalty ? UiTheme.Defense : UiTheme.Offense, "⚠️");
+                PopHitmarker(e == ScoreEvent.UnretrievedSlipperPenalty ? UiTheme.Offense : UiTheme.Defense, "⚠️");
                 GameServices.Audio?.PlayUiVaried("score_award", 0.78f, 0.86f, 0.65f);
                 return;
             }
@@ -936,6 +936,7 @@ namespace TumbangPreso.UI
                 case ScoreEvent.Tag: return "TAG";
                 case ScoreEvent.TayaCampPenalty: return "CAMPING";
                 case ScoreEvent.UnretrievedSlipperPenalty: return "SLIPPER IDLE";
+                case ScoreEvent.CanDownPenalty: return "CAN LEFT DOWN";
 
                 // ⚠️ "LAST TSINELAS", NOT "LAST TSINELAS STANDING". The toast is read in about a
                 // second beside a number, and the format's full name is already on the lobby

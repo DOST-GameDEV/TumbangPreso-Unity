@@ -47,7 +47,9 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(7.0f, PaeteRules.BreakFreeHoldSeconds);    // "hold for like 7 seconds"
             Assert.Equal(16.0f, PaeteRules.SentryCost);             // "yes" to 16
             Assert.Equal(15.0f, PaeteRules.PlantRootedSeconds);     // "invincible for the first 15 seconds"
-            Assert.Equal(5.0f, PaeteRules.PlantReloadSeconds); // October 4: automatic lob every five seconds.
+            Assert.Equal(5.0f, PaeteRules.PlantReloadSeconds);      // The pod's visible growth window.
+            Assert.Equal(3, PaeteRules.PlantMaxShots);              // October 22: "a maximum of 3 shots"
+            Assert.Equal(30.0f, PaeteRules.PlantLifeSeconds);       // "in the 30 seconds that its up"
         }
 
         [Fact]
@@ -119,8 +121,42 @@ namespace TumbangPreso.Core.Tests
         {
             // Rooted first, then pullable, then gone on its own; never a whole round of free throws.
             Assert.True(PaeteRules.PlantRootedSeconds < PaeteRules.PlantLifeSeconds);
-            int shots = 1 + (int)((PaeteRules.PlantLifeSeconds - PaeteRules.PlantFirstShotSeconds) / PaeteRules.PlantReloadSeconds);
-            Assert.Equal(8, shots); // Mature at3s, then every5s within the unchanged40s lifetime.
+            Assert.True(PaeteRules.PlantCooldown > PaeteRules.PlantLifeSeconds);
+        }
+
+        [Fact]
+        public void APlantThrowsAtMostThreeRandomlyTimedSlippersInsideItsLife()
+        {
+            for (long seed = 1; seed < 400; seed++)
+            {
+                float last = 0f;
+                for (int i = 0; i < PaeteRules.PlantMaxShots; i++)
+                {
+                    float at = PaeteRules.PlantShotAt(seed, i);
+                    Assert.True(at >= PaeteRules.PlantFirstShotSeconds && at < PaeteRules.PlantLifeSeconds - 1.9f, $"{seed}/{i}: {at}");
+                    Assert.True(i == 0 || at - last >= PaeteRules.PlantMinShotGap, $"{seed}/{i} bunched");
+                    last = at;
+                }
+                Assert.True(float.IsPositiveInfinity(PaeteRules.PlantShotAt(seed, PaeteRules.PlantMaxShots)));
+            }
+            Assert.NotEqual(PaeteRules.PlantShotAt(1, 0), PaeteRules.PlantShotAt(2, 0));
+        }
+
+        [Fact]
+        public void MostPlantThrowsMissTheCan()
+        {
+            int hits = 0, total = 0;
+            for (long seed = 1; seed < 2000; seed++)
+                for (int i = 0; i < PaeteRules.PlantMaxShots; i++)
+                {
+                    float x = 0f, z = 0f;
+                    PaeteRules.PlantShotAim(seed, i, ref x, ref z);
+                    float d = (float)System.Math.Sqrt(x * x + z * z);
+                    total++;
+                    if (d < 0.01f) hits++;
+                    else Assert.InRange(d, PaeteRules.PlantMissMin - 1e-3f, PaeteRules.PlantMissMax + 1e-3f);
+                }
+            Assert.InRange(hits / (float)total, PaeteRules.PlantHitChance - 0.05f, PaeteRules.PlantHitChance + 0.05f);
         }
 
         [Fact]

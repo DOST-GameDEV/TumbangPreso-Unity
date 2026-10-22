@@ -86,6 +86,14 @@
         public const int ScoreUnretrievedPenalty = -5;
         public const float TournamentPenaltyInterval = 1.0f;
 
+        // Owner, October 22 tournament feedback: a taya who was ahead left the can lying down,
+        // which stops every throw and every tag, and ran the round out. After this many seconds
+        // of the can down while the taya is free to act and not standing it up, the taya pays
+        // ScoreCanDownPenalty every TournamentPenaltyInterval.
+        public const float CanDownWarningTime = 2.5f;
+        public const float CanDownGracePeriod = 5.0f;
+        public const int ScoreCanDownPenalty = -5;
+
         // ------------------------------------------------------------------
         // Hero Strike objective economy, owner revision October 3, 2026.
         // Knockdowns and successful tags each pay one point. The defender also
@@ -97,6 +105,18 @@
         // Retained names keep existing callers and numeric contracts explicit.
         public const float UltimateChargeOwnSlipperRetrieved = 0.0f;
         public const float UltimateChargeLegalThrow = 0.0f;
+
+        /// <summary>
+        /// Owner, October 22 tournament feedback: *"ults were rarely cast in 4 round games"*. The
+        /// ultimate costs are priced for the eight-round default, so a shorter match pays every
+        /// objective point proportionally more (four rounds: double) and each player can still
+        /// reach an ultimate. Eight rounds or more are unchanged.
+        /// </summary>
+        public static float UltimateChargeScale(int totalRounds)
+        {
+            if (totalRounds <= 0 || totalRounds >= HeroStrikeRounds) return 1.0f;
+            return System.Math.Min(3.0f, HeroStrikeRounds / (float)totalRounds);
+        }
 
         // Pektus (Curve Spin) Throwing
         public const float PektusCurveStrength = 14.0f;
