@@ -457,7 +457,7 @@ namespace TumbangPreso.PlayTests
                     if (c != camera) return;
                     lastTime = Time.unscaledTime - began;
                     end = (float)Field("_clipEnd");
-                    lastPoseTime = Mathf.Lerp(start, end, Mathf.Clamp01(lastTime / CatchReconstruction.AnimationDuration));
+                    lastPoseTime = CatchReconstruction.RecordedTimeAt(start, contact, end, lastTime);
                     var bounds = victimCopy.Renderers[0].bounds;
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
                     lastGap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));

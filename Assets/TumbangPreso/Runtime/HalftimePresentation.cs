@@ -11,7 +11,8 @@ namespace TumbangPreso
         public static HalftimePresentation Instance {get;private set;}
         public static bool Playing=>Instance!=null&&Instance.Active;
         public const float BreakDuration = 3.5f;
-        public const float HalftimeDuration = 10;
+        // Owner, October 22: "kahit tagalan mo ren halftime replay". Two more seconds for the slower replay.
+        public const float HalftimeDuration = 12;
         // Arena transforms its stage during the ordinary break, so that break is longer there and
         // the live picture is kept. Read from the map on every peer, so it stays shared with nothing sent.
         public static bool LiveStageBreak=>Map.ArenaStage.Instance!=null;
@@ -43,7 +44,16 @@ namespace TumbangPreso
         private RecordedWorldView _view;
         private RecordedMatchClip _clip;
         private bool _attempted,_standings,_stageShow;
-        private const float ReplayEndAge=5.8f,ReplaySlowdown=.43f;
+        // The setup in real time, the 0.8 s around the contact at 0.3x, then the consequence in real time.
+        private const float SlowLead=.35f,SlowSpan=.8f,SlowRate=.3f;
+        private const float ReplaySlowdown=SlowSpan/SlowRate-SlowSpan,ReplayEndAge=7.6f;
+        public static float ReplayOffset(float elapsed,float contactFromStart)
+        {
+            float before=Mathf.Max(0,contactFromStart-SlowLead),slowFor=SlowSpan/SlowRate;
+            if(elapsed<=before)return elapsed;
+            if(elapsed<=before+slowFor)return before+(elapsed-before)*SlowRate;
+            return before+SlowSpan+(elapsed-before-slowFor);
+        }
         private float _replayBegan;
         private Scene _scene;
         // PAYO FORCES A HALF TIME (owner, 2026-10-12, of the map that turns to night at half time: "force it to have").
@@ -140,9 +150,9 @@ namespace TumbangPreso
             }
             if(_view?.Ready==true&&age<ReplayEndAge)
             {
-                // Real-time setup, a brief contact slowdown, then full consequence.
-                float elapsed=Mathf.Max(0,age-_replayBegan),before=_clip.Contact-_clip.Start-.18f;
-                float offset=elapsed<=before?elapsed:elapsed<=before+.86f?before+(elapsed-before)*.5f:elapsed-.43f;
+                // Real-time setup, a long contact slowdown, then full consequence.
+                float elapsed=Mathf.Max(0,age-_replayBegan);
+                float offset=Mathf.Min(ReplayOffset(elapsed,_clip.Contact-_clip.Start),_clip.Duration);
                 try{_view.Draw(_clip.Start+offset);}
                 catch(Exception failure){Debug.LogWarning("[Replay] Recorded view failed: "+failure.Message);_view.Dispose();_view=null;FallbackReason="Replay unavailable on this screen";}
             }

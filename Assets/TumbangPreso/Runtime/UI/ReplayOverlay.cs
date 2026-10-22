@@ -23,6 +23,17 @@ namespace TumbangPreso.UI
         private HudCard _promptPlate;
         private string _promptKey;
         private const float Inset = 108, Thick = 12, ArmWide = 289, ArmTall = 247;
+        // ⚠️ IT MOVES (owner, October 22: "everything has to be animated"). The layout is the mock-up's;
+        // only its arrival animates: the brackets close in from beyond the corners, and the plate slams
+        // down oversized and tilted, then settles. A replay that keeps its plate for a beat (the tag
+        // replay, until the touch) calls `HoldAnnouncement` and then `Slam`.
+        private readonly System.Collections.Generic.List<(RectTransform rect, Vector2 home, Vector2 outward)> _bars =
+            new System.Collections.Generic.List<(RectTransform, Vector2, Vector2)>();
+        private RectTransform _plate;
+        private CanvasGroup _plateGroup;
+        private float _born, _slamAt;
+        private bool _held;
+        private const float BracketIn = .28f, SlamIn = .1f, SlamSettle = .16f;
         private static readonly Color RecordRed = new Color32(250, 42, 42, 255);
 
         public float Alpha { set { if (_group != null) _group.alpha = value; } }
@@ -33,33 +44,36 @@ namespace TumbangPreso.UI
             var overlay = root.gameObject.AddComponent<ReplayOverlay>();
             overlay._group = root.gameObject.AddComponent<CanvasGroup>();
             overlay._group.blocksRaycasts = false; overlay._group.interactable = false;
-            for (int corner = 0; corner < 4; corner++) Bracket(root, corner);
-            Announce(root, announcement);
+            for (int corner = 0; corner < 4; corner++) overlay.Bracket(root, corner);
+            overlay.Announce(root, announcement);
+            overlay._born = overlay._slamAt = Time.unscaledTime;
+            overlay.Animate();
             overlay.Record(root);
             if (skippable) overlay.Prompt(root);
             return overlay;
         }
 
         /// <summary>One corner's two white bars, anchored to that corner of the screen.</summary>
-        private static void Bracket(RectTransform root, int corner)
+        private void Bracket(RectTransform root, int corner)
         {
             var anchor = new Vector2(corner % 2, corner / 2);
             var inward = new Vector2(anchor.x == 0 ? 1 : -1, anchor.y == 0 ? 1 : -1);
             Vector2 origin = new Vector2(Inset * inward.x, Inset * inward.y);
-            Bar(root, "ReplayCorner" + corner + "Wide", anchor, origin, new Vector2(ArmWide * inward.x, Thick * inward.y));
-            Bar(root, "ReplayCorner" + corner + "Tall", anchor, origin, new Vector2(Thick * inward.x, ArmTall * inward.y));
+            _bars.Add((Bar(root, "ReplayCorner" + corner + "Wide", anchor, origin, new Vector2(ArmWide * inward.x, Thick * inward.y)), origin, -inward));
+            _bars.Add((Bar(root, "ReplayCorner" + corner + "Tall", anchor, origin, new Vector2(Thick * inward.x, ArmTall * inward.y)), origin, -inward));
         }
-        private static void Bar(RectTransform root, string name, Vector2 anchor, Vector2 origin, Vector2 extent)
+        private static RectTransform Bar(RectTransform root, string name, Vector2 anchor, Vector2 origin, Vector2 extent)
         {
             var bar = OwnerUiLayout.Rect(root, name).gameObject.AddComponent<Image>();
             bar.color = Color.white; bar.raycastTarget = false;
             var rect = bar.rectTransform; rect.anchorMin = rect.anchorMax = anchor;
             rect.pivot = new Vector2(extent.x > 0 ? 0 : 1, extent.y > 0 ? 0 : 1);
             rect.anchoredPosition = origin; rect.sizeDelta = new Vector2(Mathf.Abs(extent.x), Mathf.Abs(extent.y));
+            return rect;
         }
 
         /// <summary>The red plate at the top: the earned-moment banner's glass surface and title face.</summary>
-        private static void Announce(RectTransform root, string words)
+        private void Announce(RectTransform root, string words)
         {
             var plate = OwnerUiLayout.Rect(root, "ReplayAnnouncement");
             plate.anchorMin = plate.anchorMax = plate.pivot = new Vector2(.5f, 1);
@@ -72,6 +86,35 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Fill(title.rectTransform);
             plate.anchoredPosition = new Vector2(0, -138);
             plate.sizeDelta = new Vector2(Mathf.Max(420, Mathf.Ceil(title.preferredWidth) + 120), 110);
+            _plate = plate;
+            _plateGroup = plate.gameObject.AddComponent<CanvasGroup>();
+            _plateGroup.blocksRaycasts = false; _plateGroup.interactable = false;
+        }
+
+        /// <summary>Keep the announcement off screen until <see cref="Slam"/>.</summary>
+        public void HoldAnnouncement() { _held = true; Animate(); }
+
+        /// <summary>The announcement lands now: oversized and tilted, then settled in a fifth of a second.</summary>
+        public void Slam() { _held = false; _slamAt = Time.unscaledTime; Animate(); }
+
+        private void Animate()
+        {
+            bool still = Settings.SettingsStore.Current.ReducedUiMotion;
+            float now = Time.unscaledTime;
+            float b = still ? 1 : Mathf.Clamp01((now - _born) / BracketIn);
+            float ease = 1 - (1 - b) * (1 - b) * (1 - b);
+            foreach (var bar in _bars)
+                if (bar.rect != null) bar.rect.anchoredPosition = bar.home + bar.outward * (90 * (1 - ease));
+            if (_plate == null) return;
+            if (_held) { _plateGroup.alpha = 0; return; }
+            float s = now - _slamAt;
+            if (still) { _plateGroup.alpha = 1; _plate.localScale = Vector3.one; _plate.localRotation = Quaternion.identity; return; }
+            float scale, tilt;
+            if (s < SlamIn) { float u = s / SlamIn; scale = Mathf.Lerp(1.75f, .9f, u * u); tilt = Mathf.Lerp(-7, 1.5f, u); }
+            else { float u = Mathf.Clamp01((s - SlamIn) / SlamSettle); float k = Mathf.SmoothStep(0, 1, u); scale = Mathf.Lerp(.9f, 1, k); tilt = Mathf.Lerp(1.5f, 0, k); }
+            _plateGroup.alpha = Mathf.Clamp01(s / .05f);
+            _plate.localScale = Vector3.one * scale;
+            _plate.localRotation = Quaternion.Euler(0, 0, tilt);
         }
 
         /// <summary>REC and its light, at the bottom right inside the bracket.</summary>
@@ -134,6 +177,7 @@ namespace TumbangPreso.UI
         {
             // A recording light: lit for most of each second, dark for the rest.
             if (_light != null) _light.enabled = Mathf.Repeat(Time.unscaledTime, 1) < .6f;
+            Animate();
             Refresh();
             if (_prompt != null && Hud.OnTouch) InputLayer.TouchHud.Emphasise(Verb.Interact);
         }

@@ -13,7 +13,14 @@ replay and the whole match read poorly ("everything has to be animated").
 - [x] Core.Tests 803/803.
 - [ ] Unity import, compile and the touched EditMode/PlayMode suites (Paete kit, spectator, lobby).
 - [ ] Owner LAN check: four-round ult pace, Paete plant feel, can-down warning, Tab card, unique picks.
-- [ ] Presentation clarity plan (tag moment, tag replay, can down, taya identity, casts, spectator feed), then implement.
+- [x] Tag replay: about 4 s (slowed into the touch, live hold), smoothed camera with a cut to a front three-quarter
+  shot at the touch, flash and TAGGED slam; spectators get it as a corner window (`CatchReconstruction`).
+- [x] Halftime replay: 7.6 s with a 0.3x contact slowdown, break 12 s, tracking camera (`RecordedWorldView.TrackShot`).
+- [x] Taya reach overshoots and follows through; GOT YOU pose on the taya, caught recoil and daze on the victim
+  (`CharacterAnimator.TagFeel`). Character select lock-in: punch, flash, LOCKED IN stamp, seat pops.
+- [ ] Owner look at all of the above in play (angles, length, feel); PlayMode `CatchReconstructionTests`.
+- [ ] Presentation pass continues: can down, taya identity, cast callouts and feed, HUD motion, round flow,
+  spectator broadcast; then every non-Arena map gets its own intro film (see the handoff in chat, 2026-10-22).
 
 ### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)
 

@@ -28,6 +28,15 @@ namespace TumbangPreso.CameraSystem
         private RecordedSceneryView _scenery;
         private RecordedArenaEffects _arenaEffects;
         private int _followSeat=-1;
+        // ⚠️ THE SHOT FOLLOWS THE PLAY (owner, October 22: "ang bobo ng replay cameras"). It used to be placed
+        // once from where both players stood at the clip's FIRST frame, up to 17 m off and high, and never moved,
+        // so the play ran out of a dead wide. Now it tracks the pair with a slow orbit, glides, cuts closer and
+        // lower around the contact, and swings to another clear bearing when scenery comes between. The
+        // free-camera replay viewer (`standalone`) keeps its own camera.
+        private Item _shotActor,_shotSubject;
+        private Vector3 _shotSide;
+        private float _shotLens;
+        private bool _tracking,_shotPlaced,_shotClose;
         private static bool IsBody(RecordedObjectTrack track)=>track.Kind==RecordedObjectKind.Player||track.Kind==RecordedObjectKind.Companion;
         private Vector3 _followOffset;
         private GameObject _stage;
@@ -192,6 +201,8 @@ namespace TumbangPreso.CameraSystem
                 }
                 if(!clear){UnavailableReason="No clear replay angle";return;}
                 _camera.transform.position=eye;_camera.transform.LookAt(centre);
+                _shotActor=focus;_shotSubject=subject;_shotLens=lensRadius;_tracking=!standalone;
+                _shotSide=eye-centre;_shotSide.y=0;_shotSide=_shotSide.sqrMagnitude>.01f?_shotSide.normalized:side;
                 _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame",
                     antiAliasing=standalone?Mathf.Max(1,QualitySettings.antiAliasing):1};_target.Create();_camera.targetTexture=_target;
                 _canvas=OwnerUiLayout.Canvas(owner,"CanonicalReplayCanvas",240);
@@ -242,6 +253,33 @@ namespace TumbangPreso.CameraSystem
             if(track.Kind==RecordedObjectKind.Can)return round.Lata!=null?MatchReplayArchive.PropModel(round.Lata.gameObject):null;
             foreach(var shoe in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include))if(shoe.SeatOfOrigin==track.Seat)return MatchReplayArchive.PropModel(shoe.gameObject);
             return null;
+        }
+        private void TrackShot(float time)
+        {
+            if(_shotActor==null||_shotSubject==null||_camera==null)return;
+            Vector3 a=_shotActor.Bones[0].position,b=_shotSubject.Bones[0].position;
+            Vector3 flat=b-a;flat.y=0;float separation=flat.magnitude;
+            bool close=time>=_clip.Contact-.35f&&time<=_clip.Contact+.9f;
+            Vector3 focus=Vector3.Lerp(a,b,close?.62f:.5f)+Vector3.up*.9f;
+            float distance=close?Mathf.Clamp(separation*.9f+3.2f,3.6f,8):Mathf.Clamp(separation+4.2f,4.8f,11);
+            float lift=close?.26f:.42f;
+            // A slow drift round the pair, seven degrees a second, so even a still moment has motion.
+            float yaw=(time-_clip.Start)*7;
+            Vector3 eye=focus;bool clear=false;
+            for(int attempt=0;attempt<8&&!clear;attempt++)
+            {
+                Vector3 dir=Quaternion.AngleAxis(yaw+attempt*45*(attempt%2==0?1:-1)*((attempt+1)/2),Vector3.up)*_shotSide;
+                eye=focus+dir*distance+Vector3.up*(distance*lift);
+                clear=Clear(focus,eye,_shotLens);
+            }
+            if(!clear&&_shotPlaced)eye=_camera.transform.position;
+            // The contact is a cut, not a glide: the lens jumps once into the close shot.
+            bool cut=close!=_shotClose;_shotClose=close;
+            float follow=!_shotPlaced||cut?1:1-Mathf.Exp(-6*Mathf.Max(.001f,Time.unscaledDeltaTime));
+            _camera.transform.position=Vector3.Lerp(_camera.transform.position,eye,follow);
+            var look=Quaternion.LookRotation(focus-_camera.transform.position,Vector3.up);
+            _camera.transform.rotation=_shotPlaced&&!cut?Quaternion.Slerp(_camera.transform.rotation,look,follow):look;
+            _shotPlaced=true;
         }
         private static bool Clear(Vector3 centre,Vector3 eye,float lensRadius)
         {
@@ -422,6 +460,7 @@ namespace TumbangPreso.CameraSystem
                     _escapePuffs[i]=puff=CourtEscapePuff.Play(cue.Position,WorldCueProfile.Current.Escape,_stage.transform);
                 puff.Sample(age);puff.ShowForCapture(true);
             }
+            if(_tracking&&_followSeat<0)TrackShot(time);
             using var sceneState=LocalReplaySceneState.Apply(RecordedScene,time,UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             using var shaderTime=RecordedShaderClock.At(LocalReplaySceneState.ShaderTimeAt(RecordedScene,time));using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();
             }

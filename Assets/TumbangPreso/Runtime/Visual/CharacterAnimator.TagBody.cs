@@ -24,7 +24,17 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed partial class CharacterAnimator
     {
-        public const float TagPunchSeconds = .34f, TagLungeSeconds = .62f;
+        // Owner, 2026-10-22: "taya animation needs to be wayyy better". The reach now snaps past its mark and
+        // settles (`TagSnap`), and recovers over a longer follow-through; the touch window is unchanged.
+        public const float TagPunchSeconds = .46f, TagLungeSeconds = .74f;
+
+        /// <summary>The reach's overshoot, 0 except just after it lands: up to about 0.1 past full, then settled.</summary>
+        private static float TagSnap(float t, float reach)
+        {
+            if (t <= 0 || t >= reach * 2.2f) return 0;
+            float u = t / (reach * 2.2f);
+            return .1f * Mathf.Sin(u * Mathf.PI) * (1 - u);
+        }
 
         private string _tagAction;
         private float _tagTime = -1;
@@ -75,7 +85,7 @@ namespace TumbangPreso.Visual
             _tgApplied = false;
         }
 
-        private void ClearTagBody() { RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgForeR = _tgForeL = _tgLegR = _tgLegL = null; _tgSoleL = _tgSoleR = null; _tagSkinContact = false; _tagSkinVictim = null; _tagSkinA = _tagSkinB = _tagSkinC = default; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
+        private void ClearTagBody() { ClearTagFeel(); RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgForeR = _tgForeL = _tgLegR = _tgLegL = null; _tgSoleL = _tgSoleR = null; _tagSkinContact = false; _tagSkinVictim = null; _tagSkinA = _tagSkinB = _tagSkinC = default; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
 
         // The already accepted, replicated tag supplies the contact. Misses keep
         // the ordinary reach; this cannot award a hit or move either live motor.
@@ -96,6 +106,7 @@ namespace TumbangPreso.Visual
             SampleTagSkin(victim, at);
             _tagContactUntil = Time.unscaledTime + .35f;
             _tagContactValid = _tagTime >= 0;
+            NoteTagWin();
             // An old receipt after a completed gesture cannot aim the next miss.
             // A genuinely preceding event may still pair with its upcoming action.
             float cooldown = _tagAction == "lunge" ? Core.Balance.LungeCooldown : Core.Balance.PunchCooldown;
@@ -177,8 +188,10 @@ namespace TumbangPreso.Visual
                 Vector3 toContact = _tagContact - transform.position; toContact.y = 0;
                 commitment = Mathf.InverseLerp(.65f, 1.35f, toContact.magnitude);
             }
-            float lean = (lunge ? 44f : Mathf.Lerp(22f, 28f, commitment)) * w;
-            float twist = (lunge ? -28f : -42f) * w;
+            // The body throws a little past the pose as the hand lands, then settles into it.
+            float snap = 1f + TagSnap(skippedTouch ? reachTime : _tagTime, reachTime) * 2.5f;
+            float lean = (lunge ? 44f : Mathf.Lerp(22f, 28f, commitment)) * w * snap;
+            float twist = (lunge ? -28f : -42f) * w * snap;
             float side = transform.InverseTransformPoint(_tgArmR.position).x >= 0 ? 1f : -1f;
 
             _tgTorsoRest = _tgTorso.localRotation; _tgArmRRest = _tgArmR.localRotation; _tgArmLRest = _tgArmL.localRotation;

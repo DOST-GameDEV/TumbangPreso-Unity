@@ -562,6 +562,8 @@ namespace TumbangPreso.Visual
             RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreCaught();
+            RestoreTagWin();
             RestoreTagBody();
             RestoreSlideBody();
             RestoreResetRaise();
@@ -1016,6 +1018,8 @@ namespace TumbangPreso.Visual
             RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreCaught();
+            RestoreTagWin();
             RestoreTagBody();
             RestoreSlideBody();
             RestoreResetRaise();
@@ -1062,7 +1066,7 @@ namespace TumbangPreso.Visual
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
                 ApplyThrowBody(throwing);
             }
-            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplySlideBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyTagWin(); ApplyCaught(); ApplySlideBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
         }
 
         private void RestoreChargeOffsets()

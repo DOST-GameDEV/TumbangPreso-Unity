@@ -71,6 +71,15 @@ namespace TumbangPreso.UI.Hub
         private float _endsAt;
         private bool _locked, _started;
         private ModelPreview _preview;
+        // ⚠️ THE LOCK-IN IS A MOMENT (owner, 2026-10-22: "lock in make that one real better"). SELECT used to
+        // turn a button and the ring gold. Now the hero punches up, a gold flash crosses the screen, a tilted
+        // LOCKED IN stamp slams onto the stage and stays, and every other seat's card pops as it locks.
+        private RectTransform _modelRect;
+        private Image _lockFlash;
+        private Text _lockStamp;
+        private float _lockAt = -100f;
+        private readonly bool[] _seatWasLocked = new bool[4];
+        private const float LockPunchSeconds = .36f, LockFlashSeconds = .3f;
         private RectTransform _stage, _light;
         private HubChalk _ring;
         private HubGlow _shadow;
@@ -171,6 +180,7 @@ namespace TumbangPreso.UI.Hub
             PlaceFloor(new Vector2(0.5f, 0.18f));
 
             var model = HubKit.Stretch(HubKit.Rect(_stage, "Model"));
+            _modelRect = model;
             _preview = model.gameObject.AddComponent<ModelPreview>();
             _preview.Attach(model);
             _preview.CentreSubject();
@@ -336,6 +346,7 @@ namespace TumbangPreso.UI.Hub
             _locked = true;
             Hub.Host.LockIn();
             MenuSfx.Valid();
+            CelebrateLock();
             // The circle is chalked again, gold: this spot on the court is taken.
             _ring.color = HubStyle.Golden;
             _ring.DrawIn(0);
@@ -523,6 +534,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Tick()
         {
+            if (_lockAt > -50f) AnimateLock();
             DrawSeats();
             if (_preview.TryGroundViewport(out var floor)) PlaceFloor(floor);
             // ⚠️ RE-STACK WHEN ANY LINE OUTGROWS ITS BOX. The stack is measured when an ability is
@@ -555,6 +567,47 @@ namespace TumbangPreso.UI.Hub
                 if (Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting)
                     Net.MatchRpc.Instance.HostCompleteCharacterSelection();
                 else Hub.Host.StartGame();
+            }
+        }
+
+        private void CelebrateLock()
+        {
+            _lockAt = Time.unscaledTime;
+            MenuSfx.Start();
+            if (_lockFlash == null)
+            {
+                _lockFlash = HubKit.Stretch(HubKit.Rect(Root, "LockFlash")).gameObject.AddComponent<Image>();
+                _lockFlash.raycastTarget = false;
+            }
+            _lockFlash.transform.SetAsLastSibling();
+            if (_lockStamp == null)
+            {
+                _lockStamp = HubKit.Text(_stage, "LockedInStamp", "LOCKED IN", HubStyle.Hero, true, HubStyle.Golden, TextAnchor.MiddleCenter);
+                HubKit.Place(_lockStamp.rectTransform, HubKit.Bottom, new Vector2(0, 40), new Vector2(900, 170));
+                var ink = _lockStamp.gameObject.AddComponent<Outline>();
+                ink.effectColor = HubStyle.Ink; ink.effectDistance = new Vector2(5, -5);
+                _lockStamp.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(10, -12);
+            }
+            _lockStamp.gameObject.SetActive(true);
+            _lockStamp.rectTransform.localRotation = Quaternion.Euler(0, 0, -6);
+            HubSlap.On(_lockStamp, .05f, -6);
+            AnimateLock();
+        }
+
+        /// <summary>The hero's punch, the name's pop and the flash, each a fraction of a second after SELECT.</summary>
+        private void AnimateLock()
+        {
+            float t = Time.unscaledTime - _lockAt;
+            bool still = Settings.SettingsStore.Current.ReducedUiMotion;
+            float u = Mathf.Clamp01(t / LockPunchSeconds);
+            float punch = still || t > LockPunchSeconds ? 1 : 1 + .1f * Mathf.Sin(u * Mathf.PI) * (1 - .4f * u);
+            if (_modelRect != null) _modelRect.localScale = Vector3.one * punch;
+            if (_name != null) _name.rectTransform.localScale = Vector3.one * (1 + (punch - 1) * .8f);
+            if (_lockFlash != null)
+            {
+                float f = still ? 0 : .45f * Mathf.Clamp01(1 - t / LockFlashSeconds);
+                _lockFlash.color = new Color(HubStyle.Golden.r, HubStyle.Golden.g, HubStyle.Golden.b, f);
+                _lockFlash.enabled = f > .001f;
             }
         }
 
@@ -598,6 +651,9 @@ namespace TumbangPreso.UI.Hub
                 // opened with your card reading LOCKED beside a SELECT you had not pressed
                 // (`CharSelect-v7-larger-1280x720.png`). `Tick`'s start test already reads `_locked`.
                 bool locked = seat.Mine && Timed ? _locked : seat.Ready;
+                // Another player just locked: their card pops and the room hears it.
+                bool justLocked = !first && locked && i < _seatWasLocked.Length && !_seatWasLocked[i] && !seat.Mine;
+                if (i < _seatWasLocked.Length) _seatWasLocked[i] = locked;
                 var card = HubKit.Place(HubKit.Rect(_seats, "Seat" + i), HubKit.BottomLeft, new Vector2(i * 300, 0), new Vector2(284, SeatHeight));
                 var plate = HubKit.Shape(card, "Plate", seat.Mine ? HubStyle.Persimmon : HubStyle.Night, false, 740 + i, 4, 18);
                 HubKit.Stretch(plate.rectTransform);
@@ -677,6 +733,7 @@ namespace TumbangPreso.UI.Hub
                     HubSlap.On(stamp, 0, -18);
                 }
                 if (first) HubSlap.On(card, 0.05f + i * 0.04f, i % 2 == 0 ? 1.5f : -1.5f);
+                else if (justLocked) { HubSlap.On(card, 0, i % 2 == 0 ? 3f : -3f); MenuSfx.Tick(); }
             }
         }
     }
