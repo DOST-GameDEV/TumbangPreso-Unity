@@ -19,8 +19,44 @@ replay and the whole match read poorly ("everything has to be animated").
 - [x] Taya reach overshoots and follows through; GOT YOU pose on the taya, caught recoil and daze on the victim
   (`CharacterAnimator.TagFeel`). Character select lock-in: punch, flash, LOCKED IN stamp, seat pops.
 - [ ] Owner look at all of the above in play (angles, length, feel); PlayMode `CatchReconstructionTests`.
+- [x] Tag replay contact restored: its settled frame is the touch again (`Followthrough` 0.18 s); the victim holds the
+  touch 0.2 s before the recoil (`CaughtHoldSeconds`) and GOT YOU waits 0.4 s, so neither pulls the hand off the
+  victim on screen. Suite timing reads the replay constants; the retired BayanPlaza and SaBubong framing cases are
+  now Payo; the ten-catch score allows the legitimate chain bonus.
+- [x] Every tag lands on someone, live: the host sends the victim home on the tag's frame, so the caught body stays
+  where the hand lands (`CaughtAfterimage`, from the pose history), is knocked off the hand and streaks home. The
+  reach closes on the real palm (it stopped 6 to 9 cm short under the dash squash), stoops to a low touch, and aims in
+  the victim's tag-time frame. Replay cut is a near-square profile of the pair with a lens punch on the touch.
+  Contact is now fist surface to skin: every playable hero's pairing lands at 0 to 3 mm (was 3 to 11 cm).
+- [ ] Tag contact leftovers (PlayMode, 2026-10-22): `AuthoredMapFarTag...` replay fist gap 0.082 m although the live hand
+  reaches its aim within 0.007 m (a far reach by a classic person whose authored punch stretches the forearm: the held
+  replay frame differs from the live pose); `RosterTag_sean_To_zack` 0.047 m against 0.045 (Rago is locked);
+  `RecordedApproach...` copy still moves 0.106 m: the test's walk is not recorded even when placed past the
+  CharacterController, so the motor restores its own position some other way (harness, not replay timeline).
+- [ ] Can moment (owner: *"panget ren can raise animation men di halata"*): the raise follows the hands' lift with a
+  grip rattle; restored, the drawn can hops to its mark with a spin, slams, squashes and rings the road; a chalk
+  seal draws itself round it for the protection window. Knocked, it clatters in three bounces; CAN DOWN slams in
+  the thrower's seat colour with an edge pulse (`UI.CanDownStamp`); the HUD can icon flips. Every peer, from the
+  replicated state and flair.
 - [ ] Presentation pass continues: can down, taya identity, cast callouts and feed, HUD motion, round flow,
   spectator broadcast; then every non-Arena map gets its own intro film (see the handoff in chat, 2026-10-22).
+- [ ] Test harness: the whole `TumpNativeHudTests` class stalls in `ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow`
+  after round 1 begins (frames keep running, the test never resumes; per-frame probes in the new presentation code
+  kept logging, so it is a wait, not a loop). Alone, or after `PlantPrompt...`, it completes. Two old asserts fail
+  there on their own: the ReadyUp glyph is 58 high, not 64, and the plant pull prompt reads empty. Run that class by
+  test name until this is fixed.
+- [ ] Map intro films, each with its own mood, built to `Map/ArenaIntro`'s quality (full and short cuts, attacker
+  YOU end shots, skip, reduced motion, one shared clock, everything restored at the end):
+  - Tondo (Eskinita), nostalgic and playful: dusk barangay, the camera slides under drying laundry lines, a kid
+    chalks the box, each player steps out of their own doorway, the taya chosen with a "Maiba taya" chant.
+  - Ermita (IlalimNgTulay), tense underground rivalry: under the viaduct at night, a train roars overhead and its
+    window light strobes across the players between the pillars; the beat drops as it passes.
+  - Sitangkai (LagoonCove), calm wonder: golden-hour glide over the reef, players arrive by banca, kids cheer from the
+    stilt houses, a lola sets the can down.
+  - BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower
+    billboard shows the VS cards, a traffic light turning green means go.
+  - Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches
+    light the ring, a carved stone glyph glows to reveal the taya.
 
 ### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)
 

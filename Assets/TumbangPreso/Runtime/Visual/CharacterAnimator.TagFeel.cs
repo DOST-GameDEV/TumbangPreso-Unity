@@ -15,7 +15,9 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed partial class CharacterAnimator
     {
-        public const float TagWinDelay = .16f, TagWinSeconds = .7f, CaughtRecoilSeconds = .6f;
+        // The touch is held before either beat starts, so the tag replay's settled frame shows the hand on the
+        // victim rather than a fist in the air and a body already flung away (`CatchReconstruction`).
+        public const float TagWinDelay = .4f, TagWinSeconds = .7f, CaughtRecoilSeconds = .6f, CaughtHoldSeconds = .2f;
 
         // ---------------------------------------------------------------- GOT YOU (taya)
         private float _tagWinAt = -100f;
@@ -82,7 +84,7 @@ namespace TumbangPreso.Visual
             hitDirection.y = 0;
             if (!float.IsFinite(hitDirection.x) || !float.IsFinite(hitDirection.z)) return;
             _caughtFrom = hitDirection.sqrMagnitude > .0001f ? hitDirection.normalized : -transform.forward;
-            _caughtAt = Time.unscaledTime;
+            _caughtAt = Time.unscaledTime + CaughtHoldSeconds;
         }
 
         private void RestoreCaught()

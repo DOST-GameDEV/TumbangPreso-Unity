@@ -64,8 +64,11 @@ namespace TumbangPreso.CameraSystem
         // A skipped tag replay crossfades back to the live recovery view rather than cutting.
         public const float SkipFadeDuration = .35f;
         public const float ReplayDuration = AnimationDuration + FreezeDuration + FadeDuration;
-        // Keep the recorded hand at its settled tag reach, before retraction.
-        private const float Followthrough = .3f;
+        // Keep the recorded hand at its settled tag reach, before retraction. The replay's held frame is
+        // this moment, so it must still show the touch: the victim's recoil and the taya's GOT YOU wait
+        // for it (`CharacterAnimator.CaughtHoldSeconds`, `TagWinDelay`).
+        private const float Followthrough = .18f;
+        private const float ShotFov = 58;
         public bool Playing => _stage != null;
         private bool _slammed, _shotPlaced, _closeShot, _cutDone;
         // ⚠️ SPECTATORS SEE IT TOO (owner, October 22: *"make it seaable ren for spectator"*), as a corner
@@ -197,10 +200,11 @@ namespace TumbangPreso.CameraSystem
             // pushed into a face. Pick once so moving contacts cannot flip the shot.
             if (Mathf.Max(left, right) < 1.65f) { End(); return; }
             // ⚠️ THE CUT (owner, October 22: *"minsan ang engot ng angles or hindi ramdam"*). The approach is the
-            // side two-shot; at the touch it cuts to the victim's face from the front three-quarter, the taya
-            // reaching in behind them. Only when that lens is clear: otherwise the side shot carries it all.
+            // side two-shot; at the touch it cuts in tight to a three-quarter profile of the pair, swung toward the
+            // victim's face, so the reaching arm, the touch and both reactions read (`CloseOffset`). Only when that
+            // lens is clear: otherwise the side shot carries it all.
             Vector3 victimCentre = _victimContact + Vector3.up * .95f;
-            Vector3 front = CloseOffset(_victimFacing * Vector3.forward, _shotSide);
+            Vector3 front = CloseOffset(forward, _victimFacing * Vector3.forward, _shotSide);
             _closeShot = ShotDistance(victimCentre, front) >= front.magnitude - .05f;
             _cutDone = false;
             _stage.SetActive(true);
@@ -235,7 +239,7 @@ namespace TumbangPreso.CameraSystem
             // ColourGrade and WorldOutline. It lives beside the stage and is destroyed with it in End.
             var go = new GameObject("~CatchPlaybackCamera"); go.transform.SetParent(transform, false);
             _camera = go.AddComponent<Camera>(); _camera.CopyFrom(Camera.main); _camera.enabled = false;
-            _camera.tag = "Untagged"; _camera.fieldOfView = 58; _camera.nearClipPlane = .08f;
+            _camera.tag = "Untagged"; _camera.fieldOfView = ShotFov; _camera.nearClipPlane = .08f;
             _camera.depth = -100; _camera.clearFlags = CameraClearFlags.Skybox;
             // ⚠️⚠️ THE MATCH'S LOOK, NOT THE EDITOR'S. Owner, 2026-09-27, twice, with "CAUGHT BY"
             // screenshots on Lagoon Cove: *"tagged cutscreen doesn't use the shader-based
@@ -308,6 +312,18 @@ namespace TumbangPreso.CameraSystem
             float flash = sinceContact < 0 || look.ReducedEffects ? 0
                 : .55f * Mathf.Clamp01(1 - sinceContact / .16f) * look.EffectiveFlashIntensity;
             _flash.color = new Color(1, 1, 1, flash * alpha);
+            // THE HOLD IS THE CAPTURED IMAGE, NOTHING LIVE RENDERS INTO IT, and the live match never pauses behind it.
+            // Its push-in is the frozen picture itself easing larger, not the camera rendering again. A spectator's
+            // corner window keeps its size, so the picture never spills out of its border.
+            if (_freezeCaptured)
+            {
+                float push = _spectatorView ? 0 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((elapsed - AnimationDuration) / FreezeDuration));
+                _picture.rectTransform.localScale = Vector3.one * Mathf.Lerp(1, 1.06f, push);
+                // Never keep an obstructed shot over the live recovery view once the world has moved on.
+                Vector3 frozenOffset = _camera.transform.position - _shotFocus;
+                if (ShotDistance(_shotFocus, frozenOffset) < frozenOffset.magnitude - .05f) End();
+                return;
+            }
             // Capture the short, real follow-through once it has happened. Detached
             // frames keep this catch intact even as the live history ring wraps.
             if (!_followthroughCaptured && _actorTrack.Newest >= _clipEnd && _victimTrack.Newest >= _clipEnd)
@@ -332,16 +348,11 @@ namespace TumbangPreso.CameraSystem
                 _victimCopy.Root.transform.SetPositionAndRotation(_victimContact, _victimFacing);
             }
             if (!PlaceShotCamera(elapsed)) { End(); return; }
-            // Never keep an obstructed shot over the live recovery view during the hold, when the world has moved on.
-            if (elapsed >= AnimationDuration)
-            {
-                Vector3 heldOffset = _camera.transform.position - _shotFocus;
-                if (ShotDistance(_shotFocus, heldOffset) < heldOffset.magnitude - .05f) { End(); return; }
-            }
             try
             {
                 RenderOnlyCopies();
-                _freezeCaptured = elapsed >= AnimationDuration;
+                // The boundary frame itself is the held one; float clocks can land a hair short of it.
+                _freezeCaptured = elapsed >= AnimationDuration - .001f;
             }
             catch (System.Exception error) { End(); Debug.LogException(error); }
         }
@@ -362,30 +373,32 @@ namespace TumbangPreso.CameraSystem
             {
                 // A hard cut, not a glide: the lens jumps once to the reaction shot.
                 if (!_cutDone) { _cutDone = true; _shotPlaced = false; }
-                offset = CloseOffset(_victimFacing * Vector3.forward, _shotSide);
-                focus = victimBounds.center + Vector3.up * .12f + Vector3.ClampMagnitude(towardTagger * .1f, .3f);
+                offset = CloseOffset(forward, _victimFacing * Vector3.forward, _shotSide);
+                // The touch is the subject: between the hand and the victim's chest, so both faces and the reach read.
+                focus = victimBounds.center + Vector3.up * .08f + Vector3.ClampMagnitude(towardTagger * .32f, .55f);
             }
             Quaternion rotation = Quaternion.LookRotation(-offset.normalized, Vector3.up);
             float desired = Mathf.Max(offset.magnitude, RequiredFrameDistance(victimBounds, focus, rotation));
             // Include the tagger where it does not shrink the victim into a
             // distant speck. Close contact naturally gives a clear two-shot.
             float paired = Mathf.Max(desired, RequiredFrameDistance(actorBounds, focus, rotation));
-            float prominent = victimBounds.size.y / (2 * Mathf.Tan(_camera.fieldOfView * .5f * Mathf.Deg2Rad) * paired);
+            float prominent = victimBounds.size.y / (2 * Mathf.Tan(ShotFov * .5f * Mathf.Deg2Rad) * paired);
             if (prominent >= .26f) desired = paired;
             float distance = ShotDistance(focus, offset.normalized * desired);
             // A close shot that something has come in front of falls back to the side shot, never ends the replay.
             if (distance < desired - .05f && _cutDone && _closeShot) { _closeShot = false; _shotPlaced = false; return PlaceShotCamera(elapsed); }
             if (distance < desired - .05f) return false;
-            // The hold pushes in a little: the framing distance keeps a 14 % margin, this takes 6 %.
-            float push = Mathf.Lerp(1, .94f, Mathf.SmoothStep(0, 1, Mathf.Clamp01((elapsed - AnimationDuration) / FreezeDuration)));
-            Vector3 position = focus + offset.normalized * distance * push;
+            Vector3 position = focus + offset.normalized * distance;
             // Smoothed rather than re-solved each frame, so the framing glides instead of pumping.
             float follow = _shotPlaced ? 1 - Mathf.Exp(-14 * Time.unscaledDeltaTime) : 1;
             _camera.transform.position = Vector3.Lerp(_camera.transform.position, position, follow);
             _shotFocus = _shotPlaced ? Vector3.Lerp(_shotFocus, focus, follow) : focus;
             _shotPlaced = true;
             float since = elapsed - ContactPlayback;
-            float shake = since < 0 || Settings.SettingsStore.Current.ReducedUiMotion ? 0 : 1.1f * Mathf.Exp(-since * 11);
+            bool calm = Settings.SettingsStore.Current.ReducedUiMotion;
+            float shake = since < 0 || calm ? 0 : 1.1f * Mathf.Exp(-since * 11);
+            // The lens punches in on the touch, a few degrees narrower, and eases back out over the follow-through.
+            _camera.fieldOfView = ShotFov * (since < 0 || calm ? 1 : 1 - .09f * Mathf.Exp(-since * 5.5f));
             Vector3 aim = _shotFocus - _camera.transform.position;
             _camera.transform.rotation = (aim.sqrMagnitude > .0001f ? Quaternion.LookRotation(aim, Vector3.up) : rotation)
                 * Quaternion.Euler(Mathf.Sin(elapsed * 71) * shake, Mathf.Sin(elapsed * 53 + 1.7f) * shake, 0);
@@ -405,7 +418,7 @@ namespace TumbangPreso.CameraSystem
         }
         private float RequiredFrameDistance(Bounds bounds, Vector3 focus, Quaternion rotation)
         {
-            float vertical = Mathf.Tan(_camera.fieldOfView * .5f * Mathf.Deg2Rad) * .86f;
+            float vertical = Mathf.Tan(ShotFov * .5f * Mathf.Deg2Rad) * .86f;
             float horizontal = vertical * _camera.aspect;
             float required = 1.65f;
             Quaternion inverse = Quaternion.Inverse(rotation);
@@ -431,13 +444,25 @@ namespace TumbangPreso.CameraSystem
         private static Vector3 ShotOffset(Vector3 forward, float side)
             => Vector3.Cross(Vector3.up, forward) * (2.9f * side) + forward * .85f + Vector3.up * .55f;
 
-        /// <summary>In front of the victim and a little to one side, just under eye height: their face as the hand lands.</summary>
-        private static Vector3 CloseOffset(Vector3 victimForward, float side)
+        /// <summary>
+        /// The touch in profile: square to the line from the taya to the victim, swung a little toward
+        /// the victim's face, just under eye height. Both bodies, the reaching arm and the victim's reaction read; the
+        /// old front shot put the taya straight behind the victim, hidden.
+        /// </summary>
+        private static Vector3 CloseOffset(Vector3 line, Vector3 victimForward, float side)
         {
-            victimForward.y = 0;
-            if (victimForward.sqrMagnitude < .01f) victimForward = Vector3.forward;
+            line.y = 0; victimForward.y = 0;
+            if (line.sqrMagnitude < .01f) line = victimForward;
+            if (line.sqrMagnitude < .01f) line = Vector3.forward;
+            line.Normalize();
+            if (victimForward.sqrMagnitude < .01f) victimForward = line;
             victimForward.Normalize();
-            return victimForward * 2.3f + Vector3.Cross(Vector3.up, victimForward) * (1.15f * side) + Vector3.up * .05f;
+            Vector3 across = Vector3.Cross(Vector3.up, line) * side;
+            // Toward whichever end of the line the victim faces, so it is their face we see, never their back.
+            float toward = Vector3.Dot(victimForward, line) >= 0 ? 1 : -1;
+            // Nearly square to the pair: at the touch they stand a third of a metre apart, and anything much off
+            // the perpendicular stacks one body on the other (Logs/tag-contact-silhouettes, Basilio on Nemu).
+            return across * 2.15f + line * (toward * .45f) + Vector3.up * .22f;
         }
         private float ShotDistance(Vector3 focus, Vector3 offset)
         {

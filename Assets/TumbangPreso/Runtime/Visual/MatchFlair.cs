@@ -420,6 +420,9 @@ namespace TumbangPreso.Visual
                 Vector3 hitDirection = victim.transform.position - taya.transform.position;
                 // The caught body reacts: a recoil away from the hand, then dazed for the stun (`CharacterAnimator.TagFeel`).
                 victim.GetComponent<CharacterAnimator>()?.PresentCaught(hitDirection);
+                // The host sends the victim home on this same frame, so the body the hand lands on is left behind for
+                // everyone to see caught, knocked back and yanked home (`CaughtAfterimage`).
+                CaughtAfterimage.Play(victim, at, at - taya.transform.position);
                 victim.GetComponentInChildren<CharacterSquashStretch>()?.Impact(hitDirection, 0.30f);
                 taya.GetComponentInChildren<CharacterSquashStretch>()?
                     .DashStretch(taya.transform.forward, 0.18f);

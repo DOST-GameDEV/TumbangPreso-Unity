@@ -173,7 +173,10 @@ namespace TumbangPreso.PlayTests
         public IEnumerator CatchCameraHidesUnrecordedAnimalsAndRestoresTheirVisibility()
         {
             yield return Open();Stage();yield return new WaitForSeconds(.4f);
-            var life=Object.FindFirstObjectByType<AmbientLife>();Assert.IsNotNull(life);
+            var life=Object.FindFirstObjectByType<AmbientLife>();
+            // The current Eskinita, like the rest of the playable pool, carries no ambient animals (they live on in
+            // the vaulted scenes). Point TUMP_CATCH_REVIEW_MAP at a map that has them to exercise this.
+            if(life==null)Assert.Ignore("The catch review map has no AmbientLife to hide.");
             var ambient=life.GetComponentsInChildren<Renderer>(true);Assert.IsNotEmpty(ambient);
             ambient[ambient.Length-1].forceRenderingOff=true;
             var flags=ambient.Select(r=>r.forceRenderingOff).ToArray();
@@ -233,12 +236,66 @@ namespace TumbangPreso.PlayTests
             Object.Destroy(wall); Object.Destroy(otherWall);
         }
 
+        /// <summary>
+        /// Every screen sees the tag land: the victim is sent home on the tag's own frame, so the caught body stays
+        /// where the hand lands (`CaughtAfterimage`), takes the touch, is knocked off it and is gone within a second.
+        /// The frames in Logs/tag-live-afterimage are the review; the asserts only pin where and how long.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator LiveTagLeavesTheCaughtBodyUnderTheHandThenSendsItHome()
+        {
+            yield return Open(); Stage();
+            yield return new WaitForSeconds(.4f);
+            var round = GameServices.Round; var taya = round.PlayerAt(0); var victim = round.PlayerAt(1);
+            taya.Teleport(victim.transform.position - Vector3.forward * 1.1f); taya.transform.forward = Vector3.forward;
+            yield return new WaitForSeconds(.3f);
+            Vector3 caught = victim.transform.position;
+            int before = CaughtAfterimage.Played;
+            var shot = new GameObject("CaughtAfterimageShot").AddComponent<Camera>();
+            var target = new RenderTexture(960, 540, 24, RenderTextureFormat.ARGB32);
+            shot.targetTexture = target; shot.enabled = false; shot.fieldOfView = 42; shot.nearClipPlane = .05f;
+            Vector3 middle = (caught + taya.transform.position) * .5f + Vector3.up * .8f;
+            shot.transform.position = middle + Vector3.right * 4.4f + Vector3.up * .7f + Vector3.forward * .6f;
+            shot.transform.rotation = Quaternion.LookRotation(middle - shot.transform.position);
+            const string folder = "Logs/tag-live-afterimage";
+            System.IO.Directory.CreateDirectory(folder);
+            var image = new Texture2D(960, 540, TextureFormat.RGB24, false);
+            try
+            {
+                Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position, taya.transform.forward));
+                Assert.Greater(CaughtAfterimage.Played, before, "Every screen must keep the caught body where the hand lands.");
+                float start = Time.unscaledTime; int index = 0;
+                foreach (float at in new[] { .04f, .12f, .2f, .3f, .4f, .5f, .58f, .7f })
+                {
+                    while (Time.unscaledTime - start < at) yield return null;
+                    var left = CaughtAfterimage.For(victim.PlayerSlot);
+                    if (at < CaughtAfterimage.HoldSeconds)
+                    {
+                        Assert.IsNotNull(left, "The caught body must still be there at " + at);
+                        var bounds = new Bounds(); bool any = false;
+                        foreach (var renderer in left.GetComponentsInChildren<Renderer>())
+                            if (!(renderer is LineRenderer)) { if (!any) { bounds = renderer.bounds; any = true; } else bounds.Encapsulate(renderer.bounds); }
+                        Assert.IsTrue(any);
+                        Vector3 flat = bounds.center - caught; flat.y = 0;
+                        Assert.Less(flat.magnitude, .6f, "The afterimage stands where the victim was caught.");
+                    }
+                    shot.Render();
+                    var previous = RenderTexture.active; RenderTexture.active = target;
+                    image.ReadPixels(new Rect(0, 0, 960, 540), 0, 0); image.Apply(); RenderTexture.active = previous;
+                    System.IO.File.WriteAllBytes(folder + "/frame-" + index++ + "-" + at.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + ".png", image.EncodeToPNG());
+                }
+                yield return new WaitForSecondsRealtime(.5f);
+                Assert.IsNull(CaughtAfterimage.For(victim.PlayerSlot), "The afterimage must be gone once the victim is home.");
+                Debug.Log("[Afterimage] caught=" + caught + " home=" + victim.transform.position);
+            }
+            finally { Object.Destroy(image); Object.Destroy(shot.gameObject); target.Release(); Object.Destroy(target); }
+        }
+
         [UnityTest] public IEnumerator VictimFraming_Arena() => CheckVictimFraming("Arena");
         [UnityTest] public IEnumerator VictimFraming_Eskinita() => CheckVictimFraming("Eskinita");
         [UnityTest] public IEnumerator VictimFraming_Kanto() => CheckVictimFraming("Kanto");
         [UnityTest] public IEnumerator VictimFraming_LagoonCove() => CheckVictimFraming("LagoonCove");
-        [UnityTest] public IEnumerator VictimFraming_BayanPlaza() => CheckVictimFraming("BayanPlaza");
-        [UnityTest] public IEnumerator VictimFraming_SaBubong() => CheckVictimFraming("SaBubong");
+        [UnityTest] public IEnumerator VictimFraming_Payo() => CheckVictimFraming("Payo");
         [UnityTest] public IEnumerator VictimFraming_IlalimNgTulay() => CheckVictimFraming("IlalimNgTulay");
         private static IEnumerator CheckVictimFraming(string map)
         {
@@ -449,7 +506,7 @@ namespace TumbangPreso.PlayTests
                 if (actorArt != null) directory = "Logs/tag-contact-silhouettes/" + actorArt + "-to-" + victimArt;
                 System.IO.Directory.CreateDirectory(directory);
                 float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
-                float lastShift = 0, lastLean = 0, lastStretch = 0;
+                float lastShift = 0, lastLean = 0, lastStretch = 0, liveAimGap = float.MaxValue;
                 var poseTiming = new System.Collections.Generic.List<string> { "simulation,delta,presentation,recorded,newest,liveTagTime,liveTorsoLean" };
                 var tagTimeField = typeof(CharacterAnimator).GetField("_tagTime", flags);
                 rendered = c =>
@@ -462,6 +519,13 @@ namespace TumbangPreso.PlayTests
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
                     lastGap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));
                     lastAlpha = picture.color.a;
+                    var liveAnimator = actor.GetComponent<CharacterAnimator>();
+                    if ((float)tagTimeField.GetValue(liveAnimator) >= 0)
+                    {
+                        Vector3 liveAim = (Vector3)typeof(CharacterAnimator).GetField("_tagContact", flags).GetValue(liveAnimator);
+                        float aimGap = Vector3.Distance(sourceHand.position, liveAim);
+                        liveAimGap = Mathf.Min(liveAimGap, aimGap);
+                    }
                     lastShift = copiedRoot.parent.TransformVector(copiedRoot.localPosition - rootStart).magnitude;
                     lastLean = Vector3.Angle(copiedTorso.up, actor.transform.up);
                     Vector3 armScale = hand.parent.localScale;
@@ -471,6 +535,7 @@ namespace TumbangPreso.PlayTests
                 Camera.onPostRender += rendered;
                 float next = 0, bestDistance = float.MaxValue, bestGap = float.MaxValue, bestAlpha = 0;
                 float bestShift = 0, bestLean = 0, bestStretch = 0, bestSurfaceGap = float.MaxValue, bestTagSole = float.PositiveInfinity;
+                float bestFistGap = float.MaxValue;
                 int frames = 0;
                 var times = new System.Collections.Generic.List<string>();
                 while (view.Playing && Time.unscaledTime - began < duration + .5f)
@@ -494,7 +559,11 @@ namespace TumbangPreso.PlayTests
                         {
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
                             bestShift = lastShift; bestLean = lastLean; bestStretch = lastStretch;
-                            if (authoredMap || actorArt != null) bestSurfaceGap = SkinSurfaceDistance(hand.position, victimCopy.Renderers);
+                            if (authoredMap || actorArt != null)
+                            {
+                                bestSurfaceGap = SkinSurfaceDistance(hand.position, victimCopy.Renderers);
+                                bestFistGap = FistSurfaceDistance(copy.Renderers, hand, victimCopy.Renderers);
+                            }
                             if (actorArt != null)
                             {
                                 var detail = new System.Text.StringBuilder();
@@ -540,20 +609,23 @@ namespace TumbangPreso.PlayTests
                 System.IO.File.WriteAllLines(directory + "/pose-timing.csv", poseTiming);
                 string values = "distance=" + distance + " contactGap=" + bestGap + " contactAlpha=" + bestAlpha
                     + " sampleError=" + bestDistance + " frames=" + frames
-                    + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch + " skinSurfaceGap=" + bestSurfaceGap + " soleY=" + bestTagSole;
+                    + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch + " skinSurfaceGap=" + bestSurfaceGap + " soleY=" + bestTagSole + " liveAimGap=" + liveAimGap + " fistGap=" + bestFistGap;
                 System.IO.File.WriteAllText(directory + "/measurements.txt", values); Debug.Log(values);
                 Assert.That(frames, Is.GreaterThan(8));
                 Assert.That(bestDistance, Is.LessThan(.09f));
                 Assert.That(bestGap, Is.LessThan(.08f), "The actual rendered reaching hand must reach the accepted victim's visible body bounds.");
-                if (authoredMap || actorArt != null) Assert.That(bestSurfaceGap, Is.LessThan(.08f), "A bounding-box overlap is not visible contact with the actual skin.");
+                if (authoredMap || actorArt != null) Assert.That(bestFistGap, Is.LessThan(.045f), "The reaching fist's own surface must meet the victim's skin; a bounding-box overlap is not visible contact.");
                 if (actorArt != null) Assert.That(bestTagSole, Is.InRange(-.015f, .03f), "The actual recorded footwear must stay on the test court.");
                 Assert.That(bestAlpha, Is.GreaterThan(.95f), "Do not fade out while the hand first reaches the target.");
-                if (sourceHand.parent.name.StartsWith("forearm-")) AssertCurrentClipScale(actor, track, sourceHand.parent);
+                // A forearm's scale belongs to the rig's authored clip (the adopted QoLUpdates motion squashes and
+                // stretches some classic people's punches); it must equal that clip, never a procedural elongation.
+                bool authoredForearm = sourceHand.parent.name.StartsWith("forearm-");
+                if (authoredForearm) AssertCurrentClipScale(actor, track, sourceHand.parent);
                 else Assert.That(Vector3.Distance(restScale, sourceHand.parent.localScale), Is.LessThan(.001f), "Temporary limb extension must restore.");
                 Assert.That(bestShift, Is.GreaterThan(.1f), "The hips must transfer weight into the step.");
                 Assert.That(bestLean, Is.GreaterThan(distance > 1.5f ? 25f : 18f), "The chest must commit to the reach.");
                 if (distance < 1.1f) Assert.That(bestLean, Is.LessThan(30f), "Close tags should not dive through the target.");
-                Assert.That(bestStretch, Is.LessThanOrEqualTo(1.101f), "Do not substitute an elongated arm for body motion.");
+                if (!authoredForearm) Assert.That(bestStretch, Is.LessThanOrEqualTo(1.101f), "Do not substitute an elongated arm for body motion.");
                 Assert.That(Vector3.Distance(motorStart, actor.transform.position), Is.LessThan(.03f), "The visual step must not move the gameplay capsule.");
                 Assert.That(Vector3.Distance(rootStart, sourceRoot.localPosition), Is.LessThan(.03f), "The visual hip offset must restore after recovery.");
                 Assert.AreEqual(1, acceptedTags, "Animation must not create another accepted tag.");
@@ -592,6 +664,48 @@ namespace TumbangPreso.PlayTests
                     "Tag recovery must restore the current authored limb scale.");
             }
             finally { Object.Destroy(stage); }
+        }
+        /// <summary>
+        /// The gap between the reaching fist's surface and the victim's skin: the skinned vertices of the bone that
+        /// carries the hand, within a fist's reach of the hand anchor, each measured to the victim's nearest triangle.
+        /// </summary>
+        private static float FistSurfaceDistance(Renderer[] actor, Transform hand, Renderer[] victim)
+        {
+            float best = float.PositiveInfinity;
+            var mesh = new Mesh();
+            var skinPoints = new System.Collections.Generic.List<Vector3>(); var skinTriangles = new System.Collections.Generic.List<int>();
+            try
+            {
+                // The victim's skin once, in world space.
+                foreach (var renderer in victim)
+                {
+                    if (!(renderer is SkinnedMeshRenderer surface) || !surface.enabled) continue;
+                    surface.BakeMesh(mesh, true);
+                    int offset = skinPoints.Count;
+                    foreach (var v in mesh.vertices) skinPoints.Add(surface.transform.TransformPoint(v));
+                    foreach (int t in mesh.triangles) skinTriangles.Add(offset + t);
+                }
+                foreach (var renderer in actor)
+                {
+                    if (!(renderer is SkinnedMeshRenderer skin) || !skin.enabled || skin.sharedMesh == null) continue;
+                    int index = System.Array.IndexOf(skin.bones, hand.parent);
+                    if (index < 0) continue;
+                    skin.BakeMesh(mesh, true);
+                    var vertices = mesh.vertices; var weights = skin.sharedMesh.boneWeights;
+                    if (weights.Length != vertices.Length) continue;
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        if (weights[i].boneIndex0 != index || weights[i].weight0 < .5f) continue;
+                        Vector3 point = skin.transform.TransformPoint(vertices[i]);
+                        if ((point - hand.position).sqrMagnitude > .16f * .16f) continue;
+                        for (int t = 0; t < skinTriangles.Count; t += 3)
+                            best = Mathf.Min(best, (point - ClosestTriangle(point, skinPoints[skinTriangles[t]], skinPoints[skinTriangles[t + 1]], skinPoints[skinTriangles[t + 2]])).magnitude);
+                    }
+                }
+            }
+            finally { Object.Destroy(mesh); }
+            // A rig whose hand rides no skinned bone falls back to the anchor itself.
+            return float.IsInfinity(best) ? SkinSurfaceDistance(hand.position, victim) : best;
         }
         private static float SkinSurfaceDistance(Vector3 point, Renderer[] renderers)
         {
@@ -700,8 +814,10 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(
                     actor.transform.position, actor.transform.forward));
                 Assert.IsTrue(view.Playing);
-                Assert.That(view.Remaining, Is.InRange(3.9f, 3.94f),
-                    "Play 2.5 seconds, hold 1.25 seconds, then fade for .18 seconds.");
+                const float Play = CatchReconstruction.AnimationDuration, Hold = CatchReconstruction.FreezeDuration;
+                const float Total = CatchReconstruction.ReplayDuration;
+                Assert.That(view.Remaining, Is.InRange(Total - .04f, Total),
+                    "Play the approach and touch, hold the settled frame, then fade.");
                 yield return new WaitForSeconds(.3f);
                 var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
                 var clock = typeof(CatchReconstruction).GetField("_began", flags);
@@ -722,25 +838,25 @@ namespace TumbangPreso.PlayTests
                 }
                 void Seek(float elapsed) { clock.SetValue(view, Time.unscaledTime - elapsed); step.Invoke(view, null); }
                 int before = rendered;
-                Seek(2.45f); Assert.Greater(rendered, before, "Animation must still render before its boundary.");
+                Seek(Play - .05f); Assert.Greater(rendered, before, "Animation must still render before its boundary.");
                 before = rendered;
-                Seek(2.5f); Assert.AreEqual(before + 1, rendered, "Capture the final tag frame at the boundary.");
+                Seek(Play); Assert.AreEqual(before + 1, rendered, "Capture the final tag frame at the boundary.");
                 var held = ReadFrame(); int captured = rendered;
                 float liveTime = Time.time, stun = victim.StunLeft;
                 actor.transform.position += Vector3.right;
                 yield return null;
                 Assert.Greater(Time.time, liveTime, "The live world must advance during the frozen image.");
                 Assert.Less(victim.StunLeft, stun, "Recovery must continue behind the image.");
-                Seek(3.74f);
+                Seek(Play + Hold - .01f);
                 Assert.IsTrue(view.Playing); Assert.AreEqual(1f, picture.color.a, .001f);
                 Assert.AreEqual(captured, rendered, "Live backgrounds must not render into the held frame.");
                 CollectionAssert.AreEqual(held, ReadFrame(), "The entire rendered image must stay frozen.");
-                Seek(3.84f);
+                Seek(Play + Hold + CatchReconstruction.FadeDuration * .5f);
                 Assert.IsTrue(view.Playing); Assert.That(picture.color.a, Is.InRange(.45f, .55f));
                 Assert.AreEqual(captured, rendered);
                 Assert.IsTrue(actor.CanAct()); Assert.IsFalse(victim.CanAct());
                 Assert.AreEqual(score + MatchRules.PointsFor(ScoreEvent.Tag), GameServices.Match.ScoreFor(0));
-                Seek(3.94f); Assert.IsFalse(view.Playing);
+                Seek(Total + .01f); Assert.IsFalse(view.Playing);
                 Assert.IsFalse(victim.CanAct(), "Presentation completion must not cancel recovery.");
             }
             finally
@@ -801,12 +917,22 @@ namespace TumbangPreso.PlayTests
             try
             {
                 Vector3 actorStart = actor.transform.position, victimStart = victim.transform.position;
+                // The CharacterController undoes a bare transform write (`CharacterMotor.Teleport` disables it for the
+                // same reason), which left this walk unrecorded: the copy moved 0.10 m however the replay was sampled.
+                // Move the bodies as Teleport does, minus its settle and epoch, so the approach is a real recorded walk.
+                void Place(CharacterMotor body, Vector3 at)
+                {
+                    var controller = body.GetComponent<CharacterController>();
+                    if (controller != null) controller.enabled = false;
+                    body.transform.position = at;
+                    if (controller != null) controller.enabled = true;
+                }
                 float began = Time.time;
                 while (Time.time - began < 3.2f)
                 {
                     float fraction = Mathf.Clamp01((Time.time - began) / 3.2f);
-                    actor.transform.position = actorStart + Vector3.back * (1 - fraction) * 2f;
-                    victim.transform.position = victimStart;
+                    Place(actor, actorStart + Vector3.back * (1 - fraction) * 2f);
+                    Place(victim, victimStart);
                     yield return null;
                 }
                 Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(
@@ -846,13 +972,16 @@ namespace TumbangPreso.PlayTests
                 };
                 Camera.onPreRender += captureProbe;
                 Vector3 middle = default, late = default;
-                foreach (float elapsed in new[] { .4f, 1.3f, 2.1f, 2.4f })
+                // Sampled on the replay's own timeline: the approach plays faster than life, then eases into
+                // slow motion for the last stretch before the touch (`CatchReconstruction.RecordedTimeAt`).
+                const float MiddleAt = .4f, LateAt = CatchReconstruction.ContactPlayback;
+                foreach (float elapsed in new[] { .4f, MiddleAt, CatchReconstruction.ApproachPlayback + .4f, LateAt })
                 {
                     clock.SetValue(view, Time.unscaledTime - elapsed);
                     step.Invoke(view, null);
                     Assert.IsTrue(view.Playing);
-                    if (elapsed == 1.3f) middle = copy.Root.transform.position;
-                    if (elapsed == 2.4f) late = copy.Root.transform.position;
+                    if (elapsed == MiddleAt) middle = copy.Root.transform.position;
+                    if (elapsed == LateAt) late = copy.Root.transform.position;
                     var previous = RenderTexture.active;
                     var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
                     try
@@ -877,7 +1006,7 @@ namespace TumbangPreso.PlayTests
                     history.ForSeat(0).Record(future + i * MatchPoseHistory.Interval);
                     history.ForSeat(1).Record(future + i * MatchPoseHistory.Interval);
                 }
-                clock.SetValue(view, Time.unscaledTime - 2.4f); step.Invoke(view, null);
+                clock.SetValue(view, Time.unscaledTime - LateAt); step.Invoke(view, null);
                 Assert.That(Vector3.Distance(late, copy.Root.transform.position), Is.LessThan(.001f),
                     "Ongoing live recording must not overwrite this catch's retained clip.");
                 Assert.That(actor.transform.position, Is.EqualTo(live));
@@ -923,7 +1052,7 @@ namespace TumbangPreso.PlayTests
                 int score = GameServices.Match.ScoreFor(0);
                 Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(tayaAt, taya.transform.forward));
                 Assert.IsTrue(view.Playing);
-                Assert.That(view.Remaining, Is.InRange(3.9f, 3.94f));
+                Assert.That(view.Remaining, Is.InRange(CatchReconstruction.ReplayDuration - .04f, CatchReconstruction.ReplayDuration));
                 Assert.AreEqual(score + MatchRules.PointsFor(ScoreEvent.Tag), GameServices.Match.ScoreFor(0));
                 Assert.IsTrue(taya.CanAct());
                 Assert.AreEqual(tayaAt, taya.transform.position);
@@ -965,7 +1094,10 @@ namespace TumbangPreso.PlayTests
                     Vector3 contact = victim.transform.position, tayaAt = taya.transform.position;
                     int score = GameServices.Match.ScoreFor(0);
                     Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(tayaAt, taya.transform.forward));
-                    Assert.AreEqual(score + MatchRules.PointsFor(ScoreEvent.Tag), GameServices.Match.ScoreFor(0));
+                    // Catches inside `ActionChains.CatchWindow` of each other earn the chain bonus on top.
+                    var chain = GameServices.Match.LastHostChainResult;
+                    Assert.IsTrue(GameServices.Match.LastHostChainIsCatch);
+                    Assert.AreEqual(score + MatchRules.PointsFor(ScoreEvent.Tag) + chain.Bonus, GameServices.Match.ScoreFor(0));
                     Assert.IsTrue(view.Playing, "Accepted tag must produce the victim view from actual prior poses.");
                     Assert.AreEqual(tayaAt, taya.transform.position, "The reconstruction must not move the live taya.");
                     Assert.IsTrue(taya.CanAct(), "Presentation must not add taya recovery.");

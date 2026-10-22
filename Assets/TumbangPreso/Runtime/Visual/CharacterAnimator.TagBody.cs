@@ -28,11 +28,15 @@ namespace TumbangPreso.Visual
         // settles (`TagSnap`), and recovers over a longer follow-through; the touch window is unchanged.
         public const float TagPunchSeconds = .46f, TagLungeSeconds = .74f;
 
-        /// <summary>The reach's overshoot, 0 except just after it lands: up to about 0.1 past full, then settled.</summary>
+        /// <summary>
+        /// The reach's overshoot: up to about 0.1 past full as the hand lands, settled by 1.5 reaches. It must be
+        /// gone by then, because the tag replay's held frame is the settled touch (`CatchReconstruction`) and a body
+        /// still swinging past its pose there carries the hand off the victim's skin.
+        /// </summary>
         private static float TagSnap(float t, float reach)
         {
-            if (t <= 0 || t >= reach * 2.2f) return 0;
-            float u = t / (reach * 2.2f);
+            if (t <= 0 || t >= reach * 1.5f) return 0;
+            float u = t / (reach * 1.5f);
             return .1f * Mathf.Sin(u * Mathf.PI) * (1 - u);
         }
 
@@ -56,6 +60,7 @@ namespace TumbangPreso.Visual
         private bool _tagSkinContact;
         private CharacterMotor _tagSkinVictim;
         private Vector3 _tagSkinAt, _tagSkinBarycentric;
+        private Quaternion _tagSkinTurn = Quaternion.identity;
         private TagSoleVertex _tagSkinA, _tagSkinB, _tagSkinC;
         private float _tagContactUntil, _tagStartedAt = -100f;
         private Quaternion _tgTorsoRest, _tgHeadRest, _tgArmRRest, _tgArmLRest, _tgLegRRest, _tgLegLRest;
@@ -189,8 +194,21 @@ namespace TumbangPreso.Visual
                 commitment = Mathf.InverseLerp(.65f, 1.35f, toContact.magnitude);
             }
             // The body throws a little past the pose as the hand lands, then settles into it.
-            float snap = 1f + TagSnap(skippedTouch ? reachTime : _tagTime, reachTime) * 2.5f;
-            float lean = (lunge ? 44f : Mathf.Lerp(22f, 28f, commitment)) * w * snap;
+            // An ACCEPTED tag stops on the body: overshooting it drives the hand into the victim's skin, and the tag
+            // replay holds exactly that moment. A whiff still throws past its mark.
+            float snap = _tagContactValid ? 1f : 1f + TagSnap(skippedTouch ? reachTime : _tagTime, reachTime) * 2.5f;
+            // ⚠️ A LOW TOUCH IS REACHED DOWN TO. When the shoulder sits higher above the touch than the arm can cover
+            // (a tall taya on a small victim), the aimed hand can only point down at it and stops in the air. The taya
+            // stoops into it instead: the chest drops by what the arm cannot cover, and the stride widens, which
+            // lowers the hips with the feet still planted. Level touches are unchanged.
+            float stoop = 0f;
+            if (_tagContactValid)
+            {
+                float armLength = hand != null && hand.IsChildOf(_tgArmR) ? Vector3.Distance(_tgArmR.position, hand.position) : .3f;
+                float above = _tgArmR.position.y - _tagContact.y;
+                stoop = Mathf.Clamp01((above - armLength * .7f) / Mathf.Max(.15f, armLength));
+            }
+            float lean = ((lunge ? 44f : Mathf.Lerp(22f, 28f, commitment)) + 30f * stoop) * w * snap;
             float twist = (lunge ? -28f : -42f) * w * snap;
             float side = transform.InverseTransformPoint(_tgArmR.position).x >= 0 ? 1f : -1f;
 
@@ -221,7 +239,7 @@ namespace TumbangPreso.Visual
             // Weight moves over the forward foot. The rear sole stays planted:
             // with this rigid seven-bone rig, lowering the hips by the cosine
             // loss keeps the split stance on the court without stretching legs.
-            float strideAngle = (lunge ? 42f : Mathf.Lerp(18f, 38f, commitment)) * w;
+            float strideAngle = ((lunge ? 42f : Mathf.Lerp(18f, 38f, commitment)) + 12f * stoop) * w;
             if (_tgRoot != null && _legReachWorld > 0f && _motor != null && _motor.IsGrounded)
             {
                 float angle = strideAngle * Mathf.Deg2Rad;
@@ -257,6 +275,18 @@ namespace TumbangPreso.Visual
                         _tgRoot.position += planar.normalized * Mathf.Clamp(planar.magnitude - horizontalReach,
                             -Core.Balance.PunchRange, Core.Balance.PunchRange) * w;
                     ReachAcceptedContact(w);
+                    // ⚠️ CLOSE WHAT IS LEFT, MEASURED ON THE REAL PALM. The model is squashed and stretched along the
+                    // dash (`CharacterSquashStretch`) before this runs, and aiming an arm by rotation under a
+                    // non-uniformly scaled parent skews it by a few per cent: over a metre of reach that left the hand
+                    // 6 to 9 cm off the victim (Logs/tag-contact-silhouettes, 2026-10-22: Basilio on Nemu, Rago on
+                    // Isagani). Slide the body the remaining distance and aim again; two passes converge.
+                    for (int pass = 0; pass < 2; pass++)
+                    {
+                        Vector3 miss = Vector3.ProjectOnPlane(_tagContact - _tgArmR.TransformPoint(_tgPalmR), up);
+                        if (miss.sqrMagnitude < .00004f || miss.sqrMagnitude > .25f) break;
+                        _tgRoot.position += miss * w;
+                        ReachAcceptedContact(w);
+                    }
                 }
             }
             else PointArm(_tgArmR, _tgAlongR, new Vector3(reach.x * side, reach.y, reach.z), w, 0);
@@ -291,12 +321,18 @@ namespace TumbangPreso.Visual
             if (!_tagContactValid || !_tagSkinContact) return;
             if (_tagSkinVictim == null || !_tagSkinA.Valid || !_tagSkinB.Valid || !_tagSkinC.Valid)
             { _tagSkinContact = false; return; }
-            _tagContact = _tagSkinA.Position * _tagSkinBarycentric.x + _tagSkinB.Position * _tagSkinBarycentric.y
-                + _tagSkinC.Position * _tagSkinBarycentric.z - _tagSkinVictim.transform.position + _tagSkinAt;
+            // ⚠️ IN THE VICTIM'S OWN FRAME AS IT STOOD AT THE TAG. The host sends the victim home on the tag's frame and
+            // the body keeps turning after it; an offset kept in world axes would swing the aim round the body by any
+            // such turn, off the pose the tag replay pins in place (`CatchReconstruction`, `_victimFacing`) and off the
+            // caught afterimage everyone else sees (`CaughtAfterimage`). The skin still moves with the live pose.
+            var victim = _tagSkinVictim.transform;
+            Vector3 skin = _tagSkinA.Position * _tagSkinBarycentric.x + _tagSkinB.Position * _tagSkinBarycentric.y
+                + _tagSkinC.Position * _tagSkinBarycentric.z;
+            _tagContact = _tagSkinAt + _tagSkinTurn * (Quaternion.Inverse(victim.rotation) * (skin - victim.position));
         }
         private void SampleTagSkin(CharacterMotor victim, Vector3 at)
         {
-            _tagSkinContact = false; _tagSkinVictim = victim; _tagSkinAt = at;
+            _tagSkinContact = false; _tagSkinVictim = victim; _tagSkinAt = at; _tagSkinTurn = victim.transform.rotation;
             var receiver = victim.GetComponent<CharacterAnimator>();
             if (receiver == null || receiver._animator == null) return;
             Vector3 near = _tagContact + victim.transform.position - at;
