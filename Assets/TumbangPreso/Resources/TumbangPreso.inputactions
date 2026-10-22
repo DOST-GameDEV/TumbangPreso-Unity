@@ -553,7 +553,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000041",
-                    "path": "<Keyboard>/tab",
+                    "path": "<Keyboard>/g",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -630,7 +630,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000048",
-                    "path": "<Keyboard>/c",
+                    "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

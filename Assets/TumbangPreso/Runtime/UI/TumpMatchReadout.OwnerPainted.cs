@@ -16,7 +16,7 @@ namespace TumbangPreso.UI
             _countdown=Ink(_root,"Countdown","",110,true);Pin(_countdown.rectTransform,new Vector2(.5f,.58f),Vector2.zero,new Vector2(740,180));_countdown.enabled=false;
             _crosshair=Ink(_root,"Reticle","○",34,false);Pin(_crosshair.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(76,76));
             _hit=Ink(_root,"HitConfirmation","×",72,true);Pin(_hit.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(120,120));_hit.enabled=false;
-            _spectator=Ink(_root,"SpectatorReadout","",27,false);Pin(_spectator.rectTransform,new Vector2(.5f,0),new Vector2(0,100),new Vector2(1420,136));
+            _spectator=Ink(_root,"SpectatorReadout","",27,false);Pin(_spectator.rectTransform,new Vector2(.5f,0),new Vector2(0,150),new Vector2(1760,236));
             _sandbox=Ink(_root,"SandboxState","",25,false);Pin(_sandbox.rectTransform,new Vector2(1,0),new Vector2(-250,38),new Vector2(456,54));
             var version=Ink(_root,"GameVersion","",20,false);Pin(version.rectTransform,new Vector2(1,0),new Vector2(-230,14),new Vector2(420,28));GameVersion.ApplyTo(version);
         }

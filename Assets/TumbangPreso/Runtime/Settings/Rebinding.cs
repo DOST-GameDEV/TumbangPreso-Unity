@@ -47,7 +47,7 @@ namespace TumbangPreso.Settings
     /// old feel. Both curve rows stay rebindable, and every screen that teaches them reads the
     /// live binding through `Hud.KeyLabel` (which prints WHEEL UP / WHEEL DOWN).
     ///
-    /// ⚠️ C IS `SpectatorControls` AND F IS `SpectatorFreeFly`, WHICH IS LEGAL RATHER THAN AN
+    /// ⚠️ TAB IS `SpectatorControls` (October 22, it was C) AND F IS `SpectatorFreeFly`, WHICH IS LEGAL RATHER THAN AN
     /// OVERSIGHT. See `SpectatorContext`: a spectator has no body. `FindDuplicateBindings`
     /// checks per context and passes.
     ///

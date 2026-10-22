@@ -58,7 +58,7 @@ namespace TumbangPreso.UI
             _hit = Ink(_root, "HitConfirmation", "×", 72, true);
             TumpUiFactory.Anchor(_hit.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(120, 120)); _hit.enabled = false;
             _spectator = Ink(_root, "SpectatorReadout", "", 26, false);
-            TumpUiFactory.Anchor(_spectator.rectTransform, new Vector2(.5f, 0), new Vector2(0, 100), new Vector2(1420, 136));
+            TumpUiFactory.Anchor(_spectator.rectTransform, new Vector2(.5f, 0), new Vector2(0, 150), new Vector2(1760, 236));
             _sandbox = Ink(_root, "SandboxState", "", 24, false);
             TumpUiFactory.Anchor(_sandbox.rectTransform, new Vector2(1, 0), new Vector2(-250, 38), new Vector2(456, 54));
             var version = Ink(_root, "GameVersion", "", 20, false);
@@ -216,10 +216,11 @@ namespace TumbangPreso.UI
             if (_spectator.enabled)
             {
                 if (_spectatorCamera == null) _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+                // The full list, not a pointer to it: the tournament's spectators never found the old hint.
                 _spectator.text = spectatorControls
                     ? (_spectatorCamera != null ? _spectatorCamera.StatusText() : "Spectating")
-                        + "\n" + Hud.KeyLabelFor("SpectatorControls") + " hide controls · " + Hud.KeyLabelFor("CleanFeed") + " clean feed"
-                    : Hud.KeyLabelFor("SpectatorControls") + " show controls";
+                        + "\n" + CameraSystem.SpectatorCamera.ControlsText()
+                    : Hud.KeyLabelFor("SpectatorControls") + " SHOW SPECTATOR CONTROLS";
             }
             Sandbox();
         }

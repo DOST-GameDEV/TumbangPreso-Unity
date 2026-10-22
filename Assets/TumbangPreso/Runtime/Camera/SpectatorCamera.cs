@@ -2784,12 +2784,15 @@ namespace TumbangPreso.CameraSystem
             // that teaches nothing: every other entry names a key the player would not guess,
             // while WASD is the same walk the whole game is already played with, and the status
             // line above it already says `FREE FLIGHT` with the speed.
-            return "SPECTATOR    F1-F4 player POV · " + Key("SpectatorCycleTarget")
-                 + " follow · " + Key("SpectatorPov") + " POV/chase · " + Key("SpectatorFreeFly")
-                 + " free · WHEEL speed/zoom · " + Key("SpectatorAutopilot") + " autopilot\n"
-                 + "BROADCAST    " + Key("SpectatorReplay") + " replay · " + Key("SpectatorPause")
-                 + " pause · 1/2/3 speed .25/.5/1x · " + Key("SpectatorMark") + " save cam · "
-                 + Key("SpectatorRecall") + " recall · " + Key("SpectatorControls") + " controls";
+            // Owner, October 22 tournament: *"for spectatotr it was very hard to figure ouut waht everything u can do
+            // with it"*. Every entry is a verb a watcher wants, in plain words, grouped by what it is for.
+            return "WATCH    F1-F4 see through a player's eyes  ·  " + Key("SpectatorCycleTarget") + " follow next player  ·  "
+                 + Key("SpectatorPov") + " eyes / chase cam  ·  " + Key("SpectatorFreeFly") + " free camera  ·  "
+                 + Key("SpectatorAutopilot") + " auto camera  ·  WHEEL zoom / fly speed\n"
+                 + "TIME    " + Key("SpectatorPause") + " pause  ·  1 / 2 / 3 slow-mo .25x / .5x / normal  ·  "
+                 + Key("SpectatorReplay") + " instant replay\n"
+                 + "CAMERA    " + Key("SpectatorMark") + " save this shot  ·  " + Key("SpectatorRecall") + " jump back to it  ·  "
+                 + Key("CleanFeed") + " hide HUD  ·  " + Key("SpectatorControls") + " hide this list";
         }
 
         /// <summary>

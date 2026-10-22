@@ -1156,7 +1156,7 @@ namespace TumbangPreso.UI
 
         /// <summary>
         /// The two lines along the bottom of a spectator's screen.
-        /// Can be toggled on/off with [C] to avoid hogging the screen.
+        /// Can be toggled on/off with the SpectatorControls key (Tab) to avoid hogging the screen.
         /// </summary>
         private void BuildSpectatorReadout()
         {
@@ -1178,7 +1178,7 @@ namespace TumbangPreso.UI
                                       TextAnchor.LowerRight);
             Place(_spectatorHint.rectTransform, new Vector2(1.0f, 0.0f), new Vector2(-24, 20),
                   new Vector2(310, 28));
-            _spectatorHint.text = "[C] CONTROLS OVERLAY";
+            _spectatorHint.text = "[" + KeyLabelFor("SpectatorControls") + "] CONTROLS OVERLAY";
             _spectatorHint.enabled = true;
 
             _spectatorLiveBug = HudLabel(_root, "BroadcastBug", 20, UiTheme.Danger,
@@ -1209,7 +1209,7 @@ namespace TumbangPreso.UI
             if (_spectatorStatus != null) _spectatorStatus.gameObject.SetActive(visible);
             if (_spectatorHint != null)
             {
-                _spectatorHint.text = visible ? "[C] HIDE CONTROLS" : "[C] SHOW CONTROLS";
+                _spectatorHint.text = "[" + KeyLabelFor("SpectatorControls") + (visible ? "] HIDE CONTROLS" : "] SHOW CONTROLS");
             }
         }
 

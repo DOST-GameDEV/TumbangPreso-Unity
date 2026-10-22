@@ -50,9 +50,9 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(Rebinding.IsSpectatorAction("SpectatorAutopilot"));
             Assert.IsFalse(Rebinding.IsSpectatorAction("Ultimate"));
 
-            // The whole point: TAB may mean "ability info" while playing and "next player" while
+            // The whole point: TAB may mean "ability info" while playing and "spectator controls" while
             // watching, because the two screens can never be live at once.
-            Assert.IsFalse(Rebinding.ShareAContext("AbilityInfo", "SpectatorCycleTarget"));
+            Assert.IsFalse(Rebinding.ShareAContext("AbilityInfo", "SpectatorControls"));
             Assert.IsFalse(Rebinding.ShareAContext("Ultimate", "SpectatorFreeFly"));
 
             // And two gameplay actions still share a context, so the original rule still bites.
