@@ -87,6 +87,7 @@ namespace TumbangPreso.UI
                     _portraits[i].sprite=Portrait(actor);_portraits[i].enabled=_portraits[i].sprite!=null;
                 }
                 PaintChips(order,defender,uniqueLeader);
+                NoteRoundGains(order,match);
             }
             Canvas.gameObject.SetActive(true);
         }

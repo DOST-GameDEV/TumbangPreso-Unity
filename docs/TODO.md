@@ -45,6 +45,8 @@ replay and the whole match read poorly ("everything has to be animated").
   (no "PlayerName" label starts with the seat tag: chips no longer carry that label), `TumpNativeHudTests.ScoreFeedReflows...`
   (the shifted row is already at -60 the frame the new row lands) and `RequirementRefusalReachesWarningWithoutCastingAndFeedStaysSeparate`
   (line 892 expects true).
+- [ ] `TumpNativeHudTests.RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds` reads an empty warning where it expects
+  "DO NOT IDLE - RETRIEVE YOUR SLIPPER" (2026-10-22); the warning strip is untouched by the presentation pass.
 - [ ] `TumpNativeHudTests.CanResetTouchCueUsesTheActualReachAndRestoreSetting` reads an empty prompt where it expects
   "Reset Can". It makes the local seat a stand-in taya (`IsDefender = true`) while the real taya is seat 0; the same
   prompt passes for the real taya (`RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions`). Untouched by the can work.
@@ -54,6 +56,9 @@ replay and the whole match read poorly ("everything has to be animated").
   disarms the taya (grey broken ring, dimmed band). `TayaIdentityTests` saves a front and side close-up of every hero.
 - [x] Cast callouts: a seat-colour disc with the ability icon pops over the caster (`UI.CastCallout`), measured over the
   caster on screen; the feed gains icon rows for casts, ultimates and ticking penalties (`CastPresentationTests`).
+- [x] Break card tells the round: each standings chip counts up what its seat earned this round, the chips drop in and
+  slide from the last break's ranks, the next-taya ticket turns over and its badge stamps (`TumpRoundSwapView.CourtBreak`,
+  `RoundBreakStoryTests`). The drafted separate round-summary strip was dropped: it stood over this card.
 - [ ] Presentation pass continues: can down, taya identity, cast callouts and feed, HUD motion, round flow,
   spectator broadcast; then every non-Arena map gets its own intro film (see the handoff in chat, 2026-10-22).
 - [ ] Test harness: the whole `TumpNativeHudTests` class stalls in `ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow`

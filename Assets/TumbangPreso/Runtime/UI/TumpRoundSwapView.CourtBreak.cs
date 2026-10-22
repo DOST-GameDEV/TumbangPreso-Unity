@@ -44,6 +44,27 @@ namespace TumbangPreso.UI
         private const float LowerThirdScale=.7f, LowerThirdMargin=30;
         private bool _lowerThird;
 
+        // ⚠️ THE ROUND'S OWN STORY, IN THE STANDINGS (owner, 2026-10-22: "everything has to be animated"; a round summary
+        // and rank changes that slide). The card showed the running totals and nothing said who had just earned what, or
+        // that anyone had moved. Each chip now carries what that seat earned since the last break, counting up from
+        // nothing, and the chips drop in one after another and slide from last break's rank to this one. A separate
+        // summary strip would have stood over this same card in the same two seconds; this is the card telling it.
+        // THE ROLE SWAP IS THE ONE FACT THAT CHANGES THE NEXT ROUND, so it is the card's beat: the next-taya ticket turns
+        // over to show who it is, its can badge stamps down, and the new taya's chip in the standings swells once.
+        private HudCard _ticket;
+        private RectTransform _tayaBadge;
+        private int _nextTayaRank=-1;
+        private readonly Text[] _gains=new Text[4];
+        private readonly Vector2[] _chipHome=new Vector2[4];
+        private readonly float[] _chipFrom=new float[4];
+        private readonly int[] _gainOf=new int[4];
+        private static readonly int[] LastScores=new int[4];
+        private static readonly int[] LastRank={0,1,2,3};
+        private static long _lastMatch=-1;
+        private static int _gainsRound=-1;
+        /// <summary>For tests: what the chip at <paramref name="rank"/> says its seat earned since the last break.</summary>
+        public int GainAt(int rank)=>rank>=0&&rank<4?_gainOf[rank]:0;
+
         public void Build(Transform owner,Action dismiss)
         {
             Canvas=OwnerUiLayout.Canvas(owner,"OwnerRoundSwapCanvas",260);
@@ -60,7 +81,7 @@ namespace TumbangPreso.UI
             _round=Label(_popup,"RoundHeadline","HALFTIME",64,CourtPresentationPalette.Paper);
             OwnerUiLayout.Place(_round.rectTransform,30,0,380,96);_round.rectTransform.localRotation=Quaternion.Euler(0,0,2);
 
-            var ticket=Card(_popup,"NextTayaTicket",446,0,412,96,HudDraw.Plate);
+            var ticket=_ticket=Card(_popup,"NextTayaTicket",446,0,412,96,HudDraw.Plate);
             ticket.Border=UiTheme.Defense;ticket.BorderWidth=3.5f;
             _nextSwatch=Card(ticket.transform,"NextTayaSwatch",12,12,72,72,Color.white);
             _nextSwatch.ShadowAlpha=0;_nextSwatch.FollowContrast=false;_nextSwatch.Radius=12;
@@ -68,7 +89,7 @@ namespace TumbangPreso.UI
             _portrait.preserveAspect=true;_portrait.raycastTarget=false;OwnerUiLayout.Place(_portrait.rectTransform,3,3,66,66);
             var badge=OwnerUiLayout.Rect(ticket.transform,"NextTayaBadge").gameObject.AddComponent<HudBadge>();
             OwnerUiLayout.Place(badge.rectTransform,62,58,32,32);badge.Detail=UiTheme.Defense;badge.raycastTarget=false;
-            badge.Show(HudBadge.Glyph.Can,CourtPresentationPalette.Paper,UiTheme.Defense);
+            badge.Show(HudBadge.Glyph.Can,CourtPresentationPalette.Paper,UiTheme.Defense);_tayaBadge=badge.rectTransform;
             var next=Label(ticket.transform,"NextRole","NEXT TAYA",28,CourtPresentationPalette.Gold);
             OwnerUiLayout.Place(next.rectTransform,100,6,300,40);
             _name=Label(ticket.transform,"NextDefenderName","",32,CourtPresentationPalette.Paper);
@@ -103,11 +124,43 @@ namespace TumbangPreso.UI
                 OwnerUiLayout.Place(_names[i].rectTransform,100,8,154,38);
                 _scores[i]=Label(chip.transform,"StandingScore"+i,"",44,HudDraw.CardInk);
                 OwnerUiLayout.Place(_scores[i].rectTransform,100,40,154,56);_scores[i].alignment=TextAnchor.MiddleRight;
+                // What this seat earned since the last break, in the chip's top-right corner above its total (above the
+                // chip it crowded the headline brush).
+                _gains[i]=Label(chip.transform,"StandingGain"+i,"",28,CourtPresentationPalette.Gold);
+                OwnerUiLayout.Place(_gains[i].rectTransform,150,4,104,36);_gains[i].alignment=TextAnchor.MiddleRight;
+                _gains[i].fontStyle=FontStyle.Italic;
+                var gainInk=_gains[i].gameObject.AddComponent<Outline>();gainInk.effectColor=UiTheme.InGameOutline;gainInk.effectDistance=new Vector2(2,-2);
+                _chipHome[i]=chip.rectTransform.anchoredPosition;_chipFrom[i]=_chipHome[i].x;
             }
             _notice=Label(_popup,"ReplayNotice","",28,CourtPresentationPalette.Paper);
             OwnerUiLayout.Place(_notice.rectTransform,0,222,PopupWidth,40);_notice.alignment=TextAnchor.MiddleCenter;
             _notice.gameObject.AddComponent<Outline>().effectColor=UiTheme.InGameOutline;
             _popupBuilt=true;
+        }
+
+        /// <summary>
+        /// Notes, once per break, what each seat earned since the last one and where it stood then, so the chips can count
+        /// it up and slide from the old rank. A late or repeated Show of the same break keeps the first reading.
+        /// </summary>
+        private void NoteRoundGains(int[] order,MatchDirector match)
+        {
+            if(!_popupBuilt||match==null)return;
+            if(match.PresentationMatchId!=_lastMatch)
+            {
+                _lastMatch=match.PresentationMatchId;_gainsRound=-1;
+                for(int s=0;s<4;s++){LastScores[s]=0;LastRank[s]=s;}
+            }
+            if(_nextRoundNumber==_gainsRound)return;
+            _gainsRound=_nextRoundNumber;
+            for(int i=0;i<4;i++)
+            {
+                int seat=order[i];
+                _gainOf[i]=match.ScoreFor(seat)-LastScores[seat];
+                int was=Mathf.Clamp(LastRank[seat],0,3);
+                _chipFrom[i]=_chipHome[was].x;
+            }
+            for(int i=0;i<4;i++){LastScores[order[i]]=match.ScoreFor(order[i]);LastRank[order[i]]=i;}
+            _nextTayaRank=System.Array.IndexOf(order,Core.MatchRules.DefenderSlotFor(_nextRoundNumber));
         }
 
         /// <summary>Paints the chips for this break: seat colours, crown, taya badge, your mark.</summary>
@@ -175,6 +228,56 @@ namespace TumbangPreso.UI
             float pop=reduced?1:1+.025f*Mathf.Sin(appear*Mathf.PI)*(1-appear);
             _popup.localScale=Vector3.one*pop*(lower?LowerThirdScale:1);
             if(_returnClock!=null)_returnClock.Set(_remainingStart>0?_remaining/_remainingStart:0);
+            PaintChipStory(age,reduced);
+            PaintRoleSwap(age,reduced);
+        }
+
+        /// <summary>The next-taya ticket turns over, its can badge stamps, and that seat's chip swells once.</summary>
+        private void PaintRoleSwap(float age,bool reduced)
+        {
+            if(_ticket==null)return;
+            var ticket=_ticket.rectTransform;
+            if(reduced){ticket.localScale=Vector3.one;if(_tayaBadge!=null)_tayaBadge.localScale=Vector3.one;return;}
+            // Edge-on until a quarter second in, then turns face-up past flat and settles.
+            float turn=Mathf.Clamp01((age-.22f)/.3f);
+            // Ease out with a little overshoot (back): it turns past face-up and settles.
+            float k=turn-1,face=1+2.70158f*k*k*k+1.70158f*k*k;
+            ticket.localScale=new Vector3(Mathf.Max(.02f,face),1,1);
+            if(_tayaBadge!=null)
+            {
+                float stamp=Mathf.Clamp01((age-.55f)/.18f);
+                _tayaBadge.localScale=Vector3.one*(stamp<=0?0:Mathf.Lerp(1.8f,1,1-(1-stamp)*(1-stamp)));
+                _tayaBadge.localRotation=Quaternion.Euler(0,0,-20*(1-stamp));
+            }
+            if(_nextTayaRank>=0&&_nextTayaRank<4&&_chips[_nextTayaRank]!=null)
+            {
+                float swell=Mathf.Clamp01(1-Mathf.Abs(age-.78f)/.16f);
+                _chips[_nextTayaRank].rectTransform.localScale*=1+.08f*swell;
+            }
+        }
+
+        /// <summary>Chips drop in one after another, slide from last break's rank, and count up what each earned.</summary>
+        private void PaintChipStory(float age,bool reduced)
+        {
+            for(int i=0;i<4;i++)
+            {
+                if(_chips[i]==null||_gains[i]==null)continue;
+                float land=reduced?1:Mathf.Clamp01((age-.12f-i*.07f)/.26f);
+                float e=1-Mathf.Pow(1-land,3);
+                float slide=reduced?1:Mathf.SmoothStep(0,1,Mathf.Clamp01((age-.4f)/.45f));
+                var home=_chipHome[i];
+                _chips[i].rectTransform.anchoredPosition=new Vector2(Mathf.Lerp(_chipFrom[i],home.x,slide),home.y+(reduced?0:30*(1-e)));
+                _chips[i].rectTransform.localScale=Vector3.one*(reduced?1:Mathf.Lerp(.86f,1,e));
+                int gain=_gainOf[i];
+                float count=reduced?1:Mathf.SmoothStep(0,1,Mathf.Clamp01((age-.5f-i*.07f)/.5f));
+                int shown=Mathf.RoundToInt(gain*count);
+                // Blank until the count begins: a "+0" waiting on the chip read as a score of nothing.
+                _gains[i].text=gain==0||shown==0?"":(gain>0?"+":"")+shown;
+                var c=gain<0?HudDraw.Alarm:CourtPresentationPalette.Gold;c.a=e;_gains[i].color=c;
+                // The tab punches once as its count lands.
+                float punch=reduced?0:Mathf.Clamp01(1-Mathf.Abs(age-(1f+i*.07f))/.12f);
+                _gains[i].rectTransform.localScale=Vector3.one*(1+.25f*punch);
+            }
         }
     }
 }
