@@ -63,8 +63,8 @@ replay and the whole match read poorly ("everything has to be animated").
   leaders, a tag's or knockdown's points fly into the scorer's chip; the last 10 s already pulse (`TumpMatchReadout.Motion`).
   Spectators get each seat's ult meter and a TAYA tab, and keep the event feed (`TumpMatchReadout.Spectator`,
   `HudMotionTests`). The autopilot already cuts to tags, knocks and ults (`SpectatorInterest`).
-- [ ] Presentation pass continues: can down, taya identity, cast callouts and feed, HUD motion, round flow,
-  spectator broadcast; then every non-Arena map gets its own intro film (see the handoff in chat, 2026-10-22).
+- [x] Presentation pass (2026-10-22): tag, can, taya identity, casts and feed, match bar, break card, spectator cards
+  are in; the owner's look in play is the open check above. Next: the map intro films below.
 - [ ] Test harness: the whole `TumpNativeHudTests` class stalls in `ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow`
   after round 1 begins (frames keep running, the test never resumes; per-frame probes in the new presentation code
   kept logging, so it is a wait, not a loop). Alone, or after `PlantPrompt...`, it completes. Two old asserts fail
