@@ -38,9 +38,10 @@ namespace TumbangPreso.UI
             public Image[] Portrait = new Image[2];
             public Text[] Tag = new Text[2];
             public HudBadge Glyph;
+            public Image Ability;
             public Text Points;
         }
-        private struct Item { public string Words; public int Actor, Other, Points; public HudBadge.Glyph Glyph; public Color Accent; public float Expires, Born, StackFromY, StackMovedAt; }
+        private struct Item { public string Words, Key; public int Actor, Other, Points; public HudBadge.Glyph Glyph; public Sprite Icon; public bool Ultimate; public Color Accent; public float Expires, Born, StackFromY, StackMovedAt, BumpAt; }
 
         private readonly Row[] _rows = new Row[Capacity];
         private readonly Item[] _items = new Item[Capacity];
@@ -89,6 +90,9 @@ namespace TumbangPreso.UI
             }
             row.Glyph = OwnerUiLayout.Rect(row.Root, "EventGlyph").gameObject.AddComponent<HudBadge>();
             row.Glyph.Detail = HudDraw.GlassDeep; row.Glyph.raycastTarget = false;
+            // A cast row shows the ability's own icon where an event row shows its glyph.
+            row.Ability = OwnerUiLayout.Rect(row.Root, "EventAbility").gameObject.AddComponent<Image>();
+            row.Ability.raycastTarget = false; row.Ability.preserveAspect = true; row.Ability.enabled = false;
             // The score feed says what the event was worth, in the same face as the totals.
             row.Points = OwnerUiLayout.Text(row.Root, "EventPoints", "", 36, OwnerUiLayout.TypeRole.Display);
             row.Points.color = HudDraw.Ivory; row.Points.alignment = TextAnchor.MiddleRight; row.Points.raycastTarget = false;
@@ -98,10 +102,12 @@ namespace TumbangPreso.UI
             return row;
         }
 
-        private void OnEnable() => MatchFlair.Presented += OnMoment;
+        private void OnEnable() { MatchFlair.Presented += OnMoment; Abilities.HeroAbilitySystem.CastPresented += OnCast; }
         private void OnDisable()
         {
-            MatchFlair.Presented -= OnMoment;
+            MatchFlair.Presented -= OnMoment; Abilities.HeroAbilitySystem.CastPresented -= OnCast;
+            if (_scoredMatch != null) _scoredMatch.Scored -= OnScored;
+            _scoredMatch = null;
             if (_lata != null) _lata.UprightChanged -= OnCanState;
             _lata = null; Clear();
         }
@@ -115,6 +121,12 @@ namespace TumbangPreso.UI
             var match = GameServices.Match;
             int number = match != null ? match.RoundNumber : 0;
             if (_match != match || _round != number) { Clear(); _match = match; _round = number; }
+            if (_scoredMatch != match)
+            {
+                if (_scoredMatch != null) _scoredMatch.Scored -= OnScored;
+                _scoredMatch = match;
+                if (_scoredMatch != null) _scoredMatch.Scored += OnScored;
+            }
             var lata = GameServices.Round != null ? GameServices.Round.Lata : null;
             if (_lata == lata) return;
             if (_lata != null) _lata.UprightChanged -= OnCanState;
@@ -128,6 +140,42 @@ namespace TumbangPreso.UI
             if (this == null || _rows[0] == null) return;
             if (upright && Live) Add(GameServices.Match.DefenderSlot, -1, "RESTORED LATA", "restore", HudBadge.Glyph.Restore, UiTheme.Defense, 0);
         }
+        private MatchDirector _scoredMatch;
+
+        /// <summary>
+        /// Casts, ultimates and penalties (owner, 2026-10-22), pictograms first: the caster's chip and the ability's own
+        /// icon, gold for an ultimate. Every peer presents every accepted cast once (`CastPresented`).
+        /// </summary>
+        private void OnCast(CharacterMotor caster, Abilities.HeroAbility ability, bool ultimate)
+        {
+            if (this == null) { Abilities.HeroAbilitySystem.CastPresented -= OnCast; return; }
+            if (_rows[0] == null || caster == null || ability == null) return;
+            Bind();
+            if (!Live) return;
+            Add(caster.PlayerSlot, -1, (ultimate ? "ULT " : "") + ability.EffectiveName.ToUpperInvariant(),
+                (ultimate ? "ult:" : "cast:") + ability.Id, HudBadge.Glyph.None, ultimate ? HudDraw.Honey : PlayerIdentity.Colour(caster.PlayerSlot),
+                0, AbilityIcons.For(ability.Glyph), ultimate);
+        }
+
+        /// <summary>
+        /// A penalty is a row with the seat, what it is for and what it has cost. A penalty that keeps ticking (the can
+        /// left down) keeps ONE row counting up and punching on each tick, never a column of identical rows.
+        /// </summary>
+        private void OnScored(int slot, ScoreEvent e)
+        {
+            if (this == null || _rows[0] == null) return;
+            if (!Live) return;
+            HudBadge.Glyph glyph;
+            switch (e)
+            {
+                case ScoreEvent.CanDownPenalty: glyph = HudBadge.Glyph.CanDown; break;
+                case ScoreEvent.UnretrievedSlipperPenalty: glyph = HudBadge.Glyph.Slipper; break;
+                case ScoreEvent.TayaCampPenalty: glyph = HudBadge.Glyph.Tag; break;
+                default: return;
+            }
+            Add(slot, -1, "PENALTY " + e, "penalty:" + e, glyph, HudDraw.Alarm, MatchRules.PointsFor(e), null, false, accumulate: true);
+        }
+
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
             // A feed destroyed without its OnDisable (an editor session with domain reload off keeps static listeners)
@@ -148,10 +196,19 @@ namespace TumbangPreso.UI
                     break;
             }
         }
-        private void Add(int actor, int other, string words, string kind, HudBadge.Glyph glyph, Color accent, int points)
+        private void Add(int actor, int other, string words, string kind, HudBadge.Glyph glyph, Color accent, int points,
+                         Sprite icon = null, bool ultimate = false, bool accumulate = false)
         {
             if (actor < 0 || actor >= Core.Balance.PlayerCount) return;
             float now = Time.unscaledTime; string key = actor + ":" + kind;
+            if (accumulate)
+                for (int i = 0; i < Count; i++)
+                    if (_items[i].Key == key && _items[i].Expires > now)
+                    {
+                        _items[i].Points += points; _items[i].Expires = now + Lifetime; _items[i].BumpAt = now;
+                        Layout(_rows[i], _items[i]); Paint(now);
+                        return;
+                    }
             if (_lastKey == key && now - _lastAt < .15f) return;
             _lastKey = key; _lastAt = now;
             for (int i = Capacity - 1; i > 0; i--)
@@ -165,7 +222,7 @@ namespace TumbangPreso.UI
                 Words = PlayerIdentity.Label(actor) + "  " + words, Actor = actor,
                 Other = other >= 0 && other < Core.Balance.PlayerCount ? other : -1,
                 Glyph = glyph, Accent = accent, Points = points, Expires = now + Lifetime, Born = now,
-                StackFromY = RowStep * .35f, StackMovedAt = now,
+                StackFromY = RowStep * .35f, StackMovedAt = now, Key = key, Icon = icon, Ultimate = ultimate, BumpAt = now,
             };
             Count = Mathf.Min(Capacity, Count + 1);
             for (int i = 0; i < Count; i++) Layout(_rows[i], _items[i]);
@@ -185,7 +242,15 @@ namespace TumbangPreso.UI
             Seat(row, 0, item.Actor, x + Pad, y);
             OwnerUiLayout.Place(row.Glyph.rectTransform, x + Pad + Chip + Gap, (RowHeight - GlyphSize) * .5f, GlyphSize, GlyphSize);
             // The event's burst takes the acting player's own colour; no team colours in the HUD.
-            row.Glyph.Show(item.Glyph, HudDraw.Ivory, Color.clear, PlayerIdentity.Colour(item.Actor));
+            row.Glyph.Show(item.Icon != null ? HudBadge.Glyph.None : item.Glyph, item.Points < 0 ? HudDraw.Alarm : HudDraw.Ivory,
+                Color.clear, PlayerIdentity.Colour(item.Actor));
+            row.Ability.enabled = item.Icon != null;
+            if (item.Icon != null)
+            {
+                row.Ability.sprite = item.Icon; row.Ability.color = item.Ultimate ? HudDraw.Honey : HudDraw.Ivory;
+                OwnerUiLayout.Place(row.Ability.rectTransform, x + Pad + Chip + Gap, (RowHeight - GlyphSize) * .5f, GlyphSize, GlyphSize);
+            }
+            row.Points.color = item.Points < 0 ? HudDraw.Alarm : HudDraw.Ivory;
             row.Swatch[1].gameObject.SetActive(two);
             if (two) Seat(row, 1, item.Other, x + Pad + Chip + Gap + GlyphSize + Gap, y);
             float label = Mathf.Max(0, points - Gap - 4);
@@ -246,6 +311,9 @@ namespace TumbangPreso.UI
                 float stack = still ? 1 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((now - item.StackMovedAt) / .2f));
                 row.Root.anchoredPosition = new Vector2((1 - fadeIn) * 36,
                     Mathf.Lerp(item.StackFromY, -i * RowStep, stack));
+                // A landing row, or a penalty ticking again, punches once; an ultimate punches harder.
+                float bump = still ? 0 : Mathf.Clamp01(1 - (now - item.BumpAt) / .22f);
+                row.Root.localScale = Vector3.one * (1 + (item.Ultimate ? .16f : .09f) * Mathf.Sin(bump * Mathf.PI));
             }
         }
     }

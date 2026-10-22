@@ -853,6 +853,10 @@ namespace TumbangPreso.Abilities
                 return;
             }
 
+            // Cast callouts and the event feed (owner, 2026-10-22): this line runs once on every peer for every
+            // accepted cast, the same reach the cast sound below relies on, so every screen announces it.
+            if (ability != null && _motor != null) CastPresented?.Invoke(_motor, ability, slot == Slot.Ultimate);
+
             // ⚠️⚠️ EVERY CAST SOUNDS FROM HERE AND FROM NOWHERE ELSE. See `HeroAbility.CastCue`
             // for what this replaces: eighteen powers opening on six shared element cues, so a
             // press told the room which hero and never which power. Playing it centrally rather
@@ -1134,6 +1138,9 @@ namespace TumbangPreso.Abilities
         /// one. See `UltimatePresentationDirector.DuplicateWindow`.
         /// </summary>
         public static event System.Action<CharacterMotor, HeroKit, HeroAbility> UltimateStarted;
+
+        /// <summary>An accepted cast, presented on this peer: (caster, ability, is the ultimate). Presentation only.</summary>
+        public static event System.Action<CharacterMotor, HeroAbility, bool> CastPresented;
 
         private void PlayUltimatePresentation(bool afterIntroduction = false, bool approvedReplay = false)
         {

@@ -40,9 +40,20 @@ replay and the whole match read poorly ("everything has to be animated").
   replicated state and flair. `CanMomentTests` traces the drawn can through a real channel: 88 degrees lying, 60 at half
   the channel, 7 by 85 per cent; the clatter is three distinct hops. Review frames are captured after LateUpdate
   (`LateFrameShot`): the can is put back in Update, so coroutine-time shots always showed it flat.
+- [ ] Three feed and score tests fail on the committed code with the new cast and feed changes removed (baseline run,
+  2026-10-22), so they predate this pass: `ScoreFeedbackTests.AcceptedScoreEmphasisFollowsTheSeatThroughRankingAndClearsWhenHidden`
+  (no "PlayerName" label starts with the seat tag: chips no longer carry that label), `TumpNativeHudTests.ScoreFeedReflows...`
+  (the shifted row is already at -60 the frame the new row lands) and `RequirementRefusalReachesWarningWithoutCastingAndFeedStaysSeparate`
+  (line 892 expects true).
 - [ ] `TumpNativeHudTests.CanResetTouchCueUsesTheActualReachAndRestoreSetting` reads an empty prompt where it expects
   "Reset Can". It makes the local seat a stand-in taya (`IsDefender = true`) while the real taya is seat 0; the same
   prompt passes for the real taya (`RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions`). Untouched by the can work.
+- [x] Taya identity: a headband fitted per hero (brow read off each side view against a ruler, width cut from the head
+  mesh's triangles at that height), a ground ring that flares at round start and an animated TAYA reveal (`TayaIdentity`,
+  `UI.TayaReveal`). Taggable attackers stand in arcs in the taya's colour and the taya-only rim pulses; a downed can
+  disarms the taya (grey broken ring, dimmed band). `TayaIdentityTests` saves a front and side close-up of every hero.
+- [x] Cast callouts: a seat-colour disc with the ability icon pops over the caster (`UI.CastCallout`), measured over the
+  caster on screen; the feed gains icon rows for casts, ultimates and ticking penalties (`CastPresentationTests`).
 - [ ] Presentation pass continues: can down, taya identity, cast callouts and feed, HUD motion, round flow,
   spectator broadcast; then every non-Arena map gets its own intro film (see the handoff in chat, 2026-10-22).
 - [ ] Test harness: the whole `TumpNativeHudTests` class stalls in `ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow`
