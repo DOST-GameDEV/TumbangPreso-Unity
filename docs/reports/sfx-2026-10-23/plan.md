@@ -44,6 +44,10 @@ No bells, no glockenspiel, no triangle, no xylophone, no marimba. At most three 
 
 ## 4. The pipeline (the skill-to-be)
 
+0. **Spot the scene first** (round 3): watch it frame by frame, read what plays before and after it, measure the key
+   and tempo of what follows, and write the beat sheet (`tondo/spotting.md`): on screen, story, feeling, music, sound.
+   Every sound needs an on-screen reason or a job in the music. The music tells the scene's arc and ends on the
+   dominant of whatever plays next, at its tempo.
 1. **Reference**: find a CC0 recording of the real object; log it in a `*_sources.json`.
 2. **Analyse**: `tump_synth.modal` / `texture` / `creak` turn it into numbers, saved in a committed profile JSON.
 3. **Generate**: a recipe per cue from the palette, through the one room and the shared glue.

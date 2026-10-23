@@ -16,7 +16,12 @@ benchmark for future sfx and music generation". Reports: [research](reports/sfx-
   "completely revamp", "less is more"; liked the alley's sparrows.
 - [x] Round 2: a rondalla (bandurria, guitar, bass) built from exact harmonics, one chord at a time, three parts, no
   bells, no pitched foley; harmony checks (`tump_synth.roughness`, `in_key`); -18.0 LUFS, -0.6 dBTP with the bed.
-- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r2-after.mp4`; marks rows by ID.
+- [x] 🧑 Round 2 heard: "better" but "random shit" (bamboo at 0:05), the chalk run's hiss, refine Maiba taya, give the
+  music a story and a transition into the game.
+- [x] Round 3: [spotting sheet](reports/sfx-2026-10-23/tondo/spotting.md); unmotivated sounds cut; chalk run = footsteps;
+  four-kid claps, `TondoFilm.cs` clap lift 4 % to 1.2 %; the story in A major at the match soundtrack's 150 bpm, ending
+  on E into it; pure-interval chord tuning; -18.9 LUFS, -0.5 dBTP; four `MapFilmTests` Tondo tests pass.
+- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r3-after.mp4`; marks rows by ID.
   Status: T-01 draft, T-02 draft, T-03 draft, T-04 draft, T-05 draft, T-06 kept (recorded voice), T-07 untouched.
 - [ ] Rounds until the owner says the Tondo cutscene sounds good (change only the named rows).
 - [ ] A real in-game recording with live ambience before calling it done.

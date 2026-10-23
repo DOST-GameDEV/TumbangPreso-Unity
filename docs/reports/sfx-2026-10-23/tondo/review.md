@@ -4,6 +4,29 @@ Mark a row by its ID ("T-04 too thin"). Only the rows the owner names change in 
 Method and theme: `../plan.md`, `../research.md`. Build: `py -3 tools/build_tondo_film_sfx.py` (generated from
 measured references in `tools/tump_sfx_profiles.json`; nothing recorded ships except T-06, which was already in the game).
 
+## Round 3 (2026-10-23): the story, the handoff into the match, nothing random
+
+Watch: `r3-after.mp4` (with the alley bed). Per cue: `cues/*_r3.mp3`. The plan it follows: [spotting.md](spotting.md).
+
+| Owner on round 2 | Round 3 |
+|---|---|
+| "005 random sound is weird", "may random shit na fucks it up" | the 0:05 sound was two bamboo clacks with nothing on screen to make them; cut, with the balde and the bandurria giggle. Rule: every sound has a reason on screen or a job in the music |
+| of the chalk-run frame: the sound "rapes the shit" | T-02 is now what the picture shows: the kid's tsinelas slapping concrete every 0.2 s, a faint chalk scratch, a short scuff and plant for the skid; file level 0.55 |
+| "refine the sound sa maiba taya even the sound they make" | T-04 is four kids clapping a little loose (0 to 22 ms apart), softer cracks, a palm body near the real takes; `TondoFilm.cs` lifts each clap 1.2 % (was 4 %, which put YA 12 % up like a toy synth), YA loudest. The chant itself is a human voice: a recording (docs/HUMAN.md), never a synth |
+| "think of how a story has a start climax and end", "transition it to the actual game" | the match soundtrack (`ost_match.mp3`, which cuts in on the countdown's first tick) is in A major at about 150 bpm; the film is now in A on that 0.40 s pulse. Start: the guitar alone. Chalk: the groove starts, stops with the skid. Doors: one more part per door. Count: almost nothing, a swelling tremolo, the bass walking up E F# G#. YA: lands on A. Turn: F#m, E. End: E on every beat, growing, held on E7 into the fade, so the countdown and the match music in A answer it |
+| "thoroughly analyze the material" | the film watched frame by frame; the handoff code read (`MapFilm.Sound`, `Hud.ShowCountdownTick`, `MusicDirector`); the match soundtrack measured for key and tempo |
+
+New in the tools: strummed chords are tuned to pure intervals above their root (`tump_synth.JUST_CENTS`): the sting's
+roughness p90 fell from 0.35 to 0.25. The match soundtrack itself measures roughness p90 0.22, the first real reference
+for that number.
+
+| Round 3 measurement | Value |
+|---|---|
+| Sounding notes in A major (score and sting) | 1.00 median, 1.00 p10 |
+| Film with the alley bed | -18.9 LUFS, true peak -0.5 dBTP |
+| Loudness by beat (0.5 s RMS) | start -21 to -25 dB, chalk -18, doors build to -17, huddle -21, count -20 to -14, YA -12 (the peak), turn -18, end builds to -14, then the fade |
+| `MapFilmTests` | TondoRecording, TondoFullFilmBeats, TondoShortFilmBeats, TondoPlaysIntoTheRound pass |
+
 ## Round 2 (2026-10-23): everything revamped, a rondalla in one key
 
 Watch: `r2-after.mp4` (with the alley bed). One mp3 per cue in `cues/` (`*_r2.mp3`).
@@ -91,3 +114,4 @@ before a version is called done). The videos mix the beds at estimated weights.
 |---|---|---|---|
 | 0 | all | "this game has horrible sfx rn"; "its js noise and a bunch of sounds taht dont have a theme and dont work well together or dont support each other" | round 1: one band, key, motif, room; everything generated from measured real objects |
 | 1 | all | "ang panget pareho" (could not tell round 1 from before); "u js mashed a bunch of unrelated audios tgthr"; "i like the bird"; "WHY IS THERE A BELL"; "TRY TO MAKE IT SOUND FILIPINO"; "ang saket sa tenga theres 0 harmony"; "ang gulo talaga"; "completely revamp everything"; "make ur own"; "sometimes less is more" | round 2: no bells; a rondalla built from exact harmonics; one chord at a time; three parts; no pitched foley; harmony checks before the owner listens. **Rules for the skill:** never a bell or music-box timbre in TUMP unless asked; Filipino means rondalla strings and street percussion; harmony first, then fewer parts; a measured partial list is not an instrument |
+| 2 | T-02, all | "005 random sound is weird", "may random shit na fucks it up", the chalk run "rapes the shit", "refine the sound sa maiba taya", "think of how a story has a start climax and end", "transition it to the actual game", "thoroughly analyze the material" | round 3: cut everything unmotivated; foley plays the picture; story arc; A major at the match's 150 bpm, ending on E into the match. **Rules for the skill:** spot the film first (watch it, write the beat sheet); every sound needs an on-screen reason or a musical job; score the scene's story arc; end a cutscene on the dominant of whatever plays next, at its tempo |

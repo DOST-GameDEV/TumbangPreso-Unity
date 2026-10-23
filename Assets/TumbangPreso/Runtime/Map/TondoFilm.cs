@@ -360,7 +360,9 @@ namespace TumbangPreso.Map
                        new Vector2(-330.0f + 220.0f * i, -230.0f), i == 3 ? 150 : 118, i % 2 == 0 ? -7.0f : 6.0f);
                 if (Crossed(_syllableAt[i]))
                 {
-                    Cue("sfx_film_tondo_clap", 0.8f, 1.0f + 0.04f * i);
+                    // A small lift per syllable, not a scale: at +4 % a clap the YA clap was 12 % up and read as a toy
+                    // synth (owner, 2026-10-23: "refine the sound sa maiba taya"). YA is the loudest instead.
+                    Cue("sfx_film_tondo_clap", i == 3 ? 0.85f : 0.72f, 1.0f + 0.012f * i);
                     if (i == 3) { Cue("sfx_film_tondo_taya", 0.8f); Punch(0.8f); if (_kidTaya != null) Cue(_kidTaya, 0.75f); }
                 }
             }

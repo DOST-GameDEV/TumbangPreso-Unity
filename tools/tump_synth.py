@@ -380,14 +380,27 @@ def body(x, kind):
     return x
 
 
-def strum(track, notes, at, stop, kind="guitar", velocity=0.8, spread=0.014, down=True, seed=0):
-    """A strum: the chord's notes a few ms apart (low to high on a down stroke), each damped at `stop`."""
+# Pure intervals above a chord's root, in cents from equal temperament. A tempered major third is 14 cents wide and
+# beats audibly in the low register (round 3's roughest moments were E2 under G#3); string players lean thirds and
+# sixths pure by ear. The dominant seventh takes the 7:4 (barbershop) seventh.
+JUST_CENTS = {0: 0.0, 2: 3.9, 3: 15.6, 4: -13.7, 5: -2.0, 7: 2.0, 8: 13.7, 9: -15.6, 10: -31.2, 11: -11.7}
+
+
+def midi(name):
+    return NOTE[name[:-1]] + 12 * (int(name[-1]) + 1)
+
+
+def strum(track, notes, at, stop, kind="guitar", velocity=0.8, spread=0.014, down=True, seed=0, root=None):
+    """A strum: the chord's notes a few ms apart (low to high on a down stroke), each damped at `stop`. With `root`
+    (a note name), every note is tuned to its pure interval above that root (JUST_CENTS)."""
     rng = np.random.default_rng(seed)
     order = notes if down else notes[::-1]
     for i, nm in enumerate(order):
         t0 = at + i * spread * rng.uniform(0.8, 1.2)
         v = velocity * (0.85 + 0.15 * rng.uniform()) * (0.9 if (not down and i == 0) else 1.0)
-        place(track, string_note(hz(nm), stop - t0 + 0.05, kind, v, seed=int(rng.integers(1 << 30)), stop=stop - t0), t0)
+        cents = JUST_CENTS[(midi(nm) - midi(root)) % 12] if root else 0.0
+        f = hz(nm) * 2 ** (cents / 1200)
+        place(track, string_note(f, stop - t0 + 0.05, kind, v, seed=int(rng.integers(1 << 30)), stop=stop - t0), t0)
 
 
 def tremolo(track, notes, start, stop, kind="bandurria", velocity=0.7, rate=13.0, seed=0, swell=True):
