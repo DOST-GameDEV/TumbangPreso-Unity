@@ -22,7 +22,14 @@ No rule changes.
   frames and clips in Logs/tag-readability; Builds/tagread checked with -tp-botmatch (Logs/tagread-botmatch).
 - [x] Three real local peers (tools/net_catch_presentation.py): every peer fills the victim before the tag and empties it
   after, onsets within 0.06 s. Not covered: the can-down restore fill on a client, link impairment.
-- [ ] Owner look in play (Builds/tagread/TumbangPreso.exe).
+- [x] Owner playtest 2026-10-23: "ppl get highlighted the moment i click raise can (or even if can isnt raised)", "we can
+  remove the red highlight sa body ng taya", "remove the front facing arrow", "taya animation in FPP is weird (... no
+  reaching)", "raising can animation in fpp is weird (... a quick squat)". Fixed: nobody is marked until the can is up
+  (the restore-channel fill and the attacker frame during it are gone); the taya's red body outline and facing chevron
+  are gone (red star and headband stay); the FPP jab and dash aim the forearm out to the crosshair; the FPP raise puts
+  both fists on the can's sides as it stands, under a slower, shallower bend (17 cm, was a 34 cm dip). Frames and
+  before/after clips: Logs/fpp-1023. GameplayActionShots (both, now on Eskinita) and TagReadabilityTests x6 pass.
+- [ ] Owner look in play, at the FPP tag and raise especially.
 
 ### ROOM-PLAYTEST-1023: the Player's Room from the owner's playtest (IN PROGRESS)
 

@@ -78,7 +78,7 @@ namespace TumbangPreso.PlayTests
             typeof(CharacterVisual).GetMethod("BeginReadability", flags).Invoke(visual, new object[] { camera });
             var block = new MaterialPropertyBlock();
             visual.Model.GetComponentInChildren<SkinnedMeshRenderer>().GetPropertyBlock(block);
-            float cue = property == "_HunterInk.r" ? block.GetColor("_HunterInk").r : block.GetFloat(property);
+            float cue = block.GetFloat(property);
             typeof(CharacterVisual).GetMethod("EndReadability", flags).Invoke(visual, new object[] { camera });
             return cue;
         }
@@ -119,9 +119,9 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(1, Rim(_runner, watcher), "A spectator sees the taggable body.");
                 Assert.AreEqual(1, Rim(_runner, tayaView), "The taya sees the taggable body.");
                 Assert.IsTrue(TayaIdentity.DangerShown(_runner));
-                Assert.Greater(Block(_taya, watcher, "_HunterGrow"), 2, "The taya wears the thick outline for a spectator.");
-                Assert.Greater(Block(_taya, watcher, "_HunterInk.r"), .8f, "In the taya's red.");
-                Assert.AreEqual(0, Block(_runner, watcher, "_HunterGrow"), "Attackers never wear it.");
+                // Owner, 2026-10-23: "we can remove the red highlight sa body ng taya". The ring and headband say who it is.
+                Assert.AreEqual(0, Block(_taya, watcher, "_HunterGrow"), "The taya wears no body outline.");
+                Assert.AreEqual(0, Block(_runner, watcher, "_HunterGrow"), "Nor do attackers.");
 
                 _runner.HoldingSlipper = false; yield return null;
                 Assert.IsFalse(round.CanBeTaggedNow(_runner), "No slipper: safe.");
@@ -157,15 +157,16 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(0, Rim(_runner, tayaView), "Nor the taya's view of the body.");
                 Assert.AreEqual(0, Rim(_runner, watcher), "Nor anyone else's.");
                 Assert.IsFalse(TayaIdentity.DangerShown(_runner));
-                Assert.Less(Block(_taya, watcher, "_HunterInk.r"), .7f, "A downed can greys the taya's outline.");
+                Assert.IsTrue(TayaIdentity.TayaDisarmed, "A downed can greys the taya's ring.");
             }
             finally { Object.Destroy(watcher.gameObject); }
         }
 
         /// <summary>
         /// The fill tells how close a flip is: the last second of Vulnerable drains it with the time left, unless the box
-        /// and slipper keep them exposed anyway; while the taya stands the can up, a body that will be taggable fills with
-        /// the channel, and is full the moment the can stands. Reduced UI motion jumps to the level instead of animating.
+        /// and slipper keep them exposed anyway. While the taya stands the can up nobody is marked; the fill climbs only once
+        /// the can is up (owner, 2026-10-23: "they js get highlighted the moment na nakataas na can"). Reduced UI motion
+        /// jumps to the level instead of animating.
         /// </summary>
         [UnityTest]
         public IEnumerator FillTellsHowCloseTheFlipIs()
@@ -203,22 +204,22 @@ namespace TumbangPreso.PlayTests
             float by = Time.unscaledTime + 3;
             while (clock.RestoreRatio <= .2f && Time.unscaledTime < by) yield return null;
             Assert.Greater(clock.RestoreRatio, .2f, "The taya's channel is filling.");
-            Assert.AreEqual(TagExposure.State.Arming, TagExposure.Read(_runner, out level), "About to be taggable.");
-            Assert.AreEqual(clock.RestoreRatio, level, .01f, "The fill level is the channel.");
-            Assert.IsTrue(TayaIdentity.DangerShown(_runner), "The arcs come in with the body.");
+            Assert.AreEqual(TagExposure.State.Safe, TagExposure.Read(_runner, out level), "Not marked while the can is coming up.");
+            Assert.AreEqual(0, level);
+            Assert.IsFalse(TayaIdentity.DangerShown(_runner), "No arcs while the can is coming up.");
             Assert.AreEqual(TagExposure.State.Safe, TagExposure.Read(_other, out _), "A safe attacker outside the box stays empty.");
             float seen = TagExposure.Fill(_runner);
             by = Time.unscaledTime + 4;
             while (!_can.IsUpright && Time.unscaledTime < by) { seen = Mathf.Max(seen, TagExposure.Fill(_runner)); yield return null; }
             Assert.IsTrue(_can.IsUpright, "The channel stood the can up.");
-            Assert.Greater(seen, .6f, "The fill climbed with the channel.");
+            Assert.AreEqual(0, seen, .001f, "The body stayed empty for the whole channel.");
             yield return Settle();
             Assert.AreEqual(TagExposure.State.Taggable, TagExposure.Read(_runner, out level)); Assert.AreEqual(1, TagExposure.Fill(_runner), "Full once the can stands.");
         }
 
         /// <summary>
-        /// The local attacker's screen-edge frame rises with their body's fill while the can is being stood up, in the
-        /// colour they chose, and the setting is local and clamped.
+        /// The local attacker's screen-edge frame shows in the colour they chose while they can be tagged, and stays off
+        /// while the can is down and being stood up; the setting is local and clamped.
         /// </summary>
         [UnityTest]
         public IEnumerator LocalAttackerFrameRisesInTheChosenColour()
@@ -240,21 +241,19 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(TagColours.All.Length - 1, SettingsStore.Current.TaggableColour, "Clamped on load.");
 
                 yield return KnockAndChannel();
-                float low = 1, high = 0, by = Time.unscaledTime + 3;
-                while (!_can.IsUpright && Time.unscaledTime < by)
-                {
-                    if (TagExposure.Read(local, out _) == TagExposure.State.Arming)
-                    { float a = effects.FrameColour.a; low = Mathf.Min(low, a); high = Mathf.Max(high, a); }
-                    yield return null;
-                }
-                Assert.Greater(high - low, .25f, "The frame rises with the restore channel.");
+                float high = 0, by = Time.unscaledTime + 3;
+                while (!_can.IsUpright && Time.unscaledTime < by) { high = Mathf.Max(high, effects.FrameColour.a); yield return null; }
+                Assert.IsTrue(_can.IsUpright, "The channel stood the can up.");
+                Assert.Less(high, .01f, "No frame while the can is coming up.");
+                for (int i = 0; i < 20; i++) yield return null;
+                Assert.IsTrue(effects.DangerFrameVisible, "The frame returns once the can stands.");
             }
             finally { SettingsStore.Current.TaggableColour = colour; }
         }
 
         /// <summary>
         /// The body is the main signal and the floor mark supports it: high in the air or over a void the floor mark goes but
-        /// the body keeps its fill (a taggable runner) or outline (the taya); on a slope the mark tilts to the floor and sits
+        /// the body keeps its fill (a taggable runner); on a slope the mark tilts to the floor and sits
         /// on it; in a jump it stays on the floor below like a shadow.
         /// </summary>
         [UnityTest]
@@ -275,13 +274,12 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(floor.y, at.y, .12f, "The mark stays on the floor under a jump.");
                 Assert.AreEqual(1, fade, .01f, "Low hops do not fade it.");
 
-                // High in the air: the floor mark goes, the body keeps the fill and the taya keeps the outline.
+                // High in the air: the floor mark goes, the body keeps the fill.
                 _runner.Teleport(floor + Vector3.up * 7f); _taya.Teleport(_taya.transform.position + Vector3.up * 7f);
                 yield return null; yield return null;
                 Assert.IsFalse(TayaIdentity.DangerShown(_runner), "No floor mark seven metres up.");
                 Assert.IsFalse(TayaIdentity.Ring.activeSelf, "Nor the taya's star.");
                 Assert.AreEqual(1, Rim(_runner, watcher), "The body still says taggable in the air.");
-                Assert.Greater(Block(_taya, watcher, "_HunterGrow"), 2, "The taya keeps the outline in the air.");
 
                 // A slope: the mark tilts to it and sits on it.
                 ramp = GameObject.CreatePrimitive(PrimitiveType.Cube); ramp.name = "Floor";
@@ -307,7 +305,7 @@ namespace TumbangPreso.PlayTests
 
         /// <summary>
         /// Every marker and circle steps aside in a cutscene or a replay (owner: "all of the markers and circles disappear
-        /// during ult cutscenes"): the floor marks, the seat rings, the body fill and the taya's outline fade out, and all
+        /// during ult cutscenes"): the floor marks, the seat rings and the body fill fade out, and all
         /// come back after.
         /// </summary>
         [UnityTest]
@@ -325,7 +323,6 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(TayaIdentity.DangerShown(_runner), "The target goes.");
                 Assert.IsFalse(TayaIdentity.Ring.activeSelf, "The taya's star goes.");
                 Assert.AreEqual(0, Rim(_runner, watcher), "The fill goes.");
-                Assert.AreEqual(0, Block(_taya, watcher, "_HunterGrow"), "The outline goes.");
                 var seatRing = _runner.GetComponentInChildren<CharacterNameplate>().transform.Find("NameplateRing");
                 Assert.IsFalse(seatRing != null && seatRing.gameObject.activeInHierarchy, "The seat ring goes.");
                 TagExposure.QuietOverride = false;
@@ -369,7 +366,7 @@ namespace TumbangPreso.PlayTests
                 _runner.HoldingSlipper = true;
                 _can.HostKnockDown(_other.PlayerSlot); Hitstop.End(); yield return new WaitForSecondsRealtime(.6f);
                 yield return Stills(cam, "4-can-down");
-                // Stills while the can comes up, then knock it again and film a whole channel.
+                // Stills while the can comes up (nobody marked), then knock it again and film a whole channel.
                 yield return KnockedChannel();
                 yield return Stills(cam, "5-can-coming-up");
                 float by = Time.unscaledTime + 4;
@@ -402,8 +399,7 @@ namespace TumbangPreso.PlayTests
                     }
                 }
                 finally { SettingsStore.Current.TaggableColour = chosen; }
-                // The taya in red beside a taggable runner in blue: hunter and hunted side by side. Turned to face the
-                // runner, so the facing chevron points at them.
+                // The taya's red star beside a taggable runner in blue: hunter and hunted side by side.
                 Vector3 toward = _runner.transform.position - _taya.transform.position; toward.y = 0;
                 _taya.transform.rotation = Quaternion.LookRotation(toward.normalized);
                 yield return new WaitForSecondsRealtime(.2f);

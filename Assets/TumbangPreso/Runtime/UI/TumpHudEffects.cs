@@ -56,9 +56,8 @@ namespace TumbangPreso.UI
             TickConcussed(local, spectator);
             var f = OwnerUiTheme.Current;
             var round = GameServices.Round;
-            // The same reading as the body's fill (`Visual.TagExposure`): taggable now, or about to be as the can is
-            // stood up. The frame is as strong as the fill is high, so it rises as the can comes up and fades as
-            // Vulnerable runs out, with the body.
+            // The same reading as the body's fill (`Visual.TagExposure`): taggable now, once the can is up. The frame is
+            // as strong as the fill is high, so it fades as Vulnerable runs out, with the body.
             var exposure = spectator || local == null || Visual.TagExposure.Quiet ? Visual.TagExposure.State.Safe : Visual.TagExposure.Read(local, out _level);
             bool threatened = exposure != Visual.TagExposure.State.Safe;
             // The taya's half of the same rule. A knockdown usually lands behind a taya who is

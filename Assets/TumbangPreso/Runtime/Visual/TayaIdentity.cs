@@ -6,9 +6,9 @@ namespace TumbangPreso.Visual
     /// <summary>
     /// WHO IS TAYA, at a glance, on every screen (owner, 2026-10-22, the presentation pass):
     ///   * a glowing headband in `UiTheme.Taya` on the taya, fitted to that rig's own head;
-    ///   * a thick outline in the same red round the whole body (owner, 2026-10-23: "a red outer outline"), drawn by
-    ///     `CharacterVisual.Readability` from <see cref="HunterInk"/>, grey and thinner while the can is down;
-    ///   * a ground ring in the same colour that follows them;
+    ///   * a ground ring in the same colour that follows them (no facing chevron and no red body outline: owner,
+    ///     2026-10-23, "we can remove the red highlight sa body ng taya, okay na pala ung circle around them and the
+    ///     thing on their head", "remove the front facing arrow, okay na ung circle na may claws around it");
     ///   * a TAYA reveal when each round goes live (`UI.TayaReveal`), with the ring flaring out on the court.
     ///
     /// ⚠️ EVERY BODY IS DIFFERENT (owner: *"iba iba size nila"*, *"paete isnt even human"*). The band is measured off
@@ -53,14 +53,8 @@ namespace TumbangPreso.Visual
         /// or flicker through one, and before standing effects (fire, smoke: 3050); still depth tested, so a wall hides them.
         /// </summary>
         private const int MarkQueue = 3025;
-        /// <summary>How much thicker the taya's outline is drawn than anyone else's.</summary>
-        public const float HunterOutline = 3.6f;
-        /// <summary>The taya's outline colour this frame (red, or grey while the can is down).</summary>
-        public static Color HunterInk { get; private set; } = UI.UiTheme.Taya;
-        /// <summary>The taya's outline growth this frame.</summary>
-        public static float HunterGrow { get; private set; } = HunterOutline;
         private void Awake() => _live = this;
-        private GameObject _band, _ring, _facing;
+        private GameObject _band, _ring;
         private Renderer _tayaBody;
         private Material _bandMaterial, _ringMaterial;
         private Renderer _bandRenderer;
@@ -73,8 +67,7 @@ namespace TumbangPreso.Visual
         // taya and if someone can't"*). Read off the ground, for every screen and the spectators:
         //   * an attacker the taya may tag right now (`TagExposure`, `RoundDirector.CanBeTaggedNow`) stands in three arcs
         //     in the taya's own colour that snap in, turn and throb in step with the body's rim, like a reticle on the
-        //     road, in the player's chosen colour; partly full (the can being stood up, Vulnerable running out) they fade
-        //     with the body's fill;
+        //     road, in the player's chosen colour; partly full (Vulnerable running out) they fade with the body's fill;
         //   * the moment they become safe (out of the box, slipper gone, a power), the arcs spin open and are gone;
         //   * while the can is down the taya CANNOT tag (`CombatVerbs` refuses), so their own ring breaks into grey
         //     dashes and the headband dims, and both flare back to colour when the can stands.
@@ -137,8 +130,6 @@ namespace TumbangPreso.Visual
             float drain = Mathf.Clamp01((t - _disarmedSince) / .25f);
             float armed = disarmed ? 1 - drain : 1;
             defense = Color.Lerp(Disarmed, defense, armed);
-            // The outline: red and thick while the taya can tag, grey and thinner while the can is down, flaring on re-arm.
-            HunterInk = defense; HunterGrow = Mathf.Lerp(1.6f, HunterOutline, armed);
             glow *= Mathf.Lerp(.35f, 1, armed);
 
             // The taya's own first-person view: the band would sit in front of the lens and the star would fill the bottom of
@@ -158,7 +149,7 @@ namespace TumbangPreso.Visual
                 float burst = still ? 0 : (1 - flare) * (1 - flare);
                 float r = RingRadius * (1 + 1.6f * burst + (still ? 0 : .04f * Mathf.Sin(t * 2.4f)));
                 // On the floor under the taya, tilted to it; gone in a cutscene, high in the air, over a void, in water,
-                // while a power hides their body, and in their own first-person view. Their outline stays on the body.
+                // while a power hides their body, and in their own first-person view.
                 float presence = TagExposure.Presence;
                 bool grounded = TagExposure.OnFloor(_taya, RingRadius * 1.5f, out Vector3 floorAt, out Quaternion tilt, out float fade);
                 if (_tayaBody == null || !_tayaBody.gameObject.activeInHierarchy)
@@ -174,14 +165,6 @@ namespace TumbangPreso.Visual
                 _ring.transform.rotation = tilt * Quaternion.Euler(0, still ? 0 : t * 24f, 0);
                 _ring.transform.localScale = new Vector3(r, 1, r);
                 _ring.SetActive(shown && armed > .02f);
-                if (_facing != null)
-                {
-                    Vector3 ahead = _taya.transform.forward; ahead.y = 0;
-                    if (ahead.sqrMagnitude < 1e-4f) ahead = Vector3.forward;
-                    _facing.transform.SetPositionAndRotation(_ring.transform.position, tilt * Quaternion.LookRotation(ahead.normalized));
-                    _facing.transform.localScale = new Vector3(r, 1, r);
-                    _facing.SetActive(_ring.activeSelf);
-                }
                 // As bold as the taggable crosshair (owner: "boring nung circle ng taya"): near opaque, and glowing.
                 SetGlow(_ringMaterial, defense, Mathf.Min(1, .88f + .12f * burst) * armed * show, (1.3f * glow + 1.5f * burst) * show);
                 StepBroken(feet, tilt, shown, show, disarmed, t, still);
@@ -256,7 +239,7 @@ namespace TumbangPreso.Visual
                 if (cue.On) { float u = appear; size = still ? 1 : 1 + .7f * (1 - u) * (1 - u) - .08f * Mathf.Sin(u * Mathf.PI); }
                 else size = still ? 1 : 1 + .45f * (1 - appear);
                 // The throb matches the taya-only rim (`CharacterVisual.Readability`), so both read as one signal.
-                // Partly full (the can coming up, Vulnerable running out): fainter, and steady, as the body's fill is.
+                // Partly full (Vulnerable running out): fainter, and steady, as the body's fill is.
                 bool partial = cue.On && cue.Level < .999f;
                 float throb = still || partial ? 1 : .8f + .3f * Mathf.Sin(t * 6.5f);
                 float strength = cue.On ? Mathf.Lerp(.35f, 1, cue.Level) : 1;
@@ -291,18 +274,6 @@ namespace TumbangPreso.Visual
                 Both(tri, b, b + 1, b + 2);
             }
             return Flat(v, tri, "TayaTeeth");
-        }
-
-        /// <summary>A chevron outside the ring pointing along +Z: the way the taya faces.</summary>
-        private static Mesh Chevron()
-        {
-            var v = new System.Collections.Generic.List<Vector3>
-            {
-                new Vector3(-.42f, 0, 1.12f), new Vector3(0, 0, 1.9f), new Vector3(.42f, 0, 1.12f), new Vector3(0, 0, 1.42f),
-            };
-            var tri = new System.Collections.Generic.List<int>();
-            Both(tri, 0, 1, 3); Both(tri, 3, 1, 2);
-            return Flat(v, tri, "TayaFacing");
         }
 
         private static void Both(System.Collections.Generic.List<int> tri, int a, int b, int c)
@@ -382,10 +353,6 @@ namespace TumbangPreso.Visual
             _ringMaterial = _ring.GetComponent<Renderer>().sharedMaterial;
             _ringMaterial.renderQueue = MarkQueue;
             ShadowsOff(_ring);
-            // And a chevron on the ring where the taya faces: the reach is in front of them, so the danger has a direction.
-            _facing = VfxShapes.Lay(transform, "TayaFacing", Chevron(), RingRadius, 0);
-            _facing.GetComponent<Renderer>().sharedMaterial = _ringMaterial;
-            ShadowsOff(_facing);
             _model = taya.GetComponent<CharacterVisual>()?.Model; _bandAttempts = 0;
         }
 
@@ -612,10 +579,9 @@ namespace TumbangPreso.Visual
         {
             DestroyBand();
             if (_ring != null) Destroy(_ring);
-            if (_facing != null) Destroy(_facing);
             if (_broken != null) Destroy(_broken);
             _broken = null; _brokenMaterial = null;
-            _band = _ring = _facing = null; _bandRenderer = null; _bandMaterial = _ringMaterial = null; _taya = null; _model = null;
+            _band = _ring = null; _bandRenderer = null; _bandMaterial = _ringMaterial = null; _taya = null; _model = null;
         }
 
         private void OnDestroy()

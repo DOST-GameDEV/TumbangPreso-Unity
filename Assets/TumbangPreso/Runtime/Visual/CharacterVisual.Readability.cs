@@ -56,13 +56,11 @@ namespace TumbangPreso.Visual
             _readBlock??=new MaterialPropertyBlock();
             var scope=_readPool.Count>0?_readPool.Pop():new ReadScope();scope.Camera=camera;
             float fill=FillFor(camera,_readActor);
-            // The taya wears a thick outline in the taya's red on every gameplay camera (owner, 2026-10-23: "make it more
-            // obvious who the taya is", "a red outer outline"), grey while the can is down (`TayaIdentity`).
+            // The taya wears no body outline of their own: their ring and headband say who they are (owner, 2026-10-23:
+            // "we can remove the red highlight sa body ng taya"). `_HunterGrow` stays 0 so the toon shader draws them plain.
             // Body cues stay on in the air, over a void and in water (the floor marks are what go); only a cutscene or a
             // replay on this screen fades them (`TagExposure.Presence`, owner: "disappear during ult cutscenes").
             float presence=TagExposure.Presence;
-            bool hunter=_readActor.IsDefender && camera!=null && camera.cameraType==CameraType.Game && presence>.01f &&
-                GameServices.Match!=null && GameServices.Match.MatchInProgress && WorldCueProfile.Current.TayaTarget>0;
             bool catchable=fill>.001f && presence>.01f && WorldCueProfile.Current.TayaTarget>0;
             foreach(var surface in _renderers)
             {
@@ -83,8 +81,7 @@ namespace TumbangPreso.Visual
                 _readBlock.SetVector("_WorldBody",new Vector4(_readActor.transform.position.y,bodyCapsule!=null?bodyCapsule.height:1.6f,1,0));
                 _readBlock.SetFloat("_DepthReadability",WorldCueProfile.Current.DistanceReadability);
                 _readBlock.SetFloat("_TayaCue",catchable?1:0);
-                _readBlock.SetFloat("_HunterGrow",hunter?Mathf.Lerp(1,TayaIdentity.HunterGrow,presence):0);
-                if(hunter)_readBlock.SetColor("_HunterInk",Color.Lerp(new Color(.02f,.02f,.03f,1),TayaIdentity.HunterInk,presence));
+                _readBlock.SetFloat("_HunterGrow",0);
                 if(catchable)
                 {
                     var colour=TagExposure.Colour;

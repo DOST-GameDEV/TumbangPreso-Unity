@@ -995,7 +995,7 @@ namespace TumbangPreso.CameraSystem
             return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         }
 
-        private float _fppSquatBlend, _reworkEyeDrop;
+        private float _fppSquatBlend, _fppSquatShape, _reworkEyeDrop;
 
         /// <summary>0 to 1: how deep the local taya is in the raise's crouch, eased in and out.</summary>
         private float FppRaiseSquat()
@@ -1004,8 +1004,10 @@ namespace TumbangPreso.CameraSystem
             var motor = _character != null ? _character.GetComponent<CharacterMotor>() : null;
             var lata = GameServices.Round?.Lata;
             float ratio = carrier != null && motor != null && motor.IsDefender && lata != null && !lata.IsUpright ? carrier.ChannelRatio : 0f;
-            _fppSquatBlend = Mathf.MoveTowards(_fppSquatBlend, ratio > 0 ? 1f : 0f, Time.deltaTime / (ratio > 0 ? .12f : .18f));
-            return _fppSquatBlend * Visual.CanRaiseShape.Crouch(ratio > 0 ? ratio : 1f);
+            _fppSquatBlend = Mathf.MoveTowards(_fppSquatBlend, ratio > 0 ? 1f : 0f, Time.deltaTime / (ratio > 0 ? .12f : .25f));
+            // Let go mid-raise: straighten from where the bend is, not from the shape's end (which is standing).
+            if (ratio > 0) _fppSquatShape = Visual.CanRaiseShape.FppBend(ratio);
+            return Mathf.SmoothStep(0f, 1f, _fppSquatBlend) * _fppSquatShape;
         }
 
         private void ApplyFpp()
@@ -1018,6 +1020,7 @@ namespace TumbangPreso.CameraSystem
             // offsets the view, never `_pitchDeg`, so the aim is untouched when the raise ends.
             float squat = FppRaiseSquat();
             eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
+            eye += Quaternion.Euler(0f, yaw, 0f) * Vector3.forward * (Visual.CanRaiseShape.FppLean * squat);
 
             // The movement rework's crouch and slide, from the eyes (`MovementRework`, a debug switch; zero with it off).
             // An offset of the view like the two around it, eased so the drop is a motion and not a cut.

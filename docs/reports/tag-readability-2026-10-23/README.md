@@ -209,3 +209,14 @@ Each round was judged on frames from the taya's first-person view, an attacker's
   and empty after it; onsets 3.94 to 4.00 s. The probe's 35 s exit was stale since the opening films; it now exits
   30 s after the round goes live. Not covered: link impairment, a network spectator, the can-down channel on a client.
 - Build: `Builds/tagread/TumbangPreso.exe`, run with `-tp-botmatch` (spectator camera): `Logs/tagread-botmatch`.
+
+## Owner playtest fixes, 2026-10-23
+
+- Nobody is marked while the can is down, the taya standing it up included: `TagExposure` lost its restore-channel
+  state, so the fill, the arcs and the attacker's screen frame start only once the can is up.
+- The taya has no red body outline and no facing chevron. The red star ring and the headband say who the taya is.
+- First person: the jab and the dash tag lay the forearm along the line to a fist just under the crosshair
+  (`ViewmodelArms.TagReach`); v1 only slid and tipped it. The raise puts both fists either side of the can as drawn
+  (`ViewmodelArms.RaiseCan`), and the eye bends 17 cm, leans 10 cm and looks down 24 degrees, holding until the can
+  seats (`CanRaiseShape.FppBend`), where it used to dip 34 cm and rise early.
+- Evidence: `Logs/fpp-1023/before-*.mp4` and `after3-*.mp4`, contact sheets beside them.

@@ -36,16 +36,27 @@ namespace TumbangPreso.Visual
     ///  * GRIP (to 0.30): held low, both hands on the can;
     ///  * LIFT (0.30 to 0.85): standing back up WITH it, the hands rising as the can tilts upright;
     ///  * SET (0.85 to 1): the short press that plants it.
-    /// The first-person camera takes the same crouch as a drop of the eye and a look down at the can
-    /// (`CameraRig.ApplyFpp`), so the player feels the squat as well as seeing hands.
+    /// The first-person camera bends with its own slower curve, <see cref="FppBend"/> (`CameraRig.ApplyFpp`), so the
+    /// player feels the bend as well as seeing their hands on the can.
     /// </summary>
     public static class CanRaiseShape
     {
         public const float CrouchSpreadDegrees = 24f;
-        /// <summary>How far the first-person eye drops at the bottom of the squat, metres.</summary>
-        public const float FppEyeDrop = .34f;
+        /// <summary>How far the first-person eye drops at the bottom of the bend, metres.</summary>
+        public const float FppEyeDrop = .17f;
+        /// <summary>How far the first-person eye leans out over the can at the bottom of the bend, metres.</summary>
+        public const float FppLean = .10f;
         /// <summary>How far the first-person view tips down toward the can at the bottom, degrees.</summary>
-        public const float FppLookDown = 16f;
+        public const float FppLookDown = 24f;
+
+        /// <summary>
+        /// The first-person bend (owner, 2026-10-23: *"feels like im js wobbing my can and i js did a quick squat"*). The
+        /// body's <see cref="Crouch"/> is a quick drop then an early rise, which read from the eyes as a bob while the hands
+        /// floated. From the eyes the bend is slower (in over the first quarter), shallower (17 cm, was 34), leans out over
+        /// the can and looks down at it, and HOLDS while the hands stand it up, straightening only as the can seats.
+        /// </summary>
+        public static float FppBend(float p) =>
+            Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0f, .26f, p)) * (1f - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.78f, 1f, p)));
 
         public static float Crouch(float p) =>
             Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0f, .18f, p)) * (1f - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.30f, .85f, p)));

@@ -11,8 +11,9 @@ namespace TumbangPreso.Visual
     /// One reading for every cue on every screen, from replicated state only, as a LEVEL the body fills to:
     ///   * <see cref="State.Taggable"/> (<see cref="RoundDirector.CanBeTaggedNow"/>, the call the tag makes): full. In the
     ///     last second of Vulnerable, when its end will make them safe, the level drains with the time left.
-    ///   * <see cref="State.Arming"/>: the can is down, the taya is standing it up, and this body will be taggable the
-    ///     moment it stands. The level climbs with the restore channel, so it is full the instant the can is up.
+    ///   * While the can is down nobody is marked, the taya standing it up included: the fill climbs only once the can
+    ///     is up (owner, 2026-10-23: "ppl get highlighted the moment i click raise can (or even if can isnt raised)",
+    ///     "they js get highlighted the moment na nakataas na can"). The restore channel had filled bodies early.
     ///   * <see cref="State.Safe"/>: empty. Safe is the default look; only the exception is marked.
     /// <see cref="Fill"/> is the level as drawn: it climbs quickly and drains a little slower, so every change is seen as
     /// the colour moving. `TayaIdentity` advances every body once a frame, so the fill keeps time whether or not a
@@ -20,7 +21,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class TagExposure
     {
-        public enum State { Safe, Taggable, Arming }
+        public enum State { Safe, Taggable }
 
         /// <summary>The last stretch of Vulnerable that drains.</summary>
         public const float EndingSeconds = 1f;
@@ -42,12 +43,7 @@ namespace TumbangPreso.Visual
                     level = Mathf.Clamp01(actor.VulnerableLeft / EndingSeconds);
                 return State.Taggable;
             }
-            var can = round.Lata;
-            if (can == null || can.IsUpright || !actor.IsTaggable()) return State.Safe;
-            float restore = LataClockPresentation.For(can)?.RestoreRatio ?? 0;
-            if (restore <= 0) return State.Safe;
-            level = Mathf.Clamp01(restore);
-            return State.Arming;
+            return State.Safe;
         }
 
         private sealed class Drawn { public float Fill; public int Frame = -1; public float At = -1; }

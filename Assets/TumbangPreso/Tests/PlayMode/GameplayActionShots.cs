@@ -100,7 +100,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator RaisingTheCanInBothViews()
         {
-            yield return MapRetrievalProbe.Load("BayanPlaza");
+            yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
             var lata = GameServices.Round.Lata;
             CharacterMotor taya = null;
             foreach (var p in GameServices.Round.Players) if (p.IsDefender) taya = p;
@@ -132,6 +132,43 @@ namespace TumbangPreso.PlayTests
             }
             finally { Object.Destroy(hold); Object.Destroy(camera.gameObject); }
             Assert.Greater(peak, .5f, "The raise never showed progress: " + why);
+        }
+
+        /// <summary>
+        /// The taya's jab and dash tag in both views (owner, 2026-10-23: "taya animation in FPP is weird", "it feels
+        /// like im js wobbing my arm, no reaching"). Render only: the clips and the view kick, no tag is attempted.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TagReachInBothViews()
+        {
+            yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
+            CharacterMotor taya = null;
+            foreach (var p in GameServices.Round.Players) if (p.IsDefender) taya = p;
+            Assert.IsNotNull(taya, "No taya this round.");
+            foreach (var p in GameServices.Round.Players) if (p != taya) p.Teleport(new Vector3(20 + p.PlayerSlot * 3, .2f, -20));
+            foreach (var brain in taya.GetComponents<MonoBehaviour>()) if (brain.GetType().Name == "AIController") brain.enabled = false;
+            var spot = GameServices.Round.Lata.transform.position + Vector3.back * 4f; spot.y += .18f;
+            taya.Teleport(spot); taya.transform.rotation = Quaternion.identity;
+            var animator = taya.GetComponent<CharacterAnimator>();
+            var rig = Camera.main.GetComponent<CameraRig>(); rig.Follow(taya, true); rig.SetAimSource(AimSource.Movement);
+            var camera = new GameObject("Tag witness").AddComponent<Camera>();
+            camera.CopyFrom(Camera.main); camera.enabled = false; camera.tag = "Untagged";
+            camera.cullingMask &= ~(1 << 5); camera.fieldOfView = 40;
+            camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            try
+            {
+                foreach (var (name, kick) in new[] { ("punch", 1f), ("lunge", 1.4f) })
+                {
+                    bool played = false;
+                    yield return ImprovementEvidenceProbe.Record(camera, "action-tag-" + name, 1.4f, taya, t =>
+                    {
+                        if (t >= .3f && !played) { played = true; animator.PlayAction(name); rig.ViewmodelKick(Vector3.forward, kick); }
+                    }, new Vector3(2.6f, 1.3f, 2.2f));
+                    Assert.IsTrue(played, name + ": never played.");
+                    yield return new WaitForSeconds(.5f);
+                }
+            }
+            finally { Object.Destroy(camera.gameObject); }
         }
 
         [DefaultExecutionOrder(-300)] private sealed class HoldGrab : MonoBehaviour
