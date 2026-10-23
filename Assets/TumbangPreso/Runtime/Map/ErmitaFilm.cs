@@ -12,12 +12,14 @@ namespace TumbangPreso.Map
     ///   UNDER    0.0 / 0.0   Under the deck between the pillars, low, sliding north along them and turning west to
     ///                         the court across the road: sodium light, wet-dark asphalt. ERMITA at 0.9.
     ///   STANDOFF 3.4 / none  Out of the dark: the attackers walk in from the north, the taya from the south, toward
-    ///                         the can. Three cuts: across the court from the road, low behind the taya at the three
-    ///                         coming, then over the attackers' shoulders at the one.
-    ///   TRAIN    7.2 / 1.6   The consist rolls in from the south along the viaduct. From the court's west side, low,
-    ///                         the players in front and the train behind them, its windows strobing light through
-    ///                         the pillars over them; faces lit and dark. DROP at 9.0: the consist level with the
-    ///                         court, under the deck looking up as it thunders over, the beat dropping.
+    ///                         the can. Three cuts: the three walking at the lens, abreast, chins up (3.4); the taya
+    ///                         walking at the lens, hunched, alone (4.6); then over the taya's shoulder at the three
+    ///                         as they plant and square up across the can (5.7).
+    ///   TRAIN    7.2 / 1.6   The consist rolls in from the north along the viaduct. A crane up from behind the taya
+    ///                         (the deck hides the consist from the ground): the four below, and the train sliding in
+    ///                         over the deck past the three; then faces in its window strobe. DROP at 9.0: beside the
+    ///                         deck at rail height south of the court, the consist coming at the lens and thundering
+    ///                         past it, the beat dropping.
     ///   TAYA     10.4 / 4.0  Quiet. A sodium lamp over the taya stutters on; the TAYA plate stamps.
     ///   CLOSE    12.8 / 5.4  Each attacker's own screen ends on themselves; the taya's and a watcher's hold the taya.
     ///
@@ -34,17 +36,19 @@ namespace TumbangPreso.Map
         protected override float CloseAt(bool full) => full ? 12.8f : 5.4f;
 
         private const float StandAt = 3.4f, TrainAt = 7.2f, DropAt = 9.0f, DropEnd = 9.8f, TayaAt_ = 10.4f;
-        private const float StandWalk = 3.2f, TrainSpeed = 24.0f;
+        private const float StandWalk = 3.2f, TrainSpeed = 13.0f;
+        private const float StandB = 4.6f, StandC = 5.7f;
         private float _trainAt, _dropAt, _tayaAt;
 
-        /// <summary>Night: a navy sky, the moon for a sun, the street lamps up hard.</summary>
+        /// <summary>Night: deep blue, the moon for a sun, the street lamps up hard (run 4 read dusk-purple: no red in the
+        /// sky or the fog now, and the warmth only in the sodium pools).</summary>
         private static readonly Mood Night = new Mood
         {
-            Sky = new Color(0.12f, 0.14f, 0.26f), Equator = new Color(0.18f, 0.17f, 0.28f), Ground = new Color(0.10f, 0.09f, 0.12f),
-            Fog = new Color(0.08f, 0.09f, 0.17f), FogStart = 18.0f, FogEnd = 150.0f,
-            Zenith = new Color(0.03f, 0.04f, 0.11f), Horizon = new Color(0.17f, 0.13f, 0.24f),
-            Sun = new Color(0.55f, 0.66f, 1.0f), SunIntensity = 0.3f, SunElevation = 38.0f,
-            Brightness = 0.92f, Saturation = 0.95f, Lamps = 2.4f, KeepYaw = true,
+            Sky = new Color(0.05f, 0.08f, 0.19f), Equator = new Color(0.06f, 0.09f, 0.18f), Ground = new Color(0.04f, 0.04f, 0.06f),
+            Fog = new Color(0.03f, 0.05f, 0.12f), FogStart = 14.0f, FogEnd = 120.0f,
+            Zenith = new Color(0.01f, 0.02f, 0.07f), Horizon = new Color(0.05f, 0.09f, 0.20f),
+            Sun = new Color(0.45f, 0.6f, 1.0f), SunIntensity = 0.18f, SunElevation = 38.0f,
+            Brightness = 0.82f, Saturation = 1.08f, Lamps = 2.6f, KeepYaw = true,
         };
 
         // ---- the viaduct and the train
@@ -55,7 +59,7 @@ namespace TumbangPreso.Map
 
         // ---- the street
         private Light[] _sodium = new Light[0];
-        private Renderer[] _sodiumHeads = new Renderer[0];
+        private Renderer[] _sodiumHeads = new Renderer[0], _sodiumPools = new Renderer[0];
         private Light _tayaLamp;
         private Renderer _tayaLampHead, _tayaPool;
 
@@ -70,7 +74,7 @@ namespace TumbangPreso.Map
             _tayaAt = Still ? 4.0f : TayaAt_;
             TitleAt(Still ? 0.2f : 0.9f, Still ? 1.4f : 3.0f);
             TayaAt(_tayaAt + 0.35f, CloseAt(!Still) - _tayaAt - 0.35f);
-            if (!Still) { Cut(StandAt); Cut(5.0f); Cut(6.1f); Cut(TrainAt); Cut(8.0f); Cut(8.55f); Cut(DropEnd); }
+            if (!Still) { Cut(StandAt); Cut(StandB); Cut(StandC); Cut(TrainAt); Cut(8.0f); Cut(8.55f); Cut(DropEnd); }
             else { Cut(_trainAt); }
             Cut(_tayaAt);
 
@@ -100,12 +104,18 @@ namespace TumbangPreso.Map
 
             // Sodium lamps round the court and a cold strip under the deck: the night's light.
             var at = new[] { new Vector3(-8.5f, 6.0f, -8.5f), new Vector3(8.5f, 6.0f, -8.5f), new Vector3(-8.5f, 6.0f, 9.5f), new Vector3(8.5f, 6.0f, 9.5f), new Vector3(_viaductX - Centre.x - 3.0f, 7.0f, 0.0f) };
-            _sodium = new Light[at.Length]; _sodiumHeads = new Renderer[at.Length];
+            _sodium = new Light[at.Length]; _sodiumHeads = new Renderer[at.Length]; _sodiumPools = new Renderer[at.Length];
             for (int i = 0; i < at.Length; i++)
             {
                 bool cold = i == at.Length - 1;
-                _sodium[i] = Lamp("Sodium " + i, Centre + at[i], cold ? new Color(0.72f, 0.86f, 1.0f) : new Color(1.0f, 0.62f, 0.26f), cold ? 16.0f : 15.0f);
+                _sodium[i] = Lamp("Sodium " + i, Centre + at[i], cold ? new Color(0.72f, 0.86f, 1.0f) : new Color(1.0f, 0.58f, 0.2f), cold ? 16.0f : 15.0f);
                 _sodiumHeads[i] = Glow("Sodium head " + i, Centre + at[i], Vector2.one * 0.9f, Color.clear);
+                if (cold) continue;
+                // An orange pool on the asphalt under each: the night's only warmth, and where the players stand in it.
+                Vector3 floor = Centre + new Vector3(at[i].x * 0.85f, 0.0f, at[i].z * 0.85f);
+                floor.y = Floor(floor, Centre.y) + 0.012f;
+                _sodiumPools[i] = Glow("Sodium pool " + i, floor, new Vector2(8.5f, 8.5f), Color.clear, Vector3.up, Soft);
+                _sodiumPools[i].transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             }
 
             // The taya's lamp, overhead, off until the quiet after the train.
@@ -167,30 +177,44 @@ namespace TumbangPreso.Map
             Shoot(eye, Vector3.Lerp(along, court, Smooth((age - 1.2f) / (StandAt - 1.2f))), Mathf.Lerp(58.0f, 46.0f, p), Mathf.Lerp(-4.0f, 0.0f, p));
         }
 
-        // ---- STANDOFF: three cuts as the two sides walk to the can.
+        // ---- STANDOFF: three cuts as the two sides walk to the can (run 4: walkers small at the frame edges, a head
+        // filling the frame, a shoulder blocking the subject; each cut is now built on the bodies it is about).
         private void Standoff(float age)
         {
-            if (age < 5.0f)
+            if (age < StandB)
             {
-                // Across the court from the road's kerb, low: the two sides closing on the can between them.
-                float p = Smooth((age - StandAt) / (5.0f - StandAt));
-                Vector3 eye = Centre + new Vector3(11.5f, Mathf.Lerp(0.7f, 0.9f, p), Mathf.Lerp(-1.0f, 0.4f, p));
-                Shoot(ClearEye(Centre + Vector3.up, eye), Centre + new Vector3(-1.0f, 1.0f, 2.8f), 50.0f);
+                // The three walking at the lens, abreast, out of the dark: the camera gives ground as they come.
+                float p = Smooth((age - StandAt) / (StandB - StandAt));
+                Vector3 mid = AttackersMid();
+                Vector3 eye = mid + new Vector3(0.6f, 0.7f, Mathf.Lerp(-5.8f, -4.4f, p));
+                Shoot(eye, mid + new Vector3(0.0f, 1.15f, 0.0f), 46.0f, 1.5f);
             }
-            else if (age < 6.1f)
+            else if (age < StandC)
             {
-                // Low behind the taya, the three coming at us.
-                Vector3 back = Here(Taya) + new Vector3(0.6f, 0.65f, -2.6f);
-                Shoot(back, Centre + new Vector3(0.0f, 1.0f, 8.0f), 44.0f, 2.0f);
+                // The taya alone, walking at the lens, hunched, low and close.
+                float p = Smooth((age - StandB) / (StandC - StandB));
+                Vector3 taya = Here(Taya);
+                Vector3 eye = taya + new Vector3(-0.6f, 0.6f, Mathf.Lerp(3.6f, 2.9f, p));
+                Shoot(eye, taya + new Vector3(0.0f, 1.05f, 0.0f), 40.0f, -2.0f);
             }
             else
             {
-                // Over the attackers' shoulders at the one.
-                int near = NearestAttacker();
-                Vector3 shoulder = Here(near) + new Vector3(0.7f, 1.5f, 1.6f);
-                Shoot(shoulder, Here(Taya) + Vector3.up * 1.0f, 40.0f, -2.0f);
+                // Over the taya's shoulder at the three as they plant: the taya's head and shoulder big on the left, the
+                // three squared up beyond the can (run 6: a profile from the kerb left them small at the edges).
+                float p = Smooth((age - StandC) / (TrainAt - StandC));
+                Vector3 taya = Here(Taya);
+                Vector3 eye = taya + new Vector3(-0.95f, Mathf.Lerp(1.55f, 1.45f, p), Mathf.Lerp(-1.9f, -1.6f, p));
+                Shoot(eye, AttackersMid() + new Vector3(-0.4f, 0.95f, 0.0f), 34.0f, 1.0f);
             }
             if (Crossed(StandAt + 0.1f)) Cue("sfx_film_ermita_step", 0.6f);
+        }
+
+        /// <summary>The middle of the three attackers as drawn this frame.</summary>
+        private Vector3 AttackersMid()
+        {
+            Vector3 sum = Vector3.zero; int n = 0;
+            for (int s = 0; s < Seats; s++) if (s != Taya && Body(s) != null) { sum += Here(s); n++; }
+            return n > 0 ? sum / n : Centre + Vector3.forward * 9.0f;
         }
 
         private int NearestAttacker()
@@ -232,7 +256,17 @@ namespace TumbangPreso.Map
         private Feel Acting(int s, float age, float walked)
         {
             Vector3 across = s == Taya ? Centre + new Vector3(0.0f, 1.2f, 9.0f) : Chest(Taya);
-            var feel = walked < 1.0f && !Still ? new Feel { Turn = LookTurn(s, across) * 0.7f, Nod = 6.0f } : Glare(s, across, age + s);
+            Feel feel;
+            if (walked < 1.0f && !Still)
+            {
+                // Walking in: the three with their chests out and a roll in the shoulders, the taya hunched and coming
+                // head down, eyes up, at the three.
+                float step = Mathf.Sin(age * 8.4f + s);
+                feel = s == Taya
+                    ? new Feel { Lean = 12.0f, Nod = 14.0f, Turn = LookTurn(s, across) * 0.5f, Rock = 3.0f * step }
+                    : new Feel { Lean = -7.0f, Nod = -9.0f, Turn = LookTurn(s, across) * 0.8f, Rock = 7.0f * step, Twist = 6.0f * step };
+            }
+            else feel = Planted(s, across, age);
             // The train overhead: heads up, a brace.
             float over = !Still && age > _dropAt - 0.6f && age < DropEnd + 0.3f ? Smooth((age - (_dropAt - 0.6f)) / 0.3f) * (1.0f - Smooth((age - DropEnd) / 0.3f)) : 0.0f;
             if (over > 0.0f)
@@ -257,8 +291,31 @@ namespace TumbangPreso.Map
             return feel;
         }
 
+        /// <summary>Planted at the can: each of the three squares up their own way (knuckles, a neck roll, a glare), the
+        /// taya glares back.</summary>
+        private Feel Planted(int s, Vector3 across, float age)
+        {
+            var glare = Glare(s, across, age + s);
+            if (s == Taya || Still) return glare;
+            int k = (s - Taya + Seats) % Seats;
+            Vector3 f = Facing(s), si = Side(s), up = Vector3.up;
+            if (k == 1)
+            {
+                // Cracking the knuckles: both fists together at the chest, a grind.
+                float grind = Mathf.Sin(age * 14.0f) * 0.12f;
+                return new Feel { Lean = 6.0f, Nod = 12.0f, Turn = LookTurn(s, across), Left = f + up * 0.15f + si * (0.25f + grind), Right = f + up * 0.15f - si * (0.25f - grind), Arms = 0.95f };
+            }
+            if (k == 2)
+            {
+                // A slow neck roll, chin up, fists low and loose.
+                return new Feel { Lean = -4.0f, Nod = -6.0f + 10.0f * Mathf.Sin(age * 3.0f), Tilt = 20.0f * Mathf.Sin(age * 3.0f + 1.2f), Turn = LookTurn(s, across) * 0.8f, Left = glare.Left, Right = glare.Right, Arms = 0.7f };
+            }
+            return glare;
+        }
+
         // ---- TRAIN: the consist over the viaduct, its windows strobing over the court, the drop as it passes.
-        private float TrainZ(float age) => Centre.z + (age - _dropAt) * TrainSpeed;
+        /// <summary>The consist's middle: from the north, level with the court at the drop.</summary>
+        private float TrainZ(float age) => Centre.z - (age - _dropAt) * TrainSpeed;
 
         private void Train(float age)
         {
@@ -267,7 +324,7 @@ namespace TumbangPreso.Map
             if (_train != null)
             {
                 _train.SetActive(running);
-                if (running) _train.transform.SetPositionAndRotation(new Vector3(_trackX, _trackY, z), Quaternion.identity);
+                if (running) _train.transform.SetPositionAndRotation(new Vector3(_trackX, _trackY, z), Quaternion.Euler(0.0f, 180.0f, 0.0f));
             }
             if (Crossed(_trainAt - 0.3f)) Cue("sfx_lrt_pass", 0.9f, 1.15f);
             if (Crossed(Still ? 0.6f : 1.4f)) Cue("sfx_film_ermita_horn", 0.55f);
@@ -286,7 +343,7 @@ namespace TumbangPreso.Map
             _belly.intensity = 3.0f * near;
             if (!Still && near > 0.05f) Flash(new Color(0.75f, 0.85f, 1.0f), 0.07f * near * bands);
             // The drop: one white hit as it passes over.
-            if (age >= _dropAt && age < _dropAt + 0.3f) Flash(Color.white, 0.4f * (1.0f - (age - _dropAt) / 0.3f) * (Still ? 0.4f : 1.0f));
+            if (age >= _dropAt && age < _dropAt + 0.2f) Flash(Color.white, 0.22f * (1.0f - (age - _dropAt) / 0.2f) * (Still ? 0.4f : 1.0f));
             ScoreLevel = age >= _trainAt && age < _dropAt ? Mathf.Lerp(0.85f, 0.55f, Span(age, _trainAt, _dropAt)) : 0.85f;
         }
 
@@ -294,10 +351,15 @@ namespace TumbangPreso.Map
         {
             if (age < 8.0f)
             {
-                // From the court's west side, low, the four in front and the train sliding in behind them, high.
-                float p = Smooth((age - TrainAt) / (8.0f - TrainAt));
-                Vector3 eye = Centre + new Vector3(-9.0f, Mathf.Lerp(0.8f, 1.0f, p), Mathf.Lerp(-2.0f, -1.0f, p));
-                Shoot(ClearEye(Centre + Vector3.up, eye), new Vector3(_viaductX, Centre.y + 4.0f, Mathf.Lerp(-6.0f, 0.0f, p)), 52.0f, 3.0f);
+                // A crane up from behind the taya: the four below, the three facing us across the can, and the consist
+                // sliding in over the deck beyond them as the camera clears its parapet (run 6: from across the street
+                // at five metres the deck still hid it).
+                // Up fast, so the consist is over the parapet for most of the shot (film r7: at 5 m it still hid it).
+                float p = Smooth((age - TrainAt) / 0.55f);
+                Vector3 eye = Centre + new Vector3(-3.0f, Mathf.Lerp(5.0f, 9.6f, p), -10.0f);
+                Vector3 train = new Vector3(_trackX, _trackY + 1.8f, TrainZ(age));
+                Vector3 court = Centre + new Vector3(0.0f, 0.8f, 5.0f);
+                Shoot(ClearEye(Centre + Vector3.up, eye), Vector3.Lerp(court, train, Mathf.Lerp(0.25f, 0.42f, p)), 58.0f, 2.0f);
             }
             else if (age < 8.55f)
             {
@@ -314,14 +376,16 @@ namespace TumbangPreso.Map
             }
             else if (age < DropEnd)
             {
-                // DROP: under the deck, looking straight up the train as it thunders over.
+                // DROP: beside the deck at rail height, south of the court: the consist comes at the lens and
+                // thunders past it (run 4 put the eye inside the deck and the frame washed grey).
                 float p = (age - DropAt) / (DropEnd - DropAt);
-                Vector3 eye = new Vector3(_trackX - 4.0f, Centre.y + 1.4f, Centre.z - 3.0f + 2.0f * p);
-                Shoot(eye, new Vector3(_trackX, _trackY + 1.0f, TrainZ(age) - 2.0f), 70.0f, -8.0f + 6.0f * p);
+                Vector3 eye = new Vector3(_viaductX - 6.0f, _trackY + 1.8f, Centre.z - 8.0f - 0.6f * p);
+                float nose = Mathf.Max(TrainZ(age) - 5.0f, eye.z - 3.0f);
+                Shoot(eye, new Vector3(_trackX, _trackY + 1.8f, nose), 62.0f, Mathf.Lerp(-7.0f, 0.0f, p));
             }
             else
             {
-                // The tail going away north; the four in the flicker, high and wide from the kerb.
+                // The tail going away south; the four in the flicker, high and wide from the kerb.
                 float p = Smooth((age - DropEnd) / (_tayaAt - DropEnd));
                 Vector3 eye = Centre + new Vector3(10.5f, Mathf.Lerp(3.4f, 4.0f, p), -9.0f);
                 Shoot(ClearEye(Centre + Vector3.up, eye), Centre + new Vector3(-0.5f, 0.6f, 2.0f), 48.0f);
@@ -373,6 +437,7 @@ namespace TumbangPreso.Map
                 bool cold = i == _sodium.Length - 1;
                 _sodium[i].intensity = (cold ? 1.6f : 2.2f) * hum;
                 Billboard(_sodiumHeads[i], _sodium[i].transform.position, cold ? new Color(0.75f, 0.88f, 1.0f, 0.7f * hum) : new Color(1.0f, 0.68f, 0.32f, 0.85f * hum), 0.9f);
+                if (_sodiumPools[i] != null) _sodiumPools[i].sharedMaterial.color = new Color(1.0f, 0.55f, 0.18f, 0.32f * hum);
             }
         }
     }

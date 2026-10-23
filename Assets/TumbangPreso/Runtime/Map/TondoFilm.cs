@@ -14,8 +14,11 @@ namespace TumbangPreso.Map
     ///                         itself behind him in a trail of dust, and skids up to the lens.
     ///   DOORS    6.4 / none  Four doors in the house fronts, one per seat, 0.9 s apart: the door cracks, swings,
     ///                         warm light spills, and the player steps out and walks to the huddle by the can.
-    ///   MAIBA    11.3 / 1.8  The four in a ring, from low outside it: MAI · BA · TA · YA, a clap and a warm spot on
-    ///                         each player in turn round the ring; the fourth lands on round 1's taya.
+    ///   MAIBA    11.3 / 1.8  From the ground inside the ring beside the can, looking up: the four leaning in over the
+    ///                         lens against the dusk, hands meeting over it. MAI · BA · TA · YA, a clap and a warm spot
+    ///                         on each player in turn round the ring; the fourth lands on round 1's taya. On YA, a cut
+    ///                         high to the north side (the taya faces north): the taya struck and sagging, the two
+    ///                         flanking attackers laughing at them, the counter dancing.
     ///   TAYA     13.05 / 3.5 Close on the taya, the TAYA plate stamping, as the attackers scatter to their marks
     ///                         behind and the taya steps back to theirs.
     ///   CLOSE    14.9 / 4.9  Each attacker's own screen ends on themselves; the taya's and a watcher's hold the taya.
@@ -91,7 +94,7 @@ namespace TumbangPreso.Map
             TitleAt(Still ? 0.2f : 0.9f, Still ? 1.6f : 3.0f);
             TayaAt(_tayaCut, CloseAt(!Still) - _tayaCut);
             if (!Still) { Cut(ChalkAt); for (int i = 0; i < Seats; i++) Cut(DoorsAt + i * DoorGap); Cut(DoorsAt + 4 * DoorGap + 0.2f); }
-            Cut(Still ? 1.8f : MaibaAt); Cut(_tayaCut);
+            Cut(Still ? 1.8f : MaibaAt); Cut(_syllableAt[3]); Cut(_tayaCut);
 
             // The huddle: a ring round the can itself, the taya's place on its south, the others round it
             // in the order their marks stand, so nobody crosses anyone on the way out.
@@ -106,7 +109,8 @@ namespace TumbangPreso.Map
                 if (s == Taya) angle = 180.0f;
                 else { int k = order.IndexOf(s); angle = order.Count <= 1 ? 0.0f : Mathf.Lerp(-95.0f, 95.0f, k / (float)(order.Count - 1)); }
                 Vector3 dir = Quaternion.Euler(0.0f, angle, 0.0f) * Vector3.forward;
-                _ring[s] = _huddle + dir * 1.3f;
+                // 1.6 m: room for the lens between them in the count (film r7: at 1.3 the torsos filled it).
+                _ring[s] = _huddle + dir * 1.6f;
                 _ring[s].y = Floor(_ring[s], Centre.y);
                 _ringYaw[s] = Quaternion.LookRotation(-dir).eulerAngles.y;
             }
@@ -144,7 +148,7 @@ namespace TumbangPreso.Map
             if (!Still)
             {
                 if (_realLine != null) Hide(new[] { _realLine });
-                _chalkLine = Glow("Fresh chalk", _lineFrom, new Vector2(0.01f, 0.15f), new Color(1.0f, 0.97f, 0.9f, 0.95f), Vector3.up, Texture2D.whiteTexture);
+                _chalkLine = Glow("Fresh chalk", _lineFrom, new Vector2(0.01f, 0.15f), new Color(1.0f, 1.0f, 0.97f, 1.0f), Vector3.up, Texture2D.whiteTexture);
                 _chalkLine.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
                 for (int i = 0; i < _dust.Length; i++) _dust[i] = Glow("Chalk dust " + i, _lineFrom, Vector2.one * 0.3f, Color.clear);
                 _glint = Glow("Chalk glint", _lineFrom, Vector2.one * 0.3f, Color.clear);
@@ -223,10 +227,11 @@ namespace TumbangPreso.Map
             {
                 _chalkLine.enabled = length > 0.01f;
                 _chalkLine.transform.position = Vector3.Lerp(_lineFrom, head, 0.5f);
-                _chalkLine.transform.localScale = new Vector3(Mathf.Max(0.01f, length), 0.17f, 1.0f);
+                // Wider than the real line it stands in for: from knee height the true width read faint (run 4).
+                _chalkLine.transform.localScale = new Vector3(Mathf.Max(0.01f, length), 0.26f, 1.0f);
             }
             // A glint where the chalk meets the concrete.
-            Billboard(_glint, head + Vector3.up * 0.08f, new Color(1.0f, 1.0f, 0.95f, run < 0.98f ? 0.9f : 0.0f), 0.32f + 0.06f * Mathf.Sin(age * 40.0f));
+            Billboard(_glint, head + Vector3.up * 0.1f, new Color(1.0f, 1.0f, 0.95f, run < 0.98f ? 1.0f : 0.0f), 0.55f + 0.12f * Mathf.Sin(age * 40.0f));
             for (int i = 0; i < _dust.Length; i++)
             {
                 // Puffs shed at the chalk's tip, each rising and spreading over its own half second.
@@ -234,14 +239,14 @@ namespace TumbangPreso.Map
                 float since = age - born / 8.0f;
                 Vector3 at = Vector3.Lerp(_lineFrom, _lineTo, Mathf.Clamp01(eased - since * 0.3f)) + Vector3.up * (0.05f + since * 0.45f) + new Vector3(0.0f, 0.0f, 0.08f * Mathf.Sin(born));
                 float a = run < 0.98f ? 0.6f * (1.0f - Mathf.Clamp01(since / 0.6f)) : 0.0f;
-                Billboard(_dust[i], at, new Color(1.0f, 0.97f, 0.92f, a), 0.16f + since * 0.5f);
+                Billboard(_dust[i], at, new Color(1.0f, 0.97f, 0.92f, a), 0.24f + since * 0.6f);
             }
             if (Crossed(ChalkAt + 0.05f)) Cue("sfx_film_tondo_chalk", 0.7f);
             if (Crossed(ChalkAt + 0.8f * (DoorsAt - ChalkAt))) Punch(0.5f);
 
             // Inside the box, knee high, looking down the line: the fresh trail across the frame, the kid running at us.
             float p = Smooth(local);
-            Vector3 eye = new Vector3(_lineTo.x - 1.5f, _lineFrom.y + Mathf.Lerp(0.85f, 0.7f, p), _lineTo.z + 2.4f);
+            Vector3 eye = new Vector3(_lineTo.x - 1.5f, _lineFrom.y + Mathf.Lerp(1.25f, 1.0f, p), _lineTo.z + 2.4f);
             Vector3 aim = Vector3.Lerp(new Vector3(_lineFrom.x - 2.5f, _lineFrom.y + 0.2f, _lineFrom.z), head + Vector3.up * 0.45f, Mathf.Lerp(0.35f, 0.9f, p));
             Shoot(eye, aim, Mathf.Lerp(50.0f, 42.0f, p), -2.0f);
         }
@@ -406,15 +411,25 @@ namespace TumbangPreso.Map
                 _kid.Play(ya > 0.0f ? "emote-yes" : "idle", ya > 0.0f ? ya : age);
             }
 
-            if (age < _tayaCut)
+            if (counting)
             {
-                // Low outside the ring, looking up across it at the dusk; a slow drift round it as the count goes.
+                // Over the huddle from its north side, under the street's wires (r9: at 4.7 m a wire crossed the lens), which the taya faces: the four heads in a ring, the hands
+                // meeting over the can, each flinch a body jerking out of the ring; a slow drift round as the count goes.
+                // (Run 4 shot it from outside at ground level and read backs; r7-r8 from the ground inside, looking up,
+                // and the bodies crowded the lens.)
                 float p = Still ? 0.0f : Smooth((age - MaibaAt) / (_syllableAt[3] - MaibaAt));
-                float push = Still ? 0.0f : Smooth(ya / 1.2f) * 0.18f;
-                // From the gap between the north and east attackers, so the taya's face and the west one's read.
-                Vector3 offset = Quaternion.Euler(0.0f, Mathf.Lerp(40.0f, 54.0f, p), 0.0f) * new Vector3(0.0f, 0.0f, 3.7f);
-                Vector3 eye = _huddle + offset * (1.0f - push) + Vector3.up * (Still ? 1.7f : 0.8f);
-                Shoot(ClearEye(_huddle + Vector3.up, eye), _huddle + Vector3.up * (Still ? 0.8f : 1.15f), Still ? 50.0f : 56.0f, Still ? 0.0f : -3.0f);
+                Vector3 eye = _huddle + Quaternion.Euler(0.0f, Mathf.Lerp(-12.0f, 12.0f, p), 0.0f) * new Vector3(0.0f, 3.5f, 3.7f);
+                Shoot(ClearEye(_huddle + Vector3.up, eye), _huddle + new Vector3(0.0f, 0.7f, -0.35f), 56.0f);
+            }
+            else if (age < _tayaCut)
+            {
+                // YA: high on the north side, which the taya faces: the taya struck and sagging, the laughs either side.
+                float push = Still ? 0.0f : Smooth(ya / 1.3f);
+                Vector3 taya = _ring[Taya] + Vector3.up * 0.95f;
+                // Off to the side and high, over the counter's raised fist (film r7: it filled the foreground).
+                // (film r8: on the east side the street's wires crossed the lens)
+                Vector3 eye = _huddle + new Vector3(-1.7f, Mathf.Lerp(3.9f, 3.6f, push), Mathf.Lerp(4.6f, 4.1f, push));
+                Shoot(ClearEye(taya, eye), Vector3.Lerp(_huddle + Vector3.up * 0.8f, taya, 0.6f), 50.0f, Still ? 0.0f : -2.0f);
             }
             else
             {
@@ -461,17 +476,19 @@ namespace TumbangPreso.Map
                     feel.Lean += 6.0f * jab; feel.Turn = LookTurn(s, Chest(pointed));
                 }
                 else if (pointed >= 0 && s != pointed) feel.Turn = LookTurn(s, Chest(pointed)) * 0.6f;
-                if (s == pointed) feel = Feel.Lerp(feel, Flinch(s, since), Hit(since, 0.05f, 2.4f) * 1.2f);
+                if (s == pointed) feel = Feel.Lerp(feel, Big(Flinch(s, since), 1.35f), Hit(since, 0.05f, 2.4f) * 1.2f);
                 return feel;
             }
             if (s == Taya)
             {
                 if (age < _tayaCut)
                 {
-                    // Struck, then deflating.
-                    var shock = Shock(s);
+                    // Struck (thrown back off their feet for a beat), then deflating, bigger than life: read at the
+                    // shot's distance, not up close (run 4 read small).
+                    var shock = Big(Shock(s), 1.4f);
+                    shock.Hop = 0.2f * Hit(ya, 0.07f, 6.0f);
                     if (ya < 0.3f) return Feel.Lerp(new Feel(), shock, Smooth(ya / 0.08f));
-                    var slump = Slump(s, Mathf.Sin((ya - 0.3f) * 2.4f));
+                    var slump = Big(Slump(s, Mathf.Sin((ya - 0.3f) * 2.4f)), 1.3f);
                     return Feel.Lerp(shock, slump, Smooth((ya - 0.3f) / 0.45f));
                 }
                 // Shaking it off, then squaring up at the three.
@@ -481,8 +498,8 @@ namespace TumbangPreso.Map
             }
             // The attackers: a jumping cheer, then each their own laugh.
             int kind = s == counter ? 0 : (counter >= 0 && Mark(s).x < Mark(counter).x ? 1 : 2);
-            Feel own = kind == 0 ? FistPump(s, ya) : kind == 1 ? LaughAt(s, tayaChest, ya, true) : DoubledOver(s, ya);
-            var cheer = Cheer(s, ya, 0.4f + 0.04f * s);
+            Feel own = Big(kind == 0 ? FistPump(s, ya) : kind == 1 ? LaughAt(s, tayaChest, ya, true) : DoubledOver(s, ya), 1.35f);
+            var cheer = Big(Cheer(s, ya, 0.4f + 0.04f * s), 1.3f);
             var now = Feel.Lerp(cheer, own, Smooth((ya - 0.55f - 0.1f * kind) / 0.25f));
             if (age >= _tayaCut)
             {
@@ -493,6 +510,13 @@ namespace TumbangPreso.Map
                 now.Arms *= 1.0f - 0.4f * scatter;
             }
             return now;
+        }
+
+        /// <summary>A feeling pushed further: every bend and the hop by `k` (the aims, which point at things, are kept).</summary>
+        private static Feel Big(Feel f, float k)
+        {
+            f.Lean *= k; f.Twist *= k; f.Rock *= k; f.Nod *= k; f.Tilt *= k; f.Hop *= k;
+            return f;
         }
 
         private static readonly Color Ivory = new Color(1.0f, 0.98f, 0.94f);

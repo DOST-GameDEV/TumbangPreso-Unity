@@ -140,22 +140,50 @@ namespace TumbangPreso.Map
         private bool _ownFramed;
         private Vector3 _ownEye, _ownAim;
         private float _ownFov;
+        private readonly bool[] _ownHides = new bool[Seats];
+
+        /// <summary>
+        /// The bodies the YOU shot leaves out: any nearer the lens than the subject and inside the frame. With the
+        /// three attackers 1.8 m apart, no three-quarter view at the close's fill keeps a neighbour out of it (film r4:
+        /// a neighbour's face filled a quarter of the frame); the close is a cut, so nobody sees them go.
+        /// </summary>
+        private void OwnHides(int seat)
+        {
+            float tangent = Mathf.Tan(_ownFov * 0.5f * Mathf.Deg2Rad);
+            float aspect = Camera != null ? Mathf.Max(0.5f, Camera.aspect) : 1.78f;
+            var turn = Quaternion.LookRotation(_ownAim - _ownEye);
+            var inverse = Quaternion.Inverse(turn);
+            float subjectDepth = (inverse * (Drawn(seat).center - _ownEye)).z;
+            for (int s = 0; s < Seats; s++)
+            {
+                _ownHides[s] = false;
+                if (s == seat || Body(s) == null) continue;
+                // Anyone in frame not clearly behind the subject (centre depth; corner depths let a neighbour standing
+                // level with them through, film r7).
+                Rect r = ScreenBox(Drawn(s), _ownEye, turn, tangent, aspect, out _);
+                float depth = (inverse * (Drawn(s).center - _ownEye)).z;
+                _ownHides[s] = r.width > 0.0f && Overlap(r, new Rect(-1, -1, 2, 2)) > 0.0f && depth < subjectDepth + 1.0f;
+            }
+        }
 
         private void Close(float age)
         {
             var t = Timeline;
             if (age < t.Close) return;
             float local = Mathf.Clamp01((age - t.Close) / OwnSeconds);
-            for (int s = 0; s < Seats; s++) { Home(s); ShowSeat(s, true); }
+            for (int s = 0; s < Seats; s++) Home(s);
             if (OwnClose)
             {
                 // This player's own shot, framed once from where they stand for the round.
-                if (!_ownFramed) { FrameSeat(ViewerSeat, 0.78f, 0.0f, out _ownEye, out _ownAim, out _ownFov); _ownFramed = true; }
+                if (!_ownFramed) { FrameSeat(ViewerSeat, 0.84f, 0.0f, out _ownEye, out _ownAim, out _ownFov); _ownFramed = true; OwnHides(ViewerSeat); }
+                // Back on screen for the return to this player's own view.
+                for (int s = 0; s < Seats; s++) ShowSeat(s, !_ownHides[s] || age >= t.Handoff);
                 Shoot(Vector3.Lerp(_ownEye, _ownAim, 0.05f * Smooth(local)), _ownAim, _ownFov);
                 for (int s = 0; s < Seats; s++) { Greet(s, s == ViewerSeat && !Still ? 0.75f * Span(local, 0.0f, 0.3f) * (1.0f - Span(age, t.Handoff, t.End)) : 0.001f); Animate(s, false); }
             }
             else
             {
+                for (int s = 0; s < Seats; s++) ShowSeat(s, true);
                 TayaShot(local, out var eye, out var aim, out var fov);
                 Shoot(eye, aim, fov);
                 for (int s = 0; s < Seats; s++) { Greet(s, s == Taya && !Still ? 0.75f * (1.0f - Span(age, t.Handoff, t.End)) : 0.001f); Animate(s, false); }

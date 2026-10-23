@@ -77,22 +77,25 @@ replay and the whole match read poorly ("everything has to be animated").
     skip ring, YOU / taya close, restore) and the hook `Map/MatchOpening.cs` (`ArenaIntro` wrapped, not edited;
     `TumpMatchReadout`, `SpectatorCutscene` and `CharacterNameplate` read `MatchOpening`/`MapFilm`).
   - [ ] Tondo (Eskinita) `TondoFilm`: built (sampay, chalk kid, four doors, gather, acted "Maiba taya" count and
-    reaction, taya plate, scatter), score and cues synthesised. Native: `TondoPlaysIntoTheRound` and
-    `TondoRecording` pass; beat review r4 notes still open: shoot the count from inside the ring looking up at the
-    four faces (outside it shows backs), reaction from high on the north side, chalk trail still faint, a neighbour
-    still in front of the YOU shot. Video: Logs/map-films/Tondo_intro_film.mp4.
+    reaction, taya plate, scatter), score and cues synthesised. Refined 2026-10-23 (runs 7 to 10): the count is shot
+    over the huddle from the north (the taya faces north) under the street's wires, with a cut on YA to a high
+    north-west shot where the taya's face and both flanking laughs read; shock, slump, cheers and laughs pushed
+    1.3 to 1.4x (`Big`), the taya hops back on YA; the ring is 1.6 m; the fresh chalk line is wider and brighter with a
+    bigger glint, shot from higher. Open: the taya reveal is framed from the side, so the defiant point reads weakly;
+    offline bots can field a duplicate hero (two Dantes). Video: Logs/map-films/Tondo_intro_film.mp4.
   - [ ] Ermita (IlalimNgTulay) `ErmitaFilm`: built (under the viaduct, standoff walk-in, LRT pass with window strobe and
-    the drop, sodium lamp on the taya), score and cues synthesised, acted (glare, brace, defiant, arms crossed).
-    `ErmitaPlaysIntoTheRound` and `ErmitaRecording` pass. Review notes open: the ghost consist does not show in the
-    train and drop shots, the drop frame washes grey, night reads dusk-purple, the walkers sit small at the edges.
-    Video: Logs/map-films/Ermita_intro_film.mp4.
-  - [ ] `MapFilmTests` beat/short/close cases fail on harness grounds (2026-10-23 run 4): with the ready gate
-    disabled the tests no longer hold `PresentationClock`, so physics and visual smoothing move the bodies and roots
-    under the film; the close case ends the film mid-way and expects the camera home (the arrival restores it, not
-    the film); `StatusBadge*`/`LataClock` renderers toggle on their own. Fix the harness (hold the clock as
-    `DirectedMapArrivalTests.ClosingBeat` does), then rerun by exact name.
-  - [ ] Nameplate label "P1 · TAYA" and the taya's ground marker still show in the test frames (the label hides under an
-    active arrival; the marker is `CharacterNameplate`'s ring): confirm in the natural flow and guard both on `MapFilm.HidesUi`.
+    the drop, sodium lamp on the taya), score and cues synthesised. Refined 2026-10-23 (runs 6 to 8): the consist runs
+    from the north at 13 m/s; the train shot cranes up behind the taya to 9.6 m (the deck hides the consist from the
+    ground) and the drop sits beside the deck at rail height, the train coming at the lens; the drop flash is 0.22;
+    night is deep blue with sodium pools; the standoff is three cuts (the three walking at the lens, the taya at the
+    lens, over the taya's shoulder at the three) with a swagger, a knuckle crack and a neck roll. Video:
+    Logs/map-films/Ermita_intro_film.mp4.
+  - [x] Base: the YOU close leaves out any body in frame not clearly behind the subject (a neighbour's face filled a
+    quarter of it); seat chips are held inside the picture, out of the letterbox.
+  - [x] `MapFilmTests` harness (2026-10-23 run 5): the tests hold `PresentationClock` as the arrival does, put the
+    camera back after a mid-film cut, and skip `StatusBadge*`/`LataClock`; all six beat, short and close cases pass.
+  - [x] Taya giveaways: every film hides each seat's nameplate renderers (label and ring) for its length, and the label
+    also hides under `MapFilm.HidesUi`; gone from the frames.
   - [ ] Sitangkai (LagoonCove), calm wonder: golden-hour glide over the reef, players arrive by banca, kids cheer from the
     stilt houses, a lola sets the can down.
   - [ ] BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower

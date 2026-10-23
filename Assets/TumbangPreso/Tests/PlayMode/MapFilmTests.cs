@@ -70,7 +70,7 @@ namespace TumbangPreso.PlayTests
         // ------------------------------------------------------------------ Ermita
 
         [UnityTest, Timeout(600000)] public IEnumerator ErmitaFullFilmBeats() => Beats(SceneFlow.IlalimNgTulay, false, 1,
-            new[] { (0.5f, "01_under"), (2.6f, "02_under_turn"), (4.2f, "03_standoff_across"), (5.5f, "04_behind_taya"), (6.6f, "05_over_shoulder"),
+            new[] { (0.5f, "01_under"), (2.6f, "02_under_turn"), (4.1f, "03_three_walk_in"), (5.2f, "04_taya_walks_in"), (6.6f, "05_over_taya_shoulder"),
                     (7.6f, "06_train_in"), (8.3f, "07_strobe_taya"), (8.8f, "08_strobe_attacker"), (9.15f, "09_drop"), (9.6f, "10_drop_over"),
                     (10.1f, "11_tail"), (10.55f, "12_lamp_strike"), (11.4f, "13_taya_stamp"), (13.4f, "14_close_you"), (14.9f, "15_return") });
         [UnityTest, Timeout(600000)] public IEnumerator ErmitaShortFilmBeats() => Beats(SceneFlow.IlalimNgTulay, true, 1,

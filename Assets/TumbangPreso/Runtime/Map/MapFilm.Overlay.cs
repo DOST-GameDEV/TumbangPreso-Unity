@@ -239,7 +239,9 @@ namespace TumbangPreso.Map
                 var drawn = Drawn(s);
                 Vector3 view = Camera.WorldToViewportPoint(drawn.center + Vector3.up * (drawn.extents.y + 0.25f));
                 if (view.z <= 0.0f) { chip.Pose(-1, 1); continue; }
-                chip.Home = new Vector2((view.x - 0.5f) * ReferenceWidth, (view.y - 0.5f) * 1080.0f + 40.0f);
+                // Held inside the picture: a head near the top of a close would put its chip in the letterbox (film r6).
+                chip.Home = new Vector2(Mathf.Clamp((view.x - 0.5f) * ReferenceWidth, -ReferenceWidth * 0.5f + 150.0f, ReferenceWidth * 0.5f - 150.0f),
+                                        Mathf.Min((view.y - 0.5f) * 1080.0f + 40.0f, 540.0f - 1080.0f * 0.085f - 40.0f));
                 chip.Pose(c, _chipLife[s], 0.16f);
                 if (_chipMarks[s] != null) _chipMarks[s].enabled = ChipRoles;
             }
