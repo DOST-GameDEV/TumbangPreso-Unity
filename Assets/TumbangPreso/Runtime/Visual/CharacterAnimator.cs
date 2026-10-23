@@ -62,15 +62,18 @@ namespace TumbangPreso.Visual
         {
             // A literal thumbs-up on this rig. Also what "ready" plays, deliberately: the
             // gesture means the same thing in both places.
-            { "yes", new[] { "emote-yes", Interact } },
-            { "no", new[] { "emote-no", "interact-left" } },
-            { "sit", new[] { "sit", "crouch" } },
+            // ⚠️ THE AUTHORED EMOTES FIRST (owner, 2026-10-23: "emotes are ... boring compared to all animations and
+            // rigid"): `HeroAbilityClips.Emotes.cs`, baked onto a hero's roster entry by `EmoteMotionAuthor`. A rig
+            // without them falls down each chain to the pack's clip, exactly as before.
+            { "yes", new[] { EmoteMotion.Nod, "emote-yes", Interact } },
+            { "no", new[] { EmoteMotion.Nope, "emote-no", "interact-left" } },
+            { "sit", new[] { EmoteMotion.SitDown, "sit", "crouch" } },
 
             // ⚠️ RELABELLED "VICTORY", STILL THE crouch CLIP. 🧑 asked for a victory pose and
             // this rig does not have one — its clips are locomotion, combat and two gestures,
             // and nothing reads as arms-up celebration. crouch is the closest available and
             // is the honest placeholder rather than a promise the animation does not keep.
-            { "crouch", new[] { "crouch", "sit" } },
+            { "crouch", new[] { EmoteMotion.Victory, "crouch", "sit" } },
 
             // ⚠️ § THE DANCE REPLACED PLAY DEAD on 2026-08-06, on a direct request. The old
             // `dead` entry played the knockdown clip as a taunt; it is gone from the wheel, so
@@ -80,17 +83,20 @@ namespace TumbangPreso.Visual
             // `DanceClip.ClipName` is BUILT at bind time rather than shipped, because this rig
             // has no dance clip and nothing retargetable exists for a seven-bone skeleton. See
             // that file. The second entry is the fallback for a model with no rig to build on.
-            { "dance", new[] { DanceClip.ClipName, Idle } },
+            { "dance", new[] { EmoteMotion.Groove, DanceClip.ClipName, Idle } },
 
             // `static` is the rig's unanimated bind pose — arms out, feet together — which is
             // exactly the T-pose the joke is about.
-            { "tpose", new[] { "static", Idle } },
+            { "tpose", new[] { EmoteMotion.TPose, "static", Idle } },
 
             // ⚠️ `pick-up`, NOT `interact-right`. It bends the torso forward over the legs, so
             // standing still it reads as a bow. One clip having two jobs costs no new asset;
             // this table had the wrong clip and the bow read as a shrug.
-            { "bow", new[] { PickUp, Interact } },
+            { "bow", new[] { EmoteMotion.Bow, PickUp, Interact } },
         };
+
+        /// <summary>The emote table, for the review strips (`ClipMotionStrip`, `emote:<id>`) and the tests.</summary>
+        public static IReadOnlyDictionary<string, string[]> EmoteChains => EmoteClips;
 
         /// <summary>
         /// ⚠️⚠️ WHICH EMOTES LOOP AND WHICH HOLD THEIR LAST FRAME. 🧑 2026-08-04: *"play dead

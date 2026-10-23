@@ -255,7 +255,14 @@ namespace TumbangPreso.EditorTools
             chain = null;
             slot = -1;
 
-            if (!CharacterAnimator.ActionChains.TryGetValue(action, out var names)) return null;
+            // An emote is photographed as `emote.<id>` (`EmoteMotionAuthor.Review`): its chain is the animator's emote
+            // table, which falls back the same way the actions do.
+            string[] names;
+            if (action != null && action.StartsWith("emote."))
+            {
+                if (!CharacterAnimator.EmoteChains.TryGetValue(action.Substring(6), out names)) return null;
+            }
+            else if (!CharacterAnimator.ActionChains.TryGetValue(action, out names)) return null;
 
             chain = names;
             var have = new HashSet<string>(supplied.Where(c => c != null).Select(c => c.name));
