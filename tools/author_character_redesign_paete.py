@@ -787,13 +787,15 @@ def build_arm_right(part):
 # ---------------------------------------------------------------------------
 # THE LEGS: a bundle of upright planks round a dark core, a knee plate, a root foot with four
 # roots. The shins widen toward the ground like a trunk into its roots. Typed separately.
+# ⚠️ THE FOOT IS CAPPED UNDERNEATH. A sit or a hop turns the sole to the camera, and an open foot
+# showed the inside of the leg there, where only the ink hull draws: a black slab (2026-10-23).
 # ---------------------------------------------------------------------------
 
 def build_leg_left(part):
     P = part.plank
     leg = "leg-left"
     root = swatch("strand_root", (0.0, 0.7), (0.0, 1.0), "columns")
-    P("foot-left", leg, (0.014, 0.000, -0.114), (0.162, 0.044, 0.078), ROOT_T, high=(0.80, 0.82), chamfer=0.014, caps=(False, True))
+    P("foot-left", leg, (0.014, 0.000, -0.114), (0.162, 0.044, 0.078), ROOT_T, high=(0.80, 0.82), chamfer=0.014)
     P("foot-moss-left", leg, (0.058, 0.034, -0.102), (0.112, 0.050, -0.074), MOSS_DARK, chamfer=0.0)
     P("shin-core-left", leg, (0.036, 0.036, -0.068), (0.140, 0.150, 0.064), BARK_DARK, low=(1.22, 1.0), chamfer=0.0, caps=(False, False))
     P("shin-plank-left-a", leg, (0.040, 0.030, -0.086), (0.084, 0.150, -0.064), BARK, tilt=2.0, low=(1.30, 1.0), bevel=(0.0, 0.004))
@@ -822,7 +824,7 @@ def build_leg_right(part):
     P = part.plank
     leg = "leg-right"
     root = swatch("strand_root", (0.2, 0.9), (0.0, 1.0), "columns")
-    P("foot-right", leg, (-0.164, 0.000, -0.116), (-0.012, 0.046, 0.076), ROOT_T, high=(0.82, 0.80), chamfer=0.014, caps=(False, True))
+    P("foot-right", leg, (-0.164, 0.000, -0.116), (-0.012, 0.046, 0.076), ROOT_T, high=(0.82, 0.80), chamfer=0.014)
     P("shin-core-right", leg, (-0.142, 0.036, -0.066), (-0.034, 0.152, 0.066), BARK_DARK, low=(1.24, 1.0), chamfer=0.0, caps=(False, False))
     P("shin-plank-right-a", leg, (-0.080, 0.034, -0.088), (-0.036, 0.152, -0.066), BARK_LIT, tilt=-1.5, low=(1.28, 1.0), bevel=(0.0, 0.004))
     P("shin-plank-right-b", leg, (-0.140, 0.036, -0.082), (-0.088, 0.142, -0.058), BARK, tilt=2.5, low=(1.32, 1.0), bevel=(0.0, 0.004))
