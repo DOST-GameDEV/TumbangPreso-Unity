@@ -33,6 +33,37 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator Kanto() => Compare(SceneFlow.Kanto, typeof(Map.BgcFilm), "Bright");
         [UnityTest] public IEnumerator Payo() => Compare(SceneFlow.Payo, typeof(Map.BanaueFilm), "Dawn");
 
+        // The real opening of each map, as it now plays (owner, 2026-10-23: "the cutscene looks completely different from the
+        // game"): four frames through the film, beside the gameplay stills above.
+        [UnityTest] public IEnumerator EskinitaFilmFrames() => FilmFrames(SceneFlow.Eskinita);
+        [UnityTest] public IEnumerator BridgeFilmFrames() => FilmFrames(SceneFlow.IlalimNgTulay);
+        [UnityTest] public IEnumerator CoveFilmFrames() => FilmFrames(SceneFlow.LagoonCove);
+        [UnityTest] public IEnumerator KantoFilmFrames() => FilmFrames(SceneFlow.Kanto);
+        [UnityTest] public IEnumerator PayoFilmFrames() => FilmFrames(SceneFlow.Payo);
+
+        private IEnumerator FilmFrames(string map)
+        {
+            SceneFlow.Networked = false;
+            var rules = CustomGameRules.Defaults(GameMode.Classic); rules.ManualReady = false; rules.Bots = CustomGameRules.MaxBots;
+            SceneFlow.PinSelectedRules(rules);
+            GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false; GameLaunch.Spectator = false;
+            Settings.SettingsStore.Current.CinematicCameraMotion = true; Settings.SettingsStore.Current.ReducedUiMotion = false;
+            yield return SceneManager.LoadSceneAsync(map);
+            string folder = Path.Combine("Logs", "lighting-compare"); Directory.CreateDirectory(folder);
+            float[] marks = { .2f, .45f, .7f, .9f }; int next = 0;
+            float by = Time.realtimeSinceStartup + 60;
+            while (next < marks.Length && Time.realtimeSinceStartup < by && GameServices.Round?.RoundActive != true)
+            {
+                yield return null;
+                var playing = Map.MapFilm.Instance;
+                if (playing == null || !playing.Playing || Camera.main == null) continue;
+                if (playing.Age < marks[next] * playing.Duration) continue;
+                Save(Camera.main, Path.Combine(folder, $"{map}-cutscene-{next + 1}.png"));
+                next++;
+            }
+            Assert.AreEqual(marks.Length, next, map + ": the film did not play through.");
+        }
+
         private IEnumerator Compare(string map, System.Type film, string moodName)
         {
             yield return MapRetrievalProbe.Load(map);

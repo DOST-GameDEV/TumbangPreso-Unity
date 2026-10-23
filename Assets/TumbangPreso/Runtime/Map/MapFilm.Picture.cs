@@ -248,6 +248,9 @@ namespace TumbangPreso.Map
         private float[] _sceneLampWas = new float[0];
         private bool _lightTaken;
 
+        /// <summary>True: the films light the map exactly as the match does (see <see cref="Tint"/>).</summary>
+        public static readonly bool AdoptsGameLight = true;
+
         /// <summary>The map's look as it was when the film began.</summary>
         protected Mood Authored { get; private set; }
 
@@ -291,10 +294,16 @@ namespace TumbangPreso.Map
             _lightTaken = true;
         }
 
-        /// <summary>Blends the map's look toward `mood` by `weight` (0 the map as authored, 1 the mood).</summary>
+        /// <summary>
+        /// Blends the map's look toward `mood` by `weight` (0 the map as authored, 1 the mood). ⚠️ OFF: every map film keeps
+        /// the game's own lighting, one for one with the match it opens (owner, 2026-10-23: "game and cutscene should be one
+        /// for one and map cutscene will adjust and adopt the real game lighting", "dont edit game lighting, edit the cutscene
+        /// lighting of all"). Each film still names its mood; nothing is blended while <see cref="AdoptsGameLight"/> holds.
+        /// The Arena's opening is not a `MapFilm` and is untouched.
+        /// </summary>
         protected void Tint(in Mood mood, float weight)
         {
-            if (!_lightTaken) return;
+            if (AdoptsGameLight || !_lightTaken) return;
             var a = Authored;
             float w = Mathf.Clamp01(weight);
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
