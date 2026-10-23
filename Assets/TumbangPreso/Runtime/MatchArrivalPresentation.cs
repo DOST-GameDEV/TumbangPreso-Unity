@@ -102,6 +102,8 @@ namespace TumbangPreso
             _spectator = _camera.GetComponent<SpectatorCamera>();
             _rigActive = _rig != null && _camera.enabled && (_spectator == null || !_spectator.enabled);
             if (_rigActive) _rig.PrepareArrivalReturnView();
+            // The film ends on this player's eye: their body is hidden before the lens reaches it (`CameraRig.GuardOwnHead`).
+            Camera.onPreCull -= GuardOwnHead; Camera.onPreCull += GuardOwnHead;
             _position = _camera.transform.position; _rotation = _camera.transform.rotation; _fov = _camera.fieldOfView;
             if (_rigActive && Settings.SettingsStore.Current.CinematicCameraMotion) _rig.SetActive(false);
             // SpectatorCamera already respects PresentationClock.Held. Disabling it would
@@ -363,6 +365,7 @@ namespace TumbangPreso
                 Trace(_shownAt < 0 ? how + " before it was shown"
                     : $"{how} after {Time.realtimeSinceStartup - _shownAt:F1} s on screen");
             _shownAt = -1; _viewerSeat = -1;
+            Camera.onPreCull -= GuardOwnHead;
             // MAP-OPENING: the map's opening, if one is up, puts back everything it posed. A no-op elsewhere.
             Map.MatchOpening.Stop();
             RestoreDirection();
@@ -382,6 +385,11 @@ namespace TumbangPreso
             if (_held) { PresentationClock.Release(); _held = false; FreshInput(); }
         }
         public void Cancel() { _runGeneration++; Finish("cancelled"); }
+
+        private void GuardOwnHead(Camera camera)
+        {
+            if (camera != null && camera == _camera && _rigActive && _rig != null) _rig.GuardOwnHead(camera);
+        }
         private void OnDisable() => Cancel();
         private void OnDestroy() => Cancel();
     }

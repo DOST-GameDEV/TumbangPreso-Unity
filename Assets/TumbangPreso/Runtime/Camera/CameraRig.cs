@@ -747,11 +747,13 @@ namespace TumbangPreso.CameraSystem
         public void SetActive(bool active)
         {
             _active = active;
+            // Back in gameplay the ordinary first-person self-hide owns the body; a cutscene's lens guard ends here.
+            if (active && !MatchArrivalPresentation.OwnsCamera) _lensGuard = false;
             if (_camera != null && !MatchArrivalPresentation.OwnsCamera) _camera.enabled = active;
 
             if (_viewmodel != null) _viewmodel.gameObject.SetActive(active && _mode == CameraMode.Fpp && !MatchArrivalPresentation.OwnsCamera);
 
-            if (active && !MatchArrivalPresentation.OwnsCamera) ApplyFppSelfHide();
+            if ((active && !MatchArrivalPresentation.OwnsCamera) || _lensGuard) ApplyFppSelfHide();
             else RestoreSelfHide();
 
             ApplyCarriedSelfHide();
@@ -1265,7 +1267,8 @@ namespace TumbangPreso.CameraSystem
         {
             RestoreSelfHide();
 
-            if (!_active || _character == null || _mode != CameraMode.Fpp || MatchArrivalPresentation.OwnsCamera) return;
+            if ((!_active && !_lensGuard) || _character == null || _mode != CameraMode.Fpp
+                || (MatchArrivalPresentation.OwnsCamera && !_lensGuard)) return;
 
             var visual = _visual != null ? _visual : _character.GetComponent<Visual.CharacterVisual>();
             _hiddenModelInstance = visual != null ? visual.Model : null;
@@ -1279,6 +1282,38 @@ namespace TumbangPreso.CameraSystem
                 r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
                 _hiddenForFpp.Add(r);
             }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A CUTSCENE THAT LANDS ON THIS PLAYER'S EYE HIDES THEIR BODY BEFORE THE LENS IS IN IT (owner, 2026-10-23,
+        /// with a frame of the inside of the head: "toward end of cutscene going to ur fpp view the camera records the inside
+        /// of ur head"). The opening film owns the camera (`MatchArrivalPresentation.OwnsCamera`) and holds the clock, so the
+        /// self-hide above stays off and this rig's `LateUpdate` does not run until the film is over; the film's last
+        /// seconds glide into this eye with the body still drawn round it. The film asks this before each of its renders:
+        /// once the lens is within <see cref="LensGuardReach"/> of the body as drawn, the body goes shadows-only exactly as in
+        /// first person, and it is drawn again if the lens pulls back out. No-op outside first person or in an emote.
+        /// </summary>
+        public void GuardOwnHead(Camera lens)
+        {
+            if (lens == null || _character == null || _mode != CameraMode.Fpp || _emoteView) return;
+            bool near = LensInsideReach(lens.transform.position);
+            var model = _visual != null ? _visual.Model : _character.GetComponent<Visual.CharacterVisual>()?.Model;
+            if (near && (!_lensGuard || model != _hiddenModelInstance)) { _lensGuard = true; ApplyFppSelfHide(); }
+            else if (!near && _lensGuard) { _lensGuard = false; if (!_active || MatchArrivalPresentation.OwnsCamera) RestoreSelfHide(); }
+        }
+
+        /// <summary>How close, metres, a cutscene's lens may come to this player's drawn body before it is hidden.</summary>
+        public const float LensGuardReach = .45f;
+        private bool _lensGuard;
+
+        private bool LensInsideReach(Vector3 lens)
+        {
+            foreach (var r in _character.GetComponentsInChildren<Renderer>(false))
+            {
+                if (r == null || !r.enabled || r is ParticleSystemRenderer || r is TrailRenderer || r is LineRenderer) continue;
+                if ((r.bounds.ClosestPoint(lens) - lens).sqrMagnitude < LensGuardReach * LensGuardReach) return true;
+            }
+            return false;
         }
 
         /// <summary>
