@@ -362,7 +362,7 @@ STRINGS = {
     # kind: (pick position, T60 s at 3 kHz (how long the treble rings), T60 s at 220 Hz, pick brightness Hz,
     #        course detune cents, body modes ((Hz, gain, decay s), ...), body mix)
     "bandurria": (0.12, 0.35, 1.6, 6000.0, 1.6, ((390, 1.0, 0.05), (780, 0.7, 0.035), (1450, 0.5, 0.02), (2700, 0.35, 0.012)), 0.35),
-    "guitar": (0.2, 0.12, 3.2, 2400.0, 0.0, ((98, 0.8, 0.14), (205, 1.0, 0.09), (395, 0.5, 0.05), (525, 0.35, 0.04), (1150, 0.2, 0.02)), 0.4),
+    "guitar": (0.2, 0.12, 3.2, 2400.0, 0.0, ((98, 0.35, 0.1), (205, 1.0, 0.09), (395, 0.6, 0.05), (525, 0.4, 0.04), (1150, 0.25, 0.02)), 0.4),
     "bass": (0.26, 0.07, 3.6, 1200.0, 0.0, ((98, 1.0, 0.14), (205, 0.6, 0.09)), 0.35),
 }
 # ⚠️ ROUND 4'S FIRST STRINGS WERE FAR TOO BRIGHT. Harmonic by harmonic against a real harp C3 (VSCO 2 CE): the real
@@ -468,7 +468,8 @@ def string_note(f, seconds, kind="guitar", velocity=1.0, seed=0, stop=None, rele
 
 # Pure intervals above a chord's root, in cents from equal temperament. A tempered major third is 14 cents wide and
 # beats audibly in the low register (round 3's roughest moments were E2 under G#3); string players lean thirds and
-# sixths pure by ear. The dominant seventh takes the 7:4 (barbershop) seventh.
+# sixths pure by ear. The dominant seventh takes the 7:4 (barbershop) seventh. ⚠️ ONLY IF EVERY PART USES IT: round 4
+# tuned the guitar's chords this way under an equal-tempered bandurria, and the owner heard "out of tune". Unused now.
 JUST_CENTS = {0: 0.0, 2: 3.9, 3: 15.6, 4: -13.7, 5: -2.0, 7: 2.0, 8: 13.7, 9: -15.6, 10: -31.2, 11: -11.7}
 
 

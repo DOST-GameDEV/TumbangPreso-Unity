@@ -356,13 +356,12 @@ def tondo_taya():
     and gets out of the way of the kid's real "Taya!". No tremolo answer."""
     n = int(SR * 1.6)
     gtr, band_, low = np.zeros(n), np.zeros(n), np.zeros(n)
-    ts.strum(gtr, ["A2", "E3", "A3", "C#4", "E4"], 0.0, 1.3, "guitar", velocity=1.0, spread=0.007, seed=31, root="A0")
+    ts.strum(gtr, ["A2", "E3", "A3", "C#4", "E4"], 0.0, 1.3, "guitar", velocity=1.0, spread=0.007, seed=31)
     for nm in ("A5", "C#6"):
-        ts.place(band_, ts.string_note(ts.hz(nm) * 2 ** (ts.JUST_CENTS[(ts.midi(nm) - ts.midi("A0")) % 12] / 1200), 1.3,
-                                       "bandurria", 0.9, seed=33 + len(nm), stop=1.2, release=0.15), 0.004)
+        ts.place(band_, ts.string_note(ts.hz(nm), 1.3, "bandurria", 0.9, seed=33 + len(nm), stop=1.2, release=0.15), 0.004)
     ts.place(low, ts.string_note(ts.hz("A2"), 1.4, "bass", 1.0, seed=35, stop=1.3, release=0.2), 0.0)
-    y = (0.55 * normal(ts.body(gtr, "guitar")) + 0.35 * normal(ts.body(band_, "bandurria")) +
-         0.45 * normal(ts.body(low, "bass")))
+    y = (0.55 * normal(ts.highpass(ts.body(gtr, "guitar"), 95)) + 0.38 * normal(ts.body(band_, "bandurria")) +
+         0.28 * normal(ts.body(low, "bass")))
     env = np.ones(n)
     env[int(0.12 * SR):] = np.exp(-(np.arange(n - int(0.12 * SR)) / SR) * 2.2)   # duck under the voice after the hit
     return ts.fade(finish(y * env, wet=0.12, hp=40), 0.0005, 0.2)
@@ -377,8 +376,9 @@ def tondo_score():
     seeds = iter(range(1000, 100000, 7))
 
     def g_strum(at, name, vel=0.5, down=True, end=None, notes=None):
-        ts.strum(gtr, notes or VOICING[name], at, end or chord_end(at), "guitar", velocity=vel, down=down, seed=next(seeds),
-                 root=ROOT[name][:-1] + "0")
+        # One tuning for every part (round 4b): pure-interval chords under an equal-tempered bandurria put the tune's
+        # C# 14 cents off the guitar's and the E7's seventh 31 cents flat: the owner heard it as "out of tune".
+        ts.strum(gtr, notes or VOICING[name], at, end or chord_end(at), "guitar", velocity=vel, down=down, seed=next(seeds))
 
     def g_note(at, note, vel=0.45, end=None):
         end = end or chord_end(at)
@@ -441,7 +441,7 @@ def tondo_score():
     trem(11.3, ["E5"], 0.42, 0.2)
     for at, top, low, v in ((SYLLABLES[0], "E5", "E3", 0.5), (SYLLABLES[1], "F#5", "F#3", 0.58), (SYLLABLES[2], "G#5", "G#3", 0.66)):
         tune(at, top, 0.36, v)
-        b_note(at, low.replace("3", "2"), v + 0.05, end=at + 0.38)
+        b_note(at, low, v - 0.1, end=at + 0.38)          # one octave under the tune, not two (round 4b: "so deep")
 
     # CLIMAX, YA: the bass lands on A under the sting (the sting has the strum and the answer; the kid the middle).
     b_note(YA, "A2", 0.6, end=TAYA_CUT)
@@ -457,21 +457,23 @@ def tondo_score():
     # countdown, then the match music in A, answer it.
     beats = np.arange(15.6, 17.6, Q)
     for i, at in enumerate(beats):
-        g_strum(at, "E" if at < 16.8 else "E7", 0.3 + 0.3 * i / len(beats), down=(i % 2 == 0), end=at + 0.32)
+        g_strum(at, "E" if at < 16.8 else "E7", 0.24 + 0.12 * i / len(beats), down=(i % 2 == 0), end=at + 0.32)
         if at < 16.8 and i % 2 == 0:
             b_note(at, "E2", 0.55, end=at + 0.7)
         elif at >= 16.8:
             b_note(at, "E2", 0.62, end=at + 0.36)
-    trem(15.62, ["B4"], 1.15, 0.36)
-    trem(16.8, ["E5"], 0.8, 0.42)
-    g_strum(17.6, "E7", 0.75, end=20.3, notes=["E3", "G#3", "B3", "D4", "E4"])
-    b_note(17.6, "E2", 0.8, end=20.3)
-    trem(17.6, ["B4", "E5"], 1.2, 0.4)
+    trem(15.62, ["B4"], 1.15, 0.28)
+    trem(16.8, ["E5"], 0.8, 0.32)
+    g_strum(17.6, "E7", 0.55, end=20.3, notes=["E3", "G#3", "B3", "D4", "E4"])
+    b_note(17.6, "E2", 0.6, end=20.3)
+    trem(17.6, ["B4", "E5"], 1.2, 0.3)
 
-    mix = (0.5 * normal(ts.body(gtr, "guitar")) + 0.55 * normal(ts.body(bass, "bass")) +
-           0.42 * normal(ts.body(band_, "bandurria")))
+    # Round 4b ("so deep"): a third of the score's energy sat under 150 Hz and the count's bass rivalled everything
+    # else; the bass is quieter and the guitar is trimmed under 95 Hz (the bass owns the low end alone).
+    mix = (0.5 * normal(ts.highpass(ts.body(gtr, "guitar"), 95)) + 0.3 * normal(ts.body(bass, "bass")) +
+           0.45 * normal(ts.body(band_, "bandurria")))
     mix = ts.room(ts.highpass(mix, 40), 0.12)
-    mix = ts.compress(mix, -20.0, 3.0)                     # round 4: physical strings are spiky (see tump_synth.compress)
+    mix = ts.compress(mix, -18.0, 2.0)                     # gentle: even the spiky plucks, keep the story's dynamics
     env = np.ones_like(mix)
     tail = int(SR * 1.2)
     env[-tail:] = np.linspace(1, 0, tail) ** 2
@@ -490,7 +492,7 @@ BUILDS = {
 # the sting must leave the voice its room. Round 2 (a full guitar strum and a balde in the sting) met the voice at
 # +0.5 dBFS at 0.6, and true peak (between samples) still read +0.4 dBTP at 0.50: the target is -1 dBTP, so the
 # score is 0.60, the sting 0.45, the clap 0.75, and the score's bass under YA softer.
-LEVEL = {"sfx_film_tondo_score.wav": 0.65, "sfx_film_tondo_taya.wav": 0.45}   # round 4: -18 LUFS with the bed once compressed
+LEVEL = {"sfx_film_tondo_score.wav": 0.65, "sfx_film_tondo_taya.wav": 0.65}   # round 4b: YA, the climax, the loudest moment
 
 
 def write(path, y):

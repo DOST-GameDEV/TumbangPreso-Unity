@@ -21,7 +21,15 @@ YA hit, nothing else; owner: "js an mp3 without the game, js the music").
 | Score roughness median / p90 | 0.070 / 0.262 (the match soundtrack, a professional track: 0.082 / 0.217) |
 | YA hit roughness median / p90 | 0.191 / 0.238 |
 | Sounding notes in A major | 1.00 |
-| Film with the alley bed | -18.1 LUFS, true peak -1.6 dBTP (the first round to meet the -1 dBTP target) |
+| Film with the alley bed | -18.8 LUFS, true peak -2.2 dBTP (after 4b) |
+
+**Round 4b** (owner, on round 4's first music mp3: "ang lakas ng music mo in some parts like it feels so deep and out
+of tune"): two causes found. OUT OF TUNE: round 4 tuned the guitar's chords to pure intervals under an equal-tempered
+bandurria, so the tune's C# sat 14 cents off the guitar's and the E7's seventh 31 cents flat; now every part is equal
+tempered (one tuning). DEEP AND LOUD: 34 % of the score's energy sat under 150 Hz and the count's bass rivalled the rest;
+the bass is quieter, doubles the count one octave down instead of two, the guitar is trimmed under 95 Hz and its body's
+98 Hz mode lowered: 15 % now. The ending's swell is gentler and the compressor eased to 2:1, so the arc keeps its
+dynamics: a hush of -25 dB just before the count, YA the loudest moment of the film at -14 dB.
 
 Loudness note: the physical strings are spiky (a crest factor of 20.5 dB), so at the same peak the score measured
 -24 LUFS. `tump_synth.compress` (a look-ahead peak compressor, 3:1 over -20 dB) brings the crest to 13.7 dB. Its first
@@ -141,3 +149,4 @@ before a version is called done). The videos mix the beds at estimated weights.
 | 1 | all | "ang panget pareho" (could not tell round 1 from before); "u js mashed a bunch of unrelated audios tgthr"; "i like the bird"; "WHY IS THERE A BELL"; "TRY TO MAKE IT SOUND FILIPINO"; "ang saket sa tenga theres 0 harmony"; "ang gulo talaga"; "completely revamp everything"; "make ur own"; "sometimes less is more" | round 2: no bells; a rondalla built from exact harmonics; one chord at a time; three parts; no pitched foley; harmony checks before the owner listens. **Rules for the skill:** never a bell or music-box timbre in TUMP unless asked; Filipino means rondalla strings and street percussion; harmony first, then fewer parts; a measured partial list is not an instrument |
 | 2 | T-02, all | "005 random sound is weird", "may random shit na fucks it up", the chalk run "rapes the shit", "refine the sound sa maiba taya", "think of how a story has a start climax and end", "transition it to the actual game", "thoroughly analyze the material" | round 3: cut everything unmotivated; foley plays the picture; story arc; A major at the match's 150 bpm, ending on E into the match. **Rules for the skill:** spot the film first (watch it, write the beat sheet); every sound needs an on-screen reason or a musical job; score the scene's story arc; end a cutscene on the dominant of whatever plays next, at its tempo |
 | 3 | T-02, T-03, T-04, music | "door opening sounds sucks", "the running sfx sucks", "why even give his running some sfx", "MAIBA TAYA SOUND SUCKS", "refine the music pa ang ijbol ng sound" | round 4: every foley cue of the film removed; the score marks doors and syllables; physical strings measured against a real harp. **Rules for the skill:** in a scored cutscene, foley only where it adds something music cannot (default: none); never foley an action the picture does not show (no claps for pointing); compare every generated instrument harmonic by harmonic with a real one before the owner hears it |
+| 4 | T-01 | "ang lakas ng music mo in some parts like it feels so deep and out of tune" | round 4b: one tuning for every part; lows from 34 % to 15 % of the energy; gentler ending; the climax the loudest moment. **Rules for the skill:** never mix tuning systems across parts; keep the energy under 150 Hz near 15 % and give the low end to one instrument; check the loudness curve against the story (the climax must be the peak) |
