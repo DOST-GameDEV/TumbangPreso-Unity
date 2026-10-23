@@ -106,6 +106,19 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(600000)] public IEnumerator BgcTayaAndWatcherHoldTheTaya() => Closes(SceneFlow.Kanto);
         [UnityTest, Timeout(600000)] public IEnumerator BgcPlaysIntoTheRound() => Natural(SceneFlow.Kanto);
 
+        // ------------------------------------------------------------------ Banaue
+
+        [UnityTest, Timeout(600000)] public IEnumerator BanaueFullFilmBeats() => Beats(SceneFlow.Payo, false, 1,
+            new[] { (0.6f, "01_mist_valley"), (2.2f, "02_mist_climb_title"), (3.3f, "03_mist_plaza"), (4.0f, "04_bulul_sun"), (4.7f, "05_bulul_torches"),
+                    (5.8f, "06_file_rising"), (6.8f, "07_file_parting"), (7.9f, "08_torches_lit"), (8.9f, "09_rite_above"), (9.8f, "10_rite_low"),
+                    (10.5f, "11_light_running"), (11.05f, "12_light_slowing"), (11.3f, "13_light_lands"), (11.9f, "14_mock_bow"), (12.4f, "15_laughing"),
+                    (13.0f, "16_taya_shakes_it_off"), (13.7f, "17_taya_defiant"), (14.6f, "18_close_you"), (16.6f, "19_return") });
+        [UnityTest, Timeout(600000)] public IEnumerator BanaueShortFilmBeats() => Beats(SceneFlow.Payo, true, 1,
+            new[] { (0.8f, "s01_rite"), (2.0f, "s02_light"), (2.8f, "s03_lands"), (3.2f, "s04_react"), (4.0f, "s05_taya"), (5.4f, "s06_close_you") });
+        [UnityTest, Timeout(1800000)] public IEnumerator BanaueRecording() => Record(SceneFlow.Payo, 1);
+        [UnityTest, Timeout(600000)] public IEnumerator BanaueTayaAndWatcherHoldTheTaya() => Closes(SceneFlow.Payo);
+        [UnityTest, Timeout(600000)] public IEnumerator BanauePlaysIntoTheRound() => Natural(SceneFlow.Payo);
+
         // ------------------------------------------------------------------ the beats
 
         private IEnumerator Load(string map, bool reduced)

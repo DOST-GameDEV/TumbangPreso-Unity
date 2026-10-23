@@ -57,7 +57,8 @@ namespace TumbangPreso.Map
         {
             if (Instance != null && Instance.MapId == mapId) return Instance;
             System.Type kind = mapId == SceneFlow.Eskinita ? typeof(TondoFilm) : mapId == SceneFlow.IlalimNgTulay ? typeof(ErmitaFilm)
-                : mapId == SceneFlow.LagoonCove ? typeof(SitangkaiFilm) : mapId == SceneFlow.Kanto ? typeof(BgcFilm) : null;
+                : mapId == SceneFlow.LagoonCove ? typeof(SitangkaiFilm) : mapId == SceneFlow.Kanto ? typeof(BgcFilm)
+                : mapId == SceneFlow.Payo ? typeof(BanaueFilm) : null;
             if (kind == null) return null;
             if (Instance != null) Destroy(Instance.gameObject);
             var go = new GameObject("Map film (" + mapId + ")");

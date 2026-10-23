@@ -6,8 +6,8 @@ match with its own short film, each with its own mood, built to `Runtime/Map/Are
 *"make showing emotion and expressiveness and readability one of the main bars"*, *"thoroughly direct everything"*,
 *"focus on one by one doing it and refining"*.
 
-Status: Tondo (`TondoFilm`), Ermita (`ErmitaFilm`), Sitangkai (`SitangkaiFilm`) and BGC (`BgcFilm`) are built. Banaue is
-not; it still plays the arrival's own shots until its director is added (see "Adding a map" below).
+Status: all five are built: Tondo (`TondoFilm`), Ermita (`ErmitaFilm`), Sitangkai (`SitangkaiFilm`), BGC
+(`BgcFilm`) and Banaue (`BanaueFilm`).
 
 ## The bars, in order
 
@@ -98,14 +98,12 @@ not; it still plays the arrival's own shots until its director is added (see "Ad
   saved and put back at `End`).
 - A lane-mode traffic (`KantoTraffic`) is still under the hold: pose each `Driver.Body` from `LaneFrame` and put every
   body back in `Restore`. Keep the runner's crossing clear by sliding the lane's other cars back while they cross.
+- Torches and lamps at night or dawn: four lamps at 3 with a 9 m reach washed a whole plaza orange (Banaue r2); keep
+  each torch near 1.6 with a 6 m reach and let the flame billboards carry the brightness.
+- A fog start inside the court (12 m) puts the players in the haze: every colour goes pale. Mist is for the distance.
 
 ## Adding a map
 
 Write `<Name>Film : MapFilm` (Region, Accent, Score, CloseAt, Prepare, Stage, optionally TayaShot and Restore),
 add it to `MapFilm.Ensure`, add its sound to `tools/synth_map_film_sfx.py` and its score to
 `tools/render_map_film.py`'s table, add its tests to `MapFilmTests`, and record the map in TODO.
-
-The owner's brief for the last one:
-- Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches
-  light the ring, a carved stone glyph glows to reveal the taya. (`PayoFire`, `PayoHaze`, `PayoNight`; the plaza's
-  sun disc at the origin.)

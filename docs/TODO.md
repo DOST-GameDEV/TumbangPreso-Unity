@@ -111,8 +111,14 @@ replay and the whole match read poorly ("everything has to be animated").
     portraits, VS, a spinning "?" that flips to the taya; the taya struck; the three laughing; the signal's own
     lamps lit amber then green through their lamp slots; the three dropping into a sprint crouch. A 128 bpm score
     and the brakes, horn, skid, slams, flip, beep and go synthesised. Video: Logs/map-films/BGC_intro_film.mp4.
-  - [ ] Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches
-    light the ring, a carved stone glyph glows to reveal the taya.
+  - [ ] Banaue (Payo) `BanaueFilm`: built 2026-10-23 (runs 1 to 3): dawn; the camera climbs the south terraces a gong
+    stroke at a time (the waterfall, the village) and tilts over to the plaza and the misty valley; the great bulul
+    catches the first sun and torches catch at its feet; the four walk up in file, heads bowed, and part to the
+    carved sun disc's four points, a torch catching at each; arms raised as the disc's rays wake gold; a pillar of
+    light runs round the ring, slowing like a wheel, and stops on the taya; the three bow to them in mock ceremony
+    and laugh; the taya shakes it off. Gangsa, flute and drone score, the gong, torches, ticks and flare synthesised.
+    The torches and the disc's light are the film's own (the map's fires are the night's, off by day).
+    Video: Logs/map-films/Banaue_intro_film.mp4.
   - [ ] Owner look at both films in play (feel, length, acting); the LAN and online peers on one clock.
 
 ### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)

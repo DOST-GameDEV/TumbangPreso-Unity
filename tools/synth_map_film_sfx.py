@@ -36,6 +36,11 @@ cue there; the mix level is the film's own):
     sfx_film_bgc_flip.wav       1.60 s  the taya's card flipping over: a whoosh and a big hit
     sfx_film_bgc_beep.wav       0.60 s  the crossing signal's beep
     sfx_film_bgc_go.wav         1.80 s  green: a boom and a bright stab
+    sfx_film_banaue_score.wav  18.4 s  BANAUE: a drone in D, a bamboo flute, gangsa rows gathering into the rite
+    sfx_film_banaue_gong.wav    4.00 s  a big hanging gong struck once, its bloom
+    sfx_film_banaue_torch.wav   1.20 s  a torch catching: a whoomp of air and a crackle
+    sfx_film_banaue_tick.wav    0.50 s  the light passing to the next: a small bright gong
+    sfx_film_banaue_flare.wav   2.40 s  the light landing on the taya: a shimmer and a ring
 
 The kids' cheer and giggle under Sitangkai are recorded: copies of Art/audio/ambience/sfx_life_cheer_1 and
 sfx_life_kid_giggle_1, as Resources/Sfx/sfx_film_sitangkai_kids and _giggle. Nothing here makes a voice.
@@ -754,6 +759,129 @@ def bgc_beep():
     return fade(lowpass(y, 6000), 0.001, 0.05)
 
 
+def banaue_flute(freq, seconds, rng, vibrato=5.0):
+    """A bamboo flute: a sine with a little breath, a slow swell and vibrato."""
+    t = t_of(seconds)
+    f = freq * (1 + 0.006 * np.sin(2 * np.pi * vibrato * t) * np.clip(t / 0.4, 0, 1))
+    tone = np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.18 * np.sin(2 * np.pi * np.cumsum(2 * f) / SR)
+    breath = band(rng.normal(0, 1, len(t)), freq * 0.8, freq * 3.0) * 0.12
+    env = np.clip(t / 0.18, 0, 1) * np.clip((seconds - t) / 0.35, 0, 1)
+    return fade((tone + breath) * env, 0.01, 0.05)
+
+
+def gangsa(freq, seconds=1.2, bright=1.0):
+    """An Ifugao gangsa, a flat bronze gong: a strong fundamental, near-octave partials beating, a dry slap."""
+    t = t_of(seconds)
+    y = (np.sin(2 * np.pi * freq * t) + 0.6 * np.sin(2 * np.pi * freq * 1.007 * t)) * np.exp(-t * 2.6)
+    y += 0.4 * bright * np.sin(2 * np.pi * freq * 2.13 * t) * np.exp(-t * 5.0)
+    y += 0.2 * bright * np.sin(2 * np.pi * freq * 3.4 * t) * np.exp(-t * 9.0)
+    return fade(y, 0.001, 0.08)
+
+
+# ------------------------------------------------------------------ BANAUE: mythic and ceremonial
+#
+# BanaueFilm: MIST 0.0 (gongs on the climb 0.3 1.1 1.9 2.7, the title 1.0), BULUL 3.6 (the sun 3.9, the torches 4.3),
+# FILE 5.0 (high 6.4, torches 6.9 7.3 7.7 8.1), RITE 8.4, CHOOSE 10.2 (the light slows to land at 11.2), REACT 11.5,
+# TAYA 12.6, CLOSE 14.0, end 17.4. A drone in D, a bamboo flute, gangsa rows; slow, then gathering into the rite.
+
+def banaue_score():
+    rng = np.random.default_rng(1025)
+    total = 18.4
+    track = np.zeros(int(SR * total))
+    # The valley: a low drone and the air.
+    place(track, pad([note("D2"), note("A2"), note("D3")], total, attack=2.0, release=2.0, bright=380), 0.0, 0.32)
+    place(track, swell(total, seed=97) * np.minimum(1, t_of(total) / 2.0), 0.0, 0.06)
+    # MIST: the climb, a deep gong on each step (cues), the flute calling across the valley.
+    for n, at, length in (("A4", 0.5, 1.4), ("D5", 1.6, 1.0), ("C5", 2.4, 0.6), ("A4", 2.9, 1.6)):
+        place(track, banaue_flute(note(n), length, rng), at, 0.32)
+    # BULUL: a held high flute note as the sun reaches its face.
+    place(track, banaue_flute(note("E5"), 1.6, rng, vibrato=4.0), 3.85, 0.3)
+    # FILE: the gangsa come in, an interlocking row on a slow pulse, gathering.
+    rowA = ["D4", "F4", "G4", "A4"]
+    rowB = ["A4", "G4", "F4", "D4"]
+    beat = 0.5
+    at, n = 5.0, 0
+    while at < 8.4:
+        place(track, gangsa(note(rowA[n % 4]), 1.0), at, 0.22)
+        place(track, gangsa(note(rowB[n % 4]) * 2, 0.6, 0.6), at + beat / 2, 0.14)
+        if n % 2 == 0:
+            place(track, gangsa(note("D3"), 1.6, 0.4), at, 0.3)
+        at += beat
+        n += 1
+    for at in (6.9, 7.3, 7.7, 8.1):
+        place(track, banaue_flute(note("D5"), 0.4, rng), at, 0.12)
+    # RITE (8.4): the big gong is a cue; the row doubles, the flute climbs, a swell under it.
+    place(track, pad([note("D3"), note("A3"), note("F#4"), note("A4")], 2.2, attack=0.8, release=0.6, bright=900), 8.4, 0.26)
+    at, n = 8.4, 0
+    while at < 10.2:
+        place(track, gangsa(note(rowA[n % 4]), 0.8), at, 0.24)
+        place(track, gangsa(note(rowB[n % 4]) * 2, 0.5, 0.6), at + beat / 4, 0.16)
+        at += beat / 2
+        n += 1
+    for nn, at in (("D5", 8.6), ("E5", 9.1), ("F#5", 9.6), ("A5", 9.95)):
+        place(track, banaue_flute(note(nn), 0.6, rng), at, 0.24)
+    # CHOOSE (10.2): the ticks are cues; under them only the drone and a rising shimmer; the LANDING (11.2): the gong
+    # (a cue) and a bright chord.
+    ct = t_of(1.0)
+    place(track, band(rng.uniform(-1, 1, len(ct)), 2000, 9000) * (ct / 1.0) ** 2, 10.2, 0.18)
+    place(track, pad([note("D4"), note("F#4"), note("A4"), note("D5")], 2.2, attack=0.02, release=1.4, bright=2400), 11.2, 0.3)
+    # REACT (11.5): a teasing gangsa figure as the three bow and laugh.
+    for i, nn in enumerate(["A5", "F5", "A5", "F5", "D5", "E5", "F5", "D5"]):
+        place(track, gangsa(note(nn), 0.35, 1.0), 11.6 + i * 0.12, 0.14)
+    # TAYA (12.6): two low strokes as they square up; then the flute over the close.
+    place(track, gangsa(note("D2"), 2.0, 0.5), 12.6, 0.45)
+    place(track, gangsa(note("D2"), 2.0, 0.5), 13.3, 0.5)
+    for nn, at, length in (("A4", 14.0, 1.2), ("D5", 15.1, 1.0), ("A4", 16.0, 1.6)):
+        place(track, banaue_flute(note(nn), length, rng), at, 0.28)
+    track = room(track, 2.4, 0.3, seed=99, tone=3600)
+    tail = int(SR * 1.8)
+    track[-tail:] *= np.linspace(1, 0, tail) ** 2
+    return fade(track, 0.01, 0.2)
+
+
+def banaue_gong():
+    """A big hanging gong struck once: slow beating partials and a long bloom."""
+    rng = np.random.default_rng(101)
+    t = t_of(4.0)
+    f = 62.0
+    y = (np.sin(2 * np.pi * f * t) + 0.9 * np.sin(2 * np.pi * f * 1.009 * t)) * np.exp(-t * 0.7)
+    y += 0.5 * np.sin(2 * np.pi * f * 2.02 * t) * np.exp(-t * 1.1) * np.clip(t / 0.3, 0, 1)
+    y += 0.3 * np.sin(2 * np.pi * f * 2.76 * t) * np.exp(-t * 1.6)
+    y += 0.15 * np.sin(2 * np.pi * f * 4.1 * t) * np.exp(-t * 2.4)
+    y += lowpass(rng.uniform(-1, 1, len(t)), 400) * np.exp(-t * 25) * 0.7
+    return fade(room(y, 2.0, 0.3, seed=102, tone=2500), 0.002, 0.4)
+
+
+def banaue_torch():
+    """A torch catching: a soft whoomp of air and a crackle settling."""
+    rng = np.random.default_rng(103)
+    t = t_of(1.2)
+    whoomp = lowpass(rng.normal(0, 1, len(t)), 500) * np.clip(t / 0.08, 0, 1) * np.exp(-t * 4.0)
+    y = whoomp * 0.8
+    at = 0.12
+    while at < 1.1:
+        place(y, noise_hit(0.02, rng, 2000, 8000, 140), at, rng.uniform(0.15, 0.4) * (1.1 - at))
+        at += rng.uniform(0.03, 0.09)
+    return fade(y, 0.002, 0.1)
+
+
+def banaue_tick():
+    """The light passing to the next: a small bright gong."""
+    return fade(gangsa(note("A5"), 0.5, 1.0), 0.001, 0.05)
+
+
+def banaue_flare():
+    """The light landing: a shimmering swell into a bright ring."""
+    rng = np.random.default_rng(105)
+    y = np.zeros(int(SR * 2.4))
+    t = t_of(2.4)
+    shimmer = sum(np.sin(2 * np.pi * f * t + i) for i, f in enumerate((880.0, 1108.7, 1318.5, 1760.0))) * np.exp(-t * 1.4)
+    place(y, shimmer * 0.3, 0.0)
+    place(y, kick(0.8, 34, 160), 0.0, 0.8)
+    place(y, noise_hit(1.6, rng, 3000, 14000, 2.0), 0.0, 0.25)
+    return fade(room(y, 1.6, 0.3, seed=106), 0.001, 0.25)
+
+
 def bgc_go():
     rng = np.random.default_rng(93)
     y = np.zeros(int(SR * 1.8))
@@ -792,6 +920,11 @@ def main():
     write("sfx_film_bgc_flip.wav", bgc_flip(), only)
     write("sfx_film_bgc_beep.wav", bgc_beep(), only)
     write("sfx_film_bgc_go.wav", bgc_go(), only)
+    write("sfx_film_banaue_score.wav", banaue_score(), only)
+    write("sfx_film_banaue_gong.wav", banaue_gong(), only)
+    write("sfx_film_banaue_torch.wav", banaue_torch(), only)
+    write("sfx_film_banaue_tick.wav", banaue_tick(), only)
+    write("sfx_film_banaue_flare.wav", banaue_flare(), only)
 
 
 if __name__ == "__main__":
