@@ -4,6 +4,31 @@ Mark a row by its ID ("T-04 too thin"). Only the rows the owner names change in 
 Method and theme: `../plan.md`, `../research.md`. Build: `py -3 tools/build_tondo_film_sfx.py` (generated from
 measured references in `tools/tump_sfx_profiles.json`; nothing recorded ships except T-06, which was already in the game).
 
+## Round 4 (2026-10-23): no foley, real-sounding strings, the band counts
+
+Watch: `r4-after.mp4` (with the alley bed and the kid's voice). Music alone: `r4-music-only.mp3` (the score and the
+YA hit, nothing else; owner: "js an mp3 without the game, js the music").
+
+| Owner on round 3 | Round 4 |
+|---|---|
+| "door opening sounds sucks" | no door foley: `sfx_film_tondo_door` deleted, its call gone from `TondoFilm.cs`. Each player's entrance is the band adding a part exactly on that door: door 1 the bass, door 2 the guitar, door 3 the bandurria, door 4 everything |
+| "the running sfx sucks", "why even give his running some sfx" | the run has no sound: `sfx_film_tondo_chalk` deleted and uncalled. The music carries it |
+| "MAIBA TAYA SOUND SUCKS" | the picture is a fist POINTING at each kid; nobody claps. `sfx_film_tondo_clap` deleted and uncalled. The band counts: a held tremolo breath, then one plucked bandurria note per syllable (E, F#, G#) doubled by the bass, each stronger; YA (T-05) is one decisive hit of the whole band on A, then it ducks for the kid's real "Taya!" (no tremolo answer) |
+| "refine the music pa ang ijbol ng sound" | the cause, measured: round 2-3's strings were sine stacks, and the first physical strings were far too bright (harmonics 10-20 at -10 to -15 dB where a real harp's are -50 to -80; a C-E-G chord at roughness 0.53 against a real harp's 0.11). Now: Karplus-Strong strings plucked with a triangle (a real string's starting shape) and losing treble per note (3 kHz rings 0.12 s on nylon), a wooden body convolved in, a tremolo that re-picks a string still ringing, looser human timing. Exact tuning kept (within 0.5 cent) |
+
+| Round 4 measurement | Value |
+|---|---|
+| Score roughness median / p90 | 0.070 / 0.262 (the match soundtrack, a professional track: 0.082 / 0.217) |
+| YA hit roughness median / p90 | 0.191 / 0.238 |
+| Sounding notes in A major | 1.00 |
+| Film with the alley bed | -18.1 LUFS, true peak -1.6 dBTP (the first round to meet the -1 dBTP target) |
+
+Loudness note: the physical strings are spiky (a crest factor of 20.5 dB), so at the same peak the score measured
+-24 LUFS. `tump_synth.compress` (a look-ahead peak compressor, 3:1 over -20 dB) brings the crest to 13.7 dB. Its first
+version averaged the level and let every pluck attack through, so it made the score QUIETER; fixed and noted in the code.
+
+The film now has two files of its own: `sfx_film_tondo_score` (T-01) and `sfx_film_tondo_taya` (T-05).
+
 ## Round 3 (2026-10-23): the story, the handoff into the match, nothing random
 
 Watch: `r3-after.mp4` (with the alley bed). Per cue: `cues/*_r3.mp3`. The plan it follows: [spotting.md](spotting.md).
@@ -115,3 +140,4 @@ before a version is called done). The videos mix the beds at estimated weights.
 | 0 | all | "this game has horrible sfx rn"; "its js noise and a bunch of sounds taht dont have a theme and dont work well together or dont support each other" | round 1: one band, key, motif, room; everything generated from measured real objects |
 | 1 | all | "ang panget pareho" (could not tell round 1 from before); "u js mashed a bunch of unrelated audios tgthr"; "i like the bird"; "WHY IS THERE A BELL"; "TRY TO MAKE IT SOUND FILIPINO"; "ang saket sa tenga theres 0 harmony"; "ang gulo talaga"; "completely revamp everything"; "make ur own"; "sometimes less is more" | round 2: no bells; a rondalla built from exact harmonics; one chord at a time; three parts; no pitched foley; harmony checks before the owner listens. **Rules for the skill:** never a bell or music-box timbre in TUMP unless asked; Filipino means rondalla strings and street percussion; harmony first, then fewer parts; a measured partial list is not an instrument |
 | 2 | T-02, all | "005 random sound is weird", "may random shit na fucks it up", the chalk run "rapes the shit", "refine the sound sa maiba taya", "think of how a story has a start climax and end", "transition it to the actual game", "thoroughly analyze the material" | round 3: cut everything unmotivated; foley plays the picture; story arc; A major at the match's 150 bpm, ending on E into the match. **Rules for the skill:** spot the film first (watch it, write the beat sheet); every sound needs an on-screen reason or a musical job; score the scene's story arc; end a cutscene on the dominant of whatever plays next, at its tempo |
+| 3 | T-02, T-03, T-04, music | "door opening sounds sucks", "the running sfx sucks", "why even give his running some sfx", "MAIBA TAYA SOUND SUCKS", "refine the music pa ang ijbol ng sound" | round 4: every foley cue of the film removed; the score marks doors and syllables; physical strings measured against a real harp. **Rules for the skill:** in a scored cutscene, foley only where it adds something music cannot (default: none); never foley an action the picture does not show (no claps for pointing); compare every generated instrument harmonic by harmonic with a real one before the owner hears it |

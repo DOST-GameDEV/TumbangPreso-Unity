@@ -163,7 +163,10 @@ namespace TumbangPreso.Map
             _pool.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
             var life = FindFirstObjectByType<SidewalkLife>();
             _kidTaya = life != null && life.KidTaya != null && life.KidTaya.Length > 0 ? life.KidTaya[0] : null;
-            Clip("sfx_film_tondo_clap"); Clip("sfx_film_tondo_chalk"); Clip("sfx_film_tondo_door"); Clip("sfx_film_tondo_taya");
+            // ⚠️ ONE CUE OF ITS OWN, THE TAYA'S. The chalk run, the doors and the count had foley; the owner (2026-10-23):
+            // "why even give his running some sfx", "door opening sounds sucks", "MAIBA TAYA SOUND SUCKS". The score
+            // marks each door and each syllable on its own beat instead (tools/build_tondo_film_sfx.py).
+            Clip("sfx_film_tondo_taya");
         }
 
         // ------------------------------------------------------------------ the frame
@@ -241,7 +244,6 @@ namespace TumbangPreso.Map
                 float a = run < 0.98f ? 0.6f * (1.0f - Mathf.Clamp01(since / 0.6f)) : 0.0f;
                 Billboard(_dust[i], at, new Color(1.0f, 0.97f, 0.92f, a), 0.24f + since * 0.6f);
             }
-            if (Crossed(ChalkAt + 0.05f)) Cue("sfx_film_tondo_chalk", 0.7f);
             if (Crossed(ChalkAt + 0.8f * (DoorsAt - ChalkAt))) Punch(0.5f);
 
             // Inside the box, knee high, looking down the line: the fresh trail across the frame, the kid running at us.
@@ -308,7 +310,6 @@ namespace TumbangPreso.Map
                 float swing = DoorSwing(local);
                 if (door.Hinge != null) door.Hinge.localRotation = Quaternion.Euler(0.0f, -100.0f * swing, 0.0f);
                 if (door.Spill != null) door.Spill.intensity = 2.2f * Mathf.Clamp01(swing * 1.6f);
-                if (door.Found && Crossed(DoorTime(s) + 0.08f)) Cue("sfx_film_tondo_door", 0.55f, 0.92f + 0.05f * s);
                 float walk = (local - StepOut) / ToHuddle;
                 ShowSeat(s, local > (door.Found ? 0.22f : 0.0f));
                 if (walk <= 0.0f) { Place(s, door.Start, door.Yaw); Animate(s, false); continue; }
@@ -358,13 +359,7 @@ namespace TumbangPreso.Map
                 if (age >= _syllableAt[i]) { pointed = seat; since = age - _syllableAt[i]; }
                 WordAt(Syllables[i], Syllables[i], i == 3 ? new Color(0.36f, 0.66f, 1.0f) : Ivory, _syllableAt[i], i == 3 ? 1.0f : 0.48f,
                        new Vector2(-330.0f + 220.0f * i, -230.0f), i == 3 ? 150 : 118, i % 2 == 0 ? -7.0f : 6.0f);
-                if (Crossed(_syllableAt[i]))
-                {
-                    // A small lift per syllable, not a scale: at +4 % a clap the YA clap was 12 % up and read as a toy
-                    // synth (owner, 2026-10-23: "refine the sound sa maiba taya"). YA is the loudest instead.
-                    Cue("sfx_film_tondo_clap", i == 3 ? 0.85f : 0.72f, 1.0f + 0.012f * i);
-                    if (i == 3) { Cue("sfx_film_tondo_taya", 0.8f); Punch(0.8f); if (_kidTaya != null) Cue(_kidTaya, 0.75f); }
-                }
+                if (i == 3 && Crossed(_syllableAt[i])) { Cue("sfx_film_tondo_taya", 0.8f); Punch(0.8f); if (_kidTaya != null) Cue(_kidTaya, 0.75f); }
             }
             if (age >= _syllableAt[3]) ChipRoles = true;
 

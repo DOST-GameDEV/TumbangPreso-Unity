@@ -318,6 +318,27 @@ def room(x, wet=0.18):
     return dry * (1 - wet * 0.5) + wetsig * wet * 2.2
 
 
+def compress(x, threshold_db=-20.0, ratio=3.0, attack=0.005, release=0.12, knee_db=6.0):
+    """A plain feed-forward compressor (peak follower, soft knee). Plucked strings are spiky: a big attack, then a fast
+    fall. Round 4's physical strings measured -24 LUFS at the same peak where round 3's sines made -19; a gentle 3:1
+    over -20 dB evens them out the way any mix engineer would. Returns the compressed signal at its original peak."""
+    from scipy.ndimage import maximum_filter1d
+    # ⚠️ A PEAK DETECTOR WITH LOOK-AHEAD, not an average: a pluck's attack is about a millisecond, and round 4's first
+    # version (two averaging followers) let every attack through untouched while squashing the sustain, so the
+    # "compressed" score measured 1 LU QUIETER. The window looks `attack` ahead, so the gain is down before the spike.
+    look = max(1, int(attack * SR))
+    env = maximum_filter1d(np.abs(x), size=2 * look + 1)
+    a_rel = np.exp(-1.0 / (release * SR))
+    follow = np.maximum(env, signal.lfilter([1 - a_rel], [1, -a_rel], env))      # the release: a slow fall after a peak
+    level = 20 * np.log10(follow + 1e-9) - 20 * np.log10(np.abs(x).max() + 1e-12)
+    over = level - threshold_db
+    gain_db = np.where(over <= -knee_db / 2, 0.0,
+                       np.where(over >= knee_db / 2, -over * (1 - 1 / ratio),
+                                -((over + knee_db / 2) ** 2) / (2 * knee_db) * (1 - 1 / ratio)))
+    y = x * 10 ** (gain_db / 20)
+    return y * (np.abs(x).max() / (np.abs(y).max() + 1e-12))
+
+
 def glue(x, drive=1.15):
     """The shared finishing touch: a gentle tanh saturation, the same 'tape' on every file."""
     return np.tanh(drive * x) / np.tanh(drive)
@@ -332,52 +353,117 @@ def glue(x, drive=1.15):
 # nothing can be out of tune, and every note has an explicit stop so no chord rings into the next one.
 
 STRINGS = {
-    # kind: (harmonics, pick position, brightness Hz, sustain s at 200 Hz, high-harmonic damping Hz, course detune cents, body EQ)
-    # bandurria: 14 steel strings in double courses, plectrum, small bright nasal body; the rondalla's melody voice
-    "bandurria": (28, 0.13, 5200.0, 1.1, 2600.0, 2.0, ((420, 4.0, 1.4), (950, 3.0, 1.6), (2600, 3.5, 1.2))),
-    # guitar: nylon, fingers or a soft strum, warm body
-    "guitar": (24, 0.22, 2600.0, 1.8, 1500.0, 0.0, ((105, 5.0, 1.5), (210, 3.0, 1.5), (420, 1.5, 1.2), (3000, -3.0, 0.7))),
-    # bass: the guitar's low strings, thumbed, dark
-    "bass": (14, 0.28, 900.0, 2.2, 700.0, 0.0, ((95, 4.0, 1.2), (190, 2.0, 1.4))),
+    # Round 4 (owner on round 3: "refine the music pa ang ijbol ng sound"): the additive strings of rounds 2 and 3 were
+    # sine stacks, plinky and organ-like, and their tremolo restarted the note from silence every stroke. These are
+    # physical strings (extended Karplus-Strong, Jaffe and Smith 1983): a burst of noise shaped by the pick runs round
+    # a delay line one period long, losing a little treble and level each trip, so the tone darkens as it rings, as a
+    # real string's does. Pitch stays exact: the loop's delay is split into whole samples, a linear-interpolation
+    # fraction and the loss filter's own half-sample-ish delay, so nothing goes sharp.
+    # kind: (pick position, T60 s at 3 kHz (how long the treble rings), T60 s at 220 Hz, pick brightness Hz,
+    #        course detune cents, body modes ((Hz, gain, decay s), ...), body mix)
+    "bandurria": (0.12, 0.35, 1.6, 6000.0, 1.6, ((390, 1.0, 0.05), (780, 0.7, 0.035), (1450, 0.5, 0.02), (2700, 0.35, 0.012)), 0.35),
+    "guitar": (0.2, 0.12, 3.2, 2400.0, 0.0, ((98, 0.8, 0.14), (205, 1.0, 0.09), (395, 0.5, 0.05), (525, 0.35, 0.04), (1150, 0.2, 0.02)), 0.4),
+    "bass": (0.26, 0.07, 3.6, 1200.0, 0.0, ((98, 1.0, 0.14), (205, 0.6, 0.09)), 0.35),
 }
+# ⚠️ ROUND 4'S FIRST STRINGS WERE FAR TOO BRIGHT. Harmonic by harmonic against a real harp C3 (VSCO 2 CE): the real
+# string's harmonics 10 to 20 sat at -50 to -80 dB, these at -10 to -15 dB, and a C-E-G chord measured roughness 0.53
+# against the real harp's 0.11. Two physical fixes: the pick is a TRIANGLE (a plucked string's starting shape, its
+# harmonics falling 12 dB an octave) instead of white noise, and the loop loses treble by a one-pole filter set per
+# note from the second field above, now the T60 at 3 kHz (how long the treble rings), so a low note darkens as fast as
+# a high one.
 
 
-def string_note(f, seconds, kind="guitar", velocity=1.0, seed=0, stop=None, release=0.03):
-    """One plucked note: exact harmonics, each weighted by where it was plucked and how bright the pluck was, each
-    dying faster the higher it is; a double course beats gently; a 2 ms pick scrape; damped at `stop` seconds."""
-    harmonics, pos, bright, sustain, hidamp, detune, _body = STRINGS[kind]
-    rng = np.random.default_rng(seed)
-    n = int(seconds * SR)
-    t = np.arange(n) / SR
-    y = np.zeros(n)
-    bright = bright * (0.75 + 0.35 * velocity)
-    courses = (0.0,) if detune == 0 else (-detune / 2, detune / 2)
-    for c in courses:
-        fc = f * 2 ** (c / 1200)
-        for h in range(1, harmonics + 1):
-            fh = fc * h
-            if fh > SR * 0.42:
-                break
-            amp = abs(np.sin(np.pi * h * pos)) / h * np.exp(-fh / bright)
-            tau = sustain * (200.0 / f) ** 0.35 / (1.0 + (fh / hidamp) ** 2)
-            y += amp * np.sin(2 * np.pi * fh * t + rng.uniform(0, 2 * np.pi)) * np.exp(-t / tau)
-    m = int(0.002 * SR)
-    pick = highpass(rng.normal(0, 1, m), 2500) * np.hanning(m)
-    y[:m] += 0.04 * pick * velocity * np.abs(y).max() / (np.abs(pick).max() + 1e-9)
-    rise = int(0.0015 * SR)
-    y[:rise] *= np.linspace(0, 1, rise)
-    if stop is not None and stop < seconds:
-        k, r = int(stop * SR), int(release * SR)
-        y[k:k + r] *= np.linspace(1, 0, len(y[k:k + r]))
-        y[k + r:] = 0.0
-    return y * velocity
+def _loss_pole(f, t60_f, t60_3k):
+    """The one-pole loop filter's coefficient that makes 3 kHz die in t60_3k while the fundamental dies in t60_f."""
+    extra_db = max(0.0, 60.0 / t60_3k - 60.0 / t60_f) / f        # extra loss per trip round the loop, at 3 kHz
+    target = 10 ** (-extra_db / 20)
+    w = 2 * np.pi * 3000.0 / SR
+    grid = np.linspace(0.0, 0.995, 400)
+    gain = (1 - grid) / np.abs(1 - grid * np.exp(-1j * w))
+    return float(grid[np.argmin(np.abs(gain - target))])
+
+
+def _ks(f, n, x, t60, t60_3k):
+    """One string: input x (the picks) through a Karplus-Strong loop tuned to f, as one IIR filter (lfilter).
+    Loop: delay N + fractional (linear interpolation) + a one-pole lowpass of DC gain g."""
+    a = _loss_pole(f, t60, t60_3k)
+    D = SR / f - a / (1 - a)                                     # the pole's own low-frequency delay
+    N = int(np.floor(D))
+    frac = D - N
+    g = 10 ** (-3.0 / (f * t60))
+    b0 = g * (1 - a)
+    den = np.zeros(N + 2)
+    den[0], den[1] = 1.0, -a
+    den[N] -= b0 * (1 - frac)
+    den[N + 1] -= b0 * frac
+    return signal.lfilter([1.0, -a], den, x[:n])
+
+
+def _pick(f, kind, velocity, rng):
+    """The excitation: the string's starting shape, a triangle peaked at the pick position (harmonics sin(n pi p)/n^2),
+    softened for a soft pick, with a breath of noise for the nail or plectrum."""
+    pos, _t3k, _t, bright, *_ = STRINGS[kind]
+    p = max(4, int(round(SR / f)))
+    k = max(1, min(p - 1, int(round(pos * p))))
+    tri = np.concatenate([np.linspace(0, 1, k, endpoint=False), np.linspace(1, 0, p - k)])
+    tri -= tri.mean()
+    noise = lowpass(rng.uniform(-1, 1, p), bright, order=2) * 0.12
+    e = lowpass(np.diff(np.concatenate([[0.0], tri])) * 10.0 + noise, bright * (0.5 + 0.6 * velocity), order=1)   # same loudness at any pitch
+    return e * velocity
+
+
+_BODY = {}
+
+
+def body_ir(kind):
+    """The instrument's wooden body as an impulse response: its main resonances, each a short decaying sine."""
+    if kind not in _BODY:
+        t = t_of(0.25)
+        ir = np.zeros_like(t)
+        for f, g, d in STRINGS[kind][5]:
+            ir += g * np.sin(2 * np.pi * f * t) * np.exp(-t / d)
+        ir /= np.sqrt(np.sum(ir ** 2)) + 1e-12
+        _BODY[kind] = ir
+    return _BODY[kind]
 
 
 def body(x, kind):
-    """The instrument's wooden body: a few broad resonances (bell EQ bands)."""
-    for f, g, q in STRINGS[kind][6]:
-        x = peak_eq(x, f, g, q)
-    return x
+    """Radiate through the body: the string's own sound plus the wood's resonance."""
+    mix = STRINGS[kind][6]
+    wet = signal.fftconvolve(x, body_ir(kind))[: len(x)]
+    wet *= np.abs(x).max() / (np.abs(wet).max() + 1e-12)
+    return x * (1 - mix) + wet * mix
+
+
+def string_voice(f, seconds, kind, picks, seed=0, stop=None, release=0.03):
+    """One string (two for a doubled bandurria course) excited by `picks` [(time s, velocity)], damped at `stop`.
+    Re-picking a string that still rings is how a tremolo works, so a tremolo is one voice with many picks."""
+    pos, t60_3k, t60_220, *_ = STRINGS[kind]
+    detune = STRINGS[kind][4]
+    rng = np.random.default_rng(seed)
+    n = int(seconds * SR)
+    t60 = t60_220 * (220.0 / f) ** 0.45
+    out = np.zeros(n)
+    courses = (0.0,) if detune == 0 else (-detune / 2, detune / 2)
+    for c in courses:
+        fc = f * 2 ** (c / 1200)
+        x = np.zeros(n)
+        for at, vel in picks:
+            e = _pick(fc, kind, vel, rng)
+            i = int(at * SR)
+            if i < n:
+                x[i:i + len(e)] += e[: n - i]
+        out += _ks(fc, n, x, t60, min(t60_3k, t60 * 0.9))
+    if stop is not None and stop < seconds:
+        k, r = int(stop * SR), int(release * SR)
+        out[k:k + r] *= np.linspace(1, 0, len(out[k:k + r]))
+        out[k + r:] = 0.0
+    return out / len(courses)
+
+
+def string_note(f, seconds, kind="guitar", velocity=1.0, seed=0, stop=None, release=0.03):
+    """One plucked note (the same call as rounds 2 and 3, now a physical string)."""
+    return string_voice(f, seconds, kind, [(0.0, velocity)], seed, stop, release)
 
 
 # Pure intervals above a chord's root, in cents from equal temperament. A tempered major third is 14 cents wide and
@@ -392,31 +478,32 @@ def midi(name):
 
 def strum(track, notes, at, stop, kind="guitar", velocity=0.8, spread=0.014, down=True, seed=0, root=None):
     """A strum: the chord's notes a few ms apart (low to high on a down stroke), each damped at `stop`. With `root`
-    (a note name), every note is tuned to its pure interval above that root (JUST_CENTS)."""
+    (a note name), every note is tuned to its pure interval above that root (JUST_CENTS). A human hand: the stroke
+    speeds up across the strings, the first string of an up-stroke is caught lightly."""
     rng = np.random.default_rng(seed)
     order = notes if down else notes[::-1]
+    t0 = at + rng.uniform(-0.006, 0.006)
     for i, nm in enumerate(order):
-        t0 = at + i * spread * rng.uniform(0.8, 1.2)
-        v = velocity * (0.85 + 0.15 * rng.uniform()) * (0.9 if (not down and i == 0) else 1.0)
+        v = velocity * rng.uniform(0.82, 1.0) * (0.75 if (not down and i == 0) else 1.0)
         cents = JUST_CENTS[(midi(nm) - midi(root)) % 12] if root else 0.0
         f = hz(nm) * 2 ** (cents / 1200)
         place(track, string_note(f, stop - t0 + 0.05, kind, v, seed=int(rng.integers(1 << 30)), stop=stop - t0), t0)
+        t0 += spread * rng.uniform(0.7, 1.15) * (1.0 - 0.08 * i)
 
 
 def tremolo(track, notes, start, stop, kind="bandurria", velocity=0.7, rate=13.0, seed=0, swell=True):
-    """The bandurria's tremolo: the plectrum flicking down-up on the course(s) at `rate` a second, each stroke
-    damping the last (it is one string), a little uneven like a hand, swelling in."""
+    """The bandurria's tremolo: one ringing course per note, re-picked down-up at about `rate` a second, a little
+    uneven like a hand, the up-strokes lighter, swelling in. The string never stops between picks."""
     rng = np.random.default_rng(seed)
-    at, k = start, 0
     span = max(stop - start, 1e-3)
-    while at < stop:
-        nxt = at + (1.0 / rate) * rng.uniform(0.93, 1.07)
-        shape = min(1.0, 0.55 + 0.45 * (at - start) / min(0.25, span)) if swell else 1.0
-        v = velocity * shape * (1.0 if k % 2 == 0 else 0.78) * rng.uniform(0.92, 1.0)
-        dur = min(nxt, stop) - at
-        for nm in notes:
-            place(track, string_note(hz(nm), dur + 0.06, kind, v, seed=int(rng.integers(1 << 30)), stop=dur, release=0.012), at)
-        at, k = nxt, k + 1
+    picks, at, k = [], 0.0, 0
+    while at < span:
+        shape = min(1.0, 0.5 + 0.5 * at / min(0.3, span)) if swell else 1.0
+        picks.append((at, velocity * shape * (1.0 if k % 2 == 0 else 0.72) * rng.uniform(0.88, 1.0)))
+        at += (1.0 / rate) * rng.uniform(0.9, 1.1)
+        k += 1
+    for nm in notes:
+        place(track, string_voice(hz(nm), span + 0.08, kind, picks, seed=int(rng.integers(1 << 30)), stop=span, release=0.05), start)
 
 
 def bamboo(f, seconds=0.25, velocity=1.0, seed=0):

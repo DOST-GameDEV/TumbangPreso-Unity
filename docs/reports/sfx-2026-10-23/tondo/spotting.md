@@ -35,6 +35,12 @@ own tempo, so the climax foreshadows the match.
 | 14.3 - 15.6 | TAYA stamps on; the taya shakes it off and squares up | the turn | resolve | two firm strums, F#m then E | |
 | 15.6 - 19.6 | each attacker's screen closes on themselves: YOU, ATTACKER; then the camera swings back to play | END: into the game | ready, leaning forward | E: the guitar on every beat getting stronger, a bandurria tremolo on B rising to E; it stops on E and rings as the score fades | (the countdown and the match music follow, in A) |
 
+## Round 4 changes to this sheet
+
+The run, the doors and the count now have NO sound effects (owner: "why even give his running some sfx",
+"door opening sounds sucks", "MAIBA TAYA SOUND SUCKS"). The doors are marked by a part of the band entering on each
+one; the count by a plucked note per syllable. Nobody claps in the picture: a fist points.
+
 ## Rules this sheet adds
 
 - Every sound is motivated by the picture or has a job in the music; anything else is cut (round 2's bamboo and balde

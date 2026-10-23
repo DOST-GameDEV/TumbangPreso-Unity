@@ -13,8 +13,9 @@ docs/reports/sfx-2026-10-23/tondo/before/.
 THE THEME (round 2; the rules are written out above tondo_score's section, and the why in tondo/review.md)
   A barangay rondalla, one chord at a time: bandurria tune, guitar chords, guitar bass, all built from
   exact harmonics (tools/tump_synth.py string_note), every note damped at the next chord change, at most three parts.
-  No bells, no bamboo, no balde: every sound has a reason on screen or a job in the music (round 3). Foley (feet,
-  chalk, door, claps) is learned from measured CC0 references and has no pitched parts. One room for every file.
+  No bells, no bamboo, no balde: every sound has a reason on screen or a job in the music (round 3). Round 4: no
+  foley at all (the run, the doors and the count are marked by the score); the strings are physical (Karplus-Strong).
+  The analyse step still measures the CC0 references into tools/tump_sfx_profiles.json for later foley.
   Round 3: the story (tondo/spotting.md) in A major at 150 bpm, ending on E into the match soundtrack's A.
   Round 1 (a toy band: glockenspiel, xylophone, marimba, harp) was rejected: "WHY IS THERE A BELL", "0 harmony".
 
@@ -293,31 +294,6 @@ def analyse():
 P = {}          # the measured profiles (tools/tump_sfx_profiles.json), loaded in main()
 
 
-def tuned(name, floor_db=-36.0, lowest=0.0):
-    """A measured profile's partials, loudest first as the root (used only for untuned foley bodies now)."""
-    parts = [p for p in P[name]["partials"] if p["db"] > floor_db and p["f"] > lowest]
-    root = max(parts, key=lambda p: p["db"])
-    return root["f"], sorted(parts, key=lambda p: p["f"])
-
-
-def wood(name, seconds=0.5, hardness=0.7, seed=0, lowest=0.0, decay_scale=1.0, click=0.08):
-    """An untuned measured wooden body (the door's bump)."""
-    root, parts = tuned(name, floor_db=-30, lowest=lowest)
-    return ts.strike(parts, seconds, hardness=hardness, seed=seed, click=click, f_ref=root, decay_scale=decay_scale)
-
-
-def clap_hand(name, seed=0, body="clap_a_body"):
-    """One hand clap: the measured clap's coloured burst, a 1.5 ms crack, the cupped palms' brief resonance."""
-    pr = P[name]
-    y = ts.burst(pr["bands"], 0.5, min(pr["decay20_ms"], 22.0), seed=seed, seconds=0.2)
-    n = int(0.0015 * SR)
-    crack = ts.highpass(np.random.default_rng(seed + 7).normal(0, 1, n), 900) * np.hanning(n)
-    ts.place(y, crack / (np.abs(crack).max() + 1e-9) * 1.4, 0.0)
-    _, parts = tuned(body, floor_db=-14)
-    res = ts.strike(parts, 0.2, hardness=1.0, seed=seed + 50, click=0.0, decay_scale=4.0)
-    return y + 0.18 * res / (np.abs(res).max() + 1e-9)
-
-
 def normal(y, peak=1.0):
     return y / (np.abs(y).max() + 1e-12) * peak
 
@@ -335,9 +311,7 @@ def finish(y, wet=0.12, hp=120.0, drive=1.1):
 # DOORS: seat k's door at 6.4 + 0.9 k + 0.08. MAIBA: syllables 11.75, 12.15, 12.55, 12.95 (YA, with the sting and the
 # kid's recorded "Taya!", 0.55 s). TayaCut 14.3. CLOSE 16.2. End 19.6.
 
-CHALK_CUE = 3.65
-SKID_IN_CHALK = 2.15                       # the skid inside the chalk file lands on the Punch: 3.65 + 2.15 = 5.80
-SKID = CHALK_CUE + SKID_IN_CHALK
+SKID = 5.80                                # the chalk kid's skid (3.6 + 0.97 x 0.8 x 2.8 = 5.77), with the camera Punch
 DOOR_TIMES = [6.4 + 0.9 * k + 0.08 for k in range(4)]
 SYLLABLES = [11.75, 12.15, 12.55, 12.95]
 YA = SYLLABLES[3]
@@ -370,81 +344,28 @@ def chord_end(at):
     return 20.5
 
 
-# ------------------------------------------------------------------ the cues (foley in the cue)
-
-def tondo_clap():
-    """T-04: the huddle's clap: four kids clapping together, a little loose (0 to 22 ms apart, as real kids are), each
-    pair of hands its own. Round 3 (owner: "refine the sound sa maiba taya"): four hands not three, softer cracks, the
-    body nearer the real takes' 1-2.5 kHz, and the film's per-clap pitch lift cut from 4 % to 1.2 %."""
-    y = np.zeros(int(SR * 0.4))
-    for k, (name, at, g, semis) in enumerate([("clap_a", 0.0, 1.0, 1.5), ("clap_d", 0.009, 0.8, 2.0),
-                                               ("clap_b", 0.015, 0.7, 1.0), ("clap_c", 0.022, 0.6, 2.5)]):
-        ts.place(y, ts.shift(clap_hand(name, seed=40 + k), semis), at, g)
-    y = ts.peak_eq(y, 1700, 2.5, 0.9)                     # the palms' body
-    y = ts.peak_eq(y, 7000, -4.0, 0.7)                    # less fizz
-    return ts.fade(finish(y, wet=0.06, hp=250)[: int(SR * 0.32)], 0.0005, 0.08)
-
-
-def tondo_chalk():
-    """T-02: what the picture shows: a kid SPRINTING in tsinelas along the line toward the lens, the chalk trailing in his
-    hand, then skidding to a stop at 2.15 s (the film's skid, 3.6 + 0.97 x 0.8 x 2.8 = 5.77 s, plus the cue's 0.05).
-    Round 2 made it a 2 s wall of chalk hiss at full level; the owner, on that very frame: it "rapes the shit". So:
-    his rubber soles slapping the concrete every 0.2 s (the sprint clip at 1.3x), the chalk only a faint scratch
-    under them, and a short rubber scuff and plant for the skid."""
-    n = int(SR * 2.6)
-    y = np.zeros(n)
-    rng = np.random.default_rng(14)
-    at, k = 0.06, 0
-    while at < SKID_IN_CHALK - 0.12:
-        pr = P["slap_a" if k % 2 == 0 else "slap_b"]
-        step = ts.burst(pr["bands"], 1.0, rng.uniform(22, 30), seed=60 + k, seconds=0.09)
-        step = ts.lowpass(step, 3800)
-        thud = np.sin(2 * np.pi * 110 * ts.t_of(0.05)) * np.exp(-ts.t_of(0.05) * 70)
-        ts.place(y, normal(step, 0.55 if k % 2 == 0 else 0.47), at)
-        ts.place(y, normal(thud, 0.25), at)
-        at += 0.2 + rng.uniform(-0.012, 0.012)
-        k += 1
-    t = np.arange(n) / SR
-    run = t < SKID_IN_CHALK
-    scratch = ts.grains(P["chalk_scrape"]["bands"], 2.6, 22.0, seed=9, grain_ms=(3, 8), level=(0.2, 1.0), bed=0.0)
-    scratch = ts.band(scratch, 1500, 6000) * np.clip(t / 0.1, 0, 1) * np.where(run, 1.0, 0.0)
-    ts.place(y, normal(scratch, 0.12), 0.0)
-    scuff = ts.lowpass(ts.burst(P["scuff"]["bands"], 3.0, 70, seed=12, seconds=0.2), 4500)
-    plant = ts.lowpass(ts.burst(P["slap_b"]["bands"], 1.0, 30, seed=13, seconds=0.12), 3500)
-    ts.place(y, normal(scuff, 0.35), SKID_IN_CHALK)
-    ts.place(y, normal(plant, 0.6), SKID_IN_CHALK + 0.12)
-    return ts.fade(finish(y, wet=0.08, hp=90), 0.003, 0.12)
-
-
-def tondo_door():
-    """T-03: a light wooden house door: the latch's tick, a dry unpitched creak of the hinge, the bump on its stop at
-    0.5 s. Nothing in it has a pitch (the film plays it at a different pitch per seat, 0.92 to 1.07)."""
-    y = np.zeros(int(SR * 0.85))
-    latch = ts.strike([p for p in P["door_latch"]["partials"] if p["f"] > 300], 0.06, hardness=1.0, seed=20, click=0.3, decay_scale=6.0)
-    latch_tex = ts.burst(P["door_latch_tex"]["bands"], 0.8, 15, seed=21, seconds=0.06)
-    ts.place(y, normal(latch, 0.3), 0.0)
-    ts.place(y, normal(latch_tex, 0.5), 0.0)
-    # the creak: slow, uneven slips (about 45 a second) through one broad wooden band, so it has grain but no note
-    creak = ts.stick_slip(np.full(10, 45.0), 0.036, [{"f": 900, "db": 0, "decay": 20000}], 0.36, seed=22, jitter=0.5)
-    creak = ts.band(creak, 300, 2200) * np.sin(np.linspace(0, np.pi, len(creak))) ** 0.8
-    ts.place(y, normal(creak, 0.22), 0.1)
-    bump = wood("door_bump", 0.25, hardness=0.35, seed=23, lowest=70, decay_scale=8.0, click=0.0)
-    bump_tex = ts.burst(P["door_bump_tex"]["bands"], 1.0, 30, seed=24, seconds=0.15)
-    ts.place(y, normal(ts.lowpass(bump, 1500), 0.8), 0.5)
-    ts.place(y, normal(ts.lowpass(bump_tex, 2500), 0.5), 0.5)
-    return ts.fade(finish(y, wet=0.12, hp=110), 0.0005, 0.1)
-
+# ------------------------------------------------------------------ the film's one cue of its own
+#
+# Round 4: the chalk run, the doors and the count have no foley (owner: "why even give his running some sfx",
+# "door opening sounds sucks", "MAIBA TAYA SOUND SUCKS"); the score marks the doors and the syllables.
+# sfx_film_tondo_chalk, _door and _clap are deleted, and TondoFilm.cs no longer calls them.
 
 def tondo_taya():
-    """T-05: the climax lands (YA): one full down-strum of A on the guitar, damped at 0.5 s; then, after the kid's
-    0.55 s "Taya!", the bandurria answers with a tremolo on E and A. In A major over the score's A bass."""
-    n = int(SR * 1.7)
-    gtr, band_ = np.zeros(n), np.zeros(n)
-    ts.strum(gtr, ["E3", "A3", "E4", "A4", "C#5"], 0.0, 0.5, "guitar", velocity=1.0, spread=0.009, seed=31, root="A0")
-    ts.tremolo(band_, ["E5", "A5"], 0.56, 1.35, "bandurria", velocity=0.6, rate=14.0, seed=32)
-    band_ *= np.clip((1.45 - np.arange(n) / SR) / 0.5, 0, 1)
-    y = 0.6 * normal(ts.body(gtr, "guitar")) + 0.42 * normal(ts.body(band_, "bandurria"))
-    return ts.fade(finish(y, wet=0.12, hp=50), 0.0005, 0.2)
+    """T-05: the climax, YA. Round 4 (owner: "MAIBA TAYA SOUND SUCKS"): one decisive hit, the whole band at once on
+    A: a hard full down-strum, the bandurria's double course on A and C# picked once, the bass on A; then it rings
+    and gets out of the way of the kid's real "Taya!". No tremolo answer."""
+    n = int(SR * 1.6)
+    gtr, band_, low = np.zeros(n), np.zeros(n), np.zeros(n)
+    ts.strum(gtr, ["A2", "E3", "A3", "C#4", "E4"], 0.0, 1.3, "guitar", velocity=1.0, spread=0.007, seed=31, root="A0")
+    for nm in ("A5", "C#6"):
+        ts.place(band_, ts.string_note(ts.hz(nm) * 2 ** (ts.JUST_CENTS[(ts.midi(nm) - ts.midi("A0")) % 12] / 1200), 1.3,
+                                       "bandurria", 0.9, seed=33 + len(nm), stop=1.2, release=0.15), 0.004)
+    ts.place(low, ts.string_note(ts.hz("A2"), 1.4, "bass", 1.0, seed=35, stop=1.3, release=0.2), 0.0)
+    y = (0.55 * normal(ts.body(gtr, "guitar")) + 0.35 * normal(ts.body(band_, "bandurria")) +
+         0.45 * normal(ts.body(low, "bass")))
+    env = np.ones(n)
+    env[int(0.12 * SR):] = np.exp(-(np.arange(n - int(0.12 * SR)) / SR) * 2.2)   # duck under the voice after the hit
+    return ts.fade(finish(y * env, wet=0.12, hp=40), 0.0005, 0.2)
 
 
 # ------------------------------------------------------------------ T-01 the score: the story on the beat table
@@ -492,29 +413,35 @@ def tondo_score():
     g_strum(SKID, "E", 0.62)
     b_note(SKID, "E2", 0.7)
 
-    # RISING 6.4 to 10.2, the players arrive: one more part with each door. Door 1 the bass; door 2 the guitar;
-    # door 3 the bandurria's tune; door 4 everything. A, F#m, D, E. No strum within 0.12 s of a door.
+    # RISING 6.4 to 10.2, the players arrive. Round 4 (owner: "door opening sounds sucks"): no door foley; each
+    # player's entrance is the moment a new part of the band comes in, exactly on that door. Door 1 the bass; door 2
+    # the guitar; door 3 the bandurria; door 4 everything. A, F#m, D, E.
     d1, d2, d3, d4 = DOOR_TIMES
-    for at, nm in ((6.4, "A2"), (7.2, "E2"), (7.6, "F#2"), (8.4, "C#3"), (8.8, "D2"), (9.2, "A2"), (9.6, "E2"), (10.0, "B2")):
-        b_note(at, nm, 0.6 + 0.04 * (at >= d4), end=min(at + 0.8, chord_end(at)))
-    for at, nm in ((7.8, "F#m"), (8.6, "F#m"), (9.0, "D"), (9.4, "D"), (9.8, "E")):
-        if min(abs(at - d) for d in DOOR_TIMES) > 0.12:
-            g_strum(at, nm, 0.32 + 0.05 * (at >= d4), down=False, end=min(at + 0.35, chord_end(at)))
-    g_strum(d4 + 0.02, "D", 0.5)                          # door 4: everything
-    trem(d3 + 0.02, ["C#5"], 8.8 - d3 - 0.06, 0.38)
-    trem(8.8, ["F#5"], 0.75, 0.42)
+    b_note(d1, "A2", 0.75, end=7.2)
+    for at, nm in ((7.2, "E2"), (7.6, "F#2"), (8.4, "C#3"), (8.8, "D2"), (9.6, "E2"), (10.0, "B2")):
+        b_note(at, nm, 0.62, end=min(at + 0.8, chord_end(at)))
+    b_note(d4, "D2", 0.72, end=9.6)
+    g_strum(d2, "A", 0.55, end=7.6)
+    for at, nm in ((7.8, "F#m"), (8.6, "F#m"), (9.6, "E"), (9.8, "E")):
+        g_strum(at, nm, 0.32, down=False, end=min(at + 0.35, chord_end(at)))
+    g_strum(d3, "F#m", 0.5, end=8.8)
+    g_strum(d4, "D", 0.62, end=9.6, notes=["D3", "A3", "D4", "F#4"])
+    trem(d3, ["C#5"], 8.8 - d3 - 0.04, 0.4)
+    trem(d4, ["F#5"], 9.6 - d4 - 0.04, 0.44)
     tune(9.6, "E5", 0.36, 0.45)
     tune(10.0, "G#5", 0.36, 0.45)
 
     # THE HUDDLE 10.2 to 11.3: the groove eases off to one soft E; the bass settles on E.
-    g_strum(10.4, "E", 0.32, end=11.6)
-    b_note(10.4, "E2", 0.55, end=11.75)
+    g_strum(10.4, "E", 0.3, end=11.6)
+    b_note(10.4, "E2", 0.5, end=11.75)
 
-    # CLIMAX BUILD 11.3 to 12.95, the count: almost nothing. A bandurria tremolo on E swells, and the bass walks
-    # E, F#, G# under the claps to A on YA. (F# over E is its ninth, G# its third: both belong.)
-    for k, v in enumerate((0.18, 0.24, 0.3, 0.36)):
-        trem(11.35 + 0.4 * k, ["E5"], 0.4, v, swell=(k == 0))
-    b_note(11.75, "E2", 0.55, end=12.15); b_note(12.15, "F#2", 0.6, end=12.55); b_note(12.55, "G#2", 0.65, end=YA)
+    # CLIMAX BUILD, the count. Round 4 (owner: "MAIBA TAYA SOUND SUCKS"; the picture is a fist POINTING at each kid,
+    # nobody claps): the band counts. A held breath (a soft tremolo on E), then one plucked bandurria note on each
+    # syllable climbing E, F#, G# with the bass doubling it two octaves down, each a little stronger; YA lands on A.
+    trem(11.3, ["E5"], 0.42, 0.2)
+    for at, top, low, v in ((SYLLABLES[0], "E5", "E3", 0.5), (SYLLABLES[1], "F#5", "F#3", 0.58), (SYLLABLES[2], "G#5", "G#3", 0.66)):
+        tune(at, top, 0.36, v)
+        b_note(at, low.replace("3", "2"), v + 0.05, end=at + 0.38)
 
     # CLIMAX, YA: the bass lands on A under the sting (the sting has the strum and the answer; the kid the middle).
     b_note(YA, "A2", 0.6, end=TAYA_CUT)
@@ -544,6 +471,7 @@ def tondo_score():
     mix = (0.5 * normal(ts.body(gtr, "guitar")) + 0.55 * normal(ts.body(bass, "bass")) +
            0.42 * normal(ts.body(band_, "bandurria")))
     mix = ts.room(ts.highpass(mix, 40), 0.12)
+    mix = ts.compress(mix, -20.0, 3.0)                     # round 4: physical strings are spiky (see tump_synth.compress)
     env = np.ones_like(mix)
     tail = int(SR * 1.2)
     env[-tail:] = np.linspace(1, 0, tail) ** 2
@@ -552,9 +480,6 @@ def tondo_score():
 
 BUILDS = {
     "sfx_film_tondo_score.wav": tondo_score,
-    "sfx_film_tondo_chalk.wav": tondo_chalk,
-    "sfx_film_tondo_door.wav": tondo_door,
-    "sfx_film_tondo_clap.wav": tondo_clap,
     "sfx_film_tondo_taya.wav": tondo_taya,
 }
 
@@ -565,8 +490,7 @@ BUILDS = {
 # the sting must leave the voice its room. Round 2 (a full guitar strum and a balde in the sting) met the voice at
 # +0.5 dBFS at 0.6, and true peak (between samples) still read +0.4 dBTP at 0.50: the target is -1 dBTP, so the
 # score is 0.60, the sting 0.45, the clap 0.75, and the score's bass under YA softer.
-LEVEL = {"sfx_film_tondo_score.wav": 0.60, "sfx_film_tondo_taya.wav": 0.45, "sfx_film_tondo_clap.wav": 0.75,
-         "sfx_film_tondo_chalk.wav": 0.55}
+LEVEL = {"sfx_film_tondo_score.wav": 0.65, "sfx_film_tondo_taya.wav": 0.45}   # round 4: -18 LUFS with the bed once compressed
 
 
 def write(path, y):

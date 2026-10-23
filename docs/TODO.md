@@ -21,7 +21,11 @@ benchmark for future sfx and music generation". Reports: [research](reports/sfx-
 - [x] Round 3: [spotting sheet](reports/sfx-2026-10-23/tondo/spotting.md); unmotivated sounds cut; chalk run = footsteps;
   four-kid claps, `TondoFilm.cs` clap lift 4 % to 1.2 %; the story in A major at the match soundtrack's 150 bpm, ending
   on E into it; pure-interval chord tuning; -18.9 LUFS, -0.5 dBTP; four `MapFilmTests` Tondo tests pass.
-- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r3-after.mp4`; marks rows by ID.
+- [x] 🧑 Round 3 heard: door, running and Maiba taya sounds "suck", "why even give his running some sfx", the music
+  "ijbol" (laughable).
+- [x] Round 4: no foley in the film (chalk, door, clap cues deleted, `TondoFilm.cs` calls only the score and the YA hit);
+  the band marks each door and counts the syllables; physical strings measured against a real harp.
+- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r4-after.mp4` and `r4-music-only.mp3`; marks rows by ID.
   Status: T-01 draft, T-02 draft, T-03 draft, T-04 draft, T-05 draft, T-06 kept (recorded voice), T-07 untouched.
 - [ ] Rounds until the owner says the Tondo cutscene sounds good (change only the named rows).
 - [ ] A real in-game recording with live ambience before calling it done.
