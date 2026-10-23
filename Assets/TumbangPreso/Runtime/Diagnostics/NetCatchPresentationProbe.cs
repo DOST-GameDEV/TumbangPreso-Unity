@@ -17,7 +17,7 @@ namespace TumbangPreso.Diagnostics
     public sealed class NetCatchPresentationProbe : MonoBehaviour
     {
         private StreamWriter _writer;
-        private float _started, _next;
+        private float _started, _next, _liveAt;
         private bool _prepared, _punched, _shot;
         private int _tags;
         private CatchReconstruction _view;
@@ -42,7 +42,7 @@ namespace TumbangPreso.Diagnostics
             var probe = go.AddComponent<NetCatchPresentationProbe>(); probe._started = Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("real,elapsed,local,playing,stun,tayaCanAct,tags,tayaX,tayaZ,victimX,victimZ,score,holding,taggable,mode");
+            probe._writer.WriteLine("real,elapsed,local,playing,stun,tayaCanAct,tags,tayaX,tayaZ,victimX,victimZ,score,holding,taggable,mode,exposure,level,fill,canUp");
         }
         private void OnEnable() => MatchFlair.Presented += OnMoment;
         private void OnDisable() { MatchFlair.Presented -= OnMoment; _writer?.Dispose(); _writer = null; }
@@ -50,12 +50,16 @@ namespace TumbangPreso.Diagnostics
         { if (kind == MatchFlair.Kind.Tag && actor == 0 && subject == 1) _tags++; }
         private void Update()
         {
-            if (Time.realtimeSinceStartup - _started > 35) { Application.Quit(); return; }
+            // 30 s after the round goes live, not 35 s after launch: the map opening films (2026-10-23) and the countdown
+            // now take longer than that before a round starts. Capped so a peer that never gets a round still exits.
+            float now = Time.realtimeSinceStartup;
+            if (now - _started > 150 || (_liveAt > 0 && now - _liveAt > 30)) { Application.Quit(); return; }
             var round = GameServices.Round; var match = GameServices.Match;
             if (!NetAuthority.IsNetworked || round == null || match == null) return;
             foreach (var ai in FindObjectsByType<AIController>()) ai.enabled = false;
             foreach (var input in FindObjectsByType<PlayerInputReader>()) input.enabled = false;
             if (!round.RoundActive || match.IsWarmupBuffer) return;
+            if (_liveAt <= 0) _liveAt = Time.realtimeSinceStartup;
             var taya = round.PlayerAt(0); var victim = round.PlayerAt(1);
             if (taya == null || victim == null || round.Lata == null) return;
             float elapsed = SceneFlow.SelectedRoundSeconds - round.TimeLeft;
@@ -96,7 +100,7 @@ namespace TumbangPreso.Diagnostics
             if (_writer == null || Time.realtimeSinceStartup < _next) return;
             _next = Time.realtimeSinceStartup + .04f;
             Vector3 a = taya.transform.position, b = victim.transform.position;
-            _writer.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F4},{elapsed:F4},{local},{(playing?1:0)},{victim.StunLeft:F4},{(taya.CanAct()?1:0)},{_tags},{a.x:F4},{a.z:F4},{b.x:F4},{b.z:F4},{match.ScoreFor(0)},{(victim.HoldingSlipper?1:0)},{(victim.IsTaggable()?1:0)},{(int)SceneFlow.SelectedMode}"));
+            _writer.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F4},{elapsed:F4},{local},{(playing?1:0)},{victim.StunLeft:F4},{(taya.CanAct()?1:0)},{_tags},{a.x:F4},{a.z:F4},{b.x:F4},{b.z:F4},{match.ScoreFor(0)},{(victim.HoldingSlipper?1:0)},{(victim.IsTaggable()?1:0)},{(int)SceneFlow.SelectedMode},{(int)TagExposure.Read(victim,out float level)},{level:F3},{TagExposure.Fill(victim):F3},{(round.Lata.IsUpright?1:0)}"));
         }
         private IEnumerator Shot()
         {

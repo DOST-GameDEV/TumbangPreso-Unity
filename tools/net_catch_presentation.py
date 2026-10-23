@@ -32,7 +32,7 @@ try:
     log=out/'victim.log'
     if log.exists() and 'LocalSlot=1' in log.read_text(errors='replace'):break
     time.sleep(.25)
- deadline=time.monotonic()+50
+ deadline=time.monotonic()+170
  for process in processes:process.wait(timeout=max(1,deadline-time.monotonic()))
 finally:
  for process in processes:
@@ -58,7 +58,17 @@ for seat,name in enumerate(['host','victim','observer']):
  movement=[r for r in rows if 10<=float(r['elapsed'])<=11.1]
  travel=max((float(r['tayaZ']) for r in movement),default=0)-min((float(r['tayaZ']) for r in movement),default=0)
  if travel<.25:errors.append(name+': taya movement was not observed')
- measured[name]={'rows':len(rows),'tagSamples':len(seen),'playbackSamples':len(playing),'tayaTravel':travel}
+ # Tag readability (2026-10-23): every peer fills the victim with the taggable colour before the tag and empties it
+ # after, from its own replicated state (`TagExposure`), and the peers agree on when.
+ exposed=[r for r in rows if 'exposure' in r and int(r['tags'])==0 and int(r['exposure'])==1 and float(r['fill'])>=.99]
+ if not exposed:errors.append(name+': never saw the victim fully filled as taggable before the tag')
+ after_tag=[r for r in rows if 'exposure' in r and int(r['tags'])>0 and float(r['elapsed'])>=11.5]
+ if after_tag and (int(after_tag[-1]['exposure'])!=0 or float(after_tag[-1]['fill'])>.01):errors.append(name+': the tagged victim still shows the taggable fill')
+ onset=min((float(r['elapsed']) for r in rows if 'exposure' in r and int(r['exposure'])==1),default=None)
+ measured[name]={'rows':len(rows),'tagSamples':len(seen),'playbackSamples':len(playing),'tayaTravel':travel,
+  'taggableOnset':onset,'fullFillSamples':len(exposed),'endExposure':after_tag[-1]['exposure'] if after_tag else None}
+onsets=[m['taggableOnset'] for m in measured.values() if m.get('taggableOnset') is not None]
+if len(onsets)==3 and max(onsets)-min(onsets)>.6:errors.append('peers disagree on when the victim became taggable: '+str(onsets))
 if not unchanged:errors.append('shared input preferences changed')
 result={'passed':not errors,'errors':errors,'measured':measured,'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: taya, victim and uninvolved participant. No network spectator, link impairment or protocol change.'}
 (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
