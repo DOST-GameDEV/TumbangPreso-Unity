@@ -12,7 +12,11 @@ benchmark for future sfx and music generation". Reports: [research](reports/sfx-
   `tools/tump_sfx_profiles.json`, references logged in `tools/tondo_film_sfx_sources.json` (CC0, measured only).
 - [x] Round 1: T-01 score, T-02 chalk, T-03 door, T-04 clap, T-05 taya sting regenerated; under 0 dBFS true peak
   with the alley bed (was +2.5 dBFS); `MapFilmTests` Tondo full, short and into-the-round pass.
-- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r1-after.mp4` against `r0-before.mp4`; marks rows by ID.
+- [x] 🧑 Round 1 heard: "ang panget pareho", "WHY IS THERE A BELL", "0 harmony", "ang gulo", "make it sound Filipino",
+  "completely revamp", "less is more"; liked the alley's sparrows.
+- [x] Round 2: a rondalla (bandurria, guitar, bass) built from exact harmonics, one chord at a time, three parts, no
+  bells, no pitched foley; harmony checks (`tump_synth.roughness`, `in_key`); -18.0 LUFS, -0.6 dBTP with the bed.
+- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r2-after.mp4`; marks rows by ID.
   Status: T-01 draft, T-02 draft, T-03 draft, T-04 draft, T-05 draft, T-06 kept (recorded voice), T-07 untouched.
 - [ ] Rounds until the owner says the Tondo cutscene sounds good (change only the named rows).
 - [ ] A real in-game recording with live ambience before calling it done.

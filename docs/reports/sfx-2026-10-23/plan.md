@@ -13,7 +13,16 @@ generated sounds failed: noise and sines with no object behind them, and no shar
 and whatever the alley gives them. Warm, toy-like, a little mischievous, never harsh. Pleasant everyday sounds
 (Untitled Goose Game's lesson) with one big signature per moment (the can, the taya).
 
-## 2. The palette: seven generated instruments, and nothing else
+## 2. The palette (round 2: the owner rejected round 1's toy band, see `tondo/review.md` taste log)
+
+**Round 2 palette, current:** a barangay rondalla, designed from string physics (`tump_synth.string_note`, exact
+harmonics, so always in tune): the **bandurria** (double steel courses, plectrum, tremolo) carries the tune, the
+**guitar** plays the chords (balitaw: bass on the beat, chords off it), the guitar's **bass** strings play the root.
+The street joins only on purpose: **bamboo** (kalutang, tuned to chord tones) and the **balde** (an upturned plastic
+bucket, its thump ending on the chord's root). **Kamay** (hands) and **kalye** foley stay, with no pitched parts.
+No bells, no glockenspiel, no triangle, no xylophone, no marimba. At most three parts at once, one job each.
+
+### Round 1 palette (rejected: "WHY IS THERE A BELL", "0 harmony", "mashed a bunch of unrelated audios")
 
 | # | Instrument | What it is in the world | How it is generated | Learned from (measured, never shipped) |
 |---|---|---|---|---|
@@ -28,7 +37,7 @@ and whatever the alley gives them. Warm, toy-like, a little mischievous, never h
 ## 3. The rules (from `research.md` section 4)
 
 1. One band, and it lives in the alley. 2. C major pentatonic, 100 bpm, on the scene's own beat table.
-3. The motif do-mi-sol-do (C E G C), on the lata and the toy glock. 4. One room (`tump_synth.alley_ir`).
+3. One chord at a time (I-IV-V7), every note damped at the change. (Round 1's do-mi-sol-do on a glock is retired.) 4. One room (`tump_synth.alley_ir`).
 5. Lanes: lows for kahoy bass only, each cue its own band, a pocket in the music for each cue, 300 to 3000 Hz kept
    clear for any human voice. 6. Foley in the cue, tuned answers in the music at the cue's time. 7. Variation by
    different strikes and scale steps. Loudness: the scene's mix below 0 dBFS true peak, about -18 LUFS.

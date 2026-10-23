@@ -4,6 +4,48 @@ Mark a row by its ID ("T-04 too thin"). Only the rows the owner names change in 
 Method and theme: `../plan.md`, `../research.md`. Build: `py -3 tools/build_tondo_film_sfx.py` (generated from
 measured references in `tools/tump_sfx_profiles.json`; nothing recorded ships except T-06, which was already in the game).
 
+## Round 2 (2026-10-23): everything revamped, a rondalla in one key
+
+Watch: `r2-after.mp4` (with the alley bed). One mp3 per cue in `cues/` (`*_r2.mp3`).
+
+What the owner said about round 1, and what round 2 does about each:
+
+| Owner on round 1 | Cause found | Round 2 |
+|---|---|---|
+| "WHY IS THERE A BELL", "NO BELL THERE" | the music box lullaby, the four door chimes and the taya run were a glockenspiel; a triangle too | no bells at all: no glockenspiel, triangle, xylophone or marimba |
+| "ang saket sa tenga theres 0 harmony" | the tuned sounds came from measured partial lists full of untuned peaks; chords rang into the next chord; the creak and the skid squeak were pitched sweeps at random pitches | strings built from exact harmonics of A440 notes (in tune by construction); every note damped at the next chord change; foley has no pitched parts |
+| "ang gulo talaga", "less is more" | up to seven instruments at once, each with a busy line | three parts with one job each (guitar chords, bass root, bandurria tune); the tune rests while the chalk, the claps and the kid's voice speak; bamboo only twice, balde only on the big hits |
+| "TRY TO MAKE IT SOUND FILIPINO" | a toy orchestra, nothing local | a barangay rondalla: bandurria tremolo for the tune over a guitar in balitaw style (bass on the beat, chords off it), I-IV-V7 in C like most Filipino folk songs; street bamboo and an upturned balde |
+| "make ur own" | measured instruments | the instruments are designed from string physics in `tools/tump_synth.py`, not copied from samples |
+| "i like the bird" | the alley's own sparrow bed (`alley_bed_sparrows`) | untouched |
+
+The cues in round 2:
+
+| ID | Round 2 | Status |
+|---|---|---|
+| T-01 | the rondalla on the beat table: guitar picking C, G into the chalk; balitaw under the chalk with two bamboo backbeats; the tune in long tremolo notes over the doors (E, C, B, one per chord); a soft G7 and the bass walking G A B under the claps to C on YA; a bandurria giggle after the voice; A minor and G strums with the balde as the taya squares up; home on C, F, C | draft |
+| T-02 | chalk grains, the tsinelas slap and rubber scuff on the punch (the pitched squeak is gone) | draft |
+| T-03 | latch tick, an unpitched hinge creak, the bump on its stop (no pitched parts, so the per-seat pitch cannot clash) | draft |
+| T-04 | unchanged from round 1 (three small hands), quieter (peak 0.75) | draft |
+| T-05 | a balde thump on C and one full guitar strum of C, then after the kid's "Taya!" a bandurria tremolo on G and C | draft |
+
+Measurements (the harmony checks are new in `tools/tump_synth.py`: `roughness` is the Plomp-Levelt / Sethares model of
+beating between partials, the "saket sa tenga" stand-in; `in_key` finds the sounding notes, not the overtones):
+
+| File | Roughness median / p90 | Sounding notes in C major (median / p10) |
+|---|---|---|
+| score, before | 0.145 / 0.439 | 1.00 / 1.00 |
+| score, round 1 | 0.111 / 0.263 | 1.00 / 1.00 |
+| score, round 2 | 0.098 / 0.200 | 1.00 / 1.00 |
+
+Every version's notes were in the key; what hurt was harsh, untuned overtones and clutter, which roughness sees.
+The round 2 sting reads rougher (0.104) than the old thin glock run (0.04) because a guitar chord has more partials;
+it is a plain C major chord.
+
+| Mix with the alley bed | Integrated | True peak |
+|---|---|---|
+| Round 2 | -18.0 LUFS (the plan's target) | -0.6 dBTP (the kid's recorded voice at YA sets this ceiling) |
+
 ## Round 1 (2026-10-23): all five generated files replaced
 
 Watch: `r1-after.mp4` (round 1, with the alley's ambience bed underneath) against `r0-before.mp4` (the old sounds,
@@ -48,3 +90,4 @@ before a version is called done). The videos mix the beds at estimated weights.
 | Round | ID | Owner said | What changed |
 |---|---|---|---|
 | 0 | all | "this game has horrible sfx rn"; "its js noise and a bunch of sounds taht dont have a theme and dont work well together or dont support each other" | round 1: one band, key, motif, room; everything generated from measured real objects |
+| 1 | all | "ang panget pareho" (could not tell round 1 from before); "u js mashed a bunch of unrelated audios tgthr"; "i like the bird"; "WHY IS THERE A BELL"; "TRY TO MAKE IT SOUND FILIPINO"; "ang saket sa tenga theres 0 harmony"; "ang gulo talaga"; "completely revamp everything"; "make ur own"; "sometimes less is more" | round 2: no bells; a rondalla built from exact harmonics; one chord at a time; three parts; no pitched foley; harmony checks before the owner listens. **Rules for the skill:** never a bell or music-box timbre in TUMP unless asked; Filipino means rondalla strings and street percussion; harmony first, then fewer parts; a measured partial list is not an instrument |

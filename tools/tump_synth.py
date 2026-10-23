@@ -321,3 +321,196 @@ def room(x, wet=0.18):
 def glue(x, drive=1.15):
     """The shared finishing touch: a gentle tanh saturation, the same 'tape' on every file."""
     return np.tanh(drive * x) / np.tanh(drive)
+
+
+# ------------------------------------------------------------------ IN TUNE BY CONSTRUCTION: the rondalla and the street
+#
+# Owner on round 1 (2026-10-23): "ang saket sa tenga theres 0 harmony", "ang gulo talaga", "completely revamp everything",
+# "make ur own". Round 1's tuned sounds came from measured partial lists that carried untuned peaks (far mics, room,
+# resonators), and its old Karplus-Strong rounded each string's period to whole samples (C6 came out 7 cents sharp).
+# These instruments are additive: every partial is an exact whole-number harmonic of an equal-tempered A440 note, so
+# nothing can be out of tune, and every note has an explicit stop so no chord rings into the next one.
+
+STRINGS = {
+    # kind: (harmonics, pick position, brightness Hz, sustain s at 200 Hz, high-harmonic damping Hz, course detune cents, body EQ)
+    # bandurria: 14 steel strings in double courses, plectrum, small bright nasal body; the rondalla's melody voice
+    "bandurria": (28, 0.13, 5200.0, 1.1, 2600.0, 2.0, ((420, 4.0, 1.4), (950, 3.0, 1.6), (2600, 3.5, 1.2))),
+    # guitar: nylon, fingers or a soft strum, warm body
+    "guitar": (24, 0.22, 2600.0, 1.8, 1500.0, 0.0, ((105, 5.0, 1.5), (210, 3.0, 1.5), (420, 1.5, 1.2), (3000, -3.0, 0.7))),
+    # bass: the guitar's low strings, thumbed, dark
+    "bass": (14, 0.28, 900.0, 2.2, 700.0, 0.0, ((95, 4.0, 1.2), (190, 2.0, 1.4))),
+}
+
+
+def string_note(f, seconds, kind="guitar", velocity=1.0, seed=0, stop=None, release=0.03):
+    """One plucked note: exact harmonics, each weighted by where it was plucked and how bright the pluck was, each
+    dying faster the higher it is; a double course beats gently; a 2 ms pick scrape; damped at `stop` seconds."""
+    harmonics, pos, bright, sustain, hidamp, detune, _body = STRINGS[kind]
+    rng = np.random.default_rng(seed)
+    n = int(seconds * SR)
+    t = np.arange(n) / SR
+    y = np.zeros(n)
+    bright = bright * (0.75 + 0.35 * velocity)
+    courses = (0.0,) if detune == 0 else (-detune / 2, detune / 2)
+    for c in courses:
+        fc = f * 2 ** (c / 1200)
+        for h in range(1, harmonics + 1):
+            fh = fc * h
+            if fh > SR * 0.42:
+                break
+            amp = abs(np.sin(np.pi * h * pos)) / h * np.exp(-fh / bright)
+            tau = sustain * (200.0 / f) ** 0.35 / (1.0 + (fh / hidamp) ** 2)
+            y += amp * np.sin(2 * np.pi * fh * t + rng.uniform(0, 2 * np.pi)) * np.exp(-t / tau)
+    m = int(0.002 * SR)
+    pick = highpass(rng.normal(0, 1, m), 2500) * np.hanning(m)
+    y[:m] += 0.04 * pick * velocity * np.abs(y).max() / (np.abs(pick).max() + 1e-9)
+    rise = int(0.0015 * SR)
+    y[:rise] *= np.linspace(0, 1, rise)
+    if stop is not None and stop < seconds:
+        k, r = int(stop * SR), int(release * SR)
+        y[k:k + r] *= np.linspace(1, 0, len(y[k:k + r]))
+        y[k + r:] = 0.0
+    return y * velocity
+
+
+def body(x, kind):
+    """The instrument's wooden body: a few broad resonances (bell EQ bands)."""
+    for f, g, q in STRINGS[kind][6]:
+        x = peak_eq(x, f, g, q)
+    return x
+
+
+def strum(track, notes, at, stop, kind="guitar", velocity=0.8, spread=0.014, down=True, seed=0):
+    """A strum: the chord's notes a few ms apart (low to high on a down stroke), each damped at `stop`."""
+    rng = np.random.default_rng(seed)
+    order = notes if down else notes[::-1]
+    for i, nm in enumerate(order):
+        t0 = at + i * spread * rng.uniform(0.8, 1.2)
+        v = velocity * (0.85 + 0.15 * rng.uniform()) * (0.9 if (not down and i == 0) else 1.0)
+        place(track, string_note(hz(nm), stop - t0 + 0.05, kind, v, seed=int(rng.integers(1 << 30)), stop=stop - t0), t0)
+
+
+def tremolo(track, notes, start, stop, kind="bandurria", velocity=0.7, rate=13.0, seed=0, swell=True):
+    """The bandurria's tremolo: the plectrum flicking down-up on the course(s) at `rate` a second, each stroke
+    damping the last (it is one string), a little uneven like a hand, swelling in."""
+    rng = np.random.default_rng(seed)
+    at, k = start, 0
+    span = max(stop - start, 1e-3)
+    while at < stop:
+        nxt = at + (1.0 / rate) * rng.uniform(0.93, 1.07)
+        shape = min(1.0, 0.55 + 0.45 * (at - start) / min(0.25, span)) if swell else 1.0
+        v = velocity * shape * (1.0 if k % 2 == 0 else 0.78) * rng.uniform(0.92, 1.0)
+        dur = min(nxt, stop) - at
+        for nm in notes:
+            place(track, string_note(hz(nm), dur + 0.06, kind, v, seed=int(rng.integers(1 << 30)), stop=dur, release=0.012), at)
+        at, k = nxt, k + 1
+
+
+def bamboo(f, seconds=0.25, velocity=1.0, seed=0):
+    """Kalutang / tinikling: a struck bamboo, tuned to a scale note. A tube's few modes, gone in 60 ms, and the knock."""
+    rng = np.random.default_rng(seed)
+    t = t_of(seconds)
+    y = np.zeros_like(t)
+    for ratio, g, d in ((1.0, 1.0, 55.0), (2.0, 0.35, 90.0), (3.01, 0.18, 130.0)):
+        y += g * np.sin(2 * np.pi * f * ratio * t + rng.uniform(0, 6.28)) * np.exp(-t * d)
+    m = int(0.003 * SR)
+    knock = band(rng.normal(0, 1, m), 1500, 7000) * np.hanning(m)
+    y[:m] += 0.5 * knock / (np.abs(knock).max() + 1e-9)
+    return fade(y * velocity, 0.0003, 0.02)
+
+
+def balde(f_end=65.41, seconds=0.35, velocity=1.0, seed=0):
+    """A plastic bucket turned over and slapped: a pitch-dropping thump ending on f_end, the plastic's short ring, the hand."""
+    rng = np.random.default_rng(seed)
+    t = t_of(seconds)
+    f = f_end + (f_end * 1.9 - f_end) * np.exp(-t * 35)
+    thump = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 14)
+    plastic = band(rng.normal(0, 1, len(t)), 250, 900) * np.exp(-t * 45) * 0.35
+    m = int(0.004 * SR)
+    hand = np.zeros_like(t)
+    hand[:m] = band(rng.normal(0, 1, m), 800, 5000) * np.hanning(m) * 0.6
+    return fade((thump + plastic + hand) * velocity, 0.0004, 0.04)
+
+
+# ------------------------------------------------------------------ the ear's stand-ins: harmony checks
+#
+# These do not approve anything; they catch what the owner called "saket sa tenga" before the owner has to hear it.
+
+def roughness(x, frame=0.1, peaks=24):
+    """Sensory roughness (Plomp-Levelt as modelled by Sethares) every `frame` seconds: the beating between every pair
+    of the frame's strongest spectral peaks. Higher is harsher. Returns an array, one value per frame."""
+    n = int(frame * SR)
+    out = []
+    win = np.hanning(n)
+    freqs = np.fft.rfftfreq(n * 4, 1 / SR)
+    for s in range(0, len(x) - n, n):
+        mag = np.abs(np.fft.rfft(x[s:s + n] * win, n * 4))
+        pk, _ = signal.find_peaks(mag, distance=3)
+        pk = pk[np.argsort(mag[pk])[-peaks:]]
+        f, a = freqs[pk], mag[pk] / (mag.max() + 1e-12)
+        sel = f > 40
+        f, a = f[sel], a[sel]
+        r = 0.0
+        for i in range(len(f)):
+            for j in range(i + 1, len(f)):
+                lo, hi = min(f[i], f[j]), max(f[i], f[j])
+                sx = 0.24 / (0.0207 * lo + 18.96)
+                d = hi - lo
+                r += a[i] * a[j] * (np.exp(-3.5 * sx * d) - np.exp(-5.75 * sx * d))
+        out.append(r)
+    return np.asarray(out)
+
+
+PITCH_CLASSES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+
+
+def chroma(x, frame=0.1, lo=80.0, hi=4000.0):
+    """Energy per pitch class (12 values, summing to 1) every `frame` seconds, from 80 Hz to 4 kHz."""
+    n = int(frame * SR)
+    freqs = np.fft.rfftfreq(n * 4, 1 / SR)
+    sel = (freqs > lo) & (freqs < hi)
+    pcs = np.round(12 * np.log2(freqs[sel] / 440.0)).astype(int) % 12
+    pcs = (pcs + 9) % 12                                   # A = 9 when C = 0
+    out = []
+    for s in range(0, len(x) - n, n):
+        mag = np.abs(np.fft.rfft(x[s:s + n] * np.hanning(n), n * 4))[sel] ** 2
+        c = np.bincount(pcs, weights=mag, minlength=12)
+        out.append(c / (c.sum() + 1e-12))
+    return np.asarray(out)
+
+
+def note_salience(x, frame=0.1, lo_midi=48, hi_midi=96, harmonics=8):
+    """Which NOTES are sounding, not which overtones: for every semitone from C3 to C7, the summed spectrum at its first
+    eight harmonics (each weighted 1/h). A real string's 7th and 11th harmonics fall between scale notes; a plain
+    chroma counts them as wrong notes (round 2's first check read 76 % in key for a score of exact C-major strings).
+    It starts at C3: a 0.1 s frame cannot tell C2 from C#2 (4 Hz apart), and a bass note still shows by its octave."""
+    hop = int(frame * SR)
+    n = int(max(frame, 0.4) * SR)                         # 0.4 s resolves neighbouring low notes (C3 / C#3 are 8 Hz apart)
+    nfft = 1 << int(np.ceil(np.log2(n * 2)))
+    midis = np.arange(lo_midi, hi_midi + 1)
+    out = []
+    padded = np.concatenate([np.zeros(n // 2), x, np.zeros(n)])
+    for s in range(0, len(x) - hop, hop):
+        mag = np.abs(np.fft.rfft(padded[s:s + n] * np.hanning(n), nfft))
+        sal = np.zeros(len(midis))
+        for i, m in enumerate(midis):
+            f0 = 440.0 * 2 ** ((m - 69) / 12)
+            for h in range(1, harmonics + 1):
+                k = int(round(f0 * h / (SR / nfft)))
+                if k >= len(mag):
+                    break
+                sal[i] += mag[max(0, k - 1):k + 2].max() / h
+        out.append(sal)
+    return midis, np.asarray(out)
+
+
+def in_key(x, scale=("C", "D", "E", "F", "G", "A", "B"), frame=0.1, top=4):
+    """The share of the strongest sounding notes (top 4 by salience, each frame) that are in the key. 1.0 = all in key."""
+    keep = {PITCH_CLASSES.index(p) for p in scale}
+    midis, sal = note_salience(x, frame)
+    out = []
+    for row in sal:
+        best = np.argsort(row)[-top:]
+        w = row[best]
+        out.append(sum(w[i] for i, b in enumerate(best) if midis[b] % 12 in keep) / (w.sum() + 1e-12))
+    return np.asarray(out)
