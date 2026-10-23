@@ -104,6 +104,46 @@ namespace TumbangPreso.Map
             Written(_torso[seat]); Written(_head[seat]); Written(_armL[seat]); Written(_armR[seat]);
         }
 
+        /// <summary>
+        /// Lays `feel` over an extra's pose this frame (call after its `Play`): the kids on a deck, the lola with the
+        /// can. The same layer as a seat's, on the extra's own bones, so a cheer or a point reads the same on them.
+        /// Build the feel with `Facing(extra)` and `Side(extra)`.
+        /// </summary>
+        protected void Act(Extra extra, in Feel feel)
+        {
+            if (extra == null || extra.Root == null || extra.Model == null) return;
+            if (extra.Bones == null)
+            {
+                extra.Bones = new Transform[4];
+                foreach (var bone in extra.Model.GetComponentsInChildren<Transform>(true))
+                {
+                    int i = bone.name == "torso" ? 0 : bone.name == "head" ? 1 : bone.name == "arm-left" ? 2 : bone.name == "arm-right" ? 3 : -1;
+                    if (i >= 0 && extra.Bones[i] == null) extra.Bones[i] = bone;
+                }
+                extra.AxisL = ArmAxis(extra.Bones[2]); extra.AxisR = ArmAxis(extra.Bones[3]);
+            }
+            Vector3 up = Vector3.up, forward = Facing(extra), right = Vector3.Cross(up, forward);
+            if (feel.Hop > 0.0f) extra.Root.transform.position += Vector3.up * feel.Hop;
+            var torso = Fresh(extra.Bones[0]);
+            if (torso != null)
+                torso.rotation = Quaternion.AngleAxis(feel.Lean, right) * Quaternion.AngleAxis(-feel.Twist, up) * Quaternion.AngleAxis(-feel.Rock, forward) * torso.rotation;
+            var head = Fresh(extra.Bones[1]);
+            if (head != null)
+                head.rotation = Quaternion.AngleAxis(feel.Nod, right) * Quaternion.AngleAxis(-feel.Turn, up) * Quaternion.AngleAxis(-feel.Tilt, forward) * head.rotation;
+            AimArm(Fresh(extra.Bones[2]), extra.AxisL, feel.Left, feel.Arms);
+            AimArm(Fresh(extra.Bones[3]), extra.AxisR, feel.Right, feel.Arms);
+            foreach (var bone in extra.Bones) Written(bone);
+        }
+
+        protected static Vector3 Facing(Extra extra)
+        {
+            if (extra == null || extra.Root == null) return Vector3.forward;
+            Vector3 f = Vector3.ProjectOnPlane(extra.Root.transform.forward, Vector3.up);
+            return f.sqrMagnitude > 0.01f ? f.normalized : Vector3.forward;
+        }
+
+        protected static Vector3 Side(Extra extra) => Vector3.Cross(Vector3.up, Facing(extra));
+
         /// <summary>The bone as the clip left it this frame: one the clip does not key still holds what this layer wrote
         /// last frame, so it is put back to its base first.</summary>
         private Transform Fresh(Transform bone)

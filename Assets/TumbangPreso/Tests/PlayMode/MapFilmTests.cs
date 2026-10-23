@@ -79,6 +79,19 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(600000)] public IEnumerator ErmitaTayaAndWatcherHoldTheTaya() => Closes(SceneFlow.IlalimNgTulay);
         [UnityTest, Timeout(600000)] public IEnumerator ErmitaPlaysIntoTheRound() => Natural(SceneFlow.IlalimNgTulay);
 
+        // ------------------------------------------------------------------ Sitangkai
+
+        [UnityTest, Timeout(600000)] public IEnumerator SitangkaiFullFilmBeats() => Beats(SceneFlow.LagoonCove, false, 1,
+            new[] { (0.5f, "01_glide_village"), (2.6f, "02_glide_follow"), (4.2f, "03_banca_alongside"), (5.3f, "04_bow_at_lens"), (5.62f, "05_grounding"),
+                    (6.2f, "06_hop_off"), (6.7f, "07_landed"), (7.5f, "08_kids_cheer"), (8.8f, "09_walk_up_beach"), (10.1f, "10_lola_carries"),
+                    (10.7f, "11_lola_sets_down"), (11.5f, "12_all_eyes_on_lola"), (12.15f, "13_lola_points"), (12.6f, "14_taya_struck"),
+                    (13.3f, "15_laughing"), (14.0f, "16_taya_shakes_it_off"), (14.8f, "17_taya_defiant"), (15.8f, "18_close_you"), (17.6f, "19_return") });
+        [UnityTest, Timeout(600000)] public IEnumerator SitangkaiShortFilmBeats() => Beats(SceneFlow.LagoonCove, true, 1,
+            new[] { (0.8f, "s01_establish"), (2.2f, "s02_look"), (2.9f, "s03_point"), (3.8f, "s04_taya"), (5.4f, "s05_close_you") });
+        [UnityTest, Timeout(1800000)] public IEnumerator SitangkaiRecording() => Record(SceneFlow.LagoonCove, 1);
+        [UnityTest, Timeout(600000)] public IEnumerator SitangkaiTayaAndWatcherHoldTheTaya() => Closes(SceneFlow.LagoonCove);
+        [UnityTest, Timeout(600000)] public IEnumerator SitangkaiPlaysIntoTheRound() => Natural(SceneFlow.LagoonCove);
+
         // ------------------------------------------------------------------ the beats
 
         private IEnumerator Load(string map, bool reduced)

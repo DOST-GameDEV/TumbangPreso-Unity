@@ -96,8 +96,14 @@ replay and the whole match read poorly ("everything has to be animated").
     camera back after a mid-film cut, and skip `StatusBadge*`/`LataClock`; all six beat, short and close cases pass.
   - [x] Taya giveaways: every film hides each seat's nameplate renderers (label and ring) for its length, and the label
     also hides under `MapFilm.HidesUi`; gone from the frames.
-  - [ ] Sitangkai (LagoonCove), calm wonder: golden-hour glide over the reef, players arrive by banca, kids cheer from the
-    stilt houses, a lola sets the can down.
+  - [ ] Sitangkai (LagoonCove) `SitangkaiFilm`: built 2026-10-23 (runs 1 to 7): golden hour; a glide by the stilt village
+    with the banca setting out; the four aboard, each excited their own way; the bow grounding at the lens; the hop-off
+    into the sand; three kids cheering on the nearest stilt house's deck; the walk up the beach into the sun; a lola
+    carrying the can out, setting it down, looking them over and pointing out the taya; the three laughing; the taya
+    shaking it off. Kulintang and agung score, engine, grounding, hops, clink and gong synthesised; the kids' cheer and
+    giggle are the alley's recorded cues. The banca is the film's own toon build (the cove's boats are static-batched,
+    so a copied hull mesh is the whole batch). Base: extras take the acting layer (`Act(Extra, Feel)`), hero pets are
+    kept off (`ForceOff`), the can's protection ring is down for any film. Video: Logs/map-films/Sitangkai_intro_film.mp4.
   - [ ] BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower
     billboard shows the VS cards, a traffic light turning green means go.
   - [ ] Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches

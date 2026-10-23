@@ -56,7 +56,8 @@ namespace TumbangPreso.Map
         public static MapFilm Ensure(string mapId)
         {
             if (Instance != null && Instance.MapId == mapId) return Instance;
-            System.Type kind = mapId == SceneFlow.Eskinita ? typeof(TondoFilm) : mapId == SceneFlow.IlalimNgTulay ? typeof(ErmitaFilm) : null;
+            System.Type kind = mapId == SceneFlow.Eskinita ? typeof(TondoFilm) : mapId == SceneFlow.IlalimNgTulay ? typeof(ErmitaFilm)
+                : mapId == SceneFlow.LagoonCove ? typeof(SitangkaiFilm) : null;
             if (kind == null) return null;
             if (Instance != null) Destroy(Instance.gameObject);
             var go = new GameObject("Map film (" + mapId + ")");
@@ -159,6 +160,9 @@ namespace TumbangPreso.Map
             TakeModels(players);
             SnapshotLight();
             HideUi();
+            // The can's protection ring is the round's, not the picture's (film r1 of Sitangkai: a yellow ring
+            // round the can in every shot of it); `ShowForCapture` is its own switch for exactly this.
+            foreach (var clock in FindObjectsByType<Visual.LataClockPresentation>()) clock.ShowForCapture(false);
             BuildOverlay();
             BuildSound();
             _prepared = true; Playing = true;
@@ -193,6 +197,7 @@ namespace TumbangPreso.Map
             DestroyOwned();
             RestoreLight();
             ShowUi();
+            foreach (var clock in FindObjectsByType<Visual.LataClockPresentation>()) clock.ShowForCapture(true);
             DestroyOverlay();
             StopSound();
             Camera = null;

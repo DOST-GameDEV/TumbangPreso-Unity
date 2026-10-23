@@ -60,6 +60,9 @@ namespace TumbangPreso.Map
                 _seatShown[s] = new bool[_seatRenderers[s].Length];
                 for (int i = 0; i < _seatRenderers[s].Length; i++) _seatShown[s][i] = _seatRenderers[s][i].enabled;
             }
+            // A hero's pet follows its owner's body, which stays on the mark while the model is posed elsewhere: it
+            // would float loose in the picture (Sitangkai r2: Nemu's ghost hanging in the air beside the taya).
+            foreach (var pet in FindObjectsByType<GhostPetCompanion>()) ForceOff(pet.GetComponentsInChildren<Renderer>(true));
             _actBase.Clear(); _actWritten.Clear();
             _posing = true;
         }
@@ -232,6 +235,22 @@ namespace TumbangPreso.Map
         {
             for (int i = 0; i < _hidden.Count; i++) if (_hidden[i] != null) _hidden[i].enabled = _hiddenWas[i];
             _hidden.Clear(); _hiddenWas.Clear();
+            for (int i = 0; i < _forced.Count; i++) if (_forced[i] != null) _forced[i].forceRenderingOff = _forcedWas[i];
+            _forced.Clear(); _forcedWas.Clear();
+        }
+
+        private readonly List<Renderer> _forced = new List<Renderer>();
+        private readonly List<bool> _forcedWas = new List<bool>();
+
+        /// <summary>Keeps renderers off for the film even when their own code switches them on each frame (a pet
+        /// mirroring its owner): `forceRenderingOff`, which only this and capture tools touch. `End` puts it back.</summary>
+        protected void ForceOff(IEnumerable<Renderer> renderers)
+        {
+            foreach (var r in renderers)
+            {
+                if (r == null || _forced.Contains(r)) continue;
+                _forced.Add(r); _forcedWas.Add(r.forceRenderingOff); r.forceRenderingOff = true;
+            }
         }
 
         /// <summary>
@@ -274,6 +293,9 @@ namespace TumbangPreso.Map
             public GameObject Root, Model;
             public AnimationClip[] Clips;
             public float Scale;
+            /// <summary>Torso, head, left and right arm, found on its first `Act`, and the arms' length axes.</summary>
+            public Transform[] Bones;
+            public Vector3 AxisL, AxisR;
 
             /// <summary>Stands it at `at` facing world `yaw`, with a hop of `lift`.</summary>
             public void Pose(Vector3 at, float yaw, float lean = 0.0f, float roll = 0.0f)

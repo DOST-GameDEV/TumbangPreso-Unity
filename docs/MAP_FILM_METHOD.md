@@ -6,8 +6,8 @@ match with its own short film, each with its own mood, built to `Runtime/Map/Are
 *"make showing emotion and expressiveness and readability one of the main bars"*, *"thoroughly direct everything"*,
 *"focus on one by one doing it and refining"*.
 
-Status: Tondo (`TondoFilm`) and Ermita (`ErmitaFilm`) are built. Sitangkai, BGC and Banaue are not; their maps
-still play the arrival's own shots until a director is added (see "Adding a map" below).
+Status: Tondo (`TondoFilm`), Ermita (`ErmitaFilm`) and Sitangkai (`SitangkaiFilm`) are built. BGC and Banaue are
+not; their maps still play the arrival's own shots until a director is added (see "Adding a map" below).
 
 ## The bars, in order
 
@@ -81,6 +81,16 @@ still play the arrival's own shots until a director is added (see "Adding a map"
 - Choose a framing once per shot (`Framed`), never every frame: the best view hops as bodies move.
 - Under a held clock, animate by the film's own time (`FrameDelta`), not the wall clock.
 - The chips' role pictogram and the nameplate rings reveal the taya; hide them until the film reveals it.
+- A static-batched map (the cove) cannot be copied: in play a renderer's `sharedMesh` is the whole batch (Sitangkai
+  r1 to r3 "copied" 54 m and then 227 m of boats). Build the prop in the toon kit (`Prop`) instead.
+- Find the ground with the map's own ground collider, not "the highest floor": a palm crown is a floor to a ray.
+- Extras need the acting layer too (`Act(Extra, Feel)`, built with `Facing(extra)`/`Side(extra)`). Chibi arms are
+  short: "arms up" stays inside the head's silhouette; spread them into a wide V.
+- `FrameSeat`/`Framed` score only the players: an extra (the lola) can stand across the subject. Frame by hand when one
+  is near.
+- A point read from behind the pointer is hidden by their own head; shoot it front three-quarter, the arm crossing the
+  frame toward the target. A doubled-over laugh and a point at the lens both read as blobs; shoot laughs three-quarter.
+- A hero's pet follows the body, not the posed model, and switches its own renderers on: `ForceOff` holds it off.
 
 ## Adding a map
 
@@ -88,9 +98,7 @@ Write `<Name>Film : MapFilm` (Region, Accent, Score, CloseAt, Prepare, Stage, op
 add it to `MapFilm.Ensure`, add its sound to `tools/synth_map_film_sfx.py` and its score to
 `tools/render_map_film.py`'s table, add its tests to `MapFilmTests`, and record the map in TODO.
 
-The owner's brief for the remaining three:
-- Sitangkai (LagoonCove), calm wonder: golden-hour glide over the reef, players arrive by banca, kids cheer from the
-  stilt houses, a lola sets the can down. (`MooredBoatMotion` bancas in `Life`; `lola_pacing`, `aling_nena` rigs.)
+The owner's brief for the remaining two:
 - BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower billboard
   shows the VS cards, a traffic light turning green means go. (`KantoTraffic.Drivers`, `LaneFrame`, `Jeepney`,
   `Signals` with the `signal_red/amber/green` lamp slots; it is frozen under the hold, so pose a time-lapse from
