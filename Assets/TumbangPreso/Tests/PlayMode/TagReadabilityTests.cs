@@ -317,7 +317,11 @@ namespace TumbangPreso.PlayTests
                     }
                 }
                 finally { SettingsStore.Current.TaggableColour = chosen; }
-                // The taya in red beside a taggable runner in blue: hunter and hunted side by side.
+                // The taya in red beside a taggable runner in blue: hunter and hunted side by side. Turned to face the
+                // runner, so the facing chevron points at them.
+                Vector3 toward = _runner.transform.position - _taya.transform.position; toward.y = 0;
+                _taya.transform.rotation = Quaternion.LookRotation(toward.normalized);
+                yield return new WaitForSecondsRealtime(.2f);
                 Vector3 pair = (_taya.transform.position + _runner.transform.position) * .5f + Vector3.up * .7f;
                 Vector3 from = pair + new Vector3(4.2f, 4.0f, -4.6f);
                 cam.transform.SetPositionAndRotation(from, Quaternion.LookRotation(pair - from));

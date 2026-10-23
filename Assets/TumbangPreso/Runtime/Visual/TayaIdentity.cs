@@ -55,7 +55,7 @@ namespace TumbangPreso.Visual
         /// <summary>The taya's outline growth this frame.</summary>
         public static float HunterGrow { get; private set; } = HunterOutline;
         private void Awake() => _live = this;
-        private GameObject _band, _ring;
+        private GameObject _band, _ring, _facing;
         private Material _bandMaterial, _ringMaterial;
         private Renderer _bandRenderer;
         private long _revealedMatch = -1;
@@ -154,7 +154,16 @@ namespace TumbangPreso.Visual
                 _ring.transform.localScale = new Vector3(r, 1, r);
                 bool shown = _taya.gameObject.activeInHierarchy && !_taya.IsSwimming;
                 _ring.SetActive(shown && armed > .02f);
-                SetGlow(_ringMaterial, defense, (.55f + .35f * burst) * armed, glow + 1.5f * burst);
+                if (_facing != null)
+                {
+                    Vector3 ahead = _taya.transform.forward; ahead.y = 0;
+                    if (ahead.sqrMagnitude < 1e-4f) ahead = Vector3.forward;
+                    _facing.transform.SetPositionAndRotation(_ring.transform.position, Quaternion.LookRotation(ahead.normalized));
+                    _facing.transform.localScale = new Vector3(r, 1, r);
+                    _facing.SetActive(_ring.activeSelf);
+                }
+                // As bold as the taggable crosshair (owner: "boring nung circle ng taya"): near opaque, and glowing.
+                SetGlow(_ringMaterial, defense, Mathf.Min(1, .88f + .12f * burst) * armed, 1.3f * glow + 1.5f * burst);
                 StepBroken(feet, shown, disarmed, t, still);
             }
         }
@@ -236,6 +245,57 @@ namespace TumbangPreso.Visual
             }
         }
 
+        /// <summary>A flat band (<paramref name="inner"/> to 1) with <paramref name="count"/> teeth pointing out by <paramref name="tooth"/>.</summary>
+        private static Mesh Teeth(int count, float inner, float tooth, int steps = 64)
+        {
+            var v = new System.Collections.Generic.List<Vector3>(); var tri = new System.Collections.Generic.List<int>();
+            for (int i = 0; i <= steps; i++)
+            {
+                float a = i * Mathf.PI * 2 / steps; var d = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                v.Add(d); v.Add(d * inner);
+                if (i == steps) continue;
+                int o = i * 2; Quad(tri, o, o + 1, o + 2, o + 3);
+            }
+            for (int k = 0; k < count; k++)
+            {
+                float mid = (k + .5f) * Mathf.PI * 2 / count, half = .17f;
+                int b = v.Count;
+                v.Add(new Vector3(Mathf.Cos(mid - half), 0, Mathf.Sin(mid - half)) * .98f);
+                v.Add(new Vector3(Mathf.Cos(mid + half), 0, Mathf.Sin(mid + half)) * .98f);
+                v.Add(new Vector3(Mathf.Cos(mid), 0, Mathf.Sin(mid)) * (1 + tooth));
+                Both(tri, b, b + 1, b + 2);
+            }
+            return Flat(v, tri, "TayaTeeth");
+        }
+
+        /// <summary>A chevron outside the ring pointing along +Z: the way the taya faces.</summary>
+        private static Mesh Chevron()
+        {
+            var v = new System.Collections.Generic.List<Vector3>
+            {
+                new Vector3(-.42f, 0, 1.12f), new Vector3(0, 0, 1.9f), new Vector3(.42f, 0, 1.12f), new Vector3(0, 0, 1.42f),
+            };
+            var tri = new System.Collections.Generic.List<int>();
+            Both(tri, 0, 1, 3); Both(tri, 3, 1, 2);
+            return Flat(v, tri, "TayaFacing");
+        }
+
+        private static void Both(System.Collections.Generic.List<int> tri, int a, int b, int c)
+        { tri.Add(a); tri.Add(b); tri.Add(c); tri.Add(a); tri.Add(c); tri.Add(b); }
+        private static void Quad(System.Collections.Generic.List<int> tri, int a, int b, int c, int d)
+        { Both(tri, a, b, c); Both(tri, b, d, c); }
+
+        /// <summary>Normals set up rather than recalculated, for the reason <see cref="Arcs"/> records.</summary>
+        private static Mesh Flat(System.Collections.Generic.List<Vector3> v, System.Collections.Generic.List<int> tri, string name)
+        {
+            var mesh = new Mesh { name = name };
+            mesh.SetVertices(v); mesh.SetTriangles(tri, 0);
+            var up = new Vector3[v.Count];
+            for (int i = 0; i < up.Length; i++) up[i] = Vector3.up;
+            mesh.normals = up; mesh.RecalculateBounds();
+            return mesh;
+        }
+
         /// <summary>A flat ring of <paramref name="count"/> arcs, each <paramref name="fill"/> of its share, drawn both ways up.</summary>
         private static Mesh Arcs(int count, float fill, float inner, int steps = 8, float tick = 0)
         {
@@ -289,10 +349,17 @@ namespace TumbangPreso.Visual
 
         private void Build(CharacterMotor taya)
         {
-            _ring = VfxShapes.Lay(transform, "TayaGroundRing", VfxShapes.Collar(40, .025f, .9f), RingRadius, 0);
+            // The hunter's ring: teeth pointing OUT, the taggable target's ticks point IN (owner, 2026-10-23: "boring nung
+            // circle ng taya", "ang ganda ng outline nung taggable na mukhang crosshair"). Out is the threat radiating from
+            // the taya; in is the target closing on whoever can be caught.
+            _ring = VfxShapes.Lay(transform, "TayaGroundRing", Teeth(8, .8f, .5f), RingRadius, 0);
             VfxMaterial.Ghost(_ring.GetComponent<Renderer>(), UI.UiTheme.Taya, 1f);
             _ringMaterial = _ring.GetComponent<Renderer>().sharedMaterial;
             ShadowsOff(_ring);
+            // And a chevron on the ring where the taya faces: the reach is in front of them, so the danger has a direction.
+            _facing = VfxShapes.Lay(transform, "TayaFacing", Chevron(), RingRadius, 0);
+            _facing.GetComponent<Renderer>().sharedMaterial = _ringMaterial;
+            ShadowsOff(_facing);
             _model = taya.GetComponent<CharacterVisual>()?.Model; _bandAttempts = 0;
         }
 
@@ -519,9 +586,10 @@ namespace TumbangPreso.Visual
         {
             DestroyBand();
             if (_ring != null) Destroy(_ring);
+            if (_facing != null) Destroy(_facing);
             if (_broken != null) Destroy(_broken);
             _broken = null; _brokenMaterial = null;
-            _band = _ring = null; _bandRenderer = null; _bandMaterial = _ringMaterial = null; _taya = null; _model = null;
+            _band = _ring = _facing = null; _bandRenderer = null; _bandMaterial = _ringMaterial = null; _taya = null; _model = null;
         }
 
         private void OnDestroy()

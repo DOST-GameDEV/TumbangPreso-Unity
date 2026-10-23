@@ -94,8 +94,11 @@ has one colour: `UiTheme.Defense` itself is now crimson (`e8203a`, was blue `008
 so it never shows through walls, `_HunterInk` in `Toon.shader`'s outline pass), the ground ring, the headband, the
 TAYA reveal and tab, the restore collar on the can, TAGGED!, the caught feed row, the role-swap and break cards and
 the film plates. Blue is left only for "can be caught". The two also differ in shape, so neither depends on colour
-alone: the taya's marks are solid and continuous (a full ring, a whole outline, a band); the taggable mark is a
-target (three arcs with ticks pointing in at the body, and the body filling). While the can is down the outline and ring go grey and thinner, as the ring already did: the
+alone. Owner, of the first plain red circle: "boring nung circle ng taya", and of the arcs: "ang ganda ng outline nung
+taggable na mukhang crosshair". So one shape language: the **hunted** stand in a target, three arcs with ticks pointing
+**in**; the **hunter** stands on a turning star, a ring with eight teeth pointing **out**, as bold as the target, plus a
+chevron on the ring pointing where the taya faces, since the reach is in front of them. While the can is down the star
+gives way to the grey broken ring. While the can is down the outline and ring go grey and thinner, as the ring already did: the
 taya cannot tag. P1's seat colour was red; it is Grape Purple now (owner: "No red seat colour"), so the only red on
 the court is the taya.
 
