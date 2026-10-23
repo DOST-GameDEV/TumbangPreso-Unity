@@ -92,6 +92,20 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(600000)] public IEnumerator SitangkaiTayaAndWatcherHoldTheTaya() => Closes(SceneFlow.LagoonCove);
         [UnityTest, Timeout(600000)] public IEnumerator SitangkaiPlaysIntoTheRound() => Natural(SceneFlow.LagoonCove);
 
+        // ------------------------------------------------------------------ BGC
+
+        [UnityTest, Timeout(600000)] public IEnumerator BgcFullFilmBeats() => Beats(SceneFlow.Kanto, false, 1,
+            new[] { (0.4f, "01_rush_crossing"), (1.2f, "02_rush_kerb"), (2.0f, "03_rush_avenue"), (2.9f, "04_rush_park_title"),
+                    (3.5f, "05_jeep_brakes"), (4.2f, "06_jeep_hop"), (5.0f, "07_bike_skid"), (5.6f, "08_bike_point"),
+                    (6.3f, "09_taxi_brakes"), (6.7f, "10_runner_salute"), (7.7f, "11_gather"), (8.9f, "12_board_cards"),
+                    (9.6f, "13_board_mystery"), (10.0f, "14_board_flip_taya"), (10.35f, "15_taya_struck"), (10.9f, "16_laughing"), (11.4f, "17_amber"),
+                    (11.85f, "18_green_go"), (12.4f, "19_crouch"), (13.4f, "20_close_you"), (15.3f, "21_return") });
+        [UnityTest, Timeout(600000)] public IEnumerator BgcShortFilmBeats() => Beats(SceneFlow.Kanto, true, 1,
+            new[] { (0.8f, "s01_establish"), (2.0f, "s02_board"), (2.8f, "s03_flip"), (3.7f, "s04_green"), (4.3f, "s05_crouch"), (5.5f, "s06_close_you") });
+        [UnityTest, Timeout(1800000)] public IEnumerator BgcRecording() => Record(SceneFlow.Kanto, 1);
+        [UnityTest, Timeout(600000)] public IEnumerator BgcTayaAndWatcherHoldTheTaya() => Closes(SceneFlow.Kanto);
+        [UnityTest, Timeout(600000)] public IEnumerator BgcPlaysIntoTheRound() => Natural(SceneFlow.Kanto);
+
         // ------------------------------------------------------------------ the beats
 
         private IEnumerator Load(string map, bool reduced)

@@ -27,7 +27,7 @@ cue there; the mix level is the film's own):
     sfx_film_sitangkai_hop.wav  0.40 s  a bare foot landing in soft sand
     sfx_film_sitangkai_clink.wav 0.70 s the tin can set down on the sand
     sfx_film_sitangkai_gong.wav 3.50 s  the agung: one deep, beating gong stroke
-    sfx_film_bgc_score.wav     16.8 s  BGC: a 128 bpm drum line, doubled under the rush, dropped for the billboard
+    sfx_film_bgc_score.wav     17.2 s  BGC: a 128 bpm drum line, doubled under the rush, dropped for the billboard
     sfx_film_bgc_brake.wav      1.20 s  tyres standing on the tarmac, a thump as it rocks to a stop
     sfx_film_bgc_horn.wav       0.90 s  a car horn, a long blast and a short one
     sfx_film_bgc_hop.wav        0.35 s  a shoe landing on asphalt
@@ -578,8 +578,9 @@ def sitangkai_gong():
 # ------------------------------------------------------------------ BGC: city adrenaline
 #
 # BgcFilm: RUSH 0.0 (cuts 0.8 1.6 2.4, the title 2.5), JEEP 3.2, BIKE 4.8, FOOT 5.9 (the brake 6.15, the horn 6.35),
-# GATHER 7.0, BOARD 8.4 (cards 8.7 8.9 9.1, VS 9.35), the FLIP 9.8, LAUGH 10.2, AMBER 10.8, GREEN 11.3, CROUCH 11.6,
-# CLOSE 12.4, end 15.8. 128 bpm (0.469 s a beat), E minor: four on the floor, a driving bass, bright stabs.
+# GATHER 7.0, BOARD 8.4 (close 8.9, cards 8.95 9.15 9.35, VS 9.6), the FLIP 9.8, STRUCK 10.15, LAUGH 10.6, AMBER 11.2,
+# GREEN 11.7, CROUCH 12.0, CLOSE 12.8, end 16.2. 128 bpm (0.469 s a beat), E minor: four on the floor, a driving
+# bass, bright stabs.
 
 def bgc_bass(freq, seconds, cut=700, drive=2.0):
     t = t_of(seconds)
@@ -603,7 +604,7 @@ def snare(seconds, rng, gain=1.0):
 
 def bgc_score():
     rng = np.random.default_rng(1024)
-    total = 16.8
+    total = 17.2
     track = np.zeros(int(SR * total))
     beat = 60.0 / 128.0
     line = ["E2", "E2", "G2", "E2", "D2", "E2", "B1", "D2"]
@@ -641,30 +642,32 @@ def bgc_score():
         place(track, bgc_stab([note("B4"), note("E5")], 0.25), a, 0.22)
     place(track, bgc_stab([note("D4"), note("F#4"), note("A4")], 0.5), 4.8, 0.3)
     place(track, bgc_stab([note("C4"), note("E4"), note("G4")], 0.5), 6.35, 0.3)
-    # BOARD (8.4): the beat drops out; a ticking hat, a low held note, a tension riser to the flip.
+    # BOARD (8.4): the beat drops out; a ticking hat, a low held note, a tension riser to the flip (the card slams
+    # and VS are cues).
     pt = t_of(1.4)
     place(track, pad([note("E2"), note("B2")], 1.6, attack=0.2, release=0.5, bright=500), 8.4, 0.35)
     for q in range(int(1.4 / (beat / 2))):
         place(track, noise_hit(0.03, rng, 8000, 15000, 120), 8.4 + q * beat / 2, 0.12)
     place(track, np.sin(2 * np.pi * np.cumsum(300 + 900 * (pt / 1.4) ** 2) / SR) * (pt / 1.4) ** 2 * 0.3, 8.4, 0.5)
-    # FLIP (9.8): the hit, then the laugh: bouncing blips over a half-time beat.
+    # FLIP (9.8): the hit; the taya struck (10.15): a low sag; then the laugh: bouncing blips over a half-time beat.
     place(track, kick(0.7, 38, 170), 9.8, 1.0)
     place(track, bgc_stab([note("E3"), note("B3"), note("E4"), note("G4")], 0.9, 2600), 9.8, 0.5)
     place(track, noise_hit(1.2, rng, 3000, 14000, 3), 9.8, 0.25)
+    st = t_of(0.5)
+    place(track, np.sin(2 * np.pi * np.cumsum(220 - 120 * st / 0.5) / SR) * np.exp(-st * 4), 10.15, 0.3)
     blips = ["E5", "G5", "E5", "B5", "A5", "G5", "E5", "D5"]
     for i, b in enumerate(blips):
-        place(track, bell(note(b), 0.25, partials=((1, 1.0), (2.0, 0.3)), decay=14), 10.2 + i * beat / 2, 0.18)
+        place(track, bell(note(b), 0.25, partials=((1, 1.0), (2.0, 0.3)), decay=14), 10.6 + i * beat / 2 * 0.65, 0.18)
     for q in range(2):
-        place(track, kick(0.3, 48, 140), 10.2 + q * beat * 2, 0.45)
-        place(track, snare(0.2, rng), 10.2 + beat + q * beat * 2, 0.3)
-    # AMBER (10.8): everything holds its breath; only the signal's beep (a cue) and a low hum.
-    place(track, pad([note("E2")], 0.6, attack=0.05, release=0.3, bright=300), 10.8, 0.3)
-    # GO (11.3): the full drop, harder than before, into the close.
-    at, n = 11.3, 0
-    while at < 15.0:
-        place(track, kick(0.32, 46, 160), at, 0.7 if at < 12.4 else 0.5)
+        place(track, kick(0.3, 48, 140), 10.6 + q * beat * 0.65, 0.45)
+    # AMBER (11.2): everything holds its breath; only the signal's beep (a cue) and a low hum.
+    place(track, pad([note("E2")], 0.6, attack=0.05, release=0.3, bright=300), 11.2, 0.3)
+    # GO (11.7): the full drop, harder than before, into the close.
+    at, n = 11.7, 0
+    while at < 15.4:
+        place(track, kick(0.32, 46, 160), at, 0.7 if at < 12.8 else 0.5)
         if n % 2 == 1:
-            place(track, snare(0.22, rng), at, 0.45 if at < 12.4 else 0.3)
+            place(track, snare(0.22, rng), at, 0.45 if at < 12.8 else 0.3)
         for q in range(4):
             place(track, noise_hit(0.035, rng, 7000, 15000, 100), at + q * beat / 4, 0.12)
         place(track, bgc_bass(note(line[n % 8]), beat * 0.9, cut=1100, drive=2.6), at, 0.5)
@@ -672,8 +675,8 @@ def bgc_score():
             place(track, bgc_stab([note("E4"), note("G4"), note("B4"), note("E5")], 0.4), at + beat * 0.5, 0.32)
         at += beat
         n += 1
-    place(track, kick(0.8, 36, 180), 11.3, 0.9)
-    place(track, noise_hit(1.4, rng, 3000, 14000, 2.5), 11.3, 0.3)
+    place(track, kick(0.8, 36, 180), 11.7, 0.9)
+    place(track, noise_hit(1.4, rng, 3000, 14000, 2.5), 11.7, 0.3)
     track = room(track, 0.9, 0.16, seed=81, tone=5000)
     tail = int(SR * 1.8)
     track[-tail:] *= np.linspace(1, 0, tail) ** 2

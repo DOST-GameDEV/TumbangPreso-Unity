@@ -104,8 +104,13 @@ replay and the whole match read poorly ("everything has to be animated").
     giggle are the alley's recorded cues. The banca is the film's own toon build (the cove's boats are static-batched,
     so a copied hull mesh is the whole batch). Base: extras take the acting layer (`Act(Extra, Feel)`), hero pets are
     kept off (`ForceOff`), the can's protection ring is down for any film. Video: Logs/map-films/Sitangkai_intro_film.mp4.
-  - [ ] BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower
-    billboard shows the VS cards, a traffic light turning green means go.
+  - [ ] BGC (Kanto) `BgcFilm`: built 2026-10-23 (runs 1 to 5): a hard bright morning; the traffic in a six-times
+    time-lapse over four cuts (the map's own vehicles posed along their lanes and put back); two off a jeepney's back
+    step, one skidding a bike in, one sprinting across in front of a braking taxi and saluting it; the four running
+    in; the tower billboard (the film's own world-space card, stood off the facade) slamming in the three attackers'
+    portraits, VS, a spinning "?" that flips to the taya; the taya struck; the three laughing; the signal's own
+    lamps lit amber then green through their lamp slots; the three dropping into a sprint crouch. A 128 bpm score
+    and the brakes, horn, skid, slams, flip, beep and go synthesised. Video: Logs/map-films/BGC_intro_film.mp4.
   - [ ] Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches
     light the ring, a carved stone glyph glows to reveal the taya.
   - [ ] Owner look at both films in play (feel, length, acting); the LAN and online peers on one clock.

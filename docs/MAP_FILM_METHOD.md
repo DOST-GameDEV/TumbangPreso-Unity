@@ -6,8 +6,8 @@ match with its own short film, each with its own mood, built to `Runtime/Map/Are
 *"make showing emotion and expressiveness and readability one of the main bars"*, *"thoroughly direct everything"*,
 *"focus on one by one doing it and refining"*.
 
-Status: Tondo (`TondoFilm`), Ermita (`ErmitaFilm`) and Sitangkai (`SitangkaiFilm`) are built. BGC and Banaue are
-not; their maps still play the arrival's own shots until a director is added (see "Adding a map" below).
+Status: Tondo (`TondoFilm`), Ermita (`ErmitaFilm`), Sitangkai (`SitangkaiFilm`) and BGC (`BgcFilm`) are built. Banaue is
+not; it still plays the arrival's own shots until its director is added (see "Adding a map" below).
 
 ## The bars, in order
 
@@ -91,6 +91,13 @@ not; their maps still play the arrival's own shots until a director is added (se
 - A point read from behind the pointer is hidden by their own head; shoot it front three-quarter, the arm crossing the
   frame toward the target. A doubled-over laugh and a point at the lens both read as blobs; shoot laughs three-quarter.
 - A hero's pet follows the body, not the posed model, and switches its own renderers on: `ForceOff` holds it off.
+- A billboard or sign set into a facade at a ray's hit gets the balconies and mullions through it: stand it off the
+  wall a metre or more. Shoot it from the street in its own shot; from the court it is a stamp.
+- A signal's lamp submesh is both faces of a head, so its bounds' centre is between them, not on a lamp. Frame the head
+  from the pole and the arm instead, and light the lamps through the renderer's own lamp slots (property blocks,
+  saved and put back at `End`).
+- A lane-mode traffic (`KantoTraffic`) is still under the hold: pose each `Driver.Body` from `LaneFrame` and put every
+  body back in `Restore`. Keep the runner's crossing clear by sliding the lane's other cars back while they cross.
 
 ## Adding a map
 
@@ -98,11 +105,7 @@ Write `<Name>Film : MapFilm` (Region, Accent, Score, CloseAt, Prepare, Stage, op
 add it to `MapFilm.Ensure`, add its sound to `tools/synth_map_film_sfx.py` and its score to
 `tools/render_map_film.py`'s table, add its tests to `MapFilmTests`, and record the map in TODO.
 
-The owner's brief for the remaining two:
-- BGC (Kanto), city adrenaline: fast-cut traffic time-lapse, arrivals by jeepney, bike and on foot, a tower billboard
-  shows the VS cards, a traffic light turning green means go. (`KantoTraffic.Drivers`, `LaneFrame`, `Jeepney`,
-  `Signals` with the `signal_red/amber/green` lamp slots; it is frozen under the hold, so pose a time-lapse from
-  `LaneFrame` and put every body back.)
+The owner's brief for the last one:
 - Banaue (Payo), mythic and ceremonial: mist over the terraces at dawn, gong beats as the camera climbs, torches
   light the ring, a carved stone glyph glows to reveal the taya. (`PayoFire`, `PayoHaze`, `PayoNight`; the plaza's
   sun disc at the origin.)
