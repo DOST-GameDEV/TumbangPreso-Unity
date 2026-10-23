@@ -1,4 +1,5 @@
 using System;
+using TumbangPreso.Settings;
 using TumbangPreso.Social;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -42,13 +43,41 @@ namespace TumbangPreso.UI
         /// between neighbouring wedges rather than taken off one side. See Build.</summary>
         public const float SliceGapDegrees = 1.375f;
 
-        /// <summary>How far the amber rim stands proud of the outer wedge. Two pixels reads as
-        /// an artefact at 540 across; this is the same weight `GodotTheme.WoodBorderWidth` gives
-        /// every other card in the HUD.</summary>
-        public const float RimWidth = 5.0f;
-        public const float LabelRadiusFraction = 0.62f;
-        public const int LabelFontSize = 20;
+        /// <summary>The chosen slice's honey band along its outer edge: the same honey foot the team bar gives "you"
+        /// and the ultimate ring gives "ready", so the wheel's one bright mark means what honey means everywhere.</summary>
+        public const float HoneyBand = 6.0f;
+        /// <summary>The cream hairline round every glass panel (`HudCard.Glass` draws 1.5).</summary>
+        public const float EdgeWidth = 1.5f;
+        public const float LabelRadiusFraction = 0.56f;
+        public const int LabelFontSize = 18;
         public const int CentreFontSize = 26;
+
+        /// <summary>
+        /// ⚠️ THE PICTURE LEADS AND THE WORD FOLLOWS (owner, 2026-10-23: "refine the ui and button for emotes"; his
+        /// standing bar is pictograms over text). Each slice carries its pose (`EmoteGlyphs`) above a small word, so a
+        /// player picks by shape and the word only confirms it; the hub repeats the chosen pose large.
+        /// </summary>
+        public const float IconSize = 84.0f;
+        public const float HubIconSize = 92.0f;
+
+        /// <summary>Where a slice's picture and word sit against its band point: the picture lifted, the word dropped
+        /// under it. Measured on screen, not along the bisector, so both stay upright. `EmoteMotionTests` keeps every
+        /// slice's pair inside the band.</summary>
+        public const float IconLift = 14.0f;
+        public const float LabelDrop = 36.0f;
+        public const float LabelHeight = 32.0f;
+
+        /// <summary>How far the chosen slice stands out along its bisector, and how much it grows: it has to move,
+        /// not just change colour, to read in the corner of the eye while the player watches the match.</summary>
+        public const float SelectedPush = 14.0f;
+        public const float SelectedScale = 1.07f;
+
+        /// <summary>The open pop: from this scale up to 1 with a little overshoot, in this many seconds.</summary>
+        public const float OpenFromScale = 0.82f;
+        public const float OpenSeconds = 0.16f;
+
+        /// <summary>A finger's drag on a phone, in screen heights, that reaches the wheel's full throw.</summary>
+        public const float TouchThrow = 0.16f;
 
         /// <summary>Mouse delta to stick units, and the cap that keeps a fast flick from
         /// pinning the selection to one slice.</summary>
@@ -59,11 +88,18 @@ namespace TumbangPreso.UI
         private RectTransform _root;
         private Text _centreLabel;
         private Text[] _labels;
-        private Image[] _slices;
+        private WheelWedge[] _slices;
+        private Image[] _icons;
+        private RectTransform[] _petals;
+        private Image _hubIcon;
+        private CanvasGroup _group;
 
         private bool _open;
         private Vector2 _stick;
         private int _selection = -1;
+        private float _openedAt;
+        private int _touchId = -1;
+        private Vector2 _touchStart;
 
         public bool IsOpen => _open;
         public int Selection => _selection;
@@ -104,6 +140,8 @@ namespace TumbangPreso.UI
             AnyOpen = true;
             _stick = Vector2.zero;
             _selection = -1;
+            _openedAt = Time.unscaledTime;
+            _touchId = -1;
             _canvas.gameObject.SetActive(true);
             Redraw();
         }
@@ -119,9 +157,13 @@ namespace TumbangPreso.UI
             _canvas.gameObject.SetActive(false);
 
             if (play && _selection >= 0 && _selection < Emotes.Count)
+            {
+                MenuSfx.Click();
                 EmoteChosen?.Invoke(Emotes.All[_selection].Id);
+            }
 
             _selection = -1;
+            _touchId = -1;
         }
 
         /// <summary>
@@ -188,6 +230,12 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Steer()
         {
+            // ⚠️ A PHONE HAS NO STICK AND NO MOUSE, SO THE WHEEL OPENED AND NEVER STEERED (2026-10-23). The EMOTE
+            // chip held the action, the wheel opened, and nothing moved the pointer, so every release played
+            // nothing. The finger that opened it now drags it: the newest touch still down is the one on the chip,
+            // and its offset from where it landed is the stick, about a sixth of the screen's height to the full throw.
+            if (SteerByTouch()) return;
+
             var pad = Gamepad.current;
 
             if (pad != null)
@@ -215,8 +263,34 @@ namespace TumbangPreso.UI
             _stick = Vector2.ClampMagnitude(_stick, StickClamp);
         }
 
+        private bool SteerByTouch()
+        {
+            var screen = Touchscreen.current;
+            if (screen == null) return false;
+
+            UnityEngine.InputSystem.Controls.TouchControl finger = null;
+            foreach (var touch in screen.touches)
+            {
+                if (!touch.isInProgress) continue;
+                if (_touchId >= 0 ? touch.touchId.ReadValue() == _touchId
+                                  : finger == null || touch.startTime.ReadValue() > finger.startTime.ReadValue())
+                    finger = touch;
+            }
+            if (finger == null) { _touchId = -1; return false; }
+
+            if (_touchId < 0)
+            {
+                _touchId = finger.touchId.ReadValue();
+                _touchStart = finger.startPosition.ReadValue();
+            }
+            float throw_ = Mathf.Max(1.0f, Screen.height * TouchThrow);
+            _stick = Vector2.ClampMagnitude((finger.position.ReadValue() - _touchStart) / throw_ * StickClamp, StickClamp);
+            return true;
+        }
+
         private void UpdateSelection()
         {
+            int before = _selection;
             if (_stick.magnitude < DeadZone)
             {
                 _selection = -1;
@@ -227,147 +301,113 @@ namespace TumbangPreso.UI
             // is read from the top, which is where the eye starts.
             float angle = Mathf.Atan2(_stick.x, _stick.y) * Mathf.Rad2Deg;
             _selection = Emotes.SegmentFor(angle);
+
+            // A tick each time the pointer crosses into a new slice, so a player can feel the wheel without looking.
+            if (_selection != before)
+            {
+                MenuSfx.Hover();
+
+                // The pushed-out slice draws over its neighbours: last of the petals (children 0 to Count - 1),
+                // still under the hub that comes after them.
+                _petals[_selection].SetSiblingIndex(Emotes.Count - 1);
+            }
         }
 
-        private void Redraw()
+        /// <summary><paramref name="settle"/> jumps the pop and the slices straight to where they are heading, for
+        /// the review capture (`EmoteMotionAuthor.ReviewWheel`), which has no frames to ease across.</summary>
+        private void Redraw(bool settle = false)
         {
+            // The open pop: up from `OpenFromScale` with a small overshoot, fading in with it. Unscaled, so a slowed
+            // replay or halftime does not slow the wheel.
+            float k = settle ? 1.0f : Mathf.Clamp01((Time.unscaledTime - _openedAt) / OpenSeconds);
+            float pop = 1.0f + (k - 1.0f) * (k - 1.0f) * ((1.70158f + 1.0f) * (k - 1.0f) + 1.70158f);
+            _root.localScale = Vector3.one * Mathf.LerpUnclamped(OpenFromScale, 1.0f, pop);
+            if (_group != null) _group.alpha = Mathf.Clamp01(k * 1.6f);
+
+            float blend = settle ? 1.0f : 1.0f - Mathf.Exp(-Time.unscaledDeltaTime * 22.0f);
+            float span = 360.0f / Emotes.Count;
             for (int i = 0; i < _slices.Length; i++)
             {
                 bool selected = i == _selection;
 
-                // ⚠️⚠️ THE WEDGE IS WOOD, NOT INK, AND INK IS WHY THIS SCREEN DID NOT LOOK LIKE
-                // THE REST OF THE GAME. 🧑 2026-08-18, with a screenshot of it open over a
-                // match: *"the emote wheeel looks ugly tho"*, *"u could make it better"*.
-                //
-                // Every other surface a player sees in a round — the scoreboard, the timer, the
-                // YOU card, the lata card, the intermission card — is `WOOD_DEEP` behind an
-                // `AMBER` or `WOOD_EDGE` border with `CREAM` lettering. This wheel was the only
-                // one built out of `INK` at 0.62 with a flat `HIGHLIGHT` selection, so it read
-                // as a grey-blue disc from a different game dropped over a warm street. The old
-                // note argued the ink was a scrim that kept the match visible, which is a real
-                // requirement — so the wood is translucent and does the same job in the game's
-                // own colour instead of borrowing one.
-                //
-                // ⚠️ THE SELECTED WEDGE IS `WOOD_MID`, THE MENU'S OWN HOVER FACE, WITH AMBER
-                // LETTERING. That pairing is stated in `ui_theme.gd`: *"WOOD_MID — the lit face,
-                // on hover"* and *"AMBER — headings, values, hover lettering"*. A flat yellow
-                // fill was louder than the rule and still said less, because it threw away the
-                // wood the rest of the card is made of.
-                // ⚠️ NEARLY OPAQUE, AND THE TRANSLUCENT VERSION DID NOT SURVIVE BEING LOOKED
-                // AT. The old note argued for a scrim so the match stays visible under the
-                // wheel; at 0.88 over a lit street the wood washed out to a grey-brown haze and
-                // the card stopped reading as a card at all — which is the complaint, not a fix
-                // for it. Every other panel in this HUD is opaque wood, and this one is on
-                // screen for under a second while the player is holding a key and not aiming.
-                _slices[i].color = selected ? UiTheme.WoodMid : UiTheme.WoodDeep;
-
-                _labels[i].color = selected ? UiTheme.Amber : UiTheme.Cream;
+                // The chosen slice stands out along its bisector and grows; the rest settle back.
+                float mid = Mathf.Deg2Rad * (span * i + span * 0.5f);
+                var out_ = new Vector2(Mathf.Sin(mid), Mathf.Cos(mid)) * (selected ? SelectedPush : 0.0f);
+                _petals[i].anchoredPosition = Vector2.Lerp(_petals[i].anchoredPosition, out_, blend);
+                float grow = Mathf.Lerp(_petals[i].localScale.x, selected ? SelectedScale : 1.0f, blend);
+                _petals[i].localScale = new Vector3(grow, grow, 1.0f);
+                _icons[i].color = selected ? HudDraw.Honey : HudDraw.Ivory;
+                _slices[i].SetSelected(selected);
+                _labels[i].color = selected ? HudDraw.Honey : HudDraw.Ivory;
                 _labels[i].fontStyle = selected ? FontStyle.Bold : FontStyle.Normal;
             }
 
             _centreLabel.text = _selection >= 0 ? Emotes.All[_selection].Name : "";
+
+            // The hub shows the chosen pose large; with nothing chosen it shows the wheel's own face, dimmed, which
+            // is the "let go here to cancel" the hub has always meant.
+            _hubIcon.sprite = _selection >= 0 ? EmoteGlyphs.For(Emotes.All[_selection].Id) : VerbIcons.For(VerbGlyph.Emote);
+            _hubIcon.color = _selection >= 0 ? HudDraw.Honey : HudDraw.IvoryMuted;
         }
 
         /// <summary>
-        /// ⚠️⚠️ A UI Image WITH NO SPRITE IS A WHITE SQUARE, AND THAT IS THE WHOLE OF "the emote
-        /// screen is completely broken". Every slice was an `Image` with `type = Filled` and
-        /// `fillMethod = Radial360` and NO sprite assigned, so the radial fill was cutting
-        /// sectors out of a SQUARE. Eight of those, each rotated by 45 degrees, is the pile of
-        /// overlapping dark slabs with labels crossing each other that was reported: the shape
-        /// is only a wheel if the thing being filled is a circle.
+        /// ⚠️⚠️ THE WHEEL IS GLASS, LIKE EVERY OTHER PANEL IN A ROUND. Owner, 2026-10-23: the wheel "sucks, it isn't in
+        /// the theme of anything else in the game HUD". It was still the hub's carved wood (`WoodDeep` wedges inside a
+        /// five-pixel amber rim) after the match HUD moved to smoked glass on 2026-10-20 (`docs/UI_DESIGN_METHOD.md`,
+        /// glass HUD), so it opened over the match as a menu from another screen. It now follows the glass rules: the
+        /// warm smoked fill and its cream hairline, ivory pictures and words outlined black, and honey spent on one
+        /// meaning, the slice you are about to play. No wood, no amber rim, no blue.
         ///
-        /// So the sprite is baked here. An annulus rather than a disc, because the wheel has a
-        /// hub the labels must not run into, and because a filled sector of a disc converges to
-        /// a point at the centre where three labels would collide.
+        /// ⚠️ IT DOES NOT LEAN. `HudDraw.Lean` shears rectangles; a sheared ring is an ellipse that no longer matches the
+        /// direction the stick points, and the ultimate's ring does not lean either.
         ///
-        /// ⚠️ A RUNTIME SPRITE IS SAFE HERE AND IS NOT SAFE IN AN IMPORTER. `TscnUiImporter`
-        /// bakes its gradients to disk because a scene SAVED with a reference to a runtime
-        /// `Sprite.Create` object is a corrupt scene in the player. This wheel is built by
-        /// `AddComponent` at runtime and nothing serialises it, so the same object is fine.
-        ///
-        /// ⚠️ AND IT IS ANTIALIASED BY MEASURING COVERAGE, not by a mipmap. The wheel is drawn
-        /// at 540 px across from a 256 px texture, so a hard alpha cutoff gives a visibly
-        /// stepped rim on the one screen whose entire job is to look good.
+        /// ⚠️ DRAWN AS A MESH, NOT A FILLED SPRITE. The wedges used to be radial-filled `Image`s cut from a baked annulus,
+        /// which can fill but not edge: a hairline round each glass wedge and a honey band on the chosen one need the
+        /// wedge's own outline, so they come from `HudDraw.Arc` like the ultimate ring's notches.
         /// </summary>
-        private static Sprite _ringSprite;
-        private static Sprite _discSprite;
-        private static Sprite _rimSprite;
-
-        /// <summary>
-        /// ⚠️⚠️ THE RIM HAS TO BE AN ANNULUS AND A DISC MADE THE WHOLE WHEEL GOLD. The first
-        /// version of the border was `Ring(solid: true)` — a filled amber circle sitting BEHIND
-        /// seven wedges that are deliberately translucent so the match stays visible through
-        /// them. Amber at full strength read straight through 0.88 of wood and every slice came
-        /// out the colour of the border. The card was the right idea and the shape was wrong.
-        ///
-        /// So `kind` picks the geometry: a disc for the hub, the hub-sized annulus for a wedge,
-        /// and a thin outer band for the rim.
-        /// </summary>
-        private enum RingKind { Disc, Wedge, Rim }
-
-        private static Sprite Ring(bool solid) => Ring(solid ? RingKind.Disc : RingKind.Wedge);
-
-        private static Sprite Ring(RingKind kind)
+        private sealed class WheelWedge : MaskableGraphic
         {
-            if (kind == RingKind.Disc && _discSprite != null) return _discSprite;
-            if (kind == RingKind.Wedge && _ringSprite != null) return _ringSprite;
-            if (kind == RingKind.Rim && _rimSprite != null) return _rimSprite;
+            /// <summary>Clockwise from twelve o'clock, in degrees, and how far round it runs.</summary>
+            public float From, Span = 360.0f;
+            public float Inner, Outer;
+            public Color Fill = HudDraw.Glass;
+            private bool _selected;
+            private bool _contrast;
 
-            bool solid = kind == RingKind.Disc;
-
-            const int size = 256;
-            const float edge = 1.25f;
-
-            float outer = size * 0.5f - 1.0f;
-
-            // The rim's hole is everything inside the wedges, so only the band between
-            // `RadiusOuter` and `RadiusOuter + RimWidth` is painted.
-            float inner = kind == RingKind.Disc ? 0.0f
-                        : kind == RingKind.Rim
-                            ? outer * (RadiusOuter / (RadiusOuter + RimWidth))
-                            : outer * (RadiusInner / RadiusOuter);
-
-            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            public void SetSelected(bool selected)
             {
-                name = kind == RingKind.Disc ? "WheelDisc"
-                     : kind == RingKind.Rim ? "WheelRim" : "WheelRing",
-                wrapMode = TextureWrapMode.Clamp,
-                filterMode = FilterMode.Bilinear,
-            };
-
-            var pixels = new Color32[size * size];
-            float centre = size * 0.5f - 0.5f;
-
-            for (int y = 0; y < size; y++)
-            {
-                for (int x = 0; x < size; x++)
-                {
-                    float dx = x - centre;
-                    float dy = y - centre;
-                    float r = Mathf.Sqrt(dx * dx + dy * dy);
-
-                    // Coverage falls off over `edge` pixels at both rims, which is what keeps
-                    // the border smooth when the texture is scaled up.
-                    float a = Mathf.Clamp01((outer - r) / edge);
-
-                    if (!solid) a = Mathf.Min(a, Mathf.Clamp01((r - inner) / edge));
-
-                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(a * 255.0f));
-                }
+                bool contrast = SettingsStore.Current.HighContrastHud;
+                if (selected == _selected && contrast == _contrast) return;
+                _selected = selected; _contrast = contrast; SetVerticesDirty();
             }
 
-            texture.SetPixels32(pixels);
-            texture.Apply(false, false);
+            protected override void OnPopulateMesh(VertexHelper vh)
+            {
+                vh.Clear();
+                _contrast = SettingsStore.Current.HighContrastHud;
+                float start = 90.0f - From;
+                // A short soft shadow, as `HudCard.Glass` gives every panel, so the glass sits over the street.
+                if (!_contrast) HudDraw.Arc(vh, new Vector2(0, -3), Outer, Inner, start, Span, new Color(0, 0, 0, .35f));
+                var fill = _contrast ? HudCard.ContrastFill : _selected ? HudDraw.GlassDeep : Fill;
+                HudDraw.Arc(vh, Vector2.zero, Outer, Inner, start, Span, fill);
+                var edge = _contrast ? Color.white : HudDraw.GlassEdge;
+                HudDraw.Arc(vh, Vector2.zero, Outer, Outer - EdgeWidth, start, Span, edge);
+                if (Inner > 0) HudDraw.Arc(vh, Vector2.zero, Inner + EdgeWidth, Inner, start, Span, edge);
+                if (_selected) HudDraw.Arc(vh, Vector2.zero, Outer, Outer - HoneyBand, start, Span, HudDraw.Honey);
+            }
+        }
 
-            var sprite = Sprite.Create(texture, new Rect(0, 0, size, size),
-                                       new Vector2(0.5f, 0.5f), 100.0f, 0,
-                                       SpriteMeshType.FullRect);
-
-            if (kind == RingKind.Disc) _discSprite = sprite;
-            else if (kind == RingKind.Rim) _rimSprite = sprite;
-            else _ringSprite = sprite;
-
-            return sprite;
+        private static WheelWedge Wedge(Transform parent, string name, float from, float span, float inner, float outer)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer));
+            go.transform.SetParent(parent, false);
+            var wedge = go.AddComponent<WheelWedge>();
+            wedge.From = from; wedge.Span = span; wedge.Inner = inner; wedge.Outer = outer;
+            wedge.raycastTarget = false;
+            var rect = wedge.rectTransform;
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(outer * 2.0f, outer * 2.0f);
+            return wedge;
         }
 
         /// <summary>The ink border every label on this wheel wears. See where it is applied.</summary>
@@ -391,67 +431,33 @@ namespace TumbangPreso.UI
             _root.SetParent(_canvas.transform, false);
             MenuKit.Place(_root, new Vector2(0.5f, 0.5f), Vector2.zero,
                 new Vector2(RadiusOuter * 2.0f, RadiusOuter * 2.0f));
-
-            // ⚠️⚠️ THE AMBER RIM, WHICH IS WHAT MAKES IT ONE OF THIS GAME'S CARDS. Every wood
-            // panel in the match HUD is a fill inside a border, and the scoreboard's is amber
-            // specifically — `hud.gd::_build_scoreboard` re-skins it that way and its own note
-            // records the report that forced it: *"ugly ui btw, not even same theme what is that
-            // white box"*. The wheel had no border at all, so it was a floating disc rather than
-            // a card, which is most of *"the emote wheeel looks ugly"*.
-            //
-            // ⚠️ IT IS DRAWN FIRST AND SLIGHTLY LARGER, so the wedges sit inside it and it reads
-            // as a rim rather than as an eighth slice.
-            var rimGo = new GameObject("Rim", typeof(RectTransform), typeof(Image));
-            rimGo.transform.SetParent(_root, false);
-
-            var rim = rimGo.GetComponent<Image>();
-            rim.sprite = Ring(RingKind.Rim);
-            rim.color = UiTheme.Amber;
-            rim.raycastTarget = false;
-
-            MenuKit.Place(rim.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
-                new Vector2((RadiusOuter + RimWidth) * 2.0f, (RadiusOuter + RimWidth) * 2.0f));
+            _group = rootGo.AddComponent<CanvasGroup>();
+            _group.interactable = false;
+            _group.blocksRaycasts = false;
 
             int count = Emotes.Count;
-            _slices = new Image[count];
+            _slices = new WheelWedge[count];
             _labels = new Text[count];
+            _icons = new Image[count];
+            _petals = new RectTransform[count];
 
             float span = 360.0f / count;
 
             for (int i = 0; i < count; i++)
             {
-                // ⚠️ ONE IMAGE PER SLICE, CENTRED AND ROTATED. Godot drew the wheel in a
-                // single `_draw()`; Unity has no per-frame 2D draw hook on a Canvas, so each
-                // slice is a radial-filled image instead. Same geometry, same slice 0 at the
-                // top — the rotation is what puts it there.
-                var sliceGo = new GameObject($"Slice{i}", typeof(RectTransform), typeof(Image));
-                sliceGo.transform.SetParent(_root, false);
+                // A petal holds one slice's wedge, picture and word, so the chosen one moves out and grows as a
+                // piece (`Redraw`).
+                var petalGo = new GameObject($"Petal{i}", typeof(RectTransform));
+                var petal = petalGo.GetComponent<RectTransform>();
+                petal.SetParent(_root, false);
+                petal.anchorMin = petal.anchorMax = petal.pivot = new Vector2(0.5f, 0.5f);
+                petal.sizeDelta = new Vector2(RadiusOuter * 2.0f, RadiusOuter * 2.0f);
+                _petals[i] = petal;
 
-                var img = sliceGo.GetComponent<Image>();
-
-                // The annulus. See Ring: without a sprite this fills a SQUARE.
-                img.sprite = Ring(solid: false);
-                img.type = Image.Type.Filled;
-                img.fillMethod = Image.FillMethod.Radial360;
-                img.fillOrigin = (int)Image.Origin360.Top;
-
-                // ⚠️ THE GAP IS WHAT SEPARATES THE SLICES, and it has to be big enough to read
-                // as a divider at 540 px across. A single hairline is invisible once the rim is
-                // antialiased, so the wedge is pulled in by a whole degree either side.
-                img.fillAmount = (1.0f / count) - (SliceGapDegrees / 360.0f);
-                img.raycastTarget = false;
-
-                var sr = img.rectTransform;
-                sr.anchorMin = sr.anchorMax = sr.pivot = new Vector2(0.5f, 0.5f);
-                sr.sizeDelta = new Vector2(RadiusOuter * 2.0f, RadiusOuter * 2.0f);
-
-                // ⚠️ HALF A GAP OF EXTRA ROTATION, so the gap is SHARED between neighbours and
-                // each wedge stays centred on its own bisector. Trimming the fill alone eats the
-                // gap off one side only, which walks every label off its own centre line.
-                sr.localRotation = Quaternion.Euler(
-                    0.0f, 0.0f, -(span * i + SliceGapDegrees * 0.5f));
-
-                _slices[i] = img;
+                // ⚠️ THE GAP IS WHAT SEPARATES THE SLICES, SHARED BETWEEN NEIGHBOURS so each wedge stays centred on
+                // its own bisector and every picture stays on its centre line. Slice 0 starts at the top.
+                _slices[i] = Wedge(petal, $"Slice{i}", span * i + SliceGapDegrees * 0.5f, span - SliceGapDegrees,
+                    RadiusInner, RadiusOuter);
 
                 // The label sits along the slice's own bisector, upright regardless of where
                 // that bisector points — a rotated word is unreadable at a glance.
@@ -461,35 +467,44 @@ namespace TumbangPreso.UI
                 // the words sat almost on the hub, in the narrowest part of the wedge, which is
                 // exactly where `emote_wheel.gd` records them overflowing four times.
                 float mid = Mathf.Deg2Rad * (span * i + span * 0.5f);
-                var pos = new Vector2(Mathf.Sin(mid), Mathf.Cos(mid))
-                          * (RadiusInner + (RadiusOuter - RadiusInner) * LabelRadiusFraction);
+                var along = new Vector2(Mathf.Sin(mid), Mathf.Cos(mid));
+                var pos = along * (RadiusInner + (RadiusOuter - RadiusInner) * LabelRadiusFraction);
 
-                _labels[i] = MenuKit.Label(_root, Emotes.All[i].Label, LabelFontSize,
-                    UiTheme.Cream, new Vector2(0.5f, 0.5f), pos, new Vector2(150, 40));
+                // The pose sits on the bisector a little inside the middle of the band, the word under it, both
+                // upright. Together they are the slice's centre of mass, so neither runs into the rims.
+                var iconGo = new GameObject($"Icon{i}", typeof(RectTransform), typeof(Image));
+                iconGo.transform.SetParent(petal, false);
+                var icon = iconGo.GetComponent<Image>();
+                icon.sprite = EmoteGlyphs.For(Emotes.All[i].Id);
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                MenuKit.Place(icon.rectTransform, new Vector2(0.5f, 0.5f), pos + new Vector2(0, IconLift),
+                    new Vector2(IconSize, IconSize));
+                var iconInk = iconGo.AddComponent<Outline>();
+                iconInk.effectColor = UiTheme.InGameOutline;
+                iconInk.effectDistance = new Vector2(2.0f, -2.0f);
+                _icons[i] = icon;
+
+                _labels[i] = MenuKit.Label(petal, Emotes.All[i].Label, LabelFontSize,
+                    HudDraw.Ivory, new Vector2(0.5f, 0.5f), pos + new Vector2(0, -LabelDrop), new Vector2(150, LabelHeight));
             }
 
-            // The hub, which reads as the "release here to cancel" target. Round, like the rest
-            // of it: a square hub inside a circular wheel was the other half of what was wrong.
-            var hubGo = new GameObject("Hub", typeof(RectTransform), typeof(Image));
-            hubGo.transform.SetParent(_root, false);
+            // The hub, which reads as the "release here to cancel" target: the denser glass of a keycap's well, so the
+            // middle of the wheel reads as an inset.
+            var hub = Wedge(_root, "Hub", 0.0f, 360.0f, 0.0f, RadiusInner - SliceGapDegrees * 2.0f);
+            hub.Fill = HudDraw.GlassDeep;
 
-            var hub = hubGo.GetComponent<Image>();
-            hub.sprite = Ring(solid: true);
+            // Honey once a slice is chosen, because it is the thing about to play; ivory at rest.
+            var hubIconGo = new GameObject("HubIcon", typeof(RectTransform), typeof(Image));
+            hubIconGo.transform.SetParent(_root, false);
+            _hubIcon = hubIconGo.GetComponent<Image>();
+            _hubIcon.preserveAspect = true;
+            _hubIcon.raycastTarget = false;
+            MenuKit.Place(_hubIcon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0, 16),
+                new Vector2(HubIconSize, HubIconSize));
 
-            // ⚠️ `WOOD_DARK` IS THE INSET FACE, and that is exactly what a hub is. The theme
-            // names it *"pressed, and inset display slots"*; the timer card in the HUD is built
-            // from the same token, so the middle of the wheel and the middle of the clock are
-            // the same colour rather than two different dark blues.
-            hub.color = UiTheme.WoodDark;
-            hub.raycastTarget = false;
-
-            MenuKit.Place(hub.rectTransform, new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(RadiusInner * 2.0f, RadiusInner * 2.0f));
-
-            // ⚠️ AMBER, because it is a VALUE — the thing currently chosen — and the theme
-            // reserves amber for headings and values. Cream is body text and read as a caption.
-            _centreLabel = MenuKit.Label(_root, "", CentreFontSize, UiTheme.Amber,
-                new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(220, 60));
+            _centreLabel = MenuKit.Label(_root, "", CentreFontSize, HudDraw.Honey,
+                new Vector2(0.5f, 0.5f), new Vector2(0, -52), new Vector2(220, 40));
 
             // ⚠️⚠️ EVERY WORD ON THIS WHEEL GETS AN INK OUTLINE. It is drawn over a LIT STREET,
             // not over an opaque screen, and `RoleSwapCard`'s header states the rule this

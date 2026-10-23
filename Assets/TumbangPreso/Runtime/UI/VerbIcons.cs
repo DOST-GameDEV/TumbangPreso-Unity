@@ -395,17 +395,23 @@ namespace TumbangPreso.UI
             return Mathf.Max(palm, Mathf.Max(fingers, thumb));
         }
 
-        /// <summary>A face: a ring, two eyes and a smile.</summary>
+        /// <summary>
+        /// A face: a solid disc with the eyes and a wide open grin cut out of it.
+        ///
+        /// ⚠️ SOLID, NOT AN OUTLINE (owner, 2026-10-23: "refine the ui and button for emotes"). The ring-and-dots
+        /// smiley thinned to a grey loop at the EMOTE chip's real size; a filled face with a big open grin keeps its
+        /// shape at 40 px and reads as fun rather than as a status icon.
+        /// </summary>
         private static float Face(float u, float v)
         {
-            float head = Ring(u, v, 0.74f, Stroke * 0.80f);
-            float eyeL = Disc(u + 0.26f, v - 0.22f, 0.095f);
-            float eyeR = Disc(u - 0.26f, v - 0.22f, 0.095f);
+            float face = Disc(u, v, 0.80f);
+            float eyes = Mathf.Max(EllipseDisc(u + 0.27f, v - 0.24f, 0.10f, 0.15f),
+                                   EllipseDisc(u - 0.27f, v - 0.24f, 0.10f, 0.15f));
 
-            // The smile is the lower half of a ring, cut off above the centre line.
-            float smile = v < -0.02f ? Ring(u, v + 0.06f, 0.40f, Stroke * 0.62f) : 0.0f;
+            // The grin is the lower half of a disc, cut off just under the centre line.
+            float grin = v < -0.04f ? Disc(u, v + 0.04f, 0.48f) : 0.0f;
 
-            return Mathf.Max(head, Mathf.Max(eyeL, Mathf.Max(eyeR, smile)));
+            return Sub(face, Mathf.Max(eyes, grin));
         }
 
         /// <summary>The rounded plate the two fallback skill glyphs sit inside.</summary>
