@@ -64,9 +64,11 @@ play NO WAY; the other celebrations and taunts pick from the set as before.
   toward the arm's front, so fists by the ears need a level arm twisted X -90 (the hinge then folds up), and fists
   meeting at the chest need a hanging arm twisted Y +-70 (the hinge then folds across). Keying "arm up, fold 110"
   without the twist folds the forearms forward instead.
-- OPEN, needs the owner's OK (finalized hero): Paete's soles render as black slabs whenever they face the camera,
-  in the sit and in any hop. The model has sole faces and the atlas under them is plain brown (105, 73, 45), so it
-  is his toon/palette shading, not the pose or the mesh. Splaying the sit's legs did not hide it.
+- FIXED with the owner's OK: Paete's soles rendered as black slabs whenever they faced the camera, in the sit and
+  in any hop. The first read here (his shading) was wrong. The faces found under him belong to the root skirt; each
+  foot itself was built open underneath (`caps=(False, True)`), so the camera looked into the leg, where the lit
+  pass culls every face it sees and only the ink hull draws. A zero outline width turned them brown, which is what
+  gave it away. Both rims are now capped in the .glb and in the script.
 - Lowering the sit's legs would lift the seat: these kneeless rigs are grounded on their lowest vertex, the heels.
 - The poses were first checked in a Python stick-figure preview of the same axes
   (`tools/emote_pose_preview.py`) before the native strips. It is wrong for raised arms: trust the strips, and for a

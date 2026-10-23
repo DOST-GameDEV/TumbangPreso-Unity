@@ -64,7 +64,7 @@ No rule changes.
   before/after clips: Logs/fpp-1023. GameplayActionShots (both, now on Eskinita) and TagReadabilityTests x6 pass.
 - [ ] Owner look in play (Builds/tump1023/TumbangPreso.exe), at the FPP tag and raise especially.
 
-### ROOM-PLAYTEST-1023: the Player's Room from the owner's playtest (IN PROGRESS)
+### ROOM-PLAYTEST-1023: the Player's Room from the owner's playtest (DONE, owner look pending)
 
 Owner 2026-10-23, with two screenshots of a LAN room: "many bugs happening here", "darked out lahat", "lumalagpas text".
 
@@ -74,7 +74,11 @@ Owner 2026-10-23, with two screenshots of a LAN room: "many bugs happening here"
 - [x] Host crown floated mid-row (pinned where a bot's button sits); now just after the name.
 - [x] CHANGE MAP wore the house icon; now the globe. TAKE A SEAT kept the eye; now a person.
   `HubLobbySeatControlsTests` 13/13; `Logs/room/room_after.png` against `room_before.png`.
-- [ ] "darked out lahat": asked the owner which (dim screen, greyed buttons, or every row dark after WATCH INSTEAD).
+- [x] "darked out lahat" is the buttons (owner, with a screenshot): every board piece in the room drew at about half
+  brightness, peach (252,211,159) as (138,114,84). The room's depth pass (`HubLobby.Deepen`) gave each piece's clear
+  hatch layer (`HubBoardSkin.Dress`) four ink shadows, drawn over the face. It now skips the hatch; pieces render at
+  their art's colour. `HubLobbySeatControlsTests` 14/14 (new: `NoBoardPieceIsShadedOverItsOwnFace`);
+  `Logs/room/room_now.png` against `room_fixed.png`.
 
 ### EMOTES-SECOND-SET-1023: completely new emotes, per-hero fit, the wheel and the EMOTE chip (IN PROGRESS)
 
@@ -88,16 +92,21 @@ new emotes", "thoroughly refine it in terms of animation", "refine the ui and bu
   (`HeroAbilityClips.Emotes.cs`); the first set's clips retired from every roster entry.
 - [x] Per-rig fit (`EmoteFit`): arm reach measured off each bind; arch, lean and head pushed on short arms. The
   hand-on-head poses (NO WAY's clamp, TOO EASY's pillow) are solved on each rig (`ArmSolver`) after four hand-keyed
-  rounds left the hands at the collar; the big-headed three reach the cheeks and the nape, no higher.
+  rounds left the hands at the collar; the big-headed three reach the cheeks and the nape, no higher. Owner
+  2026-10-23: cheeks are fine for NO WAY on Dante, Amihan and Phaister; no arm or forearm change.
 - [x] Wheel: a pose picture per slice (`EmoteGlyphs`), pop-open, chosen slice moves out, hover tick and pick click,
   large pose in the hub; touch drags the pointer (a phone could open the wheel but never steer it).
-- [ ] Wheel restyled to the glass match HUD (owner: "it isn't in the theme of anything else in the game HUD"):
+- [x] Wheel restyled to the glass match HUD (owner: "it isn't in the theme of anything else in the game HUD"):
   smoked glass, cream hairline, ivory, honey only on the chosen slice; slice words now match the names (TOO EASY,
-  COME AT ME). Photographs in `Logs/emote-wheel/`. Needs the owner's look.
+  COME AT ME). Photographs in `Logs/emote-wheel/`. Owner 2026-10-23: looks right.
 - [x] Bots laugh (HA HA) at the taya when they knock the can down; NO WAY when tagged or beaten.
 - [x] Review strips on all five heroes: every emote resolves to its own clip, floor within 2 mm; loops close.
-- [ ] Paete's soles render black face-on (sit, hops); atlas is brown, so it is his shading. Needs owner OK.
-- [ ] EditMode `EmoteMotionTests`; playtest build; owner look; remote peer sees the new set.
+- [x] Paete's black soles (sit, hops) were holes, not shading: both feet were built with no bottom cap
+  (`tools/author_character_redesign_paete.py`, `caps=(False, True)`), so the camera saw into the leg, where only the
+  ink hull draws. Owner OK'd the fix: each foot's open rim is capped in `paete-redesign.glb` (16 faces facing down, the
+  foot's own wood, the rim's leg weights) and the script now caps them too, so a Blender rebuild agrees.
+  `Logs/motion/paete_sit_before_after.png`; floor contact unchanged (0.000 m).
+- [ ] EditMode `EmoteMotionTests` 5/5 (after the cap too); playtest build; owner look; remote peer sees the new set.
 
 ### TOURNAMENT-FEEDBACK-1022: post-tournament balance, Nemu ring, spectators, unique heroes (IN PROGRESS)
 

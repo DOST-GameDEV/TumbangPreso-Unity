@@ -119,6 +119,16 @@ namespace TumbangPreso.Tests
             try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
             finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
         }
+        [Test] public void NoBoardPieceIsShadedOverItsOwnFace()
+        {
+            // Playtest 2026-10-23 "darked out lahat": the room's depth pass gave each piece's clear
+            // hatch layer four shadows, drawn over the face, and every button read at half brightness.
+            var shapes=_root.GetComponentsInChildren<HubShape>(true);
+            var hatches=shapes.Where(s=>s.SkinHatch!=null).Select(s=>s.SkinHatch).ToList();
+            Assert.IsNotEmpty(hatches,"The room's buttons wear the board pieces.");
+            foreach(var hatch in hatches)
+                Assert.AreEqual(0f,hatch.Depth,"A piece's hatch must draw no depth over its face: "+hatch.transform.parent.parent.name);
+        }
         [Test] public void TheWholeRowIsTheSeatDoorAndSitHereIsGone()
         {
             // Owner 2026-10-17: click anywhere on another P row to move there.
