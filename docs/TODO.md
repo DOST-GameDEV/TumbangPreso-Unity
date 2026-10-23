@@ -8,8 +8,8 @@ benchmark for future sfx and music generation". Reports: [research](reports/sfx-
 
 - [x] Research with links: party games' and toy-like games' sound (designer interviews), theme, tools and licences.
 - [x] Cohesion rules and the seven-instrument palette (one band in the alley, one key, one motif, one room, lanes).
-- [x] Generator: `tools/tump_synth.py` (measure and synthesise), `tools/build_tondo_film_sfx.py`, profiles in
-  `tools/tump_sfx_profiles.json`, references logged in `tools/tondo_film_sfx_sources.json` (CC0, measured only).
+- [x] Earlier rounds: `tools/tump_synth.py`, `tools/build_tondo_film_sfx.py`, profiles in `tools/tump_sfx_profiles.json`.
+  Approved C1 authoring: `tools/build_tondo_challenger.py`, sources and preset hashes in `tools/tondo_challenger_sources.json`.
 - [x] Round 1: T-01 score, T-02 chalk, T-03 door, T-04 clap, T-05 taya sting regenerated; under 0 dBFS true peak
   with the alley bed (was +2.5 dBFS); `MapFilmTests` Tondo full, short and into-the-round pass.
 - [x] 🧑 Round 1 heard: "ang panget pareho", "WHY IS THERE A BELL", "0 harmony", "ang gulo", "make it sound Filipino",
@@ -31,11 +31,16 @@ benchmark for future sfx and music generation". Reports: [research](reports/sfx-
 - [x] 🧑 Round 5 heard: "a bit better but still off", "sunken", the opening, and it should fade into the game.
 - [x] Round 6: a body that rings no pitch, an opening that waits out the game's fade-in, an ending that fades itself;
   `render_map_film.py` applies the game's own score fade-in and fade-out; -19.7 LUFS, -1.5 dBTP.
-- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r6-after.mp4` and `r6-music-only.mp3`.
-  Status: T-01 draft, T-02 draft, T-03 draft, T-04 draft, T-05 draft, T-06 kept (recorded voice), T-07 untouched.
-- [ ] Rounds until the owner says the Tondo cutscene sounds good (change only the named rows).
+- [x] Owner selected challenger C1, Home Before Dark, after hearing its synced film on October24: "good" and push it into the game.
+  One recurring melody and one 150BPM pulse; MIDI through Surge XT. Exact approved score and YA WAVs replace round6,
+  retaining their Unity metadata. T-01 and T-05 approved; run/door/count foley stays omitted; recorded voice and beds kept.
+  [Method, hashes and evidence](reports/sfx-2026-10-23/challenger/review.md).
+- [x] Owner listening approval for the Tondo music direction. New revisions still follow the named feedback.
+- [x] C1 adoption: Unity6000.5.8f1 imported both clips; full/short film beats and natural transition into the round passed3/3.
+  Existing audio metadata and unrelated dirty scenery/settings hashes preserved. No player rebuild.
 - [ ] A real in-game recording with live ambience before calling it done.
-- [ ] Then `.claude/skills/tump-sfx/SKILL.md` from what worked; then the other films, gameplay chunks, music.
+- [x] Adopted `.claude/skills/tump-sfx/SKILL.md` from the approved C1 direction, with a reproducible authoring script and pinned preset hashes.
+- [ ] Apply the adopted workflow to the other films, gameplay chunks and music, with separate listening approval.
 
 ### TAG-READABILITY-1023: can the taya tag you right now, at a glance, for everyone (IN PROGRESS)
 
