@@ -28,7 +28,10 @@ benchmark for future sfx and music generation". Reports: [research](reports/sfx-
 - [x] 🧑 Round 4 heard: still deep and out of tune, the start "weirdly strum and deep", "eating itself".
 - [x] Round 5: `tump_synth.Band` (a re-picked pitch stops its last note; no unisons across parts), upright room
   reflections, no low reverb, a light opening; 14 % under 150 Hz; -18.8 LUFS, -2.9 dBTP.
-- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r5-after.mp4` and `r5-music-only.mp3`.
+- [x] 🧑 Round 5 heard: "a bit better but still off", "sunken", the opening, and it should fade into the game.
+- [x] Round 6: a body that rings no pitch, an opening that waits out the game's fade-in, an ending that fades itself;
+  `render_map_film.py` applies the game's own score fade-in and fade-out; -19.7 LUFS, -1.5 dBTP.
+- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r6-after.mp4` and `r6-music-only.mp3`.
   Status: T-01 draft, T-02 draft, T-03 draft, T-04 draft, T-05 draft, T-06 kept (recorded voice), T-07 untouched.
 - [ ] Rounds until the owner says the Tondo cutscene sounds good (change only the named rows).
 - [ ] A real in-game recording with live ambience before calling it done.

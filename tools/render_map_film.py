@@ -113,10 +113,11 @@ def main():
         score = SCORES.get(args.map)
         if score:
             place(score, 0.0, SCORE_LEVEL, 1.0)
-            # The film fades its score out across the return home (MapFilm.Sound): the last 1.6 s.
-            fade_from = int(SR * max(0.0, length - 1.6))
-            fade = np.ones_like(track)
-            fade[fade_from:] = np.linspace(1, 0, len(track) - fade_from) ** 1.5
+            # The film's score volume (MapFilm.Sound): Span(age, 0, 0.4) in, and out over Span(age, Handoff, End + 0.2),
+            # Handoff being End - ReturnSeconds (1.4). Linear, as the game does it. (Before 2026-10-23 this skipped the
+            # fade-in, which hid a first note that swelled in backwards in the game.)
+            t = np.arange(len(track)) / SR
+            fade = np.clip(t / 0.4, 0, 1) * (1 - np.clip((t - (length - 1.4)) / 1.6, 0, 1))
             track *= fade
         cues = (folder / "cues.txt").read_text(encoding="utf-8").strip().splitlines() if (folder / "cues.txt").exists() else []
         for line in cues:

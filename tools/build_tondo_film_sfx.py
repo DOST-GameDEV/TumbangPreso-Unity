@@ -373,8 +373,8 @@ def tondo_score():
     total = 20.5
     band = ts.Band(total, seed=1023)                     # round 4c: a re-picked pitch stops its last note
 
-    def g_strum(at, name, vel=0.5, down=True, end=None, notes=None):
-        band.strum("guitar", notes or VOICING[name], at, end or chord_end(at), vel, down)
+    def g_strum(at, name, vel=0.5, down=True, end=None, notes=None, spread=0.014):
+        band.strum("guitar", notes or VOICING[name], at, end or chord_end(at), vel, down, spread)
 
     def g_note(at, note, vel=0.45, end=None):
         band.note("guitar", note, at, end or chord_end(at), vel)
@@ -388,13 +388,17 @@ def tondo_score():
     def trem(at, notes, dur, vel=0.45, swell=True):
         band.tremolo("bandurria", notes, at, at + dur, vel, swell=swell)
 
-    # START 0 to 3.6, the place: the guitar alone, picking A softly in its middle (round 4c, owner: "the start feels
-    # weirdly strum and deep": it began on a low A that doubled the bass's, under a re-picked C#). No bass yet. To E
-    # at 2.4: a question (who comes?).
-    for i, nm in enumerate(["A3", "E4", "A4", "C#5", "E4", "A4"]):
-        g_note(0.05 + Q * i, nm, 0.36 + 0.04 * (i == 0))
-    for i, nm in enumerate(["B3", "E4", "G#4"]):
-        g_note(2.4 + Q * i, nm, 0.36)
+    # START 0 to 3.6, the place. Round 5b (owner: "the opening thing talaga may problema"): the game fades the score in
+    # over its first 0.4 s (MapFilm.Sound), and the first note sat at 0.05 s, so in the game it swelled in like a
+    # backwards pluck; and an arpeggio alone had no tune. Now: nothing until the fade is done; a soft A chord rolled
+    # up the guitar; as TONDO lands (0.9) the bandurria sings a short falling phrase, E C# over A, then B G# over E,
+    # which leans into the A of the chalk run.
+    g_strum(0.45, "A", 0.34, end=2.4, notes=["A3", "E4", "A4"], spread=0.07)      # the C# is the tune's
+    tune(0.95, "E5", 0.5, 0.42)
+    tune(1.5, "C#5", 0.8, 0.38)
+    g_strum(2.4, "E", 0.32, end=3.6, notes=["E3", "B3", "E4"], spread=0.07)       # the B and G# are the tune's
+    tune(2.45, "B4", 0.5, 0.4)
+    tune(3.0, "G#4", 0.55, 0.36)
 
     # THE CHALK RUN 3.6 to 6.4, the first kid: the groove starts, light (his feet are the star): bass on the beat,
     # the guitar off it, A then D. The skid is a stop: one E strum, then a breath of silence before the doors.
@@ -446,34 +450,31 @@ def tondo_score():
     b_note(TAYA_CUT, "F#2", 0.85); g_strum(TAYA_CUT, "F#m", 0.62)
     b_note(15.05, "E2", 0.7, end=15.6); g_strum(15.05, "E", 0.62, end=15.6)
 
-    # THE END 15.6 on, into the game: E, leaning forward. The guitar on every beat, growing; the bass on the half
-    # beat, then every beat; a bandurria tremolo on B rising to E. It stops on E7 and rings as the score fades: the
-    # countdown, then the match music in A, answer it.
+    # THE END 15.6 on, into the game: E, leaning forward, then letting go. Round 5b (owner: "it should fade too as game
+    # starts"): the guitar on every beat swells to one E7 at 17.6 and stops strumming; the bandurria leaves one E on top;
+    # the file itself fades from 18.0 (the game's own fade runs from Handoff, 18.2, to 19.8) so the countdown and the
+    # match music in A arrive into quiet.
     beats = np.arange(15.6, 17.6, Q)
     for i, at in enumerate(beats):
-        g_strum(at, "E" if at < 16.8 else "E7", 0.24 + 0.12 * i / len(beats), down=(i % 2 == 0), end=at + 0.32)
-        if at < 16.8 and i % 2 == 0:
-            b_note(at, "E2", 0.55, end=at + 0.7)
-        elif at >= 16.8:
-            b_note(at, "E2", 0.62, end=at + 0.36)
-    trem(15.62, ["B4"], 1.15, 0.28)
-    trem(16.8, ["E5"], 0.8, 0.32)
-    g_strum(17.6, "E7", 0.55, end=20.3, notes=["E3", "G#3", "B3", "D4", "E4"])
-    b_note(17.6, "E2", 0.6, end=20.3)
-    trem(17.6, ["B4", "E5"], 1.2, 0.3)
+        g_strum(at, "E" if at < 16.8 else "E7", 0.24 + 0.1 * i / len(beats), down=(i % 2 == 0), end=at + 0.32)
+        if i % 2 == 0:
+            b_note(at, "E2", 0.5, end=at + 0.7)
+    trem(15.62, ["B4"], 1.15, 0.26)
+    g_strum(17.6, "E", 0.42, end=20.0, notes=["E3", "G#3", "B3"], spread=0.03)   # plain E: no seventh's itch while it fades
+    b_note(17.6, "E2", 0.5, end=20.0)
+    tune(17.62, "E5", 2.2, 0.36)
 
-    # Round 4b ("so deep"): a third of the score's energy sat under 150 Hz and the count's bass rivalled everything
-    # else; the bass is quieter and the guitar is trimmed under 95 Hz (the bass owns the low end alone).
     gtr, bass, band_ = band.render("guitar"), band.render("bass"), band.render("bandurria")
     # Round 4b ("so deep"): a third of the score's energy sat under 150 Hz and the count's bass rivalled everything
     # else; the bass is quieter and the guitar is trimmed under 95 Hz (the bass owns the low end alone).
-    mix = (0.5 * normal(ts.highpass(ts.body(gtr, "guitar"), 95)) + 0.22 * normal(ts.body(bass, "bass")) +
-           0.45 * normal(ts.body(band_, "bandurria")))
+    # Round 5b: the guitar accompanies, warm and under the bandurria's tune; the bass back up so the bottom is not thin.
+    mix = (0.38 * normal(ts.highpass(ts.body(gtr, "guitar"), 95)) + 0.42 * normal(ts.body(bass, "bass")) +
+           0.48 * normal(ts.body(band_, "bandurria")))
     mix = ts.room(ts.highpass(mix, 40), 0.12)
+    mix = ts.peak_eq(mix, 3200, 2.5, 0.7)                  # presence (round 5b, "it sounds js a bit sunken still")
     mix = ts.compress(mix, -18.0, 2.0)                     # gentle: even the spiky plucks, keep the story's dynamics
-    env = np.ones_like(mix)
-    tail = int(SR * 1.2)
-    env[-tail:] = np.linspace(1, 0, tail) ** 2
+    t = np.arange(len(mix)) / SR
+    env = np.clip((19.8 - t) / 1.8, 0.0, 1.0) ** 1.5      # out from 18.0 to 19.8, with the game's own fade
     return ts.glue(normal(mix * env, 0.95), 1.05)
 
 
@@ -489,7 +490,7 @@ BUILDS = {
 # the sting must leave the voice its room. Round 2 (a full guitar strum and a balde in the sting) met the voice at
 # +0.5 dBFS at 0.6, and true peak (between samples) still read +0.4 dBTP at 0.50: the target is -1 dBTP, so the
 # score is 0.60, the sting 0.45, the clap 0.75, and the score's bass under YA softer.
-LEVEL = {"sfx_film_tondo_score.wav": 0.75, "sfx_film_tondo_taya.wav": 0.65}   # 4b: YA the loudest moment; 4c: score up 1 dB
+LEVEL = {"sfx_film_tondo_score.wav": 0.88, "sfx_film_tondo_taya.wav": 0.65}   # 4b: YA the loudest moment; 5b: the warmer score up
 
 
 def write(path, y):

@@ -305,7 +305,7 @@ def alley_ir():
         ir[0] = 1.0
         # Positive reflections (a wall returns the wave the same way up). Round 1-4 had two of these inverted, a comb
         # filter that made everything hollow and phasey (part of "it feels like its eating itself", round 4c).
-        for ms, g in ((6, 0.3), (11, 0.2), (17, 0.14), (23, 0.09)):
+        for ms, g in ((7, 0.12), (13, 0.08), (19, 0.05)):    # round 5b: quieter; short echoes comb-filter ("sunken")
             ir[int(ms * SR / 1000)] += g
         tail /= np.sqrt(np.sum(tail ** 2))
         _ROOM = (ir, tail)
@@ -363,9 +363,10 @@ STRINGS = {
     # fraction and the loss filter's own half-sample-ish delay, so nothing goes sharp.
     # kind: (pick position, T60 s at 3 kHz (how long the treble rings), T60 s at 220 Hz, pick brightness Hz,
     #        course detune cents, body modes ((Hz, gain, decay s), ...), body mix)
-    "bandurria": (0.12, 0.35, 1.6, 6000.0, 1.6, ((390, 1.0, 0.05), (780, 0.7, 0.035), (1450, 0.5, 0.02), (2700, 0.35, 0.012)), 0.35),
-    "guitar": (0.2, 0.12, 3.2, 2400.0, 0.0, ((98, 0.35, 0.1), (205, 1.0, 0.09), (395, 0.6, 0.05), (525, 0.4, 0.04), (1150, 0.25, 0.02)), 0.28),
-    "bass": (0.26, 0.07, 3.6, 1200.0, 0.0, ((98, 1.0, 0.14), (205, 0.6, 0.09)), 0.35),
+    # body: broad bell EQ bands (Hz, dB, Q), see `body`. Round 5b: they were decaying sines and rang their own pitches.
+    "bandurria": (0.12, 0.5, 1.6, 7000.0, 1.6, ((450, 2.0, 0.9), (1000, 2.0, 1.0), (2800, 3.0, 0.8)), 0.0),
+    "guitar": (0.25, 0.08, 3.2, 1800.0, 0.0, ((110, 1.5, 0.8), (220, 2.5, 1.0), (420, 1.0, 1.0)), 0.0),   # warm nylon, picked off the bridge: it accompanies
+    "bass": (0.26, 0.1, 3.6, 1600.0, 0.0, ((100, 2.0, 0.8), (800, 2.0, 1.0)), 0.0),
 }
 # ⚠️ ROUND 4'S FIRST STRINGS WERE FAR TOO BRIGHT. Harmonic by harmonic against a real harp C3 (VSCO 2 CE): the real
 # string's harmonics 10 to 20 sat at -50 to -80 dB, these at -10 to -15 dB, and a C-E-G chord measured roughness 0.53
@@ -410,31 +411,24 @@ def _pick(f, kind, velocity, rng):
     tri = np.concatenate([np.linspace(0, 1, k, endpoint=False), np.linspace(1, 0, p - k)])
     tri -= tri.mean()
     noise = lowpass(rng.uniform(-1, 1, p), bright, order=2) * 0.12
-    e = lowpass(np.diff(np.concatenate([[0.0], tri])) * 10.0 + noise, bright * (0.5 + 0.6 * velocity), order=1)   # same loudness at any pitch
+    # The pluck's velocity shape, its peak set to 1.25 at every pitch, so the noise (the nail) keeps the same small share
+    # on every string. Round 4b scaled it by 10 instead: on low strings the noise grew to rival the pluck and sprayed
+    # buzzy overtones (a chord's roughness crept from 0.23 to 0.45; the owner: "still off").
+    d = np.diff(np.concatenate([[0.0], tri]))
+    d *= 1.25 / (np.abs(d).max() + 1e-12)
+    e = lowpass(d + noise, bright * (0.5 + 0.6 * velocity), order=1)
     return e * velocity
 
 
-_BODY = {}
-
-
-def body_ir(kind):
-    """The instrument's wooden body as an impulse response: its main resonances, each a short decaying sine."""
-    if kind not in _BODY:
-        t = t_of(0.25)
-        ir = np.zeros_like(t)
-        for f, g, d in STRINGS[kind][5]:
-            ir += g * np.sin(2 * np.pi * f * t) * np.exp(-t / d)
-        ir /= np.sqrt(np.sum(ir ** 2)) + 1e-12
-        _BODY[kind] = ir
-    return _BODY[kind]
-
-
 def body(x, kind):
-    """Radiate through the body: the string's own sound plus the wood's resonance."""
-    mix = STRINGS[kind][6]
-    wet = signal.fftconvolve(x, body_ir(kind))[: len(x)]
-    wet *= np.abs(x).max() / (np.abs(wet).max() + 1e-12)
-    return x * (1 - mix) + wet * mix
+    """The instrument's wooden body as broad resonances (bell EQ bands, Q about 1): they colour the tone and ring no
+    pitch of their own. ⚠️ ROUND 4-5 CONVOLVED A BODY BUILT FROM DECAYING SINES (98, 205, 395, 525 Hz on the guitar;
+    390, 780 Hz on the bandurria), and every note then rang a G and a C (not in A major), a tone 5 to 9 Hz beside the
+    note itself (115 Hz by A2: a throb), and lost its second harmonic (A3's fell from -3 to -15 dB: hollow). The owner
+    heard "out of tune", "eating itself", "sunken". A body must never ring a fixed pitch."""
+    for f, g, q in STRINGS[kind][5]:
+        x = peak_eq(x, f, g, q)
+    return x
 
 
 def string_voice(f, seconds, kind, picks, seed=0, stop=None, release=0.03):

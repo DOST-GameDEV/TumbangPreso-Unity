@@ -4,6 +4,40 @@ Mark a row by its ID ("T-04 too thin"). Only the rows the owner names change in 
 Method and theme: `../plan.md`, `../research.md`. Build: `py -3 tools/build_tondo_film_sfx.py` (generated from
 measured references in `tools/tump_sfx_profiles.json`; nothing recorded ships except T-06, which was already in the game).
 
+## Round 6 (2026-10-23): the body stops ringing, a real opening, a fade into the game
+
+Watch: `r6-after.mp4`. Music alone: `r6-music-only.mp3` (with the game's own 0.4 s fade-in).
+
+Owner on round 5: "a bit better but still off", "it sounds js a bit sunken still", "the opening thing talaga may
+problema", "it should fade too as game starts", "the ending should fade".
+
+Found by measuring each note's spectrum with and without the instrument body:
+- **The body rang its own pitches.** Rounds 4-5 convolved a body built from decaying sines; every note then rang a G
+  (98, 390, 780 Hz) and a C (525 Hz), neither in A major, plus a tone 5-9 Hz beside the note itself (115 Hz by A2, a
+  throb), and lost its second harmonic (A3's fell from -3 to -15 dB: hollow, "sunken"). The body is now broad bell EQ
+  bands that ring no pitch; every peak in a note is now one of its own harmonics.
+- **The opening's first note swelled in backwards.** The game fades the score in over 0.4 s (`MapFilm.Sound`) and the
+  first note sat at 0.05 s; `render_map_film.py` did not apply that fade, so the videos hid it. Both are fixed: the
+  renderer applies the game's fade-in and its linear fade-out, and the music waits until 0.45 s, then rolls a soft A
+  chord while the bandurria sings a short falling phrase (E, C# over A; B, G# over E) as TONDO lands.
+- **The ending held a loud E7 for the game to cut.** It now swells to one plain E at 17.6, leaves a single bandurria E
+  on top and fades on its own from 18.0, with the game's fade, into the countdown.
+- **The pick had grown noisy.** Round 4b's loudness-per-pitch fix let the pick's noise rival the pluck on low strings
+  (a chord's roughness crept from 0.23 to 0.45); the pluck's shape is now the same at every pitch. The accompanying
+  guitar is warm nylon, picked off the bridge, under the bandurria.
+- The room's short echoes are quieter (they comb-filter), and a presence lift at 3.2 kHz answers "sunken".
+
+A lesson for the skill: the roughness model reads every strum's attack as rough, so a strummed part measures rough even
+when its harmony is clean (a darker guitar barely moved the number, while a brighter real harp reads smoother). Use it
+to catch sustained clashes, not to judge a strummed accompaniment.
+
+| Round 6 measurement | Value |
+|---|---|
+| Same pitch in two parts at once | none |
+| Score energy under 150 Hz | 7 % |
+| Film with the alley bed | -19.7 LUFS, true peak -1.5 dBTP |
+| Last second of the film | -29 to -30 dB: the music has faded as the game returns |
+
 ## Round 5 (2026-10-23): nothing eats itself
 
 Watch: `r5-after.mp4`. Music alone: `r5-music-only.mp3`.
@@ -177,3 +211,4 @@ before a version is called done). The videos mix the beds at estimated weights.
 | 3 | T-02, T-03, T-04, music | "door opening sounds sucks", "the running sfx sucks", "why even give his running some sfx", "MAIBA TAYA SOUND SUCKS", "refine the music pa ang ijbol ng sound" | round 4: every foley cue of the film removed; the score marks doors and syllables; physical strings measured against a real harp. **Rules for the skill:** in a scored cutscene, foley only where it adds something music cannot (default: none); never foley an action the picture does not show (no claps for pointing); compare every generated instrument harmonic by harmonic with a real one before the owner hears it |
 | 4 | T-01 | "ang lakas ng music mo in some parts like it feels so deep and out of tune" | round 4b: one tuning for every part; lows from 34 % to 15 % of the energy; gentler ending; the climax the loudest moment. **Rules for the skill:** never mix tuning systems across parts; keep the energy under 150 Hz near 15 % and give the low end to one instrument; check the loudness curve against the story (the climax must be the peak) |
 | 4b | T-01 | "grabe ang deep pa ren and out of tune", "the start feels weirdly strum and deep", "it feels like its eating itself" | round 5: no pitch twice at once (a re-picked note stops the last; no unisons across parts; the bass alone under C3); upright room reflections; no low reverb; a light opening. **Rules for the skill:** model players, not oscillators (one string, one note); check for same-pitch overlaps across all parts before rendering; high-pass every reverb return |
+| 5 | T-01 | "a bit better but still off", "a bit sunken still", "the opening thing talaga may problema", "it should fade too as game starts" | round 6: a body that rings no pitch; the opening waits out the game's fade-in and has a tune; the ending fades on its own; a clean pick. **Rules for the skill:** an instrument body must never ring a fixed pitch; render previews through the game's own volume envelope; a cutscene's music fades itself out into what follows |
