@@ -7,7 +7,12 @@
 (map, length, fps) and cues.txt (age, clip, volume, pitch: every `MapFilm.Cue` the film called). This mixes the
 map's score (`MapFilm.Score`, from 0) and each cue (found by name under Assets/, any format ffmpeg reads; a pitch
 plays it faster and higher, as an AudioSource does) into one track and encodes H.264 + AAC beside the frames.
-The levels are the film's own volumes at full SFX volume; nothing here is a mix decision for the game."""
+The levels are the film's own volumes at full SFX volume; nothing here is a mix decision for the game.
+
+  --clips DIR   look for clips in DIR before Assets/ (render an older set, e.g. a report's "before" folder)
+  --bed         mix the map's own ambience beds underneath, as the film is heard in a match (Eskinita only:
+                AlleySoundscape's five beds at their default gains, every location weight taken as 1)
+  --wav PATH    also write the mixed track as a WAV (for loudness measurement)"""
 import argparse
 import shutil
 import subprocess
@@ -27,6 +32,12 @@ SCORES = {
     "Payo": "sfx_film_banaue_score",
 }
 SCORE_LEVEL = 0.85
+# AlleySoundscape's defaults: each bed's gain x BedsGain 0.7. The location weights (street side, height) are taken as 1.
+BEDS = {
+    "Eskinita": [("alley_bed_neighbourhood", 0.5), ("alley_bed_street", 0.45), ("alley_bed_kids", 0.3),
+                 ("alley_bed_sparrows", 0.4), ("alley_bed_wind", 0.3)],
+}
+BEDS_GAIN = 0.7
 
 
 def ffmpeg():
@@ -37,7 +48,14 @@ def ffmpeg():
     return imageio_ffmpeg.get_ffmpeg_exe()
 
 
+CLIP_DIRS = []
+
+
 def find_clip(name):
+    for folder in CLIP_DIRS:
+        for ext in (".wav", ".ogg", ".mp3"):
+            if (folder / (name + ext)).exists():
+                return folder / (name + ext)
     for ext in (".wav", ".ogg", ".mp3", ".aif", ".aiff", ".flac"):
         hits = sorted((ROOT / "Assets").rglob(name + ext))
         if hits:
@@ -58,7 +76,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("map")
     parser.add_argument("--out", default="")
+    parser.add_argument("--clips", default="")
+    parser.add_argument("--bed", action="store_true")
+    parser.add_argument("--wav", default="")
     args = parser.parse_args()
+    if args.clips:
+        CLIP_DIRS.append(Path(args.clips).resolve())
     folder = ROOT / "Logs" / "map-films" / args.map / "video"
     head = (folder / "film.txt").read_text(encoding="utf-8").split("\t")
     length, fps = float(head[1]), float(head[2])
@@ -99,13 +122,26 @@ def main():
         for line in cues:
             age, name, volume, pitch = line.split("\t")
             place(name, float(age), float(volume), float(pitch))
+        if args.bed:
+            for name, gain in BEDS.get(args.map, []):
+                path = find_clip(name)
+                if path is None:
+                    print(f"  (no bed named {name}: left out)")
+                    continue
+                bed = load(path, tmp)
+                reps = int(np.ceil(len(track) / len(bed)))
+                track += np.tile(bed, reps)[: len(track)] * gain * BEDS_GAIN
         peak = np.max(np.abs(track)) or 1.0
+        print(f"  mix peak {20 * np.log10(peak):.2f} dBFS" + ("  (scaled to -0.2 dBFS for the video)" if peak > 0.98 else ""))
         if peak > 0.98:
             track *= 0.98 / peak
         mix = Path(tmp) / "mix.wav"
         with wave.open(str(mix), "wb") as w:
             w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
             w.writeframes((np.clip(track, -1, 1) * 32767).astype("<i2").tobytes())
+        if args.wav:
+            Path(args.wav).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(mix, args.wav)
         subprocess.run([ffmpeg(), "-y", "-loglevel", "error", "-framerate", str(fps), "-i", str(folder / "frame_%04d.png"), "-i", str(mix),
                         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-preset", "slow",
                         "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(out)], check=True)

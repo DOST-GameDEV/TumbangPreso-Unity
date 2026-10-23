@@ -1,7 +1,7 @@
 """The map intro films' scores and cues, by deterministic synthesis.
 
   py -3 tools/synth_map_film_sfx.py
-  py -3 tools/synth_map_film_sfx.py --only tondo        (any substring of the file names)
+  py -3 tools/synth_map_film_sfx.py --only ermita       (any substring of the file names)
 
 Owner, 2026-10-22 (docs/TODO.md TOURNAMENT-FEEDBACK-1022, "Map intro films"): each map's opening with its own mood,
 music and sound. The films are Runtime/Map/MapFilm.cs and one director per map. Each score is laid out on its
@@ -11,11 +11,7 @@ Runtime/Audio/AudioCues.cs), on every peer from the film's clock, so none is rel
 
 Writes into Assets/TumbangPreso/Resources/Sfx/ (44100 Hz, mono, 16 bit, normalised to 0.85 peak like every other
 cue there; the mix level is the film's own):
-    sfx_film_tondo_score.wav   20.5 s  TONDO: a plucked lullaby under the laundry, the doors' bounce, the count's hush
-    sfx_film_tondo_clap.wav     0.30 s  one child's clap, for each syllable of "Maiba taya"
-    sfx_film_tondo_chalk.wav    2.40 s  chalk dragged fast along concrete, and the skid
-    sfx_film_tondo_door.wav     0.90 s  a wooden door: the latch, the creak, the bump on its stop
-    sfx_film_tondo_taya.wav     1.60 s  the count lands: a toy glockenspiel run up to a bright chord
+    (TONDO's five files moved to tools/build_tondo_film_sfx.py on 2026-10-23: generated from measured references)
     sfx_film_ermita_score.wav  17.0 s  ERMITA: a low pulse under the viaduct, a riser with the train, the drop as it passes
     sfx_film_ermita_horn.wav    2.20 s  the LRT's horn, far down the line, two tones in the concrete
     sfx_film_ermita_drop.wav    2.00 s  the drop: a sub boom, a crack and a metal ring as the train passes over
@@ -180,126 +176,6 @@ def write(name, y, only):
         w.setframerate(SR)
         w.writeframes(data)
     print(f"wrote {name}  {len(y) / SR:.2f} s")
-
-
-# ------------------------------------------------------------------ TONDO: nostalgic and playful
-#
-# TondoFilm: SAMPAY 0.0, CHALK 3.6, DOORS 6.4 (one each 0.9 s), GATHER 10.2, MAIBA 11.3, syllables 11.75 12.15 12.55
-# 12.95 (YA), the reaction to 14.3, TAYA 14.3, CLOSE 16.2, end 19.6. 100 bpm (0.6 s a beat); C major, pentatonic tunes.
-
-def tondo_score():
-    rng = np.random.default_rng(1022)
-    total = 20.5
-    track = np.zeros(int(SR * total))
-    beat = 0.6
-
-    # The lullaby on a music box from the first frame: under the laundry, looking up.
-    tune = ["E5", "G5", "A5", "G5", "E5", "D5", "C5", "D5", "E5", "G5", "C6", "A5"]
-    for i, n in enumerate(tune):
-        at = 0.25 + i * beat * 0.5 if i < 6 else 0.25 + 3 * beat + (i - 6) * beat * 0.5
-        place(track, bell(note(n), 2.2, decay=2.2), at, 0.30)
-
-    # The chords underneath, warm and slow: C, Am, F, G, then home.
-    chords = [(0.0, ["C3", "G3", "E4"]), (3.6, ["A2", "E3", "C4"]), (6.4, ["F2", "C3", "A3"]), (8.8, ["G2", "D3", "B3"]),
-              (11.0, ["A2", "E3", "C4"]), (12.95, ["C3", "G3", "E4", "G4"])]
-    for i, (at, names) in enumerate(chords):
-        end = chords[i + 1][0] if i + 1 < len(chords) else total
-        place(track, pad([note(n) for n in names], end - at + 0.8, attack=0.6 if i else 1.4, release=1.0), at, 0.22)
-
-    # CHALK: plucked strings come in, a bouncing figure that runs with the kid.
-    run = ["C5", "E5", "G5", "A5", "G5", "E5", "D5", "E5", "G5", "C6"]
-    for i, n in enumerate(run):
-        place(track, pluck(note(n), 0.9, rng, bright=0.65), 3.6 + i * beat * 0.5, 0.42)
-
-    # DOORS: the groove, a bass pluck on the beat, strums on the off-beat, a shaker, one door each second.
-    bass = ["F2", "F2", "C3", "F2", "G2", "G2", "D3", "G2"]
-    for k in range(8):
-        at = 6.4 + k * beat
-        place(track, pluck(note(bass[k]), 0.8, rng, bright=0.25, decay=0.993), at, 0.55)
-        for s, n in enumerate(["F4", "A4", "C5"] if k < 4 else ["G4", "B4", "D5"]):
-            place(track, pluck(note(n), 0.5, rng, bright=0.7), at + beat * 0.5 + s * 0.012, 0.22)
-        place(track, noise_hit(0.08, rng, 5000, 12000, 50), at + beat * 0.25, 0.12)
-        place(track, noise_hit(0.08, rng, 5000, 12000, 50), at + beat * 0.75, 0.16)
-    for k in range(4):
-        # Each door gets a rising tine as it opens.
-        place(track, bell(note(["C6", "D6", "E6", "G6"][k]), 1.2, decay=3.5), 6.4 + k * 1.0 + 0.1, 0.22)
-
-    # MAIBA: the band drops away to the pad; a soft kick under each syllable leaves room for the claps.
-    for at in (11.75, 12.15, 12.55):
-        place(track, kick(0.3, 50, 120), at, 0.45)
-
-    # YA (12.95): home. A bright C with a glockenspiel sparkle.
-    place(track, kick(0.5, 45, 150), 12.95, 0.7)
-    for i, n in enumerate(["C5", "E5", "G5", "C6"]):
-        place(track, pluck(note(n), 1.6, rng, bright=0.6), 12.95 + i * 0.02, 0.35)
-    # The laugh: a bouncing, giggling pluck figure while the three crack up at the taya.
-    giggle = ["G5", "E5", "G5", "E5", "A5", "G5", "E5", "C5", "D5", "E5"]
-    for i, n in enumerate(giggle):
-        place(track, pluck(note(n), 0.35, rng, bright=0.85, decay=0.99), 13.25 + i * 0.105, 0.3)
-    for k in range(4):
-        place(track, pluck(note(["C3", "G2", "A2", "G2"][k]), 0.5, rng, bright=0.3), 13.2 + k * beat * 0.5, 0.45)
-    # The taya squares up (14.3): two low, determined hits, then the lullaby comes back over the close.
-    place(track, kick(0.5, 45, 140), 14.3, 0.55)
-    place(track, kick(0.5, 45, 140), 15.05, 0.65)
-    place(track, pad([note("A2"), note("E3"), note("C4")], 1.6, attack=0.1, release=0.8), 14.3, 0.2)
-    for i, n in enumerate(["E5", "D5", "C5", "G4", "C5"]):
-        place(track, bell(note(n), 2.4, decay=1.8), 15.6 + i * beat, 0.26)
-    place(track, pad([note("C3"), note("G3"), note("E4")], 5.0, attack=0.8, release=2.0), 15.4, 0.2)
-
-    track = room(track, 1.8, 0.25, seed=11)
-    env = np.ones_like(track)
-    tail = int(SR * 2.0)
-    env[-tail:] = np.linspace(1, 0, tail) ** 2
-    return fade(track * env, 0.01, 0.2)
-
-
-def tondo_clap():
-    rng = np.random.default_rng(5)
-    t = t_of(0.3)
-    y = np.zeros_like(t)
-    # Two small hands: a few flams of band noise, a body, and the room.
-    for k, (at, g) in enumerate([(0.0, 1.0), (0.006, 0.7), (0.013, 0.5)]):
-        place(y, noise_hit(0.12, rng, 900, 6000, 38 + k * 6), at, g)
-    place(y, noise_hit(0.05, rng, 300, 900, 60), 0.0, 0.5)
-    return fade(room(y, 0.4, 0.3, seed=6, tone=5000), 0.0005, 0.05)
-
-
-def tondo_chalk():
-    rng = np.random.default_rng(9)
-    t = t_of(2.4)
-    # Scritching: grains of bright noise, faster with the run, then the skid.
-    grains = np.zeros_like(t)
-    at = 0.05
-    while at < 1.9:
-        place(grains, noise_hit(0.025, rng, 2500, 9000, 120), at, rng.uniform(0.4, 1.0))
-        at += 0.045 - 0.015 * min(1, at / 1.2) + rng.uniform(0, 0.01)
-    skid = band(rng.uniform(-1, 1, len(t)), 1200, 5000) * np.clip((t - 1.85) / 0.05, 0, 1) * np.exp(-np.clip(t - 1.85, 0, None) * 6)
-    return fade(grains + 0.6 * skid, 0.002, 0.08)
-
-
-def tondo_door():
-    rng = np.random.default_rng(13)
-    t = t_of(0.9)
-    y = np.zeros_like(t)
-    place(y, noise_hit(0.04, rng, 1500, 6000, 90), 0.0, 0.8)                    # the latch
-    creak_t = t_of(0.4)
-    f = 380 + 160 * np.sin(2 * np.pi * 3.5 * creak_t) + 90 * creak_t
-    creak = signal.sawtooth(2 * np.pi * np.cumsum(f) / SR) * np.exp(-creak_t * 3)
-    place(y, band(creak, 300, 2400) * 0.5, 0.1)                                 # the hinge
-    place(y, kick(0.2, 70, 160), 0.5, 0.6)                                     # the bump on its stop
-    place(y, noise_hit(0.1, rng, 200, 1200, 40), 0.5, 0.4)
-    return fade(room(y, 0.6, 0.25, seed=14), 0.001, 0.08)
-
-
-def tondo_taya():
-    rng = np.random.default_rng(17)
-    y = np.zeros(int(SR * 1.6))
-    for i, n in enumerate(["C6", "E6", "G6", "C7"]):
-        place(y, bell(note(n), 1.2, decay=2.8), i * 0.06, 0.5)
-    for n in ["C5", "E5", "G5"]:
-        place(y, pluck(note(n), 1.4, rng, bright=0.8), 0.24, 0.35)
-    place(y, noise_hit(0.6, rng, 6000, 14000, 6), 0.24, 0.12)
-    return fade(room(y, 1.0, 0.3, seed=18), 0.001, 0.15)
 
 
 # ------------------------------------------------------------------ ERMITA: tense, an underground rivalry
@@ -895,11 +771,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--only", default="")
     only = parser.parse_args().only
-    write("sfx_film_tondo_score.wav", tondo_score(), only)
-    write("sfx_film_tondo_clap.wav", tondo_clap(), only)
-    write("sfx_film_tondo_chalk.wav", tondo_chalk(), only)
-    write("sfx_film_tondo_door.wav", tondo_door(), only)
-    write("sfx_film_tondo_taya.wav", tondo_taya(), only)
     write("sfx_film_ermita_score.wav", ermita_score(), only)
     write("sfx_film_ermita_horn.wav", ermita_horn(), only)
     write("sfx_film_ermita_drop.wav", ermita_drop(), only)

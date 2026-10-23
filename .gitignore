@@ -181,3 +181,4 @@ scratchpad/fontsrc/OFL.txt
 # moment they have run: the record of WHY a change was made is the comment in the code
 # and the docs/TODO.md entry, never the script that typed it.
 scratchpad/patch_*.py
+ArtSource/tondo-film/sfx-sources/

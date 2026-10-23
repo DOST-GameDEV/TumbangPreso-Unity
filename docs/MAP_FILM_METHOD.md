@@ -22,7 +22,9 @@ Status: all five are built: Tondo (`TondoFilm`), Ermita (`ErmitaFilm`), Sitangka
 3. **The map's own place and mood.** Use what the map already has (its consist, its lots, its chalk, its
    houses, its sidewalk people) before building anything, and build what you add in the world's blocky toon look.
    The light is a mood (`Mood` + `Tint`), not a filter: sky, sun, ambient, fog, lamps and grade together.
-4. **Sound on the picture.** Each film's score is synthesised to its beat table (`tools/synth_map_film_sfx.py`),
+4. **Sound on the picture.** Each film's score is synthesised to its beat table (`tools/synth_map_film_sfx.py`;
+   Tondo's is generated from measured references by `tools/build_tondo_film_sfx.py`, the method the other films
+   will move to, see `docs/reports/sfx-2026-10-23/plan.md`),
    and every hit lands on a cut or an action. Recorded cues already in the project may be used (the kid's
    "Taya!" in Tondo is `SidewalkLife.KidTaya`); never synthesise a human voice.
 5. **The contract.** Full and short (reduced motion) cuts, attackers close on YOU, the taya's and a watcher's

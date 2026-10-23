@@ -1,3 +1,23 @@
+### SFX-TONDO-1023: make the Tondo cutscene sound good, then turn the method into the TUMP SFX skill (IN PROGRESS)
+
+Owner 2026-10-23: "this game has horrible sfx rn", "we will focus on fixing tondo cutscene sfx muna and when its
+likable we will turn it into a reproducible skill and theme", "its js noise and a bunch of sounds taht dont have a
+theme", "synth, learned from refs" (every shipped sound generated; references only measured), "this chat will be the
+benchmark for future sfx and music generation". Reports: [research](reports/sfx-2026-10-23/research.md),
+[plan](reports/sfx-2026-10-23/plan.md), [review sheet](reports/sfx-2026-10-23/tondo/review.md).
+
+- [x] Research with links: party games' and toy-like games' sound (designer interviews), theme, tools and licences.
+- [x] Cohesion rules and the seven-instrument palette (one band in the alley, one key, one motif, one room, lanes).
+- [x] Generator: `tools/tump_synth.py` (measure and synthesise), `tools/build_tondo_film_sfx.py`, profiles in
+  `tools/tump_sfx_profiles.json`, references logged in `tools/tondo_film_sfx_sources.json` (CC0, measured only).
+- [x] Round 1: T-01 score, T-02 chalk, T-03 door, T-04 clap, T-05 taya sting regenerated; under 0 dBFS true peak
+  with the alley bed (was +2.5 dBFS); `MapFilmTests` Tondo full, short and into-the-round pass.
+- [ ] 🧑 Owner listens to `reports/sfx-2026-10-23/tondo/r1-after.mp4` against `r0-before.mp4`; marks rows by ID.
+  Status: T-01 draft, T-02 draft, T-03 draft, T-04 draft, T-05 draft, T-06 kept (recorded voice), T-07 untouched.
+- [ ] Rounds until the owner says the Tondo cutscene sounds good (change only the named rows).
+- [ ] A real in-game recording with live ambience before calling it done.
+- [ ] Then `.claude/skills/tump-sfx/SKILL.md` from what worked; then the other films, gameplay chunks, music.
+
 ### TAG-READABILITY-1023: can the taya tag you right now, at a glance, for everyone (IN PROGRESS)
 
 Owner 2026-10-23: "we need to make it more obvious kasi whenever the defender can taya someone and when they cant",
