@@ -71,6 +71,28 @@ namespace TumbangPreso.UI.Hub
             return title;
         }
 
+        /// <summary>
+        /// Rename a screen after it is built, and size its plate to the new words.
+        ///
+        /// ⚠️ THE PLATE IS SIZED WHEN THE TITLE IS BUILT, SO A RENAME MUST RESIZE IT (owner playtest 2026-10-23,
+        /// "lumalagpas text"). The room builds as LOBBY and renames itself to the host's title on its first draw;
+        /// changing only the text left a LOBBY-sized plate under "PLAYER'S ROOM", and the centred words ran off both
+        /// ends of it, over BACK on the left. On a board screen the plate and the words are resized together; on an
+        /// old-chrome screen there is no plate and the words are only fitted.
+        /// </summary>
+        public static void Retitle(Text title, string words, float maxWidth = 900)
+        {
+            if (title == null) return;
+            title.text = words;
+            title.fontSize = HubStyle.Size(HubStyle.Display);
+            var plate = title.transform.parent != null ? title.transform.parent.Find("TitlePlate") as RectTransform : null;
+            if (plate == null) { HubKit.Fit(title, maxWidth); return; }
+            float width = Mathf.Clamp(title.preferredWidth + 96, 220, maxWidth);
+            plate.sizeDelta = new Vector2(width, plate.sizeDelta.y);
+            title.rectTransform.sizeDelta = new Vector2(width, title.rectTransform.sizeDelta.y);
+            HubKit.Fit(title, width - 60);
+        }
+
         // The chrome as it was, for screens not yet restyled onto her pieces.
         private static HubButton OldBack(RectTransform root, TumpHub hub, System.Action onBack = null)
         {

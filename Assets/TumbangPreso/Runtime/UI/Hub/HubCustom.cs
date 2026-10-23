@@ -542,7 +542,7 @@ namespace TumbangPreso.UI.Hub
             {
                 if (_chatShown) Hub.Host.ToggleChat();
                 ChangeMap();
-            }, 0, 967, HubGlyph.Mark.House);
+            }, 0, 967, HubGlyph.Mark.Globe);
             HubKit.Place((RectTransform)_map.transform, HubKit.BottomLeft, new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(420, 110));
             var mapLabel = HubKit.Text(_map.Body, "Label", "CHANGE MAP", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleCenter);
             HubKit.Stretch(mapLabel.rectTransform);
@@ -701,13 +701,19 @@ namespace TumbangPreso.UI.Hub
             if (!force && key == _drawn) return;
             _drawn = key;
 
-            _title.text = string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant();
-            _title.fontSize = HubStyle.Size(HubStyle.Display);
-            HubKit.Fit(_title, 900);
+            // Retitled with its plate, or the host's title runs off a plate sized for "LOBBY" (playtest 2026-10-23).
+            HubChrome.Retitle(_title, string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant());
             _code.text = "CODE: " + (host.RoomCode ?? "");
             string address = host.RoomAddress;
             _address.text = string.IsNullOrEmpty(address) ? "" : "or join by address  " + address;
             HubKit.SetLabel(_watch, host.Spectating ? "TAKE A SEAT" : "WATCH INSTEAD");
+            // The picture follows the words: an eye to go and watch, a person to come back and sit.
+            var watchIcon = _watch.Body.Find("Icon")?.GetComponent<HubGlyph>();
+            if (watchIcon != null && watchIcon.Kind != (host.Spectating ? HubGlyph.Mark.Person : HubGlyph.Mark.Eye))
+            {
+                watchIcon.Kind = host.Spectating ? HubGlyph.Mark.Person : HubGlyph.Mark.Eye;
+                watchIcon.SetVerticesDirty();
+            }
             HubKit.LabelOf(_watch).fontSize = HubStyle.Size(HubStyle.Floor);
             HubKit.Fit(HubKit.LabelOf(_watch), 210);
             _mapLine.text = SceneFlow.PreviewFor(SceneFlow.SelectedMap).Name + "   ·   " +
@@ -788,8 +794,12 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Fit(label, 410);
                 if (seat.Host)
                 {
+                    // The crown sits just after the name it belongs to. It was pinned 280 in from the row's right
+                    // edge, where a bot's REMOVE BOT button would be, so on the host's own row it floated alone in
+                    // the middle (playtest 2026-10-23).
                     var crown = HubKit.Glyph(surface, "HostMark", HubGlyph.Mark.Crown, HubStyle.Golden);
-                    HubKit.Place(crown.rectTransform, HubKit.Right, new Vector2(-280, 0), new Vector2(36, 36));
+                    float after = 122 + Mathf.Min(label.preferredWidth, 410) + 14;
+                    HubKit.Place(crown.rectTransform, HubKit.Left, new Vector2(after, 15), new Vector2(36, 36));
                 }
                 string state = seat.Host ? "HOST" : seat.Ready ? "READY" : "";
                 var tag = HubKit.Text(surface, "State", state, HubStyle.Floor, true, seat.Ready ? HubStyle.Chartreuse : ink, TextAnchor.MiddleLeft);
