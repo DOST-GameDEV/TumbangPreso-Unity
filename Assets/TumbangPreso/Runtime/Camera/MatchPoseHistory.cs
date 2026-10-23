@@ -33,7 +33,9 @@ namespace TumbangPreso.CameraSystem
             {
                 var actor = round.PlayerAt(i); var visual = actor != null ? actor.GetComponent<CharacterVisual>() : null;
                 if (visual == null || visual.Model == null) { _tracks[i] = null; continue; }
-                if (_tracks[i] == null || _tracks[i].Source != visual.Model)
+                // A bone destroyed under the model (something parented in and taken away) empties the track; start
+                // again rather than leave the seat with no history, and so no replay, for the rest of the round.
+                if (_tracks[i] == null || _tracks[i].Source != visual.Model || _tracks[i].Broken)
                     _tracks[i] = new Track(actor, visual.Model);
                 _tracks[i].Record(Time.time);
             }
@@ -48,7 +50,7 @@ namespace TumbangPreso.CameraSystem
                 bool transient=false;
                 for(var parent=node;parent!=null&&parent!=source.transform;parent=parent.parent)
                     if(parent.GetComponent<DanteCarapaceVisual>()!=null||parent.GetComponent<SeanIgnitionVisual>()!=null||parent.GetComponent<ZackMagnetCharge>()!=null
-                        ||parent.GetComponent<DanteMountainPiece>()!=null)
+                        ||parent.GetComponent<DanteMountainPiece>()!=null||parent.GetComponent<TransientModelPart>()!=null)
                     {transient=true;break;}
                 if(!transient)result.Add(node);
             }
@@ -66,6 +68,8 @@ namespace TumbangPreso.CameraSystem
             private int _recordedEpoch;
             private CharacterAnimator _tagAnimator;
             public bool Ready => _count >= 2;
+            /// <summary>A recorded bone was destroyed: this track can never record again.</summary>
+            public bool Broken { get; private set; }
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;
             public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
             internal bool MatchesHierarchy(GameObject source)
@@ -93,7 +97,7 @@ namespace TumbangPreso.CameraSystem
                 frame.HasCoat=ReadCoat(out frame.Frost,out frame.Flash,out frame.Element);frame.Epoch=ReadEpoch();frame.HasAccent=ReadAccent(out frame.RimStrength,out frame.RimColour);
                 for (int i = 0; i < _bones.Length; i++)
                 {
-                    var bone = _bones[i]; if (bone == null) { _count = 0; return; }
+                    var bone = _bones[i]; if (bone == null) { _count = 0; Broken = true; return; }
                     frame.Position[i] = i == 0 ? bone.position : bone.localPosition;
                     frame.Rotation[i] = i == 0 ? bone.rotation : bone.localRotation;
                     frame.Scale[i] = i == 0 ? bone.lossyScale : bone.localScale;

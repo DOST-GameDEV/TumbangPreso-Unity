@@ -312,6 +312,7 @@ namespace TumbangPreso.Visual
             // The bone her left HAND is on: the forearm on a rig with elbows (`CharacterVisual.HandBone`).
             if (!CharacterVisual.HandBone(skinned, "left", out int hand, out Vector3 palm)) return null;
             var anchor = new GameObject("ManikaPalm").transform;
+            anchor.gameObject.AddComponent<TransientModelPart>();
             anchor.SetParent(skinned.bones[hand], false);
             anchor.localPosition = palm + Vector3.up * CharacterVisual.HandTopLift;
             _palm = anchor;

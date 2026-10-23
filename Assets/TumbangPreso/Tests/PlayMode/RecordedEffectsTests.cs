@@ -166,6 +166,34 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(beforeBones,MatchPoseHistory.StableTransforms(source).Length);
         }
         [UnityTest]
+        public IEnumerator TayaHeadbandAndRemovedModelPartsCannotEndTheSeatsHistory()
+        {
+            // 2026-10-24: the taya's headband rode the recorded rig, so from round 2 every saved replay failed
+            // ("Player pose history is incomplete"), tag replays stopped and halftime refused "Changed recorded art".
+            yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+            var actor=GameServices.Round.PlayerAt(1);Hero(actor,"dante");yield return null;
+            var source=actor.GetComponent<CharacterVisual>().Model;string beforeKey=MatchReplayArchive.VisualKey(source);
+            int beforeBones=MatchPoseHistory.StableTransforms(source).Length;
+            var head=source.GetComponentInChildren<SkinnedMeshRenderer>().bones[0];
+            var band=new GameObject("TayaHeadband");band.AddComponent<TransientModelPart>();band.transform.SetParent(head,false);
+            new GameObject("BandTail").transform.SetParent(band.transform,false);
+            Assert.AreEqual(beforeKey,MatchReplayArchive.VisualKey(source),"A transient part cannot change the recorded art");
+            Assert.AreEqual(beforeBones,MatchPoseHistory.StableTransforms(source).Length);
+            var track=new MatchPoseHistory.Track(actor,source);track.Record(Time.time);track.Record(Time.time+.05f);
+            Object.DestroyImmediate(band);
+            track.Record(Time.time+.1f);
+            Assert.IsTrue(track.Ready,"Removing a transient part must leave the history recording");
+            Assert.IsFalse(track.Broken);
+            // An unmarked part still empties its track, which is now flagged so MatchPoseHistory starts it again.
+            var stray=new GameObject("UnmarkedPart");stray.transform.SetParent(head,false);
+            track=new MatchPoseHistory.Track(actor,source);track.Record(Time.time);
+            Object.DestroyImmediate(stray);track.Record(Time.time+.05f);
+            Assert.IsTrue(track.Broken);
+            foreach(var seat in GameServices.Round.Players)
+                foreach(var real in seat.GetComponentsInChildren<Transform>(true))
+                    if(real.name.StartsWith("TayaHeadband"))Assert.IsNotNull(real.GetComponent<TransientModelPart>(),real.name+" must be marked transient");
+        }
+        [UnityTest]
         public IEnumerator RecordedHeroVisualsCannotCreateHazardsActorsScoresOrGameplayRandomness()
         {
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);

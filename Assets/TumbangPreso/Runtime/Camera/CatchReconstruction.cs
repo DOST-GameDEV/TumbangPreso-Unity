@@ -29,7 +29,8 @@ namespace TumbangPreso.CameraSystem
         private bool _skipHeld;
         private float _shotSide;
         private Vector3 _shotFocus;
-        private readonly RaycastHit[] _shotHits = new RaycastHit[32];
+        // A full buffer reads as blocked, so leave room for a dense map's small colliders along a 3 m cast.
+        private readonly RaycastHit[] _shotHits = new RaycastHit[96];
         private int _round;
         private long _matchId, _pendingMatchId;
         private bool _pending;
@@ -478,7 +479,11 @@ namespace TumbangPreso.CameraSystem
             for (int i = 0; i < count; i++)
             {
                 var hit = _shotHits[i];
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                // Only scenery blocks the lens. A slipper or the can crossing it live ended the replay at random,
+                // mid-approach or over the held picture (the halftime view skips them the same way).
+                var other = hit.collider;
+                if (other.GetComponentInParent<CharacterMotor>() != null || other.GetComponentInParent<Slipper>() != null ||
+                    other.GetComponentInParent<Lata>() != null) continue;
                 distance = Mathf.Min(distance, Mathf.Max(0, hit.distance - .18f));
             }
             return distance;

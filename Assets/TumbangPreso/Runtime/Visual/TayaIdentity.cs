@@ -498,6 +498,8 @@ namespace TumbangPreso.Visual
             BandHalf = new Vector2(halfX, halfZ);
 
             _band = new GameObject("TayaHeadband");
+            // It moves to the next taya every round: never part of the recorded model (`TransientModelPart`).
+            _band.AddComponent<TransientModelPart>();
             _band.transform.SetParent(head, false);
             _band.transform.position = taya.transform.TransformPoint(centre);
             _band.transform.rotation = taya.transform.rotation;
@@ -525,6 +527,7 @@ namespace TumbangPreso.Visual
                 tail.GetComponent<Renderer>().sharedMaterial = _bandMaterial;
                 // An effect on the head, never part of the model: replays, outlines and readability skip it.
                 VfxRenderTag.Attach(tail);
+                tail.AddComponent<TransientModelPart>();
                 ShadowsOff(tail);
                 _tails[k] = tail.transform;
             }

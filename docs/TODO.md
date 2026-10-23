@@ -144,6 +144,13 @@ replay and the whole match read poorly ("everything has to be animated").
   reach closes on the real palm (it stopped 6 to 9 cm short under the dash squash), stoops to a low touch, and aims in
   the victim's tag-time frame. Replay cut is a near-square profile of the pair with a lens punch on the touch.
   Contact is now fist surface to skin: every playable hero's pairing lands at 0 to 3 mm (was 3 to 11 cm).
+- [x] Replays and highlights dead from round 2 (2026-10-24): the taya headband rode the recorded rig, so moving it to the
+  next taya emptied a seat's pose history for the round (no tag replay, saved replays "Player pose history is
+  incomplete") and halftime refused round 1's taya as "Changed recorded art". The band, its tails and the Amihan and
+  Manika palm anchors are `TransientModelPart`; a track whose bone is destroyed is rebuilt (`Broken`). The tag replay's
+  clear-shot check ignores slippers and the can, which ended it at random. Roslyn compile of Runtime and PlayTests clean.
+- [ ] Unity import, `RecordedEffectsTests.TayaHeadbandAndRemovedModelPartsCannotEndTheSeatsHistory`,
+  `CatchReconstructionTests`, and an owner match past halftime (tag replays, HIGHLIGHT, saved replay).
 - [ ] Tag contact leftovers (PlayMode, 2026-10-22): `AuthoredMapFarTag...` replay fist gap 0.082 m although the live hand
   reaches its aim within 0.007 m (a far reach by a classic person whose authored punch stretches the forearm: the held
   replay frame differs from the live pose); `RosterTag_sean_To_zack` 0.047 m against 0.045 (Rago is locked);

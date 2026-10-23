@@ -109,6 +109,7 @@ namespace TumbangPreso.Visual
         {
             if (!CharacterVisual.PalmCentre(skin, index, out var centre)) return null;
             var palm = new GameObject(name).transform;
+            palm.gameObject.AddComponent<TransientModelPart>();
             palm.SetParent(skin.bones[index], false);
             palm.localPosition = centre;
             return palm;
