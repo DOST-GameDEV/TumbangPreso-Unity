@@ -315,7 +315,7 @@ namespace TumbangPreso.Visual
             // Nor under bodies standing on an Arena stage the opening has not built yet, nor through a map's film: its
             // models walk in from elsewhere (the ring stays on the mark) and the taya's colour would tell the count.
             if (_ring != null) _ring.gameObject.SetActive(!mine && !blind && !Map.ArenaIntro.StageUnbuilt && !Map.MapFilm.HidesUi);
-            bool introducing = MatchArrivalPresentation.Active;
+            bool introducing = MatchArrivalPresentation.Active || Map.MapFilm.HidesUi;
             _label.gameObject.SetActive(!mine && !introducing && !blind);
 
             if (mine || introducing || blind) return;

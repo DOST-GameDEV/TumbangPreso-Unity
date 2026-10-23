@@ -46,6 +46,7 @@ namespace TumbangPreso.PlayTests
             _frames?.Dispose(); _frames = null;
             ArrivalActive(false);
             MapFilm.Stop();
+            HoldClock(false);
             JsonUtility.FromJsonOverwrite(_settings, Settings.SettingsStore.Current);
             Time.timeScale = 1.0f;
             yield return PlayModeWorld.Reset();
@@ -97,8 +98,17 @@ namespace TumbangPreso.PlayTests
             foreach (var old in Object.FindObjectsByType<MatchArrivalPresentation>()) old.Cancel();
             foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
             foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
+            // The hold the arrival would own (`DirectedMapArrivalTests.ClosingBeat` does the same): without it physics
+            // and the visual smoothing run under the film, move the bodies off their marks and the models off them.
+            HoldClock(true);
             yield return null;
         }
+
+        private static void HoldClock(bool on) =>
+            typeof(PresentationClock).GetMethod(on ? "Hold" : "Release", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
+
+        /// <summary>Renderers that toggle themselves on the game's own state (status badges, the can's clock), not the film's.</summary>
+        private static bool OwnState(Renderer r) => r.name.StartsWith("StatusBadge") || r.name == "LataClock";
 
         private sealed class Before_
         {
@@ -138,7 +148,7 @@ namespace TumbangPreso.PlayTests
             for (int i = 0; i < b.RootTransforms.Length; i++)
                 if (b.RootTransforms[i] != null)
                     Check(Vector3.Distance(b.RootTransforms[i].localPosition, b.Roots[i]) < 0.0001f && Quaternion.Angle(b.RootTransforms[i].localRotation, b.RootTurns[i]) < 0.01f, "seat " + i + "'s model is not on its body");
-            var off = b.RenderersOn.Where(r => r != null && !r.enabled).Select(r => r.name + " (" + (r.transform.parent != null ? r.transform.parent.name : "-") + ")").ToArray();
+            var off = b.RenderersOn.Where(r => r != null && !r.enabled && !OwnState(r)).Select(r => r.name + " (" + (r.transform.parent != null ? r.transform.parent.name : "-") + ")").ToArray();
             Check(off.Length == 0, "renderers drawn before and not after: " + string.Join(", ", off));
             Check(Object.FindObjectsByType<Canvas>().Count(c => c.enabled && c.isRootCanvas) == b.CanvasesOn, "the game's UI is not all back");
             Check(!MapFilm.HidesUi && (MapFilm.Instance == null || !MapFilm.Instance.Playing), "the film still holds the screen");
@@ -304,6 +314,8 @@ namespace TumbangPreso.PlayTests
             yield return null;
             Assert.That(skipped.Age, Is.InRange(skipped.Timeline.Close - 0.01f, skipped.Timeline.Close + 0.3f), "the skip did not land on the close");
             skipped.End();
+            // Cut mid-film, as the arrival would; in the game the arrival puts the camera back, so the test does.
+            camera.transform.SetPositionAndRotation(before.Eye, before.Turn); camera.fieldOfView = before.Fov;
             yield return null;
             var failures = new List<string>();
             Restored(before, camera, map, failures);

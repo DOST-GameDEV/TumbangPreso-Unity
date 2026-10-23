@@ -44,6 +44,9 @@ namespace TumbangPreso.Map
                 var body = s < players.Length ? players[s] : null;
                 if (body == null || !body.gameObject.activeInHierarchy) continue;
                 _body[s] = body;
+                // The nameplate's ring stays on the mark and its label names the taya before the count does: neither is
+                // drawn through the film, whatever the plate's own update decides (frames showed "P1 · TAYA" and the ring).
+                foreach (var plate in body.GetComponentsInChildren<CharacterNameplate>(true)) Hide(plate.GetComponentsInChildren<Renderer>(true));
                 var visual = body.GetComponent<CharacterVisual>();
                 var root = visual != null ? visual.ModelRoot : null;
                 // A model hung on the seat itself cannot move without the body: it stays on its mark.
