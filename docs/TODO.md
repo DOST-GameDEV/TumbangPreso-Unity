@@ -29,7 +29,7 @@ No rule changes.
   are gone (red star and headband stay); the FPP jab and dash aim the forearm out to the crosshair; the FPP raise puts
   both fists on the can's sides as it stands, under a slower, shallower bend (17 cm, was a 34 cm dip). Frames and
   before/after clips: Logs/fpp-1023. GameplayActionShots (both, now on Eskinita) and TagReadabilityTests x6 pass.
-- [ ] Owner look in play, at the FPP tag and raise especially.
+- [ ] Owner look in play (Builds/fpp1023/TumbangPreso.exe, which replaces Builds/tagread), at the FPP tag and raise especially.
 
 ### ROOM-PLAYTEST-1023: the Player's Room from the owner's playtest (IN PROGRESS)
 
