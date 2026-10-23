@@ -4,6 +4,32 @@ Mark a row by its ID ("T-04 too thin"). Only the rows the owner names change in 
 Method and theme: `../plan.md`, `../research.md`. Build: `py -3 tools/build_tondo_film_sfx.py` (generated from
 measured references in `tools/tump_sfx_profiles.json`; nothing recorded ships except T-06, which was already in the game).
 
+## Round 5 (2026-10-23): nothing eats itself
+
+Watch: `r5-after.mp4`. Music alone: `r5-music-only.mp3`.
+
+Owner on round 4: "grabe ang deep pa ren and out of tune", "especially the sound in the start it feels weirdly strum
+and deep", "like it feels like its eating itself".
+
+What was measured first: every string's overtones are within 0 to 5 cents of exact (tighter than a piano's stretch), so
+the strings themselves were not out of tune. What "eating itself" was: the same pitch sounding twice at once, which
+partly cancels and throbs:
+- the opening started on the guitar's low A2, doubled by the bass's A2, under a C#4 picked twice while the first still
+  rang (on a real guitar that is one string, and picking it again stops the old note);
+- the YA hit carried its own low A under the score's low A and the guitar's;
+- the room's early reflections had two inverted (a comb filter: hollow, phasey).
+
+Round 5: `tump_synth.Band` collects every note and, per instrument and pitch, stops a note where the same pitch is
+picked again; the bass owns everything under C3 (checked: no guitar note below C3, no pitch in two instruments at once);
+the opening is the guitar alone, soft, in its middle (A3 to C#5), the bass entering with the chalk run; the YA hit has
+no low A of its own; the room's reflections are all upright and its echo is cut under 200 Hz (low reverb is mud).
+
+| Round 5 measurement | Value |
+|---|---|
+| Energy under 150 Hz | 14 % (round 4: 34 %, 4b: 15 %) |
+| Score roughness median / p90 | 0.082 / 0.253 (the match soundtrack: 0.082 / 0.217) |
+| Film with the alley bed | -18.8 LUFS, true peak -2.9 dBTP |
+
 ## Round 4 (2026-10-23): no foley, real-sounding strings, the band counts
 
 Watch: `r4-after.mp4` (with the alley bed and the kid's voice). Music alone: `r4-music-only.mp3` (the score and the
@@ -150,3 +176,4 @@ before a version is called done). The videos mix the beds at estimated weights.
 | 2 | T-02, all | "005 random sound is weird", "may random shit na fucks it up", the chalk run "rapes the shit", "refine the sound sa maiba taya", "think of how a story has a start climax and end", "transition it to the actual game", "thoroughly analyze the material" | round 3: cut everything unmotivated; foley plays the picture; story arc; A major at the match's 150 bpm, ending on E into the match. **Rules for the skill:** spot the film first (watch it, write the beat sheet); every sound needs an on-screen reason or a musical job; score the scene's story arc; end a cutscene on the dominant of whatever plays next, at its tempo |
 | 3 | T-02, T-03, T-04, music | "door opening sounds sucks", "the running sfx sucks", "why even give his running some sfx", "MAIBA TAYA SOUND SUCKS", "refine the music pa ang ijbol ng sound" | round 4: every foley cue of the film removed; the score marks doors and syllables; physical strings measured against a real harp. **Rules for the skill:** in a scored cutscene, foley only where it adds something music cannot (default: none); never foley an action the picture does not show (no claps for pointing); compare every generated instrument harmonic by harmonic with a real one before the owner hears it |
 | 4 | T-01 | "ang lakas ng music mo in some parts like it feels so deep and out of tune" | round 4b: one tuning for every part; lows from 34 % to 15 % of the energy; gentler ending; the climax the loudest moment. **Rules for the skill:** never mix tuning systems across parts; keep the energy under 150 Hz near 15 % and give the low end to one instrument; check the loudness curve against the story (the climax must be the peak) |
+| 4b | T-01 | "grabe ang deep pa ren and out of tune", "the start feels weirdly strum and deep", "it feels like its eating itself" | round 5: no pitch twice at once (a re-picked note stops the last; no unisons across parts; the bass alone under C3); upright room reflections; no low reverb; a light opening. **Rules for the skill:** model players, not oscillators (one string, one note); check for same-pitch overlaps across all parts before rendering; high-pass every reverb return |

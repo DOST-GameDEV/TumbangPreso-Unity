@@ -355,13 +355,13 @@ def tondo_taya():
     A: a hard full down-strum, the bandurria's double course on A and C# picked once, the bass on A; then it rings
     and gets out of the way of the kid's real "Taya!". No tremolo answer."""
     n = int(SR * 1.6)
-    gtr, band_, low = np.zeros(n), np.zeros(n), np.zeros(n)
-    ts.strum(gtr, ["A2", "E3", "A3", "C#4", "E4"], 0.0, 1.3, "guitar", velocity=1.0, spread=0.007, seed=31)
+    band = ts.Band(1.6, seed=31)
+    # Round 4c: no bass and no low A of its own (the score's bass holds A under YA; three low A's fought each other).
+    band.strum("guitar", ["E3", "A3", "C#4", "E4", "A4"], 0.0, 1.3, 1.0, spread=0.007)
     for nm in ("A5", "C#6"):
-        ts.place(band_, ts.string_note(ts.hz(nm), 1.3, "bandurria", 0.9, seed=33 + len(nm), stop=1.2, release=0.15), 0.004)
-    ts.place(low, ts.string_note(ts.hz("A2"), 1.4, "bass", 1.0, seed=35, stop=1.3, release=0.2), 0.0)
-    y = (0.55 * normal(ts.highpass(ts.body(gtr, "guitar"), 95)) + 0.38 * normal(ts.body(band_, "bandurria")) +
-         0.28 * normal(ts.body(low, "bass")))
+        band.note("bandurria", nm, 0.004, 1.2, 0.9)
+    y = (0.6 * normal(ts.highpass(ts.body(band.render("guitar", release=0.15), "guitar"), 95)) +
+         0.4 * normal(ts.body(band.render("bandurria", release=0.15), "bandurria")))
     env = np.ones(n)
     env[int(0.12 * SR):] = np.exp(-(np.arange(n - int(0.12 * SR)) / SR) * 2.2)   # duck under the voice after the hit
     return ts.fade(finish(y * env, wet=0.12, hp=40), 0.0005, 0.2)
@@ -371,36 +371,30 @@ def tondo_taya():
 
 def tondo_score():
     total = 20.5
-    n = int(SR * total)
-    gtr, bass, band_ = np.zeros(n), np.zeros(n), np.zeros(n)
-    seeds = iter(range(1000, 100000, 7))
+    band = ts.Band(total, seed=1023)                     # round 4c: a re-picked pitch stops its last note
 
     def g_strum(at, name, vel=0.5, down=True, end=None, notes=None):
-        # One tuning for every part (round 4b): pure-interval chords under an equal-tempered bandurria put the tune's
-        # C# 14 cents off the guitar's and the E7's seventh 31 cents flat: the owner heard it as "out of tune".
-        ts.strum(gtr, notes or VOICING[name], at, end or chord_end(at), "guitar", velocity=vel, down=down, seed=next(seeds))
+        band.strum("guitar", notes or VOICING[name], at, end or chord_end(at), vel, down)
 
     def g_note(at, note, vel=0.45, end=None):
-        end = end or chord_end(at)
-        ts.place(gtr, ts.string_note(ts.hz(note), end - at + 0.05, "guitar", vel, seed=next(seeds), stop=end - at), at)
+        band.note("guitar", note, at, end or chord_end(at), vel)
 
     def b_note(at, note, vel=0.7, end=None):
-        end = end or chord_end(at)
-        ts.place(bass, ts.string_note(ts.hz(note), end - at + 0.05, "bass", vel, seed=next(seeds), stop=end - at), at)
+        band.note("bass", note, at, end or chord_end(at), vel)
 
     def tune(at, note, dur, vel=0.5):
-        ts.place(band_, ts.string_note(ts.hz(note), dur + 0.05, "bandurria", vel, seed=next(seeds), stop=dur, release=0.02), at)
+        band.note("bandurria", note, at, at + dur, vel)
 
     def trem(at, notes, dur, vel=0.45, swell=True):
-        ts.tremolo(band_, notes, at, at + dur, "bandurria", velocity=vel, seed=next(seeds), swell=swell)
+        band.tremolo("bandurria", notes, at, at + dur, vel, swell=swell)
 
-    # START 0 to 3.6, the place: the guitar alone, picking A in half time; a soft bass A as TONDO lands (0.9);
-    # to E at 2.4: a question (who comes?).
-    for i, nm in enumerate(["A2", "E3", "A3", "C#4", "E4", "C#4"]):
-        g_note(0.05 + Q * i, nm, 0.4 + 0.05 * (i == 0))
-    b_note(0.9, "A2", 0.45)
-    for i, nm in enumerate(["E3", "B3", "E4"]):            # light and open, no low third (E2 under G#3 beat, round 3)
-        g_note(2.4 + Q * i, nm, 0.4)
+    # START 0 to 3.6, the place: the guitar alone, picking A softly in its middle (round 4c, owner: "the start feels
+    # weirdly strum and deep": it began on a low A that doubled the bass's, under a re-picked C#). No bass yet. To E
+    # at 2.4: a question (who comes?).
+    for i, nm in enumerate(["A3", "E4", "A4", "C#5", "E4", "A4"]):
+        g_note(0.05 + Q * i, nm, 0.36 + 0.04 * (i == 0))
+    for i, nm in enumerate(["B3", "E4", "G#4"]):
+        g_note(2.4 + Q * i, nm, 0.36)
 
     # THE CHALK RUN 3.6 to 6.4, the first kid: the groove starts, light (his feet are the star): bass on the beat,
     # the guitar off it, A then D. The skid is a stop: one E strum, then a breath of silence before the doors.
@@ -470,7 +464,10 @@ def tondo_score():
 
     # Round 4b ("so deep"): a third of the score's energy sat under 150 Hz and the count's bass rivalled everything
     # else; the bass is quieter and the guitar is trimmed under 95 Hz (the bass owns the low end alone).
-    mix = (0.5 * normal(ts.highpass(ts.body(gtr, "guitar"), 95)) + 0.3 * normal(ts.body(bass, "bass")) +
+    gtr, bass, band_ = band.render("guitar"), band.render("bass"), band.render("bandurria")
+    # Round 4b ("so deep"): a third of the score's energy sat under 150 Hz and the count's bass rivalled everything
+    # else; the bass is quieter and the guitar is trimmed under 95 Hz (the bass owns the low end alone).
+    mix = (0.5 * normal(ts.highpass(ts.body(gtr, "guitar"), 95)) + 0.22 * normal(ts.body(bass, "bass")) +
            0.45 * normal(ts.body(band_, "bandurria")))
     mix = ts.room(ts.highpass(mix, 40), 0.12)
     mix = ts.compress(mix, -18.0, 2.0)                     # gentle: even the spiky plucks, keep the story's dynamics
@@ -492,7 +489,7 @@ BUILDS = {
 # the sting must leave the voice its room. Round 2 (a full guitar strum and a balde in the sting) met the voice at
 # +0.5 dBFS at 0.6, and true peak (between samples) still read +0.4 dBTP at 0.50: the target is -1 dBTP, so the
 # score is 0.60, the sting 0.45, the clap 0.75, and the score's bass under YA softer.
-LEVEL = {"sfx_film_tondo_score.wav": 0.65, "sfx_film_tondo_taya.wav": 0.65}   # round 4b: YA, the climax, the loudest moment
+LEVEL = {"sfx_film_tondo_score.wav": 0.75, "sfx_film_tondo_taya.wav": 0.65}   # 4b: YA the loudest moment; 4c: score up 1 dB
 
 
 def write(path, y):

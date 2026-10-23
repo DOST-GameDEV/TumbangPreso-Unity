@@ -303,7 +303,9 @@ def alley_ir():
         tail = lowpass(rng.normal(0, 1, n), 5000) * np.exp(-t * 6.9 / 0.55) * np.clip((t - 0.012) / 0.02, 0, 1)
         ir = np.zeros(n)
         ir[0] = 1.0
-        for ms, g in ((6, 0.45), (11, -0.32), (17, 0.26), (23, -0.18)):
+        # Positive reflections (a wall returns the wave the same way up). Round 1-4 had two of these inverted, a comb
+        # filter that made everything hollow and phasey (part of "it feels like its eating itself", round 4c).
+        for ms, g in ((6, 0.3), (11, 0.2), (17, 0.14), (23, 0.09)):
             ir[int(ms * SR / 1000)] += g
         tail /= np.sqrt(np.sum(tail ** 2))
         _ROOM = (ir, tail)
@@ -314,7 +316,7 @@ def room(x, wet=0.18):
     """Put a sound in the alley: early reflections always, the tail at `wet`."""
     early, tail = alley_ir()
     dry = signal.fftconvolve(x, early)[: len(x)]
-    wetsig = signal.fftconvolve(x, tail)[: len(x)]
+    wetsig = highpass(signal.fftconvolve(x, tail)[: len(x)], 200)    # no low reverb: it is mud (round 4c, "so deep")
     return dry * (1 - wet * 0.5) + wetsig * wet * 2.2
 
 
@@ -362,7 +364,7 @@ STRINGS = {
     # kind: (pick position, T60 s at 3 kHz (how long the treble rings), T60 s at 220 Hz, pick brightness Hz,
     #        course detune cents, body modes ((Hz, gain, decay s), ...), body mix)
     "bandurria": (0.12, 0.35, 1.6, 6000.0, 1.6, ((390, 1.0, 0.05), (780, 0.7, 0.035), (1450, 0.5, 0.02), (2700, 0.35, 0.012)), 0.35),
-    "guitar": (0.2, 0.12, 3.2, 2400.0, 0.0, ((98, 0.35, 0.1), (205, 1.0, 0.09), (395, 0.6, 0.05), (525, 0.4, 0.04), (1150, 0.25, 0.02)), 0.4),
+    "guitar": (0.2, 0.12, 3.2, 2400.0, 0.0, ((98, 0.35, 0.1), (205, 1.0, 0.09), (395, 0.6, 0.05), (525, 0.4, 0.04), (1150, 0.25, 0.02)), 0.28),
     "bass": (0.26, 0.07, 3.6, 1200.0, 0.0, ((98, 1.0, 0.14), (205, 0.6, 0.09)), 0.35),
 }
 # ⚠️ ROUND 4'S FIRST STRINGS WERE FAR TOO BRIGHT. Harmonic by harmonic against a real harp C3 (VSCO 2 CE): the real
@@ -505,6 +507,62 @@ def tremolo(track, notes, start, stop, kind="bandurria", velocity=0.7, rate=13.0
         k += 1
     for nm in notes:
         place(track, string_voice(hz(nm), span + 0.08, kind, picks, seed=int(rng.integers(1 << 30)), stop=span, release=0.05), start)
+
+
+class Band:
+    """A band that plays like real players (round 4c). Owner on round 4: "it feels like its eating itself". Two copies of
+    one pitch sounding at once (a re-picked arpeggio note on top of itself, a guitar's low A doubling the bass's A, the
+    sting's own low A over the score's) interfere: they partly cancel and throb. On a real instrument a string picked
+    again stops its last note, so: collect every note first, then, per instrument and pitch, cut each note off where the
+    next one on the same pitch begins. Render one instrument at a time."""
+
+    def __init__(self, seconds, seed=0):
+        self.seconds = seconds
+        self.events = {}
+        self.rng = np.random.default_rng(seed)
+
+    def _add(self, kind, name, start, end, picks):
+        self.events.setdefault(kind, []).append({"name": name, "start": start, "end": end, "picks": picks,
+                                                 "seed": int(self.rng.integers(1 << 30))})
+
+    def note(self, kind, name, start, end, velocity=0.5):
+        self._add(kind, name, start, end, [(0.0, velocity)])
+
+    def strum(self, kind, notes, at, end, velocity=0.5, down=True, spread=0.014):
+        """A strum: the stroke speeds up across the strings, an up-stroke catches its first string lightly."""
+        order = notes if down else notes[::-1]
+        t0 = at + self.rng.uniform(-0.006, 0.006)
+        for i, nm in enumerate(order):
+            v = velocity * self.rng.uniform(0.82, 1.0) * (0.75 if (not down and i == 0) else 1.0)
+            self.note(kind, nm, t0, end, v)
+            t0 += spread * self.rng.uniform(0.7, 1.15) * (1.0 - 0.08 * i)
+
+    def tremolo(self, kind, notes, start, end, velocity=0.45, rate=13.0, swell=True):
+        span = max(end - start, 1e-3)
+        picks, at, k = [], 0.0, 0
+        while at < span:
+            shape = min(1.0, 0.5 + 0.5 * at / min(0.3, span)) if swell else 1.0
+            picks.append((at, velocity * shape * (1.0 if k % 2 == 0 else 0.72) * self.rng.uniform(0.88, 1.0)))
+            at += (1.0 / rate) * self.rng.uniform(0.9, 1.1)
+            k += 1
+        for nm in notes:
+            self._add(kind, nm, start, end, picks)
+
+    def render(self, kind, release=0.03):
+        n = int(self.seconds * SR)
+        out = np.zeros(n)
+        evs = sorted(self.events.get(kind, []), key=lambda e: e["start"])
+        by_pitch = {}
+        for e in evs:
+            by_pitch.setdefault(midi(e["name"]), []).append(e)
+        for same in by_pitch.values():
+            for a, b in zip(same, same[1:]):
+                a["end"] = min(a["end"], b["start"])            # picked again: the last note stops
+        for e in evs:
+            dur = max(0.02, e["end"] - e["start"])
+            y = string_voice(hz(e["name"]), dur + release + 0.02, kind, e["picks"], seed=e["seed"], stop=dur, release=release)
+            place(out, y, e["start"])
+        return out
 
 
 def bamboo(f, seconds=0.25, velocity=1.0, seed=0):
