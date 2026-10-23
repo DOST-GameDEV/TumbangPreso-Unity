@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using TumbangPreso.Visual;
 using UnityEditor;
 using UnityEngine;
@@ -71,11 +72,79 @@ namespace TumbangPreso.EditorTools
                 if (roster == null || roster.Model == null) throw new InvalidOperationException("No " + id + " roster entry or model.");
                 var baked = Bake(id, roster.Model);
                 var names = baked.Select(c => c.name).ToArray();
-                roster.Clips = roster.Clips.Where(c => c != null && !names.Contains(c.name)).Concat(baked).ToArray();
+                // The first set's clips come off too (`EmoteMotion.Retired`), so no entry carries both sets.
+                roster.Clips = roster.Clips.Where(c => c != null && !names.Contains(c.name) && !EmoteMotion.Retired.Contains(c.name))
+                    .Concat(baked).ToArray();
                 EditorUtility.SetDirty(roster);
                 Debug.Log("[EmoteMotionAuthor] baked " + id + ": " + string.Join(", ", names));
             }
             AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>
+        /// Photograph the wheel itself, built exactly as a match builds it, closed-over-nothing and with each slice
+        /// chosen in turn, plus the slice pictures and the EMOTE chip's face, into Logs/emote-wheel/. Batch:
+        /// -executeMethod TumbangPreso.EditorTools.EmoteMotionAuthor.ReviewWheel.
+        /// </summary>
+        public static void ReviewWheel()
+        {
+            bool ok = true;
+            try { CaptureWheel("Logs/emote-wheel"); }
+            catch (Exception failure) { Debug.LogException(failure); ok = false; }
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        public static void CaptureWheel(string folder)
+        {
+            Directory.CreateDirectory(folder);
+            const BindingFlags hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+            var host = new GameObject("Emote wheel review");
+            var eye = new GameObject("Emote wheel review camera", typeof(Camera)).GetComponent<Camera>();
+            var target = new RenderTexture(960, 540, 24);
+            Canvas canvas = null;
+            try
+            {
+                // Awake does not run on an edit-mode AddComponent, so the wheel is built the way Awake builds it.
+                var wheel = host.AddComponent<UI.EmoteWheel>();
+                typeof(UI.EmoteWheel).GetMethod("Build", hidden).Invoke(wheel, null);
+                canvas = (Canvas)typeof(UI.EmoteWheel).GetField("_canvas", hidden).GetValue(wheel);
+                eye.enabled = false; eye.cullingMask = 1 << 31; eye.clearFlags = CameraClearFlags.SolidColor;
+                // A sunlit street's mid-tone, so the wood and the ink read against what they are drawn over.
+                eye.backgroundColor = new Color(0.52f, 0.50f, 0.42f); eye.targetTexture = target;
+                canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = eye; canvas.planeDistance = 1;
+                wheel.Open();
+                foreach (var t in canvas.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = 31;
+
+                var stick = typeof(UI.EmoteWheel).GetField("_stick", hidden);
+                var select = typeof(UI.EmoteWheel).GetMethod("UpdateSelection", hidden);
+                var redraw = typeof(UI.EmoteWheel).GetMethod("Redraw", hidden);
+                void Shoot(string name, Vector2 aim)
+                {
+                    stick.SetValue(wheel, aim);
+                    select.Invoke(wheel, null);
+                    redraw.Invoke(wheel, new object[] { true });
+                    Canvas.ForceUpdateCanvases(); eye.Render();
+                    var image = new Texture2D(960, 540, TextureFormat.RGBA32, false); var previous = RenderTexture.active;
+                    try { RenderTexture.active = target; image.ReadPixels(new Rect(0, 0, 960, 540), 0, 0); image.Apply(); File.WriteAllBytes(Path.Combine(folder, name + ".png"), image.EncodeToPNG()); }
+                    finally { RenderTexture.active = previous; Object.DestroyImmediate(image); }
+                }
+                Shoot("wheel_none", Vector2.zero);
+                float span = 360.0f / Social.Emotes.Count;
+                for (int i = 0; i < Social.Emotes.Count; i++)
+                {
+                    float a = Mathf.Deg2Rad * (span * i + span * 0.5f);
+                    Shoot("wheel_" + Social.Emotes.All[i].Id, new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * UI.EmoteWheel.StickClamp);
+                    File.WriteAllBytes(Path.Combine(folder, "glyph_" + Social.Emotes.All[i].Id + ".png"),
+                        UI.EmoteGlyphs.For(Social.Emotes.All[i].Id).texture.EncodeToPNG());
+                }
+                File.WriteAllBytes(Path.Combine(folder, "chip_face.png"), UI.VerbIcons.For(UI.VerbGlyph.Emote).texture.EncodeToPNG());
+                Debug.Log("[EmoteMotionAuthor] wheel photographed into " + folder);
+            }
+            finally
+            {
+                if (canvas != null) Object.DestroyImmediate(canvas.gameObject);
+                Object.DestroyImmediate(host); Object.DestroyImmediate(eye.gameObject); target.Release(); Object.DestroyImmediate(target);
+            }
         }
 
         /// <summary>Bake, then photograph every emote on every hero across its length (`ClipMotionStrip`), into

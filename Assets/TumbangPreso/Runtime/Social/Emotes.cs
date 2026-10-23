@@ -25,19 +25,19 @@ namespace TumbangPreso.Social
         /// player's muscle memory, so treat the count as part of the contract rather than as an
         /// array length.
         /// </summary>
+        /// <para>⚠️⚠️ A NEW SET ON THE OLD IDS (owner, 2026-10-23: "give our game completely new emotes"). The ids
+        /// cross the network, so they never change; what each one MEANS did: one feeling per slice, after the emotes
+        /// players actually use in Fortnite, PUBG and CoD (`HeroAbilityClips.Emotes.cs` has the research and the
+        /// clips). `crouch` is HA HA and `tpose` is COME AT ME. An older peer still plays its own clip for the id.</para>
         public static readonly IReadOnlyList<EmoteDef> All = new[]
         {
-            new EmoteDef("yes",    "NOD",     "NOD"),
-            new EmoteDef("no",     "NOPE",    "NOPE"),
-            new EmoteDef("sit",    "SIT",     "SIT DOWN"),
-            new EmoteDef("crouch", "VICTORY", "VICTORY POSE"),
-            // ⚠️ REPLACED PLAY DEAD 2026-08-06. 🧑: *"lets remove the play dead emote and
-            // replace it with a dance emote instead"*. One short word in the wedge and one in
-            // the hole, so this is the one entry that could never cause the label overflow the
-            // wheel's geometry was resized for.
-            new EmoteDef("dance",  "DANCE",   "DANCE"),
-            new EmoteDef("tpose",  "T-POSE",  "T-POSE"),
-            new EmoteDef("bow",    "BOW",     "BOW"),
+            new EmoteDef("yes",    "LET'S GO", "LET'S GO!"),
+            new EmoteDef("no",     "NO WAY",   "NO WAY"),
+            new EmoteDef("sit",    "TOO EASY", "TOO EASY"),
+            new EmoteDef("crouch", "HA HA",    "HA HA HA"),
+            new EmoteDef("dance",  "DANCE",    "STREET DANCE"),
+            new EmoteDef("tpose",  "COME AT ME", "COME AT ME"),
+            new EmoteDef("bow",    "GG",       "GOOD GAME"),
         };
 
         public static int Count => All.Count;

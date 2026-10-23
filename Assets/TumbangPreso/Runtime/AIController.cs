@@ -449,7 +449,11 @@ namespace TumbangPreso
         {
             if (_motor == null || slot != _motor.PlayerSlot) return;
 
-            if (e == ScoreEvent.LataKnocked || e == ScoreEvent.Tag || e == ScoreEvent.Sabotage)
+            // ⚠️ KNOCKING THE CAN DOWN IS LAUGHING AT THE TAYA (owner, 2026-10-23: "laughing at taya"), so it gets
+            // HA HA (`crouch` on the wire) rather than a random celebration.
+            if (e == ScoreEvent.LataKnocked)
+                WantEmote("crouch", AiTuning.EmoteCelebrateChance);
+            else if (e == ScoreEvent.Tag || e == ScoreEvent.Sabotage)
                 WantEmote(CelebrationEmotes, AiTuning.EmoteCelebrateChance);
         }
 

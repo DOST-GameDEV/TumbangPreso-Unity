@@ -65,15 +65,17 @@ namespace TumbangPreso.Visual
             // ⚠️ THE AUTHORED EMOTES FIRST (owner, 2026-10-23: "emotes are ... boring compared to all animations and
             // rigid"): `HeroAbilityClips.Emotes.cs`, baked onto a hero's roster entry by `EmoteMotionAuthor`. A rig
             // without them falls down each chain to the pack's clip, exactly as before.
-            { "yes", new[] { EmoteMotion.Nod, "emote-yes", Interact } },
-            { "no", new[] { EmoteMotion.Nope, "emote-no", "interact-left" } },
-            { "sit", new[] { EmoteMotion.SitDown, "sit", "crouch" } },
+            // The second set (2026-10-23, "completely new emotes"): `crouch` is HA HA and `tpose` is COME ON now; the
+            // fallbacks behind them are still the pack's nearest clips for a rig without the authored ones.
+            { "yes", new[] { EmoteMotion.Cheer, "emote-yes", Interact } },
+            { "no", new[] { EmoteMotion.NoWay, "emote-no", "interact-left" } },
+            { "sit", new[] { EmoteMotion.TooEasy, "sit", "crouch" } },
 
             // ⚠️ RELABELLED "VICTORY", STILL THE crouch CLIP. 🧑 asked for a victory pose and
             // this rig does not have one — its clips are locomotion, combat and two gestures,
             // and nothing reads as arms-up celebration. crouch is the closest available and
             // is the honest placeholder rather than a promise the animation does not keep.
-            { "crouch", new[] { EmoteMotion.Victory, "crouch", "sit" } },
+            { "crouch", new[] { EmoteMotion.Laugh, "crouch", "sit" } },
 
             // ⚠️ § THE DANCE REPLACED PLAY DEAD on 2026-08-06, on a direct request. The old
             // `dead` entry played the knockdown clip as a taunt; it is gone from the wheel, so
@@ -83,20 +85,23 @@ namespace TumbangPreso.Visual
             // `DanceClip.ClipName` is BUILT at bind time rather than shipped, because this rig
             // has no dance clip and nothing retargetable exists for a seven-bone skeleton. See
             // that file. The second entry is the fallback for a model with no rig to build on.
-            { "dance", new[] { EmoteMotion.Groove, DanceClip.ClipName, Idle } },
+            { "dance", new[] { EmoteMotion.Dance, DanceClip.ClipName, Idle } },
 
             // `static` is the rig's unanimated bind pose — arms out, feet together — which is
             // exactly the T-pose the joke is about.
-            { "tpose", new[] { EmoteMotion.TPose, "static", Idle } },
+            { "tpose", new[] { EmoteMotion.ComeOn, "static", Idle } },
 
             // ⚠️ `pick-up`, NOT `interact-right`. It bends the torso forward over the legs, so
             // standing still it reads as a bow. One clip having two jobs costs no new asset;
             // this table had the wrong clip and the bow read as a shrug.
-            { "bow", new[] { EmoteMotion.Bow, PickUp, Interact } },
+            { "bow", new[] { EmoteMotion.GoodGame, PickUp, Interact } },
         };
 
         /// <summary>The emote table, for the review strips (`ClipMotionStrip`, `emote:<id>`) and the tests.</summary>
         public static IReadOnlyDictionary<string, string[]> EmoteChains => EmoteClips;
+
+        /// <summary>Whether an emote loops or holds its last frame, for the review reel (`EmoteReel`).</summary>
+        public static bool EmoteLoopsFor(string id) => EmoteLoops.TryGetValue(id, out bool loops) && loops;
 
         /// <summary>
         /// ⚠️⚠️ WHICH EMOTES LOOP AND WHICH HOLD THEIR LAST FRAME. 🧑 2026-08-04: *"play dead
@@ -113,15 +118,15 @@ namespace TumbangPreso.Visual
             { "yes", true },
             { "no", true },
             { "sit", false },      // sitting down ends sitting; standing up every 2s is not sitting
-            { "crouch", false },
+            { "crouch", true },    // HA HA laughs until stopped (2026-10-23)
 
             // ⚠️ THE DANCE LOOPS, and it is built to. Its first and last keys are the same pose
             // (see DanceClip's note on the seam), so a replay is continuous rather than a snap
             // back to the downbeat. A groove that played once and froze would read as the
             // animation having broken.
             { "dance", true },
-            { "tpose", false },
-            { "bow", true },
+            { "tpose", true },     // COME ON keeps beckoning (2026-10-23)
+            { "bow", false },      // GG ends upright holding the salute
         };
 
         /// <summary>
@@ -774,7 +779,7 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// ⚠️⚠️ DORMANT BY DESIGN. `character_visual.gd::_on_animation_finished` does nothing
         /// when a non-looping clip reaches its end — no restart, no signal, no stop — so
-        /// "sit"/"crouch"/"tpose" hold their pose exactly as long as the looping gestures do,
+        /// "sit"/"bow" hold their pose exactly as long as the looping gestures do,
         /// until something else calls `stop_emote()`. §3aa of this repo's own rules records the
         /// same thing from the other direction: *"the emotes only end when a user does smth to
         /// interrupt it... it doesnt end on its own"*.

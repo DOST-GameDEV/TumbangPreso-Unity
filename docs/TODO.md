@@ -1,3 +1,38 @@
+### ROOM-PLAYTEST-1023: the Player's Room from the owner's playtest (IN PROGRESS)
+
+Owner 2026-10-23, with two screenshots of a LAN room: "many bugs happening here", "darked out lahat", "lumalagpas text".
+
+- [x] Reproduced in `HubLobbySeatControlsTests.RenderTheRoomForReview` (`Logs/room/room_before.png`).
+- [x] Title runs off its plate and over BACK: the plate was sized for LOBBY and never resized on rename
+  (`HubChrome.Retitle`).
+- [x] Host crown floated mid-row (pinned where a bot's button sits); now just after the name.
+- [x] CHANGE MAP wore the house icon; now the globe. TAKE A SEAT kept the eye; now a person.
+  `HubLobbySeatControlsTests` 13/13; `Logs/room/room_after.png` against `room_before.png`.
+- [ ] "darked out lahat": asked the owner which (dim screen, greyed buttons, or every row dark after WATCH INSTEAD).
+
+### EMOTES-SECOND-SET-1023: completely new emotes, per-hero fit, the wheel and the EMOTE chip (IN PROGRESS)
+
+Owner 2026-10-23: "thoroughly research emotes in games like fortnite, pubg, cod and etc and give our game completely
+new emotes", "thoroughly refine it in terms of animation", "refine the ui and button for emotes too", and earlier
+"make sure the animation looks good for each character kasi iba iba size nila". Research and design:
+[report](reports/emotes-2026-10-23/README.md).
+
+- [x] Research: Fortnite, PUBG, CoD and Overwatch emotes and wheels; one feeling per slice.
+- [x] New set on the old wire ids: LET'S GO, NO WAY, TOO EASY, HA HA, STREET DANCE, COME AT ME, GOOD GAME
+  (`HeroAbilityClips.Emotes.cs`); the first set's clips retired from every roster entry.
+- [x] Per-rig fit (`EmoteFit`): arm reach measured off each bind; arch, lean and head pushed on short arms. The
+  hand-on-head poses (NO WAY's clamp, TOO EASY's pillow) are solved on each rig (`ArmSolver`) after four hand-keyed
+  rounds left the hands at the collar; the big-headed three reach the cheeks and the nape, no higher.
+- [x] Wheel: a pose picture per slice (`EmoteGlyphs`), pop-open, chosen slice moves out, hover tick and pick click,
+  large pose in the hub; touch drags the pointer (a phone could open the wheel but never steer it).
+- [ ] Wheel restyled to the glass match HUD (owner: "it isn't in the theme of anything else in the game HUD"):
+  smoked glass, cream hairline, ivory, honey only on the chosen slice; slice words now match the names (TOO EASY,
+  COME AT ME). Photographs in `Logs/emote-wheel/`. Needs the owner's look.
+- [x] Bots laugh (HA HA) at the taya when they knock the can down; NO WAY when tagged or beaten.
+- [x] Review strips on all five heroes: every emote resolves to its own clip, floor within 2 mm; loops close.
+- [ ] Paete's soles render black face-on (sit, hops); atlas is brown, so it is his shading. Needs owner OK.
+- [ ] EditMode `EmoteMotionTests`; playtest build; owner look; remote peer sees the new set.
+
 ### TOURNAMENT-FEEDBACK-1022: post-tournament balance, Nemu ring, spectators, unique heroes (IN PROGRESS)
 
 Owner 2026-10-22 after the tournament, on branch `BugFix`: ultimates were rare in four-round matches; Paete's Bakya
