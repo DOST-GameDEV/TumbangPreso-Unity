@@ -22,14 +22,18 @@ namespace TumbangPreso.Settings
         {
             public readonly string Label;
             public readonly Color Colour;
-            public Entry(string label, Color colour) { Label = label; Colour = colour; }
+            /// <summary>How hard the body fill and rim lean into this colour, 1 as tuned for blue.</summary>
+            public readonly float Strength;
+            public Entry(string label, Color colour, float strength = 1f) { Label = label; Colour = colour; Strength = strength; }
         }
 
         /// <summary>Ordered for display; the settings row iterates this directly.</summary>
         public static readonly Entry[] All =
         {
-            // The taya's red (`UiTheme.Taya`): hunted in the hunter's colour.
-            new Entry("Red",       UI.UiTheme.Taya),
+            // The taya's red (`UiTheme.Taya`): hunted in the hunter's colour. Softer than the other colours (owner, 2026-10-23:
+            // "the highlight is too red / too strong, dapat kita na red pero di ganun kalakas"): a saturated red at blue's
+            // weight swallowed the whole body.
+            new Entry("Red",       UI.UiTheme.Taya, .55f),
             new Entry("Magenta",   new Color(.95f, .16f, .72f)),
             new Entry("Yellow",    new Color(1f, .86f, .08f)),
             new Entry("Cyan",      new Color(.1f, .86f, .95f)),
@@ -44,5 +48,7 @@ namespace TumbangPreso.Settings
         public static string LabelOf(int index) => All[Mathf.Clamp(index, 0, All.Length - 1)].Label;
         /// <summary>The colour the current settings ask for.</summary>
         public static Color Current => ColourOf(SettingsStore.Current.TaggableColour);
+        /// <summary>How hard the current colour is drawn on a body (<see cref="Entry.Strength"/>).</summary>
+        public static float CurrentStrength => All[Mathf.Clamp(SettingsStore.Current.TaggableColour, 0, All.Length - 1)].Strength;
     }
 }

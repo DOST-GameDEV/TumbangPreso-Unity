@@ -91,11 +91,13 @@ namespace TumbangPreso.Visual
                     // climbing or draining, the moving line is the motion.
                     float throb=Settings.SettingsStore.Current.ReducedUiMotion || fill<.999f?1:.82f+.24f*Mathf.Sin(Time.unscaledTime*6.5f);
                     float weight=WorldCueProfile.Current.TayaTarget*presence;
-                    _readBlock.SetFloat("_RimStrength",.72f*throb*weight);
+                    // Red, the default, is drawn softer than the other colours (`TagColours.Entry.Strength`).
+                    float strength=Settings.TagColours.CurrentStrength;
+                    _readBlock.SetFloat("_RimStrength",.72f*throb*weight*strength);
                     // The fill climbs the body (Pac-Man's blue ghost, rising from the feet: `Toon.shader`), and the ink
                     // outline under the line turns the colour and thickens, so the silhouette reads from across the court.
                     _readBlock.SetFloat("_TayaFill",fill);
-                    _readBlock.SetFloat("_TayaTint",TintStrength*throb*weight);
+                    _readBlock.SetFloat("_TayaTint",TintStrength*throb*weight*strength);
                     _readBlock.SetColor("_TayaInk",Color.Lerp(new Color(.02f,.02f,.03f,1),new Color(colour.r*.8f,colour.g*.8f,colour.b*.8f,1),weight));
                     _readBlock.SetFloat("_TayaOutlineGrow",Mathf.Lerp(1,OutlineGrowth,weight));
                     var capsule=_readActor.GetComponent<CharacterController>();
