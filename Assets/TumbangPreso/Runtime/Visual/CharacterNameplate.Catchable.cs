@@ -37,7 +37,7 @@ namespace TumbangPreso.Visual
             _ring.localScale=new Vector3(radius,1,radius);
             _ringRenderer.GetPropertyBlock(_ringBlock);
             _ringBlock.SetFloat("_Shape",2);_ringBlock.SetFloat("_Weight",WorldCueProfile.Current.TayaTarget);
-            _ringBlock.SetColor("_Color",UI.UiTheme.Defense);_ringRenderer.SetPropertyBlock(_ringBlock);
+            _ringBlock.SetColor("_Color",TagExposure.Colour);_ringRenderer.SetPropertyBlock(_ringBlock);
         }
         private void EndCatchable(Camera camera)
         {

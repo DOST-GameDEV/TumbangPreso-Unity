@@ -40,8 +40,9 @@ namespace TumbangPreso
     /// penalty and a mystery.
     ///
     /// ⚠️ THIS ASKS THE SAME FUNCTIONS THE RULES ASK, and that is a rule rather than a
-    /// coincidence: the VULNERABLE row reads <see cref="CharacterMotor.IsTaggable"/>, which is
-    /// the same call the tag itself makes. The warning a player sees and the check that
+    /// coincidence: the VULNERABLE row reads <see cref="RoundDirector.CanBeTaggedNow"/>, which is
+    /// the same call the tag itself makes (it read `IsTaggable` alone until 2026-10-23, and so
+    /// said VULNERABLE while the can was down and no tag could land). The warning a player sees and the check that
     /// catches them must be one function, or the HUD can promise safety the tag then ignores.
     ///
     /// ⚠️ AND A SHORT STUN INSIDE A LONGER ONE IS INVISIBLE HERE. That is a known, ACCEPTED
@@ -114,7 +115,7 @@ namespace TumbangPreso
                 });
 
             // No countdown: it lasts as long as you choose to stand there.
-            if (m.IsTaggable())
+            if (RoundDirector.TaggableNow(m))
                 into.Add(new StatusRow { Label = "VULNERABLE", Timed = false });
 
             // ⚠️ THE THROW LOCK IS A COOLDOWN THE PLAYER MEETS EVERY SINGLE RETRIEVAL and it

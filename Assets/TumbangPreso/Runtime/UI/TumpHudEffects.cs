@@ -22,8 +22,10 @@ namespace TumbangPreso.UI
         /// are free to retrieve and nothing can be tagged until it is reset.</summary>
         public bool CanDownFrameVisible => FrameShown && _frameCanDown;
         private bool FrameShown => _frame != null && _frame.enabled && _frameAlpha > .3f;
+        /// <summary>The frame's colour this frame: blue, the warning's white, or the taya's orange. For tests.</summary>
+        public Color FrameColour => _frame != null ? _frame.color : Color.clear;
         private Material _dangerMaterial, _caughtMaterial;
-        private float _flash, _coverage, _threatCue;
+        private float _flash, _coverage, _threatCue, _level;
         private bool _wasThreatened, _wasCanDown;
         public void Build(Transform root)
         {
@@ -54,8 +56,11 @@ namespace TumbangPreso.UI
             TickConcussed(local, spectator);
             var f = OwnerUiTheme.Current;
             var round = GameServices.Round;
-            bool threatened = !spectator && local != null && !local.IsDefender && local.IsTaggable()
-                && round != null && round.Lata != null && round.Lata.IsUpright;
+            // The same reading as the body's fill (`Visual.TagExposure`): taggable now, or about to be as the can is
+            // stood up. The frame is as strong as the fill is high, so it rises as the can comes up and fades as
+            // Vulnerable runs out, with the body.
+            var exposure = spectator || local == null ? Visual.TagExposure.State.Safe : Visual.TagExposure.Read(local, out _level);
+            bool threatened = exposure != Visual.TagExposure.State.Safe;
             // The taya's half of the same rule. A knockdown usually lands behind a taya who is
             // chasing, and the only cues were a small edge icon and a line of text, so the taya
             // gets the attacker's treatment: the onset cue, then the held frame until the reset.
@@ -74,9 +79,11 @@ namespace TumbangPreso.UI
                 // Defense blue means "the taya can catch you"; Offense orange tells the taya
                 // "the attackers are free". One viewer is never both, being one role at a time.
                 if (framed) _frameCanDown = canDown;
-                _frameAlpha = Mathf.MoveTowards(_frameAlpha, framed ? 1 : 0, dt / (framed ? .12f : .2f));
+                float want = !framed ? 0 : canDown ? 1 : Mathf.Lerp(.25f, 1, _level);
+                _frameAlpha = Mathf.MoveTowards(_frameAlpha, want, dt / (want > _frameAlpha ? .12f : .2f));
                 _frame.enabled = _frameAlpha > .001f;
-                var edge = _frameCanDown ? UiTheme.Offense : UiTheme.Defense; edge.a = .72f * _frameAlpha; _frame.color = edge;
+                var edge = _frameCanDown ? UiTheme.Offense : Visual.TagExposure.Colour;
+                edge.a = .72f * _frameAlpha; _frame.color = edge;
             }
             _flash = Mathf.Max(0, _flash - dt);
             if (_danger != null)

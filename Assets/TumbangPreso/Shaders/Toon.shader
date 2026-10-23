@@ -100,6 +100,10 @@ Shader "TumbangPreso/Toon"
         _WorldBody ("Body floor, height and eligibility", Vector) = (0,1.6,0,0)
         _WorldMetalAxis ("Metal cap axis and eligibility", Vector) = (0,1,0,0)
         _TayaCue ("Camera-only catchable rim", Range(0, 1)) = 0
+        _TayaTint ("Taggable body tint", Range(0, 1)) = 0
+        _TayaFill ("Taggable fill height", Range(0, 1)) = 0
+        _TayaInk ("Taggable outline colour", Color) = (0, 0.4, 0.73, 1)
+        _TayaOutlineGrow ("Taggable outline growth", Range(1, 3)) = 1
         _CueHeight ("Catchable body height", Vector) = (0,1.6,0,0)
 
         // The two-band ramp. `_ShadowBand` is how bright the unlit half is and `_BandEdge` is
@@ -164,6 +168,11 @@ Shader "TumbangPreso/Toon"
 
             float _OutlineWidth;
             fixed4 _OutlineColor;
+            // The taggable fill (`CharacterVisual.Readability`): below the fill line the ink turns the cue colour and
+            // thickens, so the outline climbs with the body's fill.
+            half _TayaCue, _TayaFill, _TayaOutlineGrow;
+            float4 _CueHeight;
+            fixed4 _TayaInk;
 
             // ⚠️⚠️ § THE RENDER STYLE. DECLARED HERE AND DELIBERATELY ABSENT FROM `Properties`,
             // WHICH IS WHAT MAKES IT A GLOBAL. `Settings.RenderStyles`'s Chromatic row draws the
@@ -242,6 +251,7 @@ Shader "TumbangPreso/Toon"
                 float4 pos : SV_POSITION;
                 fixed4 colour : COLOR;
                 UNITY_FOG_COORDS(0)
+                float tagHeight : TEXCOORD1;
             };
 
             // The same palette remap the lit pass runs, at the vertex. See § THE ROW TEST below.
@@ -286,6 +296,13 @@ Shader "TumbangPreso/Toon"
                 const half3 luma = half3(0.2126h, 0.7152h, 0.0722h);
                 self = self * max(1.0h, _WorldCastInkFloor * dot(albedo, luma) / max(dot(self, luma), 1e-4h)) + 0.012;
                 o.colour = fixed4(lerp(_OutlineColor.rgb, self, look * saturate(_WorldSoftLight.z) * inkish), 1.0);
+                o.tagHeight = (mul(unity_ObjectToWorld, v.vertex).y - _CueHeight.x) / max(0.1, _CueHeight.y);
+                if (_TayaCue > 0.0)
+                {
+                    half front = lerp(-0.08h, 1.35h, saturate(_TayaFill));
+                    half cover = 1.0h - smoothstep(front - 0.04h, front + 0.04h, (half)o.tagHeight);
+                    width *= lerp(1.0, max(1.0, _TayaOutlineGrow), cover);
+                }
 
                 // ⚠️⚠️ A ZERO WIDTH IS COLLAPSED TO A DEGENERATE TRIANGLE RATHER THAN DRAWN, AND
                 // THAT IS NOT AN OPTIMISATION. `Cull Front` means this pass draws BACK faces; at
@@ -321,6 +338,11 @@ Shader "TumbangPreso/Toon"
             fixed4 frag (v2f_outline i) : SV_Target
             {
                 fixed4 c = i.colour;
+                if (_TayaCue > 0.0)
+                {
+                    half front = lerp(-0.08h, 1.35h, saturate(_TayaFill));
+                    c.rgb = lerp(c.rgb, _TayaInk.rgb, 1.0h - smoothstep(front - 0.025h, front + 0.025h, (half)i.tagHeight));
+                }
 
                 // ⚠️ FOGGED LIKE EVERYTHING ELSE. Both arenas run linear fog from 14 m, and an
                 // un-fogged outline draws a hard black edge around a building that has already
@@ -385,7 +407,7 @@ Shader "TumbangPreso/Toon"
         fixed4 _RimColor;
         half _RimStrength;
         half _RimPower;
-        half _DepthReadability, _TayaCue, _ViewmodelRimStrength;
+        half _DepthReadability, _TayaCue, _TayaTint, _TayaFill, _ViewmodelRimStrength;
         float4 _CueHeight;
         float4 _WorldBody,_WorldMetalAxis;
         // Global map data, deliberately not material properties: no asset tint
@@ -547,6 +569,19 @@ Shader "TumbangPreso/Toon"
             // A small value lift preserves the painted palette. Only registered
             // cast/lata renderers opt in; map materials and viewmodels stay unchanged.
             base = lerp(base,base*1.12h+0.025h,depth);
+            // ⚠️ THE TAGGABLE FILL CLIMBS THE BODY (owner, 2026-10-23: "they get slowly covered by a color highlight
+            // everytime theyre taggable", "it climbs up their body really quick"). `_TayaFill` is the line's height as a
+            // share of the body (0 at the feet, 1 over the tallest hat); below it the body takes the cue, and a bright
+            // band rides the line while it moves, so becoming taggable, the can coming up and Vulnerable running out
+            // all read as the colour rising or draining. `TagExposure` sets the level from replicated state.
+            half tagCover = 0.0h, tagEdge = 0.0h;
+            if (_TayaCue > 0)
+            {
+                half rel = (IN.worldPos.y - _CueHeight.x) / max(.1h, _CueHeight.y);
+                half front = lerp(-.08h, 1.35h, saturate(_TayaFill));
+                tagCover = 1.0h - smoothstep(front - .025h, front + .025h, rel);
+                tagEdge = saturate(1.0h - abs(rel - front) / .07h) * step(.002h, _TayaFill) * step(_TayaFill, .998h);
+            }
             if (_RimStrength > 0.0 || depth > 0.0)
             {
                 half grazing=1.0h-saturate(dot(normalize(IN.viewDir),normalize(IN.worldNormal)));
@@ -554,11 +589,21 @@ Shader "TumbangPreso/Toon"
                 half rim=pow(grazing,lerp(_RimPower,max(1.5h,_RimPower-0.8h),depth));
                 half upper=smoothstep(0.25h,0.70h,(IN.worldPos.y-_CueHeight.x)/max(.1h,_CueHeight.y));
                 half facing=lerp(.58h,1.0h,saturate(IN.worldNormal.y*.5h+.5h));
-                half mask=lerp(1.0h,upper*facing,_TayaCue);
+                half mask=lerp(1.0h,upper*facing*tagCover,_TayaCue);
                 half strength=max(_RimStrength,depth*.13h);
                 half3 colour=_RimStrength>0?_RimColor.rgb:half3(1,.94,.82);
                 base=lerp(base,colour,saturate(rim*strength*mask));
             }
+            // ⚠️ TAGGABLE TURNS THE WHOLE BODY THE TAYA'S COLOUR (tag readability, 2026-10-23: "maybe use pacman as
+            // reference", "color change or smthhh"). The rim alone lit only the edges of flat block faces and vanished past a
+            // few metres. The tint keeps the body's own light and shade (it scales the cue colour by the lit value), so the
+            // face and form still read through it: a blue ghost, not a flat cut-out. `CharacterVisual.Readability` drives it.
+            if(_TayaCue>0 && _TayaTint>0)
+            {
+                half value=dot(base,half3(0.299h,0.587h,0.114h));
+                base=lerp(base,_RimColor.rgb*lerp(.55h,1.25h,saturate(value*1.6h)),saturate(_TayaTint)*tagCover);
+            }
+            if(tagEdge>0)base=lerp(base,lerp(_RimColor.rgb,half3(1,1,1),.55h),tagEdge*.85h);
 
             if(_WorldLookWeight>0)
             {

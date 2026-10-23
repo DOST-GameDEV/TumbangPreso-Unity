@@ -1,3 +1,19 @@
+### TAG-READABILITY-1023: can the taya tag you right now, at a glance, for everyone (IN PROGRESS)
+
+Owner 2026-10-23: "we need to make it more obvious kasi whenever the defender can taya someone and when they cant",
+"maybe use pacman as reference", "maybe kapag pede mataya nagkakasomething sila? color change", and "think abt how it
+should look like too for spectators, and other players". Design: [report](reports/tag-readability-2026-10-23/README.md).
+No rule changes.
+
+- [x] Design: one function, a colour fill that climbs the taggable body for every viewer, its level the warning.
+- [x] `RoundDirector.CanBeTaggedNow`: the tag and every cue ask it. Fixes the taya rim, nameplate brackets and the
+  VULNERABLE row saying "catchable" while the can is down.
+- [x] Fill climbs feet to head (0.22 s), drains when safe, follows the restore channel and Vulnerable's last second;
+  outline turns the colour and thickens; arcs moved outside the seat ring. Owner: "it climbs up their body".
+- [x] Accessibility, Taggable colour: Taya blue, Magenta, Yellow, Cyan, White (local, `Settings.TagColours`).
+- [ ] Focused PlayMode tests; frames per state as taya, attacker and spectator; Builds/tagread with -tp-botmatch videos.
+- [ ] Owner look in play; LAN client sees the same cues as the host.
+
 ### ROOM-PLAYTEST-1023: the Player's Room from the owner's playtest (IN PROGRESS)
 
 Owner 2026-10-23, with two screenshots of a LAN room: "many bugs happening here", "darked out lahat", "lumalagpas text".

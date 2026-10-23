@@ -697,6 +697,22 @@ namespace TumbangPreso
         /// </summary>
         public void ResolveTag(CharacterMotor taya, CharacterMotor victim) => TryResolveTag(taya, victim);
 
+        /// <summary>
+        /// Whether a taya's touch would land on <paramref name="victim"/> this frame: their state exposes them
+        /// (`IsTaggable`) AND the can is standing. ⚠️ THE ONE ANSWER EVERY CUE READS (tag readability, 2026-10-23).
+        /// `IsTaggable` alone ignores the can, and the taya's rim, nameplate brackets and the VULNERABLE row used to
+        /// read it alone, so they said "catchable" while the can was down and no tag could land.
+        /// </summary>
+        public bool CanBeTaggedNow(CharacterMotor victim)
+            => RoundActive && victim != null && victim.IsTaggable() && Lata != null && Lata.IsUpright;
+
+        /// <summary><see cref="CanBeTaggedNow"/> for the live round, false with no round.</summary>
+        public static bool TaggableNow(CharacterMotor victim)
+        {
+            var round = GameServices.Round;
+            return round != null && round.CanBeTaggedNow(victim);
+        }
+
         /// <summary>Whether the authoritative tag actually landed, including a companion tag.</summary>
         public bool TryResolveTag(CharacterMotor taya, CharacterMotor victim)
         {
@@ -706,9 +722,7 @@ namespace TumbangPreso
             // client that can award itself 100 points.
             if (!NetAuthority.ShouldResolve()) return false;
 
-            if (!RoundActive || taya == null || victim == null) return false;
-            if (!taya.IsDefender || !victim.IsTaggable()) return false;
-            if (Lata == null || !Lata.IsUpright) return false;
+            if (taya == null || !taya.IsDefender || !CanBeTaggedNow(victim)) return false;
 
             // ⚠️⚠️ TAGGING A COMPANION PAYS NOBODY (the owner: *"The doll does not give points when tagged/sabotaged"*).
             if (CompanionSeats.IsCompanion(victim.PlayerSlot)) { ResolveCompanionTag(taya, victim); return true; }

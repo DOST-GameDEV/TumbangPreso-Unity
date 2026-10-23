@@ -57,8 +57,10 @@ namespace TumbangPreso.Visual
 
         // ⚠️ WHO CAN BE TAGGED, AND WHETHER THE TAYA CAN TAG AT ALL (owner, 2026-10-22: *"easier to tell if someone can be
         // taya and if someone can't"*). Read off the ground, for every screen and the spectators:
-        //   * an attacker the taya may tag right now (`IsTaggable`, can standing) stands in three arcs in the taya's
-        //     own colour that snap in, turn and throb in step with the taya-only rim, like a reticle on the road;
+        //   * an attacker the taya may tag right now (`TagExposure`, `RoundDirector.CanBeTaggedNow`) stands in three arcs
+        //     in the taya's own colour that snap in, turn and throb in step with the body's rim, like a reticle on the
+        //     road, in the player's chosen colour; partly full (the can being stood up, Vulnerable running out) they fade
+        //     with the body's fill;
         //   * the moment they become safe (out of the box, slipper gone, a power), the arcs spin open and are gone;
         //   * while the can is down the taya CANNOT tag (`CombatVerbs` refuses), so their own ring breaks into grey
         //     dashes and the headband dims, and both flare back to colour when the can stands.
@@ -69,6 +71,7 @@ namespace TumbangPreso.Visual
         {
             public GameObject Ring; public Material Material; public float Since = -100, Until = -100; public bool On;
             public Renderer Body;
+            public TagExposure.State Exposure; public float Level;
         }
         private readonly System.Collections.Generic.Dictionary<CharacterMotor, Danger> _danger =
             new System.Collections.Generic.Dictionary<CharacterMotor, Danger>();
@@ -76,7 +79,8 @@ namespace TumbangPreso.Visual
         private Material _brokenMaterial;
         private bool _disarmed;
         private float _disarmedSince = -100;
-        private const float DangerRadius = .62f, DangerIn = .2f, DangerOut = .22f;
+        // Outside the seat ring (about .6 m), which drew over arcs laid at the same radius and hid them (review, 2026-10-23).
+        private const float DangerRadius = .95f, DangerIn = .2f, DangerOut = .22f;
         private static readonly Color Disarmed = new Color(.62f, .62f, .68f, 1);
 
         private void LateUpdate()
@@ -170,13 +174,16 @@ namespace TumbangPreso.Visual
         {
             float t = Time.unscaledTime;
             bool live = round != null && match != null && match.MatchInProgress && round.RoundActive;
-            bool canTag = live && round.Lata != null && round.Lata.IsUpright && WorldCueProfile.Current.TayaTarget > 0;
+            bool shown = live && WorldCueProfile.Current.TayaTarget > 0;
             bool still = Settings.SettingsStore.Current.ReducedUiMotion;
             if (live)
                 foreach (var actor in round.Bodies)
                 {
                     if (actor == null || actor.IsDefender) continue;
                     if (!_danger.TryGetValue(actor, out var cue)) _danger[actor] = cue = new Danger();
+                    // The same reading as the body's rim (`TagExposure`), so the arcs and the body blink together.
+                    cue.Exposure = TagExposure.Read(actor, out cue.Level);
+                    TagExposure.Fill(actor); // keeps every body's fill in time, drawn or not
                     // Never reveal a body the world is not drawing (a power that hides it, a fall, a swim).
                     if (cue.Body == null || !cue.Body.gameObject.activeInHierarchy)
                     {
@@ -184,7 +191,7 @@ namespace TumbangPreso.Visual
                         cue.Body = model != null ? model.GetComponentInChildren<SkinnedMeshRenderer>(false) : null;
                     }
                     bool drawn = cue.Body != null && cue.Body.enabled && cue.Body.gameObject.activeInHierarchy && !actor.IsSwimming;
-                    bool on = canTag && drawn && actor.IsTaggable();
+                    bool on = shown && drawn && TagExposure.Marked(cue.Exposure);
                     if (on != cue.On) { cue.On = on; if (on) cue.Since = t; else cue.Until = t; }
                 }
             foreach (var pair in _danger)
@@ -194,7 +201,7 @@ namespace TumbangPreso.Visual
                 if (actor == null || !live || appear <= .001f) { if (cue.Ring != null) cue.Ring.SetActive(false); continue; }
                 if (cue.Ring == null)
                 {
-                    cue.Ring = VfxShapes.Lay(transform, "TagDangerRing", Arcs(3, .62f, .8f), DangerRadius, 0);
+                    cue.Ring = VfxShapes.Lay(transform, "TagDangerRing", Arcs(3, .62f, .74f), DangerRadius, 0);
                     VfxMaterial.Ghost(cue.Ring.GetComponent<Renderer>(), UI.UiTheme.Defense, 1.2f);
                     cue.Material = cue.Ring.GetComponent<Renderer>().sharedMaterial;
                     ShadowsOff(cue.Ring);
@@ -205,14 +212,17 @@ namespace TumbangPreso.Visual
                 if (cue.On) { float u = appear; size = still ? 1 : 1 + .7f * (1 - u) * (1 - u) - .08f * Mathf.Sin(u * Mathf.PI); }
                 else size = still ? 1 : 1 + .45f * (1 - appear);
                 // The throb matches the taya-only rim (`CharacterVisual.Readability`), so both read as one signal.
-                float throb = still ? 1 : .8f + .3f * Mathf.Sin(t * 6.5f);
+                // Partly full (the can coming up, Vulnerable running out): fainter, and steady, as the body's fill is.
+                bool partial = cue.On && cue.Level < .999f;
+                float throb = still || partial ? 1 : .8f + .3f * Mathf.Sin(t * 6.5f);
+                float strength = cue.On ? Mathf.Lerp(.35f, 1, cue.Level) : 1;
                 float spin = still ? 0 : t * 70f + (cue.On ? 0 : 260f * (1 - appear));
                 Vector3 feet = actor.transform.position;
                 cue.Ring.transform.position = new Vector3(feet.x, feet.y + .035f, feet.z);
                 cue.Ring.transform.rotation = Quaternion.Euler(0, spin, 0);
                 float r = DangerRadius * size;
                 cue.Ring.transform.localScale = new Vector3(r, 1, r);
-                SetGlow(cue.Material, UI.UiTheme.Defense, .85f * appear, 1.3f * throb * appear);
+                SetGlow(cue.Material, TagExposure.Colour, .85f * appear * strength, 1.3f * throb * appear * strength);
             }
         }
 

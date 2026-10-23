@@ -21,7 +21,7 @@ namespace TumbangPreso.PlayTests
             =>owner.GetType().GetMethod(method,BindingFlags.NonPublic|BindingFlags.Instance).Invoke(owner,args);
         [UnityTest] public IEnumerator TayaTargetsAreCameraScopedAndReadableAtTenMetres()
         {
-            yield return Load(SceneFlow.BayanPlaza);
+            yield return Load(SceneFlow.Eskinita);
             var round=GameServices.Round;var taya=round.PlayerAt(0);var target=round.PlayerAt(1);
             taya.Teleport(new Vector3(0,taya.transform.position.y,-6));target.Teleport(new Vector3(0,target.transform.position.y,4));
             foreach(var actor in round.Players)if(actor!=target && actor!=taya)actor.Teleport(new Vector3(6,actor.transform.position.y,6));
@@ -32,7 +32,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(plate);var surface=visual.Model.GetComponentInChildren<Renderer>();var block=new MaterialPropertyBlock();
             surface.GetPropertyBlock(block);float original=block.GetFloat("_RimStrength");
             var disc=plate.transform.Find("NameplateRing").GetComponent<MeshFilter>();var originalMesh=disc.sharedMesh;
-            var observer=new GameObject("Neutral nested view").AddComponent<Camera>();observer.enabled=false;
+            // Every gameplay camera wears the tag cue now (tag readability, 2026-10-23); a preview camera nested
+            // inside the frame still keeps the authored body and must restore the outer camera's cue after it.
+            var observer=new GameObject("Neutral nested view").AddComponent<Camera>();observer.enabled=false;observer.cameraType=CameraType.Preview;
             Private(visual,"BeginReadability",cam);Private(plate,"BeginCatchable",cam);
             surface.GetPropertyBlock(block);Assert.AreEqual(1,block.GetFloat("_TayaCue"));Assert.Greater(block.GetFloat("_RimStrength"),0);
             Assert.AreEqual("Catchable four brackets",disc.sharedMesh.name);

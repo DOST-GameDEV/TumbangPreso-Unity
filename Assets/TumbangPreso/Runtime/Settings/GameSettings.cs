@@ -443,6 +443,12 @@ namespace TumbangPreso.Settings
         public int SlipperHighlight = SlipperHighlights.Default;
 
         /// <summary>
+        /// Which colour a taggable body fills with, as an index into <see cref="TagColours.All"/>. Local only, never
+        /// replicated, stored as an int with a clamp for the reasons <see cref="SlipperHighlight"/> records.
+        /// </summary>
+        public int TaggableColour = TagColours.Default;
+
+        /// <summary>
         /// How strongly the cast is shaded by its own ambient occlusion (a fringe over a forehead,
         /// an arm against a chest), as an index into <see cref="CharacterShadingLabels"/>: Off,
         /// Soft, Full. Owner, 2026-10-05, after the F8 test: "we're also pushing through with the
@@ -695,6 +701,7 @@ namespace TumbangPreso.Settings
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             MatchFormat = Mathf.Clamp(MatchFormat, 0, (int)Core.MatchFormat.Mirror);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
+            TaggableColour = Mathf.Clamp(TaggableColour, 0, TagColours.All.Length - 1);
             CharacterShading = Mathf.Clamp(CharacterShading, 0, CharacterShadingFull);
             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
             GraphicsQuality = Mathf.Clamp(GraphicsQuality, 0, GraphicsProfiles.All.Length - 1);

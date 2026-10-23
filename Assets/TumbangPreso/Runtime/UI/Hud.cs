@@ -1512,7 +1512,7 @@ namespace TumbangPreso.UI
                 _crosshair.text = "○";
             }
 
-            _vulnerable.enabled = _local.IsTaggable();
+            _vulnerable.enabled = RoundDirector.TaggableNow(_local);
 
             if (_hitmarkerTimer > 0.0f)
             {
@@ -2354,10 +2354,10 @@ namespace TumbangPreso.UI
             }
             else
             {
-                // ⚠️ `IsTaggable()` IS THE WHOLE CONDITION and is deliberately the same function
+                // ⚠️ `RoundDirector.CanBeTaggedNow` IS THE WHOLE CONDITION and is deliberately the same function
                 // the tag asks. "Until they cross back out or get tagged" is not two extra
                 // checks: it is exactly what that function stops returning true for.
-                want = _local.IsTaggable();
+                want = RoundDirector.TaggableNow(_local);
             }
 
             if (want != _dangerHeld)
