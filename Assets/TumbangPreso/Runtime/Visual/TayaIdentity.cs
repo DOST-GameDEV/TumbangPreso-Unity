@@ -48,6 +48,11 @@ namespace TumbangPreso.Visual
         /// <summary>The taya's ground ring, or null when there is no taya.</summary>
         public static GameObject Ring => _live != null ? _live._ring : null;
         private static TayaIdentity _live;
+        /// <summary>
+        /// The floor marks draw after floor effects (an ultimate's decals, puddles, trails: 3010 to 3020), so they are never buried
+        /// or flicker through one, and before standing effects (fire, smoke: 3050); still depth tested, so a wall hides them.
+        /// </summary>
+        private const int MarkQueue = 3025;
         /// <summary>How much thicker the taya's outline is drawn than anyone else's.</summary>
         public const float HunterOutline = 3.6f;
         /// <summary>The taya's outline colour this frame (red, or grey while the can is down).</summary>
@@ -56,6 +61,7 @@ namespace TumbangPreso.Visual
         public static float HunterGrow { get; private set; } = HunterOutline;
         private void Awake() => _live = this;
         private GameObject _band, _ring, _facing;
+        private Renderer _tayaBody;
         private Material _bandMaterial, _ringMaterial;
         private Renderer _bandRenderer;
         private long _revealedMatch = -1;
@@ -80,6 +86,7 @@ namespace TumbangPreso.Visual
             public GameObject Ring; public Material Material; public float Since = -100, Until = -100; public bool On;
             public Renderer Body;
             public TagExposure.State Exposure; public float Level;
+            public Vector3 FloorAt; public Quaternion Tilt = Quaternion.identity; public float Fade;
         }
         private readonly System.Collections.Generic.Dictionary<CharacterMotor, Danger> _danger =
             new System.Collections.Generic.Dictionary<CharacterMotor, Danger>();
@@ -134,11 +141,13 @@ namespace TumbangPreso.Visual
             HunterInk = defense; HunterGrow = Mathf.Lerp(1.6f, HunterOutline, armed);
             glow *= Mathf.Lerp(.35f, 1, armed);
 
+            // The taya's own first-person view: the band would sit in front of the lens and the star would fill the bottom of
+            // the screen, so neither is drawn for them.
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
+            bool ownView = rig != null && rig.IsLocalFpp && rig.IsFollowing(_taya);
             if (_band != null)
             {
-                // The taya's own first-person view would put the band in front of the lens.
-                var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
-                _bandRenderer.enabled = !(rig != null && rig.IsLocalFpp && rig.IsFollowing(_taya));
+                _bandRenderer.enabled = !ownView;
                 SetGlow(_bandMaterial, defense, 1f, .55f * glow);
                 PlaceTails(t, still);
                 if (_tails != null) foreach (var tail in _tails) if (tail != null) tail.GetComponent<Renderer>().enabled = _bandRenderer.enabled;
@@ -148,28 +157,39 @@ namespace TumbangPreso.Visual
                 float flare = Mathf.Clamp01((t - _flareAt) / FlareSeconds);
                 float burst = still ? 0 : (1 - flare) * (1 - flare);
                 float r = RingRadius * (1 + 1.6f * burst + (still ? 0 : .04f * Mathf.Sin(t * 2.4f)));
-                Vector3 feet = _taya.transform.position;
-                _ring.transform.position = new Vector3(feet.x, feet.y + .03f, feet.z);
-                _ring.transform.rotation = Quaternion.Euler(0, still ? 0 : t * 24f, 0);
+                // On the floor under the taya, tilted to it; gone in a cutscene, high in the air, over a void, in water,
+                // while a power hides their body, and in their own first-person view. Their outline stays on the body.
+                float presence = TagExposure.Presence;
+                bool grounded = TagExposure.OnFloor(_taya, RingRadius * 1.5f, out Vector3 floorAt, out Quaternion tilt, out float fade);
+                if (_tayaBody == null || !_tayaBody.gameObject.activeInHierarchy)
+                {
+                    var tayaModel = _taya.GetComponent<CharacterVisual>()?.Model;
+                    _tayaBody = tayaModel != null ? tayaModel.GetComponentInChildren<SkinnedMeshRenderer>(false) : null;
+                }
+                bool drawn = _tayaBody != null && _tayaBody.enabled && _tayaBody.gameObject.activeInHierarchy;
+                bool shown = _taya.gameObject.activeInHierarchy && !_taya.IsSwimming && drawn && !ownView && grounded && presence > .01f;
+                float show = fade * presence;
+                Vector3 feet = floorAt + tilt * Vector3.up * .03f;
+                _ring.transform.position = feet;
+                _ring.transform.rotation = tilt * Quaternion.Euler(0, still ? 0 : t * 24f, 0);
                 _ring.transform.localScale = new Vector3(r, 1, r);
-                bool shown = _taya.gameObject.activeInHierarchy && !_taya.IsSwimming;
                 _ring.SetActive(shown && armed > .02f);
                 if (_facing != null)
                 {
                     Vector3 ahead = _taya.transform.forward; ahead.y = 0;
                     if (ahead.sqrMagnitude < 1e-4f) ahead = Vector3.forward;
-                    _facing.transform.SetPositionAndRotation(_ring.transform.position, Quaternion.LookRotation(ahead.normalized));
+                    _facing.transform.SetPositionAndRotation(_ring.transform.position, tilt * Quaternion.LookRotation(ahead.normalized));
                     _facing.transform.localScale = new Vector3(r, 1, r);
                     _facing.SetActive(_ring.activeSelf);
                 }
                 // As bold as the taggable crosshair (owner: "boring nung circle ng taya"): near opaque, and glowing.
-                SetGlow(_ringMaterial, defense, Mathf.Min(1, .88f + .12f * burst) * armed, 1.3f * glow + 1.5f * burst);
-                StepBroken(feet, shown, disarmed, t, still);
+                SetGlow(_ringMaterial, defense, Mathf.Min(1, .88f + .12f * burst) * armed * show, (1.3f * glow + 1.5f * burst) * show);
+                StepBroken(feet, tilt, shown, show, disarmed, t, still);
             }
         }
 
         /// <summary>The disarmed taya's ring: grey dashes that crack apart from the whole ring and turn slowly.</summary>
-        private void StepBroken(Vector3 feet, bool shown, bool disarmed, float t, bool still)
+        private void StepBroken(Vector3 feet, Quaternion tilt, bool shown, float show, bool disarmed, float t, bool still)
         {
             float u = disarmed ? Mathf.Clamp01((t - _disarmedSince) / .25f) : 1 - Mathf.Clamp01((t - _disarmedSince) / .18f);
             if (u <= .001f) { if (_broken != null) _broken.SetActive(false); return; }
@@ -178,15 +198,16 @@ namespace TumbangPreso.Visual
                 _broken = VfxShapes.Lay(transform, "TayaDisarmedRing", Arcs(10, .48f, .9f), RingRadius, 0);
                 VfxMaterial.Ghost(_broken.GetComponent<Renderer>(), Disarmed, .4f);
                 _brokenMaterial = _broken.GetComponent<Renderer>().sharedMaterial;
+                _brokenMaterial.renderQueue = MarkQueue;
                 ShadowsOff(_broken);
             }
             _broken.SetActive(shown);
             // The dashes crack outward a little as the colour drains, then sit, turning slowly.
             float r = RingRadius * (1 + .12f * (1 - (1 - u) * (1 - u)));
-            _broken.transform.position = new Vector3(feet.x, feet.y + .03f, feet.z);
-            _broken.transform.rotation = Quaternion.Euler(0, still ? 0 : -t * 9f, 0);
+            _broken.transform.position = feet;
+            _broken.transform.rotation = tilt * Quaternion.Euler(0, still ? 0 : -t * 9f, 0);
             _broken.transform.localScale = new Vector3(r, 1, r);
-            SetGlow(_brokenMaterial, Disarmed, .7f * u, .35f * u);
+            SetGlow(_brokenMaterial, Disarmed, .7f * u * show, .35f * u * show);
         }
 
         private void StepDanger(RoundDirector round, MatchDirector match)
@@ -217,12 +238,16 @@ namespace TumbangPreso.Visual
             {
                 var actor = pair.Key; var cue = pair.Value;
                 float appear = cue.On ? Mathf.Clamp01((t - cue.Since) / DangerIn) : 1 - Mathf.Clamp01((t - cue.Until) / DangerOut);
-                if (actor == null || !live || appear <= .001f) { if (cue.Ring != null) cue.Ring.SetActive(false); continue; }
+                // On the floor under them like the star; gone in a cutscene, high up or over a void. Their fill stays.
+                float presence = TagExposure.Presence;
+                bool grounded = actor != null && TagExposure.OnFloor(actor, DangerRadius, out cue.FloorAt, out cue.Tilt, out cue.Fade);
+                if (actor == null || !live || appear <= .001f || !grounded || presence <= .01f) { if (cue.Ring != null) cue.Ring.SetActive(false); continue; }
                 if (cue.Ring == null)
                 {
                     cue.Ring = VfxShapes.Lay(transform, "TagDangerRing", Arcs(3, .62f, .74f, tick: .14f), DangerRadius, 0);
                     VfxMaterial.Ghost(cue.Ring.GetComponent<Renderer>(), UI.UiTheme.Defense, 1.2f);
                     cue.Material = cue.Ring.GetComponent<Renderer>().sharedMaterial;
+                    cue.Material.renderQueue = MarkQueue;
                     ShadowsOff(cue.Ring);
                 }
                 cue.Ring.SetActive(true);
@@ -236,12 +261,12 @@ namespace TumbangPreso.Visual
                 float throb = still || partial ? 1 : .8f + .3f * Mathf.Sin(t * 6.5f);
                 float strength = cue.On ? Mathf.Lerp(.35f, 1, cue.Level) : 1;
                 float spin = still ? 0 : t * 70f + (cue.On ? 0 : 260f * (1 - appear));
-                Vector3 feet = actor.transform.position;
-                cue.Ring.transform.position = new Vector3(feet.x, feet.y + .035f, feet.z);
-                cue.Ring.transform.rotation = Quaternion.Euler(0, spin, 0);
+                cue.Ring.transform.position = cue.FloorAt + cue.Tilt * Vector3.up * .035f;
+                cue.Ring.transform.rotation = cue.Tilt * Quaternion.Euler(0, spin, 0);
                 float r = DangerRadius * size;
                 cue.Ring.transform.localScale = new Vector3(r, 1, r);
-                SetGlow(cue.Material, TagExposure.Colour, .85f * appear * strength, 1.3f * throb * appear * strength);
+                float show = cue.Fade * presence;
+                SetGlow(cue.Material, TagExposure.Colour, .85f * appear * strength * show, 1.3f * throb * appear * strength * show);
             }
         }
 
@@ -355,6 +380,7 @@ namespace TumbangPreso.Visual
             _ring = VfxShapes.Lay(transform, "TayaGroundRing", Teeth(8, .8f, .5f), RingRadius, 0);
             VfxMaterial.Ghost(_ring.GetComponent<Renderer>(), UI.UiTheme.Taya, 1f);
             _ringMaterial = _ring.GetComponent<Renderer>().sharedMaterial;
+            _ringMaterial.renderQueue = MarkQueue;
             ShadowsOff(_ring);
             // And a chevron on the ring where the taya faces: the reach is in front of them, so the danger has a direction.
             _facing = VfxShapes.Lay(transform, "TayaFacing", Chevron(), RingRadius, 0);

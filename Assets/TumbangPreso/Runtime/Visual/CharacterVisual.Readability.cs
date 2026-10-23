@@ -58,9 +58,12 @@ namespace TumbangPreso.Visual
             float fill=FillFor(camera,_readActor);
             // The taya wears a thick outline in the taya's red on every gameplay camera (owner, 2026-10-23: "make it more
             // obvious who the taya is", "a red outer outline"), grey while the can is down (`TayaIdentity`).
-            bool hunter=_readActor.IsDefender && camera!=null && camera.cameraType==CameraType.Game &&
+            // Body cues stay on in the air, over a void and in water (the floor marks are what go); only a cutscene or a
+            // replay on this screen fades them (`TagExposure.Presence`, owner: "disappear during ult cutscenes").
+            float presence=TagExposure.Presence;
+            bool hunter=_readActor.IsDefender && camera!=null && camera.cameraType==CameraType.Game && presence>.01f &&
                 GameServices.Match!=null && GameServices.Match.MatchInProgress && WorldCueProfile.Current.TayaTarget>0;
-            bool catchable=fill>.001f && WorldCueProfile.Current.TayaTarget>0;
+            bool catchable=fill>.001f && presence>.01f && WorldCueProfile.Current.TayaTarget>0;
             foreach(var surface in _renderers)
             {
                 if(surface==null || Model==null || !surface.transform.IsChildOf(Model.transform))continue;
@@ -80,8 +83,8 @@ namespace TumbangPreso.Visual
                 _readBlock.SetVector("_WorldBody",new Vector4(_readActor.transform.position.y,bodyCapsule!=null?bodyCapsule.height:1.6f,1,0));
                 _readBlock.SetFloat("_DepthReadability",WorldCueProfile.Current.DistanceReadability);
                 _readBlock.SetFloat("_TayaCue",catchable?1:0);
-                _readBlock.SetFloat("_HunterGrow",hunter?TayaIdentity.HunterGrow:0);
-                if(hunter)_readBlock.SetColor("_HunterInk",TayaIdentity.HunterInk);
+                _readBlock.SetFloat("_HunterGrow",hunter?Mathf.Lerp(1,TayaIdentity.HunterGrow,presence):0);
+                if(hunter)_readBlock.SetColor("_HunterInk",Color.Lerp(new Color(.02f,.02f,.03f,1),TayaIdentity.HunterInk,presence));
                 if(catchable)
                 {
                     var colour=TagExposure.Colour;
@@ -90,7 +93,7 @@ namespace TumbangPreso.Visual
                     // wearing a flat fill, so the open target reads in motion and at a glance. While the fill is still
                     // climbing or draining, the moving line is the motion.
                     float throb=Settings.SettingsStore.Current.ReducedUiMotion || fill<.999f?1:.82f+.24f*Mathf.Sin(Time.unscaledTime*6.5f);
-                    float weight=WorldCueProfile.Current.TayaTarget;
+                    float weight=WorldCueProfile.Current.TayaTarget*presence;
                     _readBlock.SetFloat("_RimStrength",.72f*throb*weight);
                     // The fill climbs the body (Pac-Man's blue ghost, rising from the feet: `Toon.shader`), and the ink
                     // outline under the line turns the colour and thickens, so the silhouette reads from across the court.

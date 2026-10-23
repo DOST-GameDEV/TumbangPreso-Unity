@@ -71,6 +71,8 @@ namespace TumbangPreso
         }
         public static SharedUltimatePhase Instance { get; private set; }
         public static bool BlocksActions => Instance != null && Instance.Active && Instance._sealed;
+        /// <summary>True while the ultimate cinematic's camera is drawing, which can outlast the seal by its hand-back.</summary>
+        public static bool CinematicShowing => Instance != null && Instance._view != null;
         public static bool Collecting => Instance != null && Instance.Active && !Instance._sealed;
         public bool Active { get; private set; }
         public bool Sealed => _sealed;

@@ -82,6 +82,98 @@ namespace TumbangPreso.Visual
             _gone.Clear();
             foreach (var pair in _drawn) if (pair.Key == null) _gone.Add(pair.Key);
             foreach (var key in _gone) _drawn.Remove(key);
+            _gone.Clear();
+            foreach (var pair in _floors) if (pair.Key == null) _gone.Add(pair.Key);
+            foreach (var key in _gone) _floors.Remove(key);
+        }
+
+        // ── WHEN THE CUES STEP ASIDE, AND WHERE THE FLOOR MARKS SIT (owner, 2026-10-23: "all of the markers and circles
+        // disappear during ult cutscenes", "think abt how ur markers look when ground is uneven, ppl are doing ults",
+        // "amihan flying", "falling down", "in some cases the circle should disappear BUT they should still be highlighted").
+        //
+        // The body is the main signal; the floor mark supports it. So:
+        //   * every cutscene (a sealed ultimate, the opening film, arrival, halftime, the role-swap card) and every replay
+        //     on this screen fades ALL of it out, body and floor, in 0.15 s, and back after;
+        //   * otherwise the body keeps its fill or outline in the air, over a void, in water; only the floor mark goes:
+        //     it sits on the floor under the body (a jump or a flight leaves it on the ground like a shadow), tilted to
+        //     the slope, fading out between 1.5 and 5 m up, and gone when there is no floor under them at all.
+
+        /// <summary>True while a cutscene or a replay owns this screen.</summary>
+        public static bool Quiet => QuietOverride ??
+            (SpectatorCutscene.Hides || SharedUltimatePhase.CinematicShowing || CameraSystem.CatchReconstruction.AnyPlaying ||
+             CameraSystem.LocalReplayPlayback.Active);
+
+        /// <summary>For tests and review tools: force <see cref="Quiet"/> on or off; null is the game's own answer.</summary>
+        public static bool? QuietOverride;
+
+        private static float _presence = 1;
+        private static int _presenceFrame = -1;
+        /// <summary>1 in play, fading to 0 over 0.15 s while <see cref="Quiet"/>. Multiplies every tag cue.</summary>
+        public static float Presence
+        {
+            get
+            {
+                if (_presenceFrame == Time.frameCount) return _presence;
+                _presenceFrame = Time.frameCount;
+                float target = Quiet ? 0 : 1;
+                _presence = Settings.SettingsStore.Current.ReducedUiMotion ? target
+                    : Mathf.MoveTowards(_presence, target, Mathf.Min(Time.unscaledDeltaTime, .1f) / .15f);
+                return _presence;
+            }
+        }
+
+        /// <summary>Height above the floor where a floor mark starts to fade, and where it is gone.</summary>
+        public const float FadeFrom = 1.5f, FadeTo = 5f;
+        private const float MaxTilt = 28f;
+
+        private sealed class Floor { public int Frame = -1, TiltFrame = -999; public bool Found; public Vector3 At; public Quaternion Tilt = Quaternion.identity; public float Fade, Lift; }
+        private static readonly Dictionary<CharacterMotor, Floor> _floors = new Dictionary<CharacterMotor, Floor>();
+
+        /// <summary>
+        /// Where a floor mark of <paramref name="radius"/> belongs under <paramref name="actor"/>: on the floor (not the
+        /// feet), tilted to the slope, with how much of it to draw (fading with height). False with no floor in reach.
+        /// The tilt samples four points round the edge every few frames; on steps it settles on the higher side, so the mark
+        /// sits over a lower step rather than sinking into a higher one.
+        /// </summary>
+        public static bool OnFloor(CharacterMotor actor, float radius, out Vector3 at, out Quaternion tilt, out float fade)
+        {
+            at = default; tilt = Quaternion.identity; fade = 0;
+            if (actor == null) return false;
+            if (!_floors.TryGetValue(actor, out var floor)) _floors[actor] = floor = new Floor();
+            int frame = Time.frameCount;
+            if (floor.Frame != frame)
+            {
+                floor.Frame = frame;
+                Vector3 feet = actor.transform.position;
+                floor.Found = VfxShapes.TryGroundUnder(feet, .6f, FadeTo + 1, out float y);
+                if (floor.Found)
+                {
+                    float height = feet.y - y;
+                    floor.Fade = 1 - Mathf.Clamp01((height - FadeFrom) / (FadeTo - FadeFrom));
+                    if (frame - floor.TiltFrame >= 4)
+                    {
+                        floor.TiltFrame = frame;
+                        float r = radius * .85f, top = y;
+                        float Probe(Vector3 offset)
+                        {
+                            var p = new Vector3(feet.x, y, feet.z) + offset;
+                            if (!VfxShapes.TryGroundUnder(p, .45f, .45f, out float h)) return y;
+                            top = Mathf.Max(top, h); return h;
+                        }
+                        float east = Probe(Vector3.right * r), west = Probe(Vector3.left * r);
+                        float north = Probe(Vector3.forward * r), south = Probe(Vector3.back * r);
+                        var normal = new Vector3(-(east - west) / (2 * r), 1, -(north - south) / (2 * r)).normalized;
+                        if (Vector3.Angle(Vector3.up, normal) > MaxTilt) normal = Vector3.Slerp(Vector3.up, normal, MaxTilt / Vector3.Angle(Vector3.up, normal));
+                        floor.Tilt = Quaternion.FromToRotation(Vector3.up, normal);
+                        // Lift by part of whatever stands above the centre (a step), so no edge sinks into it.
+                        floor.Lift = Mathf.Max(0, top - y) * .5f;
+                    }
+                    floor.At = new Vector3(feet.x, y + floor.Lift, feet.z);
+                }
+            }
+            if (!floor.Found || floor.Fade <= .001f) return false;
+            at = floor.At; tilt = floor.Tilt; fade = floor.Fade;
+            return true;
         }
 
         /// <summary>The cue colour the player chose (Accessibility, Taggable colour); the taya's blue by default.</summary>

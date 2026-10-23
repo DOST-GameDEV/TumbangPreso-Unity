@@ -27,7 +27,7 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() { _reduced = SettingsStore.Current.ReducedUiMotion; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After()
         {
-            SettingsStore.Current.ReducedUiMotion = _reduced; Time.captureFramerate = 0;
+            SettingsStore.Current.ReducedUiMotion = _reduced; Time.captureFramerate = 0; TagExposure.QuietOverride = null;
             yield return PlayModeWorld.Reset();
         }
 
@@ -250,6 +250,91 @@ namespace TumbangPreso.PlayTests
                 Assert.Greater(high - low, .25f, "The frame rises with the restore channel.");
             }
             finally { SettingsStore.Current.TaggableColour = colour; }
+        }
+
+        /// <summary>
+        /// The body is the main signal and the floor mark supports it: high in the air or over a void the floor mark goes but
+        /// the body keeps its fill (a taggable runner) or outline (the taya); on a slope the mark tilts to the floor and sits
+        /// on it; in a jump it stays on the floor below like a shadow.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator FloorMarksFollowTheFloorAndBodiesKeepTheirCue()
+        {
+            yield return Open();
+            var watcher = new GameObject("SpectatorView").AddComponent<Camera>(); watcher.enabled = false;
+            GameObject ramp = null;
+            try
+            {
+                yield return Settle();
+                Assert.IsTrue(TayaIdentity.DangerShown(_runner)); Assert.IsTrue(TayaIdentity.Ring.activeSelf);
+                Vector3 floor = _runner.transform.position;
+
+                // A short hop: the mark stays on the floor, not on the feet.
+                _runner.Teleport(floor + Vector3.up * 1f); yield return null;
+                Assert.IsTrue(TagExposure.OnFloor(_runner, .95f, out Vector3 at, out _, out float fade), "A floor 1 m below is in reach.");
+                Assert.AreEqual(floor.y, at.y, .12f, "The mark stays on the floor under a jump.");
+                Assert.AreEqual(1, fade, .01f, "Low hops do not fade it.");
+
+                // High in the air: the floor mark goes, the body keeps the fill and the taya keeps the outline.
+                _runner.Teleport(floor + Vector3.up * 7f); _taya.Teleport(_taya.transform.position + Vector3.up * 7f);
+                yield return null; yield return null;
+                Assert.IsFalse(TayaIdentity.DangerShown(_runner), "No floor mark seven metres up.");
+                Assert.IsFalse(TayaIdentity.Ring.activeSelf, "Nor the taya's star.");
+                Assert.AreEqual(1, Rim(_runner, watcher), "The body still says taggable in the air.");
+                Assert.Greater(Block(_taya, watcher, "_HunterGrow"), 2, "The taya keeps the outline in the air.");
+
+                // A slope: the mark tilts to it and sits on it.
+                ramp = GameObject.CreatePrimitive(PrimitiveType.Cube); ramp.name = "Floor";
+                ramp.transform.localScale = new Vector3(4, .2f, 4);
+                ramp.transform.SetPositionAndRotation(floor + Vector3.up * .6f, Quaternion.Euler(18, 0, 0));
+                Physics.SyncTransforms();
+                _runner.Teleport(floor + Vector3.up * 1.4f);
+                yield return new WaitForSecondsRealtime(.8f);
+                Assert.IsTrue(TagExposure.OnFloor(_runner, .95f, out at, out Quaternion tilt, out _), "The ramp is a floor.");
+                float angle = Vector3.Angle(Vector3.up, tilt * Vector3.up);
+                Assert.That(angle, Is.InRange(10f, 28f), "The mark tilts with the 18 degree ramp.");
+                // Against the ramp itself: a plain ray from above hits the runner's own capsule first.
+                Assert.IsTrue(ramp.GetComponent<Collider>().Raycast(new Ray(new Vector3(at.x, at.y + 2, at.z), Vector3.down), out var hit, 4));
+                Assert.AreEqual(hit.point.y, at.y, .15f, "And sits on it.");
+                yield return Settle();
+                Vector3 front = floor + Vector3.up * 2.6f + Vector3.back * 3.4f + Vector3.right * 2.4f;
+                watcher.transform.SetPositionAndRotation(front, Quaternion.LookRotation(_runner.transform.position - front));
+                watcher.fieldOfView = 50;
+                yield return GameplayShots.Render(watcher, "9-slope", false, outDir: Out, width: 960, height: 540);
+            }
+            finally { if (ramp != null) Object.Destroy(ramp); Object.Destroy(watcher.gameObject); }
+        }
+
+        /// <summary>
+        /// Every marker and circle steps aside in a cutscene or a replay (owner: "all of the markers and circles disappear
+        /// during ult cutscenes"): the floor marks, the seat rings, the body fill and the taya's outline fade out, and all
+        /// come back after.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator EverythingStepsAsideInACutscene()
+        {
+            yield return Open();
+            var watcher = new GameObject("SpectatorView").AddComponent<Camera>(); watcher.enabled = false;
+            try
+            {
+                yield return Settle();
+                Assert.IsTrue(TayaIdentity.DangerShown(_runner)); Assert.IsTrue(TayaIdentity.Ring.activeSelf);
+                TagExposure.QuietOverride = true;
+                yield return new WaitForSecondsRealtime(.3f);
+                Assert.AreEqual(0, TagExposure.Presence, .01f);
+                Assert.IsFalse(TayaIdentity.DangerShown(_runner), "The target goes.");
+                Assert.IsFalse(TayaIdentity.Ring.activeSelf, "The taya's star goes.");
+                Assert.AreEqual(0, Rim(_runner, watcher), "The fill goes.");
+                Assert.AreEqual(0, Block(_taya, watcher, "_HunterGrow"), "The outline goes.");
+                var seatRing = _runner.GetComponentInChildren<CharacterNameplate>().transform.Find("NameplateRing");
+                Assert.IsFalse(seatRing != null && seatRing.gameObject.activeInHierarchy, "The seat ring goes.");
+                TagExposure.QuietOverride = false;
+                yield return new WaitForSecondsRealtime(.3f);
+                Assert.IsTrue(TayaIdentity.DangerShown(_runner), "And everything comes back.");
+                Assert.IsTrue(TayaIdentity.Ring.activeSelf);
+                Assert.AreEqual(1, Rim(_runner, watcher));
+            }
+            finally { TagExposure.QuietOverride = null; Object.Destroy(watcher.gameObject); }
         }
 
         private IEnumerator KnockAndChannel()

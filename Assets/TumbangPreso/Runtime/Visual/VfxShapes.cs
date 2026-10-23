@@ -2488,6 +2488,16 @@ namespace TumbangPreso.Visual
             return IsCourtSurface(collider) ? GroundSurfaceKind.Court : GroundSurfaceKind.Fallback;
         }
 
+        /// <summary>
+        /// The floor under <paramref name="at"/> by the same rules as <see cref="GroundAt"/> (court surfaces first,
+        /// characters, props and walls ignored), or false when there is none within reach: off a roof, over a void.
+        /// </summary>
+        public static bool TryGroundUnder(Vector3 at, float searchAbove, float searchBelow, out float height)
+        {
+            height = GroundUnder(at, searchAbove, searchBelow);
+            return !float.IsNegativeInfinity(height);
+        }
+
         private static float GroundUnder(Vector3 at, float searchAbove, float searchBelow,
             System.Collections.Generic.Dictionary<Collider, GroundSurfaceKind> surfaces = null)
         {

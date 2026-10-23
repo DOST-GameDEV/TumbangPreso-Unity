@@ -29,7 +29,7 @@ namespace TumbangPreso.Visual
             state.Material=_ringRenderer.sharedMaterial;_ringRenderer.GetPropertyBlock(state.Block);
             if(_ringScopes.Count>0)ApplyRing(_ringScopes[0]);
             _ringScopes.Add(state);
-            if(!CharacterVisual.CatchableFor(camera,_character) || WorldCueProfile.Current.TayaTarget<=0)return;
+            if(!CharacterVisual.CatchableFor(camera,_character) || WorldCueProfile.Current.TayaTarget<=0 || TagExposure.Quiet)return;
             if(_catchable==null)_catchable=BuildCatchable();
             if(_catchMaterial==null)_catchMaterial=new Material(Shader.Find("TumbangPreso/PlayerGroundMarker")){name="Catchable ink brackets"};
             _ringFilter.sharedMesh=_catchable;_ringRenderer.sharedMaterial=_catchMaterial;

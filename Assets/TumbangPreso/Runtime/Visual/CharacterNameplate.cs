@@ -314,7 +314,9 @@ namespace TumbangPreso.Visual
             bool blind = UI.TumpHudEffects.EyesCoveredOnScreen;
             // Nor under bodies standing on an Arena stage the opening has not built yet, nor through a map's film: its
             // models walk in from elsewhere (the ring stays on the mark) and the taya's colour would tell the count.
-            if (_ring != null) _ring.gameObject.SetActive(!mine && !blind && !Map.ArenaIntro.StageUnbuilt && !Map.MapFilm.HidesUi);
+            // Every circle steps aside in a cutscene or a replay (owner, 2026-10-23: "all of the markers and circles disappear
+            // during ult cutscenes").
+            if (_ring != null) _ring.gameObject.SetActive(!mine && !blind && !Map.ArenaIntro.StageUnbuilt && !Map.MapFilm.HidesUi && !TagExposure.Quiet);
             bool introducing = MatchArrivalPresentation.Active || Map.MapFilm.HidesUi;
             _label.gameObject.SetActive(!mine && !introducing && !blind);
 

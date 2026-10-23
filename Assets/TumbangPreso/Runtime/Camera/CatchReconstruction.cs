@@ -70,6 +70,9 @@ namespace TumbangPreso.CameraSystem
         private const float Followthrough = .18f;
         private const float ShotFov = 58;
         public bool Playing => _stage != null;
+        private static CatchReconstruction _live;
+        /// <summary>True while a tag replay owns this screen; the live court's tag markers step aside for it.</summary>
+        public static bool AnyPlaying => _live != null && _live.Playing;
         private bool _slammed, _shotPlaced, _closeShot, _cutDone;
         // ⚠️ SPECTATORS SEE IT TOO (owner, October 22: *"make it seaable ren for spectator"*), as a corner
         // window over the live picture: a watcher has no stun to fill and must not lose the match behind it.
@@ -107,7 +110,7 @@ namespace TumbangPreso.CameraSystem
             var view = owner.GetComponent<CatchReconstruction>() ?? owner.AddComponent<CatchReconstruction>();
             view._history = history;
         }
-        private void OnEnable() => MatchFlair.Presented += OnMoment;
+        private void OnEnable() { MatchFlair.Presented += OnMoment; _live = this; }
         private void OnDisable() { MatchFlair.Presented -= OnMoment; End(); }
         private void OnDestroy() => End();
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)

@@ -59,7 +59,7 @@ namespace TumbangPreso.UI
             // The same reading as the body's fill (`Visual.TagExposure`): taggable now, or about to be as the can is
             // stood up. The frame is as strong as the fill is high, so it rises as the can comes up and fades as
             // Vulnerable runs out, with the body.
-            var exposure = spectator || local == null ? Visual.TagExposure.State.Safe : Visual.TagExposure.Read(local, out _level);
+            var exposure = spectator || local == null || Visual.TagExposure.Quiet ? Visual.TagExposure.State.Safe : Visual.TagExposure.Read(local, out _level);
             bool threatened = exposure != Visual.TagExposure.State.Safe;
             // The taya's half of the same rule. A knockdown usually lands behind a taya who is
             // chasing, and the only cues were a small edge icon and a line of text, so the taya

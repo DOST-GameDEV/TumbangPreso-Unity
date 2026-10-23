@@ -143,6 +143,25 @@ nameplate brackets and the attacker's frame. Like the slipper highlight it is lo
 picks their own. Red and orange are left out, because orange already means "the can is down, the attackers are free".
 There is no Off; `WorldCueProfile.TayaTarget` stays the authoring switch.
 
+### How the marks behave across the game
+
+Owner: "all of the markers and circles disappear during ult cutscenes", "think abt how ur markers look when ground is
+uneven, ppl are doing ults", "amihan flying", "falling down", "in some cases the circle should disappear BUT they
+should still be highlighted". The body is the main signal and the floor mark supports it (`TagExposure.OnFloor`,
+`TagExposure.Presence`):
+
+| Situation | Floor marks (star, chevron, grey ring, target) | Body (fill, taya outline) |
+|---|---|---|
+| Play on flat or uneven ground | On the floor under them, tilted to the slope (up to 28 degrees), lifted over a step | On |
+| A jump | Stays on the floor below, like a shadow | On |
+| Amihan flying, Updraft, anyone high | On the floor below, fading out from 1.5 to 5 m up | On (Updraft is safe, so a fill drains) |
+| Falling off a roof, over a void | Gone: no floor in reach | On |
+| Swimming | Gone | On |
+| A power hiding the body | Gone, so it gives nothing away | Hidden with the body |
+| The taya's own first-person view | Their star is not drawn for them (it filled the bottom of the screen); the band already was not | Not seen |
+| Ultimate cinematic, opening film, arrival, halftime, role-swap card, tag replay, instant replay | Gone in 0.15 s, seat rings too | Gone, back after |
+| Ultimate floor effects in play | Drawn after floor decals (queue 3025), before fire and smoke, still depth tested | On |
+
 ### Accessibility and comfort
 
 - `WorldCueProfile.TayaTarget` still scales the fill, the arcs and the brackets; at 0 they are off.
