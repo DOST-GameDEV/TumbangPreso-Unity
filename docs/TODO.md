@@ -15,8 +15,14 @@ No rule changes.
   red ring, headband, reveal and TAYA tab, grey while the can is down (`UiTheme.Taya`). P1 seat colour Grape Purple
   (owner: "No red seat colour"). Taggable stays blue. The taya's ring is a turning red star (teeth out) with a facing
   chevron; the taggable target keeps its ticks in (owner: "boring nung circle ng taya").
-- [ ] Focused PlayMode tests; frames per state as taya, attacker and spectator; Builds/tagread with -tp-botmatch videos.
-- [ ] Owner look in play; LAN client sees the same cues as the host.
+- [x] Marks across the game: floor marks sit on the floor (slopes tilt, jumps leave them below, fade 1.5 to 5 m up, gone
+  over a void, in water, for a hidden body, in the taya's own view); bodies keep fill and outline; every cutscene and
+  replay fades all of it, seat rings too (owner: "disappear during ult cutscenes", "amihan flying", "falling down").
+- [x] Nine focused PlayMode tests pass (TagReadabilityTests x6, WorldCourtCueTests target clock, TayaIdentityTests x2);
+  frames and clips in Logs/tag-readability; Builds/tagread checked with -tp-botmatch (Logs/tagread-botmatch).
+- [x] Three real local peers (tools/net_catch_presentation.py): every peer fills the victim before the tag and empties it
+  after, onsets within 0.06 s. Not covered: the can-down restore fill on a client, link impairment.
+- [ ] Owner look in play (Builds/tagread/TumbangPreso.exe).
 
 ### ROOM-PLAYTEST-1023: the Player's Room from the owner's playtest (IN PROGRESS)
 
