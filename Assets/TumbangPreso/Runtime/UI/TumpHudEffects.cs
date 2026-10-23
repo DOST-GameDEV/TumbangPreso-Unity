@@ -75,7 +75,7 @@ namespace TumbangPreso.UI
                 // VISUAL-1.1: a state, held for as long as the state lasts, faded in over 0.12 s
                 // and out over 0.2 s. No pulse, so Reduce UI motion has nothing to remove, and
                 // Reduce visual effects keeps it: it is information, not a flash.
-                // Defense blue means "the taya can catch you"; Offense orange tells the taya
+                // The taggable colour (the taya's red by default) means "the taya can catch you"; Offense orange tells the taya
                 // "the attackers are free". One viewer is never both, being one role at a time.
                 if (framed) _frameCanDown = canDown;
                 float want = !framed ? 0 : canDown ? 1 : Mathf.Lerp(.25f, 1, _level);

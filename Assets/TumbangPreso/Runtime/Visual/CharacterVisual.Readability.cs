@@ -19,7 +19,7 @@ namespace TumbangPreso.Visual
         private readonly List<ReadScope> _readScopes=new List<ReadScope>();
         private readonly Stack<ReadScope> _readPool=new Stack<ReadScope>();
         private CharacterMotor _readActor;
-        /// <summary>How far a taggable body's colour goes to the taya's blue, before the throb.</summary>
+        /// <summary>How far a taggable body's colour goes to the taggable colour (the taya's red by default), before the throb.</summary>
         public const float TintStrength=.68f;
         /// <summary>How much thicker a taggable body's outline is drawn.</summary>
         public const float OutlineGrowth=2.2f;

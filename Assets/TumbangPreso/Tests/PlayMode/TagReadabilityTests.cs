@@ -234,7 +234,7 @@ namespace TumbangPreso.PlayTests
                 var effects = Object.FindFirstObjectByType<TumpHudEffects>();
                 for (int i = 0; i < 20; i++) yield return null;
                 Assert.IsTrue(effects.DangerFrameVisible);
-                Assert.AreEqual(TagColours.ColourOf(TagColours.Default).b, effects.FrameColour.b, .01f, "Taya blue by default.");
+                Assert.AreEqual(TagColours.ColourOf(TagColours.Default).b, effects.FrameColour.b, .01f, "The taya's red by default.");
                 SettingsStore.Current.TaggableColour = 1; yield return null; yield return null;
                 Assert.AreEqual(TagColours.ColourOf(1).r, effects.FrameColour.r, .01f, "The frame takes the chosen colour.");
                 SettingsStore.Current.TaggableColour = 99; SettingsStore.Current.Validate();

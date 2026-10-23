@@ -75,9 +75,9 @@ namespace TumbangPreso.UI
         /// tab, the restore collar, TAGGED!, the caught feed row). Never reuse it decoratively.
         ///
         /// ⚠️ CRIMSON SINCE 2026-10-23, WAS BLUE 0080e8 (owner: "make it more obvious who the taya is", "a red outer
-        /// outline", "differentiate taya and taggable cue more"). Blue now means only "can be caught" (the taggable fill,
-        /// `Settings.TagColours`, Pac-Man's frightened blue), so the hunter and the hunted never share a colour. Kept on
-        /// the magenta side of red, away from Offense orange.
+        /// outline", "differentiate taya and taggable cue more"). Since the same day the taggable fill defaults to this red
+        /// too (`Settings.TagColours`, owner: "it makes more sense if the taya's color matches taggable"): hunted in the
+        /// hunter's colour. Kept on the magenta side of red, away from Offense orange.
         /// </summary>
         public static readonly Color Defense = Hex("e8203a");
 

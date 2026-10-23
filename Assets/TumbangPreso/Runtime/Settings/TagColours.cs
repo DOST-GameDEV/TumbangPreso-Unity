@@ -9,9 +9,12 @@ namespace TumbangPreso.Settings
     /// ⚠️ LOCAL ONLY, NEVER REPLICATED, for the reason <see cref="SlipperHighlights"/> records: it is a choice about one
     /// player's screen. Two peers may see the same runner fill in different colours, and that is correct.
     ///
-    /// ⚠️ NO RED OR ORANGE, AND NO OFF. Offense orange already means "the can is down, the attackers are free", so a red
-    /// or orange fill would say the opposite of what it means, and red is the taya's own colour. The cue is the answer to the game's main question, so it
-    /// has no Off; `WorldCueProfile.TayaTarget` remains the authoring switch.
+    /// ⚠️ RED BY DEFAULT, FOR EVERYONE: THE TAYA'S OWN COLOUR (owner, 2026-10-23: "change default color ng pede tayain or
+    /// taggable to red instead of blue, for everyone", "it makes more sense if the taya's color matches taggable bcz it means
+    /// they can be hunted by taya"). Red now reads "the red player can get you". Blue moved to the end of the list so the
+    /// saved index 0 everyone holds becomes red and every other saved choice keeps its colour. Still no orange (Offense
+    /// orange means "the can is down, the attackers are free") and no Off: the cue is the answer to the game's main
+    /// question; `WorldCueProfile.TayaTarget` remains the authoring switch.
     /// </summary>
     public static class TagColours
     {
@@ -25,13 +28,14 @@ namespace TumbangPreso.Settings
         /// <summary>Ordered for display; the settings row iterates this directly.</summary>
         public static readonly Entry[] All =
         {
-            // Pac-Man's frightened blue: "can be caught". The taya is red (`UiTheme.Taya`), so hunter and hunted never
-            // share a colour. Lifted a step from `UiTheme.Defense` so the fill does not go muddy in shade.
-            new Entry("Blue",      new Color(.16f, .6f, 1f)),
+            // The taya's red (`UiTheme.Taya`): hunted in the hunter's colour.
+            new Entry("Red",       UI.UiTheme.Taya),
             new Entry("Magenta",   new Color(.95f, .16f, .72f)),
             new Entry("Yellow",    new Color(1f, .86f, .08f)),
             new Entry("Cyan",      new Color(.1f, .86f, .95f)),
             new Entry("White",     new Color(.97f, .97f, .97f)),
+            // The old default, kept for whoever wants it; last, so no saved index moves.
+            new Entry("Blue",      new Color(.16f, .6f, 1f)),
         };
 
         public const int Default = 0;

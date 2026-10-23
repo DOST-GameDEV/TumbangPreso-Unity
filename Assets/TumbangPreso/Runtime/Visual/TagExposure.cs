@@ -172,7 +172,7 @@ namespace TumbangPreso.Visual
             return true;
         }
 
-        /// <summary>The cue colour the player chose (Accessibility, Taggable colour); the taya's blue by default.</summary>
+        /// <summary>The cue colour the player chose (Accessibility, Taggable colour); the taya's red by default.</summary>
         public static Color Colour => Settings.TagColours.Current;
 
         /// <summary>True when <paramref name="state"/> wants the body marked at all.</summary>
