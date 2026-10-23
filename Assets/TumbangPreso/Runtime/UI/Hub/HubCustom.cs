@@ -564,11 +564,18 @@ namespace TumbangPreso.UI.Hub
         private const float PanelDepth = 48.0f, ButtonDepth = 28.0f, RowDepth = 16.0f, TextDepth = 10.0f;
 
         /// <summary>Give every surface in the room its height. Run after each draw, because the
-        /// seat rows are rebuilt; a surface that already has one keeps it.</summary>
+        /// seat rows are rebuilt; a surface that already has one keeps it.
+        /// ⚠️ A BOARD PIECE'S HATCH IS NOT A SURFACE (playtest 2026-10-23, "darked out lahat"). It is a
+        /// clear shape over the piece's face (`HubBoardSkin.Dress`); given a depth, it stacked four ink
+        /// shadows ON the face and dimmed every button and plate in the room to about half.</summary>
         private void Deepen()
         {
             foreach (var shape in Root.GetComponentsInChildren<HubShape>(true))
+            {
+                var piece = shape.transform.parent != null ? shape.transform.parent.GetComponent<HubShape>() : null;
+                if (piece != null && piece.SkinHatch == shape) continue;
                 if (shape.Depth <= 0.0f) shape.Depth = shape.Pressable ? ButtonDepth : RowDepth;
+            }
         }
 
         private HubButton _characterDoor;
