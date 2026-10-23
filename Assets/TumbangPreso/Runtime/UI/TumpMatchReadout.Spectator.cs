@@ -35,7 +35,7 @@ namespace TumbangPreso.UI
             // On the chip's top edge: the bar sits 22 units from the top of the screen, and a tab above it was off-screen.
             OwnerUiLayout.Place(tab, ChipWidth - 84, -14, 80, 26);
             var plate = tab.gameObject.AddComponent<HudCard>();
-            plate.Glass(UiTheme.Defense, HudDraw.Lean, 2, .3f).raycastTarget = false; plate.BorderWidth = 0; plate.FollowContrast = false;
+            plate.Glass(UiTheme.Taya, HudDraw.Lean, 2, .3f).raycastTarget = false; plate.BorderWidth = 0; plate.FollowContrast = false;
             var word = OwnerUiLayout.Text(tab, "TayaTabWord", "TAYA", 20, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(word.rectTransform); word.alignment = TextAnchor.MiddleCenter; word.color = HudDraw.Ivory;
             word.raycastTarget = false; word.fontStyle = FontStyle.Italic;

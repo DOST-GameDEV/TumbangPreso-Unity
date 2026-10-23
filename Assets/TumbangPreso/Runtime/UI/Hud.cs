@@ -496,7 +496,7 @@ namespace TumbangPreso.UI
 
             _sandboxToggle.text = on ? "[F7]  NO COOLDOWNS: ON" : "[F7]  NO COOLDOWNS: OFF";
 
-            // ⚠️ THE LIT STATE IS AMBER, NOT `UiTheme.Defense`. Blue means the taya and nothing
+            // ⚠️ THE LIT STATE IS AMBER, NOT `UiTheme.Defense`. That colour means the taya and nothing
             // else, which `CLAUDE.md` § 6.4 states as a rule after it had to be said six times.
             _sandboxToggle.color = on ? UiTheme.Amber : UiTheme.CreamMuted;
         }

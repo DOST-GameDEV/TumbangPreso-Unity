@@ -104,6 +104,8 @@ Shader "TumbangPreso/Toon"
         _TayaFill ("Taggable fill height", Range(0, 1)) = 0
         _TayaInk ("Taggable outline colour", Color) = (0, 0.4, 0.73, 1)
         _TayaOutlineGrow ("Taggable outline growth", Range(1, 3)) = 1
+        _HunterInk ("Taya outline colour", Color) = (0.91, 0.13, 0.23, 1)
+        _HunterGrow ("Taya outline growth (0 off)", Range(0, 4)) = 0
         _CueHeight ("Catchable body height", Vector) = (0,1.6,0,0)
 
         // The two-band ramp. `_ShadowBand` is how bright the unlit half is and `_BandEdge` is
@@ -173,6 +175,10 @@ Shader "TumbangPreso/Toon"
             half _TayaCue, _TayaFill, _TayaOutlineGrow;
             float4 _CueHeight;
             fixed4 _TayaInk;
+            // The taya's own outline (owner, 2026-10-23: "a red outer outline"): the whole silhouette in the taya's colour,
+            // thicker than anyone's. Outline pass only, so the taya's body keeps its look. 0 is off.
+            half _HunterGrow;
+            fixed4 _HunterInk;
 
             // ⚠️⚠️ § THE RENDER STYLE. DECLARED HERE AND DELIBERATELY ABSENT FROM `Properties`,
             // WHICH IS WHAT MAKES IT A GLOBAL. `Settings.RenderStyles`'s Chromatic row draws the
@@ -302,6 +308,11 @@ Shader "TumbangPreso/Toon"
                     half front = lerp(-0.08h, 1.35h, saturate(_TayaFill));
                     half cover = 1.0h - smoothstep(front - 0.04h, front + 0.04h, (half)o.tagHeight);
                     width *= lerp(1.0, max(1.0, _TayaOutlineGrow), cover);
+                }
+                if (_HunterGrow > 0.0)
+                {
+                    width *= max(1.0, _HunterGrow);
+                    o.colour.rgb = _HunterInk.rgb;
                 }
 
                 // ⚠️⚠️ A ZERO WIDTH IS COLLAPSED TO A DEGENERATE TRIANGLE RATHER THAN DRAWN, AND

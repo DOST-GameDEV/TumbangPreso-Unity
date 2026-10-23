@@ -56,6 +56,10 @@ namespace TumbangPreso.Visual
             _readBlock??=new MaterialPropertyBlock();
             var scope=_readPool.Count>0?_readPool.Pop():new ReadScope();scope.Camera=camera;
             float fill=FillFor(camera,_readActor);
+            // The taya wears a thick outline in the taya's red on every gameplay camera (owner, 2026-10-23: "make it more
+            // obvious who the taya is", "a red outer outline"), grey while the can is down (`TayaIdentity`).
+            bool hunter=_readActor.IsDefender && camera!=null && camera.cameraType==CameraType.Game &&
+                GameServices.Match!=null && GameServices.Match.MatchInProgress && WorldCueProfile.Current.TayaTarget>0;
             bool catchable=fill>.001f && WorldCueProfile.Current.TayaTarget>0;
             foreach(var surface in _renderers)
             {
@@ -76,6 +80,8 @@ namespace TumbangPreso.Visual
                 _readBlock.SetVector("_WorldBody",new Vector4(_readActor.transform.position.y,bodyCapsule!=null?bodyCapsule.height:1.6f,1,0));
                 _readBlock.SetFloat("_DepthReadability",WorldCueProfile.Current.DistanceReadability);
                 _readBlock.SetFloat("_TayaCue",catchable?1:0);
+                _readBlock.SetFloat("_HunterGrow",hunter?TayaIdentity.HunterGrow:0);
+                if(hunter)_readBlock.SetColor("_HunterInk",TayaIdentity.HunterInk);
                 if(catchable)
                 {
                     var colour=TagExposure.Colour;

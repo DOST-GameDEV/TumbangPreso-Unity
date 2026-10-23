@@ -70,8 +70,19 @@ namespace TumbangPreso.UI
         /// <summary>⚠️ MEANS "ATTACKING SIDE". Never reuse it decoratively.</summary>
         public static readonly Color Offense = Hex("f87020");
 
-        /// <summary>⚠️ MEANS "DEFENDING SIDE", the taya. Never reuse it decoratively.</summary>
-        public static readonly Color Defense = Hex("0080e8");
+        /// <summary>
+        /// ⚠️ MEANS "DEFENDING SIDE", THE TAYA, and everything the taya does (their outline, ring, headband, reveal, TAYA
+        /// tab, the restore collar, TAGGED!, the caught feed row). Never reuse it decoratively.
+        ///
+        /// ⚠️ CRIMSON SINCE 2026-10-23, WAS BLUE 0080e8 (owner: "make it more obvious who the taya is", "a red outer
+        /// outline", "differentiate taya and taggable cue more"). Blue now means only "can be caught" (the taggable fill,
+        /// `Settings.TagColours`, Pac-Man's frightened blue), so the hunter and the hunted never share a colour. Kept on
+        /// the magenta side of red, away from Offense orange.
+        /// </summary>
+        public static readonly Color Defense = Hex("e8203a");
+
+        /// <summary>The taya's colour by its plain name: the same value as <see cref="Defense"/>.</summary>
+        public static Color Taya => Defense;
 
         /// <summary>Pink: hits, focus, emphasis.</summary>
         public static readonly Color Impact = Hex("f468a8");

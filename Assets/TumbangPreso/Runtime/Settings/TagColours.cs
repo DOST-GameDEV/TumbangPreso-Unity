@@ -10,7 +10,7 @@ namespace TumbangPreso.Settings
     /// player's screen. Two peers may see the same runner fill in different colours, and that is correct.
     ///
     /// ⚠️ NO RED OR ORANGE, AND NO OFF. Offense orange already means "the can is down, the attackers are free", so a red
-    /// or orange fill would say the opposite of what it means. The cue is the answer to the game's main question, so it
+    /// or orange fill would say the opposite of what it means, and red is the taya's own colour. The cue is the answer to the game's main question, so it
     /// has no Off; `WorldCueProfile.TayaTarget` remains the authoring switch.
     /// </summary>
     public static class TagColours
@@ -25,8 +25,9 @@ namespace TumbangPreso.Settings
         /// <summary>Ordered for display; the settings row iterates this directly.</summary>
         public static readonly Entry[] All =
         {
-            // The taya's own colour (`UiTheme.Defense`), lifted a step so the fill does not go muddy in shade.
-            new Entry("Taya blue", new Color(.16f, .6f, 1f)),
+            // Pac-Man's frightened blue: "can be caught". The taya is red (`UiTheme.Taya`), so hunter and hunted never
+            // share a colour. Lifted a step from `UiTheme.Defense` so the fill does not go muddy in shade.
+            new Entry("Blue",      new Color(.16f, .6f, 1f)),
             new Entry("Magenta",   new Color(.95f, .16f, .72f)),
             new Entry("Yellow",    new Color(1f, .86f, .08f)),
             new Entry("Cyan",      new Color(.1f, .86f, .95f)),

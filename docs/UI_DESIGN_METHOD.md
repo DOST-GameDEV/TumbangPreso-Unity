@@ -266,9 +266,12 @@ the direction for the pause menu, round reports, match end and held reference.
 Owner-locked direction (2026-10-06): cream faces, one bevelled cut per corner,
 a solid extruded side, a soft contact shadow, brown Darumadrop for numbers and
 events, brown Nunito Bold for words. Honey means ready, leader or you; red means
-a refusal or an earned moment. Owner, 2026-10-06: no team colours in the HUD.
+a refusal or an earned moment. Crimson (`UiTheme.Defense`, blue until 2026-10-23) means the taya and
+what the taya does; blue means only "can be caught" (the taggable fill). Owner, 2026-10-06: no team colours in the HUD.
 Each player number has one colour everywhere, from the guide's palette (P1
-Strawberry Red, P2 Honey Bronze, P3 Light Green, P4 Cool Horizon); the role is
+Grape Purple, P2 Honey Bronze, P3 Light Green, P4 Cool Horizon; P1 was Strawberry
+Red until 2026-10-23, when the owner dropped it because a red seat ring read as
+the taya or as danger); the role is
 the can (taya) or slipper (thrower) icon on that player's chip.
 The home screen is not a reference. Each element is designed for its own job:
 

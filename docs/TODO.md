@@ -10,7 +10,10 @@ No rule changes.
   VULNERABLE row saying "catchable" while the can is down.
 - [x] Fill climbs feet to head (0.22 s), drains when safe, follows the restore channel and Vulnerable's last second;
   outline turns the colour and thickens; arcs moved outside the seat ring. Owner: "it climbs up their body".
-- [x] Accessibility, Taggable colour: Taya blue, Magenta, Yellow, Cyan, White (local, `Settings.TagColours`).
+- [x] Accessibility, Taggable colour: Blue, Magenta, Yellow, Cyan, White (local, `Settings.TagColours`).
+- [ ] The taya is red (owner: "more obvious who the taya is", "a red outer outline"): thick red outline on every camera,
+  red ring, headband, reveal and TAYA tab, grey while the can is down (`UiTheme.Taya`). P1 seat colour Grape Purple
+  (owner: "No red seat colour"). Taggable stays blue.
 - [ ] Focused PlayMode tests; frames per state as taya, attacker and spectator; Builds/tagread with -tp-botmatch videos.
 - [ ] Owner look in play; LAN client sees the same cues as the host.
 

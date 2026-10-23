@@ -68,14 +68,17 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(_runner.IsInsideBox(), "The staged runner stands inside the box.");
         }
 
-        private static float Rim(CharacterMotor actor, Camera camera)
+        private static float Rim(CharacterMotor actor, Camera camera) => Block(actor, camera, "_TayaCue");
+
+        /// <summary>A property as <paramref name="camera"/> draws <paramref name="actor"/>'s body.</summary>
+        private static float Block(CharacterMotor actor, Camera camera, string property)
         {
             var visual = actor.GetComponent<CharacterVisual>();
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             typeof(CharacterVisual).GetMethod("BeginReadability", flags).Invoke(visual, new object[] { camera });
             var block = new MaterialPropertyBlock();
             visual.Model.GetComponentInChildren<SkinnedMeshRenderer>().GetPropertyBlock(block);
-            float cue = block.GetFloat("_TayaCue");
+            float cue = property == "_HunterInk.r" ? block.GetColor("_HunterInk").r : block.GetFloat(property);
             typeof(CharacterVisual).GetMethod("EndReadability", flags).Invoke(visual, new object[] { camera });
             return cue;
         }
@@ -116,6 +119,9 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(1, Rim(_runner, watcher), "A spectator sees the taggable body.");
                 Assert.AreEqual(1, Rim(_runner, tayaView), "The taya sees the taggable body.");
                 Assert.IsTrue(TayaIdentity.DangerShown(_runner));
+                Assert.Greater(Block(_taya, watcher, "_HunterGrow"), 2, "The taya wears the thick outline for a spectator.");
+                Assert.Greater(Block(_taya, watcher, "_HunterInk.r"), .8f, "In the taya's red.");
+                Assert.AreEqual(0, Block(_runner, watcher, "_HunterGrow"), "Attackers never wear it.");
 
                 _runner.HoldingSlipper = false; yield return null;
                 Assert.IsFalse(round.CanBeTaggedNow(_runner), "No slipper: safe.");
@@ -151,6 +157,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(0, Rim(_runner, tayaView), "Nor the taya's view of the body.");
                 Assert.AreEqual(0, Rim(_runner, watcher), "Nor anyone else's.");
                 Assert.IsFalse(TayaIdentity.DangerShown(_runner));
+                Assert.Less(Block(_taya, watcher, "_HunterInk.r"), .7f, "A downed can greys the taya's outline.");
             }
             finally { Object.Destroy(watcher.gameObject); }
         }
@@ -310,6 +317,11 @@ namespace TumbangPreso.PlayTests
                     }
                 }
                 finally { SettingsStore.Current.TaggableColour = chosen; }
+                // The taya in red beside a taggable runner in blue: hunter and hunted side by side.
+                Vector3 pair = (_taya.transform.position + _runner.transform.position) * .5f + Vector3.up * .7f;
+                Vector3 from = pair + new Vector3(4.2f, 4.0f, -4.6f);
+                cam.transform.SetPositionAndRotation(from, Quaternion.LookRotation(pair - from));
+                yield return GameplayShots.Render(cam, "8-taya-and-taggable", false, outDir: Out, width: 960, height: 540);
             }
             finally { Object.Destroy(cam.gameObject); }
         }

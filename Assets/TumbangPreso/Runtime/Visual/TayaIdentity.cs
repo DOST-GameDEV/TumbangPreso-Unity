@@ -5,7 +5,9 @@ namespace TumbangPreso.Visual
 {
     /// <summary>
     /// WHO IS TAYA, at a glance, on every screen (owner, 2026-10-22, the presentation pass):
-    ///   * a glowing headband in `UiTheme.Defense` on the taya, fitted to that rig's own head;
+    ///   * a glowing headband in `UiTheme.Taya` on the taya, fitted to that rig's own head;
+    ///   * a thick outline in the same red round the whole body (owner, 2026-10-23: "a red outer outline"), drawn by
+    ///     `CharacterVisual.Readability` from <see cref="HunterInk"/>, grey and thinner while the can is down;
     ///   * a ground ring in the same colour that follows them;
     ///   * a TAYA reveal when each round goes live (`UI.TayaReveal`), with the ring flaring out on the court.
     ///
@@ -46,6 +48,12 @@ namespace TumbangPreso.Visual
         /// <summary>The taya's ground ring, or null when there is no taya.</summary>
         public static GameObject Ring => _live != null ? _live._ring : null;
         private static TayaIdentity _live;
+        /// <summary>How much thicker the taya's outline is drawn than anyone else's.</summary>
+        public const float HunterOutline = 3.6f;
+        /// <summary>The taya's outline colour this frame (red, or grey while the can is down).</summary>
+        public static Color HunterInk { get; private set; } = UI.UiTheme.Taya;
+        /// <summary>The taya's outline growth this frame.</summary>
+        public static float HunterGrow { get; private set; } = HunterOutline;
         private void Awake() => _live = this;
         private GameObject _band, _ring;
         private Material _bandMaterial, _ringMaterial;
@@ -115,13 +123,15 @@ namespace TumbangPreso.Visual
             float t = Time.unscaledTime;
             bool still = Settings.SettingsStore.Current.ReducedUiMotion;
             float glow = still ? .85f : .7f + .3f * Mathf.Sin(t * 3.1f);
-            var defense = UI.UiTheme.Defense;
+            var defense = UI.UiTheme.Taya;
             // The can down disarms the taya: their colour drains and the ring breaks; standing it re-arms them in a flare.
             bool disarmed = round.Lata != null && !round.Lata.IsUpright && round.RoundActive;
             if (disarmed != _disarmed) { _disarmed = disarmed; _disarmedSince = t; if (!disarmed) _flareAt = t; }
             float drain = Mathf.Clamp01((t - _disarmedSince) / .25f);
             float armed = disarmed ? 1 - drain : 1;
             defense = Color.Lerp(Disarmed, defense, armed);
+            // The outline: red and thick while the taya can tag, grey and thinner while the can is down, flaring on re-arm.
+            HunterInk = defense; HunterGrow = Mathf.Lerp(1.6f, HunterOutline, armed);
             glow *= Mathf.Lerp(.35f, 1, armed);
 
             if (_band != null)
@@ -201,7 +211,7 @@ namespace TumbangPreso.Visual
                 if (actor == null || !live || appear <= .001f) { if (cue.Ring != null) cue.Ring.SetActive(false); continue; }
                 if (cue.Ring == null)
                 {
-                    cue.Ring = VfxShapes.Lay(transform, "TagDangerRing", Arcs(3, .62f, .74f), DangerRadius, 0);
+                    cue.Ring = VfxShapes.Lay(transform, "TagDangerRing", Arcs(3, .62f, .74f, tick: .14f), DangerRadius, 0);
                     VfxMaterial.Ghost(cue.Ring.GetComponent<Renderer>(), UI.UiTheme.Defense, 1.2f);
                     cue.Material = cue.Ring.GetComponent<Renderer>().sharedMaterial;
                     ShadowsOff(cue.Ring);
@@ -227,7 +237,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>A flat ring of <paramref name="count"/> arcs, each <paramref name="fill"/> of its share, drawn both ways up.</summary>
-        private static Mesh Arcs(int count, float fill, float inner, int steps = 8)
+        private static Mesh Arcs(int count, float fill, float inner, int steps = 8, float tick = 0)
         {
             var v = new System.Collections.Generic.List<Vector3>(); var tri = new System.Collections.Generic.List<int>();
             for (int k = 0; k < count; k++)
@@ -246,6 +256,19 @@ namespace TumbangPreso.Visual
                     tri.Add(o); tri.Add(o + 2); tri.Add(o + 1); tri.Add(o + 1); tri.Add(o + 2); tri.Add(o + 3);
                 }
             }
+            // Optional ticks pointing in at the middle of each arc, so the ring reads as a target closing on someone
+            // rather than as a broken ring (owner, 2026-10-23, of the arcs: "para sa taya ba?").
+            if (tick > 0)
+                for (int k = 0; k < count; k++)
+                {
+                    float mid = (k + fill * .5f) * Mathf.PI * 2 / count, half = .09f;
+                    var at = new Vector3(Mathf.Cos(mid), 0, Mathf.Sin(mid));
+                    var side = new Vector3(Mathf.Cos(mid + half), 0, Mathf.Sin(mid + half));
+                    var other = new Vector3(Mathf.Cos(mid - half), 0, Mathf.Sin(mid - half));
+                    int b = v.Count;
+                    v.Add(side * inner); v.Add(other * inner); v.Add(at * (inner - tick));
+                    tri.Add(b); tri.Add(b + 1); tri.Add(b + 2); tri.Add(b); tri.Add(b + 2); tri.Add(b + 1);
+                }
             var mesh = new Mesh { name = "TagArcs" };
             mesh.SetVertices(v); mesh.SetTriangles(tri, 0);
             // Facing up, set rather than recalculated: the two windings share vertices, and recalculated normals cancel
@@ -267,7 +290,7 @@ namespace TumbangPreso.Visual
         private void Build(CharacterMotor taya)
         {
             _ring = VfxShapes.Lay(transform, "TayaGroundRing", VfxShapes.Collar(40, .025f, .9f), RingRadius, 0);
-            VfxMaterial.Ghost(_ring.GetComponent<Renderer>(), UI.UiTheme.Defense, 1f);
+            VfxMaterial.Ghost(_ring.GetComponent<Renderer>(), UI.UiTheme.Taya, 1f);
             _ringMaterial = _ring.GetComponent<Renderer>().sharedMaterial;
             ShadowsOff(_ring);
             _model = taya.GetComponent<CharacterVisual>()?.Model; _bandAttempts = 0;
@@ -426,7 +449,7 @@ namespace TumbangPreso.Visual
             _band.AddComponent<MeshFilter>().sharedMesh = ring;
             _bandRenderer = _band.AddComponent<MeshRenderer>();
             // Solid lit cloth with a glow in it, so it reads as a band tied on, not a hologram ring.
-            VfxMaterial.Solid(_bandRenderer, UI.UiTheme.Defense, .6f);
+            VfxMaterial.Solid(_bandRenderer, UI.UiTheme.Taya, .6f);
             _bandMaterial = _bandRenderer.sharedMaterial;
             ShadowsOff(_band);
             _band.AddComponent<OwnedMesh>().Mesh = ring;

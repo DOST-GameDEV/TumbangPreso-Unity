@@ -68,7 +68,7 @@ namespace TumbangPreso.UI
             var plate = OwnerUiLayout.Rect(_group, "TayaRevealPlate");
             plate.anchorMin = plate.anchorMax = plate.pivot = new Vector2(.5f, .5f);
             var card = plate.gameObject.AddComponent<HudCard>();
-            card.Glass(UiTheme.Defense, HudDraw.Lean, 3, .45f).raycastTarget = false; card.FollowContrast = false;
+            card.Glass(UiTheme.Taya, HudDraw.Lean, 3, .45f).raycastTarget = false; card.FollowContrast = false;
             var word = OwnerUiLayout.Text(plate, "TayaRevealWord", "TAYA", 96, OwnerUiLayout.TypeRole.Display);
             word.alignment = TextAnchor.MiddleCenter; word.raycastTarget = false; word.supportRichText = false;
             word.color = HudDraw.Ivory; word.fontStyle = FontStyle.Italic;

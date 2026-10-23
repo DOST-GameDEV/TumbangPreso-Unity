@@ -82,8 +82,22 @@ Once full, it pulses. When they become safe it drains back down in 0.3 s. It sho
 taya, the other attackers, spectators, and the attacker's own body when the camera shows it. The three arcs under them
 stay, now outside the seat ring, which used to draw over them.
 
-The default colour is the taya's blue: Defense blue already means "the taya can get you" (the screen frame, the arcs),
-so filling with it says "the taya can claim this one". Offense orange already means "the attackers are free".
+The default colour is blue: Pac-Man's frightened ghosts are blue, so blue is "can be caught". The taya is red (below),
+so the hunter and the hunted never share a colour. Offense orange still means "the can is down, the attackers are free".
+
+### The taya is red
+
+Owner: "can u make it more obvious who the taya is? maybe a red outer outline". Before this, the taya's ring and
+headband were the same blue as the taggable cue, and the owner read the taggable arcs as a taya marker. Now the taya
+has one colour: `UiTheme.Defense` itself is now crimson (`e8203a`, was blue `0080e8`), so everything that already meant
+"the taya" follows at once: a thick outline round the whole body (3.6x the ink, every gameplay camera, depth-tested,
+so it never shows through walls, `_HunterInk` in `Toon.shader`'s outline pass), the ground ring, the headband, the
+TAYA reveal and tab, the restore collar on the can, TAGGED!, the caught feed row, the role-swap and break cards and
+the film plates. Blue is left only for "can be caught". The two also differ in shape, so neither depends on colour
+alone: the taya's marks are solid and continuous (a full ring, a whole outline, a band); the taggable mark is a
+target (three arcs with ticks pointing in at the body, and the body filling). While the can is down the outline and ring go grey and thinner, as the ring already did: the
+taya cannot tag. P1's seat colour was red; it is Grape Purple now (owner: "No red seat colour"), so the only red on
+the court is the taya.
 
 ### The fill level says how close a flip is
 
@@ -120,7 +134,7 @@ brackets and the reticle), and each is about that viewer's own situation.
 
 ### The colour is a setting
 
-Owner: "make it changable in settings too with diff colors". Accessibility, **Taggable colour**: Taya blue (default),
+Owner: "make it changable in settings too with diff colors". Accessibility, **Taggable colour**: Blue (default),
 Magenta, Yellow, Cyan, White (`Settings.TagColours`). It recolours the fill, the outline, the arcs, the taya's
 nameplate brackets and the attacker's frame. Like the slipper highlight it is local and never replicated: each player
 picks their own. Red and orange are left out, because orange already means "the can is down, the attackers are free".
@@ -158,4 +172,18 @@ Each round was judged on frames from the taya's first-person view, an attacker's
 
 ## Evidence
 
-Filled in after the review: test names and results, frames per state per viewer, the build and its videos.
+- PlayMode, by name, all passing (`Logs/tagread7.xml`): `TagReadabilityTests.TaggableNowIsTheTagRuleAndEveryCueReadsIt`,
+  `FillTellsHowCloseTheFlipIs`, `LocalAttackerFrameRisesInTheChosenColour`, `ReviewEveryStateFromEveryViewer`,
+  `WorldCourtCueTests.TayaTargetsAreCameraScopedAndReadableAtTenMetres` (moved off the retired BayanPlaza scene; its
+  nested camera is now a preview camera, since every gameplay camera wears the cue) and
+  `TayaIdentityTests.TaggableAttackersStandInDangerArcsAndADownedCanDisarmsTheTaya`.
+- Not caused by this pass: `TumpNativeHudTests.ArmedAttackerInsideTheBoxSeesTheDefenseFrame` fails at its first
+  check (no slipper at round start), before any cue code runs.
+- Frames per state and viewer (taya first person, attacker first person, spectator) and every colour:
+  `Logs/tag-readability/*.png`. Clips: `1-taggable.mp4`, `3-pickup-and-drop.mp4` (climb and drain),
+  `5-can-coming-up.mp4` (the fill rising with the restore channel), `6-vulnerable-ending.mp4`, all in `all_states.mp4`.
+- Network: `tools/net_catch_presentation.py` on three real local peers (host taya, victim client, observer client),
+  `Logs/tagread-net2/result.json`, passed. Every peer drew the victim fully filled before the tag (88 to 89 samples)
+  and empty after it; onsets 3.94 to 4.00 s. The probe's 35 s exit was stale since the opening films; it now exits
+  30 s after the round goes live. Not covered: link impairment, a network spectator, the can-down channel on a client.
+- Build: `Builds/tagread/TumbangPreso.exe`, run with `-tp-botmatch` (spectator camera): `Logs/tagread-botmatch`.

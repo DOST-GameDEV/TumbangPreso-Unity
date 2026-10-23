@@ -14,8 +14,9 @@ namespace TumbangPreso.UI
     /// frame round the whole screen while you are targeted: no words, no darkening, and it is
     /// in the corner of the eye wherever the eye is.
     ///
-    /// ⚠️ DEFENSE BLUE BECAUSE IT MEANS THE TAYA (`UiTheme.Defense`, `CLAUDE.md` § 6.4's one
-    /// exemption). The frame says "the taya can catch you", in the taya's colour. It is thin (7
+    /// ⚠️ IN THE TAGGABLE COLOUR, NOT THE TAYA'S (2026-10-23): the frame says "you can be caught",
+    /// so `TumpHudEffects` paints it in the player's Taggable colour (`Settings.TagColours`, blue by
+    /// default), the same as the fill on their body; crimson `UiTheme.Defense` is the taya. It is thin (7
     /// canvas units), 70 percent opaque, and STILL: it fades in over 0.12 s and never pulses,
     /// so Reduce UI motion changes nothing about it and it cannot become a strobe during a long
     /// retrieval. It is a state, not a pulse, which is `Hud.PopHitmarker`'s lesson the other way
