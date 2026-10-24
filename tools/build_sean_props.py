@@ -196,8 +196,7 @@ def line_on(node, points, width, slot, side=1.0, lift=None):
 # bolted-on thumb and gold beads stuck to a red block, which in flat shading read as a creature from the side and claws from
 # behind. His reference (Seeker's fist, Risk of Rain 2) is ONE mass in one hue with its detail drawn on it. So v5 is one solid
 # cartoon fist: a block whose heat runs up in bands (ember heel, amber body, gold top), the knuckles as bumps on its top edge in
-# the same gold, the fingers DRAWN on its front as dark grooves and a fold line, one fat thumb tucked across them, two veins on
-# the back. The splash is a smooth wave flaring out round the wrist with a gold lip, not v4's petals (they read as leaves).
+# the same gold, the fingers DRAWN on its front as dark grooves and a fold line, one fat thumb tucked across them. The splash is a smooth wave flaring out round the wrist with a gold lip, not v4's petals (they read as leaves).
 # ---------------------------------------------------------------------------------------------
 def giant_fist():
     root = Node("giant_fist")
@@ -207,7 +206,7 @@ def giant_fist():
             CHERRY, sides=16)
     # The collar: lava heaving up round the wrist, its top edge wobbling (typed per angle, not a formula), no wide disc
     # (v5a's flat wave with a gold rim read as a plate; the runtime's puddle is the surface).
-    tops = [.13, .17, .11, .15, .19, .12, .16, .1, .18, .14, .12, .16]
+    tops = [.13, .17, .11, .15, .24, .29, .33, .28, .23, .14, .12, .16]
     outs = [.43, .4, .46, .41, .38, .44, .42, .47, .4, .43, .45, .41]
     for i, (top, out) in enumerate(zip(tops, outs)):
         a0 = math.radians(i * 30)
@@ -221,9 +220,8 @@ def giant_fist():
 
     fist = Node("fist", origin=(0, .3, 0), parent="forearm")
     # The block, in heat bands that run up it: ember at the heel, amber through the body, gold across the top.
-    band(fist, 0, .2, EMBER)
-    band(fist, .2, .52, AMBER)
-    band(fist, .52, .73, CORE)
+    band(fist, 0, .56, AMBER)
+    band(fist, .56, .73, CORE)
     # The fingers in RELIEF and in the block's own colours, so they read as its shape and not parts stuck on it (v4): each
     # rolls over the top edge as a knuckle and down the front to the fold, gold above, amber below. Fat enough to touch, with a
     # dark groove drawn where neighbours meet. Index on the thumb side (L): (x, girth, how far its knuckle rises).
@@ -255,9 +253,14 @@ def giant_fist():
     crease = bp.spline([on_fist(x, y, lift=.028) for x, y in [(L * .27, .1), (L * .2, .15), (L * .1, .19), (L * .0, .2)]],
                        per=3)
     fist.tube(crease, [.02] * len(crease), DEEP, sides=6)
-    # The back of the hand: two veins of cooler lava, knuckles toward the wrist, each its own path.
-    line_on(fist, [(L * .14, .62), (L * .12, .48), (L * .06, .32), (L * .04, .2)], .022, CHERRY, side=-1.0)
-    line_on(fist, [(R * .12, .6), (R * .14, .44), (R * .08, .3)], .02, CHERRY, side=-1.0)
+    # The back of the hand (owner 2026-10-25: "ung back looks so weird"; v5's red veins read as cracks and its stripes as a
+    # pot). Now: the knuckles roll over the top and down the back as four soft rises in the gold, fading into the amber, and
+    # the hand is one amber down to the wrist, so from behind it is a rounded hand, not a striped jar.
+    for x, r in [(L * .228, .07), (L * .077, .076), (R * .077, .073), (R * .226, .064)]:
+        ridge = bp.spline([(x, .7, -.02), on_fist(x, .64, side=-1.0, lift=r * .35), on_fist(x, .55, side=-1.0, lift=r * .3),
+                           on_fist(x * .9, .45, side=-1.0, lift=r * .15)], per=3)
+        fist.tube(ridge[:4], bp.spread([r, r * .9, r * .7, r * .35], per=3)[:4], CORE, sides=9)
+        fist.tube(ridge[3:], bp.spread([r, r * .9, r * .7, r * .35], per=3)[3:], AMBER, sides=9)
     # The sides, drawn as a cartoon fist is side-on: on each side a dark curve tracing the curled first finger (the index on
     # the thumb side, the little finger on the other), from the knuckle over and down the front to the fold.
     for side, x in ((L, .35), (R, .345)):
@@ -269,6 +272,10 @@ def giant_fist():
         fist.tube(curve, [.02] * len(curve), DEEP, sides=6)
     pitched(fist, 26)
 
+    # The back of the hand runs down into the collar: a sheet of lava over the wrist behind, and its drips, so the tilt
+    # forward never bares a neck there (v5's back read as a pot on a stem).
+    lump(forearm, (0, .3, -.16), (.2, .17, .1), EMBER, tilt=0, turn=180, sides=12)
+    lump(forearm, (L * .1, .22, -.21), (.12, .12, .07), CHERRY, turn=180, sides=10)
     drips = Node("drips", parent="forearm")
     # Lava running off the heel of the hand into the collar, each its own start and length.
     drip(drips, (L * .2, .33, .14), .1, .034, AMBER, lean=(R * .02, .02))

@@ -128,7 +128,7 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   top outline, a C-curve on each side for the curled finger, a short thumb, a low collar with a bright ring. It sprays gobs
   of lava as it erupts and melts wide and low as it sinks. The cooling no longer tints the shared `ToonSkin` material (it greyed every later Sean
   prop); the fire dome over it is a low burst and a ring; the puddle is a splat with a hot heart. Film
-  `Logs/sean-2026-10-24/film-v19`; previews from `tools/build_sean_props.py giant_fist`.
+  `Logs/sean-2026-10-24/film-v20`; previews from `tools/build_sean_props.py giant_fist`.
 - [ ] 🧑 Owner to look at the new Magma Fist in play. Its reach stays 1 m (owner 2026-10-25: "Keep the reach at 1 m; the
   look is the change").
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.

@@ -5,7 +5,8 @@ dildo") and his reference (Seeker's fist, Risk of Rain 2): no arm, a fist out of
 puddle, drawn 2.3x, tipped toward the caster, spraying lava as it erupts and melting as it
 sinks; v5 makes it one solid cartoon fist with its fingers drawn and sculpted on. Two runtime
 bugs went with it: the cooling wrote ToonSkin's shared material, and a fire dome hid the
-fist as it rose. Film v19; SeanKitPlayProbe 7/7. v5 not yet seen by the owner.
+fist as it rose. The back is one amber hand with its knuckles rolling over (it read as a
+striped pot with cracks). Film v20; SeanKitPlayProbe 7/7.
 
 # Rago's ultimate checkpoint, October24
 
