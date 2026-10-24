@@ -51,6 +51,39 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   opens a puddle that warns 0.45 s, then the giant fist. No flight, no lock. Prayer clips `hero-sean-pray-aim` (looped) and
   `hero-sean-pray` (`HeroAbilityClips.Sean.cs`, baked by `SeanMotionAuthor`); bots place it where the attacker will be.
 - [ ] 🧑 Owner to play the new Magma Fist and the prayer; first-person arms still play the old `cinder-draw` action.
+- [ ] CAN-CARRY-1024 (NOT STARTED, design agreed with the owner 2026-10-24, every hero): the reset becomes a real carry.
+  Owner: "show can being raised up and put in the right spot by defender ... animate them carrying it and walking back",
+  "dapat hold nalang nila ung raise can button, kasama na ung movement sa holding", "they drop it" (every stun that stops a
+  raise today), "siguro normal speed", "apparent that the person carries the can and puts it back in right place in all
+  aspects (fpp view etc)", "code it so that it works in network ... seen by everyone". Plan:
+  * Hold Grab near the downed, not hot can: PICKUP ~0.35 s (crouch, can rises into the hands), CARRY (the motor walks the
+    taya to `Lata._mark` at normal speed while held, input ignored, like `FleeWish` in `CharacterMotor.cs` ~L928),
+    SET-DOWN ~0.3 s at the mark (crouch-and-press), then `Lata.HostRestore`. Letting go, `!CanAct()`, Whirled or leaving the
+    taya role drops the can at their feet, still down. Per-can `Combat.ResetChannelFor` timing no longer applies.
+  * Host owns it: new `Lata` carry state (carrier slot, phase, phase age; make `Lata` partial, add `Lata.Carry.cs`).
+    `MatchRpc.HostApplyResetPhase` (~L3142): Start -> begin pickup, Cancel -> drop, Complete -> restore only if the carrier
+    is within ~0.35 m (+leeway) of the mark. Drop `_resetChannelStart`'s time check and the `grab` relay in
+    `HostStepResetChannels`; keep `HostMayChannelReset`'s checks for starting. Host and solo go through the same `Lata`
+    host methods from `Carrier.StepDefender` (~L1080).
+  * Wire: append a tagged suffix (tag 8: sbyte slot, byte phase, float age) to `SyncLata` after the hot-can suffix
+    (`BroadcastLataState` ~L5923, `OnSyncLataMsg` ~L6133); include carry changes in `BroadcastLataStateIfChanged`; clients
+    ignore `LataPose` while carried. Protocol 179 (`NetSession.ProtocolVersion`, `ChatAndLobbyChromeTests`, contract doc).
+  * Drawing on every peer: the can at carrier.position + forward*0.42 + up*0.9, upright, from the carrier's synced body
+    (pickup lerps from where it lay, set-down lerps to the mark); its colliders off while carried. Map the phases onto the
+    existing raise shape so body and first person follow (`CanRaiseShape`, `CharacterAnimator.ResetRaise.cs`:
+    pickup 0 to 0.84, carry holds 0.84, set-down 0.85 to 1; remote bodies read the synced phase instead of the relayed
+    `grab`). First person grips the drawn can already (`ViewmodelArms.RaiseCan.cs`); `CameraRig.FppRaiseSquat` (~L1003) must
+    NOT bend the eye during the carry walk (FppBend(0.84) is ~0.94).
+  * Bots: `AIController` holds Grab near the can (~L2083, L2572); check they keep holding while it walks them.
+  * Tests reading the old channel: `CanMomentTests`, `DefenderUltimateResetRecoveryTests`, `TutorialDefenderProbe`,
+    `CarrierRoleInputLifetimeTests`, `CarrierPossessionLifetimeTests`, `AccessibilityControlTests`, `WorldCourtCueTests`,
+    `TumpNativeHudTests`, `GameplayActionShots`, `Core.Tests/BalanceTests.cs`. HUD/readouts using `ChannelRatio`: `Hud`,
+    `YouCard`, `TumpMatchReadout`, `OffscreenIndicators`, `LataClockPresentation`, `SpectatorInterest`.
+- [ ] CONTACT-1024 (NOT STARTED). Owner: the point of contact "doesn't look animated well" on "EVERYTHING": MOLTEN THROW on
+  the can (no impact moment; the hot can's slide "parang teleported", `Lata.HostMoltenHit` and its client pose stream) and
+  MAGMA FIST on the player (the giant fist rising into them, `SeanMagmaFist.StepPunch`). Wants the can visibly flying away.
+  Ideas: hit-stop and a contact burst at the touch point, the can launched on an arc with spin before it lands and slides,
+  clients interpolating `LataPose` instead of snapping, the victim's knock-up drawn from the knuckles' contact.
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
 - [ ] Cleanup once nothing references them: parol props and `ParolGround`, `UltimateProp.Sean.cs`, `SeanSupernovaLook`,
   `SeanCinderGate` (+ look and tests), the Stoke FX study scenes.
