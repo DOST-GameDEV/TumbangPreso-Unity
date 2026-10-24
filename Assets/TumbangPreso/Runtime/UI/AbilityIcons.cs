@@ -59,13 +59,13 @@ namespace TumbangPreso.UI
         /// <summary>Dante Ultimate: Titan Fissure (Jagged tectonic ground split).</summary>
         DanteFissure,
 
-        /// <summary>Sean Skill 1: Flame Rush (Forward flame rocket chevrons).</summary>
+        /// <summary>Sean signature: LAVA RAM (his lava fist driving forward, the hit bursting in front).</summary>
         SeanRush,
 
-        /// <summary>Sean Skill 2: Ignition Cannon (Empowered flaming fireball / throw).</summary>
+        /// <summary>Sean attacking: MOLTEN THROW (his slipper dipped in lava, flying flat and dripping).</summary>
         SeanIgnite,
 
-        /// <summary>Sean Ultimate: Supernova (High-impact 8-point explosive supernova star).</summary>
+        /// <summary>Sean ultimate: MAYON AWAKENS (the cone erupting from its lit summit). The name is the parol era's.</summary>
         SeanSupernova,
 
         /// <summary>Cheska Skill 1: Permafrost Sheet (Frosted ice ground zone with crystal shards).</summary>
@@ -156,6 +156,10 @@ namespace TumbangPreso.UI
         NemuSkitter,
         /// <summary>Nemu defending: LOOKOUT (a lantern ghost beside a can, an arrow standing it up).</summary>
         NemuLookout,
+
+        // ⚠️ RAGO THE LAVA BRAWLER (owner 2026-10-24, "thoroughly redesign his icons"), appended to keep every serialized value.
+        /// <summary>Sean while Molten: VOLCANIC BOMB (a black-glass ball split by a glowing crack, falling in a trail of fire).</summary>
+        SeanVolcanicBomb,
     }
 
     /// <summary>
@@ -353,8 +357,9 @@ namespace TumbangPreso.UI
                 // producing something of their own, which is exactly what that word is for, and
                 // it is the single most useful thing the tray can tell a player about either.
                 case AbilityGlyph.SeanIgnite: return "SLIPPER BUFF";
-                case AbilityGlyph.SeanCinderGate: return "CROSSING TRAP";
-                case AbilityGlyph.SeanSupernova: return "FROM ABOVE";
+                case AbilityGlyph.SeanCinderGate: return "PROJECTILE";    // MAGMA FIST (the name is the parol era's)
+                case AbilityGlyph.SeanSupernova: return "AREA BURST";
+                case AbilityGlyph.SeanVolcanicBomb: return "AREA BURST";
                 case AbilityGlyph.CheskaFrostSheet: return "GROUND ZONE";
                 case AbilityGlyph.CheskaBarricade: return "BLOCKER";
                 case AbilityGlyph.CheskaNova: return "AREA BURST";
@@ -561,7 +566,8 @@ namespace TumbangPreso.UI
                     return FlameBurst(u, v);
 
                 case AbilityGlyph.SeanSupernova:
-                    // 8-ray brilliant exploding star
+                case AbilityGlyph.SeanVolcanicBomb:
+                    // 8-ray brilliant exploding star (the painted icon is what shows; this is the missing-file fallback)
                     return SupernovaStar(u, v);
 
                 case AbilityGlyph.CheskaFrostSheet:

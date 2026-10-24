@@ -2011,6 +2011,8 @@ namespace TumbangPreso
         public void HaltExternalSlide()
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            // A held dash (`BeginCarry`) would set the slide again on the next step: it ends here too.
+            _carryLeft = 0.0f;
             _externalVelocity.x = 0.0f;
             _externalVelocity.z = 0.0f;
         }

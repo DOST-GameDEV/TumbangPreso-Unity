@@ -22,9 +22,9 @@ namespace TumbangPreso.PlayTests
     /// pressed through `InputIntent` as a player presses it and resolved by the host, at a fixed 30 fps game clock, with every
     /// world cue logged for `tools/stitch_ability_film.py`. Three views of the one take:
     ///   owner/   HIS screen (seat 1, a human in his own body), the MAYON AWAKENS cutscene included;
-    ///   wide/    the court from above, re-aimed at each skill's spot;
+    ///   wide/    one hand-placed shot per skill, from behind the caster and to one side (the clips are cut from it);
     ///   victim/  over the shoulder of whoever the current skill is aimed at, so the hit is seen as it is felt.
-    /// The take, in order: LAVA RAM into a body; LAVA RAM into a wall; MOLTEN THROW at the can and the taya refused while it is
+    /// The take, in order: LAVA RAM into a body; MOLTEN THROW at the can and the taya refused while it is
     /// hot; MAGMA FIST from the taya's seat (bound to Sean for that beat); MAYON AWAKENS; a shove bouncing off Molten; the
     /// VOLCANIC BOMB on the can. If the thrown slipper misses the can, the can is knocked over and blasted on the host's own
     /// path (`Lata.HostMoltenHit`) so the hot can is still filmed, and `staged.txt` says so.
@@ -80,7 +80,9 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(900000)]
         public IEnumerator FilmAllHisSkills()
         {
-            if (Environment.GetEnvironmentVariable("TUMP_SEAN_FILM") != "1") Assert.Ignore("Film only: set TUMP_SEAN_FILM=1.");
+            string mode = Environment.GetEnvironmentVariable("TUMP_SEAN_FILM");
+            if (mode != "1" && mode != "ram" && mode != "throw" && mode != "fist") Assert.Ignore("Film only: set TUMP_SEAN_FILM=1 (the whole kit), ram, throw or fist.");
+            bool ramOnly = mode == "ram";
             string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "sean-kit-film");
             if (Directory.Exists(root)) Directory.Delete(root, true);
             foreach (string view in new[] { "owner", "wide", "victim" }) Directory.CreateDirectory(Path.Combine(root, view));
@@ -133,31 +135,13 @@ namespace TumbangPreso.PlayTests
             Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
                 cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
             AudioDirector.WorldCuePlayed += heard;
-            GameObject wall = null;
             bool sawScene = false, canDownOnThrow = false, bombKnocked = false;
             float moltenAt = -1f, shoveAt = -1f, bombAt = -1f;
             CharacterMotor watched = a;
-            Vector3 focus = At(5f), wideFocus = new Vector3(float.NaN, 0, 0), wideAt = Vector3.zero;
-            // The first of eight corners round the spot, high then lower, with nothing solid between it and the spot.
-            Vector3 ClearWide(Vector3 spot)
-            {
-                var target = spot + Vector3.up * .8f;
-                foreach (var (distance, height) in new[] { (10f, 7f), (8f, 5f), (6f, 4f) })
-                    for (int k = 0; k < 8; k++)
-                    {
-                        float angle = (135f + 45f * k) * Mathf.Deg2Rad;
-                        var eye = spot + new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) * distance + Vector3.up * height;
-                        var line = target - eye;
-                        // Bodies and the can stand at the spot and are what is being filmed, not what hides it.
-                        bool hidden = Physics.RaycastAll(eye, line.normalized, line.magnitude, ~0, QueryTriggerInteraction.Ignore)
-                            .Any(hit => hit.collider.GetComponentInParent<CharacterMotor>() == null && hit.collider.GetComponentInParent<Lata>() == null);
-                        if (!hidden && !Physics.CheckSphere(eye, .6f, ~0, QueryTriggerInteraction.Ignore)) return eye;
-                    }
-                return spot + new Vector3(0, 9f, -3f);
-            }
+            Vector3 focus = At(5f);
             try
             {
-                const float End = 44f;
+                float End = ramOnly ? 3.4f : mode == "throw" ? 13f : mode == "fist" ? 17.5f : 44f;
                 int frames = (int)(30 * End);
                 for (int f = 0; f < frames; f++)
                 {
@@ -166,41 +150,35 @@ namespace TumbangPreso.PlayTests
                     bool Beat(float at) => f == (int)Math.Round(at * 30);
 
                     // ---- LAVA RAM into a body (0 to 3.5) ----
-                    if (Beat(0f)) { Place(sean, At(9f), can); Place(a, At(6.6f), At(9f)); watched = a; focus = At(6.5f); }
+                    if (Beat(0f)) { Place(sean, At(10.5f), can); Place(a, At(4.2f), At(10.5f)); watched = a; focus = At(6f); }   // 6.3 m: the long charge, then the hit
                     if (t >= .4f && t < .8f) sean.Intent.Set(Verb.Skill1, true);
                     if (Beat(.8f)) sean.Intent.Set(Verb.Skill1, false);
 
-                    // ---- LAVA RAM into a wall (3.5 to 6.5) ----
-                    if (Beat(3.5f))
-                    {
-                        Place(sean, At(9f), can); Place(a, At(9f, 3.5f), At(9f));
-                        wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        wall.name = "SeanFilmWall"; wall.transform.position = At(7.2f, 0, 1.2f); wall.transform.localScale = new Vector3(3, 2.4f, .3f);
-                        // A plastered wall in the alley's own brick, not Unity's untextured white (it read as a blank card).
-                        wall.GetComponent<Renderer>().material.color = new Color(.62f, .38f, .30f);
-                        watched = sean; focus = At(7.5f);
-                    }
-                    if (t >= 3.9f && t < 4.3f) sean.Intent.Set(Verb.Skill1, true);
-                    if (Beat(4.3f)) sean.Intent.Set(Verb.Skill1, false);
-                    if (Beat(6.4f) && wall != null) { Object.Destroy(wall); wall = null; }
+                    // (3.5 to 6.5: nothing. The owner, 2026-10-24: no empty ram and no staged wall in the film; the wall daze is
+                    // `SeanKitPlayProbe`'s to prove.)
 
                     // ---- MOLTEN THROW at the can, then the taya at a hot can (6.5 to 13) ----
-                    if (Beat(6.5f)) { Place(sean, At(6f), can); watched = taya; focus = can; Place(taya, At(-2.5f, 2.5f), can); }
+                    // From 8.5 m: a throw is refused inside the 7 m box round the can (`ThrowRules.CanThrow`), and from 6 m it never left his hand.
+                    // The body the ram threw still stood in the lane, and the coated slipper burst on it 5 m out: off to one side.
+                    if (Beat(6.5f)) { Place(a, At(4f, 3.2f), can); Place(sean, At(8.5f), can); watched = taya; focus = can; Place(taya, At(-2.5f, 2.5f), can); }
                     if (t >= 6.8f && t < 7.0f) sean.Intent.Set(Verb.Skill2, true);
                     if (Beat(7.0f)) sean.Intent.Set(Verb.Skill2, false);
-                    if (t >= 7.5f && t < 8.1f) { sean.Intent.AimPoint = lata.transform.position + Vector3.up * .3f; sean.Intent.Set(Verb.SpecialAbility, true); }
-                    if (Beat(8.1f)) sean.Intent.Set(Verb.SpecialAbility, false);
-                    if (Beat(9.4f))
+                    if (t >= 7.5f && t < 9.05f) { sean.Intent.AimPoint = lata.transform.position + Vector3.up * .3f; sean.Intent.Set(Verb.SpecialAbility, true); }
+                    if (Beat(9.05f)) sean.Intent.Set(Verb.SpecialAbility, false);   // a full charge (`Balance.ChargeFullTime`): 0.6 s fell 5 m short
+                    if (Beat(9.9f))
                     {
                         canDownOnThrow = !lata.IsUpright;
                         if (lata.IsUpright)
                         {
+                            var shoes = Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None);
+                            var near = shoes.OrderBy(x => Flat(x.transform.position - lata.transform.position).magnitude).FirstOrDefault();
+                            staged.AppendLine(FormattableString.Invariant($"9.9 s: nearest slipper {(near != null ? Flat(near.transform.position - lata.transform.position).magnitude : -1):F2} m from the can, at {(near != null ? near.transform.position : Vector3.zero)}; can at {lata.transform.position}; Rago at {sean.transform.position}"));
                             lata.HostKnockDown(sean.PlayerSlot); lata.HostMoltenHit(-lane);
-                            staged.AppendLine("9.4 s: the thrown slipper missed the can; it was knocked over and blasted on the host's path (Lata.HostMoltenHit) so the hot can is filmed.");
+                            staged.AppendLine("9.9 s: the thrown slipper missed the can; it was knocked over and blasted on the host's path (Lata.HostMoltenHit) so the hot can is filmed.");
                         }
                     }
-                    if (Beat(9.6f)) Place(taya, Flat(lata.transform.position) + Vector3.right * .7f + Vector3.up * .12f, lata.transform.position);
-                    if (t >= 9.8f && t < 12.6f) taya.Intent.Set(Verb.Grab, true);   // refused while hot, then the reset
+                    if (Beat(10.1f)) Place(taya, Flat(lata.transform.position) + Vector3.right * .7f + Vector3.up * .12f, lata.transform.position);
+                    if (t >= 10.3f && t < 12.6f) taya.Intent.Set(Verb.Grab, true);   // refused while hot, then the reset
                     if (Beat(12.6f)) taya.Intent.Set(Verb.Grab, false);
 
                     // ---- MAGMA FIST from the taya's seat (13 to 17.5) ----
@@ -211,8 +189,8 @@ namespace TumbangPreso.PlayTests
                         Place(taya, At(1.2f), At(6f)); Place(b, At(5.6f, .4f), can);
                         watched = b; focus = At(4f);
                     }
-                    if (t >= 13.5f && t < 13.65f) taya.Intent.Set(Verb.Skill2, true);
-                    if (Beat(13.65f)) taya.Intent.Set(Verb.Skill2, false);
+                    if (t >= 13.3f && t < 13.9f) { taya.Intent.AimPoint = b.transform.position + Vector3.up; taya.Intent.Set(Verb.Skill2, true); }   // the prayer, placed on them
+                    if (Beat(13.9f)) taya.Intent.Set(Verb.Skill2, false);
 
                     // ---- MAYON AWAKENS, Molten, a shove that does not move him, the VOLCANIC BOMB (17.5 to 44) ----
                     if (Beat(17.5f))
@@ -262,11 +240,15 @@ namespace TumbangPreso.PlayTests
                     }
                     else if (Camera.main != null) Shoot(Camera.main, "owner", f);
 
-                    // The court from above, from whichever corner sees the spot: the Eskinita's roofs hid a fixed corner for a
-                    // third of the first film. Chosen again only when the spot moves, so the view never hops mid-skill.
-                    if (focus != wideFocus) { wideFocus = focus; wideAt = ClearWide(focus); }
-                    wide.transform.position = wideAt;
-                    wide.transform.LookAt(focus + Vector3.up * .8f);
+                    // ⚠️ ONE HAND-PLACED SHOT PER SKILL (owner, 2026-10-24: "separate clips", "di ung iba iba pa angle"). From behind
+                    // the caster, off to one side and above, so his body never hides who he hits; under the alley's wires.
+                    // `tools/stitch_ability_film.py` films this view and the clips are cut from it at the beats below.
+                    (Vector3 eye, Vector3 look) shot =
+                        t < 6.5f ? (At(12.5f, 2.3f, 2.6f), At(5.5f, 0f, .7f))     // LAVA RAM
+                        : t < 13f ? (At(11f, 2.4f, 2.8f), At(2f, 0f, .4f))       // MOLTEN THROW and the hot can
+                        : t < 17.5f ? (At(3.4f, 2.9f, 2.0f), At(3.4f, 0f, .7f))   // MAGMA FIST, side-on: his prayer at one side, the puddle at the other
+                        : (At(11f, 3.4f, 3.6f), At(2f, 0f, .5f));                // the blast, Molten, the VOLCANIC BOMB
+                    wide.transform.position = shot.eye; wide.transform.LookAt(shot.look);
                     var who = watched != null ? watched : a;
                     var toFocus = Flat(focus - who.transform.position);
                     toFocus = toFocus.sqrMagnitude > .01f ? toFocus.normalized : Vector3.forward;
@@ -285,12 +267,11 @@ namespace TumbangPreso.PlayTests
                 File.WriteAllText(Path.Combine(root, "notes.txt"), notes.ToString());
                 File.WriteAllText(Path.Combine(root, "staged.txt"), staged.Length > 0 ? staged.ToString() : "nothing staged: every beat came from the pressed input\n");
                 Time.captureFramerate = previousRate;
-                if (wall != null) Object.Destroy(wall);
                 Object.Destroy(wide.gameObject); Object.Destroy(victimCam.gameObject);
                 hdr.Release(); ldr.Release();
             }
             Debug.Log("[SeanKitFilmProbe] can down on the throw: " + canDownOnThrow + "; cutscene seen: " + sawScene + "; bomb knocked the can: " + bombKnocked);
-            Assert.IsTrue(sawScene, "The MAYON AWAKENS cutscene never came up on his screen.");
+            if (mode == "1") Assert.IsTrue(sawScene, "The MAYON AWAKENS cutscene never came up on his screen.");
         }
     }
 }

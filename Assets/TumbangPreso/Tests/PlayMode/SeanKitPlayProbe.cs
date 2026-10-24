@@ -212,7 +212,7 @@ namespace TumbangPreso.PlayTests
         // ------------------------------------------------------------------ MAGMA FIST
 
         [UnityTest, Timeout(60000)]
-        public IEnumerator MagmaFistMarksItsTargetAndThrowsThemAwayFromTheCan()
+        public IEnumerator MagmaFistIsPlacedWhereHeAimsAndThrowsThemAwayFromTheCan()
         {
             var round = GameServices.Round;
             var lata = round.Lata;
@@ -222,13 +222,22 @@ namespace TumbangPreso.PlayTests
             var sean = Sean(round.Players.First(p => p.IsDefender), can + new Vector3(0, .12f, -1), target.transform.position);
             yield return new WaitForSeconds(.2f);
             float before = Flat(target.transform.position - can).magnitude;
-            yield return Press(sean, Verb.Skill2, .15f);
-            bool marked = false; float t0 = Time.time;
-            while (Time.time - t0 < 1.0f) { marked |= Object.FindObjectsByType<SeanGroundMark>(FindObjectsSortMode.None).Length > 0; yield return null; }
+            // A prayer and a long press: held, the ring sits where he aims (here, on the target); the release opens it there.
+            sean.Intent.AimPoint = target.transform.position + Vector3.up;
+            yield return Press(sean, Verb.Skill2, .4f);
+            bool marked = false; float placedOff = float.MaxValue, t0 = Time.time;
+            while (Time.time - t0 < 1.0f)
+            {
+                marked |= Object.FindObjectsByType<SeanGroundMark>(FindObjectsSortMode.None).Length > 0;
+                foreach (var f in Object.FindObjectsByType<SeanMagmaFist>(FindObjectsSortMode.None))
+                    placedOff = Mathf.Min(placedOff, Flat(f.transform.position - target.transform.position).magnitude);
+                yield return null;
+            }
             yield return new WaitForSeconds(.8f);
             float after = Flat(target.transform.position - can).magnitude;
-            Note("fist_target_marked", marked); Note("fist_distance_from_can_before_m", before); Note("fist_distance_from_can_after_m", after);
-            Assert.IsTrue(marked, "The player the fist was coming for had no ring under them.");
+            Note("fist_placed_off_target_m", placedOff); Note("fist_target_marked", marked); Note("fist_distance_from_can_before_m", before); Note("fist_distance_from_can_after_m", after);
+            Assert.Less(placedOff, .4f, "The puddle did not open where he aimed.");
+            Assert.IsTrue(marked, "The spot had no warning ring on it.");
             Assert.Greater(after - before, SeanRules.FistPush * .6f, "The fist did not throw them away from the can.");
             Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanSlam && f.subject == target.PlayerSlot), "The punch was not announced.");
         }

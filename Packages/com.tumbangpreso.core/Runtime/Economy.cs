@@ -176,13 +176,14 @@ namespace TumbangPreso.Core
         /// <summary>
         /// ⚠️⚠️ THE ONLY HEROES ANYBODY MAY PLAY, ON EVERY ROUTE: OFFLINE, LAN AND ONLINE (owner,
         /// 2026-10-20: "make these characters the only unlocked characters. do this for both lan,
-        /// multiplayer, and offline"). This is narrower than ownership on purpose: a wallet that
+        /// multiplayer, and offline"; 2026-10-24, Rago: "unlock sean na ren in the game para ppl can play test
+        /// him as well as bots"). This is narrower than ownership on purpose: a wallet that
         /// bought or migrated another hero still cannot field it, and Practice no longer opens the
-        /// rest. Bots are not limited; this is about the hero a PERSON brings. Classic people are
+        /// rest. Bots field only these too (`MatchInstaller.ResolveAiCharacterIndex`). Classic people are
         /// never heroes (`IsHero`), so Classic and the tournament preset are untouched.
         /// Widen it here in one line and every gate follows.
         /// </summary>
-        public static readonly string[] UnlockedHeroes = { "nemu", "paete", "phaister", "amihan", "dante" };
+        public static readonly string[] UnlockedHeroes = { "nemu", "paete", "phaister", "amihan", "dante", "sean" };
 
         /// <summary>True for every non-hero id, and for a hero only when it is in <see cref="UnlockedHeroes"/>.</summary>
         public static bool IsHeroUnlocked(string heroId) =>

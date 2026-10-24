@@ -296,60 +296,101 @@ def dante_barrier(a):
     a.glint(345, 260, 20, 65)
 
 
+# RAGO, THE LAVA BRAWLER (owner, 2026-10-24: "thoroughly redesign his icons"). His lava is LIQUID and his own: gold
+# FFC83A to cherry D8261C, cooling to black glass; never Dante's stone, never the parol (plan.md section 0). One idea
+# per icon, each the power's own noun: the fist that rams, the slipper in lava, the fist out of the puddle, the
+# mountain waking, the bomb.
+LAVA_GOLD, LAVA_CHERRY = hexc("FFC83A"), hexc("D8261C")
+GLASS, GLASS_LT = hexc("2E1F1E"), hexc("5A3A34")
+
+
+def _drop(a, x, y, r, col):
+    """A falling drop: round below, a point above."""
+    a.add(np.maximum(a.circle(x, y, r), a.poly([(x - r * .82, y - r * .45), (x, y - r * 2.3), (x + r * .82, y - r * .45)])),
+          col, shade=False)
+
+
+def _fist_side(a, cx, cy, s, body, fingers):
+    """A clenched fist seen from the side, punching to the right: the curled fingers stacked on its front."""
+    a.add(a.ellipse(cx, cy, 175 * s, 160 * s), body)
+    for dy, reach in ((-100, 140), (0, 158), (100, 140)):
+        a.add(a.band([(cx - 10 * s, cy + dy * s), (cx + reach * s, cy + dy * s)], 92 * s), fingers)
+    a.add(a.band([(cx - 95 * s, cy + 95 * s), (cx + 55 * s, cy + 140 * s)], 78 * s), body)
+
+
 def sean_rush(a):
-    for y, x0, x1 in ((330, 100, 330), (512, 80, 290), (694, 100, 330)):
-        a.add(a.band([(x0, y), (x1, y)], 60), PERSIMMON, shade=False)
-    head = [(640 + 240 * math.cos(math.radians(t)), 512 + 240 * math.sin(math.radians(t))) for t in range(-90, 91, 10)]
-    tail = [(640, 752), (320, 660), (440, 590), (250, 512), (440, 434), (320, 364), (640, 272)]
-    a.add(a.poly(head + tail), RIMRED)
-    core = [(650 + 160 * math.cos(math.radians(t)), 512 + 160 * math.sin(math.radians(t))) for t in range(-90, 91, 10)]
-    a.add(a.poly(core + [(650, 672), (470, 590), (540, 512), (470, 434), (650, 352)]), PERSIMMON)
-    a.add(a.circle(690, 512, 84), LEMON, shade=False)
-    a.glint(720, 470, 22)
-
-
-def sean_cinder_gate(a):
-    # A low ember seam turns a crossing back; it is not a solid wall or shoe buff.
-    a.add(a.poly([(150, 750), (760, 650), (880, 750), (265, 860)]), DEEPRED)
-    a.add(a.band([(215, 758), (788, 716)], 42), EMBER, shade=False)
-    for x, y, height in ((300, 752, 155), (510, 733, 205), (735, 712, 145)):
-        a.add(a.poly(flame_pts(x, y, 120, height, 1)), PERSIMMON)
-        a.add(a.poly(flame_pts(x, y - 6, 56, height * .56, 1)), LEMON, shade=False)
-    # One broad curved return arrow, separated from the seam for small-HUD clarity.
-    a.add(a.band([(740, 472), (725, 350), (655, 252), (540, 211),
-                  (425, 236), (352, 318)], 100), GOLD)
-    a.add(a.poly([(228, 312), (439, 345), (284, 505)]), HONEY)
-    a.glint(554, 197, 43, 12)
+    # LAVA RAM: his lava fist driving right, the lava streaming off behind it, the hit bursting in front.
+    a.add(a.poly(star_pts(860, 512, 140, 66, 6, rot=0)), LEMON, shade=False)
+    for (x0, y0), (x1, y1), w in (((60, 300), (300, 400), 46), ((40, 520), (270, 540), 58), ((80, 760), (320, 670), 46)):
+        a.add(a.band([(x0, y0), (x1, y1)], w), LAVA_GOLD, shade=False)
+    for x, y, r in ((120, 410, 26), (100, 660, 30)):
+        a.add(a.circle(x, y, r), LAVA_GOLD, shade=False)
+    a.add(a.band([(200, 620), (470, 545)], 270), LAVA_CHERRY)
+    _fist_side(a, 545, 512, 1.18, EMBER, LAVA_GOLD)
+    a.glint(470, 390, 38, 22)
 
 
 def sean_ignite(a):
-    slipper(a, 400, 620, 560, -32, RIMRED, HONEY)
-    a.add(a.poly(flame_pts(700, 600, 300, 520, 3)), PERSIMMON)
-    a.add(a.poly(flame_pts(700, 590, 190, 330, 2)), GOLD)
-    a.add(a.poly(flame_pts(700, 580, 90, 170, 1)), LEMON, shade=False)
+    # MOLTEN THROW: his slipper dipped in lava, flying flat and straight (it never curves), dripping as it goes.
+    for y, x0, x1 in ((330, 60, 250), (470, 40, 230), (610, 60, 250)):
+        a.add(a.band([(x0, y), (x1, y)], 44), LAVA_GOLD, shade=False)
+    slipper(a, 590, 470, 640, 62, EMBER, GLASS)
+    # the lava coat: the sole's middle still molten gold, the toe and heel already skinning cherry
+    a.add(slipper_mask(a, 590, 470, 430, 62), LAVA_GOLD, shade=False)
+    post = rot([(590, 470 - 640 * 0.27)], 590, 470, 62)[0]
+    w = 640 * 0.46
+    left = rot([(590 - w * 0.46, 470 + 640 * 0.05)], 590, 470, 62)[0]
+    right = rot([(590 + w * 0.46, 470 + 640 * 0.05)], 590, 470, 62)[0]
+    a.add(a.band([left, post, right], 640 * 0.08), GLASS, shade=False)
+    for x, y, r in ((440, 760, 34), (590, 800, 40), (735, 735, 30)):
+        _drop(a, x, y, r, LAVA_CHERRY)
+
+
+def sean_cinder_gate(a):
+    # MAGMA FIST: a giant lava fist punching straight up out of the puddle under its target.
+    a.add(a.ellipse(512, 838, 380, 112), LAVA_CHERRY)
+    a.add(a.ellipse(512, 826, 260, 66), LAVA_GOLD, shade=False)
+    for x, y, r in ((180, 640, 34), (850, 610, 38), (255, 500, 24), (790, 470, 26)):
+        _drop(a, x, y, r, LAVA_GOLD)
+    a.add(a.band([(512, 830), (512, 520)], 240), EMBER)
+    a.add(a.ellipse(512, 400, 205, 175), EMBER)
+    for x in (392, 472, 552, 632):
+        a.add(a.circle(x, 262, 64), LAVA_GOLD)
+    a.add(a.band([(330, 450), (470, 380)], 82), EMBER)
+    a.glint(440, 330, 30, 18)
 
 
 def sean_supernova(a):
-    # Sean comes down from above as a comet and bursts on the street.
-    a.add(a.poly(star_pts(610, 690, 310, 160, 8)), PERSIMMON)
-    a.add(a.poly(star_pts(610, 690, 205, 112, 8, rot=-67.5)), GOLD)
-    a.add(a.circle(610, 690, 84), LEMON, shade=False)
-    # a comet: a round head trailing a flame that fans out behind it, toward the upper left
-    def tail(hx, hy, r, length):
-        ang = math.atan2(-1.0, -0.8)
-        ux, uy = math.cos(ang), math.sin(ang)
-        px, py = -uy, ux
-        tip = (hx + ux * length, hy + uy * length)
-        side = [(hx + px * r * 1.05, hy + py * r * 1.05),
-                (hx + ux * length * 0.45 + px * r * 1.25, hy + uy * length * 0.45 + py * r * 1.25),
-                tip,
-                (hx + ux * length * 0.45 - px * r * 1.25, hy + uy * length * 0.45 - py * r * 1.25),
-                (hx - px * r * 1.05, hy - py * r * 1.05)]
-        return side
-    a.add(np.maximum(a.poly(tail(450, 470, 120, 460)), a.circle(450, 470, 125)), RIMRED)
-    a.add(np.maximum(a.poly(tail(455, 465, 75, 300)), a.circle(455, 465, 80)), PERSIMMON, shade=False)
-    a.add(a.circle(465, 455, 42), LEMON, shade=False)
-    a.glint(560, 630, 20)
+    # MAYON AWAKENS: the mountain's cone, its summit lit, five jets of lava thrown up out of it in the cone's spread.
+    for ang, length, w, col in ((-90, 300, 74, EMBER), (-120, 270, 56, EMBER), (-60, 270, 56, EMBER),
+                                (-145, 220, 44, LAVA_GOLD), (-35, 220, 44, LAVA_GOLD)):
+        tip = (512 + length * math.cos(math.radians(ang)), 320 + length * math.sin(math.radians(ang)))
+        a.add(a.poly([(512 - w * .5, 330), tip, (512 + w * .5, 330)]) if False else a.band([(512, 320), tip], w), col)
+    a.add(a.band([(512, 320), (512, 90)], 34), LEMON, shade=False)
+    for x, y, r in ((190, 230, 30), (840, 220, 34), (330, 70, 24), (700, 64, 22)):
+        _drop(a, x, y, r, LAVA_GOLD)
+    left = [(512 - (90 + 310 * ((y - 330) / 570) ** 2), y) for y in range(330, 901, 30)]
+    right = [(1024 - x, y) for x, y in reversed(left)]
+    a.add(a.poly(left + right), GLASS)
+    a.add(a.band([(478, 345), (440, 520), (392, 720)], 40), LAVA_CHERRY, shade=False)
+    a.add(a.band([(548, 345), (592, 560), (650, 780)], 34), LAVA_CHERRY, shade=False)
+    a.add(a.ellipse(512, 334, 108, 38), LEMON, shade=False)
+
+
+def sean_bomb(a):
+    # VOLCANIC BOMB: one heavy ball of his lava, its black-glass crust split by a glowing crack, falling on its arc in a
+    # tapered trail of fire (v2: a ring of plates read as a turtle shell and a chain of fire balls as a caterpillar).
+    hx, hy, r = 610, 600, 250
+    a.add(a.poly(_swept(90, 140, hx - 60, hy - 60, 30, 330, -70)), EMBER)
+    a.add(a.poly(_swept(150, 190, hx - 90, hy - 90, 16, 190, -55)), LAVA_GOLD, shade=False)
+    a.add(a.circle(hx, hy, r), GLASS)
+    a.add(a.band([(380, 600), (450, 545), (525, 615), (610, 555), (690, 630), (830, 585)], 46), LAVA_GOLD, shade=False)
+    a.add(a.band([(525, 615), (505, 705), (545, 785)], 32), LAVA_GOLD, shade=False)
+    a.add(a.band([(610, 555), (640, 455), (600, 385)], 30), LAVA_GOLD, shade=False)
+    a.add(a.band([(450, 560), (525, 625), (610, 568), (690, 640)], 16), LEMON, shade=False)
+    for x, y, rr in ((500, 905, 30), (735, 895, 26)):
+        _drop(a, x, y, rr, EMBER)
+    a.glint(700, 440, 34, 18)
 
 
 def cheska_frost(a):
@@ -1071,7 +1112,7 @@ GLYPHS = {
     "DanteStomp": dante_stomp, "DanteShield": dante_shield, "DanteFissure": dante_fissure,
     "DanteBoulder": dante_boulder, "DanteBarrier": dante_barrier,
     "SeanRush": sean_rush, "SeanIgnite": sean_ignite, "SeanSupernova": sean_supernova,
-    "SeanCinderGate": sean_cinder_gate,
+    "SeanCinderGate": sean_cinder_gate, "SeanVolcanicBomb": sean_bomb,
     "CheskaFrostSheet": cheska_frost, "CheskaBarricade": cheska_barricade, "CheskaNova": cheska_nova,
     "CheskaFrostbite": cheska_frostbite,
     "ZackSprint": zack_sprint, "ZackOvercharge": zack_magnet, "ZackThunderstrike": zack_thunder,

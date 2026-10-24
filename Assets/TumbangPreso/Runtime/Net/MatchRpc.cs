@@ -2620,6 +2620,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.PossessedLeft);
             // Nemu's DON'T LOOK (protocol 161): the BLINDED clock. The body's own peer reads its slow and its covered eyes from it.
             writer.WriteValueSafe(unit.BlindedLeft);
+            // Rago's LAVA RAM (protocol 178): the SEARED clock. The body's own peer reads its fading slow from it.
+            writer.WriteValueSafe(unit.SearedLeft);
             writer.WriteNetworkSerializable(VoodooBodySnapshot.Capture(unit));
             writer.WriteNetworkSerializable(unit.AbilitySystem?.CaptureAimPresentation() ?? default(AbilityAimSnapshot));
             var delivery = reliable ? NetworkDelivery.ReliableSequenced : PoseDelivery;
@@ -2683,6 +2685,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float zappedLeft);
             reader.ReadValueSafe(out float possessedLeft);
             reader.ReadValueSafe(out float blindedLeft);
+            reader.ReadValueSafe(out float searedLeft);
             if (!VoodooBodySnapshot.TryRead(ref reader, slot, out var voodoo)) return;
             if (!AbilityAimSnapshot.TryRead(ref reader, out var aim)) return;
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
@@ -2735,6 +2738,7 @@ namespace TumbangPreso.Net
             unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft, hauntedLeft, zappedLeft);
             unit.ApplyNetworkPossessed(possessedLeft);
             unit.ApplyNetworkBlinded(blindedLeft);
+            unit.ApplyNetworkSeared(searedLeft);
             unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
             // The movement rework's crouch and slide, for this body's pose on a screen that does not simulate it.
             unit.ApplyNetworkMovePose(effort);

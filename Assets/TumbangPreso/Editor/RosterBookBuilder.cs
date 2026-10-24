@@ -424,6 +424,8 @@ namespace TumbangPreso.EditorTools
                         clips.AddRange(PhaisterMotionAuthor.Bake(asset.Model));
                     if(kind=="person"&&entry.Id=="nemu"&&asset.Model!=null)
                         clips.AddRange(NemuMotionAuthor.Bake(asset.Model));
+                    if(kind=="person"&&entry.Id=="sean"&&asset.Model!=null)
+                        clips.AddRange(SeanMotionAuthor.Bake(asset.Model));
                     // The emote wheel's authored clips on the playable heroes (`EmoteMotionAuthor`).
                     if(kind=="person"&&EmoteMotionAuthor.Covers(entry.Id)&&asset.Model!=null)
                         clips.AddRange(EmoteMotionAuthor.Bake(entry.Id, asset.Model));
@@ -513,6 +515,8 @@ namespace TumbangPreso.EditorTools
                     clips.AddRange(PhaisterMotionAuthor.Bake(asset.Model));
                 if(kind=="person"&&id=="nemu"&&asset.Model!=null)
                     clips.AddRange(NemuMotionAuthor.Bake(asset.Model));
+                if(kind=="person"&&id=="sean"&&asset.Model!=null)
+                    clips.AddRange(SeanMotionAuthor.Bake(asset.Model));
                 if(kind=="person"&&EmoteMotionAuthor.Covers(id)&&asset.Model!=null)
                     clips.AddRange(EmoteMotionAuthor.Bake(id, asset.Model));
                 asset.Clips = clips.ToArray();

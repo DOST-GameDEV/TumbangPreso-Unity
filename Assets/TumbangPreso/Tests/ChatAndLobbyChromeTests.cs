@@ -403,7 +403,7 @@ namespace TumbangPreso.Tests
             //175 reworks Nemu: dormant ghosts ride her ghost frames and "ReqReclaim" joins the wire.
             //176 is Sean's lava brawler kit: the hot can rides a second `SyncLata` suffix and his rules change on the same ids.
             //177 sends Sean's hits as five appended flair kinds and his PRESSURE bars in the timed-kit passive float.
-            Assert.AreEqual(177, NetSession.ProtocolVersion,
+            Assert.AreEqual(178, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

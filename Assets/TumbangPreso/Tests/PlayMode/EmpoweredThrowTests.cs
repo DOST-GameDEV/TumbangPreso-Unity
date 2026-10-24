@@ -60,7 +60,9 @@ namespace TumbangPreso.PlayTests
             var ctx = Actor(out var kit); var shoe = Shoe(ctx);
             using (NetCue.SuppressRelay()) kit.AttackingSkill.Activate(ctx);
             var origin = new Vector3(0, 1, -8); var target = Vector3.zero;
-            var expected = shoe.LaunchVelocityTo(origin, target, 1) * SeanRules.MoltenThrowSpeedScale;
+            // Faster, on the arc solved at the faster speed, so it still lands on its aim (scaled after the solve it overshot).
+            float fast = shoe.LaunchVelocityTo(origin, target, 1).magnitude * SeanRules.MoltenThrowSpeedScale;
+            var expected = Slipper.SolveArc(origin, target, fast) * fast;
             using (NetCue.SuppressRelay()) ctx.Carrier.HostThrowAt(origin, target, 1);
             Assert.AreEqual(SlipperState.InFlight, shoe.State); Assert.AreEqual(SlipperAffinity.FireExplosive, shoe.Affinity);
             Assert.Less(Vector3.Distance(expected, shoe.Velocity), .001f); Assert.IsFalse(kit.IsIgnitionCannonActive);

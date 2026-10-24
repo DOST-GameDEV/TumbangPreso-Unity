@@ -92,7 +92,27 @@ namespace TumbangPreso
             : (IsChilled ? StatusRules.ChilledSpeedScale : 1.0f) * (IsConcussed ? StatusRules.ConcussedSpeedScale : 1.0f)
               * VoodooSpeedScale
               * (IsPossessed ? NemuRules.PossessedSpeedScale : 1.0f)
-              * BlindedSpeedScale;
+              * BlindedSpeedScale
+              * Core.SeanRules.SearedSpeedScale(_searedLeft);
+
+        // ------------------------------------------------------------------ SEARED (Rago's LAVA RAM)
+
+        private float _searedLeft;
+
+        /// <summary>Seconds of SEARED left: the slow a LAVA RAM hit leaves, fading (`SeanRules.SearedSpeedScale`).</summary>
+        public float SearedLeft => _searedLeft;
+
+        /// <summary>The host sets it on the body a LAVA RAM hits; the pose stream carries it to that body's own peer.</summary>
+        public void ApplySeared(float seconds)
+        {
+            if (!MayMutateGameplayState() || !float.IsFinite(seconds) || seconds <= 0) return;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            _searedLeft = Mathf.Max(_searedLeft, Mathf.Min(seconds, Core.SeanRules.SearedTotalSeconds));
+        }
+
+        /// <summary>The host's SEARED clock, off the wire (`SyncUnit`, protocol 178).</summary>
+        public void ApplyNetworkSeared(float searedLeft)
+            => _searedLeft = float.IsFinite(searedLeft) ? Mathf.Clamp(searedLeft, 0.0f, Core.SeanRules.SearedTotalSeconds) : 0.0f;
 
         /// <summary>
         /// WHIRLED: *"Drops slipper if currently in hand. Prevents slipper retrieval for 2.5
@@ -328,6 +348,7 @@ namespace TumbangPreso
             StepBlinded(dt);
             if (_whirledLeft > 0.0f) _whirledLeft = Mathf.Max(0.0f, _whirledLeft - dt);
             if (_chilledLeft > 0.0f) _chilledLeft = Mathf.Max(0.0f, _chilledLeft - dt);
+            if (_searedLeft > 0.0f) _searedLeft = Mathf.Max(0.0f, _searedLeft - dt);
             if (_rootedLeft > 0.0f)
             {
                 _rootedLeft = Mathf.Max(0.0f, _rootedLeft - dt);
@@ -416,13 +437,15 @@ namespace TumbangPreso
         /// ⚠️ THE OWNER OF THE BODY APPLIES IT, like `ApplyImpulse`: a host resolving a hit on a
         /// client-driven body uses <see cref="ApplyResolvedCarry"/>, which sends it there.
         /// </summary>
-        public void BeginCarry(Vector3 velocity, float seconds)
+        /// <param name="own">⚠️ The body's OWN dash (Rago's LAVA RAM), not a push it takes, so its knockback resistance does
+        /// not shrink it. Molten scales every push he takes to zero, and his ram went nowhere while Molten.</param>
+        public void BeginCarry(Vector3 velocity, float seconds, bool own = false)
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
             if (!Finite(velocity) || float.IsNaN(seconds) || float.IsInfinity(seconds)) return;
             var flat = new Vector3(velocity.x, 0.0f, velocity.z);
             if (flat.magnitude > Balance.MaxKnockbackSpeed) flat = flat.normalized * Balance.MaxKnockbackSpeed;
-            float scale=IncomingKnockbackSpeedScale;
+            float scale=own?1.0f:IncomingKnockbackSpeedScale;
             flat*=scale;
             _carryVelocity = flat;
             // Scaling both held speed and time halves held travel and its friction tail.

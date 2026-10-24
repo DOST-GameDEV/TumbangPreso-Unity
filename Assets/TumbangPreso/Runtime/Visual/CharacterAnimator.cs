@@ -213,6 +213,7 @@ namespace TumbangPreso.Visual
 
             { "hero-sean-dash", new[] { "hero-sean-dash", "attack-kick-right", Sprint } },
             { "hero-sean-gate", new[] { "hero-sean-gate", Interact } },
+            { "hero-sean-pray", new[] { "hero-sean-pray", "hero-sean-gate", Interact } },
             { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
             { "hero-sean-supernova", new[] { "hero-sean-supernova", Jump, "attack-melee-right" } },
 

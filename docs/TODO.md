@@ -28,7 +28,7 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   `DanteHeroKit x0.5`). The 0.35 s splash hold added for it is reverted; the probe judges the push times the body's own scale.
 - [x] `SeanKitFilmProbe` filmed and stitched (`Logs/sean-2026-10-24/rago-all-skills-v3.mp4`, sent to the owner). The wide view
   now picks a corner the roofs do not hide (a fixed corner was blind for a third of the first take), the wall is painted,
-  the take ends 4 s after the bomb. The thrown slipper still misses the can (staged on the host's path, `staged.txt`).
+  the take ends 4 s after the bomb.
 - [ ] 🧑 Owner's look at the skills film and the prop sheets.
 - [x] Cutscene filmed alone in batchmode (`-executeMethod TumbangPreso.EditorTools.MapKit.PaeteAbilityFilm.RunIntroBatch
   -introHero sean -introTag <tag>`; films s9 to s13 in `Logs/paete-ability-film/`). Shot B sat inside his face (1.05 m,
@@ -36,6 +36,21 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   hand effect fell back to a point by his LEFT jaw; the film now fits one as the game does (`bones_<hero>_<tag>.txt` logs where
   the hands are). C2 looked down and cut the fountain off; it now ends ~10 m off level with his chest, cone and ring whole.
   Not yet seen in a match by anyone but the probe.
+- [x] Owner 2026-10-24, second round: LAVA RAM is an 8 m held charge (`BeginCarry(own: true)`, 14 m/s then the slide-out;
+  was a 4 m single shove); a body's own carry skips its knockback scale, which had cancelled the ram while Molten (scale 0).
+  `SeanKitPlayProbe` 7 of 7. Rago unlocked for people and bots (`EconomyRules.UnlockedHeroes`; `LanHeroLockTests`,
+  `OfflineBotRosterCoverageTests` 6 of 6). Icons redrawn in his lava (`tools/build_ability_icons.py`; sheet
+  `Logs/sean-2026-10-24/sean-icons-v3.png`), with VOLCANIC BOMB's own glyph `SeanVolcanicBomb` (appended). The film has no
+  wall beat, one hand-placed shot per skill, and throws from 8.5 m: from 6 m he stood inside the 7 m box, so every
+  "missed" throw was refused (`ThrowRules.CanThrow`). Separate clips per skill.
+- [x] Owner 2026-10-24, third round. MOLTEN THROW: the coat sped the throw up AFTER its arc was solved, so every coated throw
+  sailed past its aim (2.2 m past the can); the arc is now solved at the faster speed (`Carrier`), and the film's throw knocks
+  the can over unstaged. LAVA RAM: the stumble is 1.0 s, then SEARED, half speed fading to full over 2 s
+  (`SeanRules.SearedSpeedScale`, `CharacterMotor.ApplySeared`, protocol 178). MAGMA FIST reworked ("why is he throwing
+  something?"): a prayer held while the ring is placed where he looks (2 to 9 m, `AimByHolding` where-looking), the release
+  opens a puddle that warns 0.45 s, then the giant fist. No flight, no lock. Prayer clips `hero-sean-pray-aim` (looped) and
+  `hero-sean-pray` (`HeroAbilityClips.Sean.cs`, baked by `SeanMotionAuthor`); bots place it where the attacker will be.
+- [ ] 🧑 Owner to play the new Magma Fist and the prayer; first-person arms still play the old `cinder-draw` action.
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
 - [ ] Cleanup once nothing references them: parol props and `ParolGround`, `UltimateProp.Sean.cs`, `SeanSupernovaLook`,
   `SeanCinderGate` (+ look and tests), the Stoke FX study scenes.

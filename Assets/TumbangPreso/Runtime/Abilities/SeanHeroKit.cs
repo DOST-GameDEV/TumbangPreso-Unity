@@ -197,7 +197,7 @@ namespace TumbangPreso.Abilities
         private float _bombShownUntil = -1;
         internal const string BombName = "VOLCANIC BOMB";
         internal const string BombDescription =
-            "Hurl the lava off your arms: a 4.8 m splash throws everyone 4 m, knocks the can over (never your own) and leaves a slowing pool.";
+            "Hurl the lava off your arms: a 4.8 m splash throws everyone 4 m, knocks the can over and leaves a slowing pool.";
 
         /// <summary>
         /// The E press while Molten, on every peer that runs the cast. The bomb lands where he aims, as far as he aimed and no
@@ -407,8 +407,9 @@ namespace TumbangPreso.Abilities
                 _heading = ctx.Forward; _heading.y = 0;
                 if (_heading.sqrMagnitude < .0001f) { EndEarly(ctx); return; }
                 _heading.Normalize();
-                // The motor owns friction, collision and confinement: one impulse, no teleport.
-                ctx.Motor.ApplyImpulse(_heading * SeanRules.RamSpeed);
+                // The motor owns friction, collision and confinement: a held charge, no teleport. His own dash, so Molten's
+                // zero knockback does not cancel it.
+                ctx.Motor.BeginCarry(_heading * SeanRules.RamSpeed, SeanRules.RamHoldSeconds, own: true);
                 if (Visual.SeanStokeFire.Streak) Visual.SeanStokeFire.Burst(ctx.Motor, _heading);
                 else _aura = AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.FireEmber, SeanRules.RamTravelSeconds);
             }
@@ -440,6 +441,7 @@ namespace TumbangPreso.Abilities
                         if (_kit.HostLandHit(me)) { push = Erupted(push); Splash(me, first); }
                         first.ApplyResolvedImpact(push);
                         first.ApplyStagger(SeanRules.RamStumbleSeconds);
+                        first.ApplySeared(SeanRules.SearedTotalSeconds);
                         MatchFlair.Announce(MatchFlair.Kind.SeanSlam, me.PlayerSlot, first.PlayerSlot, at,
                             SeanRules.RamStumbleSeconds);
                         NetCue.Play("sfx_explosion_heavy", first.transform.position);
@@ -489,7 +491,7 @@ namespace TumbangPreso.Abilities
 
             public MoltenThrowAbility(SeanHeroKit kit)
                 : base("sean_skill2", "MOLTEN THROW",
-                       "Attacking. Coat your held slipper in lava for one throw within 8 s. It flies flat and fast. A can it knocks over is blasted away and lands hot: no reset for 1.5 s.",
+                       "Attacking. Coat your slipper in lava for one throw in 8 s, flat and fast. A can it hits flies off hot: no reset for 1.5 s.",
                        SeanRules.MoltenThrowCooldown, SeanRules.MoltenThrowLoadSeconds, AbilityGlyph.SeanIgnite,
                        summary: "One heavy throw. The can it knocks over flies and stays hot.",
                        castAction: "hero-sean-ignite", viewmodelAction: "ignite", castCue: "sfx_cast_sean_cannon")
@@ -512,7 +514,7 @@ namespace TumbangPreso.Abilities
             internal void ClearForBomb() => CooldownRemaining = 0;
 
             public override string LiveName => _kit.ShowsBomb ? BombName : EffectiveName;
-            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? _kit.Ultimate.Glyph : Glyph;
+            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? AbilityGlyph.SeanVolcanicBomb : Glyph;
             public override string LiveDescription => _kit.ShowsBomb ? BombDescription : EffectiveDescription;
 
             public bool LoadedFor(Slipper shoe)
@@ -590,17 +592,25 @@ namespace TumbangPreso.Abilities
 
             public MagmaFistAbility(SeanHeroKit kit)
                 : base("sean_skill2d", "MAGMA FIST",
-                    "Defending. Punch a fist of lava at the rival nearest your aim within 9 m. It curves after them; under their feet a giant fist punches up and throws them away from the can.",
+                    "Defending. Hold to pray and place it where you look; let go and a giant lava fist punches up there, away from the can.",
                     SeanRules.FistCooldown, 0, AbilityGlyph.SeanCinderGate,
-                    summary: "A curving lava fist that punches a rival up and away from the can.",
-                    telegraphRadius: SeanRules.FistPunchRadius, telegraphRange: SeanRules.FistLockRange,
-                    castAction: "hero-sean-gate", viewmodelAction: "cinder-draw", castCue: "sfx_cast_sean_rush")
-            { _kit = kit; }
+                    summary: "Hold to place it; a giant lava fist punches up there and throws them away from the can.",
+                    telegraphRadius: SeanRules.FistPunchRadius, telegraphRange: SeanRules.FistAimRange,
+                    castAction: "hero-sean-pray", viewmodelAction: "cinder-draw", castCue: "sfx_cast_sean_rush")
+            {
+                _kit = kit;
+                // The prayer, held while he places it (`HeroAbilityClips.Sean.cs`); the release drives his palms at the court.
+                AimPoseAction = "hero-sean-pray-aim";
+                // Owner, 2026-10-24: "he js does a prayer pose tapos he long presses or smth to decide where it gets cast".
+                // Placed where he looks on the court, as Paete's thorns and Rafi's wall are; only the release casts it.
+                AimByHolding(SeanRules.FistAimMinRange, SeanRules.FistAimRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f,
+                    whereLooking: true);
+            }
 
             public override bool CanActivate(AbilityContext ctx)
             {
                 if (_kit.BombReady) return base.CanActivate(ctx);
-                return base.CanActivate(ctx) && ctx.Motor.IsDefender && Target(ctx) != null;
+                return base.CanActivate(ctx) && ctx.Motor.IsDefender;
             }
 
             public override void Activate(AbilityContext ctx)
@@ -612,34 +622,13 @@ namespace TumbangPreso.Abilities
             internal void ClearForBomb() => CooldownRemaining = 0;
 
             public override string LiveName => _kit.ShowsBomb ? BombName : EffectiveName;
-            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? _kit.Ultimate.Glyph : Glyph;
+            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? AbilityGlyph.SeanVolcanicBomb : Glyph;
             public override string LiveDescription => _kit.ShowsBomb ? BombDescription : EffectiveDescription;
-
-            /// <summary>The rival nearest his aim inside the lock range and cone, or null.</summary>
-            internal static CharacterMotor Target(AbilityContext ctx)
-            {
-                if (ctx?.Motor == null) return null;
-                Vector3 at = ctx.Position; Vector3 aim = ctx.Forward; aim.y = 0;
-                if (aim.sqrMagnitude < .0001f) return null;
-                aim.Normalize();
-                CharacterMotor best = null; float bestAngle = float.MaxValue;
-                foreach (var p in Rivals(ctx.Motor))
-                {
-                    if (p.IsDefender) continue;
-                    Vector3 to = p.transform.position - at; to.y = 0;
-                    float angle = Vector3.Angle(aim, to);
-                    if (!SeanRules.FistCanLock(to.magnitude, angle)) continue;
-                    if (angle < bestAngle) { bestAngle = angle; best = p; }
-                }
-                return best;
-            }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                var target = Target(ctx);
-                if (target == null || ctx?.Motor == null) return;
-                Vector3 way = ctx.Forward; way.y = 0;
-                SeanMagmaFist.Spawn(ctx.Motor, _kit, ctx.Position + way.normalized * .7f + Vector3.up * .9f, way, target);
+                if (ctx?.Motor == null) return;
+                SeanMagmaFist.Erupt(ctx.Motor, _kit, AimedDestination(ctx), ctx.Position);
             }
         }
 
@@ -656,7 +645,7 @@ namespace TumbangPreso.Abilities
 
             public MayonAwakensAbility(SeanHeroKit kit)
                 : base("sean_ultimate", "MAYON AWAKENS",
-                       "Let the mountain out: everyone close is blasted away and you are Molten for 8 s, with no knockback and every hit erupting. Press E to throw the Volcanic Bomb.",
+                       "Blast everyone close away and turn Molten for 8 s: no knockback, every hit erupts. Press E to throw the Volcanic Bomb.",
                        0.0f, SeanRules.MoltenSeconds, AbilityGlyph.SeanSupernova,
                        summary: "Blast everyone close, turn Molten, then throw the Volcanic Bomb with E.",
                        telegraphRadius: SeanRules.AwakeningRadius, telegraphRange: 0.0f,

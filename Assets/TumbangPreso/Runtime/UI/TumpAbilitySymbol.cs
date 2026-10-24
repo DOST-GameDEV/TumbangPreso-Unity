@@ -141,7 +141,7 @@ namespace TumbangPreso.UI
                     P(vh,-.40f,.36f,-.18f,.36f); break;
                 case AbilityGlyph.SeanIgnite: case AbilityGlyph.Burst: case AbilityGlyph.PhaisterWitchfire:
                     P(vh,0,.42f,.10f,.19f,.25f,.28f,.33f,-.08f,.15f,-.36f,-.14f,-.36f,-.32f,-.11f,-.19f,.17f,-.13f,-.03f,0,.42f); break;
-                case AbilityGlyph.SeanSupernova:
+                case AbilityGlyph.SeanSupernova: case AbilityGlyph.SeanVolcanicBomb:
                     Ring(vh,0,0,.23f);
                     Rays(vh,8,.30f,.44f); break;
                 case AbilityGlyph.CheskaFrostSheet: case AbilityGlyph.Zone:

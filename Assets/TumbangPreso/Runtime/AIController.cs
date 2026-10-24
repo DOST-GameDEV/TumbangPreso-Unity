@@ -5643,16 +5643,16 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.SeanHeroKit && _motor.IsDefender)
                 {
-                    if (target != null && !target.IsTagged && target.IsGrounded && targetDistance > 1 && targetDistance < 6)
+                    // MAGMA FIST (2026-10-24): the prayer, placed where the attacker will be standing when the fist comes up
+                    // (their travel over the warning), inside his placing ring.
+                    if (target != null && !target.IsTagged && target.IsGrounded
+                        && targetDistance > SeanRules.FistAimMinRange && targetDistance < SeanRules.FistAimRange)
                     {
-                        var approach = target.transform.position - myPos; approach.y = 0;
-                        if (approach.sqrMagnitude > .01f)
-                        {
-                            var at = myPos + approach.normalized * Mathf.Clamp(targetDistance * .55f, 1f, 3.5f);
-                            at.y = Slipper.FindGroundY(at, .5f);
-                            intent.AimPoint = at;
-                            Consider(intent, Verb.Skill2, dt);
-                        }
+                        var lead = target.PresentationTravelVelocity; lead.y = 0;
+                        var at = target.transform.position + lead * SeanRules.FistWarnSeconds;
+                        at.y = Slipper.FindGroundY(at + Vector3.up, target.transform.position.y + 1f);
+                        intent.AimPoint = at;
+                        Consider(intent, Verb.Skill2, dt);
                     }
                 }
                 else if (kit is Abilities.SeanHeroKit || kit is Abilities.ZackHeroKit)

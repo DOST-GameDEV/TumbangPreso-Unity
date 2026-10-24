@@ -21,6 +21,14 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol178: LAVA RAM's SEARED slow (2026-10-24)
+
+Owner: "make them stumble a bit longer (1 second) tapos slowed for like 2 seconds na nagdedecay". The body a LAVA RAM hits
+stumbles `SeanRules.RamStumbleSeconds` (1.0 s) and is SEARED for that plus `RamSlowSeconds` (2.0 s): half speed, back to
+full in a straight line over the last 2 s (`SeanRules.SearedSpeedScale`). The host sets it (`CharacterMotor.ApplySeared`);
+`SyncUnit` appends the SEARED clock after the BLINDED one, so the body's own peer slows itself. Stun immunity refuses it.
+LAVA RAM is also an 8 m held charge now (`BeginCarry(own: true)`, a local move like any dash, no new message).
+
 ## Protocol177: how Sean's hits reach every peer (2026-10-24)
 
 `docs/reports/sean-kit-2026-10-24/feel-and-readability.md`. Before this, every Sean hit drew only on the host.

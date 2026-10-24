@@ -53,10 +53,10 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void TheUnlockedHeroesAreExactlyTheOwnersFiveAndAPickOfAnyOtherFallsBackToOne()
+        public void TheUnlockedHeroesAreExactlyTheOwnersSixAndAPickOfAnyOtherFallsBackToOne()
         {
-            // Owner, 2026-10-20: nemu, paete, phaister, amihan and dante, on every route.
-            Assert.Equal(new[] { "amihan", "dante", "nemu", "paete", "phaister" }, EconomyRules.UnlockedHeroes.OrderBy(x => x));
+            // Owner, 2026-10-20: nemu, paete, phaister, amihan and dante, on every route; 2026-10-24: "unlock sean na ren".
+            Assert.Equal(new[] { "amihan", "dante", "nemu", "paete", "phaister", "sean" }, EconomyRules.UnlockedHeroes.OrderBy(x => x));
             foreach (var id in EconomyRules.UnlockedHeroes) Assert.True(EconomyRules.IsHero(id), id);
 
             var heroes = Roster.HeroPeople;

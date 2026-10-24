@@ -27,7 +27,7 @@ namespace TumbangPreso.Core.Tests
         {
             // `CharacterMotor.ApplyImpulse` clamps a ground push to `Balance.MaxKnockbackSpeed`; a number past it would lie.
             Assert.Equal(4.267f, SeanRules.MaxPushDistance, 3);
-            foreach (float push in new[] { SeanRules.RamTravel, SeanRules.RamLaunch, SeanRules.EruptedDistance(SeanRules.RamLaunch),
+            foreach (float push in new[] { SeanRules.RamLaunch, SeanRules.EruptedDistance(SeanRules.RamLaunch),
                                            SeanRules.EruptedDistance(Combat.ShoveDistance()), SeanRules.EruptSplashPush,
                                            SeanRules.FistPush, SeanRules.AwakeningPush, SeanRules.BombPush, SeanRules.DroppedBombPush,
                                            SeanRules.HotCanSlide })
@@ -38,15 +38,30 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void ARamHitStumblesASecondThenTheSlowFadesOverTwo()
+        {
+            // Owner, 2026-10-24: "make them stumble a bit longer (1 second) tapos slowed for like 2 seconds na nagdedecay".
+            Assert.Equal(1.0f, SeanRules.RamStumbleSeconds);
+            Assert.Equal(3.0f, SeanRules.SearedTotalSeconds, 3);
+            Assert.Equal(SeanRules.RamSlowScale, SeanRules.SearedSpeedScale(SeanRules.SearedTotalSeconds), 3);
+            Assert.Equal(SeanRules.RamSlowScale, SeanRules.SearedSpeedScale(SeanRules.RamSlowSeconds), 3);
+            Assert.Equal(0.75f, SeanRules.SearedSpeedScale(1.0f), 3);
+            Assert.Equal(1.0f, SeanRules.SearedSpeedScale(0), 3);
+            Assert.Equal(1.0f, SeanRules.SearedSpeedScale(float.NaN), 3);
+        }
+
+        [Fact]
         public void SpeedsAreSolvedFromTheDistancesTheyCarry()
         {
-            Assert.Equal(SeanRules.RamTravel, Combat.KnockbackDistance(SeanRules.RamSpeed), 3);
+            // The charge is held (`CarryRules`), so it covers the long distance at a speed under the knockback cap.
+            Assert.Equal(SeanRules.RamTravel, CarryRules.DistanceFor(SeanRules.RamSpeed, SeanRules.RamHoldSeconds), 3);
+            Assert.True(SeanRules.RamSpeed <= Balance.MaxKnockbackSpeed);
             Assert.Equal(SeanRules.RamLaunch, Combat.KnockbackDistance(SeanRules.RamLaunchSpeed), 3);
             Assert.Equal(SeanRules.FistPush, Combat.KnockbackDistance(SeanRules.FistPushSpeed), 3);
             Assert.Equal(SeanRules.HotCanSlide, Combat.KnockbackDistance(SeanRules.HotCanSlideSpeed), 3);
             Assert.InRange(SeanRules.MoltenThrowSpeedScale, 1.0f, 1.3f);
-            Assert.Equal(15.49f, SeanRules.RamSpeed, 2);
-            Assert.Equal(0.516f, SeanRules.RamTravelSeconds, 3);
+            Assert.Equal(8.0f, SeanRules.RamTravel, 3);
+            Assert.Equal(0.805f, SeanRules.RamTravelSeconds, 3);
             // The knock-up reaches its height under character gravity and stays under the lift cap.
             Assert.Equal(SeanRules.FistKnockUpHeight,
                 SeanRules.FistLiftSpeed * SeanRules.FistLiftSpeed / (2 * Balance.CharacterGravity), 3);
@@ -104,30 +119,14 @@ namespace TumbangPreso.Core.Tests
         public void TheHotCanCannotBeResetUntilItHasCooled(float seconds, bool resettable)
             => Assert.Equal(resettable, SeanRules.HotCanResettable(seconds));
 
-        [Theory]
-        [InlineData(5f, 0f, true)]
-        [InlineData(9f, 15f, true)]
-        [InlineData(9.01f, 0f, false)]
-        [InlineData(5f, -15.1f, false)]
-        [InlineData(0f, 0f, false)]
-        [InlineData(float.NaN, 0f, false)]
-        public void TheFistLocksOnlyInsideItsRangeAndCone(float distance, float offAim, bool locks)
-            => Assert.Equal(locks, SeanRules.FistCanLock(distance, offAim));
-
-        [Theory]
-        [InlineData(0f, 90f, 0.5f, 45f)]       // limited to 90 degrees a second
-        [InlineData(0f, 10f, 0.5f, 10f)]       // reaches it when it is near
-        [InlineData(170f, -170f, 0.1f, 179f)]  // the short way round, across the seam (+9 degrees)
-        [InlineData(-170f, 170f, 0.1f, -179f)]
-        [InlineData(30f, 90f, 0f, 30f)]        // no time, no turn
-        public void TheFistTurnsTheShortWayAtItsTurnRate(float heading, float toTarget, float dt, float expected)
-            => Assert.Equal(expected, SeanRules.FistSteer(heading, toTarget, dt), 3);
-
         [Fact]
-        public void TheFistCanAlwaysReachTheEdgeOfItsLockInItsLife()
+        public void TheFistIsPlacedInItsRingAndWarnsBeforeItHits()
         {
-            Assert.True(SeanRules.FistMaxFlightSeconds * SeanRules.FistSpeed >= SeanRules.FistLockRange);
-            Assert.True(SeanRules.FistArriveRadius < SeanRules.FistPunchRadius);
+            // Owner, 2026-10-24: a prayer, then a long press places it. Placed where he looks between the two ranges; the
+            // puddle warns before the fist comes, and the hit lands inside the rise that follows.
+            Assert.True(SeanRules.FistAimMinRange > 0 && SeanRules.FistAimMinRange < SeanRules.FistAimRange);
+            Assert.InRange(SeanRules.FistWarnSeconds, 0.3f, 0.6f);
+            Assert.InRange(SeanRules.FistHitDelay, 0.01f, SeanRules.FistRiseSeconds);
         }
 
         [Fact]

@@ -342,8 +342,14 @@ namespace TumbangPreso
             {
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();
-                // MOLTEN THROW flies flat and fast: no pektus curve, `SeanRules.MoltenThrowSpeedScale` faster.
-                velocity *= SeanRules.MoltenThrowSpeedScale;
+                // MOLTEN THROW flies flat and fast: no pektus curve, `SeanRules.MoltenThrowSpeedScale` faster, on the arc SOLVED
+                // at that speed (the lower, flatter one), so it still lands where it was aimed. Scaled after the solve it sailed
+                // 2.2 m past the can (`SeanKitFilmProbe`, 2026-10-24). A wobble or misfire above keeps its turn.
+                Vector3 aimed = Held.LaunchVelocityTo(origin, aimPoint, Mathf.Clamp01(charge));
+                float fast = aimed.magnitude * SeanRules.MoltenThrowSpeedScale;
+                var turn = aimed.sqrMagnitude > .0001f && velocity.sqrMagnitude > .0001f
+                    ? Quaternion.FromToRotation(aimed.normalized, velocity.normalized) : Quaternion.identity;
+                velocity = turn * (Slipper.SolveArc(origin, aimPoint, fast) * fast);
                 spin = 0.0f;
             }
             else if (ability != null && ability.Kit is RafiHeroKit rafi && rafi.ConsumeSkim(Held))

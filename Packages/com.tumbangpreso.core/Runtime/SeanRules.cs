@@ -83,13 +83,39 @@ namespace TumbangPreso.Core
         /// <summary>The tell: the brace must be held at least this long before a release charges.</summary>
         public const float RamMinBraceSeconds = 0.25f;
 
-        /// <summary>How far the charge carries him if he hits nothing.</summary>
-        public const float RamTravel = 4.0f;
+        /// <summary>
+        /// How far the charge carries him if he hits nothing. Owner, 2026-10-24: "give it a pretty long distance". A held
+        /// charge (`CarryRules`): `RamSpeed` the whole way, then the slide-out, so it is not bound by the knockback cap.
+        /// </summary>
+        public const float RamTravel = 8.0f;
+
+        /// <summary>The charge's speed, held until the slide-out (3.3 m of the 8 m).</summary>
+        public const float RamSpeed = 14.0f;
 
         /// <summary>How far the first body he hits is launched (13.4 m/s); erupted, 4.2 m.</summary>
         public const float RamLaunch = 3.0f;
 
-        public const float RamStumbleSeconds = 0.8f;
+        /// <summary>Owner, 2026-10-24: "make them stumble a bit longer (1 second)".</summary>
+        public const float RamStumbleSeconds = 1.0f;
+
+        /// <summary>
+        /// SEARED, after the stumble (owner, 2026-10-24: "slowed for like 2 seconds na nagdedecay"): the body starts at
+        /// `RamSlowScale` of its speed and is back to full in `RamSlowSeconds`, evenly.
+        /// </summary>
+        public const float RamSlowSeconds = 2.0f;
+        public const float RamSlowScale = 0.5f;
+
+        /// <summary>The whole SEARED clock a ram hit sets: the stumble, then the fade.</summary>
+        public static float SearedTotalSeconds => RamStumbleSeconds + RamSlowSeconds;
+
+        /// <summary>The speed multiplier with <paramref name="searedLeft"/> seconds of SEARED left: full slow through the
+        /// stumble, then back to 1 in a straight line over the last `RamSlowSeconds`.</summary>
+        public static float SearedSpeedScale(float searedLeft)
+        {
+            if (float.IsNaN(searedLeft) || searedLeft <= 0) return 1.0f;
+            float depth = Math.Min(1.0f, searedLeft / RamSlowSeconds);
+            return 1.0f - (1.0f - RamSlowScale) * depth;
+        }
 
         /// <summary>Running into a wall or prop stuns HIM: the price of missing.</summary>
         public const float RamWallStunSeconds = 0.6f;
@@ -97,9 +123,9 @@ namespace TumbangPreso.Core
         /// <summary>How close in front of him a body must be for the charge to stop on it.</summary>
         public const float RamContactReach = 0.9f;
 
-        public static float RamSpeed => Combat.SpeedForDistance(RamTravel);
+        public static float RamHoldSeconds => CarryRules.SecondsFor(RamTravel, RamSpeed);
         public static float RamLaunchSpeed => Combat.SpeedForDistance(RamLaunch);
-        public static float RamTravelSeconds => RamSpeed / Balance.Friction;
+        public static float RamTravelSeconds => RamHoldSeconds + RamSpeed / Balance.Friction;
         public static float RamCooldownFor(bool molten) => molten ? RamMoltenCooldown : RamCooldown;
 
         // ------------------------------------------------------------------ MOLTEN THROW (attacking)
@@ -130,19 +156,15 @@ namespace TumbangPreso.Core
 
         public const float FistCooldown = 22.0f;
 
-        /// <summary>The lock reaches the rival nearest his aim within this range and cone (half-angle, degrees).</summary>
-        public const float FistLockRange = 9.0f;
-        public const float FistLockHalfAngle = 15.0f;
+        /// <summary>
+        /// Where he may place it (owner, 2026-10-24: "he js does a prayer pose tapos he long presses or smth to decide where
+        /// it gets cast"): held, the ring sits where he looks on the court, this near to this far (`HeroAbility.AimByHolding`).
+        /// </summary>
+        public const float FistAimMinRange = 2.0f;
+        public const float FistAimRange = 9.0f;
 
-        /// <summary>The flying fist: speed, and how fast it may turn toward its target.</summary>
-        public const float FistSpeed = 12.0f;
-        public const float FistTurnDegreesPerSecond = 90.0f;
-
-        /// <summary>Its longest life in the air: the lock range at its speed, plus room for the curve. Then it falls short.</summary>
-        public static float FistMaxFlightSeconds => FistLockRange / FistSpeed + 0.35f;
-
-        /// <summary>How close the flying fist must come to its target to sink into the puddle under them.</summary>
-        public const float FistArriveRadius = 0.6f;
+        /// <summary>The puddle opens and bubbles this long before the fist comes: the warning anyone on it can step off.</summary>
+        public const float FistWarnSeconds = 0.45f;
 
         /// <summary>The punch up out of the puddle catches everyone this close to the puddle's middle.</summary>
         public const float FistPunchRadius = 1.0f;
@@ -158,26 +180,9 @@ namespace TumbangPreso.Core
         public static float FistPushSpeed => Combat.SpeedForDistance(FistPush);
         public static float FistLiftSpeed => (float)Math.Sqrt(2.0 * Balance.CharacterGravity * FistKnockUpHeight);
 
-        /// <summary>Whether a rival this far away and this many degrees off his aim can be locked.</summary>
-        public static bool FistCanLock(float distance, float degreesOffAim)
-            => !float.IsNaN(distance) && !float.IsNaN(degreesOffAim) && distance > 0 && distance <= FistLockRange
-               && Math.Abs(degreesOffAim) <= FistLockHalfAngle;
-
-        /// <summary>
-        /// The fist's heading after <paramref name="dt"/> seconds of turning from <paramref name="heading"/> toward
-        /// <paramref name="toTarget"/> (both degrees). It turns the short way round, at most `FistTurnDegreesPerSecond`.
-        /// </summary>
-        public static float FistSteer(float heading, float toTarget, float dt)
-        {
-            if (float.IsNaN(heading) || float.IsNaN(toTarget) || float.IsNaN(dt) || dt <= 0) return Wrap(heading);
-            float delta = Wrap(toTarget - heading);
-            float step = FistTurnDegreesPerSecond * dt;
-            return Wrap(heading + Math.Max(-step, Math.Min(step, delta)));
-        }
-
         /// <summary>
         /// The direction (unit, on the ground) a MAGMA FIST sends its target: straight away from the lata. A target standing on
-        /// the can goes the way the fist was travelling, so every peer computes the same push.
+        /// the can goes the way he cast it (from him to the puddle), so every peer computes the same push.
         /// </summary>
         public static void FistPushDirection(float targetX, float targetZ, float canX, float canZ,
             float fistDirX, float fistDirZ, out float x, out float z)
@@ -261,14 +266,5 @@ namespace TumbangPreso.Core
         /// <summary>Whether something this far above or below (in metres, either sign) is on a level a reach can touch.</summary>
         public static bool WithinReach(float heightDifference, float reach)
             => !float.IsNaN(heightDifference) && Math.Abs(heightDifference) <= reach;
-
-        private static float Wrap(float degrees)
-        {
-            if (float.IsNaN(degrees) || float.IsInfinity(degrees)) return 0;
-            float d = degrees % 360.0f;
-            if (d > 180.0f) d -= 360.0f;
-            if (d <= -180.0f) d += 360.0f;
-            return d;
-        }
     }
 }
