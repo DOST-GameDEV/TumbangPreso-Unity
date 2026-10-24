@@ -5608,7 +5608,16 @@ namespace TumbangPreso
 
             if (MayConsider(Verb.Skill2) && SlotIsSpendable(kit.Skill2))
             {
-                if (kit is Abilities.DanteHeroKit)
+                if (kit is Abilities.SeanHeroKit moltenSean && moltenSean.IsMolten)
+                {
+                    // VOLCANIC BOMB, Sean's E while Molten: an attacker throws it on the upright can when it is in reach,
+                    // otherwise anyone throws it at the nearest rival. Held to the end, it drops at his feet anyway.
+                    if (!_motor.IsDefender && lata != null && lata.IsUpright && lataDistance <= SeanRules.BombMaxRange)
+                    { intent.AimPoint = lata.transform.position; Consider(intent, Verb.Skill2, dt); }
+                    else if (target != null && targetDistance <= SeanRules.BombMaxRange)
+                    { intent.AimPoint = target.transform.position; Consider(intent, Verb.Skill2, dt); }
+                }
+                else if (kit is Abilities.DanteHeroKit)
                 {
                     // ⚠️ THE CARAPACE IS IMMUNITY, SO IT WANTS SOMETHING TO BE IMMUNE TO. The old
                     // gate spent a 62 s cooldown on being taggable anywhere on the map, which is

@@ -342,6 +342,9 @@ namespace TumbangPreso
             {
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();
+                // MOLTEN THROW flies flat and fast: no pektus curve, `SeanRules.MoltenThrowSpeedScale` faster.
+                velocity *= SeanRules.MoltenThrowSpeedScale;
+                spin = 0.0f;
             }
             else if (ability != null && ability.Kit is RafiHeroKit rafi && rafi.ConsumeSkim(Held))
             {
@@ -1061,6 +1064,8 @@ namespace TumbangPreso
                 if (lata == null || lata.IsUpright) return false;
                 // Nemu's Keeper is standing it up: no prompt and no channel of the taya's own.
                 if (Abilities.NemuLookout.Keeping(lata)) return false;
+                // Sean's MOLTEN THROW: the can is too hot to start a reset on yet.
+                if (lata.IsHot) return false;
                 var offset = transform.position - lata.transform.position; offset.y = 0;
                 return offset.magnitude <= Balance.InteractionRadius;
             }

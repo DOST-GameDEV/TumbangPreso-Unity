@@ -48,19 +48,19 @@ namespace TumbangPreso.PlayTests
         {
             var ctx = Actor(out var kit);
             Assert.IsFalse(kit.AttackingSkill.CanActivate(ctx)); Assert.AreEqual(0, kit.AttackingSkill.CooldownRemaining);
-            Assert.AreEqual(35, kit.AttackingSkill.Cooldown); Assert.AreEqual(8, kit.AttackingSkill.Duration);
+            Assert.AreEqual(SeanRules.MoltenThrowCooldown, kit.AttackingSkill.Cooldown); Assert.AreEqual(8, kit.AttackingSkill.Duration);
             Assert.IsFalse(kit.AttackingSkill.UsesCharges);
             var shoe = Shoe(ctx); Assert.IsTrue(kit.AttackingSkill.CanActivate(ctx));
             using (NetCue.SuppressRelay()) kit.AttackingSkill.Activate(ctx);
             Assert.IsTrue(kit.IsEmpoweredThrowLoadedFor(shoe)); Assert.AreEqual(SlipperAffinity.FireExplosive, shoe.Affinity);
-            Assert.AreEqual(35, kit.AttackingSkill.CooldownRemaining);
+            Assert.AreEqual(SeanRules.MoltenThrowCooldown, kit.AttackingSkill.CooldownRemaining);
         }
-        [Test] public void ActualThrowConsumesExactLoadWithoutSpeedMultiplier()
+        [Test] public void ActualThrowConsumesExactLoadFlatAndFaster()
         {
             var ctx = Actor(out var kit); var shoe = Shoe(ctx);
             using (NetCue.SuppressRelay()) kit.AttackingSkill.Activate(ctx);
             var origin = new Vector3(0, 1, -8); var target = Vector3.zero;
-            var expected = shoe.LaunchVelocityTo(origin, target, 1);
+            var expected = shoe.LaunchVelocityTo(origin, target, 1) * SeanRules.MoltenThrowSpeedScale;
             using (NetCue.SuppressRelay()) ctx.Carrier.HostThrowAt(origin, target, 1);
             Assert.AreEqual(SlipperState.InFlight, shoe.State); Assert.AreEqual(SlipperAffinity.FireExplosive, shoe.Affinity);
             Assert.Less(Vector3.Distance(expected, shoe.Velocity), .001f); Assert.IsFalse(kit.IsIgnitionCannonActive);
@@ -77,26 +77,15 @@ namespace TumbangPreso.PlayTests
             kit.AttackingSkill.Tick(ctx, 8); Assert.IsFalse(kit.IsIgnitionCannonActive);
             Assert.AreEqual(SlipperAffinity.Normal, other.Affinity);
         }
-        [Test] public void BurstIsCompactOnceOnlyAndDoesNotStaggerOrLift()
+        [Test] public void MoltenImpactPushesNobodyAndSpendsTheCoat()
         {
+            // MOLTEN THROW's payoff is the can (`Lata.HostMoltenHit`); striking a body or the floor moves nobody.
             var ctx = Actor(out var kit); var shoe = Shoe(ctx);
-            var near = Body(2, new Vector3(.8f, 0, 0)); var far = Body(3, new Vector3(1.4f, 0, 0));
+            var near = Body(2, new Vector3(.8f, 0, 0));
             shoe.HostThrow(ctx.Motor, Vector3.up * .2f, Vector3.forward, affinity: SlipperAffinity.FireExplosive);
             Physics.SyncTransforms(); Impact(shoe);
-            Assert.Greater(near.PresentationTravelVelocity.x, 0); Assert.AreEqual(0, near.PresentationTravelVelocity.y, .001f);
-            Assert.LessOrEqual(near.PresentationTravelVelocity.magnitude, Mathf.Sqrt(2 * Balance.Friction) + .001f);
-            Assert.IsFalse(near.IsStunned); Assert.IsFalse(near.IsTripped); Assert.IsFalse(near.IsZapped);
-            Assert.AreEqual(Vector3.zero, far.PresentationTravelVelocity); Assert.AreEqual(Vector3.zero, ctx.Motor.PresentationTravelVelocity);
-            var velocity = near.PresentationTravelVelocity; Impact(shoe);
-            Assert.AreEqual(velocity, near.PresentationTravelVelocity); Assert.AreEqual(SlipperAffinity.Normal, shoe.Affinity);
-        }
-        [Test] public void SolidCoverStopsThePressure()
-        {
-            var ctx = Actor(out var kit); var shoe = Shoe(ctx); var near = Body(2, new Vector3(.8f, 0, 0));
-            var wall = Track(GameObject.CreatePrimitive(PrimitiveType.Cube)); wall.transform.position = new Vector3(.4f, .5f, 0);
-            wall.transform.localScale = new Vector3(.1f, 1, 2);
-            shoe.HostThrow(ctx.Motor, Vector3.up * .2f, Vector3.forward, affinity: SlipperAffinity.FireExplosive);
-            Physics.SyncTransforms(); Impact(shoe); Assert.AreEqual(Vector3.zero, near.PresentationTravelVelocity);
+            Assert.AreEqual(Vector3.zero, near.PresentationTravelVelocity); Assert.IsFalse(near.IsStunned);
+            Assert.AreEqual(Vector3.zero, ctx.Motor.PresentationTravelVelocity);
         }
         [Test] public void RecoveryAcceptsOnlyTheActualMarkedHeldSnapshot()
         {
@@ -128,20 +117,22 @@ namespace TumbangPreso.PlayTests
             NetAuthority.Provider = new Replica(); Physics.SyncTransforms(); Impact(shoe);
             Assert.AreEqual(Vector3.zero, near.PresentationTravelVelocity); Assert.AreEqual(0, GameServices.Match.ScoreFor(1));
         }
-        [Test] public void CanProtectionAndSingleKnockdownAuthorityArePreserved()
+        [Test] public void AMoltenKnockdownSlidesTheCanAndHoldsTheResetUntilItCools()
         {
-            var ctx = Actor(out var kit); var shoe = Shoe(ctx);
+            var ctx = Actor(out var kit);
             var can = Track(new GameObject("Pressure can")).AddComponent<Lata>(); can.enabled = false; GameServices.Round.Lata = can;
-            can.ApplySnapshotState(Vector3.zero, Quaternion.identity, false, 0);
             can.ApplySnapshotState(Vector3.zero, Quaternion.identity, true, 0);
-            Assert.IsTrue(can.IsProtected);
-            shoe.HostThrow(ctx.Motor, new Vector3(.8f, .2f, 0), Vector3.forward, affinity: SlipperAffinity.FireExplosive);
-            Physics.SyncTransforms(); Impact(shoe); Assert.IsTrue(can.IsUpright); Assert.AreEqual(0, GameServices.Match.ScoreFor(1));
-            typeof(Lata).GetField("_restoreProtectionLeft", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(can, 0f);
-            shoe.Affinity = SlipperAffinity.FireExplosive; Impact(shoe);
-            Assert.IsFalse(can.IsUpright); Assert.AreEqual(1, can.HostKnockdownSerial);
-            int score = GameServices.Match.ScoreFor(1); Assert.Greater(score, 0);
-            Impact(shoe); Assert.AreEqual(score, GameServices.Match.ScoreFor(1)); Assert.AreEqual(1, can.HostKnockdownSerial);
+            can.HostMoltenHit(Vector3.forward);
+            Assert.IsFalse(can.IsHot, "A standing can is not heated.");
+            can.ApplySnapshotState(Vector3.zero, Quaternion.identity, false, 0);
+            can.HostMoltenHit(Vector3.forward * 12);
+            Assert.IsTrue(can.IsHot); Assert.AreEqual(SeanRules.HotCanSeconds, can.HotLeft, .001f);
+            var step = typeof(Lata).GetMethod("StepMoltenHit", BindingFlags.Instance | BindingFlags.NonPublic);
+            for (int i = 0; i < 100; i++) step.Invoke(can, new object[] { .02f });
+            Assert.AreEqual(SeanRules.HotCanSlide, can.transform.position.z, .25f, "The can slides about its distance along the throw.");
+            Assert.IsFalse(can.IsHot, "Two seconds cools it.");
+            can.ApplyHotSnapshot(1f); Assert.IsTrue(can.IsHot);
+            can.ApplySnapshotState(Vector3.zero, Quaternion.identity, true, 0); Assert.IsFalse(can.IsHot, "Standing it up clears the heat.");
         }
         [Test] public void FirstActualWallContactConsumesThePayload()
         {

@@ -1501,8 +1501,12 @@ namespace TumbangPreso
                 && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
                 int before = round.Lata.HostKnockdownSerial;
+                bool molten = Affinity == SlipperAffinity.FireExplosive;
+                Vector3 struck = _velocity;
                 TriggerAffinityImpact();
                 round.Lata.HostKnockDown(_throwerSlot);
+                // Sean's MOLTEN THROW: a can it knocks over is blasted along the throw and lands hot.
+                if (molten && round.Lata.HostKnockdownSerial > before) round.Lata.HostMoltenHit(struck);
                 FinishChain(_throwerSlot >= 0 && round.Lata.HostKnockdownSerial > before
                     ? ThrowChainEnd.Hit : ThrowChainEnd.Miss);
                 // REBOUND belongs to the shared can that was hit, never the thrower's

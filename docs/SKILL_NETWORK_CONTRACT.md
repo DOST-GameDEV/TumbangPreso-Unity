@@ -21,6 +21,27 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol176: Sean's lava brawler kit (2026-10-24)
+
+Owner rework (`docs/reports/sean-kit-2026-10-24/plan.md`, numbers in `SeanRules`). Ids, glyphs and slots are unchanged;
+names and rules change, so a 175 peer runs Stoke Step, Cinder Gate and Supernova on the same ids and is refused.
+
+- PRESSURE is host state. `CombatVerbs.ApplyShoveTo` asks `SeanHeroKit.HostShoveLanded`; LAVA RAM and MAGMA FIST add heat on
+  the host. The owner's ring reads the heat's cooling time from the existing timed-kit passive field (capacity 6 s).
+- LAVA RAM is predicted like Stoke Step (one impulse; the movement snapshot restores the clock only). Every peer running it
+  stops his slide on the first body or wall (`CharacterMotor.HaltExternalSlide`, simulated peer only); the host alone moves
+  the body hit and decides the wall daze.
+- MOLTEN THROW keeps Empowered Throw's load on the `FireExplosive` affinity. It flies 15% faster with no pektus spin and
+  pushes nobody. A can it knocks over is moved by the host (`Lata.HostMoltenHit`, 3 m under Friction, stopping at walls) and
+  is hot for 1.5 s: `SyncLata` gains a second optional suffix (tag 7, the heat), read only by 176 peers; `Carrier.HasResetTarget`
+  and `MatchRpc.HostMayChannelReset` refuse a reset while it is hot.
+- MAGMA FIST is predicted (it spawns no host-owned field): every peer flies `SeanMagmaFist` from the same cast and target; the
+  host alone resolves the punch.
+- MAYON AWAKENS stays a shared ultimate. Molten is the ultimate's own duration (8 s) on every peer; the timed-kit ultimate
+  field restores it for a rejoiner. VOLCANIC BOMB is the E press while Molten, so it travels the ordinary skill-cast path in
+  both roles; every peer flies `SeanVolcanicBomb`, the host resolves the splash, and each peer slows the bodies it simulates
+  in the pool. Molten ending unthrown drops the bomb at his feet on every peer.
+
 ## Protocol175: Nemu SOULBOUND, PEEKER, FETCHER, KEEPER (2026-10-21)
 
 Owner rework on branch `Reworks`. IDs, glyphs and the ghost classes are unchanged; names and rules change.

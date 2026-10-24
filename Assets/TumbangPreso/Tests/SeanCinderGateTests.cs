@@ -58,11 +58,11 @@ namespace TumbangPreso.Tests
         {
             var kit=new SeanHeroKit();
             Assert.AreEqual("sean_skill2d",kit.DefendingSkill.Id);
-            Assert.AreEqual("CINDER GATE",kit.DefendingSkill.Name);
-            Assert.AreEqual(35,kit.DefendingSkill.Cooldown);
-            Assert.AreEqual(3.35f,kit.DefendingSkill.Duration,.0001f);
+            // The defending slot is MAGMA FIST since 2026-10-24 (`SeanRules`); the Cinder Gate field kinds stay on the wire.
+            Assert.AreEqual("MAGMA FIST",kit.DefendingSkill.Name);
+            Assert.AreEqual(SeanRules.FistCooldown,kit.DefendingSkill.Cooldown);
             Assert.AreEqual(0,kit.DefendingSkill.Windup);
-            Assert.AreEqual(AbilityNetworkMode.HostConfirmed,kit.DefendingSkill.NetworkMode);
+            Assert.AreEqual(AbilityNetworkMode.Predicted,kit.DefendingSkill.NetworkMode);
             Assert.AreEqual(16,(int)WorldEffectSnapshot.Kind.Waterwall);
             Assert.AreEqual(17,(int)WorldEffectSnapshot.Kind.CinderGate);
             Assert.IsTrue(WorldEffectSnapshot.UsesDynamicIdentity(WorldEffectSnapshot.Kind.CinderGate));

@@ -651,6 +651,9 @@ namespace TumbangPreso
                    * Roster.PersonPowerScale(_motor.CharacterIndex, _motor.Mode)
                    / Roster.PersonGritScale(victim.CharacterIndex, victim.Mode);
             push.y = Balance.ShoveLift;
+            // Sean's PRESSURE: a shove adds heat, and a shove at full heat erupts (farther, with a splash).
+            if (_motor.Mode == GameMode.HeroStrike && _motor.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
+                push = sean.HostShoveLanded(_motor, victim, push);
 
             victim.ApplyResolvedImpact(push);
             victim.ApplyStagger(Balance.ShoveStun);

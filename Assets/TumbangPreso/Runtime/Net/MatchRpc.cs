@@ -3183,6 +3183,7 @@ namespace TumbangPreso.Net
             if (lata == null || who == null || lata.IsUpright) return false;
             if (!who.IsDefender || !who.CanAct() || who.IsWhirled) return false;
             if (Abilities.NemuLookout.Keeping(lata)) return false;
+            if (lata.IsHot) return false;   // Sean's MOLTEN THROW: too hot to start a reset on.
 
             Vector3 a = who.transform.position;
             Vector3 b = lata.transform.position;
@@ -5932,6 +5933,9 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe((byte)1);
             writer.WriteValueSafe(Visual.LataClockPresentation.ActualRestore(lata));
             writer.WriteValueSafe(lata.ProtectionLeft);
+            // A second optional suffix, Sean's hot can (protocol 176): readers before it stop at the clock and never read this.
+            writer.WriteValueSafe((byte)HotCanSuffix);
+            writer.WriteValueSafe(lata.HotLeft);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLata", writer);
         }
 
@@ -6145,8 +6149,17 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out byte clockVersion);
                 reader.ReadValueSafe(out float restore);reader.ReadValueSafe(out float protection);
                 if(clockVersion==1)Visual.LataClockPresentation.For(GameServices.Round?.Lata)?.ApplySnapshot(restore,protection);
+                if(reader.Length-reader.Position>=5)
+                {
+                    reader.ReadValueSafe(out byte hotTag);
+                    reader.ReadValueSafe(out float hot);
+                    if(hotTag==HotCanSuffix)GameServices.Round?.Lata?.ApplyHotSnapshot(hot);
+                }
             }
         }
+
+        /// <summary>The tag on `SyncLata`'s second optional suffix: the hot can's seconds left (Sean's MOLTEN THROW).</summary>
+        private const byte HotCanSuffix = 7;
 
         private void OnSyncSlipperMsg(ulong senderClientId, FastBufferReader reader)
         {

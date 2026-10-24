@@ -8,8 +8,9 @@ namespace TumbangPreso.Core
     /// `docs/reports/sean-kit-2026-10-24/plan.md`. Numbers the owner gave carry his answer; the rest are PROPOSED, NOT YET
     /// PLAYED, written as a distance or a time and solved against `Balance.Friction` where they move a body.
     ///
-    /// ⚠️ NOTHING READS THIS YET. `SeanHeroKit` still runs the old kit (Stoke Step, Empowered Throw, Cinder Gate,
-    /// Supernova) on `SeanGateRules` and `EmpoweredThrowRules`. Those are retired when the kit is rewritten (plan § 5).
+    /// `SeanHeroKit`, `SeanMagmaFist`, `SeanVolcanicBomb`, `Lata` (the hot can) and `CombatVerbs` (PRESSURE on a shove) read
+    /// these. VOLCANIC BOMB is thrown with the E button while Molten: the ultimate's own button belongs to the shared
+    /// cutscene path (`HeroAbilitySystem.SubmitSharedUltimate`), which has no second press.
     ///
     /// ⚠️ EVERY GROUND PUSH HERE STAYS UNDER `Balance.MaxKnockbackSpeed` (16 m/s, 4.27 m of slide). `CharacterMotor.ApplyImpulse`
     /// clamps anything faster, so a bigger number would be a lie the motor quietly corrects. That cap is why LAVA RAM launches
@@ -84,8 +85,16 @@ namespace TumbangPreso.Core
         /// <summary>The coat lasts for one throw within this window.</summary>
         public const float MoltenThrowLoadSeconds = 8.0f;
 
-        /// <summary>A lata it knocks over flies this many times as far as an ordinary knockdown.</summary>
-        public const float HotCanDistanceScale = 2.0f;
+        /// <summary>
+        /// A lata it knocks over is blasted this far along the throw, sliding to a stop under `Balance.Friction`. An ordinary
+        /// knockdown topples the can where it stands, so this is the whole of "the can flies": the taya walks to it before the
+        /// reset can start, and `HostRestore` stands it back on its mark either way.
+        /// </summary>
+        public const float HotCanSlide = 3.0f;
+        public static float HotCanSlideSpeed => Combat.SpeedForDistance(HotCanSlide);
+
+        /// <summary>The coated throw flies this much faster, and it never curves: no pektus spin is applied to it.</summary>
+        public const float MoltenThrowSpeedScale = 1.15f;
 
         /// <summary>The can lands hot: the taya cannot START the reset until it has cooled this long.</summary>
         public const float HotCanSeconds = 1.5f;

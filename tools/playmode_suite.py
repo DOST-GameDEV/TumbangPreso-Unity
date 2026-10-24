@@ -228,7 +228,7 @@ GROUPS = [
         "SharedUltimatePhaseTests",
         "SkillReceiptTests",
         "RafiExpansionProbe",
-        "SeanCinderGateProbe", "SeanSteadyEmberProbe", "RafiBackwashProbe", "RafiBahaProbe",
+        "RafiBackwashProbe", "RafiBahaProbe",  # Sean's Cinder Gate and Steady Ember probes retired with his kit, 2026-10-24.
         "SpectatorExchangeTests",
         # Placed 2026-09-24: both load an arena (Eskinita for the bot's chase clock, the Lagoon
         # for its swim-and-climb recovery) and run bodies inside it.

@@ -38,9 +38,9 @@ namespace TumbangPreso.Abilities
                 // ZackHeroKit.OnObjectiveAwarded: 5 s off each non-ultimate cooldown per point.
                 case "zack": return new Passive("AMPED-UP",
                     "Isagani reduces his ability cooldowns by 5 seconds each time he gains an objective point.");
-                // SeanHeroKit Steady Ember: 1.25x charge rate for 4 s after a genuine own retrieve.
-                case "sean": return new Passive("HOT STREAK",
-                    "Retrieving your own thrown slipper makes your next throw charge 25% faster, once within 4 seconds. Maximum power is unchanged.");
+                // SeanHeroKit PRESSURE: `SeanRules.PressureBars`, `EruptDistanceScale`, `PressureCoolSeconds`.
+                case "sean": return new Passive("PRESSURE",
+                    "Every shove, Lava Ram or Magma Fist that lands adds heat. At full heat your next shove or Lava Ram erupts: 40% farther, with a splash. Heat cools after 6 s without a hit.");
                 // NemuDormant and NemuHeroKit.StepReclaim (owner 2026-10-21, replacing DEAD WEIGHT).
                 case "nemu": return new Passive("SOULBOUND",
                     "When a ghost's time is up it stays where it was, dormant. Hold Grab within 1.5 m of it for 1.5 s to reclaim it.",

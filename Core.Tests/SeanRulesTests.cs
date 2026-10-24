@@ -29,7 +29,8 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(4.267f, SeanRules.MaxPushDistance, 3);
             foreach (float push in new[] { SeanRules.RamTravel, SeanRules.RamLaunch, SeanRules.EruptedDistance(SeanRules.RamLaunch),
                                            SeanRules.EruptedDistance(Combat.ShoveDistance()), SeanRules.EruptSplashPush,
-                                           SeanRules.FistPush, SeanRules.AwakeningPush, SeanRules.BombPush, SeanRules.DroppedBombPush })
+                                           SeanRules.FistPush, SeanRules.AwakeningPush, SeanRules.BombPush, SeanRules.DroppedBombPush,
+                                           SeanRules.HotCanSlide })
             {
                 Assert.True(push <= SeanRules.MaxPushDistance, $"{push} m is past the cap");
                 Assert.True(Combat.SpeedForDistance(push) <= Balance.MaxKnockbackSpeed);
@@ -42,6 +43,8 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(SeanRules.RamTravel, Combat.KnockbackDistance(SeanRules.RamSpeed), 3);
             Assert.Equal(SeanRules.RamLaunch, Combat.KnockbackDistance(SeanRules.RamLaunchSpeed), 3);
             Assert.Equal(SeanRules.FistPush, Combat.KnockbackDistance(SeanRules.FistPushSpeed), 3);
+            Assert.Equal(SeanRules.HotCanSlide, Combat.KnockbackDistance(SeanRules.HotCanSlideSpeed), 3);
+            Assert.InRange(SeanRules.MoltenThrowSpeedScale, 1.0f, 1.3f);
             Assert.Equal(15.49f, SeanRules.RamSpeed, 2);
             Assert.Equal(0.516f, SeanRules.RamTravelSeconds, 3);
             // The knock-up reaches its height under character gravity and stays under the lift cap.

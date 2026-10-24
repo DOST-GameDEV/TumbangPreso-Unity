@@ -2004,6 +2004,17 @@ namespace TumbangPreso
         public static Vector3 AsLaunch(Vector3 throwVelocity)
             => new Vector3(throwVelocity.x, Mathf.Max(0.0f, throwVelocity.y) + LaunchFlag, throwVelocity.z);
 
+        /// <summary>
+        /// Stops the slide an impulse put on this body, keeping its fall. Sean's LAVA RAM stops dead on the first body or wall it
+        /// meets; only the peer that simulates the body moves it, the same gate as <see cref="ApplyImpulse"/>.
+        /// </summary>
+        public void HaltExternalSlide()
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            _externalVelocity.x = 0.0f;
+            _externalVelocity.z = 0.0f;
+        }
+
         public void ApplyImpulse(Vector3 impulse)
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;

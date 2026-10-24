@@ -215,6 +215,7 @@ namespace TumbangPreso
             transform.SetPositionAndRotation(position, rotation);
             _skinIndex = skinIndex;
             _isUpright = isUpright;
+            if (isUpright) { HotLeft = 0.0f; _slideVelocity = Vector3.zero; }
             if (restoredOnThisPeer) _restoreProtectionLeft = Balance.ThrowRestoreCooldown;
             else if (!isUpright) _restoreProtectionLeft = 0.0f;
             _toppleTimer = 0.0f;
@@ -425,6 +426,8 @@ namespace TumbangPreso
 
             transform.position = _mark;
             transform.rotation = Quaternion.identity;
+            HotLeft = 0.0f;
+            _slideVelocity = Vector3.zero;
 
             // ⚠️ THE TILT STATE IS CLEARED, NOT JUST THE TRANSFORM. `_toppleAngle` and the roll
             // survive a restore otherwise, and the next knockdown starts its lift from wherever
@@ -536,8 +539,53 @@ namespace TumbangPreso
             Visual.CanContactAccent.Play(transform.position, false);
         }
 
+        // ------------------------------------------------------------------ Sean's MOLTEN THROW: the hot can
+
+        /// <summary>Seconds the can stays too hot to start a reset on. Counted down on every peer; the host's value travels on `SyncLata`.</summary>
+        public float HotLeft { get; private set; }
+        public bool IsHot => HotLeft > 0.0f;
+        private Vector3 _slideVelocity;
+
+        /// <summary>
+        /// Host-side. A MOLTEN THROW knocked this can over: it is blasted `SeanRules.HotCanSlide` along the throw, sliding to a
+        /// stop under `Balance.Friction` (the pose stream carries it to every peer), and it lands hot for `SeanRules.HotCanSeconds`.
+        /// </summary>
+        public void HostMoltenHit(Vector3 along)
+        {
+            if (!NetAuthority.ShouldResolve() || _isUpright) return;
+            HotLeft = SeanRules.HotCanSeconds;
+            along.y = 0.0f;
+            _slideVelocity = along.sqrMagnitude > .0001f ? along.normalized * SeanRules.HotCanSlideSpeed : Vector3.zero;
+            NetCue.Play("sfx_slipper_burst", transform.position);
+            Net.MatchRpc.Instance?.BroadcastLataState();
+        }
+
+        /// <summary>A client takes the host's heat from `SyncLata`.</summary>
+        public void ApplyHotSnapshot(float hotLeft)
+            => HotLeft = float.IsNaN(hotLeft) ? 0.0f : Mathf.Clamp(hotLeft, 0.0f, SeanRules.HotCanSeconds);
+
+        private void StepMoltenHit(float dt)
+        {
+            if (HotLeft > 0.0f) HotLeft = Mathf.Max(0.0f, HotLeft - dt);
+            if (_slideVelocity.sqrMagnitude <= 0.0f) return;
+            if (!NetAuthority.ShouldResolve() || _isUpright) { _slideVelocity = Vector3.zero; return; }
+            float speed = _slideVelocity.magnitude;
+            Vector3 step = _slideVelocity * dt;
+            // It stops at a wall rather than going through it.
+            if (Physics.Raycast(transform.position + Vector3.up * .25f, _slideVelocity / speed, out var hit,
+                    step.magnitude + .2f, ~0, QueryTriggerInteraction.Ignore)
+                && hit.collider.GetComponentInParent<Lata>() != this
+                && hit.collider.GetComponentInParent<CharacterMotor>() == null
+                && hit.collider.GetComponentInParent<Slipper>() == null)
+            { _slideVelocity = Vector3.zero; return; }
+            transform.position += step;
+            speed = Mathf.Max(0.0f, speed - Balance.Friction * dt);
+            _slideVelocity = speed > .05f ? _slideVelocity.normalized * speed : Vector3.zero;
+        }
+
         private void Update()
         {
+            StepMoltenHit(Time.deltaTime);
             RestoreRaisePresentation();
             StepStatePresentation();
 

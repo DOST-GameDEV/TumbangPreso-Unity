@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -8,74 +7,166 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
+    /// <summary>
+    /// ⚠️⚠️ SEAN, THE LAVA BRAWLER (owner, 2026-10-24: *"I want sean to be a brawler strength based character that relies on his
+    /// muscles"*, mixed with lava, born near Mayon). PRESSURE, LAVA RAM, MOLTEN THROW, MAGMA FIST and MAYON AWAKENS. Every
+    /// number is in `SeanRules`; the plan, the six beats and the owner's answers are in `docs/reports/sean-kit-2026-10-24/plan.md`.
+    ///
+    /// ⚠️ VOLCANIC BOMB IS THE E BUTTON WHILE MOLTEN, in both roles. The ultimate's own button goes through the shared cutscene
+    /// path (`HeroAbilitySystem.SubmitSharedUltimate`), which has no second press, while the E press already travels the
+    /// ordinary predicted cast path to the host and every observer. Both E abilities therefore answer "throw the bomb" from
+    /// `Activate` while Molten, which is the one entry point the owner, the host and the observers all run.
+    ///
+    /// ⚠️ THE OLD KIT'S PUBLIC SURFACE IS KEPT WHERE OTHER FILES STILL CALL IT: the Stoke constants (the FX study scenes), the
+    /// ignition members (MOLTEN THROW loads the held slipper exactly as Empowered Throw did, on the same `FireExplosive`
+    /// affinity), `AdoptGate` (the retired Cinder Gate's world object) and the Supernova pose and apex (his cutscene, until it
+    /// is rebuilt as MAYON AWAKENS).
+    /// </summary>
     public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
-        public const float SteadyEmberSeconds=4f, SteadyEmberRate=1.25f;
-        private float _steadyEmberRemaining;
-        public float SteadyEmberRemaining => _steadyEmberRemaining;
-        public override float PassiveDuration => SteadyEmberSeconds;
-        public override float ThrowChargeRate => !IsDefending && _steadyEmberRemaining>0 ? SteadyEmberRate : 1f;
-        public override void OnManualOwnThrowRetrieved(AbilityContext context)
-        {
-            if (!NetAuthority.ShouldResolve() || context?.Motor == null || context.Motor.IsDefender
-                || context.Motor.Mode != GameMode.HeroStrike || GameServices.Round?.RoundActive != true) return;
-            _steadyEmberRemaining=SteadyEmberSeconds;
-            Net.MatchRpc.Instance?.BroadcastTimedKitState(context.Motor.PlayerSlot);
-        }
-        public override void OnAuthoritativeThrow(AbilityContext context)
-        {
-            if (!NetAuthority.ShouldResolve() || context?.Motor == null || _steadyEmberRemaining<=0) return;
-            _steadyEmberRemaining=0;
-            Net.MatchRpc.Instance?.BroadcastTimedKitState(context.Motor.PlayerSlot);
-        }
-        public override void Tick(AbilityContext context,float dt)
-        {
-            base.Tick(context,dt);
-            if (context?.Motor == null || context.Motor.IsDefender || GameServices.Round?.RoundActive != true)
-                _steadyEmberRemaining=0;
-            else if (float.IsFinite(dt) && dt>0) _steadyEmberRemaining=Mathf.Max(0,_steadyEmberRemaining-dt);
-        }
-        public override void Reset(){_steadyEmberRemaining=0;base.Reset();}
-        public override void ResetForRound(AbilityContext context){_steadyEmberRemaining=0;base.ResetForRound(context);}
+        // ------------------------------------------------------------------ PRESSURE (passive)
 
-        public bool IsIgnitionCannonActive { get; set; }
-        private SeanCinderGate _gate;
-        public void AdoptGate(SeanCinderGate gate)
-        { _gate = gate; ((CinderGateAbility)DefendingSkill).SyncField(gate); if (SeanCinderGateLook.Enabled) SeanCinderGateLook.Attach(gate); }
-        public override bool BlocksOwnLocomotion => Skill1.IsWindingUp || Skill1.IsActive;
-        public override bool BlocksOwnActions => BlocksOwnLocomotion;
+        private int _pressureBars;
+        private float _pressureIdle;
+        public int PressureBars => _pressureBars;
+        /// <summary>Molten keeps the heat full: every shove and RAM erupts.</summary>
+        public bool PressureFull => IsMolten || SeanRules.PressureFull(_pressureBars);
+        public override float PassiveDuration => SeanRules.PressureCoolSeconds;
+        private float PressureCoolLeft => _pressureBars > 0 ? Mathf.Max(0, SeanRules.PressureCoolSeconds - _pressureIdle) : 0;
+
+        /// <summary>The old Steady Ember timer, kept for `Diagnostics.NetSeanProbe`. PRESSURE has no throw-charge bonus.</summary>
+        public float SteadyEmberRemaining => 0;
+
+        /// <summary>
+        /// Host-side. A body hit landed (a shove, LAVA RAM or MAGMA FIST): adds heat, or spends a full charge on the eruption the
+        /// caller is about to apply. Returns whether this hit erupts.
+        /// </summary>
+        internal bool HostLandHit(CharacterMotor me)
+        {
+            if (!NetAuthority.ShouldResolve()) return false;
+            bool erupt = PressureFull;
+            _pressureIdle = 0;
+            _pressureBars = erupt && !IsMolten ? 0 : SeanRules.PressureAfterHit(_pressureBars);
+            if (me != null) Net.MatchRpc.Instance?.BroadcastTimedKitState(me.PlayerSlot);
+            return erupt;
+        }
+
+        /// <summary>Host-side. A MAGMA FIST hit adds heat; it never spends it (only a shove or a RAM erupts).</summary>
+        internal void HostAddHeat(CharacterMotor me)
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+            _pressureIdle = 0;
+            _pressureBars = SeanRules.PressureAfterHit(_pressureBars);
+            if (me != null) Net.MatchRpc.Instance?.BroadcastTimedKitState(me.PlayerSlot);
+        }
+
+        /// <summary>
+        /// The shove hook (`CombatVerbs.ApplyShoveTo`, host or solo). An erupting shove sends its target `EruptDistanceScale`
+        /// farther (under the knockback cap) and splashes anyone beside them.
+        /// </summary>
+        public Vector3 HostShoveLanded(CharacterMotor me, CharacterMotor victim, Vector3 push)
+        {
+            if (me == null || victim == null || !HostLandHit(me)) return push;
+            push = Erupted(push);
+            Splash(me, victim);
+            return push;
+        }
+
+        /// <summary>A ground push made `EruptDistanceScale` longer, never past the cap. Its lift is kept.</summary>
+        internal static Vector3 Erupted(Vector3 push)
+        {
+            var flat = new Vector3(push.x, 0, push.z);
+            float speed = flat.magnitude;
+            if (speed < .01f) return push;
+            float erupted = Combat.SpeedForDistance(SeanRules.EruptedDistance(Combat.KnockbackDistance(speed)));
+            flat = flat / speed * erupted;
+            return new Vector3(flat.x, push.y, flat.z);
+        }
+
+        internal static void Splash(CharacterMotor me, CharacterMotor victim)
+        {
+            var excluded = new HashSet<int> { me.PlayerSlot, victim.PlayerSlot };
+            HeroHazards.CreateExplosion(victim.transform.position, SeanRules.EruptSplashRadius,
+                Combat.SpeedForDistance(SeanRules.EruptSplashPush), 0, me.PlayerSlot, comicText: null,
+                excludedSlots: excluded, style: HeroHazards.ExplosionStyle.Fire);
+        }
+
+        public override void Tick(AbilityContext context, float dt)
+        {
+            base.Tick(context, dt);
+            if (!float.IsFinite(dt) || dt <= 0 || _pressureBars <= 0) return;
+            _pressureIdle += dt;
+            int cooled = SeanRules.PressureAfterIdle(_pressureBars, _pressureIdle);
+            if (cooled == _pressureBars) return;
+            _pressureBars = cooled;
+            if (context?.Motor != null && NetAuthority.ShouldResolve())
+                Net.MatchRpc.Instance?.BroadcastTimedKitState(context.Motor.PlayerSlot);
+        }
+
+        public override void Reset() { _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.Reset(); }
+        public override void ResetForRound(AbilityContext context)
+        { _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.ResetForRound(context); }
+
+        // ------------------------------------------------------------------ MOLTEN and VOLCANIC BOMB
+
+        private bool _bombThrown;
+        /// <summary>The 8 s after MAYON AWAKENS, until the bomb leaves his hands.</summary>
+        public bool IsMolten => Ultimate != null && Ultimate.IsActive && !_bombThrown;
+
+        /// <summary>Owner, 2026-10-24: "No knockback" while Molten.</summary>
+        public override float IncomingKnockbackDistanceScale => SeanRules.IncomingKnockbackScale(IsMolten);
+
+        /// <summary>Whether the E press throws the bomb instead of the role skill.</summary>
+        internal bool BombReady => IsMolten;
+
+        /// <summary>
+        /// The E press while Molten, on every peer that runs the cast. The bomb lands where he aims, as far as he aimed and no
+        /// farther than `BombMaxRange`; throwing it ends Molten.
+        /// </summary>
+        internal void ThrowBomb(AbilityContext ctx)
+        {
+            if (ctx?.Motor == null || !IsMolten) return;
+            Vector3 from = ctx.Motor.transform.position;
+            Vector3 way = ctx.AimPoint - from; way.y = 0;
+            if (way.sqrMagnitude < .01f) { way = ctx.Forward; way.y = 0; }
+            if (way.sqrMagnitude < .0001f) way = ctx.Motor.transform.forward;
+            float reach = SeanRules.BombLandingDistance(way.magnitude);
+            if (reach < 1f) reach = SeanRules.BombMaxRange * .5f;
+            Vector3 land = from + way.normalized * reach;
+            land.y = Slipper.FindGroundY(land, from.y);
+            _bombThrown = true;
+            SeanVolcanicBomb.Spawn(ctx.Motor, land, thrown: true);
+            NetCue.Play("sfx_cast_sean_cannon", from);
+            ((MayonAwakensAbility)Ultimate).EndMolten(ctx);
+        }
+
+        /// <summary>Molten ran out with the bomb still in his hands: it drops at his feet (owner, 2026-10-24).</summary>
+        internal void DropBomb(AbilityContext ctx)
+        {
+            if (ctx?.Motor == null || _bombThrown) return;
+            _bombThrown = true;
+            SeanVolcanicBomb.Spawn(ctx.Motor, ctx.Motor.transform.position, thrown: false);
+        }
+
+        private void ReadyRoleSkillsForBomb()
+        {
+            (AttackingSkill as MoltenThrowAbility)?.ClearForBomb();
+            (DefendingSkill as MagmaFistAbility)?.ClearForBomb();
+        }
+
+        // ------------------------------------------------------------------ the old kit's public surface
+
+        /// <summary>Stoke Step's numbers, kept for the FX study scenes that still film it (`Visual.FxStudy`).</summary>
         public const float StokeDistance = 2f, StokeAnticipation = .18f, StokeRecovery = .25f;
         public static float StokeSpeed => Mathf.Sqrt(2f * Balance.Friction * StokeDistance);
         public static float StokeTravelSeconds => StokeSpeed / Balance.Friction;
-        public bool IsEmpoweredThrowLoadedFor(Slipper shoe) => ((IgnitionCannonAbility)AttackingSkill).LoadedFor(shoe);
+
+        /// <summary>True while MOLTEN THROW has the held slipper coated (the ember on the shoe, the status icon).</summary>
+        public bool IsIgnitionCannonActive { get; set; }
+        public bool IsEmpoweredThrowLoadedFor(Slipper shoe) => ((MoltenThrowAbility)AttackingSkill).LoadedFor(shoe);
         private bool _joinChargeStateSettled;
-        public TimedKitSnapshot CaptureTimedKit()
-            => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0,
-                passiveRemaining:_steadyEmberRemaining,passiveCapacity:PassiveDuration);
 
-        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
-        {
-            if (motor == null) return false;
-            bool changed=RestoreJoiningIgnition(motor,state.PersonalRemaining);
-            float remaining=motor.IsDefender?0:Mathf.Clamp(state.PassiveRemaining,0,SteadyEmberSeconds);
-            changed |= remaining != _steadyEmberRemaining;_steadyEmberRemaining=remaining;
-            return changed;
-        }
-
-        public HeroMovementState CaptureMovementState()=>((StokeStepAbility)Skill1).CaptureMovement();
-        public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
-            => motor!=null && ((StokeStepAbility)Skill1).RestoreMovement(
-                new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
-        public void AdoptMovementFields(int owner) { } // Stoke Step creates no recoverable fire fields.
-        public void RebindWorldEffects(CharacterMotor motor)
-        {
-            if (motor == null) return;
-            AdoptMovementFields(motor.PlayerSlot);
-            SeanCinderGate found = null;
-            foreach (var gate in SeanCinderGate.Active)
-                if (gate != null && gate.Owner == motor.PlayerSlot) { found = gate; break; }
-            AdoptGate(found);
-        }
+        public void ConsumeIgnition() { _joinChargeStateSettled = true; IsIgnitionCannonActive = false; }
 
         public bool RestoreJoiningIgnition(CharacterMotor motor, float remaining)
         {
@@ -87,79 +178,113 @@ namespace TumbangPreso.Abilities
             return true;
         }
 
-        public void ConsumeIgnition()
-        {
-            _joinChargeStateSettled = true;
-            IsIgnitionCannonActive = false;
-        }
-
         public void RestoreIgnition(CharacterMotor motor, float remaining)
         {
             if (motor == null) return;
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
-            ((IgnitionCannonAbility)AttackingSkill).RestoreCharge(context, remaining);
+            ((MoltenThrowAbility)AttackingSkill).RestoreCharge(context, remaining);
         }
-        /// <summary>How far up SUPERNOVA's launch has him when its dive begins: 14 m/s up for 0.55 s against `Balance.CharacterGravity`.</summary>
-        public const float SupernovaApex = 14.0f * .55f - .5f * Core.Balance.CharacterGravity * .55f * .55f;
 
-        /// <summary>
-        /// How far up he is put when SUPERNOVA is released after its cutscene, from these feet: `SupernovaApex`, or as much of it
-        /// as there is headroom for. The cutscene's last frame for his own screen is computed from the same number
-        /// (`Visual.HeroIntroductionScene.HandBackView`), so the picture and the body agree.
-        /// </summary>
+        /// <summary>The retired Cinder Gate's world object still reports in; nothing places one any more.</summary>
+        public void AdoptGate(SeanCinderGate gate) { }
+
+        /// <summary>The Supernova cutscene's apex (its hand-back still computes from it until MAYON AWAKENS replaces it).</summary>
+        public const float SupernovaApex = 14.0f * .55f - .5f * Core.Balance.CharacterGravity * .55f * .55f;
         public static float SupernovaApexRise(Vector3 feet)
         {
             const float head = 1.5f;
             return Physics.Raycast(feet + Vector3.up * 1.0f, Vector3.up, out var roof, SupernovaApex + head, ~0, QueryTriggerInteraction.Ignore)
                 ? Mathf.Clamp(roof.distance + 1.0f - head, 0f, SupernovaApex) : SupernovaApex;
         }
+        /// <summary>No Supernova pose plays any more: MAYON AWAKENS has no leap.</summary>
+        public float SupernovaPoseTime => -1;
 
-        private float _supernovaPoseTime = -1;
-        public float SupernovaPoseTime => Ultimate.IsWindingUp
-            ? Mathf.Lerp(0, .20f, 1 - Ultimate.WindupRemaining / Mathf.Max(.01f, Ultimate.Windup))
-            : _supernovaPoseTime;
+        // ------------------------------------------------------------------ replication
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0,
+                Ultimate, IsMolten ? Ultimate.DurationRemaining : 0,
+                passiveRemaining: PressureCoolLeft, passiveCapacity: PassiveDuration);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+        {
+            if (motor == null) return false;
+            bool changed = RestoreJoiningIgnition(motor, state.PersonalRemaining);
+            float molten = Mathf.Clamp(state.UltimateRemaining, 0, SeanRules.MoltenSeconds);
+            if (molten > 0 && !Ultimate.IsActive)
+            {
+                ((MayonAwakensAbility)Ultimate).RestoreMolten(molten);
+                _bombThrown = false;
+                changed = true;
+            }
+            // The owner's ring shows the heat cooling; the bars themselves stay on the host.
+            float cool = Mathf.Clamp(state.PassiveRemaining, 0, SeanRules.PressureCoolSeconds);
+            if (!NetAuthority.ShouldResolve())
+            {
+                int bars = cool > 0 ? Mathf.Max(1, _pressureBars) : 0;
+                changed |= bars != _pressureBars;
+                _pressureBars = bars; _pressureIdle = SeanRules.PressureCoolSeconds - cool;
+            }
+            return changed;
+        }
+
+        public HeroMovementState CaptureMovementState() => ((LavaRamAbility)Skill1).CaptureMovement();
+        public bool RestoreJoiningMovement(CharacterMotor motor, HeroMovementState state, float age)
+            => motor != null && ((LavaRamAbility)Skill1).RestoreMovement(
+                new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>()), state, age);
+        public void AdoptMovementFields(int owner) { } // LAVA RAM leaves nothing in the world.
+        public void RebindWorldEffects(CharacterMotor motor) { }
+
+        // ------------------------------------------------------------------ the kit
 
         public SeanHeroKit() : base("sean", "RAGO")
         {
-            Skill1 = new StokeStepAbility();
-            // Attacking load and defending crossing seam keep separate cooldowns.
-            AttackingSkill = new IgnitionCannonAbility(this);
-            DefendingSkill = new CinderGateAbility(this);
-            Ultimate = new SupernovaSmashdownAbility(this);
+            Skill1 = new LavaRamAbility(this);
+            AttackingSkill = new MoltenThrowAbility(this);
+            DefendingSkill = new MagmaFistAbility(this);
+            Ultimate = new MayonAwakensAbility(this);
         }
 
-        /// <summary>
-        /// ⚠️ PRICED ABOVE DANTE AND BELOW CHESKA BECAUSE IT PAYS A POINT DIRECTLY. Supernova's
-        /// blast knocks the lata over, so unlike every other ultimate in the game it converts
-        /// into score without needing a follow-up. It has to be aimed and it can be walked out
-        /// of, which is what keeps it under Thunderstrike's 150.
-        ///
-        /// ⚠️ 15 CHARGES, WHICH IS 15 LATA KNOCKDOWNS. Was 130 against a knockdown worth 25,
-        /// which is 5.2. `docs/Hero_Strike_Balance.md` § 3.1.
-        /// </summary>
-        public override float UltimateCost => 15.0f;
+        /// <summary>15 charges, as Supernova was: the bomb can knock the lata over by itself.</summary>
+        public override float UltimateCost => SeanRules.UltimateCost;
 
-        private sealed class StokeStepAbility : HeroAbility
+        /// <summary>The bodies a RAM or a fist may hit: everyone else in the round who is on the court and not already tagged.</summary>
+        internal static IEnumerable<CharacterMotor> Rivals(CharacterMotor me)
+        {
+            var round = GameServices.Round;
+            if (round == null || me == null) yield break;
+            foreach (var p in round.Players)
+                if (p != null && p != me && p.gameObject.activeInHierarchy && !p.IsTagged) yield return p;
+        }
+
+        // ================================================================== LAVA RAM (signature, both roles)
+
+        private sealed class LavaRamAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
-            private bool _movementKnown, _movementRestored;
-            private GameObject _rushAura;
-            public StokeStepAbility()
-                : base("sean_skill1", "STOKE STEP",
-                    "Brace, then burst two metres along your aim. Recover before acting again. No knockdown or burning trail.",
-                    30f, StokeTravelSeconds + StokeRecovery, AbilityGlyph.SeanRush,
-                    summary: "A short committed burst, then a planted recovery.",
+            private readonly SeanHeroKit _kit;
+            private bool _movementKnown, _movementRestored, _hit;
+            private Vector3 _heading;
+            private GameObject _aura;
+            private const float Recover = .25f;
+
+            public LavaRamAbility(SeanHeroKit kit)
+                : base("sean_skill1", "LAVA RAM",
+                    "Brace, then charge along your aim. You stop on the first player you hit and launch them. A wall stops you instead, dazed.",
+                    SeanRules.RamCooldown, SeanRules.RamTravelSeconds + Recover, AbilityGlyph.SeanRush,
+                    summary: "Charge; the first player you hit is launched. Walls daze you.",
                     castAction: "hero-sean-dash", viewmodelAction: "thrust-fire", castCue: "sfx_cast_sean_rush")
-            { Windup = StokeAnticipation; }
+            { _kit = kit; Windup = SeanRules.RamMinBraceSeconds; }
 
             public override bool CanActivate(AbilityContext ctx)
                 => base.CanActivate(ctx) && ctx?.Motor != null && ctx.Motor.IsGrounded && !ctx.Motor.IsFlying;
 
             public override void Activate(AbilityContext ctx)
             {
-                // The look alone, on every peer that hears the cast: the brace is drawn from the press. It decides nothing.
+                // The brace is drawn from the press on every peer; it decides nothing.
                 Visual.SeanStokeFire.Brace(ctx);
                 base.Activate(ctx);
+                if (_kit.IsMolten) CooldownRemaining = Mathf.Min(CooldownRemaining, SeanRules.RamMoltenCooldown);
             }
 
             public HeroMovementState CaptureMovement() => IsActive
@@ -174,8 +299,8 @@ namespace TumbangPreso.Abilities
                 if (_movementKnown) remaining = Mathf.Min(remaining, DurationRemaining);
                 _movementKnown = true; _movementRestored = remaining > 0;
                 if (remaining <= 0) { EndEarly(ctx); return true; }
-                // The movement snapshot already owns position and velocity. Recovery
-                // restores only the remaining gate; never launch a second impulse.
+                // The movement snapshot owns position and velocity: restore only the clock, never a second impulse.
+                _hit = true;
                 RestoreLiveClock(remaining);
                 return true;
             }
@@ -186,82 +311,111 @@ namespace TumbangPreso.Abilities
                     && (!ctx.Motor.RoundActive || ctx.Motor.IsStunned || ctx.Motor.IsFeared || ctx.Motor.IsRooted))
                 { _movementKnown = true; _movementRestored = false; RollBackPredictedCast(ctx, false); }
                 base.Tick(ctx, dt);
-                if (_rushAura != null && DurationRemaining <= StokeRecovery) ReleaseAura();
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                _movementKnown = true; _movementRestored = false;
+                _movementKnown = true; _movementRestored = false; _hit = false;
                 if (ctx?.Motor == null || !ctx.Motor.IsGrounded || ctx.Motor.IsFlying
                     || ctx.Motor.IsStunned || ctx.Motor.IsFeared || ctx.Motor.IsRooted)
                 { EndEarly(ctx); return; }
-                Vector3 heading = ctx.Forward; heading.y = 0;
-                if (heading.sqrMagnitude < .0001f) { EndEarly(ctx); return; }
-                // Native motor owns friction, body/cover collision and confinement.
-                // No teleport, vertical launch, hit loop or damaging world field.
-                ctx.Motor.ApplyImpulse(heading.normalized * StokeSpeed);
-                // The look alone. With `SeanStokeFire.Streak` on, the fireball wake that follows his body; off (as it ships
-                // until the owner has seen it), the shared fire aura exactly as before.
-                if (Visual.SeanStokeFire.Streak) Visual.SeanStokeFire.Burst(ctx.Motor, heading);
-                else _rushAura = AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.FireEmber, StokeTravelSeconds);
+                _heading = ctx.Forward; _heading.y = 0;
+                if (_heading.sqrMagnitude < .0001f) { EndEarly(ctx); return; }
+                _heading.Normalize();
+                // The motor owns friction, collision and confinement: one impulse, no teleport.
+                ctx.Motor.ApplyImpulse(_heading * SeanRules.RamSpeed);
+                if (Visual.SeanStokeFire.Streak) Visual.SeanStokeFire.Burst(ctx.Motor, _heading);
+                else _aura = AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.FireEmber, SeanRules.RamTravelSeconds);
+            }
+
+            protected override void OnTick(AbilityContext ctx, float dt)
+            {
+                if (_hit || ctx?.Motor == null || DurationRemaining <= Recover) return;
+                var me = ctx.Motor;
+                Vector3 at = me.transform.position;
+
+                // The first body in front of him stops the charge. Every peer that runs it stops his slide (only the one that
+                // simulates his body actually moves it); the host alone moves the body he hit.
+                CharacterMotor first = null; float best = float.MaxValue;
+                foreach (var p in Rivals(me))
+                {
+                    Vector3 to = p.transform.position - at; to.y = 0;
+                    float d = to.magnitude;
+                    if (d > SeanRules.RamContactReach + .45f || d < .01f) continue;
+                    if (Vector3.Dot(to / d, _heading) < .35f) continue;
+                    if (d < best) { best = d; first = p; }
+                }
+                if (first != null)
+                {
+                    _hit = true;
+                    me.HaltExternalSlide();
+                    if (NetAuthority.ShouldResolve())
+                    {
+                        Vector3 push = _heading * SeanRules.RamLaunchSpeed + Vector3.up * Balance.ShoveLift;
+                        if (_kit.HostLandHit(me)) { push = Erupted(push); Splash(me, first); }
+                        first.ApplyResolvedImpact(push);
+                        first.ApplyStagger(SeanRules.RamStumbleSeconds);
+                        Visual.ComicPopup.Bonk(first.transform.position);
+                        NetCue.Play("sfx_explosion_heavy", first.transform.position);
+                    }
+                    return;
+                }
+
+                // A wall in front of him: he runs into it and is dazed (the host decides the stun).
+                if (Physics.Raycast(at + Vector3.up * .7f, _heading, out var wall, .55f, ~0, QueryTriggerInteraction.Ignore)
+                    && wall.collider.GetComponentInParent<CharacterMotor>() == null
+                    && wall.collider.GetComponentInParent<Slipper>() == null
+                    && wall.collider.GetComponentInParent<Lata>() == null)
+                {
+                    _hit = true;
+                    me.HaltExternalSlide();
+                    if (NetAuthority.ShouldResolve()) me.ApplyStagger(SeanRules.RamWallStunSeconds);
+                    NetCue.Play("sfx_slipper_burst", wall.point);
+                }
             }
 
             private void ReleaseAura()
             {
-                if (_rushAura != null) { _rushAura.SetActive(false); UnityEngine.Object.Destroy(_rushAura); }
-                _rushAura = null;
+                if (_aura != null) { _aura.SetActive(false); UnityEngine.Object.Destroy(_aura); }
+                _aura = null;
             }
             protected override void OnEnd(AbilityContext ctx) => ReleaseAura();
             protected override void OnCancelled(AbilityContext ctx) => ReleaseAura();
-            public override void Reset()
-            { ReleaseAura(); base.Reset(); _movementKnown = _movementRestored = false; }
+            public override void Reset() { ReleaseAura(); base.Reset(); _movementKnown = _movementRestored = _hit = false; }
         }
 
-        private sealed class CinderGateAbility : HeroAbility
-        {
-            private readonly SeanHeroKit _kit;
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
-            public CinderGateAbility(SeanHeroKit kit)
-                : base("sean_skill2d", "CINDER GATE",
-                    "Place a three-metre ember line. After a short warning, the first grounded rival crossing is pushed back and extinguishes it. Jump over; throws pass through.",
-                    SeanGateRules.Cooldown, SeanGateRules.TotalSeconds, AbilityGlyph.SeanCinderGate,
-                    summary: "One grounded crossing. Jump or go around the ends.",
-                    telegraphRadius: SeanGateRules.HalfWidth, telegraphRange: SeanGateRules.PlacementRange,
-                    castAction: "hero-sean-gate", viewmodelAction: "cinder-draw", castCue: null)
-            { _kit = kit; AimByHolding(.75f, SeanGateRules.PlacementRange, .4f, 0, whereLooking: true); }
-            public override bool CanActivate(AbilityContext context)
-                => base.CanActivate(context) && context?.Motor != null && context.Motor.IsDefender
-                    && SeanCinderGate.CanPlace(context, AimedDestination(context));
-            protected override void OnActivate(AbilityContext context)
-            {
-                if (NetAuthority.ShouldResolve()) _kit.AdoptGate(SeanCinderGate.Cast(context, AimedDestination(context)));
-                else if (_kit._gate != null) SyncField(_kit._gate);
-            }
-            public void SyncField(SeanCinderGate gate) => RestoreLiveClock(gate != null ? gate.ActiveRemaining : 0);
-            protected override void OnTick(AbilityContext context, float dt)
-            {
-                if (_kit._gate != null) SyncField(_kit._gate);
-            }
-        }
+        // ================================================================== MOLTEN THROW (attacking)
 
-        private sealed class IgnitionCannonAbility : HeroAbility
+        private sealed class MoltenThrowAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly SeanHeroKit _kit;
-
             private Slipper _loaded;
             private int _joiningSeat = -1;
-            public IgnitionCannonAbility(SeanHeroKit kit)
-                : base("sean_skill2", "EMPOWERED THROW",
-                       "Load your held slipper for one throw within eight seconds. Its first impact creates a compact pressure burst that nudges nearby rivals.",
-                       EmpoweredThrowRules.Cooldown, EmpoweredThrowRules.LoadSeconds, AbilityGlyph.SeanIgnite,
-                       summary: "One held throw, one compact pressure burst; no lingering fire.",
+
+            public MoltenThrowAbility(SeanHeroKit kit)
+                : base("sean_skill2", "MOLTEN THROW",
+                       "Attacking. Coat your held slipper in lava for one throw within 8 s. It flies flat and fast. A can it knocks over is blasted away and lands hot: no reset for 1.5 s.",
+                       SeanRules.MoltenThrowCooldown, SeanRules.MoltenThrowLoadSeconds, AbilityGlyph.SeanIgnite,
+                       summary: "One heavy throw. The can it knocks over flies and stays hot.",
                        castAction: "hero-sean-ignite", viewmodelAction: "ignite", castCue: "sfx_cast_sean_cannon")
             { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)
-                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null
+            {
+                if (_kit.BombReady) return base.CanActivate(ctx);
+                return base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null
                     && ctx.Carrier.Held.State == SlipperState.Held && ctx.Carrier.Held.Holder == ctx.Motor;
+            }
+
+            public override void Activate(AbilityContext ctx)
+            {
+                if (_kit.BombReady) { _kit.ThrowBomb(ctx); CooldownRemaining = Cooldown; return; }
+                base.Activate(ctx);
+            }
+
+            // Even with a slipper loaded: the coat stays on the shoe, and E is the bomb until Molten ends.
+            internal void ClearForBomb() => CooldownRemaining = 0;
 
             public bool LoadedFor(Slipper shoe)
                 => _kit.IsIgnitionCannonActive && DurationRemaining > 0 && shoe != null
@@ -291,9 +445,8 @@ namespace TumbangPreso.Abilities
             public void RestoreCharge(AbilityContext ctx, float remaining)
             {
                 if (remaining <= 0) { EndEarly(ctx); _kit.IsIgnitionCannonActive = false; return; }
-                RestoreLiveClock(Mathf.Min(remaining, EmpoweredThrowRules.LoadSeconds));
-                // Equipment recovery carries the held affinity on the exact object.
-                // Never adopt an arbitrary shoe solely because it is currently held.
+                RestoreLiveClock(Mathf.Min(remaining, SeanRules.MoltenThrowLoadSeconds));
+                // Equipment recovery carries the held affinity on the exact object; never adopt an arbitrary held shoe.
                 _loaded = null; _joiningSeat = ctx.Motor.PlayerSlot;
                 _kit.IsIgnitionCannonActive = true;
                 RefreshEmber(ctx);
@@ -301,8 +454,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (!_kit.IsIgnitionCannonActive || ctx.Motor.IsDefender)
-                { EndEarly(ctx); return; }
+                if (!_kit.IsIgnitionCannonActive || ctx.Motor.IsDefender) { EndEarly(ctx); return; }
                 if (_loaded == null && _joiningSeat >= 0)
                 {
                     var held = ctx.Carrier?.Held;
@@ -327,48 +479,86 @@ namespace TumbangPreso.Abilities
                 }
                 _loaded = null; _joiningSeat = -1;
             }
-            public override void Reset()
+
+            public override void Reset() { OnEnd(null); base.Reset(); _kit._joinChargeStateSettled = false; }
+        }
+
+        // ================================================================== MAGMA FIST (defending)
+
+        private sealed class MagmaFistAbility : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            private readonly SeanHeroKit _kit;
+
+            public MagmaFistAbility(SeanHeroKit kit)
+                : base("sean_skill2d", "MAGMA FIST",
+                    "Defending. Punch a fist of lava at the rival nearest your aim within 9 m. It curves after them; under their feet a giant fist punches up and throws them away from the can.",
+                    SeanRules.FistCooldown, 0, AbilityGlyph.SeanCinderGate,
+                    summary: "A curving lava fist that punches a rival up and away from the can.",
+                    telegraphRadius: SeanRules.FistPunchRadius, telegraphRange: SeanRules.FistLockRange,
+                    castAction: "hero-sean-gate", viewmodelAction: "cinder-draw", castCue: "sfx_cast_sean_rush")
+            { _kit = kit; }
+
+            public override bool CanActivate(AbilityContext ctx)
             {
-                OnEnd(null); base.Reset(); _kit._joinChargeStateSettled = false;
+                if (_kit.BombReady) return base.CanActivate(ctx);
+                return base.CanActivate(ctx) && ctx.Motor.IsDefender && Target(ctx) != null;
+            }
+
+            public override void Activate(AbilityContext ctx)
+            {
+                if (_kit.BombReady) { _kit.ThrowBomb(ctx); CooldownRemaining = Cooldown; return; }
+                base.Activate(ctx);
+            }
+
+            internal void ClearForBomb() => CooldownRemaining = 0;
+
+            /// <summary>The rival nearest his aim inside the lock range and cone, or null.</summary>
+            internal static CharacterMotor Target(AbilityContext ctx)
+            {
+                if (ctx?.Motor == null) return null;
+                Vector3 at = ctx.Position; Vector3 aim = ctx.Forward; aim.y = 0;
+                if (aim.sqrMagnitude < .0001f) return null;
+                aim.Normalize();
+                CharacterMotor best = null; float bestAngle = float.MaxValue;
+                foreach (var p in Rivals(ctx.Motor))
+                {
+                    if (p.IsDefender) continue;
+                    Vector3 to = p.transform.position - at; to.y = 0;
+                    float angle = Vector3.Angle(aim, to);
+                    if (!SeanRules.FistCanLock(to.magnitude, angle)) continue;
+                    if (angle < bestAngle) { bestAngle = angle; best = p; }
+                }
+                return best;
+            }
+
+            protected override void OnActivate(AbilityContext ctx)
+            {
+                var target = Target(ctx);
+                if (target == null || ctx?.Motor == null) return;
+                Vector3 way = ctx.Forward; way.y = 0;
+                SeanMagmaFist.Spawn(ctx.Motor, _kit, ctx.Position + way.normalized * .7f + Vector3.up * .9f, way, target);
             }
         }
 
-        private sealed class SupernovaSmashdownAbility : HeroAbility
+        // ================================================================== MAYON AWAKENS (ultimate)
+
+        private sealed class MayonAwakensAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
-            // ⚠️ THE CUTSCENE IS THE LEAP (owner 2026-10-09, of his restaged cutscene: "he should leap but then at the apex of the
-            // leap, the person playing sean should have their cam tween to their fpv. and the rest of the players cut to their
-            // fpv"). So released after its cutscene there is no wind-up and no launch: he is put at the top of the leap, where
-            // the cutscene left him, hangs a moment and dives. A cast that had no cutscene launches from the ground as before.
+            // The cutscene shows the awakening, so released after it there is no second wind-up.
             protected override bool IntroductionIsTheWindup => true;
-            private bool _fromApex;
-            private float _slamBelow;
-            private float _airTimer;
             private readonly SeanHeroKit _kit;
-            private float _landingAge;
-            private bool _diving;
-            private bool _hasLeftGround;
-            private bool _smashed;
+            private GameObject _aura;
+            private AbilityContext _context;
 
-            public SupernovaSmashdownAbility(SeanHeroKit kit)
-                // ⚠️⚠️ THE CARD USED TO SAY *"Knocks the lata over on impact"* AND 🧑 READ IT
-                // EXACTLY AS WRITTEN: *"this too it reads as unusable on defender"*. It was an
-                // honest description of an attacker-only power. Both halves are fixed rather than
-                // just the sentence: `HeroHazards.CreateExplosion` no longer knocks over the
-                // CASTER'S OWN objective, and the crater below is what the ultimate leaves for
-                // either role. The text now leads with what is true in both.
-                //
-                // ⚠️ DURATION 2.0 s TO 5.6 s, AND IT IS THE CRATER'S LIFE PLUS THE SLAM. The old
-                // 2.0 covered the leap and the landing and nothing else, which is why
-                // `SkyEvent.SecondsFor` gave it the bare floor. The ability now stays active for
-                // as long as the ground is burning, which is what `IsActive` should mean.
-                : base("sean_ultimate", "SUPERNOVA",
-                       "Launches you up and slams you back down. The blast throws everyone near it clear and leaves the road burning behind you.",
-                       0.0f, 5.6f, TumbangPreso.UI.AbilityGlyph.SeanSupernova,
-                       summary: "Leap and crash down. Leaves burning ground where you land.",
-                       telegraphRadius: 5.4f, telegraphRange: 0.0f,
-                       castAction: "hero-sean-supernova",
-                       viewmodelAction: "supernova-slam",
+            public MayonAwakensAbility(SeanHeroKit kit)
+                : base("sean_ultimate", "MAYON AWAKENS",
+                       "Let the mountain out: everyone close is blasted away and you are Molten for 8 s, with no knockback and every hit erupting. Press E to throw the Volcanic Bomb.",
+                       0.0f, SeanRules.MoltenSeconds, AbilityGlyph.SeanSupernova,
+                       summary: "Blast everyone close, turn Molten, then throw the Volcanic Bomb with E.",
+                       telegraphRadius: SeanRules.AwakeningRadius, telegraphRange: 0.0f,
+                       castAction: "hero-sean-supernova", viewmodelAction: "supernova-slam",
                        castCue: "sfx_cast_sean_supernova")
             {
                 _kit = kit;
@@ -378,104 +568,51 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                _airTimer = 0.55f;
-                _landingAge = 0;
-                _kit._supernovaPoseTime = .20f;
-                _diving = false;
-                _hasLeftGround = false;
-                _smashed = false;
-
-                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Stretch(0.06f);
-
-                _fromApex = HadSharedIntroduction;
-                if (_fromApex)
-                {
-                    // Where the launch below would have had him when its dive begins (`SupernovaApex`), or as high as the
-                    // roof over him allows. `Teleport` is the motor's own guarded, replicated move (only the peer that owns
-                    // the body moves it, and the host tells the others); it also clears his statuses, as every teleport does.
-                    float rise = SupernovaApexRise(ctx.Position);
-                    _slamBelow = ctx.Position.y + Mathf.Min(.35f, rise * .5f);
-                    ctx.Motor.Teleport(ctx.Position + Vector3.up * rise);
-                    _airTimer = .14f;
-                    _kit._supernovaPoseTime = .78f;
-                    _hasLeftGround = true;
-                    NetCue.Play("hero_sean_ult", ctx.Position);
-                    return;
-                }
-
-                // Launch upward
-                ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
-                NetCue.Play("hero_sean_ult", ctx.Position);
+                _context = ctx;
+                _kit._bombThrown = false;
+                _kit.ReadyRoleSkillsForBomb();
+                if (ctx?.Motor == null) return;
+                var me = ctx.Motor;
+                NetCue.Play("hero_sean_ult", me.transform.position);
+                var squash = me.GetComponent<CharacterSquashStretch>();
+                if (squash != null) squash.Squash(0.08f);
+                HeroHazards.CreateExplosion(me.transform.position, SeanRules.AwakeningRadius,
+                    Combat.SpeedForDistance(SeanRules.AwakeningPush), 0.4f, me.PlayerSlot, comicText: null,
+                    excludedSlots: new HashSet<int> { me.PlayerSlot }, style: HeroHazards.ExplosionStyle.Fire);
+                StartAura(me);
             }
 
-            protected override void OnTick(AbilityContext ctx, float dt)
+            private void StartAura(CharacterMotor me)
             {
-                if (_smashed)
-                {
-                    _landingAge += dt;
-                    _kit._supernovaPoseTime = _landingAge < .43f ? 1.12f + _landingAge : -1;
-                    return;
-                }
-                if (!ctx.Motor.IsGrounded) _hasLeftGround = true;
-                _airTimer -= dt;
-                if (_airTimer <= 0.0f && !_diving)
-                {
-                    _diving = true;
-                    // ⚠️ THE MIDDLE BEAT LOSES ITS CAPTION. "BLAST OFF!" on the launch and
-                    // "SUPERNOVA!" on the landing are the two moments a player acts on; a third
-                    // word 0.55 s into a 2 s ultimate is one the eye never finishes reading.
-                    ctx.Motor.ApplyImpulse(Vector3.down * 28.0f);
-                }
-
-                _kit._supernovaPoseTime = !_diving
-                    ? (_fromApex ? .78f : Mathf.Lerp(.20f, .78f, 1 - Mathf.Clamp01(_airTimer / .55f)))
-                    : Mathf.Lerp(.78f, 1.04f, Mathf.Clamp01(-_airTimer / .16f));
-                if (!_diving) return;
-                // Put at the top, the motor's "on the ground" is still what it was before the move until its next step: he must
-                // actually have come down before the slam, or it would go off in the air.
-                if (_fromApex && ctx.Motor.transform.position.y > _slamBelow && _airTimer > -1.5f) return;
-
-                // An interrupted leap under a low ceiling may never report an airborne
-                // frame. It may still impact while grounded, never from a timer in midair.
-                if (ctx.Motor.IsGrounded && (_hasLeftGround || _airTimer <= -.12f))
-                {
-                    _smashed = true;
-                    _kit._supernovaPoseTime = 1.12f;
-
-                    var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                    if (squash != null) squash.Squash(0.08f);
-
-                    NetCue.Play("sfx_explosion_heavy", ctx.Position);
-
-                    // ⚠️ THE BLAST IS BIGGER AND THE COMIC TEXT IS GONE. 4.8 to 5.4 m, knockback
-                    // 16 to 22, hold 2.2 to 2.6: 🧑 asked for *"more of an impact"* and this is
-                    // the half that is a number rather than a picture. The word went with every
-                    // other cast callout in § 31.8; a blast this size does not need announcing.
-                    HeroHazards.CreateExplosion(ctx.Position, 5.4f, 22.0f, 2.6f,
-                        ctx.Motor.PlayerSlot, comicText: null,
-                        style: HeroHazards.ExplosionStyle.Fire);
-
-                    // ⚠️⚠️ AND THE GROUND STAYS ON FIRE, WHICH IS THE PART THAT WAS MISSING.
-                    // `SpawnSupernovaCrater` carries why: Sean's was the only ultimate in the
-                    // game that left nothing behind, which is 🧑's *"it just reads as a one time
-                    // down on laata and knockback"* exactly. It is also what makes the power
-                    // worth pressing as a taya, now that the blast no longer topples his own can.
-                    HeroHazards.SpawnSupernovaCrater(ctx.Position, 5.4f, 5.0f,
-                                                     ctx.Motor.PlayerSlot);
-                    if (SeanSupernovaLook.Enabled) SeanSupernovaLook.Spawn(ctx.Position, 5.4f, 5.0f);
-
-                    // ⚠️⚠️ THIS WAS `SpawnMagmaEruption`, WHICH IS DANTE'S. Sean's whole identity
-                    // is `HeroFire` and Dante's is `HeroMagmaCore`, and the biggest moment in
-                    // Sean's kit was throwing up Dante's orange rock. Two heroes reading as one
-                    // is the most expensive version of *"they all look repetitive"*, because it
-                    // costs a CHARACTER rather than an effect. `SpawnCastFlash` in Sean's own
-                    // colour is now inside `CreateExplosion` via the Fire style, so the eruption
-                    // here is removed rather than recoloured: one blast, one set of particles.
-                }
+                ReleaseAura();
+                _aura = AbilityVfx.AttachAura(me.transform, AbilityVfx.Aura.FireEmber, Mathf.Max(.1f, DurationRemaining));
             }
 
-            protected override void OnEnd(AbilityContext ctx) => _kit._supernovaPoseTime = -1;
+            /// <summary>The bomb left his hands: Molten is over, and nothing drops.</summary>
+            internal void EndMolten(AbilityContext ctx) => EndEarly(ctx);
+
+            internal void RestoreMolten(float remaining)
+            {
+                RestoreLiveClock(remaining);
+                if (_context?.Motor != null) StartAura(_context.Motor);
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                ReleaseAura();
+                _kit.DropBomb(ctx ?? _context);
+                _context = null;
+            }
+
+            // A round ending mid-Molten drops nothing.
+            protected override void OnCancelled(AbilityContext ctx)
+            { ReleaseAura(); _kit._bombThrown = true; _context = null; }
+
+            private void ReleaseAura()
+            {
+                if (_aura != null) { _aura.SetActive(false); UnityEngine.Object.Destroy(_aura); }
+                _aura = null;
+            }
         }
     }
 }

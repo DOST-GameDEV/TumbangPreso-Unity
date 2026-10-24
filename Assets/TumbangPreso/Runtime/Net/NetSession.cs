@@ -662,7 +662,11 @@ namespace TumbangPreso.Net
         // 175 (2026-10-21): Nemu's rework (SOULBOUND). Her ghost frames carry a fourth kind, the dormant ghost, a reclaim
         // request ("ReqReclaim") joins the wire, and Peeker/Fetcher/Keeper's timings change. A 174 peer rejects the frames
         // and judges the ghosts on the old clocks: the two may not meet.
-        public const int ProtocolVersion = 175;
+        // 176 (2026-10-24): Sean's lava brawler kit (`SeanRules`). LAVA RAM, MOLTEN THROW (the can is blasted along the throw
+        // and lands hot; `SyncLata` gains a second optional suffix with its heat), MAGMA FIST, MAYON AWAKENS with Molten and
+        // the VOLCANIC BOMB on E, and PRESSURE on a landed shove. A 175 peer runs Stoke Step, Cinder Gate and Supernova on the
+        // same ids: the two may not meet.
+        public const int ProtocolVersion = 176;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
