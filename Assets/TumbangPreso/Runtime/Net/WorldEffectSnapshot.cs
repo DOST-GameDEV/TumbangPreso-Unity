@@ -14,10 +14,14 @@ namespace TumbangPreso.Net
             // ⚠️ APPEND ONLY (protocol 53): Amihan's Whirlwind gale, a travelling front.
             Gale = 11,
             // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
-            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16, CinderGate = 17, Baha = 18,
+            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16,
+            // ⚠️ RETIRED (protocol 181): Rago's Cinder Gate. The number stays taken; nothing sends it and `Valid` refuses it.
+            // Saved replays from protocol 130 on may still hold one: `RecordedMatchClip` steps over it.
+            RetiredCinderGate = 17,
+            Baha = 18,
             // ⚠️ APPEND ONLY (protocol 161): Nemu's DON'T LOOK ghost, waiting (a sprung one is the victim's BLINDED clock).
             Blindfold = 19 }
-        public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind) || kind == Kind.CinderGate;
+        public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind);
         public struct Field
         {
             public Kind Type;
@@ -113,8 +117,6 @@ namespace TumbangPreso.Net
                 if (sentry.isActiveAndEnabled && sentry.Age >= 0f && sentry.Age < Core.PaeteRules.SentryLifeSeconds + .5f) fields.Add(sentry.Capture());
             foreach (var water in RafiWaterField.Active)
                 if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
-            foreach (var gate in SeanCinderGate.Active)
-                if (gate != null && gate.isActiveAndEnabled && gate.Remaining > .02f) fields.Add(gate.Capture());
             foreach (var blindfold in NemuBlindfold.Live)
                 if (blindfold != null && blindfold.isActiveAndEnabled && !blindfold.Sprung && blindfold.Remaining > .02f) fields.Add(blindfold.Capture());
             return fields;
@@ -131,7 +133,6 @@ namespace TumbangPreso.Net
                 || (field.TargetMask & ~((1 << Core.Balance.PlayerCount) - 1)) != 0
                 || (field.Type != Kind.Sentry && field.TargetMask != 0)) return false;
             if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
-            if (field.Type == Kind.CinderGate) return SeanCinderGate.Valid(field);
             if (field.Type == Kind.Drift)
                 return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.GeoRules.DriftSeconds) < .001f
                     && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .001f
@@ -188,8 +189,7 @@ namespace TumbangPreso.Net
             {
                 float remaining = Mathf.Clamp(field.Remaining - elapsed, 0, field.Duration);
                 if (remaining <= .02f) continue;
-                if (field.Type == Kind.CinderGate) SeanCinderGate.Restore(field, elapsed);
-                else if (RafiWaterField.IsWater(field.Type)) RafiWaterField.Restore(field, elapsed);
+                if (RafiWaterField.IsWater(field.Type)) RafiWaterField.Restore(field, elapsed);
                 else if (field.Type == Kind.Sheet)
                 {
                     var go = HeroHazards.SpawnIceSheet(field.Position, field.Radius, field.Duration,
@@ -271,7 +271,6 @@ namespace TumbangPreso.Net
         public static void ClearPersistentFields()
         {
             Retire<RafiWaterField>();
-            Retire<SeanCinderGate>();
             Retire<HeroHazards.IceSheetComponent>();
             Retire<HeroHazards.IceBarricadeComponent>();
             Retire<HeroHazards.FireTrailComponent>();

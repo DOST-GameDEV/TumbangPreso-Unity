@@ -15,7 +15,8 @@ over him; it now takes the floor under the feet when that is over 1 m off (film 
 dump, v9 fixed). Evidence: Core 839/839; SeanKitPlayProbe 7/7; films
 Logs/paete-ability-film/introfx_sean_s16..s17, Logs/sean-2026-10-24/film-v9,
 Logs/sean-share/rago_ult_v2.mp4.
-Next: owner's look; the effects bench pass; SeanCinderGate removal (protocol step).
+Protocol 181 then retired the Cinder Gate (kind 17 reserved; saved replays step over it).
+Next: owner's look; the effects bench pass.
 
 # Can carry and contact checkpoint, October24
 

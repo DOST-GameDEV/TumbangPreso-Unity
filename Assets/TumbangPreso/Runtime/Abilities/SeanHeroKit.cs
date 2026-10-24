@@ -19,8 +19,7 @@ namespace TumbangPreso.Abilities
     ///
     /// ⚠️ THE OLD KIT'S PUBLIC SURFACE IS KEPT WHERE OTHER FILES STILL CALL IT: the Stoke constants (the FX study scenes), the
     /// ignition members (MOLTEN THROW loads the held slipper exactly as Empowered Throw did, on the same `FireExplosive`
-    /// affinity), `AdoptGate` (the retired Cinder Gate's world object) and the Supernova pose and apex (his cutscene, until it
-    /// is rebuilt as MAYON AWAKENS).
+    /// affinity) and the Supernova pose and apex (his cutscene, until it is rebuilt as MAYON AWAKENS).
     /// </summary>
     public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
@@ -220,9 +219,6 @@ namespace TumbangPreso.Abilities
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
             ((MoltenThrowAbility)AttackingSkill).RestoreCharge(context, remaining);
         }
-
-        /// <summary>The retired Cinder Gate's world object still reports in; nothing places one any more.</summary>
-        public void AdoptGate(SeanCinderGate gate) { }
 
         /// <summary>The Supernova cutscene's apex (its hand-back still computes from it until MAYON AWAKENS replaces it).</summary>
         public const float SupernovaApex = 14.0f * .55f - .5f * Core.Balance.CharacterGravity * .55f * .55f;

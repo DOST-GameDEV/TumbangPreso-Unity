@@ -121,9 +121,9 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   (s14/s15 are v1's refit), skills film `Logs/sean-2026-10-24/film-v5`.
 - [ ] 🧑 Owner to watch THE MOUNTAIN RISES (cutscene and play) and judge its numbers (9 m, 7 bombs, 2.5 m splash).
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
-- [ ] Cleanup once nothing references them: `SeanSupernovaLook`, `SeanCinderGate` (+ look and tests; it is still in
-  `WorldEffectSnapshot` and `MatchRpc`, so it needs a protocol step), the Stoke FX study scenes. (The parol props, `ParolGround`
-  and `UltimateProp.Sean.cs` went with ULT-READ-1024.)
+- [ ] Cleanup once nothing references them: `SeanSupernovaLook`, the Stoke FX study scenes. (The parol props, `ParolGround`
+  and `UltimateProp.Sean.cs` went with ULT-READ-1024; the Cinder Gate, its look, shader, `SeanGateRules` and tests went with
+  protocol 181, snapshot kind 17 kept reserved. The `AbilityGlyph.SeanCinderGate` name stays: it is MAGMA FIST's tile.)
 - [ ] Wiki (Google Doc): the rules this pass changed (the can, uniform blast distances, the accent, the E tile).
 - [ ] Known, not Sean's: Bayan Plaza is out of the build scene list, so every probe that loads it fails in SetUp
   (`MovementSnapshotProbe`, `PaeteKitPlayProbe`, `AmihanKitPlayProbe`, ...); a full EditMode run hangs in the LAN socket tests

@@ -9,7 +9,7 @@ namespace TumbangPreso.Net
     public sealed partial class MatchRpc
     {
         // Bounded dynamic-field identity and optional geometry share the existing
-        // reliable route. Protocol130 adds Cinder Gate without a parallel RPC.
+        // reliable route. Protocol130 added Cinder Gate on it; protocol181 retired it (Rafi's water alone uses it now).
         private static void WriteWaterExtra(FastBufferWriter writer, WorldEffectSnapshot.Field f)
         {
             if (!WorldEffectSnapshot.UsesDynamicIdentity(f.Type)) return;
@@ -63,8 +63,7 @@ namespace TumbangPreso.Net
             if (WorldEffectSnapshot.Valid(f))
             {
                 float age = Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt);
-                if (f.Type == WorldEffectSnapshot.Kind.CinderGate) SeanCinderGate.Restore(f, age);
-                else RafiWaterField.Restore(f, age);
+                RafiWaterField.Restore(f, age);
             }
         }
     }

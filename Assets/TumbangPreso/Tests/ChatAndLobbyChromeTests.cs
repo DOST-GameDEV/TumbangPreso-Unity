@@ -406,7 +406,8 @@ namespace TumbangPreso.Tests
             //178 appends LAVA RAM's SEARED clock to `SyncUnit`.
             //179 makes the reset a held carry: the carry rides a third `SyncLata` suffix and COMPLETE no longer restores.
             //180 is MAYON AWAKENS v2: the volcano's bombs ride an appended flair kind and the ultimate is aimed.
-            Assert.AreEqual(180, NetSession.ProtocolVersion,
+            //181 retires the Cinder Gate: snapshot kind 17 is reserved and no longer carries a dynamic identity.
+            Assert.AreEqual(181, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

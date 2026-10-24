@@ -326,5 +326,17 @@ namespace TumbangPreso.Tests
                 {field.Forward=Vector3.zero;Assert.False(WorldEffectSnapshot.Valid(field));}
             }
         }
+
+        // Protocol 181 retired the Cinder Gate. Its number stays taken (the kinds are append only) and nothing may carry it.
+        [Test]
+        public void TheRetiredCinderGateKindStaysReservedAndIsRefused()
+        {
+            Assert.AreEqual(17,(int)WorldEffectSnapshot.Kind.RetiredCinderGate);
+            Assert.IsFalse(WorldEffectSnapshot.UsesDynamicIdentity(WorldEffectSnapshot.Kind.RetiredCinderGate));
+            var gate=new WorldEffectSnapshot.Field{Type=WorldEffectSnapshot.Kind.RetiredCinderGate,EventId=1901,Owner=0,
+                Position=Vector3.zero,Forward=Vector3.forward,Radius=1.5f,Duration=4f,Remaining=4f,Path=System.Array.Empty<Vector3>()};
+            Assert.IsFalse(WorldEffectSnapshot.Valid(gate));
+            Assert.IsFalse(WorldEffectSnapshot.Apply(new[]{gate},0f),"a batch holding a retired gate is refused whole");
+        }
     }
 }

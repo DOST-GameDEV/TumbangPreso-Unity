@@ -680,7 +680,10 @@ namespace TumbangPreso.Net
         // raises a volcano there; the host lobs its bombs and each reaches every peer as an appended `MatchFlair` kind (22,
         // SeanVolcanoBomb: Sean's seat, the target's seat, the landing point, the bomb's index). The bomb on E is gone and his
         // cutscene is 5.0 s. A 179 peer drops the bombs and runs the old ultimate on the same id: the two may not meet.
-        public const int ProtocolVersion = 180;
+        // 181 (2026-10-24): the Cinder Gate is retired. `WorldEffectSnapshot.Kind` 17 stays reserved (RetiredCinderGate) but is
+        // no longer a dynamic field: a 181 peer neither sends nor accepts it, and reads a 180 peer's kind 17 with the wrong
+        // layout. Nothing has cast a gate since protocol 176, but the two may not meet.
+        public const int ProtocolVersion = 181;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

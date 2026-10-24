@@ -21,6 +21,14 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol181: the Cinder Gate retired (2026-10-24)
+
+Nothing has cast Rago's Cinder Gate since his lava kit (176); its world object, look, wall shader, `SeanGateRules` and tests
+are deleted. `WorldEffectSnapshot.Kind` 17 stays reserved as `RetiredCinderGate`: it is no longer a dynamic field (no event
+id or path follows it on the `RafiWater` route or in a snapshot batch), `Valid` refuses it, and a batch holding one is refused
+whole. Saved replays from protocol 130 on may hold one: `RecordedMatchClip` still reads its identity and path to keep the
+layout and leaves it out of the frame. A 180 peer would read kind 17 with the other layout: the two may not meet.
+
 ## Protocol180: MAYON AWAKENS v2, the mountain rises (2026-10-24)
 
 ULT-READ-1024. Owner: *"the ult of sean doesnt earn its place"*; he chose "The mountain rises". The ultimate stays a shared

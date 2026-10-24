@@ -26,8 +26,7 @@ namespace TumbangPreso.EditorTools.MapKit
     ///     field) is called as the game calls it, with its switch turned on in memory for the call and turned back off;
     ///   * a look whose entry point needs a live kit or slipper (Skim, Frostbite, Closed Circuit) is built from its own
     ///     private builders by reflection, and only the few lines that read the kit are stood in for here, each one
-    ///     written out below beside the line of the look it replaces;
-    ///   * the Cinder Gate is the game's own gate (`SeanCinderGate.Restore`) with its age stepped by hand.
+    ///     written out below beside the line of the look it replaces.
     /// Bodies are still poses (nothing animates outside Play). Shader time is the film's clock, written to `_Time` before
     /// every picture, so a shader that reads `_Time` plays at the film's rate; the report says whether that took.
     ///
@@ -72,7 +71,7 @@ namespace TumbangPreso.EditorTools.MapKit
         internal static readonly string[] Looks =
         {
             "rafi_skim", "cheska_coldfeet", "cheska_frostbite", "dante_refusal", "zack_circuit",
-            "sean_cinder", "sean_supernova", "ult_amihan", "ult_cheska", "ult_rafi", "ult_zack",
+            "sean_supernova", "ult_amihan", "ult_cheska", "ult_rafi", "ult_zack",
         };
 
         private const BindingFlags Any = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
@@ -401,7 +400,6 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
                 case "dante_refusal": BuildRefusal(s, p, S, fwd, right); return;
                 case "zack_circuit": BuildCircuit(s, p, S, fwd, right); return;
-                case "sean_cinder": BuildCinder(s, p, S, fwd, right); return;
                 case "sean_supernova":
                 {
                     Vector3 P = s.Ground(0f, 0f);
@@ -744,50 +742,6 @@ namespace TumbangPreso.EditorTools.MapKit
                 new View("caster's eyes (no first-person arms)", S + Vector3.up * 1.15f + fwd * 0.12f, S + fwd * 6f + Vector3.up * 0.8f - right * 1.2f, 75f, zack),
                 new View("bystander three-quarter", S - fwd * 2.5f + right * 4f + Vector3.up * 2f, mid + Vector3.up * 0.8f - right * 1f, 55f),
                 new View("side", mid + right * 6.3f + Vector3.up * 1.1f, mid + Vector3.up * 0.8f - right * 1.5f, 55f),
-            };
-        }
-
-        // ---------------------------------------------------------------- Cinder Gate
-
-        private static void BuildCinder(Stage s, Plan p, Vector3 S, Vector3 fwd, Vector3 right)
-        {
-            s.Person(p, "sean", S, 0f, out _);
-            Vector3 G = s.Ground(S.x, S.z + 3f);
-            var runner = s.Person(p, "zack", G + fwd * 2f, 180f, out _);
-            var state = new WorldEffectSnapshot.Field
-            {
-                Type = WorldEffectSnapshot.Kind.CinderGate, EventId = 990001, Owner = 0, Position = G, Forward = fwd,
-                Radius = SeanGateRules.HalfWidth, Duration = SeanGateRules.TotalSeconds, Remaining = SeanGateRules.TotalSeconds,
-                Path = Array.Empty<Vector3>(),
-            };
-            SeanCinderGate gate = null;
-            s.Capture(p, () => gate = SeanCinderGate.Restore(state, 0f));
-            if (gate == null) throw new InvalidOperationException("SeanCinderGate.Restore refused the staged gate.");
-            s.Capture(p, () => SeanCinderGateLook.Attach(gate));
-            var look = gate.GetComponent<SeanCinderGateLook>();
-            if (look == null) throw new InvalidOperationException("SeanCinderGateLook.Attach drew nothing (its shader may be missing).");
-            var t = typeof(SeanCinderGate);
-            var age = Field(t, "_age"); var st = Field(t, "_state");
-            const float crossAt = 2.0f;
-            s.Report.AppendLine("  the game's own gate (" + (SeanGateRules.HalfWidth * 2) + " m line, " + SeanGateRules.WarningSeconds + " s warning, " + SeanGateRules.TotalSeconds + " s life) 3 m in front of him; a rival crosses it at " + crossAt + " s and splits it");
-            p.Pose = time =>
-            {
-                gate.gameObject.SetActive(time >= 0f);
-                float a = Mathf.Clamp(time, 0f, SeanGateRules.TotalSeconds);
-                age.SetValue(gate, a);
-                var field = (WorldEffectSnapshot.Field)st.GetValue(gate);
-                bool split = time >= crossAt;
-                if (field.Split != split) { field.Split = split; field.FirstScale = split ? crossAt : 0f; field.SecondScale = split ? -1f : 0f; st.SetValue(gate, field); }
-                // The rival runs through the line, crossing it at `crossAt`.
-                runner.transform.position = G + fwd * Mathf.Lerp(2f, -2f, Mathf.InverseLerp(crossAt - 0.4f, crossAt + 0.4f, time)) + right * 0.4f;
-                Invoke(typeof(SeanCinderGateLook), look, "LateUpdate");
-            };
-            p.Segments.Add((-0.15f, 3.6f));
-            p.Views = new[]
-            {
-                new View("bystander three-quarter", G + right * 4.5f - fwd * 3.5f + Vector3.up * 2.4f, G + Vector3.up * 0.3f, 45f),
-                new View("face on, low", G - fwd * 6f + right * 1.8f + Vector3.up * 1.2f, G + Vector3.up * 0.45f, 40f),
-                new View("from above", G + Vector3.up * 7f - fwd * 0.3f, G, 45f),
             };
         }
     }

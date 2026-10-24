@@ -172,7 +172,8 @@ namespace TumbangPreso.CameraSystem
                     }
                     int fields=Count(reader,0,WorldEffectSnapshot.MaxFields);totalFields+=fields;
                     if(!Finite(time)||time<=fieldTime||time<result.Start-.3f||time>result.End+.3f||totalFields>32768)throw new InvalidDataException("Invalid field window");
-                    fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Fields=new RecordedField[fields],Lighting=lighting,Trails=trails};var ids=new System.Collections.Generic.HashSet<int>();
+                    fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Lighting=lighting,Trails=trails};var ids=new System.Collections.Generic.HashSet<int>();
+                    var kept=new System.Collections.Generic.List<RecordedField>(fields);
                     for(int i=0;i<fields;i++)
                     {
                         int id=reader.ReadInt32();var kind=(WorldEffectSnapshot.Kind)reader.ReadByte();
@@ -180,15 +181,21 @@ namespace TumbangPreso.CameraSystem
                             Duration=reader.ReadSingle(),Remaining=reader.ReadSingle(),Radius=reader.ReadSingle(),FirstScale=reader.ReadSingle(),SecondScale=reader.ReadSingle(),Owner=reader.ReadInt32(),Split=reader.ReadBoolean()};
                         if(kind==WorldEffectSnapshot.Kind.Barricade && f.Radius>0 && version<14)
                             throw new InvalidDataException("Arc wall in an incompatible clip");
-                        if(WorldEffectSnapshot.UsesDynamicIdentity(kind))
+                        // A saved clip from protocol 130 to 180 may hold a Cinder Gate (retired in 181): read its identity and
+                        // path so the layout stays in step, then leave it out of the frame. Nothing draws it any more.
+                        bool retiredGate=kind==WorldEffectSnapshot.Kind.RetiredCinderGate;
+                        if(WorldEffectSnapshot.UsesDynamicIdentity(kind)||retiredGate)
                         {
-                            if(version<11 || (kind==WorldEffectSnapshot.Kind.CinderGate && version<12) || (kind==WorldEffectSnapshot.Kind.Baha && version<13))throw new InvalidDataException("Dynamic field in an incompatible clip");
+                            if(version<11 || (retiredGate && version<12) || (kind==WorldEffectSnapshot.Kind.Baha && version<13))throw new InvalidDataException("Dynamic field in an incompatible clip");
                             f.EventId=reader.ReadInt32();int points=Count(reader,0,Abilities.RafiWaterField.MaxPathPoints);
                             f.Path=new Vector3[points];for(int p=0;p<points;p++)f.Path[p]=ReadVector(reader,10000);
                         }
-                        if(id<=0||id>100000||!ids.Add(id)||!RecordedSpecialFields.Valid(f))throw new InvalidDataException("Invalid recorded field");
-                        frame.Fields[i]=new RecordedField{Id=id,State=f};
+                        if(id<=0||id>100000||!ids.Add(id))throw new InvalidDataException("Invalid recorded field");
+                        if(retiredGate)continue;
+                        if(!RecordedSpecialFields.Valid(f))throw new InvalidDataException("Invalid recorded field");
+                        kept.Add(new RecordedField{Id=id,State=f});
                     }
+                    frame.Fields=kept.ToArray();
                     result.FieldFrames[n]=frame;
                 }
                 if(fieldFrameCount>0&&(result.FieldFrames[0].Time>result.Start+.001f||result.FieldFrames[fieldFrameCount-1].Time<result.End-.001f))throw new InvalidDataException("Incomplete field coverage");
