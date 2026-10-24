@@ -127,8 +127,8 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   and melts wide and low as it sinks. The cooling no longer tints the shared `ToonSkin` material (it greyed every later Sean
   prop); the fire dome over it is a low burst and a ring; the puddle is a splat with a hot heart. Film
   `Logs/sean-2026-10-24/film-v17`; previews from `tools/build_sean_props.py giant_fist`.
-- [ ] 🧑 Owner to look at the new Magma Fist in play. If it should look bigger than its reach, the reach (1 m) is the rule
-  to change, not the model.
+- [ ] 🧑 Owner to look at the new Magma Fist in play. Its reach stays 1 m (owner 2026-10-25: "Keep the reach at 1 m; the
+  look is the change").
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
 - [ ] Cleanup once nothing references them: `SeanSupernovaLook`, the Stoke FX study scenes. (The parol props, `ParolGround`
   and `UltimateProp.Sean.cs` went with ULT-READ-1024; the Cinder Gate, its look, shader, `SeanGateRules` and tests went with
