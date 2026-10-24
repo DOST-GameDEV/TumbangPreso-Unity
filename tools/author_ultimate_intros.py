@@ -418,13 +418,18 @@ def _sean(held):
     side = -1 if held else 1
     # A: from his feet, the lens cranes up his body following the heat (it finds his chest as Mayon lights behind him).
     p.shot(0, 2.1, (-side * .7, .22, 1.25), (0, .15, 0), 52, eye_to=(-side * .9, 1.35, 1.75), look_to=(0, 1.45, 0), fov_to=48)
-    # B: macro on the fist, then round it to the face behind it.
-    p.shot(2.1, 4.3, (side * .55, 1.15, 1.05), (side * .22, 1.25, .5), 34,
-           eye_to=(side * .08, 1.32, 1.18), look_to=(0, 1.45, .1), fov_to=32, close=True)
+    # B: the fist big in front, his face behind it, then round it to the face. (2026-10-24, the skills film: from 1.05 m and
+    # 34 degrees the lens sat inside his face, one eye filling the frame and the fist unreadable; his head is big, so 1.8 m.
+    # Film s12: from across his body the raised fist (HandAnchor at x .37, z .65) sits in front of the face, its lava nearest
+    # the lens; aimed between the two so neither leaves the frame.)
+    p.shot(2.1, 4.3, (-side * .6, 1.2, 1.7), (side * .12, 1.2, .35), 40,
+           eye_to=(-side * .15, 1.35, 1.95), look_to=(side * .1, 1.35, .15), fov_to=38, close=True)
     # C1: low and looking up at him for the coil.
     p.shot(4.3, 5.6, (side * 1.3, .45, 3.3), (0, 1.75, 0), 50, eye_to=(side * 1.2, .4, 3.0), look_to=(0, 1.9, 0))
     # C2: from the slam, the lens rises and backs off to hold the whole ring and whoever stands inside it.
-    p.shot(5.6, 7.0, (side * 1.2, .4, 3.0), (0, 1.6, 0), 50, eye_to=(side * 3.4, 3.6, 7.2), look_to=(0, .4, -.5), fov_to=66)
+    # (2026-10-24: it looked down at the court, so the 6.4 m fountain left the top of the frame and he was a speck. From ~10 m
+    # and level with his chest the whole cone and the 4 m ring's near edge both stay in.)
+    p.shot(5.6, 7.0, (side * 1.2, .4, 3.0), (0, 1.6, 0), 50, eye_to=(side * 3.8, 2.6, 8.6), look_to=(0, 1.5, -.5), fov_to=62)
     p.locked((side * 2.6, 1.8, 6.0), (0, 1.0, 0), 56)
     return p
 

@@ -137,7 +137,24 @@ namespace TumbangPreso.PlayTests
             bool sawScene = false, canDownOnThrow = false, bombKnocked = false;
             float moltenAt = -1f, shoveAt = -1f, bombAt = -1f;
             CharacterMotor watched = a;
-            Vector3 focus = At(5f);
+            Vector3 focus = At(5f), wideFocus = new Vector3(float.NaN, 0, 0), wideAt = Vector3.zero;
+            // The first of eight corners round the spot, high then lower, with nothing solid between it and the spot.
+            Vector3 ClearWide(Vector3 spot)
+            {
+                var target = spot + Vector3.up * .8f;
+                foreach (var (distance, height) in new[] { (10f, 7f), (8f, 5f), (6f, 4f) })
+                    for (int k = 0; k < 8; k++)
+                    {
+                        float angle = (135f + 45f * k) * Mathf.Deg2Rad;
+                        var eye = spot + new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) * distance + Vector3.up * height;
+                        var line = target - eye;
+                        // Bodies and the can stand at the spot and are what is being filmed, not what hides it.
+                        bool hidden = Physics.RaycastAll(eye, line.normalized, line.magnitude, ~0, QueryTriggerInteraction.Ignore)
+                            .Any(hit => hit.collider.GetComponentInParent<CharacterMotor>() == null && hit.collider.GetComponentInParent<Lata>() == null);
+                        if (!hidden && !Physics.CheckSphere(eye, .6f, ~0, QueryTriggerInteraction.Ignore)) return eye;
+                    }
+                return spot + new Vector3(0, 9f, -3f);
+            }
             try
             {
                 const float End = 44f;
@@ -159,6 +176,8 @@ namespace TumbangPreso.PlayTests
                         Place(sean, At(9f), can); Place(a, At(9f, 3.5f), At(9f));
                         wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         wall.name = "SeanFilmWall"; wall.transform.position = At(7.2f, 0, 1.2f); wall.transform.localScale = new Vector3(3, 2.4f, .3f);
+                        // A plastered wall in the alley's own brick, not Unity's untextured white (it read as a blank card).
+                        wall.GetComponent<Renderer>().material.color = new Color(.62f, .38f, .30f);
                         watched = sean; focus = At(7.5f);
                     }
                     if (t >= 3.9f && t < 4.3f) sean.Intent.Set(Verb.Skill1, true);
@@ -227,6 +246,8 @@ namespace TumbangPreso.PlayTests
                     }
                     if (bombAt >= 0 && t >= bombAt + .15f) sean.Intent.Set(Verb.Skill2, false);
                     bombKnocked |= bombAt >= 0 && !lata.IsUpright;
+                    // Four seconds after the bomb is enough to see it land and the Molten end; the first film held 12 s of nothing.
+                    if (bombAt >= 0 && t >= bombAt + 4f) break;
 
                     yield return null;
 
@@ -241,7 +262,10 @@ namespace TumbangPreso.PlayTests
                     }
                     else if (Camera.main != null) Shoot(Camera.main, "owner", f);
 
-                    wide.transform.position = focus + new Vector3(7.5f, 7.0f, -6.5f);
+                    // The court from above, from whichever corner sees the spot: the Eskinita's roofs hid a fixed corner for a
+                    // third of the first film. Chosen again only when the spot moves, so the view never hops mid-skill.
+                    if (focus != wideFocus) { wideFocus = focus; wideAt = ClearWide(focus); }
+                    wide.transform.position = wideAt;
                     wide.transform.LookAt(focus + Vector3.up * .8f);
                     var who = watched != null ? watched : a;
                     var toFocus = Flat(focus - who.transform.position);

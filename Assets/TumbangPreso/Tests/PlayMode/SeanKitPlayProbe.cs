@@ -148,6 +148,10 @@ namespace TumbangPreso.PlayTests
             var victim = Attacker(1);
             victim.Teleport(new Vector3(0, .12f, -7));
             var beside = round.Players.First(p => p != sean && p != victim && !p.IsDefender);
+            // The Eskinita seats Dante here, and his Earthbound halves every push he takes: the 0.72 m this measured was the
+            // splash's 1.5 m times his 0.5, not a short splash. The splash is judged against what this body takes.
+            float besideScale = Mathf.Clamp01(beside.AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1f);
+            Debug.Log("[SeanKitPlayProbe] splash body: " + beside.AbilitySystem?.Kit?.GetType().Name + " x" + besideScale);
             beside.Teleport(new Vector3(0, .12f, -6.0f));   // along the lane: the Eskinita's walls are close on x
             var above = round.Players.First(p => p != sean && p != victim && p != beside);
             Box(new Vector3(-1.0f, 1.25f, -7), new Vector3(1.2f, 2.5f, 1.2f));
@@ -168,7 +172,9 @@ namespace TumbangPreso.PlayTests
             float besideMoved = Flat(beside.transform.position - besideFrom).magnitude;
             float aboveMoved = Flat(above.transform.position - aboveFrom).magnitude;
             Note("pressure_splash_beside_m", besideMoved); Note("pressure_splash_above_m", aboveMoved);
-            Assert.That(besideMoved, Is.InRange(SeanRules.EruptSplashPush * .6f, SeanRules.EruptSplashPush * 1.4f), "The splash did not push the body beside them.");
+            float besideWanted = SeanRules.EruptSplashPush * besideScale;
+            Note("pressure_splash_beside_wanted_m", besideWanted);
+            Assert.That(besideMoved, Is.InRange(besideWanted * .6f, besideWanted * 1.4f), "The splash did not push the body beside them.");
             Assert.Less(aboveMoved, .3f, "The splash reached a body on a platform 2.5 m above it.");
             Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanSplash && f.subject < 0), "The splash's ring was not announced.");
             Assert.IsTrue(round.Lata.IsUpright, "PRESSURE's splash knocked the can over.");

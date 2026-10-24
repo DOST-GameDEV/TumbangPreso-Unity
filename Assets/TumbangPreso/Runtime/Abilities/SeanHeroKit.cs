@@ -91,7 +91,7 @@ namespace TumbangPreso.Abilities
             Vector3 at = victim.transform.position;
             // The ring on every screen (the host resolves; a client only learns of it from this).
             MatchFlair.Announce(MatchFlair.Kind.SeanSplash, me.PlayerSlot, -1, at, SeanRules.EruptSplashRadius);
-            HostBlast(me, at, SeanRules.EruptSplashRadius, SeanRules.EruptSplashPush, SeanRules.EruptSplashStaggerSeconds,
+            HostBlast(me, at, SeanRules.EruptSplashRadius, SeanRules.EruptSplashPush, 0,
                 knocksCan: false, MatchFlair.Kind.SeanSplash, except: victim);
         }
 

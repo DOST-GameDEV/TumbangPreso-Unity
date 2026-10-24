@@ -23,11 +23,19 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   placed yet.
 - [x] Sound drafts (`tools/build_sean_audio.py`, report `audio-drafts/`): 23 cues and the MAYON AWAKENS theme, the slam its
   loudest beat. Not heard by the owner; not in the game. May need rebuilding in the SFX-TONDO-1023 method once it is settled.
-- [ ] Rerun `SeanKitPlayProbe.FullPressureErupts...` (splash now holds 0.35 s; it slid 0.72 of 1.5 m) and
-  `SeanSkillTimingProbe.JoiningIgnition...` (test now gives the shoe its coat as a rejoin snapshot does).
-- [ ] Run `SeanKitFilmProbe` (TUMP_SEAN_FILM=1), stitch with `tools/stitch_ability_film.py`, send the owner the video.
+- [x] `SeanKitPlayProbe` 7 of 7 and `SeanSkillTimingProbe` 6 of 6 (2026-10-24, `Logs/sean-2026-10-24/play5..6`). The splash's
+  0.72 of 1.5 m was never braking: the Eskinita seats Dante beside the victim and his Earthbound halves every push (logged
+  `DanteHeroKit x0.5`). The 0.35 s splash hold added for it is reverted; the probe judges the push times the body's own scale.
+- [x] `SeanKitFilmProbe` filmed and stitched (`Logs/sean-2026-10-24/rago-all-skills-v3.mp4`, sent to the owner). The wide view
+  now picks a corner the roofs do not hide (a fixed corner was blind for a third of the first take), the wall is painted,
+  the take ends 4 s after the bomb. The thrown slipper still misses the can (staged on the host's path, `staged.txt`).
 - [ ] 🧑 Owner's look at the skills film and the prop sheets.
-- [ ] Film the cutscene alone (`introfx sean <tag>`) and fix shot B (the fist macro) and C2 (the rising wide).
+- [x] Cutscene filmed alone in batchmode (`-executeMethod TumbangPreso.EditorTools.MapKit.PaeteAbilityFilm.RunIntroBatch
+  -introHero sean -introTag <tag>`; films s9 to s13 in `Logs/paete-ability-film/`). Shot B sat inside his face (1.05 m,
+  34 degrees); it is now 1.8 m off with the lava fist in front of the face. The film's bare model had no `HandAnchor`, so every
+  hand effect fell back to a point by his LEFT jaw; the film now fits one as the game does (`bones_<hero>_<tag>.txt` logs where
+  the hands are). C2 looked down and cut the fountain off; it now ends ~10 m off level with his chest, cone and ring whole.
+  Not yet seen in a match by anyone but the probe.
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
 - [ ] Cleanup once nothing references them: parol props and `ParolGround`, `UltimateProp.Sean.cs`, `SeanSupernovaLook`,
   `SeanCinderGate` (+ look and tests), the Stoke FX study scenes.

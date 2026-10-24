@@ -36,13 +36,6 @@ namespace TumbangPreso.Core
         public const float EruptSplashRadius = 1.6f;
         public const float EruptSplashPush = 1.5f;
 
-        /// <summary>
-        /// The splash holds who it pushes for as long as the slide lasts (1.5 m under `Friction`, about 0.32 s), so the 1.5 m is
-        /// travelled: a body under its own control brakes a push this small to half of it (`SeanKitPlayProbe`, 2026-10-24,
-        /// measured 0.72 m). Under half a second, so no stars are drawn for it.
-        /// </summary>
-        public const float EruptSplashStaggerSeconds = 0.35f;
-
         /// <summary>Heat after one more body hit. Never above full, never below empty, whatever is passed in.</summary>
         public static int PressureAfterHit(int bars) => Math.Min(PressureBars, Math.Max(0, bars) + 1);
 

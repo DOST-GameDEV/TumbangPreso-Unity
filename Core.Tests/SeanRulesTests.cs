@@ -203,9 +203,6 @@ namespace TumbangPreso.Core.Tests
             // The hit lands inside the rise, before the fist reaches the top.
             Assert.InRange(SeanRules.FistHitDelay, 0.01f, SeanRules.FistRiseSeconds);
             Assert.True(SeanRules.BombStaggerSeconds >= SeanRules.AwakeningStaggerSeconds);
-            // The splash's hold covers its own slide and stays under the half second that draws stars.
-            float slide = (float)System.Math.Sqrt(2.0 * Balance.Friction * SeanRules.EruptSplashPush) / Balance.Friction;
-            Assert.InRange(SeanRules.EruptSplashStaggerSeconds, slide, 0.49f);
         }
     }
 }

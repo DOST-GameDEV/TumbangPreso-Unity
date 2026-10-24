@@ -31,6 +31,24 @@ namespace TumbangPreso.EditorTools.MapKit
 
         private static readonly string[] IntroHeroes = { "paete", "sean", "phaister", "zack", "nemu", "dante", "cheska", "rafi", "amihan" };
 
+        /// <summary>
+        /// The same film from batchmode, with the editor closed: `-executeMethod TumbangPreso.EditorTools.MapKit.PaeteAbilityFilm.RunIntroBatch
+        /// -introHero sean -introTag s9 -quit`. Exits 1 when the film failed (its `failed_<hero>_<tag>.txt` says why).
+        /// </summary>
+        public static void RunIntroBatch()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            string Arg(string name, string fallback)
+            {
+                int at = Array.IndexOf(args, name);
+                return at >= 0 && at + 1 < args.Length ? args[at + 1] : fallback;
+            }
+            string hero = Arg("-introHero", "paete"), tag = Arg("-introTag", "v00");
+            RunIntroFor(hero, tag);
+            string named = hero.ToLowerInvariant() == "paete" ? tag : hero.ToLowerInvariant() + "_" + tag;
+            if (Application.isBatchMode) UnityEditor.EditorApplication.Exit(File.Exists(Path.Combine(OutDir, "done_" + named + ".txt")) ? 0 : 1);
+        }
+
         private static void RunIntroFor(string hero, string tag)
         {
             Directory.CreateDirectory(OutDir);
@@ -125,6 +143,16 @@ namespace TumbangPreso.EditorTools.MapKit
                 foreach (var skin in body.GetComponentsInChildren<SkinnedMeshRenderer>(true))
                 { skin.forceMatrixRecalculationPerRender = true; skin.updateWhenOffscreen = true; }
                 var animator = body.GetComponentInChildren<Animator>(true);
+                // The game fits a `HandAnchor` to the right palm at runtime (`CharacterVisual`), and the stage pins every hand
+                // effect to it. The film's bare model had none, so the stage fell back to a fixed point by his LEFT jaw (film
+                // sean_s11: Rago's lava fist drawn on his cheek while his real fist was raised on the other side).
+                var handSkin = body.GetComponentInChildren<SkinnedMeshRenderer>(true);
+                if (handSkin != null && CharacterVisual.HandBone(handSkin, "right", out int handBone, out var handPalm))
+                {
+                    var anchor = new GameObject("HandAnchor").transform;
+                    anchor.SetParent(handSkin.bones[handBone], false);
+                    anchor.localPosition = handPalm;
+                }
                 var copy = new MatchPoseHistory.Copy(body);
                 copy.ShowOnlyForCapture(true);
                 clip = HeroAbilityClips.BuildUltimateIntroduction(animator != null ? animator.transform : body.transform, hero);
@@ -211,6 +239,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 var strip = new Texture2D(width * columns, height * rows, TextureFormat.RGB24, false);
                 owned.Add(strip);
                 int next = 0;
+                var boneLog = new System.Text.StringBuilder();
                 for (int f = 0; f < count; f++)
                 {
                     float t = Mathf.Min(seconds, f / 30f);
@@ -237,6 +266,17 @@ namespace TumbangPreso.EditorTools.MapKit
                     else if (tag.StartsWith("arms")) { eye = new Vector3(1.55f, 0.85f, 2.75f); focus = new Vector3(0f, 0.28f, 0.75f); fov = 36f; }
                     cam.fieldOfView = fov;
                     cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(focus - eye, Vector3.up));
+                    // Where the hands and head really are, in the lens's own frame (-1 to 1 each way), once a second and a half:
+                    // an effect pinned to the wrong bone reads as "the lava is on his cheek" in a picture, as numbers here.
+                    if (f % 15 == 0)
+                    {
+                        foreach (var bone in body.GetComponentsInChildren<Transform>(true))
+                        {
+                            if (bone.name != "HandAnchor" && bone.name != "arm-left" && bone.name != "arm-right" && bone.name != "head") continue;
+                            var v = cam.WorldToViewportPoint(bone.position);
+                            boneLog.AppendLine(FormattableString.Invariant($"{t:F2} s {bone.name} at {bone.position} under {bone.parent?.name}: frame x {v.x * 2 - 1:F2} y {v.y * 2 - 1:F2}, {v.z:F2} m from the lens"));
+                        }
+                    }
                     cam.Render();
                     var keep = RenderTexture.active; RenderTexture.active = rt;
                     shot.ReadPixels(new Rect(0, 0, width, height), 0, 0); shot.Apply();
@@ -251,6 +291,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 strip.Apply();
                 string stripPath = Path.Combine(OutDir, "introfx_" + named + "_strip.png");
                 File.WriteAllBytes(stripPath, strip.EncodeToPNG());
+                File.WriteAllText(Path.Combine(OutDir, "bones_" + named + ".txt"), boneLog.ToString());
                 File.WriteAllText(donePath, stripPath.Replace('\\', '/') + "\n" + count + " frames, " + seconds.ToString("0.00") + " s, in " + frames.Replace('\\', '/') + "\n");
                 Debug.Log("[PaeteAbilityFilm] introfx " + named + " written to " + OutDir);
             }
