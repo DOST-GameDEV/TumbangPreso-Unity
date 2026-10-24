@@ -3,8 +3,9 @@
 MAGMA FIST's giant fist is v4 after the owner's in-match screenshot ("looks like a red
 dildo") and his reference (Seeker's fist, Risk of Rain 2): no arm, a fist out of the
 puddle, drawn 2.3x, tipped toward the caster, spraying lava as it erupts and melting as it
-sinks. Two runtime bugs went with it: the cooling wrote ToonSkin's shared material, and a
-fire dome hid the fist as it rose. Film v17; SeanKitPlayProbe 7/7. Not seen by the owner.
+sinks; v5 makes it one solid cartoon fist with its fingers drawn and sculpted on. Two runtime
+bugs went with it: the cooling wrote ToonSkin's shared material, and a fire dome hid the
+fist as it rose. Film v19; SeanKitPlayProbe 7/7. v5 not yet seen by the owner.
 
 # Rago's ultimate checkpoint, October24
 

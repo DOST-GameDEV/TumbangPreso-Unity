@@ -153,90 +153,126 @@ def pitched(node, degrees):
                   for slot, faces in node.parts]
 
 
-def blotch(node, centre, size, slot, facing):
-    """A flat patch of brighter or darker lava lying on a surface that faces `facing` degrees round Y (0 is +Z): the mottling
-    that carries a surface's detail in flat toon shading. `size` is (across, tall)."""
-    lump(node, centre, (size[0], size[1], .014), slot, turn=facing, sides=8)
+# The fist's block, typed once and shared by its colour bands and the lines drawn on it: rows (y, cx, cz, rx, rz).
+FIST_ROWS = [(0, 0, 0, .2, .17), (.07, 0, .01, .29, .22), (.17, 0, .02, .335, .25), (.32, 0, .025, .35, .265),
+             (.48, 0, .02, .352, .265), (.6, 0, .01, .34, .255), (.68, 0, 0, .3, .22), (.73, 0, -.01, .22, .15)]
+FIST_POWER = 3.4
+
+
+def fist_row(y):
+    """The fist's section at height `y`, interpolated between its typed rows."""
+    for (y0, cx0, cz0, rx0, rz0), (y1, cx1, cz1, rx1, rz1) in zip(FIST_ROWS, FIST_ROWS[1:]):
+        if y0 <= y <= y1:
+            t = (y - y0) / (y1 - y0)
+            return (y, cx0 + (cx1 - cx0) * t, cz0 + (cz1 - cz0) * t, rx0 + (rx1 - rx0) * t, rz0 + (rz1 - rz0) * t)
+    return FIST_ROWS[-1]
+
+
+def on_fist(x, y, side=1.0, lift=.006):
+    """The point on the fist's front (`side` 1) or back (-1) surface at (x, y), `lift` proud of it."""
+    _, cx, cz, rx, rz = fist_row(y)
+    u = min(.999, abs(x - cx) / rx)
+    z = rz * (1 - u ** FIST_POWER) ** (1 / FIST_POWER)
+    return (x, y, cz + side * (z + lift))
+
+
+def band(node, y0, y1, slot):
+    """The part of the fist's block between heights y0 and y1, in one colour."""
+    rows = [fist_row(y0)] + [r for r in FIST_ROWS if y0 < r[0] < y1] + [fist_row(y1)]
+    sloft(node, rows, slot, sides=28, power=FIST_POWER, cap_first=y0 <= 0, cap_last=y1 >= FIST_ROWS[-1][0])
+
+
+def line_on(node, points, width, slot, side=1.0, lift=None):
+    """A drawn line on the fist's surface through (x, y) points: a groove or crease, the ink a cartoon fist is drawn with."""
+    path = bp.spline([on_fist(x, y, side, lift=width * .35 if lift is None else lift) for x, y in points], per=3)
+    node.tube(path, [width] * len(path), slot, sides=6)
 
 
 # ---------------------------------------------------------------------------------------------
-# The Puddle Punch's giant fist: a fist of lava erupting out of the puddle on a short wrist, wrapped in a surge of lava, its
-# fingers to the front (+Z). About 1.2 m tall from the puddle's surface at y 0 (the runtime draws it 2x).
+# The Puddle Punch's giant fist: a fist of lava erupting out of the puddle on a short wrist in a wave of lava, its fingers to
+# the front (+Z). About 1.05 m tall from the puddle's surface at y 0; the runtime draws it 2.3x.
 #
-# v4 (owner 2026-10-24): "it doenst read as an arm ... looks like a red dildo", then "needs to be bigger, doesnt have to fully
-# look like a hand", and his reference: Seeker's fist in Risk of Rain 2. What that picture does, done here in Rago's lava:
-#  * NO ARM. The fist comes straight up out of the pool on a short thick wrist hidden in a surge of liquid mounds; v2 and v3's
-#    long forearm column was the shape that read wrong.
-#  * The fist is the whole picture, chunky and tipped toward the viewer (`pitched`, 18 degrees), so the curled fingers face him.
-#  * A bright ring of lava where it breaks the surface.
-#  * Detail carried in colour, as flat toon shading needs: a dark cherry core showing between hot amber fingers, the gold top
-#    edge (the leading edge, the brightest), and gold and ember blotches mottling it.
+# v5 (owner 2026-10-25, on v4: "it still looks kinda weird and not that nice"). v4 was PARTS: separate sausage fingers, a
+# bolted-on thumb and gold beads stuck to a red block, which in flat shading read as a creature from the side and claws from
+# behind. His reference (Seeker's fist, Risk of Rain 2) is ONE mass in one hue with its detail drawn on it. So v5 is one solid
+# cartoon fist: a block whose heat runs up in bands (ember heel, amber body, gold top), the knuckles as bumps on its top edge in
+# the same gold, the fingers DRAWN on its front as dark grooves and a fold line, one fat thumb tucked across them, two veins on
+# the back. The splash is a smooth wave flaring out round the wrist with a gold lip, not v4's petals (they read as leaves).
 # ---------------------------------------------------------------------------------------------
 def giant_fist():
     root = Node("giant_fist")
     forearm = Node("forearm", parent="giant_fist")
-    # The wrist: short and thick, out of the pool, narrowing under the hand. Rows (y, cx, cz, rx, rz).
-    bp.loft(forearm, [(-.08, 0, 0, .29, .25), (.08, 0, 0, .26, .22), (.22, 0, .01, .22, .185), (.33, 0, .02, .2, .17)],
+    # The wrist, short and thick out of the pool.
+    bp.loft(forearm, [(-.08, 0, 0, .27, .23), (.1, 0, 0, .24, .2), (.24, 0, .01, .21, .18), (.33, 0, .02, .2, .17)],
             CHERRY, sides=16)
-    # The bright ring where it breaks the surface, thick and a little wavy.
-    ring = [(.3 * math.sin(math.radians(a)), .04 + .018 * math.sin(math.radians(a * 4)), .265 * math.cos(math.radians(a)))
-            for a in range(0, 361, 24)]
-    forearm.tube(ring, [.05] * len(ring), CORE, sides=7)
-    # The surge: lava spilled out round the wrist, LONG, LOW and leaning out, each its own size and lean, with a hot crown on
-    # two. (v4a's tall round mounds competed with the fist; v4b's rounder ones read as a creature's feet in the film.)
-    lump(forearm, (L * .36, .03, .12), (.28, .07, .15), EMBER, tilt=-40, turn=30, sides=10)
-    lump(forearm, (L * .38, .07, .1), (.13, .03, .07), AMBER, tilt=-40, turn=30, sides=9)
-    lump(forearm, (R * .38, .02, .08), (.25, .06, .13), CHERRY, tilt=-42, turn=-60, sides=10)
-    lump(forearm, (R * .3, .06, -.27), (.26, .1, .14), EMBER, tilt=-30, turn=-130, sides=10)
-    lump(forearm, (R * .3, .12, -.25), (.11, .04, .06), AMBER, tilt=-30, turn=-130, sides=9)
-    lump(forearm, (L * .12, .02, -.38), (.27, .05, .12), DEEP, tilt=-42, turn=170, sides=10)
+    # The collar: lava heaving up round the wrist, its top edge wobbling (typed per angle, not a formula), no wide disc
+    # (v5a's flat wave with a gold rim read as a plate; the runtime's puddle is the surface).
+    tops = [.13, .17, .11, .15, .19, .12, .16, .1, .18, .14, .12, .16]
+    outs = [.43, .4, .46, .41, .38, .44, .42, .47, .4, .43, .45, .41]
+    for i, (top, out) in enumerate(zip(tops, outs)):
+        a0 = math.radians(i * 30)
+        x, z = math.sin(a0), math.cos(a0)
+        bp.clump(forearm, (x * out * .62, top * .35, z * out * .55), (.17, top * .62, .15), EMBER if i % 3 else CHERRY,
+                 tilt=0, turn=math.degrees(a0), sides=14)
+    # The ring of light where it breaks the surface, tight round the collar's foot (the reference's glow at the base).
+    ring = [(.43 * math.sin(math.radians(a)), .02 + .01 * math.sin(math.radians(a * 4)), .39 * math.cos(math.radians(a)))
+            for a in range(0, 361, 15)]
+    forearm.tube(ring, [.045] * len(ring), CORE, sides=7)
 
     fist = Node("fist", origin=(0, .3, 0), parent="forearm")
-    # The hand's core: dark cherry, a block with soft corners, its heel on the wrist, widest across the fingers.
-    sloft(fist, [(0, 0, 0, .2, .17), (.07, 0, 0, .3, .21), (.17, 0, .005, .345, .235), (.4, 0, .005, .355, .245),
-                 (.58, 0, 0, .34, .235), (.67, 0, -.01, .3, .2), (.72, 0, -.02, .21, .13)], CHERRY, sides=24, power=3.4)
-    # The four fingers, curled and chunky: each runs down the front from its knuckle, bulges out and tucks into the palm,
-    # with dark core between them. Index on the thumb side (L), then middle, ring, pinky: (x, girth, top, bottom, lean).
-    fingers = [(L * .235, .078, .67, .28, .0), (L * .08, .083, .685, .26, .004), (R * .078, .08, .672, .275, -.003),
-               (R * .232, .07, .632, .32, -.006)]
-    for x, r, top, bottom, lean in fingers:
-        path = bp.spline([(x, top, .14), (x + lean, top - .06, .25), (x + lean, (top + bottom) * .5, .3),
-                          (x + lean * 1.5, bottom + .05, .28), (x + lean * 1.5, bottom - .02, .19)], per=3)
-        radii = bp.spread([r * .95, r, r * 1.04, r * .98, r * .85], per=3)
-        # Two-tone, the heat running UP: the upper half pale gold (the reference's lit top edges), the lower half amber,
-        # so each finger reads as a form in flat shading. (v4d's rim stripes sank inside the fingers.)
-        fist.tube(path[:7], radii[:7], SUMMIT, sides=9)
-        fist.tube(path[6:], radii[6:], AMBER, sides=9)
-        # The tip, curled under the fold: a darker pad of cooler lava poking out below it.
-        lump(fist, (x + lean * 1.5, bottom + .005, .27), (r * .82, r * .5, r * .62), EMBER, tilt=0, sides=8)
-    # The knuckles along the top, the leading edge: the brightest value on the prop, each its own size.
-    lump(fist, (L * .235, .71, .05), (.085, .066, .095), CORE, sides=9)
-    lump(fist, (L * .08, .73, .055), (.09, .07, .1), CORE, sides=9)
-    lump(fist, (R * .078, .72, .05), (.087, .067, .096), CORE, sides=9)
-    lump(fist, (R * .232, .68, .04), (.075, .058, .084), CORE, sides=9)
-    # The thumb: its root swells out of the side of the palm and it wraps across the index and middle fingers, paler gold.
-    lump(fist, (L * .32, .18, .06), (.11, .16, .14), AMBER, tilt=10, sides=10)
-    fist.tube(bp.spline([(L * .36, .14, .02), (L * .38, .25, .16), (L * .29, .32, .3), (L * .12, .35, .355), (R * .01, .34, .34)],
-                        per=3), bp.spread([.098, .098, .092, .082, .072], per=3), SUMMIT, sides=9)
-    lump(fist, (R * .005, .345, .35), (.066, .055, .05), CORE, sides=8)      # the thumb's tip, hot where it presses
-    # The back of the hand: a ridge down from each knuckle, fading before the wrist, hot on the dark core.
-    for x, r, end in [(L * .235, .046, L * .13), (L * .08, .05, L * .045), (R * .078, .048, R * .045), (R * .232, .042, R * .12)]:
-        fist.tube(bp.spline([(x, .67, -.11), (x * .97, .56, -.22), (x * .88, .41, -.24), (end, .27, -.237)], per=3),
-                  bp.spread([r, r * .95, r * .7, r * .35], per=3), AMBER, sides=8)
-    # The heel of the hand on the pinky side.
-    lump(fist, (R * .34, .3, .03), (.065, .21, .17), AMBER, sides=9)
-    # The mottling, on the back only and long rather than round (film v15: an inked round blotch on the side read as an EYE,
-    # and on the fingers as pimples).
-    blotch(fist, (L * .16, .2, -.24), (.08, .035), EMBER, 180)
-    blotch(fist, (R * .14, .6, -.21), (.06, .025), CORE, 180)
-    pitched(fist, 18)
+    # The block, in heat bands that run up it: ember at the heel, amber through the body, gold across the top.
+    band(fist, 0, .2, EMBER)
+    band(fist, .2, .52, AMBER)
+    band(fist, .52, .73, CORE)
+    # The fingers in RELIEF and in the block's own colours, so they read as its shape and not parts stuck on it (v4): each
+    # rolls over the top edge as a knuckle and down the front to the fold, gold above, amber below. Fat enough to touch, with a
+    # dark groove drawn where neighbours meet. Index on the thumb side (L): (x, girth, how far its knuckle rises).
+    fingers = [(L * .228, .086, .0), (L * .077, .092, .012), (R * .077, .089, .006), (R * .226, .08, -.014)]
+    for x, r, rise in fingers:
+        top_y = .69 + rise
+        # The knuckle stands proud of the top edge, so the silhouette from any side has four bumps (v5d in the match film
+        # read as a smooth pawn from the side); the finger then bulges out at the front in two steps, its two joints.
+        path = bp.spline([(x, top_y - .02, -.07), (x, top_y + .05, .06), on_fist(x, .6, lift=r * .7),
+                          on_fist(x, .47, lift=r * .95), on_fist(x, .36, lift=r * .75)], per=3)
+        radii = bp.spread([r * .9, r * 1.08, r * 1.02, r * 1.05, r * .9], per=3)
+        fist.tube(path[:8], radii[:8], CORE, sides=10)
+        fist.tube(path[7:], radii[7:], AMBER, sides=10)
+    for x in (L * .152, R * .0, R * .152):
+        path = bp.spline([(x, .74, .1)] + [on_fist(x, y, lift=.11) for y in (.62, .52, .42, .35)], per=3)
+        fist.tube(path, [.021] * len(path), DEEP, sides=6)
+    # The fold: where the curled fingertips tuck under, a dark line across them.
+    fold = bp.spline([on_fist(x, y, lift=.085) for x, y in [(L * .25, .325), (L * .15, .31), (R * .0, .305), (R * .15, .31),
+                                                            (R * .25, .325)]], per=3)
+    fist.tube(fold, [.022] * len(fold), DEEP, sides=6)
+    # The thumb: short and chunky, angled UP across the index and middle fingers from the side of the palm, in the body's
+    # amber with a gold tip, a dark crease under it (v5a's flat long one read as a duck's bill).
+    # (It lies CLOSE: v5b's stood off the front and from the side read as a beak.)
+    root_ = on_fist(L * .33, .12, lift=.03)
+    thumb = bp.spline([root_, on_fist(L * .29, .2, lift=.055), on_fist(L * .17, .26, lift=.07), on_fist(L * .05, .29, lift=.065)],
+                      per=3)
+    fist.tube(thumb, bp.spread([.08, .09, .09, .078], per=3), AMBER, sides=10)
+    lump(fist, on_fist(L * .045, .29, lift=.075), (.064, .058, .052), CORE, sides=9)
+    crease = bp.spline([on_fist(x, y, lift=.028) for x, y in [(L * .27, .1), (L * .2, .15), (L * .1, .19), (L * .0, .2)]],
+                       per=3)
+    fist.tube(crease, [.02] * len(crease), DEEP, sides=6)
+    # The back of the hand: two veins of cooler lava, knuckles toward the wrist, each its own path.
+    line_on(fist, [(L * .14, .62), (L * .12, .48), (L * .06, .32), (L * .04, .2)], .022, CHERRY, side=-1.0)
+    line_on(fist, [(R * .12, .6), (R * .14, .44), (R * .08, .3)], .02, CHERRY, side=-1.0)
+    # The sides, drawn as a cartoon fist is side-on: on each side a dark curve tracing the curled first finger (the index on
+    # the thumb side, the little finger on the other), from the knuckle over and down the front to the fold.
+    for side, x in ((L, .35), (R, .345)):
+        pts = []
+        for y, z in [(.66, .05), (.64, .17), (.55, .25), (.44, .27), (.35, .24), (.3, .17)]:
+            _, cx, cz, rx, rz = fist_row(y)
+            pts.append((side * (rx + .012), y, z))
+        curve = bp.spline(pts, per=3)
+        fist.tube(curve, [.02] * len(curve), DEEP, sides=6)
+    pitched(fist, 26)
 
     drips = Node("drips", parent="forearm")
-    # Lava running off the heel of the hand into the surge, each its own start and length.
-    drip(drips, (L * .21, .33, .12), .14, .036, AMBER, lean=(R * .02, .02))
-    drip(drips, (R * .22, .32, .08), .18, .034, EMBER, lean=(L * .02, .02))
-    drip(drips, (R * .05, .32, -.17), .12, .03, AMBER, lean=(0, -.02))
-
+    # Lava running off the heel of the hand into the collar, each its own start and length.
+    drip(drips, (L * .2, .33, .14), .1, .034, AMBER, lean=(R * .02, .02))
+    drip(drips, (R * .21, .32, .1), .12, .032, EMBER, lean=(L * .02, .02))
     return [root, forearm, fist, drips]
 
 

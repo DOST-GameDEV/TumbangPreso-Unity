@@ -123,10 +123,12 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
 - [x] MAGMA FIST's giant fist, v4 (owner 2026-10-25: "doesnt read as an arm ... looks like a red dildo", "needs to be bigger",
   "make it more comically large rather than showing the whole arm", reference Seeker's fist in Risk of Rain 2): no arm, a
   fist erupting from the puddle in a low splash with a bright ring, drawn 2.3x (about 2.4 m, the puddle's width), tipped
-  toward the caster, detail in colour (two-tone fingers on a dark core, gold knuckles). It sprays gobs of lava as it erupts
-  and melts wide and low as it sinks. The cooling no longer tints the shared `ToonSkin` material (it greyed every later Sean
+  toward the caster. v5 (owner: "still looks kinda weird and not that nice") is ONE solid cartoon fist, not parts: heat
+  bands up the block (ember, amber, gold), fingers in relief with dark grooves and a fold line, knuckle bumps breaking the
+  top outline, a C-curve on each side for the curled finger, a short thumb, a low collar with a bright ring. It sprays gobs
+  of lava as it erupts and melts wide and low as it sinks. The cooling no longer tints the shared `ToonSkin` material (it greyed every later Sean
   prop); the fire dome over it is a low burst and a ring; the puddle is a splat with a hot heart. Film
-  `Logs/sean-2026-10-24/film-v17`; previews from `tools/build_sean_props.py giant_fist`.
+  `Logs/sean-2026-10-24/film-v19`; previews from `tools/build_sean_props.py giant_fist`.
 - [ ] 🧑 Owner to look at the new Magma Fist in play. Its reach stays 1 m (owner 2026-10-25: "Keep the reach at 1 m; the
   look is the change").
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.

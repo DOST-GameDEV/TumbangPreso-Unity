@@ -28,9 +28,9 @@ namespace TumbangPreso.Abilities
     ///
     /// ⚠️ IT MUST READ AS AN ARM (owner 2026-10-24, from a match: "it doenst read as an arm bcz it has no details it js looks
     /// like a red dildo"). Two causes, both fixed here and in `tools/build_sean_props.py` (`giant_fist` v3):
-    ///  * the model was a straight column with a round cap; v4 is a comically big fist erupting out of the puddle on a short
+    ///  * the model was a straight column with a round cap; v5 is a comically big fist erupting out of the puddle on a short
     ///    wrist in a surge of lava, no arm (his reference: Seeker's fist, Risk of Rain 2), tipped toward the caster, its detail
-    ///    carried in colour (hot fingers on a dark core, gold knuckles) as flat toon shading needs;
+    ///    one solid cartoon form with its fingers sculpted and drawn on, as flat toon shading needs;
     ///  * the cooling wrote `sharedMaterial.color`, and `ToonSkin` hands every Sean prop dressed the same way ONE cached
     ///    material whose `_Color` multiplies the palette: the first fist to cool stamped one flat colour over every fist, Molten
     ///    fist and bomb after it. It now tints each renderer through a property block (<see cref="Cool"/>).
@@ -48,7 +48,7 @@ namespace TumbangPreso.Abilities
         private SeanGroundMark _mark;
         private Vector3 _travel, _punchAt;
         private Transform _giant, _puddle;
-        private const float GiantHeight = 1.05f;  // `tools/build_sean_props.py --measure giant_fist` (v4: 1.05 m)
+        private const float GiantHeight = 1.06f;  // `tools/build_sean_props.py --measure giant_fist` (v5: 1.06 m)
         // Drawn this much bigger than the model: comically big, about 2.4 m tall and as wide as the puddle, so its edge is still
         // what it throws (owner 2026-10-24: "needs to be bigger", "make it more comically large rather than showing the whole arm",
         // after Seeker's fist in Risk of Rain 2). Bigger than the reach would draw players under it who are not thrown.
@@ -126,7 +126,7 @@ namespace TumbangPreso.Abilities
             _punchAge = 0;
             var giant = new GameObject("GiantFist").transform;
             giant.SetParent(transform, false);
-            // The modelled giant fist (`giant_fist` v4, rising +Y out of the puddle); the first-pass blocks if it is missing.
+            // The modelled giant fist (`giant_fist` v5, rising +Y out of the puddle); the first-pass blocks if it is missing.
             if (SeanProp.Spawn("giant_fist", giant) == null)
             {
                 Block("Forearm", giant, new Vector3(.9f, 1.3f, .9f), new Vector3(0, .65f, 0), LavaEdge);
