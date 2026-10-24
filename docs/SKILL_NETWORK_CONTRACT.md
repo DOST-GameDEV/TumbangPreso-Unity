@@ -102,7 +102,8 @@ names and rules change, so a 175 peer runs Stoke Step, Cinder Gate and Supernova
   is hot for 1.5 s: `SyncLata` gains a second optional suffix (tag 7, the heat), read only by 176 peers; `Carrier.HasResetTarget`
   and `MatchRpc.HostMayChannelReset` refuse a reset while it is hot.
 - MAGMA FIST is predicted (it spawns no host-owned field): every peer flies `SeanMagmaFist` from the same cast and target; the
-  host alone resolves the punch.
+  host alone resolves the punch. The host also knocks each thrown player's held slipper loose onto the spot they stood on
+  (`HostDisarm`, `HostScatter`, `BroadcastSlipperState`, as Whirled's drop does): no new message, no protocol step.
 - MAYON AWAKENS stays a shared ultimate. Molten is the ultimate's own duration (8 s) on every peer; the timed-kit ultimate
   field restores it for a rejoiner. VOLCANIC BOMB is the E press while Molten, so it travels the ordinary skill-cast path in
   both roles; every peer flies `SeanVolcanicBomb`, the host resolves the splash, and each peer slows the bodies it simulates

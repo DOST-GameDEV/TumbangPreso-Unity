@@ -212,7 +212,7 @@ namespace TumbangPreso.PlayTests
         // ------------------------------------------------------------------ MAGMA FIST
 
         [UnityTest, Timeout(60000)]
-        public IEnumerator MagmaFistIsPlacedWhereHeAimsAndThrowsThemAwayFromTheCan()
+        public IEnumerator MagmaFistIsPlacedWhereHeAimsThrowsThemAwayFromTheCanAndKnocksTheirSlipperLoose()
         {
             var round = GameServices.Round;
             var lata = round.Lata;
@@ -220,7 +220,12 @@ namespace TumbangPreso.PlayTests
             var target = round.Players.First(p => !p.IsDefender);
             target.Teleport(can + new Vector3(0, .12f, -5)); target.Intent.Parked = false;
             var sean = Sean(round.Players.First(p => p.IsDefender), can + new Vector3(0, .12f, -1), target.transform.position);
+            // They hold their own slipper: the fist knocks it out of the hand, onto the spot they were thrown from.
+            var shoe = target.GetComponent<Carrier>().Held
+                ?? Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None).First(x => x.OwnerSlot == target.PlayerSlot);
+            if (target.GetComponent<Carrier>().Held != shoe) Assert.IsTrue(shoe.HostForceEquip(target), "Could not put the slipper in their hand.");
             yield return new WaitForSeconds(.2f);
+            Vector3 stood = Flat(target.transform.position);
             float before = Flat(target.transform.position - can).magnitude;
             // A prayer and a long press: held, the ring sits where he aims (here, on the target); the release opens it there.
             sean.Intent.AimPoint = target.transform.position + Vector3.up;
@@ -240,6 +245,14 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(marked, "The spot had no warning ring on it.");
             Assert.Greater(after - before, SeanRules.FistPush * .6f, "The fist did not throw them away from the can.");
             Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanSlam && f.subject == target.PlayerSlot), "The punch was not announced.");
+            float shoeFromSpot = (Flat(shoe.transform.position) - stood).magnitude;
+            Note("fist_slipper_state", shoe.State.ToString()); Note("fist_slipper_from_spot_m", shoeFromSpot);
+            Note("fist_target_from_slipper_m", Flat(target.transform.position - shoe.transform.position).magnitude);
+            Assert.IsNull(target.GetComponent<Carrier>().Held, "They kept the slipper in their hand.");
+            Assert.AreEqual(SlipperState.Loose, shoe.State, "The slipper is not loose on the court.");
+            Assert.Less(shoeFromSpot, .6f, "The slipper did not stay on the spot they were thrown from.");
+            Assert.Greater(Flat(target.transform.position - shoe.transform.position).magnitude, SeanRules.FistPush * .6f,
+                "The slipper went with them.");
         }
 
         // ------------------------------------------------------------------ MAYON AWAKENS v2: the mountain, Molten, its bombs

@@ -521,9 +521,9 @@ namespace TumbangPreso.Abilities
 
             public MagmaFistAbility(SeanHeroKit kit)
                 : base("sean_skill2d", "MAGMA FIST",
-                    "Defending. Hold to pray and place it where you look; let go and a giant lava fist punches up there, away from the can.",
+                    "Defending. Hold to pray and place it where you look; a giant lava fist punches up there and knocks their slippers loose.",
                     SeanRules.FistCooldown, 0, AbilityGlyph.SeanCinderGate,
-                    summary: "Hold to place it; a giant lava fist punches up there and throws them away from the can.",
+                    summary: "Punch them away from the can; their slippers stay on the spot.",
                     telegraphRadius: SeanRules.FistPunchRadius, telegraphRange: SeanRules.FistAimRange,
                     castAction: "hero-sean-pray", viewmodelAction: "magma-palms", castCue: "sfx_cast_sean_rush")
             {

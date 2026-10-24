@@ -14,7 +14,7 @@ His old thread holds and gets sharper: *"waits for the line he wants, then commi
 being let go. Every skill has a held wind-up the others can read, then a heavy commit.
 
 **Against the cast:** Dante can't be moved; Sean moves you (and only while Molten, for 8 s, can nothing move him). Dante is stone and standing still; Sean is molten and moving
-forward. Amihan's Drift passes through a crowd; Sean picks one body and hits it. Paete takes slippers; Sean leaves them alone.
+forward. Amihan's Drift passes through a crowd; Sean picks one body and hits it. Paete takes slippers wherever they are; Sean's MAGMA FIST knocks one out of the hand it punches, onto that spot.
 
 **Cut completely:** the parol and everything of it (cutscene, `parol`, `parol_small` and `duskline` props, `ParolGround`
 shader), Stoke Step, Empowered Throw, Cinder Gate, Steady Ember, Supernova. Saved ids `sean_skill1`, `sean_skill2`,
@@ -52,7 +52,7 @@ Rules that follow from it:
 | Passive | **PRESSURE** | Every body hit he lands (shove, punch, LAVA RAM, MAGMA FIST) adds one bar of heat; three bars is full and his fists glow. When full, his next shove or LAVA RAM **erupts**: the target goes 40% farther (never past the 4.27 m knockback cap) and a 1.6 m splash pushes anyone beside them 1.5 m. Heat cools away after 6 s without contact. Replaces Steady Ember on the existing timed-kit passive field |
 | Q, both roles (`sean_skill1`) | **LAVA RAM** | Hold to brace (0.25 s minimum, the tell), release to charge 8.0 m straight along his aim (held at 14 m/s, then the slide-out; owner 2026-10-24: "give it a pretty long distance"). He stops dead on the **first** body: that one rival is launched 3.0 m (13.4 m/s; 4.2 m erupted, under the 16 m/s knockback cap) and stumbles 1.0 s, then is SEARED: half speed, back to full over 2 s (owner 2026-10-24). Hitting a wall or prop stuns HIM 0.6 s. No trail. Cooldown 14 s |
 | E, attacking (`sean_skill2`) | **MOLTEN THROW** | Coat the held slipper in lava for one throw within 8 s. It flies flat and heavy: no curve, no dip. If it knocks the lata over, the can is **blasted 3 m along the throw** and lands **hot**: the taya cannot start the reset for 1.5 s while it cools (it hisses and darkens). Cooldown 30 s |
-| E, defending (`sean_skill2d`) | **MAGMA FIST** | (Reworked 2026-10-24, owner: "why is he throwing something?", "he js does a prayer pose tapos he long presses or smth to decide where it gets cast".) Hold: he holds a prayer (palms together, head bowed) and the ring sits where he looks on the court, 2 to 9 m away. Release: he drives his palms at the court and a puddle of lava opens on the spot; it bubbles 0.45 s (the warning anyone on it can step off), then a giant fist **punches up out of it** (the Puddle Punch): everyone on it knocked up 1.0 m and pushed 3.5 m directly away from the lata. Nothing flies. Cooldown 22 s |
+| E, defending (`sean_skill2d`) | **MAGMA FIST** | (Reworked 2026-10-24, owner: "why is he throwing something?", "he js does a prayer pose tapos he long presses or smth to decide where it gets cast".) Hold: he holds a prayer (palms together, head bowed) and the ring sits where he looks on the court, 2 to 9 m away. Release: he drives his palms at the court and a puddle of lava opens on the spot; it bubbles 0.45 s (the warning anyone on it can step off), then a giant fist **punches up out of it** (the Puddle Punch): everyone on it knocked up 1.0 m and pushed 3.5 m directly away from the lata, **their slipper knocked out of their hand onto the spot they were thrown from** (corrected 2026-10-25, owner: "the plan for this skill was that it detaches the slipper at launch spot"). Nothing flies. Cooldown 22 s |
 | Ultimate (`sean_ultimate`) | **MAYON AWAKENS** | The cutscene, then the awakening blast (everyone within 4.0 m pushed 3.5 m), then he is **Molten** for 8 s: no knockback at all (owner's pick), PRESSURE stays full so every shove and RAM erupts, LAVA RAM cooldown 4 s. While Molten his E button becomes **VOLCANIC BOMB** (the Lapu-Lapu lesson): he pulls the lava off both arms into one heavy ball between his fists and hurls it up to 14 m; it splashes 4.8 m wide, throws everyone 4 m, knocks the lata over (never his own when he is taya), and leaves a pool that skins over into black glass for 4 s and slows by 30%. Throwing it ends Molten. If he never throws it, it drops at his feet as the 8 s run out and splashes there, smaller: 3.0 m wide, everyone thrown 3 m (owner's pick). Cost 15 charges, as now |
 
 Why each earns its slot:
@@ -61,7 +61,8 @@ Why each earns its slot:
 - **MOLTEN THROW** speaks the game's own sentence, "the whole game is the run back in": a can that flies farther and stays
   hot buys every attacker time. No other hero touches the reset.
 - **MAGMA FIST** is the taya's version of a punch: control instead of a free tag. Pushing them AWAY FROM THE CAN makes them
-  run the danger box again; their slipper stays in their hand, so it never copies Paete or Amihan.
+  run the danger box again, and their slipper stays on the spot they were thrown from, so they come back into his reach for
+  it. (This line said the slipper stayed in their hand; that was a mistake in the plan, corrected 2026-10-25.)
 - **MAYON AWAKENS** is both things the owner asked for in one: the state, then the bomb he chooses when to throw.
 
 ## 2 · The six beats per ability (Tell, Release, Travel, Contact, Linger, Dissipate)

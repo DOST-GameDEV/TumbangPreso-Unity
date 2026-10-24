@@ -10,7 +10,8 @@ namespace TumbangPreso.Abilities
     /// prayer pose tapos he long presses or smth to decide where it gets cast"). Nothing flies any more: he holds the prayer and
     /// places the ring where he looks (`HeroAbility.AimByHolding`, where-looking), and on the release a puddle of lava opens on
     /// that spot. For `SeanRules.FistWarnSeconds` it bubbles, the warning anyone standing on it can step off; then a giant fist
-    /// punches up out of it (the owner's Puddle Punch picture) and throws everyone on it up and straight away from the lata.
+    /// punches up out of it (the owner's Puddle Punch picture) and throws everyone on it up and straight away from the lata,
+    /// knocking the slipper out of their hand onto the spot (<see cref="KnockSlipperLoose"/>).
     ///
     /// ⚠️ EVERY PEER OPENS ITS OWN COPY FROM THE SAME CAST, AND ONLY THE HOST DECIDES WHO IS HIT. The aimed spot is the cast's
     /// own (it rides the cast, so every peer opens it in the same place); positions of the bodies on it differ by a frame or two,
@@ -166,6 +167,8 @@ namespace TumbangPreso.Abilities
                 SeanRules.FistPushDirection(p.transform.position.x, p.transform.position.z, canAt.x, canAt.z,
                     _travel.x, _travel.z, out float x, out float z);
                 var away = new Vector3(x, 0, z);
+                // Not thrown (immune), not disarmed: the slipper goes only with the throw.
+                if (p.AbilitySystem == null || !p.AbilitySystem.IsImmuneToStuns) KnockSlipperLoose(p);
                 p.ApplyResolvedImpact(away * SeanRules.FistPushSpeed + Vector3.up * SeanRules.FistLiftSpeed);
                 p.ApplyStagger(.5f);
                 // From behind them along the throw, so their camera is punched the way they fly.
@@ -173,6 +176,22 @@ namespace TumbangPreso.Abilities
                 landed = true;
             }
             if (landed) _kit?.HostAddHeat(_owner);
+        }
+
+        /// <summary>
+        /// ⚠️ THE FIST KNOCKS THE SLIPPER OUT OF THEIR HAND, AND IT STAYS WHERE THEY STOOD (owner 2026-10-25: "the plan for
+        /// this skill was that it detaches the slipper at launch spot"; the written plan had it backwards). They fly off
+        /// empty-handed and have to come back onto the spot for it. The host decides, as Whirled's drop does
+        /// (`CharacterMotor.ApplyWhirled`): disarm, set it down on the court where their feet were, and tell every peer through
+        /// the slipper's own state message, so nothing new is on the wire.
+        /// </summary>
+        private static void KnockSlipperLoose(CharacterMotor victim)
+        {
+            var carrier = victim.GetComponent<Carrier>();
+            var held = carrier != null ? carrier.Held : null;
+            if (held == null || !held.HostDisarm()) return;
+            held.HostScatter(victim.transform.position - held.transform.position);
+            Net.MatchRpc.Instance?.BroadcastSlipperState(held);
         }
 
         /// <summary>
