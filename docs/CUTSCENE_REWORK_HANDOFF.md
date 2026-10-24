@@ -96,7 +96,7 @@ Films and sheets are in `Logs/paete-ability-film/`; a sheet is `sheet_<hero>_<ta
 | Hero | Length | First polish film | His verdict | Round two (running when this was written) |
 |---|---|---|---|---|
 | Nemu | 7.2 s | `nemu_p4` | "the ghost needs a remodel. needs more vfx/particles" | Remodel the giant (rage) Kuro in the painted one-skin style through a tool like `tools/kubo_kuro.py` (same node names, rig, clip: it is the LIVE monster too), and more designed VFX |
-| Sean | 8.4 s | `sean_p3` | "sean's parol looks good, but the ground effects/magic circles are lacking proper shaders and effects" | A new ground shader and emissive, living landing mark; light cast on the court; designed embers and sparks |
+| Sean | 7.0 s, MAYON AWAKENS (2026-10-24, replaces the parol; blocking, unfilmed; `docs/reports/sean-kit-2026-10-24/plan.md` section 3) | `sean_p3` (parol, retired) | "sean's parol looks good, but the ground effects/magic circles are lacking proper shaders and effects" | A new ground shader and emissive, living landing mark; light cast on the court; designed embers and sparks |
 | Zack | 6.4 s | `zack_p3` | none yet | none |
 | Dante | 7.0 s | `dante_p4` | "the longhorn lacks texture. the actual in-game ulitmate is just effects on the ground, it doesnt sell that weight of the longhorn's slampunch" | A: paint the longhorn properly, emissive seams. B: the LIVE ultimate's look (`DanteDriftVisual`, look only, nothing that decides gameplay): the longhorn's fist coming down on each band |
 | Cheska | 11.9 s | `cheska_p4` (sheets p3 and p4) | none yet | none |

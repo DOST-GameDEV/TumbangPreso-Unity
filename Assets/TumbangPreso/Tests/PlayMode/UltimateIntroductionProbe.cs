@@ -268,16 +268,14 @@ namespace TumbangPreso.PlayTests
                                     float contact = bolt.sharedMesh.vertices.Min(v => Vector3.Distance(bolt.transform.TransformPoint(v), headPoint));
                                     Assert.Less(contact, .15f, "Overclock's bolt must reach Zack, not an old distant target.");
                                 }
-                                if(hero=="sean"&&Mathf.Abs(warm-2.5f)<.001f)
-                                {
-                                    var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty(emptyHands ? "BothPalms" : "FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
-                                    var flame=scene.Root.transform.Find("ParolFlame");
-                                    Assert.Less(Vector3.Distance(flame.position,scene.Root.transform.TransformPoint(palm)),.34f,
-                                        "The parol must stay in front of its gathering hand through the coil.");
-                                }
+                                // MAYON AWAKENS (2026-10-24): the lava fist forms ON his fist hand, the free one when he carries a slipper.
                                 if(hero=="sean"&&Mathf.Abs(warm-2.97f)<.001f)
-                                    Assert.Less(Vector3.Distance(scene.Root.transform.Find("RiseSpark0").position,
-                                        scene.Root.transform.Find("ParolFlame").position),.02f,"The burst must start at the parol.");
+                                {
+                                    var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty(emptyHands ? "RightPalm" : "FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
+                                    var fist=scene.Root.transform.Find("SeanLavaFist");
+                                    Assert.Less(Vector3.Distance(fist.position,scene.Root.transform.TransformPoint(palm)),.02f,
+                                        "The lava fist must grow on the hand that makes the fist.");
+                                }
                                 if (hero == "cheska" && Mathf.Abs(warm-1.1f)<.001f)
                                 {
                                     var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty(emptyHands ? "RightPalm" : "FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);

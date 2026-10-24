@@ -664,8 +664,9 @@ namespace TumbangPreso.Net
         // and judges the ghosts on the old clocks: the two may not meet.
         // 176 (2026-10-24): Sean's lava brawler kit (`SeanRules`). LAVA RAM, MOLTEN THROW (the can is blasted along the throw
         // and lands hot; `SyncLata` gains a second optional suffix with its heat), MAGMA FIST, MAYON AWAKENS with Molten and
-        // the VOLCANIC BOMB on E, and PRESSURE on a landed shove. A 175 peer runs Stoke Step, Cinder Gate and Supernova on the
-        // same ids: the two may not meet.
+        // the VOLCANIC BOMB on E, and PRESSURE on a landed shove. His cutscene is MAYON AWAKENS, 7.0 s (was the parol's 8.4),
+        // which every peer's shared phase reads. A 175 peer runs Stoke Step, Cinder Gate and Supernova on the same ids: the
+        // two may not meet.
         public const int ProtocolVersion = 176;
 
         /// <summary>

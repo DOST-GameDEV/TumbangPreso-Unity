@@ -359,85 +359,73 @@ def phaister():
 
 def _sean(held):
     """
-    SUPERNOVA, 3.4 s. Patience turning into commitment (plan.md section 1): "Waits for one
-    opening. Makes it count." He is a lantern maker, so the fire is ASSEMBLED, not summoned:
-    a parol frame of five sticks builds between his cupped hands one stick at a time while he
-    watches it. Then the head snaps up (the opening), a held breath, the coil, and the rise
-    that is the first frame of the live leap.
-    Measured on his real mesh: twist 38 brings both hands together in front of the chest.
+    MAYON AWAKENS, 7.0 s (owner 2026-10-24: the lava brawler from Mayon; "mix gising na ang bulkan and volcanic bomb", "pedeng
+    his ult transforms him"; "7.0 s"). The direction is `docs/reports/sean-kit-2026-10-24/plan.md` section 3: the mountain's
+    heat comes up out of the ground into him until he cannot hold it, and he lets it out. Three shots, one idea each:
+      A. THE MOUNTAIN WAKES (0 to 2.1): from his feet, the lens cranes up his body as the heat climbs it; Mayon wakes behind him.
+      B. THE FIST (2.1 to 4.3): fist in front, face behind it; the lava runs up his forearm, his eyes ignite, he holds.
+      C. ERUPTION (4.3 to 7.0): low, looking up at him: the coil, both fists into the court at 5.6, the fountain in the
+         mountain's shape, and the shockwave racing out. It ENDS as the wave reaches the real players, so play throws them
+         (the live awakening blast) instead of the cutscene throwing them and play doing it again.
+    The parol is gone (owner 2026-10-24). The last pose is standing, which is where play picks him up.
     """
-    p = Performance("sean-held" if held else "sean", 8.4)
+    p = Performance("sean-held" if held else "sean", 7.0)
+    # The carrying hand keeps its slipper low; the free hand is his fist.
+    carry = (18, 28, -6)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    plant = Pose(torso=(6, 8, 0), head=(16, -4, 0), left=(6, 18, 0), right=(6, 18, 0),
-                 legs=((4, 7), (-4, 7)))
-    roll = plant.but(torso=(6, -8, 0), head=(16, 4, 0))
-    # Cupped hands at the chest, head bowed over them: the craftsman.
-    cup = Pose(torso=(10, 0, 0), head=(24, 0, 0), left=(75, 5, 38), right=(75, 5, 38),
-               legs=((4, 7), (-4, 7)))
+    # A wide, planted stance; head down at the court as the cracks come to him.
+    plant = Pose(torso=(6, 0, 0), head=(16, 0, 0), left=(8, 22, 0), right=carry if held else (8, 22, 0),
+                 legs=((3, 10), (-3, 10)))
+    press = plant.but(torso=(9, 0, 0), head=(20, 0, 0))
+    # The breath held as the heat reaches his chest: shoulders up and out, chin lifting.
+    breathe = Pose(torso=(-6, 0, 0), head=(-8, 0, 0), left=(14, 30, 0), right=carry if held else (14, 30, 0),
+                   legs=((3, 10), (-3, 10)))
+    # The fist: his free arm drawn up in front of the chest, the body turned behind it.
     if held:
-        # The free hand forges the parol; the carrying hand keeps its slipper low.
-        cup = cup.but(left=(75, 24, 20), right=(18, 28, -6))
-        plant = plant.but(right=(18, 28, -6))
-        roll = roll.but(right=(18, 28, -6))
-    inspect_ = cup.but(head=(22, 0, -6), torso=(12, 0, 0))
-    inspect2 = cup.but(head=(22, 0, 5), torso=(11, 0, 0))
-    # The opening: the head snaps up to the target, hands still cupped. Held.
-    look = cup.but(torso=(4, 0, 0), head=(-6, 0, 0))
-    # The coil: chest down over the front leg, hands compressing the lantern in front of the chest.
-    coil = Pose(torso=(30, 0, 0), head=(-14, 0, 0), left=(55, 25, 24), right=(55, 25, 24),
-                legs=((18, 5), (-22, 5)))
-    if held:
-        coil = coil.but(left=(60, 30, 4), right=(8, 28, -4))
-    # The rise: arms driving up, onto the toes, the first frame of the leap.
-    rise = Pose(torso=(-8, 0, 0), head=(-14, 0, 0), left=(165, 22, 0), right=(165, 22, 0),
-                legs=((-4, 3), (-10, 3)))
-
-    # ⚠️ 7.0 s, RESTAGED (owner 2026-10-08: of three staging ideas "sean i like 1 and 2", joined, "About 7 s"). He builds
-    # the parol as before, lifts it over his head and lets it go; the lens follows it up as it grows into the giant
-    # festival lantern and lies over above the court; from above, the ring where he will land and who is in it; then the
-    # coil and the LEAP up into it, ending at the top (see the stage's header for why and how play picks it up).
-    # The stage (`HeroIntroductionScene.Sean.cs`) reads: the flame 1.75, the lift 2.25, the release 2.70, the top 4.60,
-    # the ring 4.75, the coil 5.20, the leap 6.20, the burst 6.72. The LAST pose is still `rise`.
-    free = (165, 22, 0)
-    # Lifting it over his head with both hands (the free one alone when he holds a shoe), his face following it up.
-    lift = Pose(torso=(-6, 0, 0), head=(-22, 0, 0), left=free, right=(18, 28, -6) if held else free, legs=((4, 7), (-4, 7)))
-    # Letting it go: the hands open out and stay up, as if it might come back.
-    let_go = lift.but(torso=(-10, 0, 0), head=(-34, 0, 0), left=(150, 56, 0), right=(18, 28, -6) if held else (150, 56, 0))
-    # Watching it climb: the arms come down slowly, his head stays back.
-    watch = Pose(torso=(-8, 0, 0), head=(-38, 0, 0), left=(40, 30, 0), right=(18, 28, -6) if held else (40, 30, 0), legs=((4, 7), (-4, 7)))
+        fist = Pose(torso=(6, 12, 0), head=(4, 0, 0), left=(82, 10, 0), right=carry, legs=((3, 10), (-3, 10)))
+        clench = fist.but(torso=(8, 14, 0), left=(86, 6, 0))
+        draw = fist.but(torso=(2, -10, 0), left=(-20, 18, 0))
+    else:
+        fist = Pose(torso=(6, -12, 0), head=(4, 0, 0), left=(10, 20, 0), right=(82, 10, 0), legs=((3, 10), (-3, 10)))
+        clench = fist.but(torso=(8, -14, 0), right=(86, 6, 0))
+        draw = fist.but(torso=(2, 10, 0), right=(-20, 18, 0))
+    # The coil: leaning back, both fists high over his head (one, holding a slipper).
+    coil = Pose(torso=(-12, 0, 0), head=(-14, 0, 0), left=(170, 18, 0), right=carry if held else (170, 18, 0),
+                legs=((10, 14), (-10, 14)))
+    # The slam: folded over, both fists driven into the court in front of him.
+    slam = Pose(torso=(48, 0, 0), head=(-22, 0, 0), left=(70, 12, 0), right=carry if held else (70, 12, 0),
+                legs=((22, 14), (-18, 14)))
+    # Standing out of it, Molten, rolling one shoulder: the first frame of play.
+    stand = Pose(torso=(8, 0, 0), head=(0, 0, 0), left=(28, 22, 0), right=carry if held else (36, 24, 10),
+                 legs=((4, 9), (-4, 9)))
 
     p.key(0, rest)
-    p.key(.22, plant).key(.38, roll).key(.5, plant)
-    p.key(.72, cup)
-    p.key(1.05, inspect_).key(1.35, inspect2).key(1.62, cup)
-    p.hold(1.62, 2.1, cup)
-    p.key(2.5, lift)
-    p.key(2.7, let_go, punch=True)
-    p.hold(2.7, 3.3, let_go)
-    p.key(4.2, watch)
-    p.hold(4.2, 4.9, watch)
-    # ⚠️ HE LEAPS (owner 2026-10-09: "he should leap but then at the apex of the leap ... their cam tween to their fpv"). Up
-    # at 6.2, fast and then slowing, to 4.675 m at 7.0: `SeanHeroKit.SupernovaApex`, where play puts him to dive from.
-    p.key(5.3, coil)
-    p.hold(5.3, 6.02, coil)
-    p.key(6.2, rise, punch=True)
-    p.hold(6.2, 8.4, rise)
-    # 8.4 s (owner 2026-10-09: "more airtime before going to the fpv"): the same leap, slower over its top, then he HANGS there
-    # while the lens comes round behind him (`SeanFrame`), 7.15 to 7.85, and only after that goes into his eyes.
-    p.rise(0, 0).rise(6.14, 0).rise(6.36, 1.9).rise(6.62, 3.3).rise(6.95, 4.25).rise(7.35, 4.6).rise(7.7, 4.675).rise(8.4, 4.675)
+    p.key(.3, plant).key(.45, press, punch=True)
+    p.hold(.45, 1.2, press)
+    p.key(1.6, breathe)
+    p.hold(1.6, 2.1, breathe)
+    p.key(2.18, fist)
+    p.key(2.25, clench, punch=True)
+    p.hold(2.25, 4.1, clench)
+    p.key(4.3, draw)
+    p.key(4.8, coil)
+    p.hold(4.8, 5.45, coil)
+    p.key(5.6, slam, punch=True)
+    p.hold(5.6, 6.25, slam)
+    p.key(6.65, stand)
+    p.hold(6.65, 7.0, stand)
 
     side = -1 if held else 1
-    # A: three-quarter front medium while he plants and builds the lantern.
-    p.shot(0, 1.3, (side * 1.9, 1.35, 4.1), (0, 1.0, 0), 44, eye_to=(side * 1.6, 1.3, 3.6))
-    # B: close on the lantern and his face as it fills with flame.
-    p.shot(1.3, 2.25, (side * 1.1, 1.45, 3.1), (0, 1.25, .2), 40, eye_to=(side * .95, 1.45, 2.8), close=True)
-    # C: beside and below him as he lets it go, then up after it (the stage turns the lens to the lantern as it climbs).
-    p.shot(2.25, 4.9, (side * 2.4, 3.4, 5.4), (0, 1.5, .2), 50, eye_to=(side * 3.2, 4.4, 8.6), fov_to=60)
-    # D: from over the lantern, down through its frame at the court, the ring and whoever stands in it.
-    p.shot(4.9, 6.0, (.4, 13.4, -2.2), (0, 0, .4), 58, eye_to=(.2, 12.4, -1.8))
-    # E: low in front of him: the coil with the flames at his feet, the lantern filling the sky over him, and the rise.
-    p.shot(6.0, 8.4, (side * -2.0, .3, 6.6), (0, 3.2, 0), 66, eye_to=(side * -1.6, .3, 5.4), look_to=(0, 3.8, 0))
-    p.locked((1.9, 1.6, 7.2), (0, 2.4, 0), 56)
+    # A: from his feet, the lens cranes up his body following the heat (it finds his chest as Mayon lights behind him).
+    p.shot(0, 2.1, (-side * .7, .22, 1.25), (0, .15, 0), 52, eye_to=(-side * .9, 1.35, 1.75), look_to=(0, 1.45, 0), fov_to=48)
+    # B: macro on the fist, then round it to the face behind it.
+    p.shot(2.1, 4.3, (side * .55, 1.15, 1.05), (side * .22, 1.25, .5), 34,
+           eye_to=(side * .08, 1.32, 1.18), look_to=(0, 1.45, .1), fov_to=32, close=True)
+    # C1: low and looking up at him for the coil.
+    p.shot(4.3, 5.6, (side * 1.3, .45, 3.3), (0, 1.75, 0), 50, eye_to=(side * 1.2, .4, 3.0), look_to=(0, 1.9, 0))
+    # C2: from the slam, the lens rises and backs off to hold the whole ring and whoever stands inside it.
+    p.shot(5.6, 7.0, (side * 1.2, .4, 3.0), (0, 1.6, 0), 50, eye_to=(side * 3.4, 3.6, 7.2), look_to=(0, .4, -.5), fov_to=66)
+    p.locked((side * 2.6, 1.8, 6.0), (0, 1.0, 0), 56)
     return p
 
 
