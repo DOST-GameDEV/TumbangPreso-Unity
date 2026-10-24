@@ -6,7 +6,7 @@ make these athletes historical people or representatives of everyone from a regi
 Owner-approved names, October4: Dante, Yasmin, Rago, Isagani, Nemu, Phaister,
 Ilyas, Amihan and Paete. Stable roster/save IDs retain existing progression.
 
-## Rago: San Fernando, Pampanga
+## Rago: born near Mayon, Albay; plays in San Fernando, Pampanga
 
 Home court: **Eskinita**, a fictional neighbourhood lane in San Fernando.
 
@@ -14,16 +14,19 @@ Character-select line: **Waits for one opening. Makes it count.**
 
 Long introduction:
 
-Rago grew up playing between the houses of San Fernando, where an afternoon match
-could hold up the walk home for hours. He helped assemble lantern frames after
-school and learned to notice the small mistake that throws a whole shape off.
-On court he is just as particular: one chosen angle, one committed run. Isagani
-calls him slow. Rago keeps the score. His fire gets the crowd's attention, but
-the clean retrieval afterward is the part he wants them to remember.
+Rago was born at the foot of Mayon and played his first games of tumbang preso
+on the slopes in the mountain's shadow. His family moved to San Fernando when he
+was a kid, and the lane between the houses there became his court, where an
+afternoon match could hold up the walk home for hours. He plays the way the
+mountain behaves: quiet for a long time, then all at once. Isagani calls him
+slow. Rago keeps the score. His strength gets the crowd's attention, but the
+clean retrieval afterward is the part he wants them to remember.
 
 His patience is a strength and a flaw: he can wait past a useful chance while
-looking for a perfect one. Fire-light stories support the effect language;
-lantern craft informs his personal concentration, not a costume or sacred power.
+looking for a perfect one. The mountain supports the effect language (liquid
+lava from his own fists, cooling to black glass); it is his birthplace and his
+heat, not a disaster story, a costume or a sacred power. Owner, 2026-10-24: born
+near Mayon, moved to San Fernando as a kid, and the Eskinita stays his court.
 
 ## Isagani: Pasig, Metro Manila
 
@@ -151,9 +154,10 @@ courts until a separately scheduled map expansion. All athletes can play all map
 - [CCP: Bernardo Carpio](https://epa.culturalcenter.gov.ph/3/82/2199/):
   mountain struggle in the Montalban setting and earthquake association. Modern
   artwork on that page is not source art for the game.
-- [PIA: San Fernando lantern tradition](https://pia.gov.ph/features/in-phs-christmas-capital-giant-lanterns-illuminate-century-old-tradition/):
-  local craft context for Rago. His family, after-school work and sporting life
-  are invented, not quoted from an artisan's biography.
+- Rago's Albay birthplace and his move to San Fernando are the owner's direction
+  (2026-10-24). His family and sporting life are invented; no eruption or real
+  incident is part of his story. The lantern-craft thread was retired with the
+  parol.
 - [Dumaguete City: Rizal Boulevard](https://dumaguetecity.gov.ph/2018/11/19/paseo-de-rizal-or-the-rizal-boulevard/):
   waterfront setting for Nemu. No exact school, household or historic incident
   has been attributed to her.

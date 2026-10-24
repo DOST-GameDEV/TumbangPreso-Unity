@@ -3,7 +3,8 @@
 **Character origins, 2026-09-14:** [Character origins and court stories](docs/CHARACTER_ORIGINS.md)
 contains the six hometowns, short selection lines and longer introduction copy.
 Zack grew up at the Pasig condo behind Sa Bubong; Cheska comes from La Trinidad,
-Benguet. Sean's Eskinita and Dante's Bayan Plaza are fictional home courts in
+Benguet. Sean was born at the foot of Mayon in Albay and moved to San Fernando
+as a kid; his Eskinita and Dante's Bayan Plaza are fictional home courts in
 San Fernando and Montalban. Phaister grew up on Capul and now plays at Ilalim
 near Gilmore; Nemu comes from Dumaguete; Amihan, the eighth hero, comes from Vigan; Paete, the ninth, is a
 tree from Mount Makiling in Laguna. These are fictional sporting lives.
@@ -123,7 +124,7 @@ not biographies of the real people their names may reference.
 
 | Hero | Character thread | How it should show up in play and presentation |
 |---|---|---|
-| Sean | Waits for the line he wants, then commits completely. He would rather be remembered for one clean, brave play than constant activity | A gathered stance, a decisive extension and a controlled recovery. Fire follows his commitment; it does not obscure what he chose |
+| Sean | Waits for the line he wants, then commits completely, the way the mountain he was born under is quiet for a long time and then all at once. Strength is his talent | A held wind-up the others can read, then a heavy commit. Liquid lava runs off his own fists and cools to black glass; it never obscures what he chose |
 | Zack | Notices an angle before the rest of the court does. Enjoys making a difficult play look almost casual | Precise footwork, a small pause before the snap, narrow branching electricity. Confidence comes from accuracy rather than swagger in every idle |
 | Dante | The player people trust to hold the difficult space. Patient, grounded and hard to rush | A planted base, protective shapes, broken stone with weight. His strongest motion begins in the floor rather than with a generic leap |
 | Cheska | Reads a crowded court as a set of useful spaces. Practical, observant and quietly competitive | Exact gestures, clear ice boundaries and a composed finish. She changes the route with the least motion needed |
