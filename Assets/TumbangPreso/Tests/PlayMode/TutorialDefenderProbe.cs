@@ -121,7 +121,9 @@ namespace TumbangPreso.PlayTests
             // `ArmDefenderReset` restores, waits `ThrowRestoreCooldown + 0.08`, then knocks the
             // can over. Give it that plus a margin, and let the roll settle.
             float wait = Balance.ThrowRestoreCooldown + 1.4f;
-            for (float t = 0.0f; t < wait; t += Time.deltaTime) yield return null;
+            // ⚠️ A REAL-TIME CEILING TOO: a scaled clock held at 0 (a pause) never advances `t` and the probe would spin.
+            float realEnd = Time.realtimeSinceStartup + wait + 10.0f;
+            for (float t = 0.0f; t < wait && Time.realtimeSinceStartup < realEnd; t += Time.deltaTime) yield return null;
 
             bool armed = Field<bool>(route, "_defenderResetArmed");
 
@@ -132,6 +134,7 @@ namespace TumbangPreso.PlayTests
 
             lines.AppendLine();
             lines.AppendLine("on the frame the lesson is armed:");
+            lines.AppendLine($"  Time.timeScale        = {Time.timeScale} (presentation held {PresentationClock.Held})");
             lines.AppendLine($"  local.IsDefender      = {local.IsDefender}");
             lines.AppendLine($"  local.RoundActive     = {local.RoundActive}");
             lines.AppendLine($"  local.CanAct()        = {local.CanAct()}");
@@ -163,7 +166,8 @@ namespace TumbangPreso.PlayTests
             float hold = lata.ResetChannelTime + 1.0f;
             float bestChannel = 0.0f;
 
-            for (float t = 0.0f; t < hold; t += Time.deltaTime)
+            realEnd = Time.realtimeSinceStartup + hold + 10.0f;
+            for (float t = 0.0f; t < hold && Time.realtimeSinceStartup < realEnd; t += Time.deltaTime)
             {
                 intent.Set(Verb.Grab, true);
                 yield return null;

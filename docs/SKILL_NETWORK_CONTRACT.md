@@ -21,6 +21,21 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol179: the can carry (2026-10-24)
+
+CAN-CARRY-1024, every hero. The reset is a held carry: hold Grab beside the downed, not hot can, a 0.35 s pickup, the taya's
+body walks itself to the mark at walking speed (stick ignored, no sprint), a 0.3 s set-down, then `Lata.HostRestore`. Letting
+go, any stun (`CanAct`), Whirled or leaving the taya role drops the can at their feet, still down. The host owns the carry
+(`Lata.Carry.cs`: carrier seat, phase, phase age) and appends it to `SyncLata` as a third tagged suffix after the hot can:
+tag 8, `sbyte` seat, `byte` phase (0 none, 1 pickup, 2 carry, 3 set-down), `float` age. A carry starting, changing phase or
+ending is sent reliably. `ReqReset` keeps its shape: START asks for the pickup, CANCEL drops it, COMPLETE is read and ignored
+(the host sets the can down when the carrier's synced body is within `Lata.HoldReach` + `ArriveSlack` of the mark, or when
+its walk has been blocked for `Lata.BlockedSetDownSeconds` within `Balance.InteractionRadius`; an ultimate's shared pause
+holds the carry rather than dropping it). The
+host's per-seat channel clock and its relayed `grab` reach are gone. Every peer draws the can in the carrier's hands off the
+replicated phase; the walk runs on the peer that simulates the body. The owning client predicts its own pickup and drops it
+if the host has not confirmed within 0.6 s. A 178 peer would channel on the old clock and never walk: the two may not meet.
+
 ## Protocol178: LAVA RAM's SEARED slow (2026-10-24)
 
 Owner: "make them stumble a bit longer (1 second) tapos slowed for like 2 seconds na nagdedecay". The body a LAVA RAM hits

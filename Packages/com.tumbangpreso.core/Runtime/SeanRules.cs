@@ -143,6 +143,35 @@ namespace TumbangPreso.Core
         public const float HotCanSlide = 3.0f;
         public static float HotCanSlideSpeed => Combat.SpeedForDistance(HotCanSlide);
 
+        // CONTACT-1024 (owner: the hot can's slide "parang teleported", wants it "visibly flying away"). Under `Balance.Friction`
+        // the whole 3 m went by in 0.45 s at 13 m/s. It now LEAVES THE ROAD: an arc of `HotCanFlightSeconds` peaking at
+        // `HotCanApex`, then a skid under the gentler `HotCanSkidFriction`, the same `HotCanSlide` in all, over about 0.9 s.
+
+        /// <summary>Seconds the struck can is in the air before it lands and skids.</summary>
+        public const float HotCanFlightSeconds = 0.45f;
+        /// <summary>How high the struck can's arc peaks, metres.</summary>
+        public const float HotCanApex = 0.5f;
+        /// <summary>The landed can's skid deceleration, m/s^2 (the road's `Balance.Friction` is 30).</summary>
+        public const float HotCanSkidFriction = 9.0f;
+        /// <summary>The arc's gravity, so it peaks at <see cref="HotCanApex"/> halfway through <see cref="HotCanFlightSeconds"/>.</summary>
+        public static float HotCanGravity => 8.0f * HotCanApex / (HotCanFlightSeconds * HotCanFlightSeconds);
+        /// <summary>The arc's upward launch speed.</summary>
+        public static float HotCanLaunchUp => HotCanGravity * HotCanFlightSeconds * 0.5f;
+        /// <summary>
+        /// The flat speed it leaves at and keeps through the air, solved so flight plus skid is exactly <see cref="HotCanSlide"/>:
+        /// v T + v^2 / (2 a) = d.
+        /// </summary>
+        public static float HotCanFlightSpeed
+        {
+            get
+            {
+                float t = HotCanFlightSeconds, a = HotCanSkidFriction, d = HotCanSlide;
+                // v^2 / (2a) + v t - d = 0
+                float qa = 1.0f / (2.0f * a);
+                return (-t + (float)System.Math.Sqrt(t * t + 4.0f * qa * d)) / (2.0f * qa);
+            }
+        }
+
         /// <summary>The coated throw flies this much faster, and it never curves: no pektus spin is applied to it.</summary>
         public const float MoltenThrowSpeedScale = 1.15f;
 

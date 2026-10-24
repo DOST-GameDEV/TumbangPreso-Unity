@@ -24,7 +24,7 @@ namespace TumbangPreso
     /// before the hook runs. When Phase 5 arrives, replicate this with an explicit Rpc and
     /// raise <see cref="UprightChanged"/> from one place, exactly as the original does.
     /// </summary>
-    public sealed class Lata : MonoBehaviour
+    public sealed partial class Lata : MonoBehaviour
     {
         public event Action<bool> UprightChanged;
         // Host bookkeeping for consumed target cycles, never a replicated outcome.
@@ -144,6 +144,7 @@ namespace TumbangPreso
 
             _mark = new Vector3(_mark.x, bestY, _mark.z);
             transform.position = _mark;
+            _groundY = _mark.y;
         }
 
         /// <summary>
@@ -213,9 +214,12 @@ namespace TumbangPreso
             bool knockedOnThisPeer = _isUpright && !isUpright;
 
             transform.SetPositionAndRotation(position, rotation);
+            _poseSmoothing = false; _poseKnown = true;
             _skinIndex = skinIndex;
             _isUpright = isUpright;
             if (isUpright) { HotLeft = 0.0f; _slideVelocity = Vector3.zero; }
+            // A stand-up ends any carry on this peer too (CAN-CARRY-1024): the set-down's landing is the restore's own.
+            if (isUpright && IsCarried) ClearCarryState();
             if (restoredOnThisPeer) _restoreProtectionLeft = Balance.ThrowRestoreCooldown;
             else if (!isUpright) _restoreProtectionLeft = 0.0f;
             _toppleTimer = 0.0f;
@@ -267,8 +271,35 @@ namespace TumbangPreso
         /// </summary>
         public void ApplySnapshotPose(Vector3 position, Quaternion rotation)
         {
+            // ⚠️ CONTACT-1024: A REPLICA GLIDES TO THE HOST'S POSE INSTEAD OF JUMPING TO IT. A struck can crosses metres in a
+            // fraction of a second, and a pose applied as it lands is a can that hops between packets (owner: "parang
+            // teleported"). The host's pose is the target and `StepPoseSmoothing` closes on it in a few hundredths of a
+            // second; a jump too far to be motion (a respawn, a restore) is still taken at once.
+            if (!NetAuthority.ShouldResolve() && _poseKnown
+                && (position - transform.position).sqrMagnitude < PoseSnapDistance * PoseSnapDistance)
+            {
+                _poseTarget = position; _poseTargetRot = rotation; _poseSmoothing = true;
+                return;
+            }
+            _poseSmoothing = false; _poseKnown = true;
             transform.SetPositionAndRotation(position, rotation);
             _lastRollPosition = position;
+        }
+
+        private Vector3 _poseTarget;
+        private Quaternion _poseTargetRot = Quaternion.identity;
+        private bool _poseSmoothing, _poseKnown;
+        private const float PoseSnapDistance = 2.5f, PoseSmoothSeconds = .045f;
+
+        /// <summary>A replica closing on the host's last pose (see <see cref="ApplySnapshotPose"/>).</summary>
+        private void StepPoseSmoothing(float dt)
+        {
+            if (!_poseSmoothing) return;
+            if (NetAuthority.ShouldResolve()) { _poseSmoothing = false; return; }
+            float k = 1.0f - Mathf.Exp(-Mathf.Max(0.0f, dt) / PoseSmoothSeconds);
+            Vector3 at = Vector3.Lerp(transform.position, _poseTarget, k);
+            transform.SetPositionAndRotation(at, Quaternion.Slerp(transform.rotation, _poseTargetRot, k));
+            if ((at - _poseTarget).sqrMagnitude < 1e-6f) { transform.SetPositionAndRotation(_poseTarget, _poseTargetRot); _poseSmoothing = false; }
         }
 
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
@@ -316,6 +347,7 @@ namespace TumbangPreso
             // four screens get the tag's beat. `AnnounceUprightChange` is this event's
             // equivalent of that path and is reached exactly once per peer.
             HostKnockdownSerial++;
+            _groundY = transform.position.y; _flightHeight = 0.0f; _flightUp = 0.0f;
             SetUpright(false);
             GameServices.Match?.ResetHostCatchChain();
             _toppleTimer = Balance.ToppleTime;
@@ -428,6 +460,7 @@ namespace TumbangPreso
             transform.rotation = Quaternion.identity;
             HotLeft = 0.0f;
             _slideVelocity = Vector3.zero;
+            _groundY = _mark.y; _flightHeight = 0.0f; _flightUp = 0.0f;
 
             // ⚠️ THE TILT STATE IS CLEARED, NOT JUST THE TRANSFORM. `_toppleAngle` and the roll
             // survive a restore otherwise, and the next knockdown starts its lift from wherever
@@ -438,6 +471,7 @@ namespace TumbangPreso
             _lastRollPosition = _mark;
 
             _restoreProtectionLeft = Balance.ThrowRestoreCooldown;
+            if (IsCarried) { ClearCarryState(); _lastCarryDrawnAt = Time.time; }
             SetUpright(true);
 
             // ⚠️ NO CUE HERE EITHER. `SetUpright(true)` above already sounds the restore; see
@@ -546,27 +580,53 @@ namespace TumbangPreso
         public bool IsHot => HotLeft > 0.0f;
         private Vector3 _slideVelocity;
         private float _slideGround, _slideLift;
+        /// <summary>The struck can's flight (host): height above its skid line and upward speed.</summary>
+        private float _flightHeight, _flightUp;
+        private bool _flightBounced;
         private Visual.SeanGroundMark _hotRing;
 
         /// <summary>
-        /// Host-side. A MOLTEN THROW knocked this can over: it is blasted `SeanRules.HotCanSlide` along the throw, sliding to a
-        /// stop under `Balance.Friction` (the pose stream carries it to every peer), and it lands hot for `SeanRules.HotCanSeconds`.
+        /// Host-side. A MOLTEN THROW knocked this can over: it flies `SeanRules.HotCanFlight*` along the throw, off the road on a
+        /// short arc, then skids to a stop (the pose stream carries it to every peer), and it lands hot for `SeanRules.HotCanSeconds`.
         /// </summary>
         public void HostMoltenHit(Vector3 along)
         {
             if (!NetAuthority.ShouldResolve() || _isUpright) return;
             HotLeft = SeanRules.HotCanSeconds;
             along.y = 0.0f;
-            _slideVelocity = along.sqrMagnitude > .0001f ? along.normalized * SeanRules.HotCanSlideSpeed : Vector3.zero;
+            // CONTACT-1024: it leaves the road on an arc (`SeanRules.HotCanFlightSpeed`, `HotCanLaunchUp`), lands and skids.
+            _slideVelocity = along.sqrMagnitude > .0001f ? along.normalized * SeanRules.HotCanFlightSpeed : Vector3.zero;
             _slideGround = Visual.VfxShapes.TryGroundUnder(transform.position, .5f, 3f, out float ground) ? ground : transform.position.y;
-            _slideLift = transform.position.y - _slideGround;
+            _groundY = _slideGround;
+            // The topple is the flight's now: lying from the first frame, so the arc carries a lying, rolling can.
+            _toppleTimer = 0.0f; _toppleAngle = Balance.DownedTiltDeg;
+            _flightUp = SeanRules.HotCanLaunchUp; _flightHeight = 0.0001f; _flightBounced = false;
+            ApplyTilt(_toppleAngle);
+            _slideLift = transform.position.y - _slideGround - _flightHeight;
             NetCue.Play("sfx_slipper_burst", transform.position);
+            PresentMoltenContact(along);
             Net.MatchRpc.Instance?.BroadcastLataState();
         }
 
         /// <summary>A client takes the host's heat from `SyncLata`.</summary>
         public void ApplyHotSnapshot(float hotLeft)
-            => HotLeft = float.IsNaN(hotLeft) ? 0.0f : Mathf.Clamp(hotLeft, 0.0f, SeanRules.HotCanSeconds);
+        {
+            float was = HotLeft;
+            HotLeft = float.IsNaN(hotLeft) ? 0.0f : Mathf.Clamp(hotLeft, 0.0f, SeanRules.HotCanSeconds);
+            // The strike itself, on this peer: the can was cool and is now freshly hot (CONTACT-1024).
+            if (was <= 0.0f && HotLeft > SeanRules.HotCanSeconds - .4f && !_isUpright) PresentMoltenContact(Vector3.zero);
+        }
+
+        /// <summary>
+        /// ⚠️ CONTACT-1024: THE MOMENT A MOLTEN THROW MEETS THE CAN, ON EVERY PEER. Owner: the contact "doesn't look animated
+        /// well". A short impact freeze, a burst of lava where it was struck, a flash ring, and the in-place clatter cancelled
+        /// so the drawn can goes with the flying transform instead of bouncing where it stood.
+        /// </summary>
+        private void PresentMoltenContact(Vector3 along)
+        {
+            _clatterLeft = 0.0f;
+            Visual.SeanImpact.CanContact(transform.position, along);
+        }
 
         private void StepMoltenHit(float dt)
         {
@@ -576,36 +636,74 @@ namespace TumbangPreso
                 _hotRing = Visual.SeanGroundMark.Spawn(transform.position, Balance.InteractionRadius, Visual.SeanGroundMark.Mode.Drain,
                     HotLeft, Visual.SeanImpact.Accent, transform);
             else if ((!IsHot || _isUpright) && _hotRing != null) { _hotRing.Stop(); _hotRing = null; }
-            if (_slideVelocity.sqrMagnitude <= 0.0f) return;
-            if (!NetAuthority.ShouldResolve() || _isUpright) { _slideVelocity = Vector3.zero; return; }
+            bool flying = _flightHeight > 0.0f || _flightUp > 0.0f;
+            if (_slideVelocity.sqrMagnitude <= 0.0f && !flying) return;
+            if (!NetAuthority.ShouldResolve() || _isUpright) { _slideVelocity = Vector3.zero; _flightHeight = _flightUp = 0.0f; return; }
+            if (flying) StepFlight(dt);
+            if (_slideVelocity.sqrMagnitude <= 0.0f) { SetFlightHeight(); return; }
             float speed = _slideVelocity.magnitude;
             Vector3 step = _slideVelocity * dt;
-            // It stops at a wall rather than going through it.
+            // It stops at a wall rather than going through it (in the air it drops where it struck it).
             if (Physics.Raycast(transform.position + Vector3.up * .25f, _slideVelocity / speed, out var hit,
                     step.magnitude + .2f, ~0, QueryTriggerInteraction.Ignore)
                 && hit.collider.GetComponentInParent<Lata>() != this
                 && hit.collider.GetComponentInParent<CharacterMotor>() == null
                 && hit.collider.GetComponentInParent<Slipper>() == null)
-            { _slideVelocity = Vector3.zero; return; }
+            { _slideVelocity = Vector3.zero; SetFlightHeight(); return; }
             // It follows the court (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 2): down a kerb or a terrace
             // edge it falls, at a step up taller than `SeanRules.HotCanStepUp` it stops as at a wall, and it never leaves the
             // playable square, so the taya can always reach it.
             Vector3 next = AIController.ClampToPlayable(transform.position + step);
             if (Visual.VfxShapes.TryGroundUnder(next, SeanRules.HotCanStepUp + .25f, 6f, out float ground))
             {
-                if (ground - _slideGround > SeanRules.HotCanStepUp) { _slideVelocity = Vector3.zero; return; }
+                // In the air it clears a step its height clears; on the road a tall step stops it as a wall.
+                if (ground - _slideGround > SeanRules.HotCanStepUp + _flightHeight) { _slideVelocity = Vector3.zero; SetFlightHeight(); return; }
+                // Off a kerb in the air, the arc carries on from where it is: the drop is added to its height.
+                if (flying && ground < _slideGround) _flightHeight += _slideGround - ground;
                 _slideGround = ground;
+                _groundY = ground;
             }
-            next.y = Mathf.MoveTowards(transform.position.y, _slideGround + _slideLift, 9f * dt);
+            next.y = flying ? _slideGround + _slideLift + _flightHeight
+                            : Mathf.MoveTowards(transform.position.y, _slideGround + _slideLift, 9f * dt);
             transform.position = next;
-            speed = Mathf.Max(0.0f, speed - Balance.Friction * dt);
+            // Through the air it keeps its speed; on the road it skids to a stop (`SeanRules.HotCanSkidFriction`).
+            // The tin hop off the landing is part of the skid, so the throw still carries exactly `HotCanSlide`.
+            if (!flying || _flightBounced) speed = Mathf.Max(0.0f, speed - SeanRules.HotCanSkidFriction * dt);
             _slideVelocity = speed > .05f ? _slideVelocity.normalized * speed : Vector3.zero;
+        }
+
+        /// <summary>The arc: up, over and down onto the road, with one small bounce off a hard landing.</summary>
+        private void StepFlight(float dt)
+        {
+            _flightUp -= SeanRules.HotCanGravity * dt;
+            _flightHeight += _flightUp * dt;
+            if (_flightHeight > 0.0f) return;
+            _flightHeight = 0.0f;
+            if (_flightUp < -2.0f)
+            {
+                // A tin hop off the landing, a twelfth of the height, and the landing is heard and seen on every peer.
+                _flightUp = -_flightUp * .28f; _flightHeight = .0001f; _flightBounced = true;
+                NetCue.PlayImpact("can_knockdown", "lata_impact", transform.position, .45f);
+                Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .06f);
+                return;
+            }
+            _flightUp = 0.0f;
+        }
+
+        /// <summary>A can stopped in the horizontal still falls the rest of its arc.</summary>
+        private void SetFlightHeight()
+        {
+            if (_flightHeight <= 0.0f && _flightUp <= 0.0f) return;
+            Vector3 at = transform.position;
+            transform.position = new Vector3(at.x, _slideGround + _slideLift + _flightHeight, at.z);
         }
 
         private void Update()
         {
+            StepPoseSmoothing(Time.deltaTime);
             StepMoltenHit(Time.deltaTime);
             RestoreRaisePresentation();
+            StepCarry(Time.deltaTime);
             StepStatePresentation();
 
             if (_isUpright || _toppleTimer <= 0.0f) return;
@@ -924,10 +1022,15 @@ namespace TumbangPreso
         {
             transform.rotation = Quaternion.Euler(angleDeg, _rollAngleDeg, 0.0f);
 
+            // ⚠️ CONTACT-1024: A REPLICA'S HEIGHT IS THE HOST'S, off the pose stream; it no longer pins the can to the mark's
+            // level, which flattened a struck can's arc and its fall down a kerb. The host measures from the ground the can
+            // is actually on (`_groundY`, the mark's own level until it is moved) plus any flight.
+            if (!NetAuthority.ShouldResolve()) return;
+
             float lift = DownedLift * Mathf.Abs(Mathf.Sin(angleDeg * Mathf.Deg2Rad));
 
             Vector3 at = transform.position;
-            transform.position = new Vector3(at.x, _mark.y + lift, at.z);
+            transform.position = new Vector3(at.x, _groundY + lift + _flightHeight, at.z);
         }
 
         /// <summary>
@@ -967,6 +1070,8 @@ namespace TumbangPreso
         }
 
         private float _downedLift;
+        /// <summary>The floor under the can as it lies (host). The mark's level unless it has been struck or carried elsewhere.</summary>
+        private float _groundY;
 
         private float _toppleAngle;
         private float _rollAngleDeg;
@@ -1052,6 +1157,8 @@ namespace TumbangPreso
                 return;
             }
             _clatterLeft = 0;
+            // Carried back and set down (CAN-CARRY-1024): the mesh is already on the mark, so it lands where it is.
+            if (CarriedJustNow) { _drawnDownAt = -100; _hopLeft = 0; LandRestore(); return; }
             bool fresh = Time.time - _drawnDownAt < .5f;
             _drawnDownAt = -100;
             if (fresh && !Settings.SettingsStore.Current.ReducedUiMotion) { _hopLeft = HopSeconds; _hopFromPos = _drawnDownPos; _hopFromRot = _drawnDownRot; }
@@ -1124,6 +1231,8 @@ namespace TumbangPreso
         private void ApplyRaisePresentation()
         {
             if (!_clunkSubscribed) { _clunkSubscribed = true; UprightChanged += OnUprightPresented; }
+            // In the taya's hands (CAN-CARRY-1024), which owns the mesh for as long as it lasts.
+            if (ApplyCarryPresentation()) return;
             if (_isUpright && _hopLeft > 0.0f)
             {
                 if (!ResolveRaiseMesh()) { _hopLeft = 0.0f; return; }
@@ -1193,7 +1302,7 @@ namespace TumbangPreso
         private bool RaiseTurn(out Quaternion turn, out float drop)
         {
             turn = Quaternion.identity; drop = 0.0f;
-            if (_isUpright || _toppleTimer > 0.0f) return false;
+            if (_isUpright || _toppleTimer > 0.0f || IsCarried) return false;
             float progress = 0.0f;
             var players = GameServices.Round?.Players;
             if (players != null)
@@ -1226,6 +1335,11 @@ namespace TumbangPreso
         {
             bottom = top = transform.position;
             if (!ResolveRaiseMesh()) return false;
+            // Carried (CAN-CARRY-1024): pose it in the hands now, as `LateUpdate` will, so a reader mid-frame sees it there.
+            // A reader before `Update` (a coroutine after FixedUpdate) still sees last frame's pose, perhaps a clatter, so
+            // the rest pose is put back first.
+            bool carried = IsCarried && !_isUpright;
+            if (carried) { RestoreRaisePresentation(); ApplyCarryPresentation(); }
             var filter = _raiseMesh.GetComponent<MeshFilter>();
             if (filter == null || filter.sharedMesh == null) return false;
             var b = filter.sharedMesh.bounds;
@@ -1240,8 +1354,9 @@ namespace TumbangPreso
                 a = pivot + turn * (a - pivot) + Vector3.up * drop;
                 c = pivot + turn * (c - pivot) + Vector3.up * drop;
             }
-            // The base is the end at the can's own origin (it pivots there).
-            if ((a - transform.position).sqrMagnitude < (c - transform.position).sqrMagnitude) { bottom = a; top = c; }
+            // The base is the end at the can's own origin (it pivots there); held upright in the hands, the lower end.
+            if (carried) { if (a.y <= c.y) { bottom = a; top = c; } else { bottom = c; top = a; } }
+            else if ((a - transform.position).sqrMagnitude < (c - transform.position).sqrMagnitude) { bottom = a; top = c; }
             else { bottom = c; top = a; }
             return true;
         }
@@ -1261,6 +1376,8 @@ namespace TumbangPreso
         private void StepRoll()
         {
             if (_isUpright) { _rollAngleDeg = 0.0f; _lastRollPosition = transform.position; return; }
+            // Carried, it is in the taya's hands and does not roll along the road (CAN-CARRY-1024).
+            if (IsCarried) { _lastRollPosition = transform.position; return; }
 
             Vector3 here = transform.position;
             Vector3 moved = new Vector3(here.x - _lastRollPosition.x, 0.0f,

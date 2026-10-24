@@ -230,6 +230,8 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] NotModifiers =
         {
+            new Modifier("Lata.Carry.LogCarry",
+                "Diagnostic logging only: tests and probes turn it on to log why a can carry was dropped. It changes no rule, timing or outcome."),
             new Modifier("AIController.EdgeSense",
                 "Not a setting. The Arena's stage sets it while its scene is live and clears it when the scene goes (ArenaStage); it only lets bots see the open edges of that map."),
             new Modifier("ConvertedMatchSetup.Hub.HubEnabled",

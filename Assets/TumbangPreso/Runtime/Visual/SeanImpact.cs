@@ -104,6 +104,37 @@ namespace TumbangPreso.Visual
             HeroHazards.CreateExplosionVisual(at + Vector3.up * 0.4f, Mathf.Min(radius, 0.8f), "", HeroHazards.ExplosionStyle.Ignition);
         }
 
+        /// <summary>
+        /// ⚠️ CONTACT-1024: A MOLTEN THROW MEETS THE CAN, ON EVERY PEER (owner: the point of contact "doesn't look animated
+        /// well"). A short impact freeze, the shortest the game has (`Hitstop` bounds it and Reduced Effects skips it), lava
+        /// bursting off the struck side, and a flash ring on the road. The can's own flight is the transform's (`Lata`).
+        /// </summary>
+        public static void CanContact(Vector3 can, Vector3 along)
+        {
+            // Only in a live round: a can knocked about between rounds or in a bench has no beat to land.
+            if (GameServices.Round != null && GameServices.Round.RoundActive) Hitstop.Trigger(0.05f, 0.12f);
+            along.y = 0.0f;
+            Vector3 struck = can + Vector3.up * 0.2f - (along.sqrMagnitude > 0.0001f ? along.normalized * 0.12f : Vector3.zero);
+            HeroHazards.CreateExplosionVisual(struck, 0.55f, "", HeroHazards.ExplosionStyle.Ignition);
+            ImpactBurst.SpawnTinContact(struck);
+            SeanGroundMark.Spawn(can, 0.85f, SeanGroundMark.Mode.Flash, 0.3f, Accent);
+        }
+
+        /// <summary>
+        /// ⚠️ CONTACT-1024: MAGMA FIST'S KNUCKLES MEET A BODY, ON EVERY PEER, at the waist where they touch: lava bursting off
+        /// the knuckles and a squash up the body, so the throw that follows reads as coming out of that touch. The victim's own
+        /// freeze and camera punch stay with `Body` (`MatchFlair.Kind.SeanSlam`); nobody else's screen freezes.
+        /// </summary>
+        public static void FistContact(CharacterMotor victim, Vector3 knuckles)
+        {
+            if (victim == null) return;
+            Vector3 waist = new Vector3(victim.transform.position.x, Mathf.Max(knuckles.y, victim.transform.position.y + 0.55f),
+                                        victim.transform.position.z);
+            HeroHazards.CreateExplosionVisual(waist, 0.5f, "", HeroHazards.ExplosionStyle.Ignition);
+            ImpactBurst.SpawnAt(waist);
+            victim.GetComponentInChildren<CharacterSquashStretch>()?.Impact(Vector3.up, 0.22f);
+        }
+
         private static CameraSystem.CameraRig LocalRig()
             => Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
     }

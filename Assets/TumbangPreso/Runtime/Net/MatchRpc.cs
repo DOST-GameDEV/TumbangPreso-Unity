@@ -690,7 +690,6 @@ namespace TumbangPreso.Net
                 _nm == null || _nm.CustomMessagingManager == null)
                 return;
 
-            HostStepResetChannels();
             HostStepReclaimChannels();
             HookCompanions();
 
@@ -3084,32 +3083,12 @@ namespace TumbangPreso.Net
         // re-press after an interruption looks like.
         // -------------------------------------------------------------------
 
+        // ⚠️⚠️ CAN-CARRY-1024 (protocol 179): THE CHANNEL IS A CARRY NOW AND THE CAN OWNS IT. START asks for the pickup,
+        // CANCEL drops the can at the taya's feet, and COMPLETE is no longer the owner's to send: the host sets the can
+        // down itself when the carrier's synced body reaches the mark (`Lata.Carry.cs`). A COMPLETE from an old habit
+        // is read and ignored. The hold is still measured by the host alone, as the notes above require.
+
         public enum ResetPhase : byte { Start = 0, Cancel = 1, Complete = 2 }
-
-        /// <summary>Slot to the host's own start timestamp for an open reset channel.</summary>
-        private readonly Dictionary<int, float> _resetChannelStart = new Dictionary<int, float>();
-
-        /// <summary>
-        /// ⚠️ ONE PHYSICS STEP OF SLACK, AND NOT A FRAME MORE THAN THAT. A client's local clock
-        /// reaches the channel time up to one step before the host's does, purely because the two
-        /// processes step at different offsets. Refusing that COMPLETE would make the bar fill and
-        /// nothing happen, which is the worst of both.
-        /// </summary>
-        private const float ResetChannelLeeway = 0.05f;
-
-        // Read-only presentation of the host's validated remote hold. This value
-        // never changes channel admission or decides when a reset completes.
-        public float ObservedHostResetRatio
-        {
-            get
-            {
-                var lata=GameServices.Round?.Lata;if(lata==null)return 0;
-                float ratio=0;
-                foreach(var pair in _resetChannelStart)if(HostMayChannelReset(pair.Key))
-                    ratio=Mathf.Max(ratio,Mathf.Clamp01((Time.time-pair.Value)/lata.ResetChannelTime));
-                return ratio;
-            }
-        }
 
         public void RequestLataResetServerRpc(int slot, ResetPhase phase)
         {
@@ -3142,116 +3121,21 @@ namespace TumbangPreso.Net
         private void HostApplyResetPhase(int slot, ResetPhase phase)
         {
             if (!NetAuthority.IsHost) return;
-
-            if (phase == ResetPhase.Cancel)
-            {
-                _resetChannelStart.Remove(slot);
-                return;
-            }
-
-            if (!HostMayChannelReset(slot))
-            {
-                _resetChannelStart.Remove(slot);
-                return;
-            }
-
-            if (phase == ResetPhase.Start)
-            {
-                if (!_resetChannelStart.ContainsKey(slot))
-                {
-                    _resetChannelStart[slot] = Time.time;
-
-                    // The defender already played their own reach-down on the frame they pressed.
-                    BroadcastActionExceptOwner(slot, "grab");
-                }
-                return;
-            }
-
             var lata = GameServices.Round?.Lata;
             if (lata == null) return;
-            if (!_resetChannelStart.TryGetValue(slot, out float startedAt)) return;
-            if (Time.time - startedAt < lata.ResetChannelTime - ResetChannelLeeway) return;
 
-            _resetChannelStart.Remove(slot);
-            lata.HostRestore();
-            BroadcastLataState();
+            if (phase == ResetPhase.Cancel) { lata.HostDropCarry(slot); return; }
+            // The host sets the can down on its own clock (`Lata.StepCarry`); a COMPLETE decides nothing.
+            if (phase != ResetPhase.Start) return;
+            if (!HostMayChannelReset(slot)) return;
+            lata.HostBeginCarry(slot);
         }
 
-        /// <summary>Every condition `Carrier.StepDefender` checks, re-checked by the owner of the can.</summary>
+        /// <summary>Every condition `Carrier.StepDefender` checks, re-checked by the owner of the can (`Lata.MayStartCarry`).</summary>
         private bool HostMayChannelReset(int slot)
         {
-            var round = GameServices.Round;
-            var lata = round?.Lata;
-            var who = Unit(slot);
-
-            if (lata == null || who == null || lata.IsUpright) return false;
-            if (!who.IsDefender || !who.CanAct() || who.IsWhirled) return false;
-            if (Abilities.NemuLookout.Keeping(lata)) return false;
-            if (lata.IsHot) return false;   // Sean's MOLTEN THROW: too hot to start a reset on.
-
-            Vector3 a = who.transform.position;
-            Vector3 b = lata.transform.position;
-            a.y = 0.0f;
-            b.y = 0.0f;
-            return Vector3.Distance(a, b) <= Balance.InteractionRadius;
-        }
-
-        /// <summary>
-        /// Drops any channel whose conditions stopped holding, on the host's own step rather
-        /// than at COMPLETE time. Without this a defender could open a channel legitimately, walk
-        /// out of the ring, and still land the reset a second later.
-        /// </summary>
-        /// <summary>When each open reset channel last had its reach-down relayed to the peers.</summary>
-        private readonly Dictionary<int, float> _lastResetGestureRelay = new Dictionary<int, float>();
-
-        private void HostStepResetChannels()
-        {
-            if (_resetChannelStart.Count == 0) return;
-
-            List<int> dead = null;
-            foreach (var kv in _resetChannelStart)
-            {
-                if (!HostMayChannelReset(kv.Key))
-                {
-                    (dead ??= new List<int>()).Add(kv.Key);
-                    continue;
-                }
-
-                // ⚠️⚠️ THE REACH-DOWN IS RELAYED FOR THE WHOLE HOLD, NOT ONCE AT THE START. 🧑
-                // 2026-08-29, of the animation work: *"make sure everyone sees this not just host
-                // or client"*. `Carrier.StepDefender` re-fires the gesture every
-                // `ViewmodelArms.GrabSeconds` because the channel runs for
-                // `Balance.ResetChannelTime`, 1.5 s, and one 0.40 s reach leaves two thirds of
-                // the longest hold in the game with nothing moving in it. That repeat was purely
-                // LOCAL: `ResetPhase.Start` is sent once, so the taya saw themselves reaching
-                // over and over while the other three saw one reach and then a statue for 1.1 s.
-                //
-                // ⚠️ RELAYED FROM THE HOST ON ITS OWN CLOCK RATHER THAN BY A NEW WIRE PHASE.
-                // Adding a `Repeat` to `ResetPhase` would be a protocol change, and § 59.4 is
-                // what a protocol bump costs: both machines rebuilt off the same commit or they
-                // refuse each other at approval. The host already knows the channel is open and
-                // already ticks every physics step, so it can produce the repeat without anybody
-                // sending anything new.
-                //
-                // ⚠️ AND IT SKIPS THE OWNER, like the `Start` relay above it, because that peer
-                // is the one already playing it locally on its own timer.
-                float now = Time.time;
-                float last = _lastResetGestureRelay.TryGetValue(kv.Key, out float t) ? t : kv.Value;
-
-                if (now - last >= CameraSystem.ViewmodelArms.GrabSeconds)
-                {
-                    _lastResetGestureRelay[kv.Key] = now;
-                    BroadcastActionExceptOwner(kv.Key, "grab");
-                }
-            }
-
-            if (dead == null) return;
-
-            foreach (int slot in dead)
-            {
-                _resetChannelStart.Remove(slot);
-                _lastResetGestureRelay.Remove(slot);
-            }
+            var lata = GameServices.Round?.Lata;
+            return lata != null && lata.MayStartCarry(Unit(slot));
         }
 
         public void RequestEmoteServerRpc(int slot, string id)
@@ -5773,6 +5657,8 @@ namespace TumbangPreso.Net
 
         private Vector3 _lastLataPosition = new Vector3(float.NaN, float.NaN, float.NaN);
         private bool _lastLataUpright;
+        private int _lastLataCarrier = -1;
+        private Lata.CarryPhase _lastLataCarryPhase;
         private float _lataKeepaliveLeft;
 
         private readonly Dictionary<int, Vector3> _lastSlipperPosition = new Dictionary<int, Vector3>();
@@ -5809,11 +5695,16 @@ namespace TumbangPreso.Net
             if(clockChanged)_lataClockSyncLeft=.1f;
             bool toppled = lata.IsUpright != _lastLataUpright;
             bool keepalive = _lataKeepaliveLeft <= 0.0f;
+            // A carry starting, changing phase or ending is an event and travels reliably (CAN-CARRY-1024).
+            bool carryChanged = lata.CarrierSlot != _lastLataCarrier || lata.Carrying != _lastLataCarryPhase;
 
-            if (!moved && !toppled && !keepalive && !clockChanged) return;
+            if (!moved && !toppled && !keepalive && !clockChanged && !carryChanged) return;
 
             _lastLataPosition = lata.transform.position;
             _lastLataUpright = lata.IsUpright;
+            _lastLataCarrier = lata.CarrierSlot;
+            _lastLataCarryPhase = lata.Carrying;
+            if (carryChanged) toppled = true;
             _lataKeepaliveLeft = PropKeepaliveSeconds;
 
             // ⚠️ A ROLL IS A POSE AND TRAVELS AS ONE; GOING OVER IS THE EVENT THAT SCORES AND
@@ -5940,6 +5831,11 @@ namespace TumbangPreso.Net
             // A second optional suffix, Sean's hot can (protocol 176): readers before it stop at the clock and never read this.
             writer.WriteValueSafe((byte)HotCanSuffix);
             writer.WriteValueSafe(lata.HotLeft);
+            // A third, the carry (CAN-CARRY-1024, protocol 179): the carrier's seat, the phase and its age.
+            writer.WriteValueSafe((byte)CarrySuffix);
+            writer.WriteValueSafe((sbyte)Mathf.Clamp(lata.CarrierSlot, -1, 127));
+            writer.WriteValueSafe((byte)lata.Carrying);
+            writer.WriteValueSafe(lata.CarryAge);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLata", writer);
         }
 
@@ -6158,12 +6054,24 @@ namespace TumbangPreso.Net
                     reader.ReadValueSafe(out byte hotTag);
                     reader.ReadValueSafe(out float hot);
                     if(hotTag==HotCanSuffix)GameServices.Round?.Lata?.ApplyHotSnapshot(hot);
+                    if(reader.Length-reader.Position>=7)
+                    {
+                        reader.ReadValueSafe(out byte carryTag);
+                        reader.ReadValueSafe(out sbyte carrier);
+                        reader.ReadValueSafe(out byte carryPhase);
+                        reader.ReadValueSafe(out float carryAge);
+                        if(carryTag==CarrySuffix)GameServices.Round?.Lata?.ApplyCarrySnapshot(carrier,carryPhase,carryAge);
+                    }
+                    else GameServices.Round?.Lata?.ApplyCarrySnapshot(-1,0,0);
                 }
             }
         }
 
         /// <summary>The tag on `SyncLata`'s second optional suffix: the hot can's seconds left (Sean's MOLTEN THROW).</summary>
         private const byte HotCanSuffix = 7;
+
+        /// <summary>The tag on `SyncLata`'s third optional suffix: the can carry (CAN-CARRY-1024, protocol 179).</summary>
+        public const byte CarrySuffix = 8;
 
         private void OnSyncSlipperMsg(ulong senderClientId, FastBufferReader reader)
         {
@@ -6273,7 +6181,7 @@ namespace TumbangPreso.Net
                 // The chair changes hands here too, so the same per-seat host bookkeeping
                 // `HostPeerLeft` drops has to go: the arriving player must not inherit a movement
                 // rate window or a reset channel opened by the bot that was sitting there.
-                _resetChannelStart.Remove(peerRecord.Seat);
+                GameServices.Round?.Lata?.HostDropCarry(peerRecord.Seat);
 
                 // ⚠️ THE ARRIVING PLAYER DOES NOT INHERIT THE BOT'S BALANCE, in either direction.
                 // A drained budget would refuse their first steps and a full one would hand them
@@ -6687,7 +6595,7 @@ namespace TumbangPreso.Net
                     // Per-seat host bookkeeping belongs to whoever is driving the chair, and a
                     // bot is about to. A half-finished reset channel or a movement rate window
                     // left over from the peer that dropped would be applied to its replacement.
-                    _resetChannelStart.Remove(seat);
+                    GameServices.Round?.Lata?.HostDropCarry(seat);
                     _moveBudgets.Remove(seat);
 
                     // ⚠️⚠️ AND THE WIND-UP IS CANCELLED ON EVERYBODY ELSE'S SCREEN, WHICH

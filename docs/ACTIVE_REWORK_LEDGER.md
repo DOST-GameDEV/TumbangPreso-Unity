@@ -1,3 +1,20 @@
+# Can carry and contact checkpoint, October24
+
+CAN-CARRY-1024 (protocol 179) and CONTACT-1024 coded on BugFix; not played online
+or seen by the owner. This session fixed: replica PresentedEnds read a stale pose
+before Update; a body on the mark blocked the walk forever (blocked 0.35 s within
+the interaction radius now sets down); an ultimate or paused clock dropped the
+carry (Lata and Carrier now hold it); other views drew the can at face height
+inside the head (now in the hands; own first person keeps the eye height).
+Shared test isolation: PlayModeWorld.Reset now releases the presentation hold and
+restores scale 1 (TumpNativeHudTests froze the clock and stalled whole runs).
+Evidence Logs/carry-2026-10-24: carry set 29/29 (play19), CanCarry 5/5 with film
+(film3), Core 839/839. Pre-existing failures left as found: TumpNativeHudTests
+13 (Open waits 3.7 s, shorter than the opening countdown), BayanPlaza not in the
+build profile, TutorialDefenderProbe staging/roles, 46 EditMode (hero kits, art).
+Film: CanCarryFilm with TUMP_CARRY_FILM=1, encoded under Logs/can-carry-film.
+Next: TODO after CONTACT-1024 (Mayon cutscene, Molten fists, effects, parol, Wiki).
+
 # Opening HUD checkpoint, October22
 
 Original hide-through-GO source published as 1bd559dd1 to origin/BugFix.

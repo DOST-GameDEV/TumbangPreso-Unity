@@ -27,7 +27,7 @@ namespace TumbangPreso.PlayTests
         {
             _provider=NetAuthority.Provider;_rules=SceneFlow.SelectedRules.Clone();_pinned=SceneFlow.RulesPinned;
             _seat=GameLaunch.SoloSeat;_tutorial=GameLaunch.GuidedTutorial;
-            yield return PlayModeWorld.Reset();NetAuthority.Provider=new SoloProvider();GameLaunch.SoloSeat=1;GameLaunch.GuidedTutorial=false;
+            Lata.LogCarry=true;yield return PlayModeWorld.Reset();NetAuthority.Provider=new SoloProvider();GameLaunch.SoloSeat=1;GameLaunch.GuidedTutorial=false;
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));GameServices.Ensure();GameServices.Round.Clear();
             var floor=Keep(GameObject.CreatePrimitive(PrimitiveType.Cube));floor.transform.position=Vector3.down*.5f;floor.transform.localScale=new Vector3(40,1,40);
             _can=Keep(new GameObject("Reset recovery can")).AddComponent<Lata>();GameServices.Round.Lata=_can;
@@ -42,7 +42,7 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTearDown] public IEnumerator After()
         {
-            SharedUltimatePhase.Instance?.Cancel();PresentationClock.RequestScale(1);
+            SharedUltimatePhase.Instance?.Cancel();PresentationClock.RequestScale(1);Lata.LogCarry=false;
             foreach(var go in _objects)if(go!=null)Object.Destroy(go);_objects.Clear();yield return PlayModeWorld.Reset();
             NetAuthority.Provider=_provider;GameLaunch.SoloSeat=_seat;GameLaunch.GuidedTutorial=_tutorial;
             SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();

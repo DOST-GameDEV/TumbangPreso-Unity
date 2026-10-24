@@ -742,10 +742,12 @@ namespace TumbangPreso.Visual
             bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-circuit"
                 || _current == "hero-zack-bankshot";
             bool movingAction = _throwReleaseTime >= 0 || mobileUpperBody;
+            // Carrying the can back (CAN-CARRY-1024): the legs walk under the held can while the raise owns the arms.
+            bool carryWalk = _carrier != null && _carrier.IsCarryWalking;
             bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || movingAction)
                 && (_emote == null || !_emote.IsEmoting)
-                && (_carrier == null || _carrier.ChannelRatio <= 0)
-                && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing || movingAction);
+                && (_carrier == null || _carrier.ChannelRatio <= 0 || carryWalk)
+                && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing || movingAction || carryWalk);
             float target = layered && speed > WalkSpeedThreshold ? 1f : 0f;
             _gaitWeight = Mathf.MoveTowards(_gaitWeight, target, dt / .08f);
             // Accepted actions immediately own every bone. A leg layer lingering over a

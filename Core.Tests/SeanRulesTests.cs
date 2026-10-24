@@ -69,6 +69,21 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void TheStruckCanFliesThenSkidsTheSameDistance()
+        {
+            float v = SeanRules.HotCanFlightSpeed;
+            float flown = v * SeanRules.HotCanFlightSeconds;
+            float skid = v * v / (2.0f * SeanRules.HotCanSkidFriction);
+            Assert.Equal(SeanRules.HotCanSlide, flown + skid, 3);
+            // It peaks at the apex halfway through the flight and is back on the road at its end.
+            float up = SeanRules.HotCanLaunchUp, g = SeanRules.HotCanGravity, half = SeanRules.HotCanFlightSeconds * 0.5f;
+            Assert.Equal(SeanRules.HotCanApex, up * half - 0.5f * g * half * half, 3);
+            Assert.Equal(0.0f, up * SeanRules.HotCanFlightSeconds - 0.5f * g * SeanRules.HotCanFlightSeconds * SeanRules.HotCanFlightSeconds, 3);
+            // Slow enough to watch: the whole move takes far longer than the old 0.45 s friction stop.
+            Assert.True(SeanRules.HotCanFlightSeconds + v / SeanRules.HotCanSkidFriction > 0.8f);
+        }
+
+        [Fact]
         public void PressureFillsOneBarPerHitAndNeverOverflows()
         {
             int bars = 0;

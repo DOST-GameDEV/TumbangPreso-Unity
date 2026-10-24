@@ -37,7 +37,8 @@ namespace TumbangPreso.CameraSystem
         public const float GripSpread = .31f;
         private static readonly Vector3 LeftShoulder = new Vector3(-.46f, -.88f, -.05f);
 
-        private float RaiseRatio => _characterMotor != null ? _characterMotor.GetComponent<Carrier>()?.ChannelRatio ?? 0 : 0;
+        // CAN-CARRY-1024: the raise's shape off the can's carry (pickup, held through the walk, set-down), not the HUD ratio.
+        private float RaiseRatio => _characterMotor != null ? _characterMotor.GetComponent<Carrier>()?.RaiseShape ?? 0 : 0;
 
         /// <summary>True while the local taya is raising the can and the hands are in the raise pose.</summary>
         private bool RaisingCan => RaiseRatio > 0 && _raiseBlend > .5f;

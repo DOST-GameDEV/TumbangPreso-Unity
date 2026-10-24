@@ -69,10 +69,9 @@ namespace TumbangPreso.PlayTests
             taya.Intent.Parked=false;taya.Intent.Set(Verb.Grab,true);
             yield return new WaitForSeconds(.3f);
             Assert.Greater(carrier.ChannelRatio,.05f);Assert.AreEqual(carrier.ChannelRatio,clock.RestoreRatio,.04f);
-            // Preserve the actual in-progress channel during the comparison.
-            // A paused gameplay frame otherwise makes Carrier.CanAct false and
-            // correctly cancels the hold before the camera renders it.
-            carrier.enabled=false;Time.timeScale=0;yield return null;
+            // The paused frame holds the carry where it is (CAN-CARRY-1024: a carry pauses with the clock). Disabling
+            // Carrier is no longer the way to keep it: that is letting go, and drops the can.
+            Time.timeScale=0;yield return null;
             var source=MatchReplayArchive.PropModel(lata.gameObject);var history=new MatchPoseHistory.Track(null,source);
             var first=history.Capture(10);LataClockPresentation.Unpack(first.State,out float firstRestore,out _);
             Assert.AreEqual(clock.RestoreRatio,firstRestore,1f/255);
@@ -90,7 +89,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(state!="before",clock.GetComponent<Renderer>().enabled);
                 yield return GameplayShots.Render(cam,"restore-"+state,false,Output,taya,960,540);
             }
-            carrier.enabled=true;Time.timeScale=1;taya.Intent.Set(Verb.Grab,false);yield return new WaitForSeconds(.06f);
+            Time.timeScale=1;taya.Intent.Set(Verb.Grab,false);yield return new WaitForSeconds(.06f);
             // The coroutine resumes before the clock's LateUpdate. Let the
             // released input and its presentation both publish that frame.
             yield return null;

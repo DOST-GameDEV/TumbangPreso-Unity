@@ -879,7 +879,7 @@ namespace TumbangPreso
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
             // HERO-10 (plan 9.5): Phaister walks while she reaches for someone with a curse, but she cannot sprint.
-            Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
+            Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching && !IsCarryingCan
                                                    && !ReworkCrouched
                                                    && Intent.Pressed(Verb.Sprint));
 
@@ -926,6 +926,14 @@ namespace TumbangPreso
             if (canSteer)
             {
                 Vector3 wish = IsFeared ? FleeWish() : PossessedWish(Steer(axis, dt), dt);
+                // Carrying the can back (CAN-CARRY-1024): the body walks itself to the mark and the stick is ignored.
+                if (IsCarryingCan)
+                {
+                    wish = CarryWish(speed, dt);
+                    // A movement-aimed body turns to face where it walks, by the same bounded turn; a mouse-aimed one
+                    // keeps the player's own look.
+                    if (!MouseAimed && wish.sqrMagnitude > 1e-6f) Steer(new Vector2(wish.x, wish.z), dt);
+                }
 
                 // ⚠️ THE MOVEMENT REWORK PROTOTYPE takes the write for the local human while its debug switch is on
                 // (`MovementRework`, `CharacterMotor.MovementRework.cs`); otherwise this is the write it has always been.

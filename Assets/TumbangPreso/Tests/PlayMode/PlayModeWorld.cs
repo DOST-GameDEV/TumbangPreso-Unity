@@ -108,6 +108,15 @@ namespace TumbangPreso.PlayTests
             TumbangPreso.GameServices.Match?.ResetForNewMatch();
             TumbangPreso.GameServices.Round?.ResetForNewMatch();
 
+            // ⚠️ THE CLOCK GOES BACK TO 1 TOO. A test that ends inside the ready gate's hold, or pauses and "restores" a
+            // scale it read while that hold had it at 0, hands the next test a stopped clock: the gate's next `Hold`
+            // saves the 0 as the rate to resume at, and every `WaitForSeconds` after it never returns (2026-10-24,
+            // `TumpNativeHudTests`, the whole run stalled with no `.xml`).
+            TumbangPreso.Hitstop.End();
+            typeof(TumbangPreso.PresentationClock).GetMethod("Release",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)?.Invoke(null, null);
+            TumbangPreso.PresentationClock.RequestScale(1.0f);
+
             var clean = SceneManager.CreateScene(
                 EmptySceneName + "_" + Time.frameCount.ToString());
 

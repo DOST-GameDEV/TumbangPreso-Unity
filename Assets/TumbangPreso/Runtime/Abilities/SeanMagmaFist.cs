@@ -147,10 +147,49 @@ namespace TumbangPreso.Abilities
             if (landed) _kit?.HostAddHeat(_owner);
         }
 
+        /// <summary>
+        /// ⚠️ CONTACT-1024: THE KNUCKLES MEET THE BODIES ON IT, ON EVERY PEER. Owner: the contact "doesn't look animated well".
+        /// Each peer looks at who is standing on the puddle as the knuckles reach the waist (presentation; the host alone
+        /// decides who is thrown, in <see cref="HostResolvePunch"/>), bursts lava off the knuckles at each one, and holds the
+        /// fist on the touch for a beat with a squash, so the hit reads as an impact before the body flies.
+        /// </summary>
+        private void PresentContact()
+        {
+            if (_owner == null) return;
+            bool touched = false;
+            foreach (var p in SeanHeroKit.Rivals(_owner))
+            {
+                Vector3 to = p.transform.position - _punchAt;
+                if (!SeanRules.WithinReach(to.y, SeanRules.FistReachHeight)) continue;
+                to.y = 0;
+                if (to.magnitude > SeanRules.FistPunchRadius + .2f) continue;
+                SeanImpact.FistContact(p, _punchAt + Vector3.up * .9f);
+                touched = true;
+            }
+            if (!touched) return;
+            _contactHold = ContactHoldSeconds;
+            NetCue.PlayVaried("sfx_explosion_heavy", _punchAt, .82f, .9f, .6f);
+        }
+
+        private float _contactHold;
+        private const float ContactHoldSeconds = .07f;
+
         private void StepPunch(float dt)
         {
+            // The impact frame: the fist stops dead on the touch for a beat and swells, then carries on up.
+            if (_contactHold > 0)
+            {
+                _contactHold = Mathf.Max(0, _contactHold - dt);
+                if (_giant != null)
+                {
+                    float pop = 1f + .12f * Mathf.Sin((1f - _contactHold / ContactHoldSeconds) * Mathf.PI);
+                    _giant.localScale = new Vector3(pop, 1f / Mathf.Sqrt(pop), pop);
+                }
+                return;
+            }
+            if (_giant != null && _giant.localScale != Vector3.one) _giant.localScale = Vector3.MoveTowards(_giant.localScale, Vector3.one, dt * 4f);
             _punchAge += dt;
-            if (!_resolved && _punchAge >= SeanRules.FistHitDelay) { _resolved = true; HostResolvePunch(); }
+            if (!_resolved && _punchAge >= SeanRules.FistHitDelay) { _resolved = true; HostResolvePunch(); PresentContact(); }
             float rise = SeanRules.FistRiseSeconds, hold = SeanRules.FistHoldSeconds, cool = .45f;
             if (_giant != null)
             {

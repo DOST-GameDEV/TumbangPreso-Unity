@@ -56,8 +56,6 @@ namespace TumbangPreso.Visual
             float ratio=0;
             foreach(var actor in round.Players)if(actor!=null && actor.IsDefender)
                 ratio=Mathf.Max(ratio,actor.GetComponent<Carrier>()?.ChannelRatio??0);
-            if(NetAuthority.IsHost && Net.MatchRpc.Instance!=null)
-                ratio=Mathf.Max(ratio,Net.MatchRpc.Instance.ObservedHostResetRatio);
             return Mathf.Clamp01(ratio);
         }
         public void ApplySnapshot(float restore,float protection)
@@ -98,7 +96,8 @@ namespace TumbangPreso.Visual
                 protection=_lata.IsUpright?Mathf.Max(0,_observedProtection-age)/Balance.ThrowRestoreCooldown:0;
                 var viewer=GameServices.Round?.PlayerAt(NetAuthority.LocalSlot);
                 bool owner=viewer!=null && viewer.IsDefender;
-                if(!owner)restore=!_lata.IsUpright && _observedRestore>0 && age<=.65f?
+                // A carry is replicated (CAN-CARRY-1024), so every peer reads it straight; only an old relay is extrapolated.
+                if(!owner && !_lata.IsCarried)restore=!_lata.IsUpright && _observedRestore>0 && age<=.65f?
                     Mathf.Clamp01(_observedRestore+age/_lata.ResetChannelTime):0;
             }
         }

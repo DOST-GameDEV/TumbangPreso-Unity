@@ -16,12 +16,10 @@ namespace TumbangPreso.Visual
     /// the legs have no knees and the torso does the bending), both hands down on it, rising as the channel
     /// fills while the can itself tilts upright under them (`Lata`), then a short press down to plant it.
     ///
-    /// ⚠️ PROGRESS ON EVERY SCREEN, WITH NO WIRE CHANGE. The taya's own peer knows the real
-    /// `Carrier.ChannelRatio`. The others only receive the relayed `grab` gesture every 0.4 s
-    /// (`MatchRpc.HostStepResetChannels`), so they start a local clock at the first one and keep it alive while
-    /// they keep arriving. It is presentation only: the host alone decides when the can is upright, and the
-    /// can snaps to its real state the moment that arrives. A protocol change was not worth it (`CLAUDE.md`
-    /// § 4a, crossplay: both builds would have to ship together).
+    /// ⚠️ PROGRESS ON EVERY SCREEN, OFF THE CAN'S REPLICATED CARRY (CAN-CARRY-1024, protocol 179). The reset is a held
+    /// carry the host owns (`Lata.Carry.cs`), and every peer reads its phase: the pickup plays the crouch, grip and lift,
+    /// the carry holds the lift with the can in both hands while the legs walk, and the set-down plays the press
+    /// (`Lata.RaiseShapeFor`). The relayed `grab` clock this used to keep is gone with the host's channel.
     /// </summary>
     /// <summary>
     /// ⚠️⚠️ THE ONE SHAPE OF THE RAISE, SHARED BY THE BODY AND THE FIRST-PERSON VIEW SO THEY AGREE.
@@ -99,9 +97,9 @@ namespace TumbangPreso.Visual
             if (_motor == null || !_motor.IsDefender) return 0;
             var lata = GameServices.Round?.Lata;
             if (lata == null || lata.IsUpright) { _raiseSeen = -100; return 0; }
-            if (_carrier != null && _carrier.ChannelRatio > 0) return _carrier.ChannelRatio;
-            if (Time.time - _raiseSeen > ResetRelayGap) return 0;
-            return Mathf.Clamp01((Time.time - _raiseStart) / lata.ResetChannelTime);
+            // CAN-CARRY-1024: the can's replicated carry drives the shape on every peer (pickup 0 to 0.84, the carry
+            // holds 0.84 with the can in both hands, the set-down 0.85 to 1), so no relayed reach is needed any more.
+            return _carrier != null ? _carrier.RaiseShape : 0;
         }
 
         private void RestoreResetRaise()

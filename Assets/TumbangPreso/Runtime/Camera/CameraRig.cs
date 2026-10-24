@@ -1005,10 +1005,16 @@ namespace TumbangPreso.CameraSystem
             var carrier = _character != null ? _character.GetComponent<Carrier>() : null;
             var motor = _character != null ? _character.GetComponent<CharacterMotor>() : null;
             var lata = GameServices.Round?.Lata;
-            float ratio = carrier != null && motor != null && motor.IsDefender && lata != null && !lata.IsUpright ? carrier.ChannelRatio : 0f;
+            float ratio = carrier != null && motor != null && motor.IsDefender && lata != null && !lata.IsUpright ? carrier.RaiseShape : 0f;
             _fppSquatBlend = Mathf.MoveTowards(_fppSquatBlend, ratio > 0 ? 1f : 0f, Time.deltaTime / (ratio > 0 ? .12f : .25f));
             // Let go mid-raise: straighten from where the bend is, not from the shape's end (which is standing).
-            if (ratio > 0) _fppSquatShape = Visual.CanRaiseShape.FppBend(ratio);
+            // CAN-CARRY-1024: the eye straightens for the walk back (FppBend(0.84) would hold it bent at ~0.94), easing
+            // up out of the pickup and down again into the set-down rather than cutting.
+            if (ratio > 0)
+            {
+                float want = carrier.IsCarryWalking ? 0f : Visual.CanRaiseShape.FppBend(ratio);
+                _fppSquatShape = Mathf.MoveTowards(_fppSquatShape, want, Time.deltaTime / .18f);
+            }
             return Mathf.SmoothStep(0f, 1f, _fppSquatBlend) * _fppSquatShape;
         }
 

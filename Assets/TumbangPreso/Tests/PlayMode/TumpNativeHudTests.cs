@@ -1321,7 +1321,8 @@ namespace TumbangPreso.PlayTests
         public IEnumerator OrdinaryNativeToastStillExpiresWhilePaused()
         {
             yield return Open(GameMode.Classic);
-            var view = Object.FindFirstObjectByType<TumpMatchReadout>(); float scale = Time.timeScale;
+            // The scale to go back to is the clock's own, not `Time.timeScale`: the ready gate may still be holding it at 0.
+            var view = Object.FindFirstObjectByType<TumpMatchReadout>(); float scale = PresentationClock.RequestedScale;
             try
             {
                 Time.timeScale = 0; view.Toast("Ordinary paused toast", .2f);

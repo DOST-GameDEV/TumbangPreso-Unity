@@ -672,7 +672,11 @@ namespace TumbangPreso.Net
         // timed-kit passive float carries PRESSURE's bars as well as their cooling (`SeanRules.HeatWire`), and his blasts
         // reach their own level only and never knock the can over except the bomb. A 176 peer drops the new flair and reads
         // the heat as seconds: the two may not meet.
-        public const int ProtocolVersion = 178;
+        // 178 (2026-10-24): LAVA RAM's SEARED slow rides `SyncUnit` after the BLINDED clock.
+        // 179 (2026-10-24): the can carry (CAN-CARRY-1024). The reset is a held carry the host owns; `SyncLata` gains a
+        // third optional suffix (tag 8: carrier seat, phase, phase age) and COMPLETE no longer restores. A 178 peer
+        // channels on the old clock and never walks: the two may not meet.
+        public const int ProtocolVersion = 179;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

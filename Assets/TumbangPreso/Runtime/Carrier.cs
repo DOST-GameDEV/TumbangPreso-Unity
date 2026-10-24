@@ -124,20 +124,59 @@ namespace TumbangPreso
         private float _throwChargeDecayLeft, _throwChargeDecayStart, _observedDecayStart;
         public bool IsThrowChargeDecaying => _throwChargeDecayLeft > 0f;
         private float _throwLockLeft;
-        private float _channel;
-
-        /// <summary>The channel time the reset gesture was last fired at, so the read repeats on
-        /// its own length instead of once per press. See <see cref="StepDefender"/>.
-        /// ⚠️ IT NEEDS NO RESET OF ITS OWN: the opening frame is detected from `_channel` being
-        /// zero and rewrites this on the way past, so a stale value cannot survive a press.
+        /// <summary>
+        /// This producer is holding Grab for the can carry (CAN-CARRY-1024): it has asked for, or is in, a carry. See
+        /// <see cref="StepDefender"/>; the carry itself is the can's (`Lata.Carry.cs`).
         /// </summary>
-        private float _lastResetGesture;
+        private bool _carryHeld;
+        private float _carryRetryLeft;
 
         public Slipper Held { get; private set; }
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         private float ChargeRate => _motor.Mode == GameMode.HeroStrike
             ? Mathf.Clamp(_motor.AbilitySystem?.Kit?.ThrowChargeRate ?? 1f,.25f,2f) : 1f;
-        public float ChannelRatio { get; private set; }
+        /// <summary>
+        /// 0 to 1, how far this unit is through the reset carry (pickup, walk by distance, set-down), on EVERY peer: it
+        /// is read off the can's replicated carry (`Lata.CarryProgressFor`), so the HUD, the clock and the readouts agree.
+        /// </summary>
+        public float ChannelRatio
+        {
+            get
+            {
+                var lata = GameServices.Round?.Lata;
+                return lata != null && _motor != null ? lata.CarryProgressFor(_motor.PlayerSlot) : 0.0f;
+            }
+        }
+
+        /// <summary>The raise's shape (`Visual.CanRaiseShape`) for this unit's body and first-person arms, 0 when not carrying.</summary>
+        public float RaiseShape
+        {
+            get
+            {
+                var lata = GameServices.Round?.Lata;
+                return lata != null && _motor != null ? lata.RaiseShapeFor(_motor.PlayerSlot) : 0.0f;
+            }
+        }
+
+        /// <summary>True while this unit's body walks itself to the mark with the can (the CARRY phase).</summary>
+        public bool IsCarryWalking
+        {
+            get
+            {
+                var lata = GameServices.Round?.Lata;
+                return lata != null && _motor != null && lata.CarryWalks(_motor.PlayerSlot);
+            }
+        }
+
+        /// <summary>True for the whole carry, pickup to set-down: the stick is ignored.</summary>
+        public bool IsCarryingCan
+        {
+            get
+            {
+                var lata = GameServices.Round?.Lata;
+                return lata != null && _motor != null && lata.CarryHolds(_motor.PlayerSlot);
+            }
+        }
 
         private float _pektusSpin;
         public float CurrentPektusSpin => _charging ? _pektusSpin : 0.0f;
@@ -209,7 +248,7 @@ namespace TumbangPreso
         /// See the execution-order attribute on this class for what makes the ordering real
         /// rather than incidental.
         /// </summary>
-        public bool IsBusy => _channel > 0.0f || _charging || _grabPressConsumed;
+        public bool IsBusy => _carryHeld || IsCarryingCan || _charging || _grabPressConsumed;
 
         /// <summary>
         /// A successful pickup owns this grab press until release. InputIntent edges last
@@ -234,7 +273,6 @@ namespace TumbangPreso
 
         internal void RetireProducerInput(bool clearReceivedPresentation)
         {
-            if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
             ClearPendingState(clearReceivedPresentation);
         }
 
@@ -545,6 +583,10 @@ namespace TumbangPreso
             if (_observedCharge >= 0.0f)
                 _observedCharge = Mathf.Min(_observedCharge + dt * ChargeRate, Balance.ChargeFullTime);
 
+            // A shared pause (an ultimate's hold, a stopped clock) holds a carry where it is, as `Lata` does, rather than
+            // letting go of it (CAN-CARRY-1024). The input is read again the moment the pause ends.
+            if (_carryHeld && PresentationClock.BlocksInput) return;
+
             if (!_motor.CanAct())
             {
                 CancelAll();
@@ -560,9 +602,7 @@ namespace TumbangPreso
             }
             else
             {
-                if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
-                _channel = 0.0f;
-                ChannelRatio = 0.0f;
+                if (_carryHeld) ReleaseCarry();
                 StepAttacker(dt);
             }
         }
@@ -1077,92 +1117,73 @@ namespace TumbangPreso
             }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE RESET IS A HELD CARRY NOW (CAN-CARRY-1024, owner 2026-10-24: *"dapat hold nalang nila ung raise can
+        /// button, kasama na ung movement sa holding"*). Holding Grab beside the downed can asks for the carry; the can
+        /// owns the pickup, the walk to the mark and the set-down (`Lata.Carry.cs`), and letting go drops it.
+        ///
+        /// ⚠️ ONLY THE PEER THAT PRODUCES THIS BODY'S INPUT DECIDES THE HOLD. On the host that is its own human and the
+        /// bots, which reach `Lata.HostBeginCarry` directly, as solo does; a client's own taya sends START and CANCEL and
+        /// predicts the pickup (`Lata.PredictCarry`) until the host answers. A body this peer only displays has no say.
+        ///
+        /// ⚠️ A HOLD THAT OUTLIVES ITS CARRY ASKS AGAIN. Stunned mid-walk, the can drops; still holding when the stun ends,
+        /// the taya picks it up again, which is what the old channel did when it could run again.
+        /// </summary>
         private void StepDefender(float dt)
         {
-            var round = GameServices.Round;
-            var lata = round?.Lata;
-            var intent = _motor.Intent;
+            var lata = GameServices.Round?.Lata;
+            if (lata == null || !_motor.IsLocallySimulated()) { _carryHeld = false; return; }
 
-            bool canChannel = HasResetTarget;
+            int slot = _motor.PlayerSlot;
+            bool holding = _motor.Intent.Pressed(Verb.Grab);
+            bool mine = lata.IsCarriedBy(slot);
 
-            if (!canChannel || !intent.Pressed(Verb.Grab))
+            if (!holding)
             {
-                // ⚠️ LETTING GO ZEROES THE CHANNEL. It does not pause and it does not decay:
-                // a partial reset that survives being interrupted would let the taya nibble
-                // at it between throws, which is exactly the pressure the channel creates.
-                if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
-                _channel = 0.0f;
-                ChannelRatio = 0.0f;
+                if (_carryHeld || mine) ReleaseCarry();
                 return;
             }
 
-            // § THE ARM DOES THE WORK, and in first person the arm IS the viewmodel: righting
-            // the can is the same reach-down gesture as picking a tsinelas up. 🧑 2026-08-16:
-            // *"make sure my arm moves or does an animation when i interact with objects like in
-            // the real game — raise can, tag someone"*. Raising the can is this.
-            //
-            // ⚠️ NOT EVERY FRAME, or the clip restarts before it has moved and the arm never
-            // leaves its first pose. That is the trap this branch has always guarded against.
-            //
-            // ⚠️⚠️ BUT ONCE PER PRESS WAS TOO FEW, AND THAT IS THE OTHER HALF OF 🧑's *"no
-            // animation when ... raising lata"*. The gesture runs `ViewmodelArms.GrabSeconds`,
-            // 0.40 s, and the channel is held for `Lata.ResetChannelTime`, so the arm reached
-            // down once, came home, and then stood perfectly still for the rest of the hold while
-            // the meter filled and the can stayed on its side. Re-firing on the read's own length
-            // makes it a repeated reach, which is what righting a can looks like, and it goes
-            // through the one call site so both views get it rather than the viewmodel being
-            // posed behind the body's back.
-            //
-            // ⚠️⚠️ THE REPEAT IS GATED ON BOTH CLIPS, and either alone re-opens the trap from the
-            // other side. The body's read is a one-shot whose length comes off the rig, so waiting
-            // only on `IsPlayingAction` would restart the arm every frame on a rig with no
-            // `pick-up`: `PlayOneShot` returns silently on a missing clip and the timer never
-            // starts. Waiting only on the arm's length would cut a longer body clip off
-            // part-played. Both means the read repeats at the pace of whichever view is slower.
-            //
-            // ⚠️ `ReportResetPhase(Start)` STAYS ON THE OPENING FRAME ALONE. It is a network
-            // event announcing that a channel began, not a cosmetic one, and firing it four times
-            // for one hold would tell every peer the reset restarted three times.
-            var anim = GetComponentInChildren<Visual.CharacterAnimator>();
+            if (mine) { _carryHeld = true; return; }
 
-            bool opening = _channel <= 0.0f;
-            bool bodyFinished = anim == null || !anim.IsPlayingAction;
-            bool armFinished = _channel - _lastResetGesture >= CameraSystem.ViewmodelArms.GrabSeconds;
-
-            if (opening || (bodyFinished && armFinished))
+            if (_carryHeld)
             {
-                _lastResetGesture = _channel;
-                anim?.PlayAction("grab");
+                // Asked and not carrying (refused, dropped by a stun, or the reply is on its way): ask again, gently.
+                if ((_carryRetryLeft -= dt) > 0.0f || !HasResetTarget) return;
+                AskForCarry(lata, slot);
+                return;
             }
 
-            // ⚠️ AND NO CUE HERE. `Lata.SetUpright` owns the channel's sound off the can's own
-            // state; a `PlayAt` on this frame would be a second source for the same event, which
-            // matters more now that the read above fires more than once.
-            if (opening) ReportResetPhase(Net.MatchRpc.ResetPhase.Start);
+            if (!HasResetTarget) return;
+            _carryHeld = true;
+            AskForCarry(lata, slot);
+        }
 
-            _channel += dt;
-            ChannelRatio = Mathf.Clamp01(_channel / lata.ResetChannelTime);
-
-            if (_channel < lata.ResetChannelTime) return;
-
-            // ⚠️⚠️ THE CLIENT SHOWS ITS OWN BAR AND THE HOST STANDS THE CAN UP, AND THAT SPLIT IS
-            // THE WHOLE POINT. Before this the channel ran entirely locally and called
-            // `Lata.HostRestore` from whichever peer was holding the key, so a client righted the
-            // can on its own screen, the host's stream knocked it straight back down, and the taya
-            // saw the reset flicker and fail. The bar is prediction; the restore is a decision, and
-            // only one process makes decisions.
-            GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.18f);
-            _channel = 0.0f;
-            ChannelRatio = 0.0f;
-
+        private void AskForCarry(Lata lata, int slot)
+        {
+            _carryRetryLeft = .5f;
             if (NetAuthority.ShouldRequest())
             {
-                ReportResetPhase(Net.MatchRpc.ResetPhase.Complete);
+                ReportResetPhase(Net.MatchRpc.ResetPhase.Start);
+                lata.PredictCarry(_motor);
                 return;
             }
+            lata.HostBeginCarry(_motor);
+        }
 
-            lata.HostRestore();
-            Net.MatchRpc.Instance?.BroadcastLataState();
+        /// <summary>Let go of the carry: the host drops the can at the taya's feet; a client drops its own picture now.</summary>
+        private void ReleaseCarry()
+        {
+            _carryHeld = false;
+            var lata = GameServices.Round?.Lata;
+            if (lata == null || _motor == null) return;
+            if (NetAuthority.ShouldRequest())
+            {
+                ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
+                lata.UnpredictCarry(_motor.PlayerSlot);
+                return;
+            }
+            lata.HostDropCarry(_motor.PlayerSlot);
         }
 
         /// <summary>
@@ -1184,8 +1205,7 @@ namespace TumbangPreso
             bool clearTell = clearReceivedPresentation || _observedChargeFromInput;
             RetireLocalCharge(clearReceivedPresentation);
             if (clearTell) ApplyObservedCharge(false);
-            _channel = 0.0f;
-            ChannelRatio = 0.0f;
+            if (_carryHeld) ReleaseCarry();
         }
     }
 }

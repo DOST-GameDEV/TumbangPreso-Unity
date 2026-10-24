@@ -51,7 +51,18 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   opens a puddle that warns 0.45 s, then the giant fist. No flight, no lock. Prayer clips `hero-sean-pray-aim` (looped) and
   `hero-sean-pray` (`HeroAbilityClips.Sean.cs`, baked by `SeanMotionAuthor`); bots place it where the attacker will be.
 - [ ] 🧑 Owner to play the new Magma Fist and the prayer; first-person arms still play the old `cinder-draw` action.
-- [ ] CAN-CARRY-1024 (NOT STARTED, design agreed with the owner 2026-10-24, every hero): the reset becomes a real carry.
+- [x] CAN-CARRY-1024 (CODED 2026-10-24, protocol 179; not played online by anyone yet, the owner asked for it coded to work in
+  theory): the reset becomes a real carry. Built: `Lata.Carry.cs` (host-owned carrier, phase, age; pickup 0.35 s, the walk,
+  set-down 0.3 s, drop on release, stun, Whirled or role change, a stuck walk drops after 2.5 s, a walk blocked for 0.35 s
+  within `Balance.InteractionRadius` of the mark sets it down from there, an ultimate's shared pause holds the carry), `Carrier.StepDefender`
+  (START/CANCEL from the owning client with a predicted pickup, host and solo call `Lata` directly), `CharacterMotor.CanCarry.cs`
+  (walk to the mark at walking speed, no sprint, on the simulating peer), `SyncLata` tag 8, the body (`RaiseShape`, legs walk
+  under the held can), first person (`ViewmodelArms` grips the drawn can, `CameraRig` straightens the eye for the walk), the
+  clock and HUD off `ChannelRatio` read from the replicated carry on every peer. Tests: `CanCarryTests` (carry to the mark,
+  release drops, stun drops, a client draws it from the snapshot). Every view but the carrier's own first person draws the
+  held can in the body's real hands (`CharacterVisual.HandAnchor`); at the first-person height it sat inside the head. A
+  shared pause holds the carry in `Carrier` too. Film: `CanCarryFilm` (TUMP_CARRY_FILM=1; carry, drop, hot can; the
+  taya's own screen and another player's). Design as agreed:
   Owner: "show can being raised up and put in the right spot by defender ... animate them carrying it and walking back",
   "dapat hold nalang nila ung raise can button, kasama na ung movement sa holding", "they drop it" (every stun that stops a
   raise today), "siguro normal speed", "apparent that the person carries the can and puts it back in right place in all
@@ -79,7 +90,12 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
     `CarrierRoleInputLifetimeTests`, `CarrierPossessionLifetimeTests`, `AccessibilityControlTests`, `WorldCourtCueTests`,
     `TumpNativeHudTests`, `GameplayActionShots`, `Core.Tests/BalanceTests.cs`. HUD/readouts using `ChannelRatio`: `Hud`,
     `YouCard`, `TumpMatchReadout`, `OffscreenIndicators`, `LataClockPresentation`, `SpectatorInterest`.
-- [ ] CONTACT-1024 (NOT STARTED). Owner: the point of contact "doesn't look animated well" on "EVERYTHING": MOLTEN THROW on
+- [x] CONTACT-1024 (CODED 2026-10-24, not seen by the owner). The struck hot can leaves the road: an arc of 0.45 s peaking at
+  0.5 m, then a skid under 9 m/s^2, the same 3 m (`SeanRules.HotCanFlightSpeed`, was 13 m/s under friction 30 for 0.45 s);
+  the host's ApplyTilt measures from the ground the can is on, and a replica no longer pins it to the mark's level; replicas
+  glide to each `LataPose` (45 ms) instead of jumping. Contact on every peer: `SeanImpact.CanContact` (0.05 s freeze in a live
+  round, lava burst, flash ring; the in-place clatter is cancelled), a tin hop on landing; `SeanImpact.FistContact` at each
+  body on the puddle as the knuckles reach the waist, and the giant fist holds on the touch 0.07 s with a swell. Owner: the point of contact "doesn't look animated well" on "EVERYTHING": MOLTEN THROW on
   the can (no impact moment; the hot can's slide "parang teleported", `Lata.HostMoltenHit` and its client pose stream) and
   MAGMA FIST on the player (the giant fist rising into them, `SeanMagmaFist.StepPunch`). Wants the can visibly flying away.
   Ideas: hit-stop and a contact burst at the touch point, the can launched on an arc with spin before it lands and slides,
