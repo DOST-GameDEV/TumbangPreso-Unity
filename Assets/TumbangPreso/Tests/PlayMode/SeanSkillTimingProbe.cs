@@ -49,7 +49,7 @@ namespace TumbangPreso.PlayTests
             _bots = GameLaunch.AllBots; _spectator = GameLaunch.Spectator; _seat = GameLaunch.SoloSeat;
             _net = NetAuthority.Provider; _rules = SceneFlow.SelectedRules.Clone(); _pinned = SceneFlow.RulesPinned;
             yield return PlayModeWorld.Reset();
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider = new SoloProvider();
@@ -85,10 +85,13 @@ namespace TumbangPreso.PlayTests
             var kit=(SeanHeroKit)_caster.AbilitySystem.Kit;
             kit.Skill2.ApplyNetworkSnapshot(0,1);
             float bank=kit.UltimateCharge;
+            // A real rejoin's equipment snapshot carries the coat on the exact shoe (`MoltenThrowAbility.LoadedFor`).
+            _caster.GetComponent<Carrier>().Held.Affinity=SlipperAffinity.FireExplosive;
             Assert.IsTrue(kit.RestoreJoiningIgnition(_caster,1.2f));
             yield return null;yield return null;
             Assert.IsTrue(kit.IsIgnitionCannonActive);
-            Assert.AreEqual(1,kit.Skill2.ChargesRemaining);Assert.AreEqual(bank,kit.UltimateCharge);
+            // MOLTEN THROW is on a cooldown since 2026-10-24 (Empowered Throw's charges retired): restoring spends nothing.
+            Assert.AreEqual(0,kit.Skill2.CooldownRemaining,.001f);Assert.AreEqual(bank,kit.UltimateCharge);
             Assert.IsNotNull(_caster.GetComponent<Carrier>().Held.GetComponentInChildren<Visual.SeanIgnitionVisual>());
             float remaining=kit.Skill2.DurationRemaining;
             Assert.IsFalse(kit.RestoreJoiningIgnition(_caster,10));

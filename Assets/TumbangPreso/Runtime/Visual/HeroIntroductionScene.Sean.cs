@@ -132,13 +132,20 @@ namespace TumbangPreso.Visual
         }
 
         private static Mesh _snSphere;
+        /// <summary>
+        /// ⚠️ A COPY PER PIECE. `Add` hands its mesh to `VfxShapes.Own`, which destroys it with the piece; Unity's built-in sphere
+        /// is an ASSET, so handing it over logged "Destroying assets is not permitted" at the end of every MAYON AWAKENS (found by
+        /// `SeanKitPlayProbe`, 2026-10-24). The built-in one is kept only as the template.
+        /// </summary>
         private static Mesh SnSphereMesh()
         {
-            if (_snSphere != null) return _snSphere;
-            var probe = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            _snSphere = probe.GetComponent<MeshFilter>().sharedMesh;
-            ObjectDestroy(probe);
-            return _snSphere;
+            if (_snSphere == null)
+            {
+                var probe = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                _snSphere = probe.GetComponent<MeshFilter>().sharedMesh;
+                ObjectDestroy(probe);
+            }
+            return Object.Instantiate(_snSphere);
         }
 
         /// <summary>A fixed scatter in 0 to 1 for row <paramref name="i"/>: the same every frame and on every peer.</summary>

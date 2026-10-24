@@ -42,16 +42,23 @@ namespace TumbangPreso.Abilities
             bomb._from = owner.transform.position + Vector3.up * 2.3f;
             bomb._last = bomb._from;
             go.transform.position = bomb._from;
-            var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            ball.name = "Ball";
-            ball.transform.SetParent(go.transform, false);
-            VfxMaterial.Ghost(ball.GetComponent<Renderer>(), SeanMagmaFist.LavaEdge, 1.4f);
-            var core = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            core.name = "Core";
-            core.transform.SetParent(ball.transform, false);
-            core.transform.localScale = Vector3.one * .7f;
-            VfxMaterial.Ghost(core.GetComponent<Renderer>(), SeanMagmaFist.LavaCore, 1.8f);
-            bomb._ball = ball.transform;
+            // The modelled ball of lava (`bomb_ball`, 1.2 m across at scale 1); the first-pass spheres if it is missing.
+            var holder = new GameObject("Ball").transform;
+            holder.SetParent(go.transform, false);
+            var model = SeanProp.Spawn("bomb_ball", holder);
+            // The holder's scale is the ball's diameter (as the unit sphere's was); the model is 1.2 m at scale 1.
+            if (model != null) model.transform.localScale = Vector3.one / 1.2f;
+            else
+            {
+                var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                ball.transform.SetParent(holder, false);
+                VfxMaterial.Ghost(ball.GetComponent<Renderer>(), SeanMagmaFist.LavaEdge, 1.4f);
+                var core = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                core.transform.SetParent(ball.transform, false);
+                core.transform.localScale = Vector3.one * .7f;
+                VfxMaterial.Ghost(core.GetComponent<Renderer>(), SeanMagmaFist.LavaCore, 1.8f);
+            }
+            bomb._ball = holder;
             bomb._ball.localScale = Vector3.zero;
             AbilityVfx.AttachAura(bomb._ball, AbilityVfx.Aura.FireEmber, bomb._gather + bomb._flight + .2f);
             bomb._ring = SeanGroundMark.Spawn(land, SeanRules.BombRadiusFor(thrown), SeanGroundMark.Mode.Fill,

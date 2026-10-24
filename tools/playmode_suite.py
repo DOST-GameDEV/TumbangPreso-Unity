@@ -235,8 +235,10 @@ GROUPS = [
         "AiReactionTimingTests", "LagoonRecoveryProbe",
         # Placed 2026-09-26: plays Paete's whole kit through real input on Bayan Plaza (HERO-9).
         "PaeteKitPlayProbe",
-        # Placed 2026-10-24: plays Sean's lava brawler kit through real input on Bayan Plaza, and checks every hit is announced.
+        # Placed 2026-10-24: plays Sean's lava brawler kit through real input on the Eskinita, and checks every hit is announced.
         "SeanKitPlayProbe",
+        # Placed 2026-10-24: films Sean's whole kit in one take on the Eskinita (opt-in, TUMP_SEAN_FILM=1).
+        "SeanKitFilmProbe",
         # Placed 2026-09-27: puts Paete's plant, thorns and a mid-crawl sentry back for a rejoiner (HERO-9), the Ice probe's twin.
         "PaeteWorldSnapshotProbe",
         # Placed 2026-09-26: films Amihan's whole kit through real input on Bayan Plaza (HERO-8's second pass).

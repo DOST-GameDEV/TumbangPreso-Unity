@@ -16,7 +16,7 @@ using Object = UnityEngine.Object;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// Plays Sean's kit through real input in a live Hero Strike round on Bayan Plaza, and checks what each skill does to the
+    /// Plays Sean's kit through real input in a live Hero Strike round on the Eskinita (his own court; Bayan Plaza is out of the build list since protocol 172), and checks what each skill does to the
     /// world and what it tells every peer (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md`). Measurements go to
     /// `Logs/sean-play.csv`. Solo authority: the host's rules and the flair every peer would play are the same calls.
     /// </summary>
@@ -33,7 +33,7 @@ namespace TumbangPreso.PlayTests
             _net = NetAuthority.Provider;
             _log.Clear(); _flair.Clear();
             yield return PlayModeWorld.Reset();
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider = new SoloProvider();
@@ -143,12 +143,12 @@ namespace TumbangPreso.PlayTests
         public IEnumerator FullPressureErupts40PercentFartherAndSplashesOnlyItsOwnLevel()
         {
             var round = GameServices.Round;
-            var sean = Sean(round.PlayerAt(1), new Vector3(0, .12f, -8), new Vector3(0, 1, 7));
+            var sean = Sean(round.PlayerAt(1), new Vector3(1.6f, .12f, -9.5f), new Vector3(0, 1, -7));
             var kit = (SeanHeroKit)sean.AbilitySystem.Kit;
             var victim = Attacker(1);
             victim.Teleport(new Vector3(0, .12f, -7));
             var beside = round.Players.First(p => p != sean && p != victim && !p.IsDefender);
-            beside.Teleport(new Vector3(1.0f, .12f, -7));
+            beside.Teleport(new Vector3(0, .12f, -6.0f));   // along the lane: the Eskinita's walls are close on x
             var above = round.Players.First(p => p != sean && p != victim && p != beside);
             Box(new Vector3(-1.0f, 1.25f, -7), new Vector3(1.2f, 2.5f, 1.2f));
             above.Teleport(new Vector3(-1.0f, 2.62f, -7));

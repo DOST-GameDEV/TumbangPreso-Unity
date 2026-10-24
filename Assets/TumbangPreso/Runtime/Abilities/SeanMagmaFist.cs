@@ -38,6 +38,7 @@ namespace TumbangPreso.Abilities
         private SeanGroundMark _mark;
         private Vector3 _travel, _punchAt;
         private Transform _fist, _giant, _puddle;
+        private const float GiantHeight = 1.84f;   // `tools/build_sean_props.py --measure giant_fist`
         private Renderer[] _glow;
 
         public static SeanMagmaFist Spawn(CharacterMotor owner, SeanHeroKit kit, Vector3 at, Vector3 way, CharacterMotor target)
@@ -59,6 +60,9 @@ namespace TumbangPreso.Abilities
 
         private void Build()
         {
+            // The modelled fist of lava (`tools/build_sean_props.py`, knuckles leading on +Z); the first-pass blocks if it is missing.
+            var model = SeanProp.Spawn("lava_fist", transform);
+            if (model != null) { _fist = model.transform; AbilityVfx.AttachAura(_fist, AbilityVfx.Aura.FireEmber, SeanRules.FistMaxFlightSeconds + 1f); _glow = GetComponentsInChildren<Renderer>(); return; }
             _fist = Block("Fist", transform, new Vector3(.42f, .38f, .48f), Vector3.zero, LavaEdge);
             Block("Knuckles", _fist, new Vector3(1.05f, .45f, .3f), new Vector3(0, .2f, .45f), LavaCore);
             AbilityVfx.AttachAura(_fist, AbilityVfx.Aura.FireEmber, SeanRules.FistMaxFlightSeconds + 1f);
@@ -148,9 +152,14 @@ namespace TumbangPreso.Abilities
 
             var giant = new GameObject("GiantFist").transform;
             giant.SetParent(transform, false);
-            Block("Forearm", giant, new Vector3(.9f, 1.3f, .9f), new Vector3(0, .65f, 0), LavaEdge);
-            Block("Fist", giant, new Vector3(1.15f, .7f, 1.1f), new Vector3(0, 1.6f, 0), LavaCore);
-            giant.localScale = new Vector3(1, 0, 1);
+            // The modelled giant fist (`giant_fist`, 1.84 m, rising +Y out of its splash); the first-pass blocks if it is missing.
+            if (SeanProp.Spawn("giant_fist", giant) == null)
+            {
+                Block("Forearm", giant, new Vector3(.9f, 1.3f, .9f), new Vector3(0, .65f, 0), LavaEdge);
+                Block("Fist", giant, new Vector3(1.15f, .7f, 1.1f), new Vector3(0, 1.6f, 0), LavaCore);
+            }
+            // It comes UP OUT OF the puddle, never scaled out of nothing (plan § 0 rule 4): it starts sunk below the court.
+            giant.localPosition = new Vector3(0, -GiantHeight, 0);
             _giant = giant;
             _glow = GetComponentsInChildren<Renderer>();
 
@@ -195,7 +204,8 @@ namespace TumbangPreso.Abilities
                          : _punchAge < rise + .08f ? Mathf.Lerp(1.12f, 1f, (_punchAge - rise) / .08f)
                          : _punchAge < rise + hold ? 1f
                          : Mathf.Lerp(1f, 0f, (_punchAge - rise - hold) / cool);
-                _giant.localScale = new Vector3(1, Mathf.Max(0, up), 1);
+                // Risen by `up` out of the puddle and sunk back into it as it cools; the court hides what is below it.
+                _giant.localPosition = new Vector3(0, -GiantHeight * (1f - Mathf.Max(0, up)), 0);
             }
             // It cools to black glass as it sinks back into the puddle.
             float k = Mathf.Clamp01((_punchAge - rise - hold) / cool);

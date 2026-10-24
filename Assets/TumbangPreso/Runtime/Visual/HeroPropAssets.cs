@@ -9,7 +9,8 @@ namespace TumbangPreso.Visual
     {
         private static readonly string[] Folders =
         {
-            PaeteProp.ResourceFolder, ReworkProp.ResourceFolder, PhaisterProp.ResourceFolder, DanteProp.ResourceFolder
+            PaeteProp.ResourceFolder, ReworkProp.ResourceFolder, PhaisterProp.ResourceFolder, DanteProp.ResourceFolder,
+            SeanProp.ResourceFolder
         };
         private static readonly Dictionary<string, GameObject[]> RetainedFolders = new Dictionary<string, GameObject[]>();
         private static readonly Dictionary<string, GameObject> Prefabs = new Dictionary<string, GameObject>();

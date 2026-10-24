@@ -1,3 +1,41 @@
+### SEAN-LAVA-BRAWLER-1024: Rago's lava brawler kit, how it reads and feels for everyone (IN PROGRESS)
+
+Owner 2026-10-24: the lava brawler rework, then *"thoroughly think abt how all his skills should look like for everyone and
+interact with all shit in the game (uneven map surface, etc)"*, *"if affected or hit how do u make them EXPERIENCE or feel na
+its happening to them"*, *"spectator what do they see"*, *"felt but not overwhelming"*. Reports:
+[plan](reports/sean-kit-2026-10-24/plan.md), [research](reports/sean-kit-2026-10-24/research.md),
+[feel and readability](reports/sean-kit-2026-10-24/feel-and-readability.md). Branch `BugFix`, protocol 177.
+
+- [x] Kit on `SeanRules` (PRESSURE, LAVA RAM, MOLTEN THROW, MAGMA FIST, MAYON AWAKENS, VOLCANIC BOMB on E); core tests pass.
+- [x] Every hit reaches every peer (`MatchFlair` SeanSlam, SeanBlast, SeanSplash, SeanAbsorb, SeanBombThrown); the victim
+  alone gets the freeze, the punch from the hit's direction, the gold flash and a pad pulse; everyone sees the body shake.
+- [x] Blasts throw the written distance inside their ring, reach their own level only, and only the bomb knocks the can over.
+- [x] Court: draped rings and pool, the bomb's arc stops at walls and roofs, the fist climbs kerbs and stays on its level, the
+  hot can follows the ground and stays in the playable square; the taya's prompt says "Too hot to reset".
+- [x] Accent molten gold `#C9A000` (his red sat 2.2 degrees from the taya's); heat bars on every peer; E tile reads VOLCANIC
+  BOMB while Molten; a tagged Sean drops no bomb; the spectator director cuts to a thrown bomb.
+- [x] `SeanKitPlayProbe` (Eskinita), 11 of 13 on run 3: RAM 2.91 m and he stops, wall daze, hot can 3.08 m and the reset refused then allowed,
+  MAGMA FIST throws 3.68 m away from the can, PRESSURE 1.4x and the splash spares the platform above.
+- [x] Fixed: MAYON AWAKENS destroyed Unity's built-in sphere at every teardown ("Destroying assets is not permitted").
+- [x] Lore: born at the foot of Mayon, moved to San Fernando as a kid, the Eskinita stays his court.
+- [x] Props modelled part by part (`tools/build_sean_props.py`): flying fist, giant fist, bomb, Mayon, Molten fist; v2 seen in
+  Blender only. The fist, giant fist and bomb are wired with the old shapes as fallback; Mayon and the Molten fists are not
+  placed yet.
+- [x] Sound drafts (`tools/build_sean_audio.py`, report `audio-drafts/`): 23 cues and the MAYON AWAKENS theme, the slam its
+  loudest beat. Not heard by the owner; not in the game. May need rebuilding in the SFX-TONDO-1023 method once it is settled.
+- [ ] Rerun `SeanKitPlayProbe.FullPressureErupts...` (splash now holds 0.35 s; it slid 0.72 of 1.5 m) and
+  `SeanSkillTimingProbe.JoiningIgnition...` (test now gives the shoe its coat as a rejoin snapshot does).
+- [ ] Run `SeanKitFilmProbe` (TUMP_SEAN_FILM=1), stitch with `tools/stitch_ability_film.py`, send the owner the video.
+- [ ] 🧑 Owner's look at the skills film and the prop sheets.
+- [ ] Film the cutscene alone (`introfx sean <tag>`) and fix shot B (the fist macro) and C2 (the rising wide).
+- [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
+- [ ] Cleanup once nothing references them: parol props and `ParolGround`, `UltimateProp.Sean.cs`, `SeanSupernovaLook`,
+  `SeanCinderGate` (+ look and tests), the Stoke FX study scenes.
+- [ ] Wiki (Google Doc): the rules this pass changed (the can, uniform blast distances, the accent, the E tile).
+- [ ] Known, not Sean's: Bayan Plaza is out of the build scene list, so every probe that loads it fails in SetUp
+  (`MovementSnapshotProbe`, `PaeteKitPlayProbe`, `AmihanKitPlayProbe`, ...); a full EditMode run hangs in the LAN socket tests
+  when Windows refuses port 8911.
+
 ### SFX-TONDO-1023: make the Tondo cutscene sound good, then turn the method into the TUMP SFX skill (IN PROGRESS)
 
 Owner 2026-10-23: "this game has horrible sfx rn", "we will focus on fixing tondo cutscene sfx muna and when its
