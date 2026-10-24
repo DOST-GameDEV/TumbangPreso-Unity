@@ -21,6 +21,21 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol177: how Sean's hits reach every peer (2026-10-24)
+
+`docs/reports/sean-kit-2026-10-24/feel-and-readability.md`. Before this, every Sean hit drew only on the host.
+
+- `MatchFlair.Kind` gains SeanSlam (17), SeanBlast (18), SeanSplash (19), SeanAbsorb (20) and SeanBombThrown (21);
+  `MatchFlair.LastKind` is the one bound the relay checks. For the body hits `at` is where the hit came FROM (the victim's
+  camera is punched from it) and `strength` is the stagger. SeanSplash with subject -1 is the eruption's ring, `strength` its
+  radius. Every peer plays `Visual.SeanImpact`; only the victim's own view freezes, punches and rumbles.
+- PRESSURE's bars ride the timed-kit passive float as `SeanRules.HeatWire(bars, coolLeft)` (capacity
+  `HeatWireCapacity`, 18 s), so a client knows the bars and his full-heat glow matches the host's.
+- `SeanHeroKit.HostBlast` resolves the awakening (bodies only), PRESSURE's splash (bodies only) and both bombs (the can too,
+  never the taya's own): everyone in the ring slides the written distance, and only bodies within `BlastReachHeight` (1.8 m)
+  of the blast are reached. MAGMA FIST reaches its own level only and resolves `FistHitDelay` (0.1 s) after the puddle opens.
+- The hot can's host-side slide follows the court and stays in the playable square; the pose stream carries it as before.
+
 ## Protocol176: Sean's lava brawler kit (2026-10-24)
 
 Owner rework (`docs/reports/sean-kit-2026-10-24/plan.md`, numbers in `SeanRules`). Ids, glyphs and slots are unchanged;

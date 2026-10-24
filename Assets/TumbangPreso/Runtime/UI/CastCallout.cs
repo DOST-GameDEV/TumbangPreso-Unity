@@ -106,7 +106,7 @@ namespace TumbangPreso.UI
             pop.Ring.anchorMin = pop.Ring.anchorMax = new Vector2(.5f, 0); pop.Ring.pivot = new Vector2(.5f, .5f);
             pop.Ring.anchoredPosition = new Vector2(0, 30 + size * .5f); pop.Ring.sizeDelta = new Vector2(size, size);
             pop.RingImage.color = ultimate ? HudDraw.Honey : seat;
-            pop.Name.text = ability.EffectiveName.ToUpperInvariant();
+            pop.Name.text = ability.LiveName.ToUpperInvariant();
             pop.Name.fontSize = ultimate ? 30 : 24;
             pop.Name.color = ultimate ? HudDraw.Honey : HudDraw.Ivory;
             pop.Name.rectTransform.anchorMin = pop.Name.rectTransform.anchorMax = new Vector2(.5f, 0);

@@ -291,21 +291,22 @@ namespace TumbangPreso.InputLayer
                 if (_nativeAbility != null)
                 {
                     _nativeAbility.gameObject.SetActive(current != null);
-                    if (current != null && _nativeAbility.Glyph != current.Glyph)
-                    { _nativeAbility.Glyph = current.Glyph; _nativeAbility.SetVerticesDirty(); }
+                    if (current != null && _nativeAbility.Glyph != current.LiveGlyph)
+                    { _nativeAbility.Glyph = current.LiveGlyph; _nativeAbility.SetVerticesDirty(); }
                 }
                 return;
             }
             if (_icon == null) return;
 
             var ability = AbilityForSlot(local);
-            string id = ability != null ? ability.Id : null;
+            // Keyed on what the button does now, so Sean's E changes its icon while he is Molten.
+            string id = ability != null ? ability.Id + "/" + (int)ability.LiveGlyph : null;
 
             if (id == _iconGlyphShown) return;
 
             _iconGlyphShown = id;
             _icon.sprite = ability != null
-                ? AbilityIcons.For(ability.Glyph)
+                ? AbilityIcons.For(ability.LiveGlyph)
                 : VerbIcons.For(Entry.Glyph);
         }
 

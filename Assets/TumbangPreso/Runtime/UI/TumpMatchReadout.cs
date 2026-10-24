@@ -428,6 +428,14 @@ namespace TumbangPreso.UI
             if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
             {
                 if (!local.CanAct()) return;
+                // Sean's MOLTEN THROW: say WHY the reset is refused, with the cooling on the bar, instead of no prompt at all.
+                if (round.Lata.IsHot)
+                {
+                    Vector3 off = local.transform.position - round.Lata.transform.position; off.y = 0;
+                    if (off.magnitude > Balance.InteractionRadius) return;
+                    _prompt.text = "Too hot to reset";
+                    Progress(1f - round.Lata.HotLeft / SeanRules.HotCanSeconds); return;
+                }
                 if (carrier == null || !carrier.HasResetTarget) return;
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
                 string cue = Hud.PressCue("Grab");

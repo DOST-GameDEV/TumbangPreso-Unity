@@ -667,7 +667,12 @@ namespace TumbangPreso.Net
         // the VOLCANIC BOMB on E, and PRESSURE on a landed shove. His cutscene is MAYON AWAKENS, 7.0 s (was the parol's 8.4),
         // which every peer's shared phase reads. A 175 peer runs Stoke Step, Cinder Gate and Supernova on the same ids: the
         // two may not meet.
-        public const int ProtocolVersion = 176;
+        // 177 (2026-10-24): how Sean's hits reach every peer (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md`).
+        // Five `MatchFlair` kinds are appended (17 to 21: SeanSlam, SeanBlast, SeanSplash, SeanAbsorb, SeanBombThrown), the
+        // timed-kit passive float carries PRESSURE's bars as well as their cooling (`SeanRules.HeatWire`), and his blasts
+        // reach their own level only and never knock the can over except the bomb. A 176 peer drops the new flair and reads
+        // the heat as seconds: the two may not meet.
+        public const int ProtocolVersion = 177;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -74,6 +74,44 @@ namespace TumbangPreso.Visual
             _angularVelocity = Vector3.zero;
         }
 
+        /// <summary>
+        /// The body that was hit shakes side to side while its view is frozen, horizontal only and decaying to nothing
+        /// (Masahiro Sakurai's hit-stop rules: the one hit shakes more than the hitter, on the ground the shake is horizontal,
+        /// and the amplitude decays). It moves the MODEL only; the collider and the body the host simulates stay where they
+        /// are, so nothing about the hit changes. `docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 3.
+        ///
+        /// ⚠️ IT IS ADDED TO THE MODEL'S POSITION AND TAKEN BACK OFF, never written over it, so a clip or a crouch that owns
+        /// the model's local position keeps it.
+        /// </summary>
+        public void HitShake(Vector3 worldAcross, float seconds, float amplitude)
+        {
+            if (seconds <= 0.0f || amplitude <= 0.0f) return;
+            worldAcross.y = 0.0f;
+            if (worldAcross.sqrMagnitude < 0.0001f) worldAcross = transform.right;
+            _shakeAcross = worldAcross.normalized;
+            _shakeSeconds = Mathf.Min(seconds, 0.25f);
+            _shakeLeft = _shakeSeconds;
+            _shakeAmplitude = Mathf.Min(amplitude, 0.08f);
+        }
+
+        private Vector3 _shakeAcross, _shakeApplied;
+        private float _shakeSeconds, _shakeLeft, _shakeAmplitude;
+
+        private void StepHitShake(Transform target, float dt)
+        {
+            if (_shakeApplied != Vector3.zero) { target.localPosition -= _shakeApplied; _shakeApplied = Vector3.zero; }
+            if (_shakeLeft <= 0.0f) return;
+            _shakeLeft = Mathf.Max(0.0f, _shakeLeft - dt);
+            float k = _shakeLeft / _shakeSeconds;
+            // About 30 Hz, so a 70 ms freeze shows two full swings and the second is smaller.
+            float swing = Mathf.Sin((_shakeSeconds - _shakeLeft) * 190.0f) * _shakeAmplitude * k;
+            var parent = target.parent;
+            Vector3 local = parent != null ? parent.InverseTransformDirection(_shakeAcross) : _shakeAcross;
+            _shakeApplied = local * swing;
+            if (IsFinite(_shakeApplied)) target.localPosition += _shakeApplied;
+            else _shakeApplied = Vector3.zero;
+        }
+
         private void Update()
         {
             // Cosmetic springs must remain stable when tournament probes accelerate the
@@ -113,6 +151,8 @@ namespace TumbangPreso.Visual
             Vector3 scale = Vector3.Scale(_baseScale, Vector3.one + _currentScaleOffset);
             target.localScale = IsFinite(scale) ? scale : _baseScale;
             target.localRotation = _baseRotation * Quaternion.Euler(_rotationOffset);
+            // Never the character's own root: that carries the collider and the simulated body.
+            if (_modelRoot != null && _modelRoot != transform) StepHitShake(_modelRoot, dt);
         }
 
         private static bool IsFinite(Vector3 value)

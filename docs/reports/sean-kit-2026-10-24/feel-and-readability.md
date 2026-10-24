@@ -113,7 +113,7 @@ The blast does not knock the can over. The bomb does; the awakening is about bod
 
 | Beat | Sean | Players where it will land | Everyone else | Spectator |
 |---|---|---|---|---|
-| Tell, 0.2 s | The lava runs off both arms into one ball between his fists, held overhead | | Same | |
+| Tell, 0.5 s (`BombTellSeconds`) | The lava runs off both arms into one ball between his fists, held overhead | | Same | |
 | Release | His arms are bare again at once | | | **The director cuts to the landing spot** (a new interest, section 7, item 12) |
 | Travel, 0.9 s | | **A gold ring at exactly 4.8 m on the ground where it will land, filling as it falls; brighter, with a falling whistle, for players standing inside it** | The ring and the ball's growing shadow; the ball wobbles and sheds drips | The ring and the arc |
 | Contact | | **Ultimate weight** (knockdown weight for the smaller dropped bomb), thrown 4 m from the centre, stars 0.5 s | A crown of lava thrown up and out, the ring, the small Mayon cone of light; the can goes over if inside (never his own can) | The splash, held 1.5 s |
@@ -143,7 +143,8 @@ the pool is a draped mesh, so it lies on a slope, climbs a kerb and does not flo
 - Pad pulse on the victim only: low 0.35 and high 0.55 for 0.12 s (Knockdown), 0.6 and 0.8 for 0.2 s (Ultimate).
 - Text popups: none. A BONK on every hit is the clutter `docs/VISION.md` § 2 warns about; stars already say "held".
 - Lens splat (lava drops at the edge of the victim's view, from the side the hit came from): Ultimate weight only, three
-  drops, 0.5 s, cooling to black and sliding off. Off under `ReducedEffects`.
+  drops, 0.5 s, cooling to black and sliding off. Off under `ReducedEffects`. Not built in the first pass: it is painted
+  art, so it comes with the effects pass; until then the gold edge flash (`DamageVignette`) carries the "it was lava" read.
 
 ## 4 · Interactions with the rest of the game
 
@@ -196,7 +197,7 @@ colours until those passes replace them.
 13. Tests still asserted the old kit (SUPERNOVA, Steady Ember, protocol 175, two Molten Throw charges), and PRESSURE's tray
     line was one character over the limit.
 
-## 8 · Build order
+## 8 · Build order (built 2026-10-24 in this order; first-pass shapes, not yet played)
 
 1. The hit reactions (rules 1, 6, 7): new `MatchFlair` kinds for Sean's hits, the victim's body shake, the pad pulse; the
    protocol goes to 177.

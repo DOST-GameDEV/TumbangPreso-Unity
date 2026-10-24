@@ -13,6 +13,16 @@ namespace TumbangPreso.Abilities
     /// are the same on every peer; positions differ by a frame or two, so a replica may draw the punch a hair off, never a
     /// different outcome. Nothing here runs while a cutscene holds the world (`PresentationClock.Held`).
     ///
+    /// ⚠️⚠️ HOW IT READS AND MEETS THE COURT (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 2):
+    ///  * **The player it is coming for has a ring under their feet on every screen**, pulsing, brighter on their own; it
+    ///    is the read that tells them to sidestep, and it tells everyone else who is being hunted.
+    ///  * **It skims the court smoothly**, climbing a kerb or a step up to `SeanRules.FistStepUp` and falling off a ledge;
+    ///    anything taller is a wall and stops it.
+    ///  * **It reaches its own level only.** A target more than `SeanRules.FistReachHeight` above or below it is passed under,
+    ///    and the giant fist throws only players standing on the puddle's level.
+    ///  * **It hits as the knuckles reach the waist** (`SeanRules.FistHitDelay` after the puddle opens), so what the player
+    ///    sees touch them is what hits them.
+    ///
     /// The look is a first pass in the kit's family (liquid lava, gold to cherry red, cooling to black glass;
     /// `docs/reports/sean-kit-2026-10-24/plan.md` § 0). Its model and effects are the art pass still to come.
     /// </summary>
@@ -23,7 +33,9 @@ namespace TumbangPreso.Abilities
 
         private CharacterMotor _owner, _target;
         private SeanHeroKit _kit;
-        private float _heading, _age, _punchAge = -1;
+        private float _heading, _age, _punchAge = -1, _groundY;
+        private bool _resolved;
+        private SeanGroundMark _mark;
         private Vector3 _travel, _punchAt;
         private Transform _fist, _giant, _puddle;
         private Renderer[] _glow;
@@ -36,7 +48,11 @@ namespace TumbangPreso.Abilities
             fist._owner = owner; fist._kit = kit; fist._target = target;
             way.y = 0;
             fist._heading = way.sqrMagnitude > .0001f ? Mathf.Atan2(way.x, way.z) * Mathf.Rad2Deg : owner.transform.eulerAngles.y;
+            fist._groundY = Slipper.FindGroundY(at, at.y);
             fist.Build();
+            if (target != null)
+                fist._mark = SeanGroundMark.Spawn(target.transform.position, SeanRules.FistPunchRadius, SeanGroundMark.Mode.Follow,
+                    SeanRules.FistMaxFlightSeconds, SeanImpact.Accent, target.transform);
             NetCue.Play("sfx_cast_sean_rush", at);
             return fist;
         }
@@ -70,10 +86,22 @@ namespace TumbangPreso.Abilities
             if (_age > SeanRules.FistMaxFlightSeconds || _owner == null) { Fizzle(); return; }
 
             bool chasing = _target != null && _target.gameObject.activeInHierarchy && !_target.IsTagged;
+            if (_mark != null)
+            {
+                if (!chasing) { _mark.Stop(); _mark = null; }
+                else
+                {
+                    // The player it is coming for sees their ring brighter: the threat to YOU outranks the rest.
+                    var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
+                    _mark.Brightness = rig != null && rig.IsFollowing(_target) ? 1.7f : 1f;
+                }
+            }
             if (chasing)
             {
-                Vector3 to = _target.transform.position - transform.position; to.y = 0;
-                if (to.magnitude <= SeanRules.FistArriveRadius) { Punch(_target.transform.position); return; }
+                Vector3 to = _target.transform.position - transform.position;
+                bool level = SeanRules.WithinReach(_target.transform.position.y - _groundY, SeanRules.FistReachHeight);
+                to.y = 0;
+                if (level && to.magnitude <= SeanRules.FistArriveRadius) { Punch(_target.transform.position); return; }
                 _heading = SeanRules.FistSteer(_heading, Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg, dt);
             }
 
@@ -87,7 +115,15 @@ namespace TumbangPreso.Abilities
             { Fizzle(); return; }
 
             Vector3 next = transform.position + step;
-            next.y = Slipper.FindGroundY(next, next.y) + .55f;
+            // The court under the next step: a kerb or a step it can climb, a ledge it falls off, anything taller is a wall.
+            if (VfxShapes.TryGroundUnder(next, SeanRules.FistStepUp + .2f, 6f, out float ground))
+            {
+                if (ground - _groundY > SeanRules.FistStepUp) { Fizzle(); return; }
+                _groundY = ground;
+            }
+            // Smoothly onto the new height (no pop at a kerb), falling faster than it climbs.
+            float want = _groundY + .55f, rate = want < transform.position.y ? 9f : 5f;
+            next.y = Mathf.MoveTowards(transform.position.y, want, rate * dt);
             transform.position = next;
             transform.rotation = Quaternion.LookRotation(_travel, Vector3.up);
         }
@@ -120,7 +156,8 @@ namespace TumbangPreso.Abilities
 
             NetCue.Play("sfx_explosion_heavy", _punchAt);
             HeroHazards.CreateExplosionVisual(_punchAt, SeanRules.FistPunchRadius, "", HeroHazards.ExplosionStyle.Fire);
-            HostResolvePunch();
+            if (_mark != null) { _mark.Stop(); _mark = null; }
+            _resolved = false;
         }
 
         private void HostResolvePunch()
@@ -131,13 +168,17 @@ namespace TumbangPreso.Abilities
             bool landed = false;
             foreach (var p in SeanHeroKit.Rivals(_owner))
             {
-                Vector3 to = p.transform.position - _punchAt; to.y = 0;
+                Vector3 to = p.transform.position - _punchAt;
+                if (!SeanRules.WithinReach(to.y, SeanRules.FistReachHeight)) continue;
+                to.y = 0;
                 if (to.magnitude > SeanRules.FistPunchRadius) continue;
                 SeanRules.FistPushDirection(p.transform.position.x, p.transform.position.z, canAt.x, canAt.z,
                     _travel.x, _travel.z, out float x, out float z);
-                p.ApplyResolvedImpact(new Vector3(x, 0, z) * SeanRules.FistPushSpeed + Vector3.up * SeanRules.FistLiftSpeed);
+                var away = new Vector3(x, 0, z);
+                p.ApplyResolvedImpact(away * SeanRules.FistPushSpeed + Vector3.up * SeanRules.FistLiftSpeed);
                 p.ApplyStagger(.5f);
-                ComicPopup.Bonk(p.transform.position);
+                // From behind them along the throw, so their camera is punched the way they fly.
+                MatchFlair.Announce(MatchFlair.Kind.SeanSlam, _owner.PlayerSlot, p.PlayerSlot, p.transform.position - away, .5f);
                 landed = true;
             }
             if (landed) _kit?.HostAddHeat(_owner);
@@ -146,6 +187,7 @@ namespace TumbangPreso.Abilities
         private void StepPunch(float dt)
         {
             _punchAge += dt;
+            if (!_resolved && _punchAge >= SeanRules.FistHitDelay) { _resolved = true; HostResolvePunch(); }
             float rise = SeanRules.FistRiseSeconds, hold = SeanRules.FistHoldSeconds, cool = .45f;
             if (_giant != null)
             {
@@ -165,8 +207,11 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>It lost its target or hit a wall: a small splash and it is gone.</summary>
+        private void OnDestroy() { if (_mark != null) _mark.Stop(); }
+
         private void Fizzle()
         {
+            if (_mark != null) { _mark.Stop(); _mark = null; }
             HeroHazards.CreateExplosionVisual(transform.position, .6f, "", HeroHazards.ExplosionStyle.Ignition);
             Object.Destroy(gameObject);
         }

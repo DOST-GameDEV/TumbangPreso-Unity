@@ -1,7 +1,7 @@
 # Sean rework: plan and direction (2026-10-24)
 
 Status: PLAN, owner questions all answered 2026-10-24 (section 6). Nothing here is built; numbers the owner did not give stay PROPOSED. Research is in
-`research.md` beside this file. Method: `docs/HERO_KIT_METHOD.md`. Network: `docs/SKILL_NETWORK_CONTRACT.md`.
+`research.md` beside this file. How every skill reads and feels for Sean, the player hit, everyone else and a spectator, and how it meets the real court, is `feel-and-readability.md`; its section 5 lists what it changed here, and it wins where the two differ. Method: `docs/HERO_KIT_METHOD.md`. Network: `docs/SKILL_NETWORK_CONTRACT.md`.
 
 ## 0 · Who he is now
 

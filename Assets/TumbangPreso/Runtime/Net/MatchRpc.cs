@@ -3451,7 +3451,7 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
             if (!Finite(at) || !Finite(strength)) return;
             int round = GameServices.Match?.RoundNumber ?? 0;
-            if (PresentationMatchId <= 0 || round <= 0 || kind > (byte)Visual.MatchFlair.Kind.UltimateImpact) return;
+            if (PresentationMatchId <= 0 || round <= 0 || kind > (byte)Visual.MatchFlair.LastKind) return;
 
             using var writer = new FastBufferWriter(64, Allocator.Temp);
             writer.WriteValueSafe(kind);
@@ -3488,7 +3488,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int round);
 
             if (reader.Position != reader.Length || !Finite(at) || !Finite(strength)
-                || kind > (byte)Visual.MatchFlair.Kind.UltimateImpact || match <= 0 || match != PresentationMatchId
+                || kind > (byte)Visual.MatchFlair.LastKind || match <= 0 || match != PresentationMatchId
                 || round <= 0 || round != GameServices.Match?.RoundNumber) return;
             if (actor < -1 || actor >= Balance.PlayerCount) return;
             if (subject < -1 || subject >= Balance.PlayerCount) return;

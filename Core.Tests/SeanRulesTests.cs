@@ -165,5 +165,44 @@ namespace TumbangPreso.Core.Tests
             // The gather and the flight fit inside Molten, so a bomb thrown at the last moment still lands in the state.
             Assert.True(SeanRules.BombTellSeconds + SeanRules.BombFlightSeconds < SeanRules.MoltenSeconds);
         }
+
+        [Theory]
+        [InlineData(0f, true)]
+        [InlineData(1.1f, true)]      // a standing jump over a street blast is still caught
+        [InlineData(-1.8f, true)]
+        [InlineData(2.5f, false)]     // a roof above the street
+        [InlineData(-3.0f, false)]    // the street below a roof
+        [InlineData(float.NaN, false)]
+        public void ABlastReachesOnlyItsOwnLevel(float dy, bool reached)
+            => Assert.Equal(reached, SeanRules.WithinReach(dy, SeanRules.BlastReachHeight));
+
+        [Theory]
+        [InlineData(0, 3f)]
+        [InlineData(1, 6f)]
+        [InlineData(2, 0.4f)]
+        [InlineData(3, 5.99f)]
+        public void TheHeatBarsReachEveryPeerIntact(int bars, float cool)
+        {
+            float wire = SeanRules.HeatWire(bars, cool);
+            Assert.InRange(wire, 0f, SeanRules.HeatWireCapacity);
+            SeanRules.HeatFromWire(wire, out int gotBars, out float gotCool);
+            Assert.Equal(bars, gotBars);
+            if (bars > 0) Assert.Equal(System.Math.Min(cool, SeanRules.PressureCoolSeconds - 0.001f), gotCool, 2);
+            else Assert.Equal(0f, gotCool);
+            SeanRules.HeatFromWire(float.NaN, out gotBars, out _);
+            Assert.Equal(0, gotBars);
+        }
+
+        [Fact]
+        public void TheCourtLimitsKeepEachThingOnItsOwnLevel()
+        {
+            // The fist punches up through a jump but not onto a terrace above; it climbs kerbs a ground mark climbs.
+            Assert.True(SeanRules.FistReachHeight < SeanRules.BlastReachHeight);
+            Assert.True(SeanRules.FistStepUp <= 0.6f);
+            Assert.True(SeanRules.HotCanStepUp < SeanRules.FistStepUp);
+            // The hit lands inside the rise, before the fist reaches the top.
+            Assert.InRange(SeanRules.FistHitDelay, 0.01f, SeanRules.FistRiseSeconds);
+            Assert.True(SeanRules.BombStaggerSeconds >= SeanRules.AwakeningStaggerSeconds);
+        }
     }
 }

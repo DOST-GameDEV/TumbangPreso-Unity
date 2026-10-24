@@ -152,7 +152,7 @@ namespace TumbangPreso.UI
             if (_rows[0] == null || caster == null || ability == null) return;
             Bind();
             if (!Live) return;
-            Add(caster.PlayerSlot, -1, (ultimate ? "ULT " : "") + ability.EffectiveName.ToUpperInvariant(),
+            Add(caster.PlayerSlot, -1, (ultimate ? "ULT " : "") + ability.LiveName.ToUpperInvariant(),
                 (ultimate ? "ult:" : "cast:") + ability.Id, HudBadge.Glyph.None, ultimate ? HudDraw.Honey : PlayerIdentity.Colour(caster.PlayerSlot),
                 0, AbilityIcons.For(ability.Glyph), ultimate);
         }

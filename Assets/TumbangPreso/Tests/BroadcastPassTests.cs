@@ -367,7 +367,7 @@ namespace TumbangPreso.Tests
             {
                 { "dante", "CONTINENTAL DRIFT" },
                 { "cheska", "ABSOLUTE ZERO" },
-                { "sean", "SUPERNOVA" },
+                { "sean", "MAYON AWAKENS" },
                 { "zack", "THUNDERSTRIKE" },
                 { "nemu", "DEVOURING SEANCE" },
                 { "phaister", "VOODOO DOLL" },

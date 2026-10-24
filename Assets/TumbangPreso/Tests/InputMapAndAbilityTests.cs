@@ -635,7 +635,8 @@ namespace TumbangPreso.Tests
                 Assert.IsFalse(kit.Ultimate.UsesCharges,
                     hero + "'s ultimate is on ability charges as well as the ultimate meter");
             }
-            CollectionAssert.AreEquivalent(new[] { "sean_skill2d", "zack_skill2d", "rafi_skill2d" },
+            // Sean's defending slot is MAGMA FIST since 2026-10-24, not a placeholder.
+            CollectionAssert.AreEquivalent(new[] { "zack_skill2d", "rafi_skill2d" },
                                            placeholders, "the three designed-later role slots changed");
         }
 
@@ -651,11 +652,12 @@ namespace TumbangPreso.Tests
                 Assert.IsFalse(skill.UsesCharges, skill.Id + " still uses the retired ice charges");
             }
 
-            foreach (string hero in new[] { "sean", "zack" })
+            // Sean left this list on 2026-10-24: MOLTEN THROW is on a cooldown, not Empowered Throw's two charges.
+            foreach (string hero in new[] { "zack" })
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
                 var skill = kit.AttackingSkill;
-                int cap = hero == "sean" ? 2 : 1;
+                int cap = 1;
                 Assert.AreEqual(cap, skill.MaxCharges, hero + " has the wrong charge cap");
                 Assert.AreEqual(HeroAbility.Recharge.LataKnocked, skill.RechargedBy);
                 skill.ApplyNetworkSnapshot(0, 0);

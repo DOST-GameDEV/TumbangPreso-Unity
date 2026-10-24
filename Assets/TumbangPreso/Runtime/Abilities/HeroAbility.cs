@@ -605,6 +605,16 @@ namespace TumbangPreso.Abilities
         public string EffectiveDescription =>
             string.IsNullOrEmpty(VariantSummary) ? Description : VariantSummary;
 
+        /// <summary>
+        /// What this slot's button does RIGHT NOW, for the deck tile, the touch button, the hold-key panel, the cast callout and
+        /// the event feed. Normally the slot itself; a kit whose button does something else inside a state answers with what it
+        /// does then (Sean's E is VOLCANIC BOMB while he is Molten). The saved id, the loadout and the slot's own glyph never
+        /// change, so `Glyph`'s rule (one icon per slot in every build) still holds outside the state.
+        /// </summary>
+        public virtual string LiveName => EffectiveName;
+        public virtual UI.AbilityGlyph LiveGlyph => Glyph;
+        public virtual string LiveDescription => EffectiveDescription;
+
         protected HeroAbility(string id, string name, string description, float cooldown,
                               float duration = 0.0f,
                               UI.AbilityGlyph glyph = UI.AbilityGlyph.Burst,

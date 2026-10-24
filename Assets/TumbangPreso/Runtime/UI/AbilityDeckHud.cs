@@ -39,7 +39,7 @@ namespace TumbangPreso.UI
         public static void PaintGlyph(Image target, Abilities.HeroAbility ability)
         {
             if (target == null || ability == null) return;
-            var want = AbilityIcons.For(ability.Glyph);
+            var want = AbilityIcons.For(ability.LiveGlyph);
             if (target.sprite != want) target.sprite = want;
         }
 
@@ -49,7 +49,7 @@ namespace TumbangPreso.UI
         public static string GetGlyphLabel(Abilities.HeroAbility ability)
         {
             if (ability == null) return "POWER";
-            return AbilityIcons.LabelFor(ability.Glyph);
+            return AbilityIcons.LabelFor(ability.LiveGlyph);
         }
     }
 }

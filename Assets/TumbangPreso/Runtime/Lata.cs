@@ -545,6 +545,8 @@ namespace TumbangPreso
         public float HotLeft { get; private set; }
         public bool IsHot => HotLeft > 0.0f;
         private Vector3 _slideVelocity;
+        private float _slideGround, _slideLift;
+        private Visual.SeanGroundMark _hotRing;
 
         /// <summary>
         /// Host-side. A MOLTEN THROW knocked this can over: it is blasted `SeanRules.HotCanSlide` along the throw, sliding to a
@@ -556,6 +558,8 @@ namespace TumbangPreso
             HotLeft = SeanRules.HotCanSeconds;
             along.y = 0.0f;
             _slideVelocity = along.sqrMagnitude > .0001f ? along.normalized * SeanRules.HotCanSlideSpeed : Vector3.zero;
+            _slideGround = Visual.VfxShapes.TryGroundUnder(transform.position, .5f, 3f, out float ground) ? ground : transform.position.y;
+            _slideLift = transform.position.y - _slideGround;
             NetCue.Play("sfx_slipper_burst", transform.position);
             Net.MatchRpc.Instance?.BroadcastLataState();
         }
@@ -567,6 +571,11 @@ namespace TumbangPreso
         private void StepMoltenHit(float dt)
         {
             if (HotLeft > 0.0f) HotLeft = Mathf.Max(0.0f, HotLeft - dt);
+            // Every screen: the reset reach round the can, draining as it cools. The taya may start the reset when it empties.
+            if (IsHot && _hotRing == null && !_isUpright)
+                _hotRing = Visual.SeanGroundMark.Spawn(transform.position, Balance.InteractionRadius, Visual.SeanGroundMark.Mode.Drain,
+                    HotLeft, Visual.SeanImpact.Accent, transform);
+            else if ((!IsHot || _isUpright) && _hotRing != null) { _hotRing.Stop(); _hotRing = null; }
             if (_slideVelocity.sqrMagnitude <= 0.0f) return;
             if (!NetAuthority.ShouldResolve() || _isUpright) { _slideVelocity = Vector3.zero; return; }
             float speed = _slideVelocity.magnitude;
@@ -578,7 +587,17 @@ namespace TumbangPreso
                 && hit.collider.GetComponentInParent<CharacterMotor>() == null
                 && hit.collider.GetComponentInParent<Slipper>() == null)
             { _slideVelocity = Vector3.zero; return; }
-            transform.position += step;
+            // It follows the court (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 2): down a kerb or a terrace
+            // edge it falls, at a step up taller than `SeanRules.HotCanStepUp` it stops as at a wall, and it never leaves the
+            // playable square, so the taya can always reach it.
+            Vector3 next = AIController.ClampToPlayable(transform.position + step);
+            if (Visual.VfxShapes.TryGroundUnder(next, SeanRules.HotCanStepUp + .25f, 6f, out float ground))
+            {
+                if (ground - _slideGround > SeanRules.HotCanStepUp) { _slideVelocity = Vector3.zero; return; }
+                _slideGround = ground;
+            }
+            next.y = Mathf.MoveTowards(transform.position.y, _slideGround + _slideLift, 9f * dt);
+            transform.position = next;
             speed = Mathf.Max(0.0f, speed - Balance.Friction * dt);
             _slideVelocity = speed > .05f ? _slideVelocity.normalized * speed : Vector3.zero;
         }

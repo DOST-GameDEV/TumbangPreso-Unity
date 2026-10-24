@@ -654,6 +654,10 @@ namespace TumbangPreso
             // Sean's PRESSURE: a shove adds heat, and a shove at full heat erupts (farther, with a splash).
             if (_motor.Mode == GameMode.HeroStrike && _motor.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                 push = sean.HostShoveLanded(_motor, victim, push);
+            // Molten Sean cannot be moved: his lava fists splash, and the shover feels it on their own camera.
+            if (victim.AbilitySystem?.Kit is Abilities.SeanHeroKit molten && molten.IsMolten && NetAuthority.ShouldResolve())
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.SeanAbsorb, _motor.PlayerSlot, victim.PlayerSlot,
+                    transform.position);
 
             victim.ApplyResolvedImpact(push);
             victim.ApplyStagger(Balance.ShoveStun);

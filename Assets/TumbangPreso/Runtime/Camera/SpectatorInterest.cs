@@ -333,6 +333,13 @@ namespace TumbangPreso.CameraSystem
         private CharacterMotor _lataHitBy;
 
         private float _tagAt = -99.0f;
+
+        // Sean's VOLCANIC BOMB is the payoff of an ultimate that started up to 8 s earlier, long after `UltimateSeconds`.
+        // `docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 2: the director cuts to where it will land.
+        private float _bombAt = -99.0f;
+        private CharacterMotor _bombCaster;
+        private Vector3 _bombPoint;
+        public const float BombShotSeconds = 2.2f;   // the 0.5 s gather, the 0.9 s flight and the splash
         private CharacterMotor _tagDefender;
         private CharacterMotor _tagVictim;
         private Vector3 _tagPoint;
@@ -410,6 +417,8 @@ namespace TumbangPreso.CameraSystem
             _hookedLata = null;
             _ultimateAt = -99.0f;
             _ultimateCaster = null;
+            _bombAt = -99.0f;
+            _bombCaster = null;
             _ultimateAbility = null;
             _ultimateKit = null;
             _ultimateRound = null;
@@ -453,6 +462,11 @@ namespace TumbangPreso.CameraSystem
 
         private void OnPublicFlair(Visual.MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
         {
+            if(kind==Visual.MatchFlair.Kind.SeanBombThrown)
+            {
+                var r=GameServices.Round;if(r==null)return;
+                _bombAt=Time.unscaledTime;_bombCaster=SeatOf(r,actor);_bombPoint=at;return;
+            }
             if(kind!=Visual.MatchFlair.Kind.Tag)return;
             var round=GameServices.Round;if(round==null)return;
             _tagAt=Time.unscaledTime;_tagDefender=SeatOf(round,actor);_tagVictim=SeatOf(round,subject);_tagPoint=at;
@@ -665,6 +679,11 @@ namespace TumbangPreso.CameraSystem
                 if(nearest!=null)return new SpectatorInterest(SpectatorBeat.Retrieval,retriever,taya,nearest.transform.position,true,
                     ShotType.RetrievalTwoShot,now,RetrievalSeconds,MinCommit,"own tsinelas recovery while the taya returns to the can",nearest);
             }
+
+            if (_bombCaster != null && now - _bombAt < BombShotSeconds)
+                return new SpectatorInterest(
+                    SpectatorBeat.Ultimate, _bombCaster, NearestOther(round, _bombCaster), _bombPoint, true,
+                    ShotType.UltimateWide, _bombAt, BombShotSeconds, MinCommit, "volcanic bomb landing");
 
             var casting = LiveUltimate(round);
             // Instant abilities can finish between director decisions. Cover the

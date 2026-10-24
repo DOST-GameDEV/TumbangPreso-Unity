@@ -427,7 +427,7 @@ namespace TumbangPreso.UI
 
             card.Rt.gameObject.SetActive(true);
             card.Tile.color = Color.white;
-            card.Glyph.sprite = AbilityIcons.For(ability.Glyph);
+            card.Glyph.sprite = AbilityIcons.For(ability.LiveGlyph);
             card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, hero);
             card.Key.text = Hud.KeyLabelFor(action);
             // ⚠️⚠️ `EffectiveName` AND `EffectiveSummary`, WHICH IS `VISION.md` § 3's RECALL
@@ -441,7 +441,7 @@ namespace TumbangPreso.UI
             // SECTION: the icon says what the power does to the WORLD, and a sidegrade does not
             // change the job. Chalk Perimeter is still a zone. Two icons for one slot would teach
             // the player that the icon means the build.
-            card.Name.text = ability.EffectiveName;
+            card.Name.text = ability.LiveName;
             card.Name.color = hero;
 
             // ⚠️⚠️ THE KIND WORD IS MUTED CREAM AND IT WAS THE HERO COLOUR, WHICH GAVE EVERY CARD
@@ -460,7 +460,7 @@ namespace TumbangPreso.UI
             // ⚠️ AND THE WORD ITSELF CHANGED, WHICH IS THE HALF THAT MATTERS.
             // `AbilityIcons.LabelFor` returned the ability's own NAME for every bespoke glyph;
             // it returns the JOB now (`docs/VISION.md` § 3 rule 1). That file has the argument.
-            card.Kind.text = AbilityIcons.LabelFor(ability.Glyph);
+            card.Kind.text = AbilityIcons.LabelFor(ability.LiveGlyph);
             card.Kind.color = UiTheme.CreamMuted;
 
             // ⚠️⚠️ `EffectiveDescription` AND NOT `EffectiveSummary`. This is `VISION.md` § 3's
@@ -469,7 +469,7 @@ namespace TumbangPreso.UI
             // player who has equipped an alternate sees that alternate's sentence instead.
             // Falling back to `Summary` here would have shortened the one screen in the game that
             // exists to be long. See `HeroAbility.EffectiveDescription`.
-            card.Body.text = ability.EffectiveDescription;
+            card.Body.text = ability.LiveDescription;
 
             // ⚠️⚠️ THE TIMING IS ON ITS OWN LINE NOW AND IT USED TO SHARE ONE WITH THE KIND
             // WORD, WHICH IS THE MESS `Logs/shots-hero/hero_inspect_dante_v3.png` SHOWS.

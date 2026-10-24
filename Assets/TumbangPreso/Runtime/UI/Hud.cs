@@ -5596,7 +5596,7 @@ namespace TumbangPreso.UI
         {
             if (target == null || ability == null) return;
 
-            var want = AbilityIcons.For(ability.Glyph);
+            var want = AbilityIcons.For(ability.LiveGlyph);
             if (target.sprite != want) target.sprite = want;
         }
 

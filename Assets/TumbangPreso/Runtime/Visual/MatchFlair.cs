@@ -115,7 +115,33 @@ namespace TumbangPreso.Visual
 
             /// <summary>Existing ultimate camera feedback, only on the named victim's view.</summary>
             UltimateImpact = 16,
+
+            // -----------------------------------------------------------------
+            // § SEAN'S HITS (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md`)
+            //
+            // ⚠️ `at` IS WHERE THE HIT CAME FROM, NOT WHERE IT LANDED, for the three body hits: the victim's camera is
+            // punched from it and their body recoils away from it. The landing point is the victim's own body. `strength`
+            // is the stagger, so the stars last as long as the hold, exactly as `HeroHit`.
+            // -----------------------------------------------------------------
+
+            /// <summary>LAVA RAM, MAGMA FIST, an erupting shove or the dropped bomb: knockdown weight.</summary>
+            SeanSlam = 17,
+
+            /// <summary>The awakening blast or the thrown bomb: ultimate weight.</summary>
+            SeanBlast = 18,
+
+            /// <summary>PRESSURE's splash on a player beside the one erupted on: a jolt, no stars.</summary>
+            SeanSplash = 19,
+
+            /// <summary>Something tried to move Molten Sean. `actor` pushed, `subject` is Sean, `at` is where it came from.</summary>
+            SeanAbsorb = 20,
+
+            /// <summary>A VOLCANIC BOMB left his hands. `actor` is Sean, `at` where it will land, `strength` its radius.</summary>
+            SeanBombThrown = 21,
         }
+
+        /// <summary>The highest kind on the wire. The relay drops anything above it (`MatchRpc.BroadcastFlair`, `OnFlairMsg`).</summary>
+        public const Kind LastKind = Kind.SeanBombThrown;
 
         /// <summary>
         /// Draw this on every screen. Host-side; a client that reaches it draws its own copy and
@@ -241,6 +267,27 @@ namespace TumbangPreso.Visual
                 case Kind.UltimateImpact:
                     HitFeel.Land(Seat(subject), HitFeel.Weight.Ultimate, AccentOf(Seat(actor)), at);
                     break;
+
+                case Kind.SeanSlam:
+                    SeanImpact.Body(Seat(actor), Seat(subject), at, strength, HitFeel.Weight.Knockdown);
+                    break;
+
+                case Kind.SeanBlast:
+                    SeanImpact.Body(Seat(actor), Seat(subject), at, strength, HitFeel.Weight.Ultimate);
+                    break;
+
+                case Kind.SeanSplash:
+                    // No subject is the splash itself (its ring, `strength` its radius); a subject is somebody it caught.
+                    if (subject < 0) SeanImpact.Ring(at, strength);
+                    else SeanImpact.Body(Seat(actor), Seat(subject), at, strength, HitFeel.Weight.Jolt);
+                    break;
+
+                case Kind.SeanAbsorb:
+                    SeanImpact.Absorb(Seat(actor), Seat(subject), at);
+                    break;
+
+                case Kind.SeanBombThrown:
+                    break;   // the bomb draws itself on every peer from the cast; the spectator director listens for this
             }
         }
 

@@ -69,6 +69,8 @@ namespace TumbangPreso.Abilities
             if (me == null || victim == null || !HostLandHit(me)) return push;
             push = Erupted(push);
             Splash(me, victim);
+            // The shove draws its own stars; the eruption is what makes it land one weight heavier.
+            MatchFlair.Announce(MatchFlair.Kind.SeanSlam, me.PlayerSlot, victim.PlayerSlot, me.transform.position, 0);
             return push;
         }
 
@@ -83,17 +85,65 @@ namespace TumbangPreso.Abilities
             return new Vector3(flat.x, push.y, flat.z);
         }
 
+        /// <summary>The eruption's splash round the one it erupted on: everyone beside them pushed, never the can.</summary>
         internal static void Splash(CharacterMotor me, CharacterMotor victim)
         {
-            var excluded = new HashSet<int> { me.PlayerSlot, victim.PlayerSlot };
-            HeroHazards.CreateExplosion(victim.transform.position, SeanRules.EruptSplashRadius,
-                Combat.SpeedForDistance(SeanRules.EruptSplashPush), 0, me.PlayerSlot, comicText: null,
-                excludedSlots: excluded, style: HeroHazards.ExplosionStyle.Fire);
+            Vector3 at = victim.transform.position;
+            // The ring on every screen (the host resolves; a client only learns of it from this).
+            MatchFlair.Announce(MatchFlair.Kind.SeanSplash, me.PlayerSlot, -1, at, SeanRules.EruptSplashRadius);
+            HostBlast(me, at, SeanRules.EruptSplashRadius, SeanRules.EruptSplashPush, 0, knocksCan: false,
+                MatchFlair.Kind.SeanSplash, except: victim);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ SEAN'S OWN BLAST, AND NOT `HeroHazards.CreateExplosion`, for three reasons that function cannot answer
+        /// (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 7, items 2 to 4):
+        ///  1. **The ring is the hitbox and the number is the number.** That function falls off to 35% at its edge and adds a
+        ///     fixed 5.5 m/s lift, so "everyone thrown 4 m" was only ever true at the centre. Here everyone inside the ring
+        ///     slides the written distance, solved from `Friction` like every push in the game.
+        ///  2. **Only the bomb knocks the can over.** That function knocks it over for any attacking caster, which gave the
+        ///     awakening and an erupting shove next to the can a knockdown the kit never had.
+        ///  3. **A blast reaches its own level.** It measured flat distance, so a roof above a street blast was thrown too.
+        /// Host-side; each body hit is announced, so every peer draws it and the victim feels it.
+        /// </summary>
+        internal static void HostBlast(CharacterMotor me, Vector3 center, float radius, float push, float stagger,
+            bool knocksCan, MatchFlair.Kind kind, CharacterMotor except = null)
+        {
+            if (me == null || !NetAuthority.ShouldResolve()) return;
+            var round = GameServices.Round;
+            if (round == null) return;
+            float speed = Combat.SpeedForDistance(push);
+            foreach (var p in Rivals(me))
+            {
+                if (p == except) continue;
+                Vector3 to = p.transform.position - center;
+                if (!SeanRules.WithinReach(to.y, SeanRules.BlastReachHeight)) continue;
+                to.y = 0;
+                if (to.magnitude > radius) continue;
+                if (to.sqrMagnitude < .01f) { to = p.transform.position - me.transform.position; to.y = 0; }
+                if (to.sqrMagnitude < .01f) to = me.transform.forward;
+                p.ApplyResolvedImpact(to.normalized * speed + Vector3.up * Balance.ShoveLift);
+                if (stagger > 0) p.ApplyStagger(stagger);
+                MatchFlair.Announce(kind, me.PlayerSlot, p.PlayerSlot, center, stagger);
+            }
+            var can = round.Lata;
+            if (!knocksCan || can == null || !SeanRules.BombKnocksCan(me.IsDefender)) return;
+            Vector3 c = can.transform.position - center;
+            if (!SeanRules.WithinReach(c.y, SeanRules.BlastReachHeight)) return;
+            c.y = 0;
+            if (c.magnitude <= radius) can.HostKnockDown(me.PlayerSlot);
         }
 
         public override void Tick(AbilityContext context, float dt)
         {
             base.Tick(context, dt);
+            // A caught Sean leaves no bomb behind: Molten ends at once and nothing drops (feel-and-readability.md § 4).
+            if (IsMolten && context?.Motor != null && context.Motor.IsTagged)
+            {
+                _bombThrown = true;
+                ((MayonAwakensAbility)Ultimate).EndMolten(context);
+            }
+            StepHeatGlow(context?.Motor);
             if (!float.IsFinite(dt) || dt <= 0 || _pressureBars <= 0) return;
             _pressureIdle += dt;
             int cooled = SeanRules.PressureAfterIdle(_pressureBars, _pressureIdle);
@@ -103,9 +153,29 @@ namespace TumbangPreso.Abilities
                 Net.MatchRpc.Instance?.BroadcastTimedKitState(context.Motor.PlayerSlot);
         }
 
-        public override void Reset() { _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.Reset(); }
+        private GameObject _heatGlow;
+
+        /// <summary>
+        /// Everyone reads "his next hit erupts" from his body: a glow while the heat is full, on every peer (the bars reach
+        /// clients through `HeatWire`). First pass: the lava fists of the art pass replace it with the three-step fist glow.
+        /// </summary>
+        private void StepHeatGlow(CharacterMotor me)
+        {
+            bool full = me != null && SeanRules.PressureFull(_pressureBars) && !IsMolten;
+            if (full && _heatGlow == null)
+                _heatGlow = AbilityVfx.AttachAura(me.transform, AbilityVfx.Aura.FireEmber, SeanRules.PressureCoolSeconds + 1f);
+            else if (!full) ReleaseHeatGlow();
+        }
+
+        private void ReleaseHeatGlow()
+        {
+            if (_heatGlow != null) { _heatGlow.SetActive(false); UnityEngine.Object.Destroy(_heatGlow); }
+            _heatGlow = null;
+        }
+
+        public override void Reset() { ReleaseHeatGlow(); _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.Reset(); }
         public override void ResetForRound(AbilityContext context)
-        { _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.ResetForRound(context); }
+        { ReleaseHeatGlow(); _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.ResetForRound(context); }
 
         // ------------------------------------------------------------------ MOLTEN and VOLCANIC BOMB
 
@@ -118,6 +188,16 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Whether the E press throws the bomb instead of the role skill.</summary>
         internal bool BombReady => IsMolten;
+
+        /// <summary>
+        /// Whether the E button presents as VOLCANIC BOMB: while it is ready, and for a second after the throw, so the cast
+        /// callout and the event feed that read it on the cast's frame name the bomb rather than the role skill.
+        /// </summary>
+        internal bool ShowsBomb => BombReady || Time.time < _bombShownUntil;
+        private float _bombShownUntil = -1;
+        internal const string BombName = "VOLCANIC BOMB";
+        internal const string BombDescription =
+            "Hurl the lava off your arms: a 4.8 m splash throws everyone 4 m, knocks the can over (never your own) and leaves a slowing pool.";
 
         /// <summary>
         /// The E press while Molten, on every peer that runs the cast. The bomb lands where he aims, as far as he aimed and no
@@ -133,9 +213,15 @@ namespace TumbangPreso.Abilities
             float reach = SeanRules.BombLandingDistance(way.magnitude);
             if (reach < 1f) reach = SeanRules.BombMaxRange * .5f;
             Vector3 land = from + way.normalized * reach;
-            land.y = Slipper.FindGroundY(land, from.y);
+            // The court under his aim, found from above, so a roof he aims at is where it lands.
+            if (VfxShapes.TryGroundUnder(land, 6f, 8f, out float ground)) land.y = ground;
+            else land.y = Slipper.FindGroundY(land, from.y);
             _bombThrown = true;
+            _bombShownUntil = Time.time + 1f;
             SeanVolcanicBomb.Spawn(ctx.Motor, land, thrown: true);
+            // The spectator director cuts to where it will land (the bomb itself is drawn on every peer from the cast).
+            if (NetAuthority.ShouldResolve())
+                MatchFlair.Announce(MatchFlair.Kind.SeanBombThrown, ctx.Motor.PlayerSlot, -1, land, SeanRules.BombRadius);
             NetCue.Play("sfx_cast_sean_cannon", from);
             ((MayonAwakensAbility)Ultimate).EndMolten(ctx);
         }
@@ -204,7 +290,7 @@ namespace TumbangPreso.Abilities
         public TimedKitSnapshot CaptureTimedKit()
             => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0,
                 Ultimate, IsMolten ? Ultimate.DurationRemaining : 0,
-                passiveRemaining: PressureCoolLeft, passiveCapacity: PassiveDuration);
+                passiveRemaining: SeanRules.HeatWire(_pressureBars, PressureCoolLeft), passiveCapacity: SeanRules.HeatWireCapacity);
 
         public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
         {
@@ -217,13 +303,12 @@ namespace TumbangPreso.Abilities
                 _bombThrown = false;
                 changed = true;
             }
-            // The owner's ring shows the heat cooling; the bars themselves stay on the host.
-            float cool = Mathf.Clamp(state.PassiveRemaining, 0, SeanRules.PressureCoolSeconds);
+            // The bars and the cooling, so his fists glow the same on every screen (the host keeps deciding them).
             if (!NetAuthority.ShouldResolve())
             {
-                int bars = cool > 0 ? Mathf.Max(1, _pressureBars) : 0;
+                SeanRules.HeatFromWire(state.PassiveRemaining, out int bars, out float cool);
                 changed |= bars != _pressureBars;
-                _pressureBars = bars; _pressureIdle = SeanRules.PressureCoolSeconds - cool;
+                _pressureBars = bars; _pressureIdle = bars > 0 ? SeanRules.PressureCoolSeconds - cool : 0;
             }
             return changed;
         }
@@ -355,21 +440,30 @@ namespace TumbangPreso.Abilities
                         if (_kit.HostLandHit(me)) { push = Erupted(push); Splash(me, first); }
                         first.ApplyResolvedImpact(push);
                         first.ApplyStagger(SeanRules.RamStumbleSeconds);
-                        Visual.ComicPopup.Bonk(first.transform.position);
+                        MatchFlair.Announce(MatchFlair.Kind.SeanSlam, me.PlayerSlot, first.PlayerSlot, at,
+                            SeanRules.RamStumbleSeconds);
                         NetCue.Play("sfx_explosion_heavy", first.transform.position);
                     }
                     return;
                 }
 
-                // A wall in front of him: he runs into it and is dazed (the host decides the stun).
+                // A wall in front of him: he runs into it and is dazed (the host decides the stun). A surface you can walk
+                // on (a ramp, a step's top) is not a wall, so charging up a slope never dazes him.
                 if (Physics.Raycast(at + Vector3.up * .7f, _heading, out var wall, .55f, ~0, QueryTriggerInteraction.Ignore)
+                    && wall.normal.y < .6f
                     && wall.collider.GetComponentInParent<CharacterMotor>() == null
                     && wall.collider.GetComponentInParent<Slipper>() == null
                     && wall.collider.GetComponentInParent<Lata>() == null)
                 {
                     _hit = true;
                     me.HaltExternalSlide();
-                    if (NetAuthority.ShouldResolve()) me.ApplyStagger(SeanRules.RamWallStunSeconds);
+                    if (NetAuthority.ShouldResolve())
+                    {
+                        me.ApplyStagger(SeanRules.RamWallStunSeconds);
+                        // His own daze: stars over him for everyone (the punish window), the thud on his own view.
+                        MatchFlair.Announce(MatchFlair.Kind.HeroHit, me.PlayerSlot, me.PlayerSlot, wall.point,
+                            SeanRules.RamWallStunSeconds);
+                    }
                     NetCue.Play("sfx_slipper_burst", wall.point);
                 }
             }
@@ -416,6 +510,10 @@ namespace TumbangPreso.Abilities
 
             // Even with a slipper loaded: the coat stays on the shoe, and E is the bomb until Molten ends.
             internal void ClearForBomb() => CooldownRemaining = 0;
+
+            public override string LiveName => _kit.ShowsBomb ? BombName : EffectiveName;
+            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? _kit.Ultimate.Glyph : Glyph;
+            public override string LiveDescription => _kit.ShowsBomb ? BombDescription : EffectiveDescription;
 
             public bool LoadedFor(Slipper shoe)
                 => _kit.IsIgnitionCannonActive && DurationRemaining > 0 && shoe != null
@@ -513,6 +611,10 @@ namespace TumbangPreso.Abilities
 
             internal void ClearForBomb() => CooldownRemaining = 0;
 
+            public override string LiveName => _kit.ShowsBomb ? BombName : EffectiveName;
+            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? _kit.Ultimate.Glyph : Glyph;
+            public override string LiveDescription => _kit.ShowsBomb ? BombDescription : EffectiveDescription;
+
             /// <summary>The rival nearest his aim inside the lock range and cone, or null.</summary>
             internal static CharacterMotor Target(AbilityContext ctx)
             {
@@ -576,9 +678,11 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("hero_sean_ult", me.transform.position);
                 var squash = me.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Squash(0.08f);
-                HeroHazards.CreateExplosion(me.transform.position, SeanRules.AwakeningRadius,
-                    Combat.SpeedForDistance(SeanRules.AwakeningPush), 0.4f, me.PlayerSlot, comicText: null,
-                    excludedSlots: new HashSet<int> { me.PlayerSlot }, style: HeroHazards.ExplosionStyle.Fire);
+                // The ring on every peer; the push from the host. Bodies only: the awakening never knocks the can over.
+                HeroHazards.CreateExplosionVisual(me.transform.position, SeanRules.AwakeningRadius, "",
+                    HeroHazards.ExplosionStyle.Fire);
+                HostBlast(me, me.transform.position, SeanRules.AwakeningRadius, SeanRules.AwakeningPush,
+                    SeanRules.AwakeningStaggerSeconds, knocksCan: false, MatchFlair.Kind.SeanBlast);
                 StartAura(me);
             }
 

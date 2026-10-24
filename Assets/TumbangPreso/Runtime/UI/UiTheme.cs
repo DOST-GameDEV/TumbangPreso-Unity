@@ -591,6 +591,17 @@ namespace TumbangPreso.UI
 
         public static readonly Color HeroFire = Hex("ff3355");
         public static readonly Color HeroFireBright = Hex("ff8fa3");
+
+        /// <summary>
+        /// ⚠️⚠️ SEAN IS MOLTEN GOLD, NOT `HeroFire`, BECAUSE THE TAYA BECAME RED. `Defense` moved to `#e8203a` (hue 352) for
+        /// everyone, which put Sean's `#ff3355` (hue 350) 2.2 degrees from "this player is the taya": his deck rim, his stars
+        /// and the flash on a player he hits all read as the taya's. His lava is a gold core with a cherry-red rim
+        /// (`docs/reports/sean-kit-2026-10-24/plan.md` § 0), so the accent is the core: hue 47.8, 25.6 degrees clear of
+        /// Offense orange, and darker than Zack's yellow by 0.18 OKLab (`HeroPresentationTests`' two colour rules).
+        /// `docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 1 rule 4. `HeroFire` stays for the ember sheet.
+        /// </summary>
+        public static readonly Color HeroMolten = Hex("c9a000");
+        public static readonly Color HeroMoltenBright = Hex("ffd45c");
         public static readonly Color HeroIce = Hex("5fe8d0");
         public static readonly Color HeroIceBright = Hex("b8fff2");
         public static readonly Color HeroElectric = Hex("e8f53a");
@@ -693,6 +704,7 @@ namespace TumbangPreso.UI
             switch (heroId.ToLowerInvariant())
             {
                 case "sean":
+                    return HeroMoltenBright;
                 case "kuya_boy":
                 case "iggy":
                     return HeroFireBright;
@@ -722,6 +734,7 @@ namespace TumbangPreso.UI
             switch (heroId.ToLowerInvariant())
             {
                 case "sean":
+                    return HeroMolten;
                 case "kuya_boy":
                 case "iggy":
                     return HeroFire;

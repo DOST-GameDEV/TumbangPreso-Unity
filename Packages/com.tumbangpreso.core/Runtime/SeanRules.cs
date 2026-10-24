@@ -46,6 +46,30 @@ namespace TumbangPreso.Core
         public static bool PressureFull(int bars) => bars >= PressureBars;
 
         /// <summary>How far an erupting hit sends a body that would otherwise go <paramref name="baseDistance"/>.</summary>
+        /// <summary>
+        /// ⚠️ THE HEAT TRAVELS AS ONE NUMBER, because the timed-kit message carries one passive float and every peer must show
+        /// the same fist glow (`docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 7 item 9): `(bars - 1)` whole cool
+        /// windows plus the cooling left, and 0 for no heat. Its ceiling is `HeatWireCapacity`, which the receiver's own
+        /// capture reports, so the message's bounds check still holds.
+        /// </summary>
+        public static float HeatWire(int bars, float coolLeft)
+        {
+            if (bars <= 0 || float.IsNaN(coolLeft) || coolLeft <= 0) return 0;
+            bars = Math.Min(PressureBars, bars);
+            return (bars - 1) * PressureCoolSeconds + Math.Min(coolLeft, PressureCoolSeconds - 0.001f);
+        }
+
+        public static float HeatWireCapacity => PressureBars * PressureCoolSeconds;
+
+        public static void HeatFromWire(float wire, out int bars, out float coolLeft)
+        {
+            bars = 0; coolLeft = 0;
+            if (float.IsNaN(wire) || wire <= 0) return;
+            wire = Math.Min(wire, HeatWireCapacity - 0.001f);
+            bars = (int)Math.Floor(wire / PressureCoolSeconds) + 1;
+            coolLeft = wire - (bars - 1) * PressureCoolSeconds;
+        }
+
         public static float EruptedDistance(float baseDistance)
             => float.IsNaN(baseDistance) || baseDistance <= 0 ? 0 : Math.Min(baseDistance * EruptDistanceScale, MaxPushDistance);
 
@@ -209,6 +233,34 @@ namespace TumbangPreso.Core
 
         /// <summary>The bomb knocks the lata over unless the caster is the taya guarding it.</summary>
         public static bool BombKnocksCan(bool casterIsTaya) => !casterIsTaya;
+
+        /// <summary>How long the players a blast throws are held: stars only from half a second.</summary>
+        public const float AwakeningStaggerSeconds = 0.4f;
+        public const float BombStaggerSeconds = 0.5f;
+
+        // ------------------------------------------------------------------ how it meets the court
+        // `docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 2: the ring is the hitbox, and nothing reaches a level
+        // it cannot touch.
+
+        /// <summary>A blast, a splash or the pool reaches only bodies within this height of it, so a roof above a street blast
+        /// and a street below a roof blast are out of reach. A standing jump (about 1.1 m) stays inside it.</summary>
+        public const float BlastReachHeight = 1.8f;
+
+        /// <summary>MAGMA FIST arrives, and its giant fist throws, only on its own level.</summary>
+        public const float FistReachHeight = 1.2f;
+
+        /// <summary>The fist climbs a kerb or a step up to this, the same limit a ground mark drapes over; taller is a wall.</summary>
+        public const float FistStepUp = 0.6f;
+
+        /// <summary>The hot can's slide stops at a step up taller than this; a step down it simply falls.</summary>
+        public const float HotCanStepUp = 0.3f;
+
+        /// <summary>The giant fist hits as its knuckles reach the target's waist, so what they see touch them is what hits them.</summary>
+        public static float FistHitDelay => FistRiseSeconds * 0.4f;
+
+        /// <summary>Whether something this far above or below (in metres, either sign) is on a level a reach can touch.</summary>
+        public static bool WithinReach(float heightDifference, float reach)
+            => !float.IsNaN(heightDifference) && Math.Abs(heightDifference) <= reach;
 
         private static float Wrap(float degrees)
         {
