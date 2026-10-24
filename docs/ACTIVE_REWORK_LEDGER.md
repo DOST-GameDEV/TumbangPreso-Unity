@@ -1,3 +1,11 @@
+# Rago's Magma Fist look, October25
+
+MAGMA FIST's giant fist is v4 after the owner's in-match screenshot ("looks like a red
+dildo") and his reference (Seeker's fist, Risk of Rain 2): no arm, a fist out of the
+puddle, drawn 2.3x, tipped toward the caster, spraying lava as it erupts and melting as it
+sinks. Two runtime bugs went with it: the cooling wrote ToonSkin's shared material, and a
+fire dome hid the fist as it rose. Film v17; SeanKitPlayProbe 7/7. Not seen by the owner.
+
 # Rago's ultimate checkpoint, October24
 
 ULT-READ-1024 (protocol 180) on BugFix, not seen by the owner. MAYON AWAKENS is now

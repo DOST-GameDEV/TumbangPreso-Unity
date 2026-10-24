@@ -120,6 +120,15 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   the parol glbs and atlas, `tools/build_ultimate_props_sean.py`). Films `Logs/paete-ability-film/introfx_sean_s14..s16`
   (s14/s15 are v1's refit), skills film `Logs/sean-2026-10-24/film-v5`.
 - [ ] 🧑 Owner to watch THE MOUNTAIN RISES (cutscene and play) and judge its numbers (9 m, 7 bombs, 2.5 m splash).
+- [x] MAGMA FIST's giant fist, v4 (owner 2026-10-25: "doesnt read as an arm ... looks like a red dildo", "needs to be bigger",
+  "make it more comically large rather than showing the whole arm", reference Seeker's fist in Risk of Rain 2): no arm, a
+  fist erupting from the puddle in a low splash with a bright ring, drawn 2.3x (about 2.4 m, the puddle's width), tipped
+  toward the caster, detail in colour (two-tone fingers on a dark core, gold knuckles). It sprays gobs of lava as it erupts
+  and melts wide and low as it sinks. The cooling no longer tints the shared `ToonSkin` material (it greyed every later Sean
+  prop); the fire dome over it is a low burst and a ring; the puddle is a splat with a hot heart. Film
+  `Logs/sean-2026-10-24/film-v17`; previews from `tools/build_sean_props.py giant_fist`.
+- [ ] 🧑 Owner to look at the new Magma Fist in play. If it should look bigger than its reach, the reach (1 m) is the rule
+  to change, not the model.
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
 - [ ] Cleanup once nothing references them: `SeanSupernovaLook`, the Stoke FX study scenes. (The parol props, `ParolGround`
   and `UltimateProp.Sean.cs` went with ULT-READ-1024; the Cinder Gate, its look, shader, `SeanGateRules` and tests went with

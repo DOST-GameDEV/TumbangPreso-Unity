@@ -23,7 +23,7 @@ splash lump is its own row with its own numbers. Nothing is one shape repeated r
 
 NAMED NODES FOR WHAT MOVES (the runtime poses them from the object's age):
   lava_fist    > fist > knuckles ; fist > drips                      the MAGMA FIST in flight, knuckles on +Z
-  giant_fist   > forearm > fist ; forearm > ropes ; forearm > drips ; collar   the Puddle Punch, rising +Y from the court
+  giant_fist   > forearm > fist ; forearm > drips                    the Puddle Punch, rising +Y out of the puddle
   bomb_ball    > ball > bulges ; ball > ropes ; ball > skin ; ball > drips    the VOLCANIC BOMB, 1.2 m across
   mayon        > cone > summit ; cone > rivulets ; plume                the backdrop, authored 1.0 tall (the scene scales it)
   molten_fist  > sleeve > mitt > knuckles ; sleeve > drips              Molten, on his fist; origin at the wrist, fist on +Z
@@ -118,52 +118,126 @@ def lava_fist():
     return [root, fist, knuckles, drips]
 
 
+def sloft(node, sections, slot, sides=20, power=3.0, cap_first=True, cap_last=True):
+    """`bp.loft` through squarer sections: each ring is a superellipse (`power` 2 is the ellipse, higher is boxier), for the
+    parts a round loft turns into a bulb (a fist is a block with soft corners, not an egg). Rows (y, cx, cz, rx, rz)."""
+    def ring(y, cx, cz, rx, rz):
+        out = []
+        for j in range(sides):
+            a = j * math.tau / sides
+            sx, cx_ = math.sin(a), math.cos(a)
+            out.append((cx + rx * math.copysign(abs(sx) ** (2 / power), sx), y,
+                        cz + rz * math.copysign(abs(cx_) ** (2 / power), cx_)))
+        return out
+    rings = [ring(*row) for row in sections]
+    faces = []
+    for i in range(len(rings) - 1):
+        axis = ((sections[i][1] + sections[i + 1][1]) * .5, (sections[i][0] + sections[i + 1][0]) * .5,
+                (sections[i][2] + sections[i + 1][2]) * .5)
+        for j in range(sides):
+            k = (j + 1) % sides
+            quad = [rings[i][j], rings[i][k], rings[i + 1][k], rings[i + 1][j]]
+            faces.append(bp.pv._rafi_orient(quad, bp.sub(bp.pv._rafi_mean(quad), axis)))
+    if cap_first:
+        faces.append(bp.pv._rafi_orient(rings[0], (0.0, -1.0, 0.0)))
+    if cap_last:
+        faces.append(bp.pv._rafi_orient(rings[-1], (0.0, 1.0, 0.0)))
+    node.parts.append((slot, faces))
+
+
+def pitched(node, degrees):
+    """Tips everything in `node` forward about its own origin (+Y toward +Z by `degrees`), after it is built."""
+    a = math.radians(degrees)
+    c, s = math.cos(a), math.sin(a)
+    node.parts = [(slot, [[(p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c) for p in face] for face in faces])
+                  for slot, faces in node.parts]
+
+
+def blotch(node, centre, size, slot, facing):
+    """A flat patch of brighter or darker lava lying on a surface that faces `facing` degrees round Y (0 is +Z): the mottling
+    that carries a surface's detail in flat toon shading. `size` is (across, tall)."""
+    lump(node, centre, (size[0], size[1], .014), slot, turn=facing, sides=8)
+
+
 # ---------------------------------------------------------------------------------------------
-# The Puddle Punch's giant fist: a forearm of flowing lava rising out of the puddle, the fist on top, knuckles UP.
-# About 1.75 m tall from the court; its base sits in the puddle at y 0.
+# The Puddle Punch's giant fist: a fist of lava erupting out of the puddle on a short wrist, wrapped in a surge of lava, its
+# fingers to the front (+Z). About 1.2 m tall from the puddle's surface at y 0 (the runtime draws it 2x).
+#
+# v4 (owner 2026-10-24): "it doenst read as an arm ... looks like a red dildo", then "needs to be bigger, doesnt have to fully
+# look like a hand", and his reference: Seeker's fist in Risk of Rain 2. What that picture does, done here in Rago's lava:
+#  * NO ARM. The fist comes straight up out of the pool on a short thick wrist hidden in a surge of liquid mounds; v2 and v3's
+#    long forearm column was the shape that read wrong.
+#  * The fist is the whole picture, chunky and tipped toward the viewer (`pitched`, 18 degrees), so the curled fingers face him.
+#  * A bright ring of lava where it breaks the surface.
+#  * Detail carried in colour, as flat toon shading needs: a dark cherry core showing between hot amber fingers, the gold top
+#    edge (the leading edge, the brightest), and gold and ember blotches mottling it.
 # ---------------------------------------------------------------------------------------------
 def giant_fist():
     root = Node("giant_fist")
     forearm = Node("forearm", parent="giant_fist")
-    # The column: cherry where it leaves the puddle, amber as it climbs (the heat runs UP, as in his cutscene).
-    bp.loft(forearm, [(0, 0, 0, .36, .34), (.12, 0, 0, .31, .3), (.34, 0, .01, .28, .27)], CHERRY, sides=14)
-    bp.loft(forearm, [(.33, 0, .01, .282, .272), (.46, .005, 0, .272, .262), (.6, .01, 0, .272, .262)], EMBER, sides=14)
-    bp.loft(forearm, [(.59, .01, 0, .274, .264), (.78, 0, -.01, .28, .27), (1.0, 0, 0, .3, .29), (1.14, 0, 0, .33, .31)],
-            AMBER, sides=14)
-    ropes = Node("ropes", parent="forearm")
-    # Three coils of lava wound round it the way pahoehoe folds, each its own height, angle, girth and turn.
-    column = lambda y: .29 if y > .3 else .34 - y * .17
-    rope(ropes, .08, .62, .3, 20, .55, .07, CHERRY, wobble=.02, surface=column)
-    rope(ropes, .38, .98, .29, 205, .48, .065, EMBER, wobble=.02, surface=column)
-    rope(ropes, .7, 1.1, .32, 110, .32, .06, CORE, wobble=.01, surface=column)
-    fist = Node("fist", origin=(0, 1.14, 0), parent="forearm")
-    bp.loft(fist, [(0, 0, 0, .34, .32), (.12, 0, .01, .42, .38), (.3, 0, .02, .45, .4), (.46, 0, .01, .4, .36),
-                   (.56, 0, 0, .26, .24)], AMBER, sides=14)
-    # The knuckles on TOP, leading the punch upward: the brightest value of the prop.
-    lump(fist, (L * .25, .55, .05), (.1, .085, .1), CORE, sides=10)
-    lump(fist, (L * .085, .6, .07), (.11, .095, .11), CORE, sides=10)
-    lump(fist, (R * .085, .59, .06), (.108, .092, .108), CORE, sides=10)
-    lump(fist, (R * .245, .53, .04), (.095, .08, .095), CORE, sides=10)
-    lump(fist, (L * .34, .28, .2), (.11, .14, .1), AMBER, tilt=-12, turn=25, sides=9)          # the thumb, folded over
-    lump(fist, (R * .12, .2, -.36), (.12, .09, .05), CHERRY, sides=9)                          # cooler back of the hand
-    lump(fist, (R * .16, .28, -.4), (.05, .03, .02), GLASS, tilt=12, sides=7)                  # a first fleck of glass
+    # The wrist: short and thick, out of the pool, narrowing under the hand. Rows (y, cx, cz, rx, rz).
+    bp.loft(forearm, [(-.08, 0, 0, .29, .25), (.08, 0, 0, .26, .22), (.22, 0, .01, .22, .185), (.33, 0, .02, .2, .17)],
+            CHERRY, sides=16)
+    # The bright ring where it breaks the surface, thick and a little wavy.
+    ring = [(.3 * math.sin(math.radians(a)), .04 + .018 * math.sin(math.radians(a * 4)), .265 * math.cos(math.radians(a)))
+            for a in range(0, 361, 24)]
+    forearm.tube(ring, [.05] * len(ring), CORE, sides=7)
+    # The surge: lava spilled out round the wrist, LONG, LOW and leaning out, each its own size and lean, with a hot crown on
+    # two. (v4a's tall round mounds competed with the fist; v4b's rounder ones read as a creature's feet in the film.)
+    lump(forearm, (L * .36, .03, .12), (.28, .07, .15), EMBER, tilt=-40, turn=30, sides=10)
+    lump(forearm, (L * .38, .07, .1), (.13, .03, .07), AMBER, tilt=-40, turn=30, sides=9)
+    lump(forearm, (R * .38, .02, .08), (.25, .06, .13), CHERRY, tilt=-42, turn=-60, sides=10)
+    lump(forearm, (R * .3, .06, -.27), (.26, .1, .14), EMBER, tilt=-30, turn=-130, sides=10)
+    lump(forearm, (R * .3, .12, -.25), (.11, .04, .06), AMBER, tilt=-30, turn=-130, sides=9)
+    lump(forearm, (L * .12, .02, -.38), (.27, .05, .12), DEEP, tilt=-42, turn=170, sides=10)
+
+    fist = Node("fist", origin=(0, .3, 0), parent="forearm")
+    # The hand's core: dark cherry, a block with soft corners, its heel on the wrist, widest across the fingers.
+    sloft(fist, [(0, 0, 0, .2, .17), (.07, 0, 0, .3, .21), (.17, 0, .005, .345, .235), (.4, 0, .005, .355, .245),
+                 (.58, 0, 0, .34, .235), (.67, 0, -.01, .3, .2), (.72, 0, -.02, .21, .13)], CHERRY, sides=24, power=3.4)
+    # The four fingers, curled and chunky: each runs down the front from its knuckle, bulges out and tucks into the palm,
+    # with dark core between them. Index on the thumb side (L), then middle, ring, pinky: (x, girth, top, bottom, lean).
+    fingers = [(L * .235, .078, .67, .28, .0), (L * .08, .083, .685, .26, .004), (R * .078, .08, .672, .275, -.003),
+               (R * .232, .07, .632, .32, -.006)]
+    for x, r, top, bottom, lean in fingers:
+        path = bp.spline([(x, top, .14), (x + lean, top - .06, .25), (x + lean, (top + bottom) * .5, .3),
+                          (x + lean * 1.5, bottom + .05, .28), (x + lean * 1.5, bottom - .02, .19)], per=3)
+        radii = bp.spread([r * .95, r, r * 1.04, r * .98, r * .85], per=3)
+        # Two-tone, the heat running UP: the upper half pale gold (the reference's lit top edges), the lower half amber,
+        # so each finger reads as a form in flat shading. (v4d's rim stripes sank inside the fingers.)
+        fist.tube(path[:7], radii[:7], SUMMIT, sides=9)
+        fist.tube(path[6:], radii[6:], AMBER, sides=9)
+        # The tip, curled under the fold: a darker pad of cooler lava poking out below it.
+        lump(fist, (x + lean * 1.5, bottom + .005, .27), (r * .82, r * .5, r * .62), EMBER, tilt=0, sides=8)
+    # The knuckles along the top, the leading edge: the brightest value on the prop, each its own size.
+    lump(fist, (L * .235, .71, .05), (.085, .066, .095), CORE, sides=9)
+    lump(fist, (L * .08, .73, .055), (.09, .07, .1), CORE, sides=9)
+    lump(fist, (R * .078, .72, .05), (.087, .067, .096), CORE, sides=9)
+    lump(fist, (R * .232, .68, .04), (.075, .058, .084), CORE, sides=9)
+    # The thumb: its root swells out of the side of the palm and it wraps across the index and middle fingers, paler gold.
+    lump(fist, (L * .32, .18, .06), (.11, .16, .14), AMBER, tilt=10, sides=10)
+    fist.tube(bp.spline([(L * .36, .14, .02), (L * .38, .25, .16), (L * .29, .32, .3), (L * .12, .35, .355), (R * .01, .34, .34)],
+                        per=3), bp.spread([.098, .098, .092, .082, .072], per=3), SUMMIT, sides=9)
+    lump(fist, (R * .005, .345, .35), (.066, .055, .05), CORE, sides=8)      # the thumb's tip, hot where it presses
+    # The back of the hand: a ridge down from each knuckle, fading before the wrist, hot on the dark core.
+    for x, r, end in [(L * .235, .046, L * .13), (L * .08, .05, L * .045), (R * .078, .048, R * .045), (R * .232, .042, R * .12)]:
+        fist.tube(bp.spline([(x, .67, -.11), (x * .97, .56, -.22), (x * .88, .41, -.24), (end, .27, -.237)], per=3),
+                  bp.spread([r, r * .95, r * .7, r * .35], per=3), AMBER, sides=8)
+    # The heel of the hand on the pinky side.
+    lump(fist, (R * .34, .3, .03), (.065, .21, .17), AMBER, sides=9)
+    # The mottling, on the back only and long rather than round (film v15: an inked round blotch on the side read as an EYE,
+    # and on the fingers as pimples).
+    blotch(fist, (L * .16, .2, -.24), (.08, .035), EMBER, 180)
+    blotch(fist, (R * .14, .6, -.21), (.06, .025), CORE, 180)
+    pitched(fist, 18)
+
     drips = Node("drips", parent="forearm")
-    # Lava running back down the arm, each drip its own start, length and lean.
-    drip(drips, (L * .28, 1.42, .2), .32, .042, CORE, lean=(L * .03, .02))
-    drip(drips, (R * .3, 1.36, .12), .44, .04, AMBER, lean=(R * .02, .04))
-    drip(drips, (R * .05, 1.3, -.34), .26, .036, EMBER, lean=(0, -.03))
-    drip(drips, (L * .2, 1.0, -.22), .38, .034, CHERRY, lean=(L * .02, -.04))
-    collar = Node("collar", parent="giant_fist")
-    # The splash where it bursts out of the puddle: seven lumps thrown up and out, each its own size, height and lean.
-    # v2: a low ring of thrown lava hugging the column's foot and leaning OUT (v1 stood apart like petals round it).
-    lump(collar, (.0, .05, .4), (.2, .12, .14), EMBER, tilt=-38, turn=0, sides=10)
-    lump(collar, (.33, .04, .24), (.17, .1, .13), CHERRY, tilt=-34, turn=55, sides=10)
-    lump(collar, (.4, .08, -.12), (.15, .15, .11), AMBER, tilt=-42, turn=108, sides=10)
-    lump(collar, (.12, .03, -.4), (.19, .09, .14), CHERRY, tilt=-30, turn=165, sides=10)
-    lump(collar, (-.27, .07, -.31), (.14, .13, .1), EMBER, tilt=-40, turn=220, sides=10)
-    lump(collar, (-.41, .03, .02), (.2, .08, .15), DEEP, tilt=-28, turn=270, sides=10)
-    lump(collar, (-.27, .06, .31), (.15, .12, .11), AMBER, tilt=-36, turn=320, sides=10)
-    return [root, forearm, ropes, fist, drips, collar]
+    # Lava running off the heel of the hand into the surge, each its own start and length.
+    drip(drips, (L * .21, .33, .12), .14, .036, AMBER, lean=(R * .02, .02))
+    drip(drips, (R * .22, .32, .08), .18, .034, EMBER, lean=(L * .02, .02))
+    drip(drips, (R * .05, .32, -.17), .12, .03, AMBER, lean=(0, -.02))
+
+    return [root, forearm, fist, drips]
 
 
 # ---------------------------------------------------------------------------------------------

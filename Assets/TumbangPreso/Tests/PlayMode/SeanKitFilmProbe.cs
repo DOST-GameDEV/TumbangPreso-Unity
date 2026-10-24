@@ -265,6 +265,15 @@ namespace TumbangPreso.PlayTests
                         : t < 13f ? (At(11f, 2.4f, 2.8f), At(2f, 0f, .4f))       // MOLTEN THROW and the hot can
                         : t < 17.5f ? (At(3.4f, 2.9f, 2.0f), At(3.4f, 0f, .7f))   // MAGMA FIST, side-on: his prayer at one side, the puddle at the other
                         : (At(11f, 3.4f, 3.6f), At(2f, 0f, .5f));                // the blast, Molten, the VOLCANIC BOMB
+                    // While a MAGMA FIST is out, the court's lens is on IT, from the side and a little below the knuckles, so its
+                    // shape is judged and not a corner of it (owner 2026-10-24: "it doenst read as an arm").
+                    var punch = t >= 13f && t < 17.5f ? Object.FindFirstObjectByType<SeanMagmaFist>() : null;
+                    if (punch != null)
+                    {
+                        Vector3 along = punch.transform.forward, across = Vector3.Cross(Vector3.up, along);
+                        shot = (punch.transform.position + across * 3.6f - along * 1.2f + Vector3.up * 1.3f,
+                                punch.transform.position + Vector3.up * 1.0f);
+                    }
                     wide.transform.position = shot.eye; wide.transform.LookAt(shot.look);
                     var who = watched != null ? watched : a;
                     var toFocus = Flat(focus - who.transform.position);
