@@ -95,8 +95,17 @@ namespace TumbangPreso.CameraSystem
                         // his knee, and grounding that frame's lowest vertex undid the sink for the whole cutscene (he floated,
                         // Dante film r2). Every other table starts at lift 0, so nothing else moves.
                         float firstLift=UltimatePerformance.For(actor.AbilitySystem.HeroId,actor.GetComponent<Carrier>().Held!=null)?.LiftAt(0)??0f;
+                        // ⚠️ THE FLOOR UNDER HIS FEET, NOT THE HIGHEST THING ABOVE THEM (Rago film v8, 2026-10-24). `GroundY` scans
+                        // down from 6 m and keeps the highest hit: under an awning at the court's end it answered 5.8 m, the copy
+                        // was lifted onto it and every shot framed an empty court. Same guard as the stage's own ground.
+                        float floor=Slipper.GroundY(actor.transform.position);
+                        if(Mathf.Abs(floor-actor.transform.position.y)>1f)
+                        {
+                            float feet=Slipper.FindGroundY(actor.transform.position,.5f);
+                            floor=!float.IsInfinity(feet)&&Mathf.Abs(feet-actor.transform.position.y)<1f?feet:actor.transform.position.y;
+                        }
                         if(surfaces.Length>0)
-                            actorStage.transform.position+=Vector3.up*(Slipper.GroundY(actor.transform.position)-surfaces.Min(r=>r.bounds.min.y)+Mathf.Min(0f,firstLift));
+                            actorStage.transform.position+=Vector3.up*(floor-surfaces.Min(r=>r.bounds.min.y)+Mathf.Min(0f,firstLift));
                     }
                     foreach (var surface in body.Renderers) surface.shadowCastingMode = ShadowCastingMode.On;
                     entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body, commit.Aim) { Boundary = _duration };

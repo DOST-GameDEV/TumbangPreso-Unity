@@ -80,6 +80,24 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>
+        /// How thick one first-person arm is, in that arm's own space: the mesh's middle extent across it (its longest runs along
+        /// the arm). For a prop that must be bigger than the hand it sits on (Rago's Molten fists), measured, not typed.
+        /// </summary>
+        public float ArmThickness(bool right)
+        {
+            var arm = right ? _rightArm : _leftArm;
+            var renderer = right ? _rightArmRenderer : _leftArmRenderer;
+            if (arm == null || renderer == null) return 0f;
+            var filter = renderer.GetComponent<MeshFilter>();
+            if (filter == null || filter.sharedMesh == null) return 0f;
+            Vector3 size = Vector3.Scale(filter.sharedMesh.bounds.size, renderer.transform.lossyScale);
+            float armScale = Mathf.Max(1e-4f, Mathf.Abs(arm.lossyScale.x));
+            float a = size.x, b = size.y, c = size.z;
+            float mid = Mathf.Max(Mathf.Min(a, b), Mathf.Min(Mathf.Max(a, b), c));
+            return mid / armScale;
+        }
+
+        /// <summary>
         /// Where the palm is in <see cref="LeftHandForProps"/>'s space: the far end of the arm mesh along its longest axis,
         /// the end farther from the pivot. MEASURED from the mesh rather than typed, the lesson `CharacterVisual.PalmCentre`
         /// records (eight guessed hand offsets, eight wrong places).

@@ -73,7 +73,33 @@ Why each earns its slot:
 | MAGMA FIST | the prayer: palms pressed together in front of his chest, head bowed, a slow breath; the ring on the court where he looks | both palms driven down at the court | a puddle of lava opens on the spot and bubbles, a filling ring round it | a giant blocky fist bursts up out of it (0.25 s from puddle to full height) and whoever is on it goes up and away | the fist holds at the top 0.2 s, knuckles glowing | it skins over into glossy black glass, cracks, and slumps back into the puddle, which steams and dries to a dark stain |
 | VOLCANIC BOMB | he claps his fists together over his head and the lava runs off both arms into one ball between them, swelling and bubbling; the aim ring shows where it will land | the ball (1.2 m), held overhead 0.2 s, then hurled; his arms are bare again at once | a high arc for 0.9 s, wobbling like liquid, shedding drips and a ribbon of steam; its shadow grows on the spot | a splash: a crown of lava thrown up and out, a ring, the small Mayon cone of light (the emblem) | the pool glowing and bubbling for 4 s, skinning over from its edge inward | the skin goes glossy black, cracks into plates and steams away |
 
-## 3 · MAYON AWAKENS: the cutscene, directed
+## 2b · MAYON AWAKENS v2: THE MOUNTAIN RISES (2026-10-24, replaces the ultimate row above and section 3)
+
+Owner, after v1 was built and filmed: *"his ult sucks as shit especially cutscene i cant even tell wtf his ult does from his
+cutscene"*, then *"look at the other ults especially paete and phasiter"*, *"the ult of sean doesnt earn its place"*, *"dante has
+a really good ult"*. Held against them:
+
+| | Paete, MAKILING'S EMBRACE | Phaister, VOODOO DOLL | Rago v1 |
+|---|---|---|---|
+| Reach | everyone within 9 m | the whole round | 4 m |
+| How long it changes the round | up to 10 s, and they must work out | the rest of the round | ~1 s of push, then a self-buff |
+| What the court sees | a guardian tree, players in roots | a new body | his fists glow; "no knockback" is invisible |
+| Payoff | at once, on everyone | at once and lasting | deferred and optional (the bomb on E) |
+
+Three directions were offered (the mountain rises, a meteor slam, a lava court); he chose **the mountain rises**. Numbers in
+`SeanRules` (volcano section): hold to place it where he looks, 3 to 10 m, never within 3 m of the can; a 3 m Mayon bursts up,
+throws everyone within 9 m out (the push cap) and SEARS them 2 s; for 8 s it lobs a bomb every 1.2 s (7 at most) at the
+opponent it has hit least, nearest first, within 12 m: its ring on the court for the 1.0 s flight, a 2.5 m splash, 3 m throw,
+a slowing pool, the can knocked over unless he is the taya; it is solid; then it cools and sinks in 1 s. He is Molten for the 8 s
+(no knockback, RAM every 4 s, the lava fists worn on both hands). The bomb on E is gone: E is his role skill throughout.
+
+**The cutscene, Dante's shape, 5.0 s.** One sentence: the lava in his fists goes into the court, races to the spot he chose, and
+the mountain bursts up there. A, THE FISTS (0 to 1.5): both fists into the court, the lava climbing them into the Molten fists,
+his eyes igniting. B, THE RUN (1.5 to 3.0): a river of lava racing along the court to the real spot, the lens racing beside it;
+the court there bulges and vents. C, THE RISE (3.0 to 5.0): wide and low, him, the spot and the real players; the mountain bursts
+up (3.1) and its wave races out to 9 m as the cut comes. Play's mountain is standing at the hand-back and throws them then.
+
+## 3 · MAYON AWAKENS: the cutscene, directed (v1, superseded by 2b)
 
 **One sentence:** the mountain's heat comes up out of the ground into him until he cannot hold it, and he lets it out.
 

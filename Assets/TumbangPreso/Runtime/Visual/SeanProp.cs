@@ -28,8 +28,26 @@ namespace TumbangPreso.Visual
 
         private static bool _warned;
 
+        /// <summary>
+        /// MAYON AWAKENS v2's mountain in the court: the backdrop's DUSK and FAR (a silhouette against a dusk sky) become warm
+        /// basalt browns, so on a sunny court it reads as rock with lava down it and not a black witch's hat (film v5).
+        /// </summary>
+        public static Color[] CourtMountainPalette
+        {
+            get
+            {
+                var p = (Color[])Palette.Clone();
+                p[10] = Hex(0x6B3A2E);   // DUSK, the upper cone
+                p[11] = Hex(0x8A4A33);   // FAR, the foot
+                return p;
+            }
+        }
+
         /// <summary>The prop <paramref name="name"/> under <paramref name="parent"/>, dressed in his palette; null if missing.</summary>
-        public static GameObject Spawn(string name, Transform parent)
+        public static GameObject Spawn(string name, Transform parent) => Spawn(name, parent, Palette);
+
+        /// <summary>The prop dressed in <paramref name="palette"/> (sixteen colours in `Palette`'s slot order).</summary>
+        public static GameObject Spawn(string name, Transform parent, Color[] palette)
         {
             var source = HeroPropAssets.Load(ResourceFolder, name);
             if (source == null)
@@ -47,7 +65,7 @@ namespace TumbangPreso.Visual
                 VfxRenderTag.Attach(r.gameObject);
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             }
-            ToonSkin.Apply(go, ToonSkin.PersonOutlineWidth, Palette);
+            ToonSkin.Apply(go, ToonSkin.PersonOutlineWidth, palette ?? Palette);
             return go;
         }
 

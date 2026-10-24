@@ -21,6 +21,26 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol180: MAYON AWAKENS v2, the mountain rises (2026-10-24)
+
+ULT-READ-1024. Owner: *"the ult of sean doesnt earn its place"*; he chose "The mountain rises". The ultimate stays a shared
+ultimate but is now aimed (`AimByHolding`, where he looks, 3 to 10 m), and the accepted commit's aim is the spot on every peer:
+`SeanVolcano.SpotFor` (the aim, kept `SeanRules.VolcanoClearOfCan` off the synced can, inside the playable square). Every peer
+builds the volcano from the cast, standing (the cutscene showed it rise), on its own clock.
+
+- The rise is host-resolved through `SeanHeroKit.HostBlast` (9 m, the motor's push cap, a 0.5 s hold, SEARED 2 s, never the
+  can); the throw, the hold and SEARED ride the bodies' own sync, as every host blast does.
+- The host decides each bomb (`SeanRules.BombDue`, every 1.2 s from 0.6 s, at most 7): the opponent it has thrown at least,
+  nearest first, within 12 m, never his own side. Each is announced as an appended flair kind, `MatchFlair.Kind.SeanVolcanoBomb`
+  (22): actor Sean's seat, subject the target's seat, `at` the landing point, `strength` its index. `MatchFlair.LastKind` moves to
+  it. Every peer flies `SeanVolcanicBomb.FromVolcano` from its own crater; the host alone resolves the splash (2.5 m, 3 m throw,
+  the can unless he is the taya), and each peer slows the bodies it simulates in the pool.
+- Molten is the ultimate's own duration (8 s, the eruption); the timed-kit ultimate field still restores it for a rejoiner. The
+  bomb on E is gone, so E is the role skill throughout. A late joiner does not see a volcano already standing: it lives 9 s and
+  `WorldEffectSnapshot` does not carry it.
+- The volcano is solid (a capsule, 1.1 m) from the rise until it starts to sink.
+A 179 peer drops kind 22 and runs the old awakening on the same id: the two may not meet.
+
 ## Protocol179: the can carry (2026-10-24)
 
 CAN-CARRY-1024, every hero. The reset is a held carry: hold Grab beside the downed, not hot can, a 0.35 s pickup, the taya's

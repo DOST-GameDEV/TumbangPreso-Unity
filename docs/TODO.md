@@ -19,8 +19,8 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
 - [x] Fixed: MAYON AWAKENS destroyed Unity's built-in sphere at every teardown ("Destroying assets is not permitted").
 - [x] Lore: born at the foot of Mayon, moved to San Fernando as a kid, the Eskinita stays his court.
 - [x] Props modelled part by part (`tools/build_sean_props.py`): flying fist, giant fist, bomb, Mayon, Molten fist; v2 seen in
-  Blender only. The fist, giant fist and bomb are wired with the old shapes as fallback; Mayon and the Molten fists are not
-  placed yet.
+  Blender only. The fist, giant fist and bomb are wired with the old shapes as fallback; Mayon and the Molten fists are
+  placed since ULT-READ-1024.
 - [x] Sound drafts (`tools/build_sean_audio.py`, report `audio-drafts/`): 23 cues and the MAYON AWAKENS theme, the slam its
   loudest beat. Not heard by the owner; not in the game. May need rebuilding in the SFX-TONDO-1023 method once it is settled.
 - [x] `SeanKitPlayProbe` 7 of 7 and `SeanSkillTimingProbe` 6 of 6 (2026-10-24, `Logs/sean-2026-10-24/play5..6`). The splash's
@@ -50,7 +50,7 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   something?"): a prayer held while the ring is placed where he looks (2 to 9 m, `AimByHolding` where-looking), the release
   opens a puddle that warns 0.45 s, then the giant fist. No flight, no lock. Prayer clips `hero-sean-pray-aim` (looped) and
   `hero-sean-pray` (`HeroAbilityClips.Sean.cs`, baked by `SeanMotionAuthor`); bots place it where the attacker will be.
-- [ ] 🧑 Owner to play the new Magma Fist and the prayer; first-person arms still play the old `cinder-draw` action.
+- [ ] 🧑 Owner to play the new Magma Fist and the prayer (first person has its own prayer and `magma-palms` since ULT-READ-1024).
 - [x] CAN-CARRY-1024 (CODED 2026-10-24, protocol 179; not played online by anyone yet, the owner asked for it coded to work in
   theory): the reset becomes a real carry. Built: `Lata.Carry.cs` (host-owned carrier, phase, age; pickup 0.35 s, the walk,
   set-down 0.3 s, drop on release, stun, Whirled or role change, a stuck walk drops after 2.5 s, a walk blocked for 0.35 s
@@ -100,9 +100,30 @@ its happening to them"*, *"spectator what do they see"*, *"felt but not overwhel
   MAGMA FIST on the player (the giant fist rising into them, `SeanMagmaFist.StepPunch`). Wants the can visibly flying away.
   Ideas: hit-stop and a contact burst at the touch point, the can launched on an arc with spin before it lands and slides,
   clients interpolating `LataPose` instead of snapping, the victim's knock-up drawn from the knuckles' contact.
+- [x] ULT-READ-1024 (CODED 2026-10-24, protocol 180; not seen by the owner). Owner: *"his ult sucks as shit especially
+  cutscene i cant even tell wtf his ult does from his cutscene"*, then, held against Paete's and Phaister's, *"the ult of sean
+  doesnt earn its place"* and *"dante has a really good ult"*. v1 was 4 m of push, then 8 s of a self-buff nobody could see, its
+  payoff (the bomb on E) deferred and optional; the film's Molten wore only a generic aura. Offered three directions, he chose
+  **The mountain rises**: hold to place it where he looks (3 to 10 m, never within 3 m of the can); a 3 m Mayon (`SeanProps/mayon`)
+  bursts up there, throws everyone within 9 m out (the push cap) and SEARS them 2 s; for 8 s it lobs a bomb every 1.2 s at the
+  opponent it has hit least, nearest first, within 12 m (ring on the court the whole 1.0 s flight, 2.5 m splash, 3 m throw, a
+  slowing pool; it knocks the can over unless he is the taya); it is solid; then it cools and sinks. He is Molten while it
+  erupts (no knockback, RAM every 4 s, `SeanMoltenLook`: the modelled lava fists on both real hands on every peer and his own
+  first-person arms, built late and retried because the phase still has his arms off at activation). The bomb on E is gone.
+  Core `SeanRules` (volcano section, `BombDue`, `VolcanoSpotClearOfCan`), `SeanVolcano` (every peer builds it from the cast,
+  standing; the host times and targets the bombs and announces each as `MatchFlair.Kind.SeanVolcanoBomb`, 22),
+  `SeanVolcanicBomb.FromVolcano`, `SeanHeroKit` (aimed ultimate, E bomb removed), bots (`AIController.SeanVolcanoAim`).
+  Cutscene, Dante's shape, 5.0 s: A his fists into the court and the lava climbing them into the Molten fists, B a river of lava
+  racing along the court to the real spot (lens computed from it), C the mountain bursting up there and its wave reaching the real
+  players as the cut comes; play throws them. MAGMA FIST in first person: the prayer held at the bottom centre while he aims
+  (`ViewmodelArms.Prayer.cs`), its own `magma-palms` release. Parol leftovers removed (`UltimateProp.Sean.cs`, `ParolGround`,
+  the parol glbs and atlas, `tools/build_ultimate_props_sean.py`). Films `Logs/paete-ability-film/introfx_sean_s14..s16`
+  (s14/s15 are v1's refit), skills film `Logs/sean-2026-10-24/film-v5`.
+- [ ] 🧑 Owner to watch THE MOUNTAIN RISES (cutscene and play) and judge its numbers (9 m, 7 bombs, 2.5 m splash).
 - [ ] The effects pass on the bench (`VFX_BENCH_METHOD.md`): rings, splashes, steam and the lens splat painted, not first-pass.
-- [ ] Cleanup once nothing references them: parol props and `ParolGround`, `UltimateProp.Sean.cs`, `SeanSupernovaLook`,
-  `SeanCinderGate` (+ look and tests), the Stoke FX study scenes.
+- [ ] Cleanup once nothing references them: `SeanSupernovaLook`, `SeanCinderGate` (+ look and tests; it is still in
+  `WorldEffectSnapshot` and `MatchRpc`, so it needs a protocol step), the Stoke FX study scenes. (The parol props, `ParolGround`
+  and `UltimateProp.Sean.cs` went with ULT-READ-1024.)
 - [ ] Wiki (Google Doc): the rules this pass changed (the can, uniform blast distances, the accent, the E tile).
 - [ ] Known, not Sean's: Bayan Plaza is out of the build scene list, so every probe that loads it fails in SetUp
   (`MovementSnapshotProbe`, `PaeteKitPlayProbe`, `AmihanKitPlayProbe`, ...); a full EditMode run hangs in the LAN socket tests

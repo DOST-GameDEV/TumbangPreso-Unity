@@ -59,6 +59,11 @@ namespace TumbangPreso.CameraSystem
             { "cinder-draw", new CastPath(.35f, false,
                 Rest(0), K(.12f,.20f,-.06f,.04f,-.04f,.12f,-.03f),
                 K(.35f,-.16f,-.10f,.28f,.06f,.18f,-.08f), K(.46f,-.14f,-.09f,.24f,.06f,.16f,-.06f), Rest(.75f)) },
+            // MAGMA FIST's release (2026-10-24, replacing the old Cinder Gate draw): out of the prayer, both palms lift once
+            // together at the centre, then drive down and forward at the court and stop dead there; the puddle opens.
+            { "magma-palms", new CastPath(.24f, false,
+                Rest(0), K(.10f, -.10f, .14f, .04f, .16f, .36f, .04f),
+                K(.24f, -.08f, -.16f, .26f, .14f, .08f, .26f), K(.40f, -.08f, -.15f, .25f, .14f, .09f, .25f), Rest(.75f)) },
             // IGNITION CANNON. Loading the throw: the slipper comes back to the shoulder and the free hand
             // comes across and cups over it, his lantern maker's care; held while it catches, then released.
             { "ignite", new CastPath(.28f, false,

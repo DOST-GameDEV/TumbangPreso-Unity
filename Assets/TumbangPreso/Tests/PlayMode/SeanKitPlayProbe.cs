@@ -242,79 +242,115 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanSlam && f.subject == target.PlayerSlot), "The punch was not announced.");
         }
 
-        // ------------------------------------------------------------------ MAYON AWAKENS, Molten and VOLCANIC BOMB
+        // ------------------------------------------------------------------ MAYON AWAKENS v2: the mountain, Molten, its bombs
+
+        private static CharacterMotor Taya() => GameServices.Round.Players.First(p => p.IsDefender);
+
+        private static SeanVolcano MountainOf(CharacterMotor sean)
+            => Object.FindObjectsByType<SeanVolcano>().FirstOrDefault(v => v != null && v.OwnerSlot == sean.PlayerSlot);
 
         [UnityTest, Timeout(120000)]
-        public IEnumerator TheAwakeningThrowsBodiesNotTheCanThenMoltenStandsAndTheBombKnocksTheCanOver()
+        public IEnumerator TheMountainRisesWhereHeAimedThrowsEveryoneOutAndBombardsTheTaya()
         {
             var round = GameServices.Round;
             var lata = round.Lata;
             Vector3 can = Flat(lata.transform.position);
-            var sean = Sean(round.PlayerAt(1), can + new Vector3(0, .12f, -2.5f), lata.transform.position);
+            Vector3 lane = Vector3.back;
+            Vector3 aim = can + lane * 9f + Vector3.up * .12f;
+            var sean = Sean(round.PlayerAt(1), can + lane * 3f + Vector3.up * .12f, aim);
             var kit = (SeanHeroKit)sean.AbilitySystem.Kit;
             Assert.IsFalse(sean.IsDefender, "This reproduction needs the attacking kit.");
             kit.AddUltimateCharge(100);
+            var taya = Taya();
+            taya.Teleport(aim + Vector3.right * 2.2f); taya.Intent.Clear(); taya.Intent.Parked = true; taya.ClearStun();
             var near = Attacker(sean.PlayerSlot);
-            near.Teleport(sean.transform.position + new Vector3(1.6f, 0, 0)); near.Intent.Parked = false;
+            near.Teleport(aim + Vector3.left * 1.8f); near.Intent.Parked = true; near.ClearStun();
             yield return new WaitForSeconds(.2f);
-            Vector3 nearFrom = near.transform.position;
-            string before = kit.Skill2.LiveName;
+            Vector3 tayaFrom = taya.transform.position, nearFrom = near.transform.position;
 
-            yield return Press(sean, Verb.Ultimate, .2f);
+            yield return Press(sean, Verb.Ultimate, .3f);
             float t0 = Time.time;
             while (Time.time - t0 < 12f && !kit.IsMolten) yield return null;
             Assert.IsTrue(kit.IsMolten, "MAYON AWAKENS never made him Molten.");
-            yield return new WaitForSeconds(.6f);
-            float thrown = Flat(near.transform.position - nearFrom).magnitude;
-            Note("awakening_thrown_m", thrown); Note("awakening_can_upright", lata.IsUpright);
-            Assert.That(thrown, Is.InRange(SeanRules.AwakeningPush * .7f, SeanRules.AwakeningPush * 1.3f), "The awakening did not throw the body beside him 3.5 m.");
-            Assert.IsTrue(lata.IsUpright, "The awakening knocked the can over; only the bomb may.");
-            Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanBlast && f.subject == near.PlayerSlot), "The awakening's hit was not announced.");
+            var mountain = MountainOf(sean);
+            Assert.IsNotNull(mountain, "No mountain rose.");
+            float placedOff = Flat(mountain.Foot - aim).magnitude;
+            Note("mountain_placed_off_aim_m", placedOff);
+            Assert.Less(placedOff, .6f, "The mountain did not rise where he aimed.");
+            var solid = mountain.GetComponentInChildren<Collider>();
+            Assert.IsTrue(solid != null && solid.enabled, "The mountain is not solid.");
 
-            // Molten: nothing moves him.
+            yield return new WaitForSeconds(.6f);
+            float tayaThrown = Flat(taya.transform.position - tayaFrom).magnitude, nearThrown = Flat(near.transform.position - nearFrom).magnitude;
+            Note("rise_threw_taya_m", tayaThrown); Note("rise_threw_attacker_m", nearThrown);
+            // Judged against each body's own knockback scale (Dante's Earthbound halves every push he takes).
+            float tayaScale = Mathf.Clamp01(taya.AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1f);
+            float nearScale = Mathf.Clamp01(near.AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1f);
+            Note("rise_taya_scale", tayaScale); Note("rise_attacker_scale", nearScale);
+            Assert.Greater(tayaThrown, SeanRules.VolcanoBlastPush * tayaScale * .6f, "The rise did not throw the taya out.");
+            Assert.Greater(nearThrown, SeanRules.VolcanoBlastPush * nearScale * .6f, "The rise did not throw the attacker beside it out.");
+            Assert.IsTrue(lata.IsUpright, "The rise knocked the can over; only a bomb may.");
+            Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanBlast && f.subject == taya.PlayerSlot), "The rise's hit was not announced.");
+
+            // Molten: nothing moves him, and E is his role skill again (the mountain throws the bombs).
             Vector3 held = sean.transform.position;
             sean.ApplyResolvedImpact(Vector3.right * 14f + Vector3.up * 3f);
             yield return new WaitForSeconds(.5f);
             Note("molten_moved_m", Flat(sean.transform.position - held).magnitude);
+            // SEARED lands once their slide is over (so it never shortens the throw).
+            Note("rise_taya_seared_s", taya.SearedLeft);
+            Assert.Greater(taya.SearedLeft, 0f, "The rise did not SEAR them.");
             Assert.Less(Flat(sean.transform.position - held).magnitude, .25f, "A push moved Molten Sean.");
+            Assert.AreNotEqual("VOLCANIC BOMB", kit.Skill2.LiveName, "E still reads the old bomb.");
 
-            // The E tile is the bomb while Molten, and the bomb knocks the can over.
-            Note("e_tile_before", before); Note("e_tile_molten", kit.Skill2.LiveName);
-            Assert.AreEqual("VOLCANIC BOMB", kit.Skill2.LiveName, "The E tile did not read VOLCANIC BOMB while Molten.");
-            Assert.AreNotEqual("VOLCANIC BOMB", before);
-            sean.Intent.AimPoint = lata.transform.position;
-            yield return Press(sean, Verb.Skill2, .15f);
-            Assert.IsFalse(kit.IsMolten, "Throwing the bomb did not end Molten.");
-            Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanBombThrown), "The throw was not announced for the spectator.");
+            // It lobs at the taya (his opponent), never at his own side.
             t0 = Time.time;
-            while (Time.time - t0 < 3f && lata.IsUpright) yield return null;
-            Note("bomb_knocked_can", !lata.IsUpright);
-            Assert.IsFalse(lata.IsUpright, "The bomb did not knock the can over.");
+            while (Time.time - t0 < 3f && !_flair.Any(f => f.kind == MatchFlair.Kind.SeanVolcanoBomb)) yield return null;
+            var bombs = _flair.Where(f => f.kind == MatchFlair.Kind.SeanVolcanoBomb).ToList();
+            Note("bombs_by_1_8_s", bombs.Count);
+            Assert.IsTrue(bombs.Count > 0, "The mountain threw no bomb.");
+            Assert.IsTrue(bombs.All(f => f.subject == taya.PlayerSlot), "A bomb was thrown at his own side.");
         }
 
         [UnityTest, Timeout(120000)]
-        public IEnumerator AnUnthrownBombDropsAtHisFeetWhenMoltenEnds()
+        public IEnumerator TheMountainNeverStandsOnTheCanItsBombsKnockTheCanOverAndItSinks()
         {
             var round = GameServices.Round;
-            var sean = Sean(round.PlayerAt(1), new Vector3(0, .12f, -8), new Vector3(0, 1, 7));
+            var lata = round.Lata;
+            Vector3 can = Flat(lata.transform.position);
+            Vector3 lane = Vector3.back;
+            var sean = Sean(round.PlayerAt(1), can + lane * 6f + Vector3.up * .12f, can + Vector3.up * .12f);
             var kit = (SeanHeroKit)sean.AbilitySystem.Kit;
             kit.AddUltimateCharge(100);
-            yield return Press(sean, Verb.Ultimate, .2f);
+            var taya = Taya();
+            taya.Intent.Clear(); taya.Intent.Parked = true;
+            yield return Press(sean, Verb.Ultimate, .3f);
             float t0 = Time.time;
             while (Time.time - t0 < 12f && !kit.IsMolten) yield return null;
-            Assert.IsTrue(kit.IsMolten);
-            var near = Attacker(sean.PlayerSlot);
-            near.Teleport(sean.transform.position + new Vector3(1.5f, 0, 0)); near.ClearStun(); near.ClearTrip();
-            _flair.Clear();
-            Vector3 nearFrom = near.transform.position;
+            var mountain = MountainOf(sean);
+            Assert.IsNotNull(mountain, "No mountain rose.");
+            float fromCan = Flat(mountain.Foot - can).magnitude;
+            Note("mountain_from_can_m", fromCan);
+            Assert.GreaterOrEqual(fromCan, SeanRules.VolcanoClearOfCan - .1f, "Aimed on the can, the mountain stood on it.");
+
+            // The taya back beside the can after the rise threw them: the next bomb comes down on both.
+            yield return new WaitForSeconds(.3f);
+            taya.Teleport(can + Vector3.right * 1.2f + Vector3.up * .12f); taya.ClearStun();
             t0 = Time.time;
-            while (Time.time - t0 < SeanRules.MoltenSeconds + 1f && kit.IsMolten) yield return null;
-            Assert.IsFalse(kit.IsMolten);
-            yield return new WaitForSeconds(1.0f);
-            float thrown = Flat(near.transform.position - nearFrom).magnitude;
-            Note("dropped_bomb_thrown_m", thrown);
-            Assert.That(thrown, Is.InRange(SeanRules.DroppedBombPush * .6f, SeanRules.DroppedBombPush * 1.4f), "The dropped bomb did not splash at his feet.");
-            Assert.IsTrue(_flair.Any(f => f.kind == MatchFlair.Kind.SeanSlam && f.subject == near.PlayerSlot), "The dropped bomb's hit was not announced.");
+            while (Time.time - t0 < 4f && lata.IsUpright)
+            {
+                if (Flat(taya.transform.position - can).magnitude > 1.6f) { taya.Teleport(can + Vector3.right * 1.2f + Vector3.up * .12f); taya.ClearStun(); }
+                yield return null;
+            }
+            Note("bomb_knocked_can", !lata.IsUpright);
+            Assert.IsFalse(lata.IsUpright, "A bomb landing by the can did not knock it over.");
+
+            // It cools and sinks when the eruption ends, and Molten ends with it.
+            t0 = Time.time;
+            while (Time.time - t0 < SeanRules.MoltenSeconds + SeanRules.VolcanoSinkSeconds + 2f && MountainOf(sean) != null) yield return null;
+            Note("mountain_gone", MountainOf(sean) == null);
+            Assert.IsNull(MountainOf(sean), "The mountain never sank.");
+            Assert.IsFalse(kit.IsMolten, "Molten outlived its mountain.");
         }
     }
 }

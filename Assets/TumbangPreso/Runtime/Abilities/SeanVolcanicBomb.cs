@@ -6,9 +6,8 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// Sean's VOLCANIC BOMB in the world: the lava pulled off both his arms into one heavy ball over his head (the tell), hurled
-    /// on a high arc, splashing where it lands and leaving a pool that skins over into black glass and slows anyone in it.
-    /// Unthrown when Molten runs out, it drops at his feet and splashes smaller (owner, 2026-10-24: "Drops at his feet").
+    /// A VOLCANIC BOMB in the world: since MAYON AWAKENS v2 his volcano lobs them (`SeanVolcano`), a ball of lava out of the
+    /// crater on a high arc, splashing where it lands and leaving a pool that skins over into black glass and slows anyone in it.
     ///
     /// ⚠️ EVERY PEER RUNS ITS OWN COPY FROM THE SAME CAST; THE HOST ALONE RESOLVES THE SPLASH (`SeanHeroKit.HostBlast`, which
     /// knocks the lata over unless Sean is the taya guarding it). The pool's slow is applied by each peer to the bodies it
@@ -25,21 +24,28 @@ namespace TumbangPreso.Abilities
     public sealed class SeanVolcanicBomb : MonoBehaviour
     {
         private CharacterMotor _owner;
-        private bool _thrown;
         private Vector3 _land, _from, _last;
-        private float _age, _gather, _flight;
+        private float _age, _gather, _flight, _radius, _push, _size, _apex;
         private Transform _ball;
         private bool _splashed;
         private SeanGroundMark _ring;
 
-        public static SeanVolcanicBomb Spawn(CharacterMotor owner, Vector3 land, bool thrown)
+        /// <summary>
+        /// One bomb out of <paramref name="crater"/>, landing on <paramref name="land"/> after `VolcanoBombFlightSeconds`. Every
+        /// peer runs its own from the host's announcement (`MatchFlair.Kind.SeanVolcanoBomb`); the host's splash is the hit.
+        /// </summary>
+        public static SeanVolcanicBomb FromVolcano(CharacterMotor owner, Vector3 crater, Vector3 land)
         {
             var go = new GameObject("SeanVolcanicBomb");
             var bomb = go.AddComponent<SeanVolcanicBomb>();
-            bomb._owner = owner; bomb._thrown = thrown; bomb._land = land;
-            bomb._gather = thrown ? SeanRules.BombTellSeconds : .15f;
-            bomb._flight = thrown ? SeanRules.BombFlightSeconds : .25f;
-            bomb._from = owner.transform.position + Vector3.up * 2.3f;
+            bomb._owner = owner; bomb._land = land;
+            bomb._gather = .08f;
+            bomb._flight = SeanRules.VolcanoBombFlightSeconds;
+            bomb._radius = SeanRules.VolcanoBombRadius; bomb._push = SeanRules.VolcanoBombPush;
+            bomb._size = .8f;
+            // A lob: higher the farther it goes, so a far one is still a falling thing and not a line drive.
+            bomb._apex = 2.5f + .25f * Vector3.Distance(crater, land);
+            bomb._from = crater;
             bomb._last = bomb._from;
             go.transform.position = bomb._from;
             // The modelled ball of lava (`bomb_ball`, 1.2 m across at scale 1); the first-pass spheres if it is missing.
@@ -61,7 +67,7 @@ namespace TumbangPreso.Abilities
             bomb._ball = holder;
             bomb._ball.localScale = Vector3.zero;
             AbilityVfx.AttachAura(bomb._ball, AbilityVfx.Aura.FireEmber, bomb._gather + bomb._flight + .2f);
-            bomb._ring = SeanGroundMark.Spawn(land, SeanRules.BombRadiusFor(thrown), SeanGroundMark.Mode.Fill,
+            bomb._ring = SeanGroundMark.Spawn(land, bomb._radius, SeanGroundMark.Mode.Fill,
                 bomb._gather + bomb._flight, SeanImpact.Accent);
             return bomb;
         }
@@ -71,23 +77,21 @@ namespace TumbangPreso.Abilities
             if (PresentationClock.Held || _splashed) return;
             _age += Time.deltaTime;
             MarkForLocalPlayer();
-            float size = _thrown ? 1.2f : .9f;
+            float size = _size;
             if (_age < _gather)
             {
-                // The gather: it swells over his head, riding with him.
-                if (_owner != null) _from = _owner.transform.position + Vector3.up * 2.3f;
+                // It wells up out of the crater.
                 transform.position = _last = _from;
                 _ball.localScale = Vector3.one * size * Mathf.SmoothStep(0, 1, _age / _gather);
                 return;
             }
             float t = Mathf.Clamp01((_age - _gather) / _flight);
             _ball.localScale = Vector3.one * size * (1 + .06f * Mathf.Sin(_age * 30f));   // it wobbles like liquid
-            float apex = _thrown ? 4.0f : .2f;
-            Vector3 next = Vector3.Lerp(_from, _land, t) + Vector3.up * (apex * 4 * t * (1 - t));
+            Vector3 next = Vector3.Lerp(_from, _land, t) + Vector3.up * (_apex * 4 * t * (1 - t));
 
             // Swept against the world: whatever is in the way is where it lands.
             Vector3 step = next - _last;
-            if (_thrown && step.sqrMagnitude > .0001f
+            if (t > .15f && step.sqrMagnitude > .0001f
                 && Physics.SphereCast(_last, .3f, step.normalized, out var hit, step.magnitude, ~0, QueryTriggerInteraction.Ignore)
                 && Blocks(hit.collider))
             {
@@ -103,7 +107,8 @@ namespace TumbangPreso.Abilities
 
         private bool Blocks(Collider c)
             => c != null && c.GetComponentInParent<CharacterMotor>() == null && c.GetComponentInParent<Slipper>() == null
-               && c.GetComponentInParent<Lata>() == null && c.GetComponentInParent<SeanVolcanicBomb>() == null;
+               && c.GetComponentInParent<Lata>() == null && c.GetComponentInParent<SeanVolcanicBomb>() == null
+               && c.GetComponentInParent<SeanVolcano>() == null;
 
         /// <summary>The player it is coming down on sees its ring brighter (the threat to YOU outranks the rest).</summary>
         private void MarkForLocalPlayer()
@@ -114,7 +119,7 @@ namespace TumbangPreso.Abilities
             if (me == null || me == _owner) { _ring.Brightness = 1f; return; }
             Vector3 to = me.transform.position - _land;
             bool inside = SeanRules.WithinReach(to.y, SeanRules.BlastReachHeight)
-                          && new Vector2(to.x, to.z).magnitude <= SeanRules.BombRadiusFor(_thrown);
+                          && new Vector2(to.x, to.z).magnitude <= _radius;
             _ring.Brightness = inside ? 1.7f : 1f;
         }
 
@@ -123,14 +128,15 @@ namespace TumbangPreso.Abilities
             _splashed = true;
             if (_ball != null) _ball.gameObject.SetActive(false);
             if (_ring != null) _ring.Stop();
-            float radius = SeanRules.BombRadiusFor(_thrown);
-            NetCue.Play("sfx_explosion_heavy", _land);
+            float radius = _radius;
+            // Local on every peer: each runs this same flight from the same announcement.
+            GameServices.Audio?.PlayAt("sfx_explosion_heavy", _land);
             HeroHazards.CreateExplosionVisual(_land, radius, "", HeroHazards.ExplosionStyle.Fire);
             SeanGroundMark.Spawn(_land, radius, SeanGroundMark.Mode.Flash, .35f, SeanImpact.Accent);
             if (_owner != null)
-                SeanHeroKit.HostBlast(_owner, _land, radius, SeanRules.BombPushFor(_thrown), SeanRules.BombStaggerSeconds,
-                    knocksCan: true, _thrown ? MatchFlair.Kind.SeanBlast : MatchFlair.Kind.SeanSlam);
-            SeanLavaPool.Spawn(_land, radius * .6f, SeanRules.PoolSeconds, _owner);
+                SeanHeroKit.HostBlast(_owner, _land, radius, _push, SeanRules.BombStaggerSeconds,
+                    knocksCan: true, MatchFlair.Kind.SeanSlam);
+            SeanLavaPool.Spawn(_land, radius * SeanRules.PoolRadiusShare, SeanRules.PoolSeconds, _owner);
             Object.Destroy(gameObject, .1f);
         }
 

@@ -1209,7 +1209,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "closed-circuit" ? ClosedCircuitClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : clip == "thrust-fire" ? ThrustFireClip
-                  : clip == "cinder-draw" ? CinderDrawClip
+                  : clip == "cinder-draw" || clip == "magma-palms" ? CinderDrawClip
                   : clip == "ignite" ? IgniteClip
                   : clip == "supernova-slam" ? SupernovaSlamClip
                   : clip == "sprint-electric" ? SprintElectricClip
@@ -3073,6 +3073,7 @@ namespace TumbangPreso.CameraSystem
             RestoreAirMotion();
             RestoreRunSway();
             RestoreFeatherfall();
+            RestorePrayer();
             RestoreHeldProp();
             RestoreSwimming();
             _phase += dt;
@@ -3112,6 +3113,7 @@ namespace TumbangPreso.CameraSystem
                 }
                 ApplySwimming(dt);
                 ApplyFeatherfall();
+                ApplyPrayer(dt);
                 ApplyHeldProp();
                 ApplyRunSway(dt);
                 ApplyAirMotion(dt);
@@ -3161,6 +3163,7 @@ namespace TumbangPreso.CameraSystem
             }
             ApplySwimming(dt);
             ApplyFeatherfall();
+            ApplyPrayer(dt);
             ApplyHeldProp();
             ApplyRunSway(dt);
             ApplyAirMotion(dt);

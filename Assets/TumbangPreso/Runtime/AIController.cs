@@ -5037,6 +5037,29 @@ namespace TumbangPreso
         }
 
         /// <summary>How many opponents a sentry thrown to the best point within range would catch, and that point.</summary>
+        /// <summary>
+        /// Where to raise Sean's mountain: on an opponent within his aim range, the one whose spot the 9 m rise throws the most
+        /// opponents from (his own side is never counted). Returns how many it throws.
+        /// </summary>
+        private int SeanVolcanoAim(RoundDirector round, out Vector3 best)
+        {
+            best = At(_motor).Value;
+            int most = 0;
+            if (round == null) return 0;
+            foreach (var centre in Perceived(round.Players))
+            {
+                if (centre == null || centre == _motor || !centre.RoundActive || centre.IsDefender == _motor.IsDefender) continue;
+                Vector3 at = At(centre).Value;
+                if (Flat(At(_motor).Value, at) > Core.SeanRules.VolcanoAimMaxRange) continue;
+                int thrown = 0;
+                foreach (var who in Perceived(round.Players))
+                    if (who != null && who != _motor && who.RoundActive && who.IsDefender != _motor.IsDefender
+                        && Flat(at, At(who).Value) <= Core.SeanRules.VolcanoBlastRadius - AiTuning.AbilityVictimMargin) thrown++;
+                if (thrown > most) { most = thrown; best = at; }
+            }
+            return most;
+        }
+
         private int PaeteSentryAim(RoundDirector round, out Vector3 best)
         {
             best = At(_motor).Value;
@@ -5455,21 +5478,12 @@ namespace TumbangPreso
                     // Absolute Zero reaches the map; already helpless bodies do not justify it.
                     if (WouldCatch(kit.Ultimate, stunPayload: true)) Consider(intent, Verb.Ultimate, dt);
                 }
-                else if (kit is Abilities.SeanHeroKit)
+                else if (kit is Abilities.SeanHeroKit && SeanVolcanoAim(round, out var mountainAt) >= 1)
                 {
-                    // ⚠️ AN ATTACKER MAY DELIBERATELY METEOR THE LATA, and the reach for that is
-                    // the ultimate's own radius rather than the 6.0 m that used to be written
-                    // here. A DEFENDING Sean must never spend one knocking over their own
-                    // objective, and must not knock it over as a side effect either.
-                    float smash = kit.Ultimate.TelegraphRadius + AiTuning.AbilityVictimMargin;
-
-                    bool meteorTheCan = !_motor.IsDefender && lata != null && lata.IsUpright
-                                        && lataDistance <= smash;
-                    bool safeForOwnCan = !_motor.IsDefender || lataDistance > 9.0f;
-
-                    if (meteorTheCan
-                        || (safeForOwnCan && WouldCatch(kit.Ultimate, stunPayload: false)))
-                        Consider(intent, Verb.Ultimate, dt);
+                    // MAYON AWAKENS v2 raises a volcano where he looks: put it where its 9 m rise throws the most opponents.
+                    // It never knocks the can over itself (only its bombs can), so a defending Sean may raise it by his can.
+                    intent.AimPoint = mountainAt;
+                    Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
@@ -5608,16 +5622,7 @@ namespace TumbangPreso
 
             if (MayConsider(Verb.Skill2) && SlotIsSpendable(kit.Skill2))
             {
-                if (kit is Abilities.SeanHeroKit moltenSean && moltenSean.IsMolten)
-                {
-                    // VOLCANIC BOMB, Sean's E while Molten: an attacker throws it on the upright can when it is in reach,
-                    // otherwise anyone throws it at the nearest rival. Held to the end, it drops at his feet anyway.
-                    if (!_motor.IsDefender && lata != null && lata.IsUpright && lataDistance <= SeanRules.BombMaxRange)
-                    { intent.AimPoint = lata.transform.position; Consider(intent, Verb.Skill2, dt); }
-                    else if (target != null && targetDistance <= SeanRules.BombMaxRange)
-                    { intent.AimPoint = target.transform.position; Consider(intent, Verb.Skill2, dt); }
-                }
-                else if (kit is Abilities.DanteHeroKit)
+                if (kit is Abilities.DanteHeroKit)
                 {
                     // ⚠️ THE CARAPACE IS IMMUNITY, SO IT WANTS SOMETHING TO BE IMMUNE TO. The old
                     // gate spent a 62 s cooldown on being taggable anywhere on the map, which is

@@ -359,77 +359,56 @@ def phaister():
 
 def _sean(held):
     """
-    MAYON AWAKENS, 7.0 s (owner 2026-10-24: the lava brawler from Mayon; "mix gising na ang bulkan and volcanic bomb", "pedeng
-    his ult transforms him"; "7.0 s"). The direction is `docs/reports/sean-kit-2026-10-24/plan.md` section 3: the mountain's
-    heat comes up out of the ground into him until he cannot hold it, and he lets it out. Three shots, one idea each:
-      A. THE MOUNTAIN WAKES (0 to 2.1): from his feet, the lens cranes up his body as the heat climbs it; Mayon wakes behind him.
-      B. THE FIST (2.1 to 4.3): fist in front, face behind it; the lava runs up his forearm, his eyes ignite, he holds.
-      C. ERUPTION (4.3 to 7.0): low, looking up at him: the coil, both fists into the court at 5.6, the fountain in the
-         mountain's shape, and the shockwave racing out. It ENDS as the wave reaches the real players, so play throws them
-         (the live awakening blast) instead of the cutscene throwing them and play doing it again.
-    The parol is gone (owner 2026-10-24). The last pose is standing, which is where play picks him up.
+    MAYON AWAKENS v2, THE MOUNTAIN RISES, 5.0 s (owner 2026-10-24: *"the ult of sean doesnt earn its place"*, beside Paete's
+    and Phaister's; he chose "The mountain rises", and pointed at Dante's: *"dante has a really good ult"*). Dante's lesson is
+    the shape: the cutscene is the CHARGE-UP, it shows where the power comes from, and it cuts as the power launches at the real
+    players, with play carrying on from that frame. One sentence: the lava in his fists goes into the court, races to the spot
+    he chose, and the mountain bursts up there.
+      A. THE FISTS (0 to 1.5): he drives both fists into the court (0.35); lava wells up out of it and climbs his forearms into
+         the Molten fists (the model he wears in play), his eyes ignite. Where it comes from.
+      B. THE RUN (1.5 to 3.0): the lens races low along the court beside a river of lava running from his fists to the spot;
+         the court there bulges, glows and vents. Where it goes. (The lens is computed from the real spot: `SeanFrame`.)
+      C. THE RISE (3.0 to 5.0): wide and low, him and the spot and the real players: he hauls his fists up and the mountain
+         bursts out of the court (3.1), its wave racing out to 9 m as the cut comes. What it does to them. Play throws them.
+    The last pose is standing with the lava fists, which is how play picks him up. Table lens values for B and C are only
+    the fallbacks for a film with no spot; `HeroIntroductionScene.Sean.cs` places both from the real one.
     """
-    p = Performance("sean-held" if held else "sean", 7.0)
-    # The carrying hand keeps its slipper low; the free hand is his fist.
+    p = Performance("sean-held" if held else "sean", 5.0)
     carry = (18, 28, -6)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # A wide, planted stance; head down at the court as the cracks come to him.
-    plant = Pose(torso=(6, 0, 0), head=(16, 0, 0), left=(8, 22, 0), right=carry if held else (8, 22, 0),
-                 legs=((3, 10), (-3, 10)))
-    press = plant.but(torso=(9, 0, 0), head=(20, 0, 0))
-    # The breath held as the heat reaches his chest: shoulders up and out, chin lifting.
-    breathe = Pose(torso=(-6, 0, 0), head=(-8, 0, 0), left=(14, 30, 0), right=carry if held else (14, 30, 0),
-                   legs=((3, 10), (-3, 10)))
-    # The fist: his free arm drawn up in front of the chest, the body turned behind it.
-    if held:
-        fist = Pose(torso=(6, 12, 0), head=(4, 0, 0), left=(82, 10, 0), right=carry, legs=((3, 10), (-3, 10)))
-        clench = fist.but(torso=(8, 14, 0), left=(86, 6, 0))
-        draw = fist.but(torso=(2, -10, 0), left=(-20, 18, 0))
-    else:
-        fist = Pose(torso=(6, -12, 0), head=(4, 0, 0), left=(10, 20, 0), right=(82, 10, 0), legs=((3, 10), (-3, 10)))
-        clench = fist.but(torso=(8, -14, 0), right=(86, 6, 0))
-        draw = fist.but(torso=(2, 10, 0), right=(-20, 18, 0))
-    # The coil: leaning back, both fists high over his head (one, holding a slipper).
-    coil = Pose(torso=(-12, 0, 0), head=(-14, 0, 0), left=(170, 18, 0), right=carry if held else (170, 18, 0),
-                legs=((10, 14), (-10, 14)))
+    # The wind-up: a quick crouch, both fists drawn up to the chest.
+    crouch = Pose(torso=(14, 0, 0), head=(4, 0, 0), left=(60, 20, 0), right=carry if held else (60, 20, 0),
+                  legs=((14, 14), (-10, 14)))
     # The slam: folded over, both fists driven into the court in front of him.
     slam = Pose(torso=(48, 0, 0), head=(-22, 0, 0), left=(70, 12, 0), right=carry if held else (70, 12, 0),
                 legs=((22, 14), (-18, 14)))
-    # Standing out of it, Molten, rolling one shoulder: the first frame of play.
-    stand = Pose(torso=(8, 0, 0), head=(0, 0, 0), left=(28, 22, 0), right=carry if held else (36, 24, 10),
-                 legs=((4, 9), (-4, 9)))
+    # Pushing: still down, head up at where the lava is going.
+    push = slam.but(torso=(40, 0, 0), head=(-30, 0, 0))
+    # The haul: up off the court, fists swept up past his face to call the mountain up.
+    haul = Pose(torso=(-10, 0, 0), head=(-14, 0, 0), left=(150, 30, 0), right=carry if held else (150, 30, 0),
+                legs=((6, 13), (-6, 13)))
+    # Standing out of it, Molten, fists low and ready: the first frame of play.
+    stand = Pose(torso=(8, 0, 0), head=(0, 0, 0), left=(30, 24, 0), right=carry if held else (30, 24, 0),
+                 legs=((4, 11), (-4, 11)))
 
     p.key(0, rest)
-    p.key(.3, plant).key(.45, press, punch=True)
-    p.hold(.45, 1.2, press)
-    p.key(1.6, breathe)
-    p.hold(1.6, 2.1, breathe)
-    p.key(2.18, fist)
-    p.key(2.25, clench, punch=True)
-    p.hold(2.25, 4.1, clench)
-    p.key(4.3, draw)
-    p.key(4.8, coil)
-    p.hold(4.8, 5.45, coil)
-    p.key(5.6, slam, punch=True)
-    p.hold(5.6, 6.25, slam)
-    p.key(6.65, stand)
-    p.hold(6.65, 7.0, stand)
+    p.key(.22, crouch)
+    p.key(.35, slam, punch=True)
+    p.hold(.35, 1.2, slam)
+    p.key(1.5, push)
+    p.hold(1.5, 2.8, push)
+    p.key(3.1, haul, punch=True)
+    p.hold(3.1, 3.5, haul)
+    p.key(3.95, stand)
+    p.hold(3.95, 5.0, stand)
 
     side = -1 if held else 1
-    # A: from his feet, the lens cranes up his body following the heat (it finds his chest as Mayon lights behind him).
-    p.shot(0, 2.1, (-side * .7, .22, 1.25), (0, .15, 0), 52, eye_to=(-side * .9, 1.35, 1.75), look_to=(0, 1.45, 0), fov_to=48)
-    # B: the fist big in front, his face behind it, then round it to the face. (2026-10-24, the skills film: from 1.05 m and
-    # 34 degrees the lens sat inside his face, one eye filling the frame and the fist unreadable; his head is big, so 1.8 m.
-    # Film s12: from across his body the raised fist (HandAnchor at x .37, z .65) sits in front of the face, its lava nearest
-    # the lens; aimed between the two so neither leaves the frame.)
-    p.shot(2.1, 4.3, (-side * .6, 1.2, 1.7), (side * .12, 1.2, .35), 40,
-           eye_to=(-side * .15, 1.35, 1.95), look_to=(side * .1, 1.35, .15), fov_to=38, close=True)
-    # C1: low and looking up at him for the coil.
-    p.shot(4.3, 5.6, (side * 1.3, .45, 3.3), (0, 1.75, 0), 50, eye_to=(side * 1.2, .4, 3.0), look_to=(0, 1.9, 0))
-    # C2: from the slam, the lens rises and backs off to hold the whole ring and whoever stands inside it.
-    # (2026-10-24: it looked down at the court, so the 6.4 m fountain left the top of the frame and he was a speck. From ~10 m
-    # and level with his chest the whole cone and the 4 m ring's near edge both stay in.)
-    p.shot(5.6, 7.0, (side * 1.2, .4, 3.0), (0, 1.6, 0), 50, eye_to=(side * 3.8, 2.6, 8.6), look_to=(0, 1.5, -.5), fov_to=62)
+    # A: low and in front, a little off his free side: the fists going in and the lava climbing them, his face over them.
+    p.shot(0, 1.5, (-side * .9, .55, 2.6), (0, .7, .3), 50, eye_to=(-side * .7, .65, 2.2), look_to=(0, .8, .3), fov_to=46)
+    # B: racing along the court beside the river (fallback: down the lane ahead of him).
+    p.shot(1.5, 3.0, (side * 1.4, .6, 1.5), (0, .3, 5.0), 52, eye_to=(side * 1.4, .7, 4.5), look_to=(0, .4, 7.0), fov_to=52)
+    # C: wide and low from the side, him and the mountain both (fallback: a spot 6 m ahead).
+    p.shot(3.0, 5.0, (side * 7.0, 1.4, 2.0), (0, 1.4, 3.0), 55, eye_to=(side * 8.0, 1.8, 1.5), look_to=(0, 1.3, 3.0), fov_to=58)
     p.locked((side * 2.6, 1.8, 6.0), (0, 1.0, 0), 56)
     return p
 

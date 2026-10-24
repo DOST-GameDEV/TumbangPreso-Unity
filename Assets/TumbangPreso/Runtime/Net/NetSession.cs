@@ -676,7 +676,11 @@ namespace TumbangPreso.Net
         // 179 (2026-10-24): the can carry (CAN-CARRY-1024). The reset is a held carry the host owns; `SyncLata` gains a
         // third optional suffix (tag 8: carrier seat, phase, phase age) and COMPLETE no longer restores. A 178 peer
         // channels on the old clock and never walks: the two may not meet.
-        public const int ProtocolVersion = 179;
+        // 180 (2026-10-24): MAYON AWAKENS v2, THE MOUNTAIN RISES (ULT-READ-1024). The ultimate is aimed where he looks and
+        // raises a volcano there; the host lobs its bombs and each reaches every peer as an appended `MatchFlair` kind (22,
+        // SeanVolcanoBomb: Sean's seat, the target's seat, the landing point, the bomb's index). The bomb on E is gone and his
+        // cutscene is 5.0 s. A 179 peer drops the bombs and runs the old ultimate on the same id: the two may not meet.
+        public const int ProtocolVersion = 180;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

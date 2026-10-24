@@ -8,9 +8,8 @@ namespace TumbangPreso.Core
     /// `docs/reports/sean-kit-2026-10-24/plan.md`. Numbers the owner gave carry his answer; the rest are PROPOSED, NOT YET
     /// PLAYED, written as a distance or a time and solved against `Balance.Friction` where they move a body.
     ///
-    /// `SeanHeroKit`, `SeanMagmaFist`, `SeanVolcanicBomb`, `Lata` (the hot can) and `CombatVerbs` (PRESSURE on a shove) read
-    /// these. VOLCANIC BOMB is thrown with the E button while Molten: the ultimate's own button belongs to the shared
-    /// cutscene path (`HeroAbilitySystem.SubmitSharedUltimate`), which has no second press.
+    /// `SeanHeroKit`, `SeanMagmaFist`, `SeanVolcano`, `SeanVolcanicBomb`, `Lata` (the hot can) and `CombatVerbs` (PRESSURE on a
+    /// shove) read these. Since MAYON AWAKENS v2 the volcano throws the bombs; E is his role skill again while Molten.
     ///
     /// ⚠️ EVERY GROUND PUSH HERE STAYS UNDER `Balance.MaxKnockbackSpeed` (16 m/s, 4.27 m of slide). `CharacterMotor.ApplyImpulse`
     /// clamps anything faster, so a bigger number would be a lie the motor quietly corrects. That cap is why LAVA RAM launches
@@ -223,54 +222,104 @@ namespace TumbangPreso.Core
         }
 
         // ------------------------------------------------------------------ MAYON AWAKENS (ultimate)
+        // ⚠️⚠️ v2, THE MOUNTAIN RISES (owner 2026-10-24: *"the ult of sean doesnt earn its place"*, beside Paete's and Phaister's;
+        // he chose "The mountain rises"). v1 was 4 m of push and then 8 s of a buff nobody could see, with its payoff (the bomb on
+        // E) deferred and optional. Now it puts a THING in the court that everyone plays around, as MAKILING'S EMBRACE does: he
+        // holds to place it where he looks, a small Mayon bursts up there and throws everyone within 9 m out, then for 8 s it
+        // lobs a volcanic bomb every 1.2 s at the nearest opponent, while he is Molten beside it.
 
         /// <summary>15 charges, as Supernova was (`docs/Hero_Strike_Balance.md` § 3.1): it can knock the lata over itself.</summary>
         public const float UltimateCost = 15.0f;
 
-        /// <summary>Owner, 2026-10-24: "7.0 s" for the cutscene.</summary>
-        public const float CutsceneSeconds = 7.0f;
+        /// <summary>The cutscene. The method's cap is 6.5 s; Dante's lesson (*"dont force it to 7 seconds"*) is to end it as the
+        /// power launches, so it ends as the mountain bursts up and its wave heads for the players.</summary>
+        public const float CutsceneSeconds = 5.0f;
 
-        /// <summary>The awakening blast as the cutscene hands back.</summary>
-        public const float AwakeningRadius = 4.0f;
-        public const float AwakeningPush = 3.5f;
+        /// <summary>Where he may put it: held where he looks, between these (as MAKILING'S EMBRACE).</summary>
+        public const float VolcanoAimMinRange = 3.0f;
+        public const float VolcanoAimMaxRange = 10.0f;
 
+        /// <summary>Its foot never stands this near the lata (the owner's rule for Paete's tree: never on the can).</summary>
+        public const float VolcanoClearOfCan = 3.0f;
+
+        /// <summary>The mountain's body: its height to the summit and the solid round its foot nobody walks through.</summary>
+        public const float VolcanoHeight = 3.0f;
+        public const float VolcanoSolidRadius = 1.1f;
+
+        /// <summary>The rise: everyone within this of its foot is thrown straight out from it and SEARED.</summary>
+        public const float VolcanoBlastRadius = 9.0f;
+
+        /// <summary>How far the rise throws: the motor's cap, every body the same (`MaxPushDistance`).</summary>
+        public static float VolcanoBlastPush => MaxPushDistance;
+
+        public const float VolcanoBlastStaggerSeconds = 0.5f;
+        public const float VolcanoSearedSeconds = 2.0f;
+
+        /// <summary>How long it erupts after the rise; he is Molten for exactly as long.</summary>
         public const float MoltenSeconds = 8.0f;
+
+        /// <summary>A bomb leaves the crater this often, the first this long after the rise.</summary>
+        public const float VolcanoBombEvery = 1.2f;
+        public const float VolcanoFirstBomb = 0.6f;
+
+        /// <summary>It lobs only at opponents this near its foot.</summary>
+        public const float VolcanoBombRange = 12.0f;
+
+        /// <summary>A bomb's flight: its ring is on the court the whole way down, so this is the warning a player gets.</summary>
+        public const float VolcanoBombFlightSeconds = 1.0f;
+
+        /// <summary>One bomb's splash, throw and hold. Smaller than v1's single bomb: there are six of them.</summary>
+        public const float VolcanoBombRadius = 2.5f;
+        public const float VolcanoBombPush = 3.0f;
+        public const float BombStaggerSeconds = 0.4f;
+
+        /// <summary>The pool a bomb leaves: how long it lasts, its share of the splash and how much it slows anyone in it.</summary>
+        public const float PoolSeconds = 3.0f;
+        public const float PoolRadiusShare = 0.6f;
+        public const float PoolSpeedScale = 0.7f;
+
+        /// <summary>After the eruption it cools to black glass and sinks back into the court.</summary>
+        public const float VolcanoSinkSeconds = 1.0f;
+
+        /// <summary>How many bombs one eruption throws at most.</summary>
+        public static int VolcanoBombCount => (int)Math.Floor((MoltenSeconds - VolcanoFirstBomb) / VolcanoBombEvery) + 1;
+
+        /// <summary>Whether a bomb leaves the crater between <paramref name="before"/> and <paramref name="now"/> (seconds since the
+        /// rise), and which one. Every peer could ask this, but only the host does: it also picks the target.</summary>
+        public static bool BombDue(float before, float now, out int index)
+        {
+            index = -1;
+            if (!(now > before) || now < VolcanoFirstBomb || before >= MoltenSeconds) return false;
+            int last = (int)Math.Floor((Math.Min(now, MoltenSeconds) - VolcanoFirstBomb) / VolcanoBombEvery);
+            int prior = before < VolcanoFirstBomb ? -1 : (int)Math.Floor((before - VolcanoFirstBomb) / VolcanoBombEvery);
+            if (last <= prior || last >= VolcanoBombCount) return false;
+            index = last;
+            return true;
+        }
 
         /// <summary>Owner, 2026-10-24: "No knockback" while Molten. A multiplier on every push he takes.</summary>
         public const float MoltenKnockbackScale = 0.0f;
 
         public static float IncomingKnockbackScale(bool molten) => molten ? MoltenKnockbackScale : 1.0f;
 
-        /// <summary>VOLCANIC BOMB: the gather (the tell), the flight and the reach of the throw.</summary>
-        public const float BombTellSeconds = 0.5f;
-        public const float BombFlightSeconds = 0.9f;
-        public const float BombMaxRange = 14.0f;
-
-        /// <summary>The thrown splash.</summary>
-        public const float BombRadius = 4.8f;
-        public const float BombPush = 4.0f;
-
-        /// <summary>Owner, 2026-10-24: "Drops at his feet" if never thrown. A smaller splash where he stands.</summary>
-        public const float DroppedBombRadius = 3.0f;
-        public const float DroppedBombPush = 3.0f;
-
-        /// <summary>The pool it leaves: how long it lasts and how much it slows anyone in it.</summary>
-        public const float PoolSeconds = 4.0f;
-        public const float PoolSpeedScale = 0.7f;
-
-        /// <summary>Where a thrown bomb lands along his aim: as far as he aimed, never past `BombMaxRange`.</summary>
-        public static float BombLandingDistance(float aimedDistance)
-            => float.IsNaN(aimedDistance) || aimedDistance <= 0 ? 0 : Math.Min(aimedDistance, BombMaxRange);
-
-        public static float BombRadiusFor(bool thrown) => thrown ? BombRadius : DroppedBombRadius;
-        public static float BombPushFor(bool thrown) => thrown ? BombPush : DroppedBombPush;
-
-        /// <summary>The bomb knocks the lata over unless the caster is the taya guarding it.</summary>
+        /// <summary>A bomb knocks the lata over unless the caster is the taya guarding it.</summary>
         public static bool BombKnocksCan(bool casterIsTaya) => !casterIsTaya;
 
-        /// <summary>How long the players a blast throws are held: stars only from half a second.</summary>
-        public const float AwakeningStaggerSeconds = 0.4f;
-        public const float BombStaggerSeconds = 0.5f;
+        /// <summary>
+        /// The mountain's foot, kept off the can: a spot nearer the can than `VolcanoClearOfCan` is pushed straight out from it
+        /// (along the line from where he stands if it sits right on top of it). Plain numbers so the cutscene, every peer and
+        /// the host all put it in the same place.
+        /// </summary>
+        public static void VolcanoSpotClearOfCan(float x, float z, float canX, float canZ, float fromX, float fromZ,
+                                                 out float outX, out float outZ)
+        {
+            double dx = x - canX, dz = z - canZ, d = Math.Sqrt(dx * dx + dz * dz);
+            if (d >= VolcanoClearOfCan) { outX = x; outZ = z; return; }
+            if (d < 1e-3) { dx = fromX - canX; dz = fromZ - canZ; d = Math.Sqrt(dx * dx + dz * dz); }
+            if (d < 1e-3) { dx = 0; dz = 1; d = 1; }
+            outX = (float)(canX + dx / d * VolcanoClearOfCan);
+            outZ = (float)(canZ + dz / d * VolcanoClearOfCan);
+        }
 
         // ------------------------------------------------------------------ how it meets the court
         // `docs/reports/sean-kit-2026-10-24/feel-and-readability.md` § 2: the ring is the hitbox, and nothing reaches a level

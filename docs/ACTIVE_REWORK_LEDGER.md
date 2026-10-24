@@ -1,3 +1,22 @@
+# Rago's ultimate checkpoint, October24
+
+ULT-READ-1024 (protocol 180) on BugFix, not seen by the owner. MAYON AWAKENS is now
+THE MOUNTAIN RISES (owner's pick of three, after "the ult of sean doesnt earn its
+place"): aimed where he looks, a solid 3 m volcano rises, throws everyone within 9 m
+and SEARS them, lobs 7 host-targeted bombs over 8 s (flair kind 22), then sinks; he
+is Molten meanwhile (SeanMoltenLook fists on body and first person, built late and
+retried). E bomb removed. Cutscene 5.0 s, Dante's shape: fists into the court, a
+lava river to the real spot, the mountain bursting up as its wave reaches the real
+players. MAGMA FIST first person: prayer hold plus magma-palms. Parol glbs, atlas,
+ParolGround and UltimateProp.Sean.cs deleted. Wiki (Google Doc, tab t.0) Rago row
+updated: Lava Ram, Magma Fist, Mayon Awakens. In-match cutscenes framed an empty
+court: UltimatePhaseView grounded the cast copy on GroundY, which kept an awning 5.8 m
+over him; it now takes the floor under the feet when that is over 1 m off (film v8
+dump, v9 fixed). Evidence: Core 839/839; SeanKitPlayProbe 7/7; films
+Logs/paete-ability-film/introfx_sean_s16..s17, Logs/sean-2026-10-24/film-v9,
+Logs/sean-share/rago_ult_v2.mp4.
+Next: owner's look; the effects bench pass; SeanCinderGate removal (protocol step).
+
 # Can carry and contact checkpoint, October24
 
 CAN-CARRY-1024 (protocol 179) and CONTACT-1024 coded on BugFix; not played online

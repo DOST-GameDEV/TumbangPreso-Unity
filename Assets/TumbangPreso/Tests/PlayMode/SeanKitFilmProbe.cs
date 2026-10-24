@@ -135,7 +135,7 @@ namespace TumbangPreso.PlayTests
             Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
                 cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
             AudioDirector.WorldCuePlayed += heard;
-            bool sawScene = false, canDownOnThrow = false, bombKnocked = false;
+            bool dumpedCopy = false, sawScene = false, canDownOnThrow = false, bombKnocked = false;
             float moltenAt = -1f, shoveAt = -1f, bombAt = -1f;
             CharacterMotor watched = a;
             Vector3 focus = At(5f);
@@ -192,16 +192,18 @@ namespace TumbangPreso.PlayTests
                     if (t >= 13.3f && t < 13.9f) { taya.Intent.AimPoint = b.transform.position + Vector3.up; taya.Intent.Set(Verb.Skill2, true); }   // the prayer, placed on them
                     if (Beat(13.9f)) taya.Intent.Set(Verb.Skill2, false);
 
-                    // ---- MAYON AWAKENS, Molten, a shove that does not move him, the VOLCANIC BOMB (17.5 to 44) ----
+                    // ---- MAYON AWAKENS v2: the mountain rises by the can, throws everyone out, Molten, its bombs (17.5 to 36) ----
                     if (Beat(17.5f))
                     {
                         if (!lata.IsUpright) staged.AppendLine("17.5 s: the can was still down; the ultimate's beat started anyway.");
-                        Place(taya, At(-3f, 3f), can); taya.Intent.Parked = true;
-                        Place(sean, At(4.2f), can);
-                        Place(a, At(4.2f, 1.6f), can); Place(b, At(3.0f, -1.4f), can);
+                        Place(taya, At(1.6f, 2.0f), can); taya.Intent.Parked = true;
+                        Place(sean, At(9.5f), can);
+                        Place(a, At(4.6f, 1.8f), can); Place(b, At(2.8f, -2.0f), can);
                         kit.AddUltimateCharge(100);
-                        watched = a; focus = At(4f);
+                        watched = taya; focus = At(3.6f);
                     }
+                    // Held where he looks: 3.6 m out from the can, between it and him.
+                    if (t >= 17.5f && t < 18.05f) sean.Intent.AimPoint = At(3.6f, 0f, 0f);
                     if (t >= 17.8f && t < 18.05f) sean.Intent.Set(Verb.Ultimate, true);
                     if (Beat(18.05f)) sean.Intent.Set(Verb.Ultimate, false);
                     // One second into Molten (after the hand-back): a shove that cannot move him.
@@ -214,18 +216,14 @@ namespace TumbangPreso.PlayTests
                         notes.AppendLine(FormattableString.Invariant($"{t:F2} s: Molten, then the shove on him"));
                     }
                     if (shoveAt >= 0 && t >= shoveAt + .2f) b.Intent.Set(Verb.Lunge, false);
-                    // Two seconds after the shove: the VOLCANIC BOMB on E, aimed at the can.
-                    if (shoveAt >= 0 && bombAt < 0 && t >= shoveAt + 2f)
+                    // The taya keeps to the can, so the bombs come down by it; the take ends once the mountain has sunk.
+                    if (moltenAt >= 0 && bombAt < 0 && t >= moltenAt + 2.5f)
                     {
-                        bombAt = t;
-                        sean.Intent.AimPoint = lata.transform.position; sean.Intent.Set(Verb.Skill2, true);
-                        watched = a; focus = can;
-                        notes.AppendLine(FormattableString.Invariant($"{t:F2} s: the bomb"));
+                        bombAt = t; taya.Intent.Parked = true; Place(taya, At(1.2f, 1.0f), can); watched = taya; focus = can;
+                        notes.AppendLine(FormattableString.Invariant($"{t:F2} s: the taya back at the can, under the bombs"));
                     }
-                    if (bombAt >= 0 && t >= bombAt + .15f) sean.Intent.Set(Verb.Skill2, false);
-                    bombKnocked |= bombAt >= 0 && !lata.IsUpright;
-                    // Four seconds after the bomb is enough to see it land and the Molten end; the first film held 12 s of nothing.
-                    if (bombAt >= 0 && t >= bombAt + 4f) break;
+                    bombKnocked |= moltenAt >= 0 && !lata.IsUpright;
+                    if (moltenAt >= 0 && t >= moltenAt + SeanRules.MoltenSeconds + SeanRules.VolcanoSinkSeconds + .5f) break;
 
                     yield return null;
 
@@ -236,7 +234,26 @@ namespace TumbangPreso.PlayTests
                     if (scene != null)
                     {
                         if (!sawScene) cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_sean,1,0.2"));
+                        // Once, at half a second in: every surface of his cutscene copy, to see what keeps him out of the picture.
+                        if (CameraSystem.UltimatePhaseView.LastAge >= .5f && !dumpedCopy)
+                        {
+                            dumpedCopy = true;
+                            var copies = GameObject.Find("~UltimateRenderCopies");
+                            notes.AppendLine("copy stage: " + (copies != null ? copies.transform.position.ToString() : "missing"));
+                            if (copies != null)
+                                foreach (var r in copies.GetComponentsInChildren<Renderer>(true))
+                                {
+                                    bool scenePiece = false;
+                                    for (var p = r.transform; p != null; p = p.parent) scenePiece |= p.name.StartsWith("IntroductionScene");
+                                    if (scenePiece) continue;
+                                    notes.AppendLine(FormattableString.Invariant(
+                                        $"  {r.name} on {r.enabled} active {r.gameObject.activeInHierarchy} off {r.forceRenderingOff} layer {r.gameObject.layer} shadow {r.shadowCastingMode} centre {r.bounds.center} size {r.bounds.size}"));
+                                }
+                        }
                         sawScene = true; Save(scene.texture, "owner", f);
+                        // What the phase drew: its clock, its shot, its lens, and whether his copy's surfaces are on.
+                        notes.AppendLine(FormattableString.Invariant(
+                            $"{t:F2} s: phase age {CameraSystem.UltimatePhaseView.LastAge:F2} shot {CameraSystem.UltimatePhaseView.LastShot} eye {CameraSystem.UltimatePhaseView.LastEye} sean at {sean.transform.position} report [{CameraSystem.UltimatePhaseView.LastShotReport.Replace('\n', ' ')}]"));
                     }
                     else if (Camera.main != null) Shoot(Camera.main, "owner", f);
 

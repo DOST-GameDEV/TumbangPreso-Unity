@@ -107,7 +107,7 @@ namespace TumbangPreso.Abilities
         /// Host-side; each body hit is announced, so every peer draws it and the victim feels it.
         /// </summary>
         internal static void HostBlast(CharacterMotor me, Vector3 center, float radius, float push, float stagger,
-            bool knocksCan, MatchFlair.Kind kind, CharacterMotor except = null)
+            bool knocksCan, MatchFlair.Kind kind, CharacterMotor except = null, List<CharacterMotor> hit = null)
         {
             if (me == null || !NetAuthority.ShouldResolve()) return;
             var round = GameServices.Round;
@@ -124,6 +124,7 @@ namespace TumbangPreso.Abilities
                 if (to.sqrMagnitude < .01f) to = me.transform.forward;
                 p.ApplyResolvedImpact(to.normalized * speed + Vector3.up * Balance.ShoveLift);
                 if (stagger > 0) p.ApplyStagger(stagger);
+                hit?.Add(p);
                 MatchFlair.Announce(kind, me.PlayerSlot, p.PlayerSlot, center, stagger);
             }
             var can = round.Lata;
@@ -137,13 +138,12 @@ namespace TumbangPreso.Abilities
         public override void Tick(AbilityContext context, float dt)
         {
             base.Tick(context, dt);
-            // A caught Sean leaves no bomb behind: Molten ends at once and nothing drops (feel-and-readability.md § 4).
+            // A caught Sean is Molten no longer; his mountain keeps erupting (it is in the court, not in him).
             if (IsMolten && context?.Motor != null && context.Motor.IsTagged)
-            {
-                _bombThrown = true;
                 ((MayonAwakensAbility)Ultimate).EndMolten(context);
-            }
             StepHeatGlow(context?.Motor);
+            // A peer that restored Molten without the cast (a late join) still wears the fists.
+            if (IsMolten && context?.Motor != null) ((MayonAwakensAbility)Ultimate).EnsureLook(context.Motor);
             if (!float.IsFinite(dt) || dt <= 0 || _pressureBars <= 0) return;
             _pressureIdle += dt;
             int cooled = SeanRules.PressureAfterIdle(_pressureBars, _pressureIdle);
@@ -173,72 +173,22 @@ namespace TumbangPreso.Abilities
             _heatGlow = null;
         }
 
-        public override void Reset() { ReleaseHeatGlow(); _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.Reset(); }
+        public override void Reset() { ReleaseHeatGlow(); _pressureBars = 0; _pressureIdle = 0; base.Reset(); }
         public override void ResetForRound(AbilityContext context)
-        { ReleaseHeatGlow(); _pressureBars = 0; _pressureIdle = 0; _bombThrown = false; base.ResetForRound(context); }
+        {
+            ReleaseHeatGlow(); _pressureBars = 0; _pressureIdle = 0;
+            if (context?.Motor != null) SeanVolcano.RetireFor(context.Motor.PlayerSlot);
+            base.ResetForRound(context);
+        }
 
-        // ------------------------------------------------------------------ MOLTEN and VOLCANIC BOMB
+        // ------------------------------------------------------------------ MOLTEN
 
-        private bool _bombThrown;
-        /// <summary>The 8 s after MAYON AWAKENS, until the bomb leaves his hands.</summary>
-        public bool IsMolten => Ultimate != null && Ultimate.IsActive && !_bombThrown;
+        /// <summary>The 8 s his mountain erupts (MAYON AWAKENS v2). Since v2 the bombs are the mountain's, so E stays his role
+        /// skill.</summary>
+        public bool IsMolten => Ultimate != null && Ultimate.IsActive;
 
         /// <summary>Owner, 2026-10-24: "No knockback" while Molten.</summary>
         public override float IncomingKnockbackDistanceScale => SeanRules.IncomingKnockbackScale(IsMolten);
-
-        /// <summary>Whether the E press throws the bomb instead of the role skill.</summary>
-        internal bool BombReady => IsMolten;
-
-        /// <summary>
-        /// Whether the E button presents as VOLCANIC BOMB: while it is ready, and for a second after the throw, so the cast
-        /// callout and the event feed that read it on the cast's frame name the bomb rather than the role skill.
-        /// </summary>
-        internal bool ShowsBomb => BombReady || Time.time < _bombShownUntil;
-        private float _bombShownUntil = -1;
-        internal const string BombName = "VOLCANIC BOMB";
-        internal const string BombDescription =
-            "Hurl the lava off your arms: a 4.8 m splash throws everyone 4 m, knocks the can over and leaves a slowing pool.";
-
-        /// <summary>
-        /// The E press while Molten, on every peer that runs the cast. The bomb lands where he aims, as far as he aimed and no
-        /// farther than `BombMaxRange`; throwing it ends Molten.
-        /// </summary>
-        internal void ThrowBomb(AbilityContext ctx)
-        {
-            if (ctx?.Motor == null || !IsMolten) return;
-            Vector3 from = ctx.Motor.transform.position;
-            Vector3 way = ctx.AimPoint - from; way.y = 0;
-            if (way.sqrMagnitude < .01f) { way = ctx.Forward; way.y = 0; }
-            if (way.sqrMagnitude < .0001f) way = ctx.Motor.transform.forward;
-            float reach = SeanRules.BombLandingDistance(way.magnitude);
-            if (reach < 1f) reach = SeanRules.BombMaxRange * .5f;
-            Vector3 land = from + way.normalized * reach;
-            // The court under his aim, found from above, so a roof he aims at is where it lands.
-            if (VfxShapes.TryGroundUnder(land, 6f, 8f, out float ground)) land.y = ground;
-            else land.y = Slipper.FindGroundY(land, from.y);
-            _bombThrown = true;
-            _bombShownUntil = Time.time + 1f;
-            SeanVolcanicBomb.Spawn(ctx.Motor, land, thrown: true);
-            // The spectator director cuts to where it will land (the bomb itself is drawn on every peer from the cast).
-            if (NetAuthority.ShouldResolve())
-                MatchFlair.Announce(MatchFlair.Kind.SeanBombThrown, ctx.Motor.PlayerSlot, -1, land, SeanRules.BombRadius);
-            NetCue.Play("sfx_cast_sean_cannon", from);
-            ((MayonAwakensAbility)Ultimate).EndMolten(ctx);
-        }
-
-        /// <summary>Molten ran out with the bomb still in his hands: it drops at his feet (owner, 2026-10-24).</summary>
-        internal void DropBomb(AbilityContext ctx)
-        {
-            if (ctx?.Motor == null || _bombThrown) return;
-            _bombThrown = true;
-            SeanVolcanicBomb.Spawn(ctx.Motor, ctx.Motor.transform.position, thrown: false);
-        }
-
-        private void ReadyRoleSkillsForBomb()
-        {
-            (AttackingSkill as MoltenThrowAbility)?.ClearForBomb();
-            (DefendingSkill as MagmaFistAbility)?.ClearForBomb();
-        }
 
         // ------------------------------------------------------------------ the old kit's public surface
 
@@ -300,7 +250,6 @@ namespace TumbangPreso.Abilities
             if (molten > 0 && !Ultimate.IsActive)
             {
                 ((MayonAwakensAbility)Ultimate).RestoreMolten(molten);
-                _bombThrown = false;
                 changed = true;
             }
             // The bars and the cooling, so his fists glow the same on every screen (the host keeps deciding them).
@@ -498,24 +447,8 @@ namespace TumbangPreso.Abilities
             { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)
-            {
-                if (_kit.BombReady) return base.CanActivate(ctx);
-                return base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null
-                    && ctx.Carrier.Held.State == SlipperState.Held && ctx.Carrier.Held.Holder == ctx.Motor;
-            }
-
-            public override void Activate(AbilityContext ctx)
-            {
-                if (_kit.BombReady) { _kit.ThrowBomb(ctx); CooldownRemaining = Cooldown; return; }
-                base.Activate(ctx);
-            }
-
-            // Even with a slipper loaded: the coat stays on the shoe, and E is the bomb until Molten ends.
-            internal void ClearForBomb() => CooldownRemaining = 0;
-
-            public override string LiveName => _kit.ShowsBomb ? BombName : EffectiveName;
-            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? AbilityGlyph.SeanVolcanicBomb : Glyph;
-            public override string LiveDescription => _kit.ShowsBomb ? BombDescription : EffectiveDescription;
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null
+                   && ctx.Carrier.Held.State == SlipperState.Held && ctx.Carrier.Held.Holder == ctx.Motor;
 
             public bool LoadedFor(Slipper shoe)
                 => _kit.IsIgnitionCannonActive && DurationRemaining > 0 && shoe != null
@@ -596,7 +529,7 @@ namespace TumbangPreso.Abilities
                     SeanRules.FistCooldown, 0, AbilityGlyph.SeanCinderGate,
                     summary: "Hold to place it; a giant lava fist punches up there and throws them away from the can.",
                     telegraphRadius: SeanRules.FistPunchRadius, telegraphRange: SeanRules.FistAimRange,
-                    castAction: "hero-sean-pray", viewmodelAction: "cinder-draw", castCue: "sfx_cast_sean_rush")
+                    castAction: "hero-sean-pray", viewmodelAction: "magma-palms", castCue: "sfx_cast_sean_rush")
             {
                 _kit = kit;
                 // The prayer, held while he places it (`HeroAbilityClips.Sean.cs`); the release drives his palms at the court.
@@ -607,23 +540,7 @@ namespace TumbangPreso.Abilities
                     whereLooking: true);
             }
 
-            public override bool CanActivate(AbilityContext ctx)
-            {
-                if (_kit.BombReady) return base.CanActivate(ctx);
-                return base.CanActivate(ctx) && ctx.Motor.IsDefender;
-            }
-
-            public override void Activate(AbilityContext ctx)
-            {
-                if (_kit.BombReady) { _kit.ThrowBomb(ctx); CooldownRemaining = Cooldown; return; }
-                base.Activate(ctx);
-            }
-
-            internal void ClearForBomb() => CooldownRemaining = 0;
-
-            public override string LiveName => _kit.ShowsBomb ? BombName : EffectiveName;
-            public override AbilityGlyph LiveGlyph => _kit.ShowsBomb ? AbilityGlyph.SeanVolcanicBomb : Glyph;
-            public override string LiveDescription => _kit.ShowsBomb ? BombDescription : EffectiveDescription;
+            public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && ctx.Motor.IsDefender;
 
             protected override void OnActivate(AbilityContext ctx)
             {
@@ -637,41 +554,43 @@ namespace TumbangPreso.Abilities
         private sealed class MayonAwakensAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
-            // The cutscene shows the awakening, so released after it there is no second wind-up.
+            // The cutscene shows the mountain bursting up, so released after it there is no second wind-up.
             protected override bool IntroductionIsTheWindup => true;
             private readonly SeanHeroKit _kit;
             private GameObject _aura;
+            private Visual.SeanMoltenLook _look;
             private AbilityContext _context;
 
             public MayonAwakensAbility(SeanHeroKit kit)
                 : base("sean_ultimate", "MAYON AWAKENS",
-                       "Blast everyone close away and turn Molten for 8 s: no knockback, every hit erupts. Press E to throw the Volcanic Bomb.",
+                       "Hold to place it where you look. A volcano bursts up there and throws everyone within 9 m out, then lobs a lava bomb at the nearest opponent every 1.2 s for 8 s. You are Molten beside it: no knockback.",
                        0.0f, SeanRules.MoltenSeconds, AbilityGlyph.SeanSupernova,
-                       summary: "Blast everyone close, turn Molten, then throw the Volcanic Bomb with E.",
-                       telegraphRadius: SeanRules.AwakeningRadius, telegraphRange: 0.0f,
+                       summary: "Raise a volcano that throws everyone out, then bombards your opponents for 8 s.",
+                       telegraphRadius: SeanRules.VolcanoBlastRadius, telegraphRange: SeanRules.VolcanoAimMaxRange,
                        castAction: "hero-sean-supernova", viewmodelAction: "supernova-slam",
                        castCue: "sfx_cast_sean_supernova")
             {
                 _kit = kit;
                 TelegraphStyle = Visual.GroundReticle.Style.Ember;
                 Windup = UltimateWindup;
+                // ⚠️ HE CHOOSES WHERE IT RISES, as Paete chooses where his guardian comes up (`docs/HERO_KIT_METHOD.md` § 6 rule
+                // 8): the 9 m ring shows where he looks while he holds, the release casts, and the commit carries the spot so
+                // every peer and the cutscene put the mountain in the same place.
+                AimByHolding(SeanRules.VolcanoAimMinRange, SeanRules.VolcanoAimMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f,
+                    whereLooking: true);
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 _context = ctx;
-                _kit._bombThrown = false;
-                _kit.ReadyRoleSkillsForBomb();
                 if (ctx?.Motor == null) return;
                 var me = ctx.Motor;
-                NetCue.Play("hero_sean_ult", me.transform.position);
                 var squash = me.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Squash(0.08f);
-                // The ring on every peer; the push from the host. Bodies only: the awakening never knocks the can over.
-                HeroHazards.CreateExplosionVisual(me.transform.position, SeanRules.AwakeningRadius, "",
-                    HeroHazards.ExplosionStyle.Fire);
-                HostBlast(me, me.transform.position, SeanRules.AwakeningRadius, SeanRules.AwakeningPush,
-                    SeanRules.AwakeningStaggerSeconds, knocksCan: false, MatchFlair.Kind.SeanBlast);
+                // One mountain per seat; the cutscene showed it bursting up, so it stands and throws at once (handBack).
+                SeanVolcano.RetireFor(me.PlayerSlot);
+                Vector3 at = SeanVolcano.SpotFor(ctx.Position, ctx.Forward, AimedDestination(ctx), ctx.Round?.Lata ?? GameServices.Round?.Lata);
+                SeanVolcano.Spawn(me, at, handBack: true);
                 StartAura(me);
             }
 
@@ -679,9 +598,16 @@ namespace TumbangPreso.Abilities
             {
                 ReleaseAura();
                 _aura = AbilityVfx.AttachAura(me.transform, AbilityVfx.Aura.FireEmber, Mathf.Max(.1f, DurationRemaining));
+                // The state itself, worn: lava fists on both hands on every peer and in his own first person.
+                _look = Visual.SeanMoltenLook.On(me);
             }
 
-            /// <summary>The bomb left his hands: Molten is over, and nothing drops.</summary>
+            internal void EnsureLook(CharacterMotor me)
+            {
+                if (_look == null) _look = Visual.SeanMoltenLook.On(me);
+            }
+
+            /// <summary>He was caught: Molten is over (his mountain, in the court, keeps erupting).</summary>
             internal void EndMolten(AbilityContext ctx) => EndEarly(ctx);
 
             internal void RestoreMolten(float remaining)
@@ -693,18 +619,24 @@ namespace TumbangPreso.Abilities
             protected override void OnEnd(AbilityContext ctx)
             {
                 ReleaseAura();
-                _kit.DropBomb(ctx ?? _context);
                 _context = null;
             }
 
-            // A round ending mid-Molten drops nothing.
+            // A round ending mid-eruption takes the mountain with it.
             protected override void OnCancelled(AbilityContext ctx)
-            { ReleaseAura(); _kit._bombThrown = true; _context = null; }
+            {
+                ReleaseAura();
+                var me = ctx?.Motor ?? _context?.Motor;
+                if (me != null) SeanVolcano.RetireFor(me.PlayerSlot);
+                _context = null;
+            }
 
             private void ReleaseAura()
             {
                 if (_aura != null) { _aura.SetActive(false); UnityEngine.Object.Destroy(_aura); }
                 _aura = null;
+                if (_look != null) _look.End();
+                _look = null;
             }
         }
     }

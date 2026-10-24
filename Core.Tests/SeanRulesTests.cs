@@ -14,12 +14,14 @@ namespace TumbangPreso.Core.Tests
         public void TheOwnersNumbersAreTheOnesInTheKit()
         {
             Assert.Equal(0.0f, SeanRules.MoltenKnockbackScale);   // "No knockback"
-            Assert.Equal(7.0f, SeanRules.CutsceneSeconds);        // "7.0 s"
             Assert.Equal(3, SeanRules.PressureBars);              // "Keep PRESSURE"
             Assert.Equal(15.0f, SeanRules.UltimateCost);          // as Supernova, a power that can score itself
-            // "Drops at his feet": the unthrown bomb still splashes, smaller than a thrown one.
-            Assert.True(SeanRules.DroppedBombRadius > 0 && SeanRules.DroppedBombRadius < SeanRules.BombRadius);
-            Assert.True(SeanRules.DroppedBombPush > 0 && SeanRules.DroppedBombPush < SeanRules.BombPush);
+            // "The mountain rises": everyone within 9 m thrown out, 8 s of eruption, a bomb every 1.2 s.
+            Assert.Equal(9.0f, SeanRules.VolcanoBlastRadius);
+            Assert.Equal(8.0f, SeanRules.MoltenSeconds);
+            Assert.Equal(1.2f, SeanRules.VolcanoBombEvery);
+            // The method's cap for a cutscene (`docs/HERO_KIT_METHOD.md` rule 8).
+            Assert.InRange(SeanRules.CutsceneSeconds, 1.0f, 6.5f);
         }
 
         [Fact]
@@ -29,7 +31,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(4.267f, SeanRules.MaxPushDistance, 3);
             foreach (float push in new[] { SeanRules.RamLaunch, SeanRules.EruptedDistance(SeanRules.RamLaunch),
                                            SeanRules.EruptedDistance(Combat.ShoveDistance()), SeanRules.EruptSplashPush,
-                                           SeanRules.FistPush, SeanRules.AwakeningPush, SeanRules.BombPush, SeanRules.DroppedBombPush,
+                                           SeanRules.FistPush, SeanRules.VolcanoBlastPush, SeanRules.VolcanoBombPush,
                                            SeanRules.HotCanSlide })
             {
                 Assert.True(push <= SeanRules.MaxPushDistance, $"{push} m is past the cap");
@@ -159,25 +161,50 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(1f, x * x + z * z, 3);
         }
 
-        [Theory]
-        [InlineData(6f, 6f)]
-        [InlineData(20f, 14f)]
-        [InlineData(-3f, 0f)]
-        [InlineData(float.NaN, 0f)]
-        public void TheBombLandsWhereAimedButNoFartherThanItsRange(float aimed, float lands)
-            => Assert.Equal(lands, SeanRules.BombLandingDistance(aimed), 3);
-
         [Fact]
-        public void TheBombSparesTheTayasOwnCanAndShrinksWhenDropped()
+        public void TheBombsSpareTheTayasOwnCanAndFitTheEruption()
         {
             Assert.True(SeanRules.BombKnocksCan(casterIsTaya: false));
             Assert.False(SeanRules.BombKnocksCan(casterIsTaya: true));
-            Assert.Equal(SeanRules.BombRadius, SeanRules.BombRadiusFor(true));
-            Assert.Equal(SeanRules.DroppedBombRadius, SeanRules.BombRadiusFor(false));
-            Assert.Equal(SeanRules.DroppedBombPush, SeanRules.BombPushFor(false));
             Assert.InRange(SeanRules.PoolSpeedScale, 0.01f, 0.99f);
-            // The gather and the flight fit inside Molten, so a bomb thrown at the last moment still lands in the state.
-            Assert.True(SeanRules.BombTellSeconds + SeanRules.BombFlightSeconds < SeanRules.MoltenSeconds);
+            // Six bombs in the 8 s, the first after the rise has thrown everyone out.
+            Assert.Equal(7, SeanRules.VolcanoBombCount);
+            Assert.True(SeanRules.VolcanoFirstBomb > 0);
+            // The last one leaves the crater inside the eruption.
+            Assert.True(SeanRules.VolcanoFirstBomb + (SeanRules.VolcanoBombCount - 1) * SeanRules.VolcanoBombEvery <= SeanRules.MoltenSeconds);
+            // A bomb's ring is on the court long enough to step out of it at a walk.
+            Assert.True(SeanRules.VolcanoBombFlightSeconds * Balance.AttackerWalkSpeed >= SeanRules.VolcanoBombRadius * .5f);
+            // It reaches past the ring it threw everyone out of, so a thrown player is still in range.
+            Assert.True(SeanRules.VolcanoBombRange > SeanRules.VolcanoBlastRadius);
+        }
+
+        [Fact]
+        public void EachBombLeavesTheCraterOnceOnItsOwnBeat()
+        {
+            int seen = 0, expect = 0;
+            float before = 0f;
+            for (float now = 1f / 60f; now <= SeanRules.MoltenSeconds + 1f; now += 1f / 60f)
+            {
+                if (SeanRules.BombDue(before, now, out int index)) { Assert.Equal(expect, index); expect++; seen++; }
+                before = now;
+            }
+            Assert.Equal(SeanRules.VolcanoBombCount, seen);
+            // A long frame that spans a beat still fires it once; nothing before the first or after the eruption.
+            Assert.True(SeanRules.BombDue(0.5f, 0.7f, out int first) && first == 0);
+            Assert.False(SeanRules.BombDue(0.1f, 0.5f, out _));
+            Assert.False(SeanRules.BombDue(SeanRules.MoltenSeconds, SeanRules.MoltenSeconds + 1f, out _));
+            Assert.False(SeanRules.BombDue(float.NaN, 1f, out _));
+        }
+
+        [Theory]
+        [InlineData(5f, 0f, 5f, 0f)]       // far enough: unchanged
+        [InlineData(1f, 0f, 3f, 0f)]       // too near: pushed straight out to the clearance
+        [InlineData(0f, 0f, 0f, -3f)]      // on the can: pushed toward where he stands (0, -8)
+        public void TheMountainNeverStandsOnTheCan(float x, float z, float expectX, float expectZ)
+        {
+            SeanRules.VolcanoSpotClearOfCan(x, z, 0f, 0f, 0f, -8f, out float outX, out float outZ);
+            Assert.Equal(expectX, outX, 3);
+            Assert.Equal(expectZ, outZ, 3);
         }
 
         [Theory]
@@ -216,7 +243,7 @@ namespace TumbangPreso.Core.Tests
             Assert.True(SeanRules.HotCanStepUp < SeanRules.FistStepUp);
             // The hit lands inside the rise, before the fist reaches the top.
             Assert.InRange(SeanRules.FistHitDelay, 0.01f, SeanRules.FistRiseSeconds);
-            Assert.True(SeanRules.BombStaggerSeconds >= SeanRules.AwakeningStaggerSeconds);
+            Assert.True(SeanRules.VolcanoBlastStaggerSeconds >= SeanRules.BombStaggerSeconds);
         }
     }
 }

@@ -405,7 +405,8 @@ namespace TumbangPreso.Tests
             //177 sends Sean's hits as five appended flair kinds and his PRESSURE bars in the timed-kit passive float.
             //178 appends LAVA RAM's SEARED clock to `SyncUnit`.
             //179 makes the reset a held carry: the carry rides a third `SyncLata` suffix and COMPLETE no longer restores.
-            Assert.AreEqual(179, NetSession.ProtocolVersion,
+            //180 is MAYON AWAKENS v2: the volcano's bombs ride an appended flair kind and the ultimate is aimed.
+            Assert.AreEqual(180, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");
