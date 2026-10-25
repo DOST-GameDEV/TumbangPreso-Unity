@@ -407,8 +407,8 @@ namespace TumbangPreso.Tests
             //179 makes the reset a held carry: the carry rides a third `SyncLata` suffix and COMPLETE no longer restores.
             //180 is MAYON AWAKENS v2: the volcano's bombs ride an appended flair kind and the ultimate is aimed.
             //181 retires the Cinder Gate: snapshot kind 17 is reserved and no longer carries a dynamic identity.
-            //182 is Zack's speedster kit: Zapped is a stun, Overclocked is timed, kinds 20 and 21 join the dynamic fields.
-            Assert.AreEqual(182, NetSession.ProtocolVersion,
+            //183 lowers Live Wire to a jumpable ankle-height contact line.
+            Assert.AreEqual(183, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

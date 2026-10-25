@@ -1,91 +1,133 @@
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
 
 namespace TumbangPreso.Visual
 {
-    /// <summary>
-    /// BACKTRACK's public half (plan section 3; owner, 2026-10-25: everyone sees the rewind trail and landing ring when he
-    /// casts). The snap is instant; this is drawn after it: a gold streak runs BACKWARDS along the path he really ran, in
-    /// 0.3 s, into the landing spot, where a ring of sparks holds 0.4 s and breaks into four. Render only; it decides nothing.
-    /// </summary>
+    // Render-only reverse travel. The accepted teleport still owns gameplay; this copy and eye offset own the pull.
+    [DefaultExecutionOrder(2500)]
     public sealed class ZackBacktrackLook : MonoBehaviour
     {
-        private const float Rewind = 0.3f, RingHold = 0.4f;
-        private const int RingPoints = 13;
+        public const float PullSeconds = .42f;
+        private const float RingHold = .4f;
+        private static readonly Dictionary<int,ZackBacktrackLook> Live = new Dictionary<int,ZackBacktrackLook>();
+        private CharacterMotor _motor;
         private Vector3[] _path;
-        private Vector3 _to;
-        private LineRenderer _streak, _streakInk, _ring, _ringInk;
-        private float _age;
-        private bool _broke;
+        private Vector3 _to, _modelOffset;
+        private Quaternion _facing;
+        private float _born, _poseTime;
+        private int _serial, _round;
+        private ZackFx.Echo _body;
+        private readonly ZackFx.Echo[] _frames = new ZackFx.Echo[3];
+        private Renderer[] _hidden;
+        private bool[] _wasHidden;
+        private LineRenderer _streak, _ink, _ring, _ringInk;
+        private bool _restored, _landed;
+        private float Age => Mathf.Max(0,Time.time-_born);
+        public bool Pulling => _motor!=null && Age<PullSeconds;
+        public Vector3 VisualFeet => FeetAt(Mathf.Clamp01(Age/PullSeconds));
 
-        public static void Play(CharacterMotor motor, Vector3 from, Vector3 to, Vector3[] path)
+        public static ZackBacktrackLook Play(CharacterMotor motor,Vector3 from,Vector3 to,Vector3[] path)
         {
-            var go = new GameObject("ZackBacktrack");
-            var look = go.AddComponent<ZackBacktrackLook>();
-            // Newest last in the ring's order; the rewind runs from his old body (`from`) back to the landing (`to`).
-            var points = new System.Collections.Generic.List<Vector3>();
-            points.Add(from);
-            if (path != null) for (int i = path.Length - 1; i >= 0; i--) points.Add(path[i]);
-            points.Add(to);
-            look._path = points.ToArray();
-            look._to = to;
-            int n = Mathf.Clamp(look._path.Length, 2, 80);
-            look._streakInk = ZackFx.Line(go.transform, "RewindInk", n, 0.12f, ZackFx.Ink, 0.0f);
-            look._streak = ZackFx.Line(go.transform, "Rewind", n, 0.06f, ZackFx.Core, 1.5f);
-            look._ringInk = ZackFx.Line(go.transform, "LandingRingInk", RingPoints, 0.08f, ZackFx.Ink, 0.0f);
-            look._ring = ZackFx.Line(go.transform, "LandingRing", RingPoints, 0.04f, ZackFx.Body, 1.4f);
-            look._ring.loop = true; look._ringInk.loop = true;
-            if (motor != null) ZackFx.Sparks(from + Vector3.up * 0.9f, 0.35f, 3, motor.PlayerSlot);
-            look.Step(0.0f);
-        }
-
-        private void Update()
-        {
-            _age += Time.deltaTime;
-            if (_age > Rewind + RingHold + 0.1f) { Destroy(gameObject); return; }
-            Step(_age);
-        }
-
-        private void Step(float age)
-        {
-            // The head of the streak runs from `from` to `to` along the path; its tail follows 0.12 s behind.
-            float head = Mathf.Clamp01(age / Rewind), tail = Mathf.Clamp01((age - 0.12f) / Rewind);
-            int n = _streak.positionCount;
-            for (int i = 0; i < n; i++)
+            if(motor==null)return null;
+            if(Live.TryGetValue(motor.PlayerSlot,out var old)&&old!=null)old.Finish();
+            var v=new GameObject("ZackBacktrackPull").AddComponent<ZackBacktrackLook>();
+            v._motor=motor;v._to=to;v._born=Time.time;v._serial=motor.PresentationTeleportSerial;
+            v._round=GameServices.Match?.RoundNumber??0;v._facing=motor.transform.rotation;
+            var points=new List<Vector3>{from};
+            if(path!=null)for(int i=path.Length-1;i>=0;i--)
+                if((path[i]-points[points.Count-1]).sqrMagnitude>.0025f)points.Add(path[i]);
+            if((to-points[points.Count-1]).sqrMagnitude>.0001f)points.Add(to);
+            if(points.Count<2)points.Add(to);v._path=points.ToArray();
+            v._body=ZackFx.Echo.Of(motor.PlayerSlot,v.transform);
+            if(v._body!=null)
             {
-                float t = Mathf.Lerp(tail, head, i / (float)(n - 1));
-                var p = Sample(t) + Vector3.up * (0.25f + 0.04f * Mathf.Sin(i * 2.9f + age * 60.0f));
-                _streak.SetPosition(i, p);
-                _streakInk.SetPosition(i, p + Vector3.down * 0.015f);
+                v._poseTime=v._body.Track.Newest;v._body.PoseAt(v._poseTime);v._body.Coat(.18f);
+                v._modelOffset=v._body.Copy.Root.transform.position-motor.transform.position;
+                for(int i=0;i<3;i++)v._frames[i]=ZackFx.Echo.Of(motor.PlayerSlot,v.transform);
+                v.CopyShoe();
+                var surfaces=new List<Renderer>(motor.GetComponentsInChildren<Renderer>(true));
+                var held=motor.GetComponent<Carrier>()?.Held;if(held!=null)surfaces.AddRange(held.GetComponentsInChildren<Renderer>(true));
+                v._hidden=surfaces.ToArray();v._wasHidden=new bool[surfaces.Count];
+                for(int i=0;i<surfaces.Count;i++){v._wasHidden[i]=surfaces[i].forceRenderingOff;surfaces[i].forceRenderingOff=true;}
             }
-            float streakAlpha = head >= 1.0f && tail >= 1.0f ? 0.0f : 1.0f;
-            ZackFx.Tint(_streak, new Color(ZackFx.Core.r, ZackFx.Core.g, ZackFx.Core.b, streakAlpha));
-            ZackFx.Tint(_streakInk, new Color(ZackFx.Ink.r, ZackFx.Ink.g, ZackFx.Ink.b, streakAlpha * 0.8f));
-            // The landing ring: it arrives with the head and holds 0.4 s, then breaks into four sparks.
-            float ring = age < Rewind ? 0.0f : Mathf.Clamp01(1.0f - (age - Rewind) / RingHold);
-            for (int i = 0; i < RingPoints; i++)
-            {
-                float a = i / (float)RingPoints * Mathf.PI * 2.0f;
-                float r = 0.55f + ((i % 2 == 0) ? 0.05f : -0.05f);
-                var p = _to + new Vector3(Mathf.Cos(a) * r, 0.05f, Mathf.Sin(a) * r);
-                _ring.SetPosition(i, p);
-                _ringInk.SetPosition(i, p + Vector3.down * 0.01f);
-            }
-            ZackFx.Tint(_ring, new Color(ZackFx.Body.r, ZackFx.Body.g, ZackFx.Body.b, ring));
-            ZackFx.Tint(_ringInk, new Color(ZackFx.Ink.r, ZackFx.Ink.g, ZackFx.Ink.b, ring * 0.8f));
-            if (!_broke && age >= Rewind + RingHold)
-            {
-                _broke = true;
-                ZackFx.Sparks(_to + Vector3.up * 0.1f, 0.35f, 4, _to.x * 7.0f + _to.z);
-            }
+            v._ink=ZackFx.Line(v.transform,"PullRibbonInk",24,.13f,ZackFx.Ink,0);
+            v._streak=ZackFx.Line(v.transform,"PullRibbon",24,.055f,ZackFx.Core,1.5f);
+            v._ringInk=ZackFx.Line(v.transform,"LandingRingInk",24,.09f,ZackFx.Ink,0);
+            v._ring=ZackFx.Line(v.transform,"LandingRing",24,.045f,ZackFx.Body,1.3f);
+            v._ring.loop=v._ringInk.loop=true;Live[motor.PlayerSlot]=v;v.Step();return v;
         }
-
-        private Vector3 Sample(float t)
+        public void SealTeleport(){if(_motor!=null)_serial=_motor.PresentationTeleportSerial;}
+        public static Vector3 EyeOffset(CharacterMotor motor)
+            => motor!=null&&Live.TryGetValue(motor.PlayerSlot,out var v)&&v!=null&&v._motor==motor&&v.Pulling
+                ?v.VisualFeet-motor.transform.position:Vector3.zero;
+        private static float PullAt(float u)=>u<.7f?.9f*Mathf.Pow(u/.7f,1.65f):.9f+.1f*Mathf.SmoothStep(0,1,(u-.7f)/.3f);
+        private Vector3 Sample(float u)
         {
-            if (_path.Length < 2) return _to;
-            float f = t * (_path.Length - 1);
-            int i = Mathf.Clamp(Mathf.FloorToInt(f), 0, _path.Length - 2);
-            return Vector3.Lerp(_path[i], _path[i + 1], f - i);
+            float f=Mathf.Clamp01(u)*(_path.Length-1);int i=Mathf.Min(Mathf.FloorToInt(f),_path.Length-2);
+            return Vector3.Lerp(_path[i],_path[i+1],f-i);
         }
+        private Vector3 FeetAt(float u)
+        {
+            var p=Sample(PullAt(u));return _motor==null?p:Vector3.Lerp(p,_motor.transform.position,Mathf.SmoothStep(0,1,Mathf.InverseLerp(.8f,1,u)));
+        }
+        private void CopyShoe()
+        {
+            var held=_motor.GetComponent<Carrier>()?.Held;var liveHand=_motor.GetComponent<CharacterVisual>()?.HandAnchor;
+            Transform grip=null;foreach(var bone in _body.Copy.Bones)if(bone.name=="HandAnchor"){grip=bone;break;}
+            if(held==null||liveHand==null||grip==null)return;
+            var root=new GameObject("RewindingHeldSlipper");root.transform.SetParent(grip,false);
+            foreach(var surface in held.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if(!surface.enabled||!surface.gameObject.activeInHierarchy||surface.GetComponent<VfxRenderTag>()!=null
+                    ||!surface.TryGetComponent<MeshFilter>(out var mesh)||mesh.sharedMesh==null)continue;
+                var part=new GameObject("HeldShoeSurface");part.transform.SetParent(root.transform,false);
+                held.FitCarriedSurface(surface.transform,liveHand,part.transform);part.AddComponent<MeshFilter>().sharedMesh=mesh.sharedMesh;
+                var r=part.AddComponent<MeshRenderer>();r.sharedMaterials=surface.sharedMaterials;r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
+        }
+        private void LateUpdate()
+        {
+            if(_motor==null||_motor.AbilitySystem?.HeroId!="zack"||_motor.IsTagged||_motor.IsStunned||_motor.IsTripped
+                ||GameServices.Round?.RoundActive!=true||(GameServices.Match?.RoundNumber??0)!=_round||_motor.PresentationTeleportSerial!=_serial)
+            {Finish();return;}Step();if(Age>PullSeconds+RingHold+.1f)Finish();
+        }
+        private void Step()
+        {
+            float u=Mathf.Clamp01(Age/PullSeconds);bool eyes=ZackFx.InOwnFirstPerson(_motor);
+            if(_body!=null)
+            {
+                _body.PoseAt(_poseTime-ZackRules.BacktrackSeconds*PullAt(u));
+                _body.Copy.Root.transform.SetPositionAndRotation(FeetAt(u)+_modelOffset,_facing);_body.Visible(u<1&&!eyes);
+                foreach(var r in _body.Copy.Root.GetComponentsInChildren<MeshRenderer>())if(r.name=="HeldShoeSurface")r.forceRenderingOff=u>=1||eyes;
+                if(u<1){foreach(var r in _hidden)if(r!=null)r.forceRenderingOff=true;}else Restore();
+            }
+            for(int i=0;i<3;i++)
+            {
+                var frame=_frames[i];if(frame==null)continue;float behind=Mathf.Clamp01(u-.075f*(i+1));
+                frame.PoseAt(_poseTime-ZackRules.BacktrackSeconds*PullAt(behind));
+                frame.Copy.Root.transform.SetPositionAndRotation(FeetAt(behind)+_modelOffset,_facing);
+                frame.Visible(!eyes&&u>.05f&&u<.98f&&!Settings.SettingsStore.Current.ReducedEffects);
+            }
+            float head=PullAt(u),tail=PullAt(Mathf.Max(0,u-.24f));
+            for(int i=0;i<24;i++)
+            {
+                var p=Sample(Mathf.Lerp(tail,head,i/23f))+Vector3.up*(.72f+.07f*Mathf.Sin(i*2.7f+Age*70));
+                _streak.SetPosition(i,p);_ink.SetPosition(i,p-Vector3.up*.01f);
+                float a=i/24f*Mathf.PI*2;var ring=_to+new Vector3(Mathf.Cos(a)*.65f,.055f,Mathf.Sin(a)*.65f);
+                _ring.SetPosition(i,ring);_ringInk.SetPosition(i,ring-Vector3.up*.01f);
+            }
+            _streak.enabled=_ink.enabled=u<1;float alpha=u<1?0:Mathf.Clamp01(1-(Age-PullSeconds)/RingHold);
+            ZackFx.Tint(_ring,new Color(ZackFx.Body.r,ZackFx.Body.g,ZackFx.Body.b,alpha));
+            ZackFx.Tint(_ringInk,new Color(ZackFx.Ink.r,ZackFx.Ink.g,ZackFx.Ink.b,alpha));
+            if(!_landed&&u>=1){_landed=true;ZackFx.Sparks(_to+Vector3.up*.12f,.45f,4);}
+        }
+        private void Restore()
+        {
+            if(_restored||_hidden==null)return;_restored=true;
+            for(int i=0;i<_hidden.Length;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_wasHidden[i];
+        }
+        private void Finish(){Restore();if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);Destroy(gameObject);}
+        private void OnDestroy(){Restore();_body?.Destroy();foreach(var f in _frames)f?.Destroy();if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);}
     }
 }

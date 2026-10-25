@@ -689,7 +689,8 @@ namespace TumbangPreso.Net
         // carried to a joiner in the timed-kit passive fields (a 181 peer keeps it for the match). Two dynamic-field kinds are
         // appended on the existing reliable message: 20 AFTERIMAGE and 21 LIVE WIRE. The circuit and objective-cooldown
         // messages are gone and the movement window's flag byte is always 0. The two may not meet.
-        public const int ProtocolVersion = 182;
+        // 183: Live Wire uses low floor anchors and a jumpable 0.40 m feet-contact limit.
+        public const int ProtocolVersion = 183;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

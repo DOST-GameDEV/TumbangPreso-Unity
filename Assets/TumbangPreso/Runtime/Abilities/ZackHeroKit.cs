@@ -361,13 +361,14 @@ namespace TumbangPreso.Abilities
             {
                 if (ctx?.Motor == null) return;
                 var motor = ctx.Motor;
-                Vector3 from = motor.transform.position, to = ctx.AimPoint;
+                Vector3 from = ctx.Position, to = ctx.AimPoint;
                 // The rewind is drawn along the path this peer saw him run, played backwards; it decides nothing.
                 var path = _kit.PathSince(ZackRules.BacktrackSeconds + .1f);
-                ZackBacktrackLook.Play(motor, from, to, path);
+                var pull = ZackBacktrackLook.Play(motor, from, to, path);
                 // His own body: the owner predicts it and the host replays it (`CharacterMotor.Teleport` refuses elsewhere). He
                 // keeps the slipper in hand, his statuses and his facing.
                 motor.Teleport(to, keepStatuses: true);
+                pull?.SealTeleport();
                 _kit.ResetMomentum();
                 NetCue.Play("sfx_zack_backtrack_land", to);
             }

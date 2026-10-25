@@ -98,6 +98,10 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(ZackRules.LiveWireSagHeight, middle.y - ground, .06f, "The drawn sag is not the rule's sag.");
                 Assert.IsNotNull(root.GetComponentsInChildren<LineRenderer>().FirstOrDefault(l => l.name == "WireOvercharged"),
                     "Overcharged is doubled.");
+                var anchor = root.GetComponentsInChildren<Transform>().First(t => t.name == "AnchorA");
+                var surfaces = anchor.GetComponentsInChildren<Renderer>();
+                Assert.Greater(surfaces.Length, 3, "The wire needs a mounted reel, cleat and socket, not a bare pole.");
+                Assert.Less(surfaces.Max(r => r.bounds.max.y) - ground, .40f, "The complete anchor stays low on the court.");
                 Assert.IsEmpty(Object.FindObjectsByType<Abilities.HazardVolume>(FindObjectsSortMode.None)
                     .Where(h => h.transform.IsChildOf(root.transform)), "A look registers no hazard: the field does.");
             }

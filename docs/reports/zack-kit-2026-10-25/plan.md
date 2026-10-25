@@ -16,7 +16,7 @@ strings a live wire across a lane (Live Wire). The ultimate is simply MORE of hi
 | | Zack |
 |---|---|
 | Colours | core `#FFE27A`, body `#FFC21A`, edge `#C8740E`, ink line `#2A2230`. Never white, never blue, never a flag colour |
-| Shapes | thin jagged lines with knees, short forks, sparks as four-point glints, his own body as the decoy, two small concrete posts |
+| Shapes | thin jagged lines with knees, short forks, sparks as four-point glints, his own body as the decoy, two compact floor-mounted reel anchors |
 | Motion | snap, then chatter: everything arrives in one frame and then crackles in short bursts; nothing glides |
 | Ends | a line breaks into three or four short sparks that fall and wink out; a body breaks into rising flecks from the feet up |
 | Sound family | dry snaps, a buzzing hum at mains frequency, wire twang, a rising whine for speed, a pop for the decoy |
@@ -59,7 +59,7 @@ mastery, loadouts and HUD slots hold.
 - The host accepts only a destination within `BacktrackTolerance` 2.5 m of its own ring of that body anywhere from 2.5 to
   3.5 s ago, inside the playable rectangle, on ground, with no wall between it and the ring point. Otherwise refused and
   refunded (the existing predicted-refusal path).
-- He keeps the slipper in hand, his statuses and his facing. The snap is instant; the rewind is drawn after it.
+- He keeps the slipper in hand, his statuses and his facing. The accepted gameplay snap is instant. Its render-only body and eye are pulled back along the actual path in 0.42 s (owner refinement, section 7).
 - Cannot be cast while stunned, Zapped, tagged, rooted, flying or carrying the can.
 - Cooldown 30 s; while Overclocked 3 s (and Overclock's start clamps a running cooldown to 3 s).
 - Momentum resets (he stopped).
@@ -79,10 +79,10 @@ mastery, loadouts and HUD slots hold.
 - Defending only. Hold to aim (0 to 6 m, `AimByHolding(1.5, 6, whereLooking: true)`), release: post A at his feet, post B at
   the aimed point (owner, 2026-10-25). Length 1.5 to 6.0 m. Both posts on ground within 0.3 m of his floor, inside the
   playable rectangle, with no wall between them at 0.9 m.
-- The wire sags from 1.15 m at the posts to 0.85 m at its middle: above any jump (apex 0.83 m), below a Featherfall flyer.
+- The tension wire sits at 0.28 m on compact floor anchors and 0.24 m in the middle. A timed jump clears it (owner refinement, 2026-10-25).
   It has NO collider: bodies, slippers and the can pass through it.
 - Crossing = an attacker's feet go from one side of the segment to the other between two host physics steps, within the
-  segment's length, feet below 1.6 m above the court. Taya, tagged and already-zapped-by-this-wire bodies are ignored.
+  segment's length, feet no more than 0.40 m above the wire floor at the crossing plane. Taya, tagged and already-zapped-by-this-wire bodies are ignored.
 - Normal wire: the first crosser is Zapped and the wire snaps. Overcharged wire (strung while Overclocked): every attacker
   is Zapped the first time they cross it, and it lasts its full 10 s.
 - Lasts 10 s. A new cast retires his old wire. Round end retires it.
@@ -156,7 +156,7 @@ Play picks up with him Overclocked, his crackle already on (never charged twice)
 
 ## 6 · Network contract
 
-- Protocol 182: Zapped means a 1 s full stun (a 181 peer would let a zapped body walk), Backtrack's host check,
+- Protocol 183 retains the 182 rework contract and adds the low, jumpable wire contact rule. Zapped means a 1 s full stun (a 181 peer would let a zapped body walk), Backtrack's host check,
   Overclock is timed (a 181 peer would keep it for the match), and two new dynamic-field kinds (20 Afterimage, 21 Live
   Wire) on the existing reliable dynamic-field message, validated by `WorldEffectSnapshot.Valid` before any mutation.
 - Afterimage: the host spawns it from the accepted cast (start, flat forward, solved end, copy index) and broadcasts the
@@ -177,6 +177,8 @@ Play picks up with him Overclocked, his crackle already on (never charged twice)
 | Who sees Backtrack's return point | Zack always, everyone on cast | a private echo while ready; a public rewind trail and landing ring at the cast |
 | The ultimate intro | Trim the bolt one | section 4, about 4.5 s |
 | Stun breakout, clarified in session 3 | Follow shared timer-only recovery | Zapped ends on its timer; no button mash shortens it |
+| Visual refinement | Ekko-like body pull, no old FPP magnets, low Cypher-like wire anchors | 0.42 s render-only reverse body travel, bare powered hands, low floor reels and a jumpable wire |
+| Publication branch | Commit on main as work progresses | Main is authorized for this rework including its required compatibility changes |
 
 ## 8 · Numbers to watch in play (starting values)
 

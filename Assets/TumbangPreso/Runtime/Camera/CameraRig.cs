@@ -1043,6 +1043,7 @@ namespace TumbangPreso.CameraSystem
             var reworkMotor = _character.GetComponent<CharacterMotor>();
             _reworkEyeDrop = Mathf.MoveTowards(_reworkEyeDrop, reworkMotor != null ? reworkMotor.ReworkEyeDropTarget : 0f, Time.deltaTime * 4.5f);
             eye -= Vector3.up * _reworkEyeDrop;
+            eye += Visual.ZackBacktrackLook.EyeOffset(_character);
 
             // ⚠️ PAETE DOWN ON HIS KNEE, FROM HIS OWN EYES (HERO-9 v5, direction.md 5.14: *"HE GOES TO THE GHHROUND AND HIS ROOTS
             // CONNECT TO IT"*). While MAKILING'S EMBRACE holds him down after its cutscene his view is at kneel height and tipped a

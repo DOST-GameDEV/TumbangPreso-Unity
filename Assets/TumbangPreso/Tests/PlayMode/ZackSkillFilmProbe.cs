@@ -92,7 +92,7 @@ namespace TumbangPreso.PlayTests
         private IEnumerator Take(string name, float seconds, Action<int> drive, bool owner = false, bool intro = false)
         {
             string folder = Path.Combine(_output, name); Directory.CreateDirectory(folder);
-            var trace = new StringBuilder("frame,seconds,game_seconds,x,z,momentum,overclock,zapped,copies,wires\n");
+            var trace = new StringBuilder("frame,seconds,game_seconds,x,z,momentum,overclock,zapped,copies,wires,backtrack_cooldown,wire_snapped,a_zapped,b_zapped\n");
             bool sawScene = false;
             // The stock review mode lets the world looks draw as an observer sees them. His private return echo is
             // withheld from this court camera; the victim take keeps his actual first-person view and HUD.
@@ -149,7 +149,7 @@ namespace TumbangPreso.PlayTests
                     if (f >= count) return;
                     _late.Shoot(Path.Combine(folder, $"{f:D5}.jpg"));
                     var at = _zack.transform.position;
-                    trace.AppendLine(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count}"));
+                    trace.AppendLine(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count},{Kit.Skill1.CooldownRemaining:F3},{(ZackLiveWire.Active.Any(w=>w.Snapped)?1:0)},{(_a.IsZapped?1:0)},{(_b.IsZapped?1:0)}"));
                     f++;
                     if (f < count) { _frame++; drive(f); }
                 };
@@ -234,13 +234,19 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(copySeen && popped); _observations.AppendLine("Afterimage ran into the taya and popped.");
 
             Prepare(true); Place(_zack, new Vector3(-2, .12f, -5), true);
-            Place(_a, new Vector3(0, .12f, -7));
-            yield return new WaitForSeconds(.2f); bool firstZap = false, snapped = false;
+            Place(_a, new Vector3(0, .12f, -7)); Place(_b,new Vector3(1,.12f,-5.8f));
+            yield return new WaitForSeconds(.2f); bool firstZap = false, snapped = false, jumpedClear = false;
             yield return Take("04-live-wire", 9f, f =>
             {
                 _zack.Intent.AimPoint = new Vector3(2, 0, -5);
                 _zack.Intent.Set(Verb.Skill2, f >= 10 && f < 33);
-                _a.Intent.Move = f >= 48 && f < 99 ? Vector2.up : Vector2.zero;
+                _a.Intent.Move = f >= 70 && f < 120 ? Vector2.up : Vector2.zero;
+                if(f<132)
+                {
+                    _b.Intent.Move=f>=42&&f<65?Vector2.up:Vector2.zero;
+                    _b.Intent.Set(Verb.Sprint,f>=42&&f<65);_b.Intent.Set(Verb.Jump,f>=42&&f<45);
+                    if(f==66)jumpedClear=!_b.IsZapped&&ZackLiveWire.Active.Any(w=>w.IsLive);
+                }
                 firstZap |= _a.IsZapped; snapped |= ZackLiveWire.Active.Any(w => w.Snapped);
                 if (f == 132)
                 {
@@ -250,8 +256,8 @@ namespace TumbangPreso.PlayTests
                 if (f >= 132) _zack.Intent.Set(Verb.Skill2, f >= 140 && f < 163);
                 if (f >= 174) { _a.Intent.Move = Vector2.up; _b.Intent.Move = Vector2.up; }
             });
-            Assert.IsTrue(firstZap && snapped); Assert.IsTrue(ZackLiveWire.Active.Any(w => w.Overcharged && !w.Snapped));
-            _observations.AppendLine("Normal wire zapped and snapped; the overcharged wire stayed intact.");
+            Assert.IsTrue(jumpedClear,"A timed jump must clear the low wire without consuming it."); Assert.IsTrue(firstZap && snapped); Assert.IsTrue(ZackLiveWire.Active.Any(w => w.Overcharged && !w.Snapped));
+            _observations.AppendLine("A timed jump cleared the low wire; walking through zapped and snapped it; overcharged stayed intact.");
 
             Prepare(); yield return new WaitForSeconds(.2f); bool seized = false, stayedInFirstPerson = true;
             yield return Take("06-zapped-victim", 2.6f, f =>

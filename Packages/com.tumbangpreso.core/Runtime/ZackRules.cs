@@ -126,15 +126,12 @@ namespace TumbangPreso.Core
         public const float LiveWireMaxLength = 6.0f;
         public const float LiveWireMinLength = 1.5f;
 
-        /// <summary>
-        /// The wire hangs from the posts' tops and sags to its middle. 0.85 m is above any jump (`Balance.JumpVelocity` 5.75 under
-        /// `CharacterGravity` 20 peaks at 0.83 m) so it cannot be hopped, and far below a Featherfall flyer, who passes over it.
-        /// </summary>
-        public const float LiveWirePostHeight = 1.15f;
-        public const float LiveWireSagHeight = 0.85f;
+        /// <summary>An ankle-height tension wire on floor cleats. A timed jump clears the visible line.</summary>
+        public const float LiveWirePostHeight = 0.28f;
+        public const float LiveWireSagHeight = 0.24f;
 
-        /// <summary>A body whose feet are higher than this above the court where it crosses goes over the wire (flight, a pad).</summary>
-        public const float LiveWireReachAbove = 1.6f;
+        /// <summary>Feet above the wire plus a small body-contact allowance pass over it.</summary>
+        public const float LiveWireReachAbove = 0.40f;
 
         /// <summary>Both posts stand within this height of his floor (no wire strung up a staircase).</summary>
         public const float LiveWireFloorTolerance = 0.3f;

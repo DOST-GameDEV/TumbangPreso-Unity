@@ -98,10 +98,11 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void TheWireHangsAboveAnyJumpAndBelowAFlyer()
+        public void TheLowTensionWireCanBeClearedByATimedJump()
         {
             float jumpApex = Balance.JumpVelocity * Balance.JumpVelocity / (2.0f * Balance.CharacterGravity);
-            Assert.True(ZackRules.LiveWireSagHeight > jumpApex, $"the lowest point {ZackRules.LiveWireSagHeight} must clear a {jumpApex} m hop");
+            Assert.True(ZackRules.LiveWirePostHeight <= .30f);
+            Assert.True(ZackRules.LiveWireReachAbove < jumpApex, "A timed hop must clear the low wire.");
             Assert.Equal(ZackRules.LiveWirePostHeight, ZackRules.LiveWireHeightAt(0.0f), 4);
             Assert.Equal(ZackRules.LiveWireSagHeight, ZackRules.LiveWireHeightAt(0.5f), 4);
             Assert.Equal(ZackRules.LiveWirePostHeight, ZackRules.LiveWireHeightAt(1.0f), 4);

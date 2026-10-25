@@ -108,8 +108,13 @@ namespace TumbangPreso.PlayTests
             }
             finally { Object.DestroyImmediate(wall); Physics.SyncTransforms(); }
             var ctx = Kit.Skill1.CaptureLocalCastContext(Context());
+            var departure = _caster.transform.position;
             Assert.IsTrue(Kit.Skill1.CanActivate(ctx));
             Kit.Skill1.Activate(ctx);
+            var pull = Object.FindAnyObjectByType<Visual.ZackBacktrackLook>();
+            Assert.IsNotNull(pull);Assert.IsTrue(pull.Pulling);
+            Assert.Less(Vector3.Distance(departure,pull.VisualFeet),.2f,"The visible body must start at the departure, not already at the landing.");
+            Assert.Greater(Visual.ZackBacktrackLook.EyeOffset(_caster).magnitude,1f,"His view must be drawn back with the pull.");
             yield return null;
             var flat = _caster.transform.position - spot; flat.y = 0;
             Assert.Less(flat.magnitude, .25f, "He did not land on the spot.");
@@ -117,6 +122,12 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(ZackRules.BacktrackCooldown, Kit.Skill1.CooldownRemaining, .2f);
             Assert.Zero(Kit.MomentumSeconds, "The snap stops him: Momentum starts over.");
             Assert.IsNotNull(Object.FindFirstObjectByType<Visual.ZackBacktrackLook>(), "Everyone sees the rewind and the ring.");
+            yield return new WaitForSeconds(.16f);
+            Assert.Less(Vector3.Distance(pull.VisualFeet,spot),Vector3.Distance(departure,spot),"The body must travel toward its past along the recorded path.");
+            Assert.IsEmpty(pull.GetComponentsInChildren<CharacterMotor>());
+            Assert.IsEmpty(pull.GetComponentsInChildren<Collider>());
+            yield return new WaitForSeconds(.4f);
+            Assert.IsFalse(pull.Pulling);Assert.AreEqual(Vector3.zero,Visual.ZackBacktrackLook.EyeOffset(_caster));
         }
 
         // ------------------------------------------------------------------ AFTERIMAGE
@@ -227,12 +238,12 @@ namespace TumbangPreso.PlayTests
             var wire = ZackLiveWire.Cast(_caster, a, b, false);
             var runner = GameServices.Round.PlayerAt(2); runner.enabled = false;
             var mid = (a + b) * .5f; mid.y = wire.PostA.y;
-            yield return Cross(runner, mid + Vector3.forward + Vector3.up * 2.1f,
-                mid + Vector3.back + Vector3.up * 1.4f);
-            Assert.IsFalse(runner.IsZapped, "He crossed at 1.75 m, above the wire's 1.6 m reach.");
+            yield return Cross(runner, mid + Vector3.forward + Vector3.up * .8f,
+                mid + Vector3.back + Vector3.up * .2f);
+            Assert.IsFalse(runner.IsZapped, "He crossed at 0.5 m, above the low wire's 0.4 m contact reach.");
             Assert.IsTrue(wire.IsLive);
-            yield return Cross(runner, mid + Vector3.back + Vector3.up * 1.5f,
-                mid + Vector3.forward + Vector3.up * 1.3f);
+            yield return Cross(runner, mid + Vector3.back + Vector3.up * .32f,
+                mid + Vector3.forward + Vector3.up * .24f);
             Assert.IsTrue(runner.IsZapped, "The lower crossing must still trip the wire.");
         }
 
