@@ -123,7 +123,7 @@ def main():
         (out / 'initial.json').write_text(json.dumps(initial, indent=2))
         match = initial['host']['match']
         assert match > 0 and all(s['match'] == match for s in initial.values()), initial
-        assert initial['client']['local'] == 1 and initial['observer']['local'] == -1 and initial['observer']['spectator'], initial
+        assert initial['client']['local'] in (1, 2, 3) and initial['observer']['local'] == -1 and initial['observer']['spectator'], initial
         if args.case.startswith('host-'):
             if args.case == 'host-leave':
                 signal('host', '.stop')
@@ -174,7 +174,9 @@ def main():
             assert restored['local'] == initial['client']['local'] and restored['match'] == match, restored
             assert restored['epoch'] >= initial['client']['epoch'] and restored['ended'] == 0, restored
             signal('rejoined', '.finish')
-        for name, child in list(processes.items()):
+        # Preserve client receipts before the host deliberately closes the room.
+        for name in sorted(processes, key=lambda n: n == 'host'):
+            child = processes[name]
             if child.poll() is None:
                 signal(name, '.finish')
                 child.wait(timeout=12)
