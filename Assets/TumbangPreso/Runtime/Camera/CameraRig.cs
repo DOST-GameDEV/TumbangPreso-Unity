@@ -1290,7 +1290,7 @@ namespace TumbangPreso.CameraSystem
             foreach (var r in _character.GetComponentsInChildren<Renderer>(true))
             {
                 if (r == null) continue;
-                if (r.GetComponentInParent<Visual.GroundReticle>() != null) continue;
+                if (r.GetComponentInParent<Visual.GroundReticle>(true) != null) continue;
                 if (r.shadowCastingMode == ShadowCastingMode.ShadowsOnly) continue;
 
                 _selfShadowModes.Add(r.shadowCastingMode);
