@@ -207,6 +207,32 @@ namespace TumbangPreso.CameraSystem
                 }
                 return new RecordedPoseTrack(paths,result);
             }
+            /// <summary>The recorded model root at <paramref name="time"/>, interpolated like <see cref="Apply"/>.</summary>
+            public bool TryRootAt(float time, out Vector3 position, out Quaternion rotation)
+            {
+                position = Vector3.zero; rotation = Quaternion.identity;
+                if (!Ready || _frames.Length == 0) return false;
+                int oldest = (_cursor + Samples - _count) % Samples;
+                Frame left = _frames[oldest], right = left;
+                for (int n = 1; n < _count; n++)
+                {
+                    right = _frames[(oldest + n) % Samples];
+                    if (right.Time >= time) break;
+                    left = right;
+                }
+                float t = right.Time > left.Time ? Mathf.Clamp01((time - left.Time) / (right.Time - left.Time)) : 0;
+                // Root-only readers obey the same teleport boundary as the retained pose.
+                bool flight = left.Holder < 0 && right.Holder < 0 &&
+                    (left.State & 255) == (int)SlipperState.InFlight &&
+                    (right.State & 255) == (int)SlipperState.InFlight;
+                bool discontinuity = left.Epoch >= 0 && right.Epoch >= 0
+                    ? left.Epoch != right.Epoch
+                    : !flight && (right.Position[0] - left.Position[0]).sqrMagnitude > 4;
+                if (discontinuity && time < right.Time) t = 0;
+                position = Vector3.Lerp(left.Position[0], right.Position[0], t);
+                rotation = Quaternion.Slerp(left.Rotation[0], right.Rotation[0], t);
+                return true;
+            }
             public float ContactTime(Vector3 at)
             {
                 float best = 1.5f * 1.5f, time = -1;

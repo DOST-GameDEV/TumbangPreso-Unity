@@ -20,10 +20,12 @@ Updated 2026-10-26. Owner scope: [TODO](TODO.md).
   [Evidence and limits](reports/networkfix-2026-10-25/README.md).
 - Network changes stay on NETWORKFIX until the owner asks for integration.
   Mobile is next; future unrelated work does not automatically owe mobile updates.
-- Zack's authored kit/audio and later Backtrack visual candidate remain under
-  their owner's review. Preserve that work and its [recorded limits](reports/zack-kit-2026-10-25/refinement-validation.md).
-  NETWORKFIX was qualified against main through `f97da3be6`; newer main visuals
-  are separate and must not be overwritten.
+- Mobile refresh is active on MOBILEFIX, based on verified NETWORKFIX plus
+  main's newer Backtrack visuals. Do not overwrite owner art or restore the old
+  mobile-every-feature mandate.
+- Zack's lead-and-merge Backtrack visual candidate has its separate native 22/22
+  and film receipts; creative/listening review remains its owner's task.
+  [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
 Peer proof is controlled Windows processes on one PC, separate from natural play,
 WAN/Relay/separate-machine/Android acceptance. Current jobs and exact commands

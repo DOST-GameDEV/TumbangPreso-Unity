@@ -169,6 +169,7 @@ namespace TumbangPreso.CameraSystem
         public const float TppArmMargin = 0.15f;
 
         [SerializeField] private float _fieldOfView = FppFieldOfView;
+        private float _rewindKick;
 
         private CharacterMotor _character;
         private CameraMode _mode = CameraMode.Fpp;
@@ -554,7 +555,12 @@ namespace TumbangPreso.CameraSystem
             // the broadcast pause, and a lens caught mid-transition would freeze part way and then
             // finish when the game resumed. The camera is not part of the simulation.
             float blend = 1.0f - Mathf.Exp(-SprintLensRate * Time.unscaledDeltaTime);
-            float lens = Mathf.Lerp(_camera.fieldOfView, want, blend);
+            float lens = Mathf.Lerp(_camera.fieldOfView - _rewindKick, want, blend);
+
+            // Zack's Backtrack zoom rides on top of the smoothed lens, unsmoothed: a short sharp widening while his eye
+            // is rewound down the route and a punch in on the catch. Kept out of the smoothing so it cannot linger.
+            _rewindKick = _mode == CameraMode.Fpp && !_emoteView ? Visual.ZackBacktrackLook.FovKick(_character) : 0.0f;
+            lens += _rewindKick;
 
             if (!Mathf.Approximately(_camera.fieldOfView, lens)) _camera.fieldOfView = lens;
         }

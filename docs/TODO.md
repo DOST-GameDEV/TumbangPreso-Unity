@@ -1,6 +1,6 @@
 # Current work
 
-This is the only active queue. Updated 2026-10-25 from source and the owner's
+This is the only active queue. Updated 2026-10-26 from source and the owner's
 current assignment. Older unchecked boxes are not automatically unfinished work.
 [Retirement decisions](RETIRED_WORK.md) explain superseded requirements.
 All original IDs and full bodies remain in the
@@ -12,10 +12,10 @@ All original IDs and full bodies remain in the
 | ID | Status | Acceptance / next action |
 |---|---|---|
 | REPO-CLEANUP-1025 | DONE | Cleanup aaf96e52e1 integrated into main; BugFix deleted after ancestry verification; NETWORKFIX created at the merged commit. 107.2 MiB assets removed; entry docs 97.62% smaller. [Evidence](reports/repository-cleanup-2026-10-25.md) |
-| ZACK-SPEEDSTER-1025 | OWNER REVIEW, publication authorized on main | Kit, visible pullback, bare FPP hands and low jumpable wire are committed. Sixteen original electrical cues are enabled with sustained buzz, arcing and live current beds. Audio EditMode 1/1 and PlayMode 16/16 pass; six new videos capture actual Unity audio. Core 840/840 remains applicable to unchanged rules. Owner listening review, a further Backtrack VFX/animation refinement and actual peers remain open. Handoff waits for owner satisfaction. [Audio evidence](reports/zack-kit-2026-10-25/lightning-audio.md). |
+| ZACK-SPEEDSTER-1025 | OWNER REVIEW, lead-and-merge candidate verified on main | Backtrack leads with one gold hologram and merges at the catch, with stretch, bounded speed dashes, first-person lens feedback and same-frame markers through the overshoot. Own floor brackets step aside during the zoom. Final native 22/22 passed; reviewed observer/FPP films contain actual audio. Creative/listening acceptance and actual peers remain open. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md). |
 | SPECTATOR-1025 | DONE desktop, main | Controls/pacing, actual player FPP, body/effect framing, all six maps and private hallucination/held-marker delivery implemented and checked. Current skill/prop/transition checks are recorded with NETWORKFIX; mobile remains its explicit separate assignment. [Evidence](reports/spectator-2026-10-25/README.md) |
 | NETWORKFIX-1025 | DONE within recorded Windows scope, NETWORKFIX only | Host/referee loss stops old simulation; retained notices, small yellow/red quality badge, current RTT probes, role-preserving same-process rejoin, full-room replacement and complete unit packets. Actual hosted/referee pause, lag/outage/cold/same-process rejoin, throws/recall/current dolls/round transitions checked. WAN/Relay/device limits remain explicit. [Evidence](reports/networkfix-2026-10-25/README.md) |
-| MOBILE-1025 | OPEN, after NETWORKFIX | Thoroughly refresh stale mobile input, UI/flows, map/kit presentation, performance and Android/network compatibility after networking is complete. Preserve existing support during earlier work; future unrelated sessions do not automatically owe mobile updates. |
+| MOBILE-1025 | IN PROGRESS, MOBILEFIX after verified NETWORKFIX | Thoroughly refresh stale mobile input, UI/flows, map/kit presentation, performance and Android/network compatibility after networking is complete. Preserve existing support during earlier work; future unrelated sessions do not automatically owe mobile updates. |
 
 ## Existing evidence limits worth retaining
 

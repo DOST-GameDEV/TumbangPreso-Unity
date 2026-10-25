@@ -130,6 +130,125 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(pull.Pulling);Assert.AreEqual(Vector3.zero,Visual.ZackBacktrackLook.EyeOffset(_caster));
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator BacktrackDrawnBodyUsesAndRestoresCameraScopedReadability()
+        {
+            var history = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
+            float readyBy = Time.realtimeSinceStartup + 2;
+            while (history?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsTrue(history?.ForSeat(_caster.PlayerSlot)?.Ready == true);
+            var from = _caster.transform.position; var to = from + Vector3.left * 4;
+            var pull = Visual.ZackBacktrackLook.Play(_caster, from, to, new[] { to, from });
+            _caster.Teleport(to, keepStatuses: true); pull.SealTeleport();
+            yield return new WaitForSeconds(.16f);
+            var surface = pull.GetComponentsInChildren<SkinnedMeshRenderer>(true).First();
+            var properties = new MaterialPropertyBlock(); surface.GetPropertyBlock(properties);
+            properties.SetFloat("_TayaCue", .37f); properties.SetVector("_WorldBody", new Vector4(0, 0, 0, 7));
+            surface.SetPropertyBlock(properties);
+            var camera = new GameObject("Backtrack readability observer").AddComponent<Camera>(); camera.enabled = false;
+            var visual = _caster.GetComponent<Visual.CharacterVisual>();
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                typeof(Visual.CharacterVisual).GetMethod("BeginReadability", hidden).Invoke(visual, new object[] { camera });
+                surface.GetPropertyBlock(properties);
+                Assert.AreEqual(pull.RenderedFeet.y, properties.GetVector("_WorldBody").x, .001f,
+                    "The moving copy must receive the actor's scoped cue at its drawn height.");
+                Assert.Zero(properties.GetVector("_WorldBody").w);
+                Assert.AreNotEqual(.37f, properties.GetFloat("_TayaCue"));
+            }
+            finally
+            {
+                typeof(Visual.CharacterVisual).GetMethod("EndReadability", hidden).Invoke(visual, new object[] { camera });
+                Object.Destroy(camera.gameObject);
+            }
+            surface.GetPropertyBlock(properties);
+            Assert.AreEqual(.37f, properties.GetFloat("_TayaCue"), .001f, "The camera override must restore the copy's own block.");
+            Assert.AreEqual(7, properties.GetVector("_WorldBody").w);
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator RewindMomentsMoveBackwardStayBoundedAndRetire()
+        {
+            var history = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
+            float readyBy = Time.realtimeSinceStartup + 2;
+            while (history?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsTrue(history?.ForSeat(_caster.PlayerSlot)?.Ready == true);
+            var rig = Camera.main.GetComponent<CameraSystem.CameraRig>();
+            bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+            try
+            {
+                foreach (bool calm in new[] { false, true })
+                {
+                    rig.Follow(_caster); rig.SetDebugThirdPerson(true);
+                    Settings.SettingsStore.Current.ReducedEffects = calm;
+                    var from = _caster.transform.position; var to = from + Vector3.left * 4;
+                    var rewind = Visual.ZackBacktrackLook.Play(_caster, from, to, new[] { to, from });
+                    _caster.Teleport(to, keepStatuses: true); rewind.SealTeleport();
+                    yield return new WaitForSeconds(.15f);
+                    var streaks = rewind.GetComponentsInChildren<LineRenderer>(true);
+                    Assert.AreEqual(2, rewind.transform.Cast<Transform>().Count(t => t.GetComponent<LineRenderer>() == null),
+                        "Only the travelling body and one hologram may be copied.");
+                    Assert.AreEqual(4, rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length);
+                    Assert.AreEqual(1, rewind.MomentsDrawn);
+                    Assert.IsFalse(rewind.TryMoment(1, out _, out _), "There is only one historical subject.");
+                    Assert.IsTrue(Visual.TagExposure.OnFloor(_caster, .8f, out var cueFeet, out _, out _));
+                    var markerError = cueFeet - rewind.VisualFeet; markerError.y = 0;
+                    Assert.Less(markerError.magnitude, .08f, "The taggability floor brackets must follow the drawn body, not the instant teleport.");
+                    if (calm) Assert.IsEmpty(streaks, "Reduced effects omit speed dashes.");
+                    else Assert.That(streaks.Length, Is.InRange(1, 20), "Speed dashes must remain bounded.");
+                    foreach (var streak in streaks)
+                    {
+                        Assert.IsTrue(streak.name.StartsWith("RewindStreak"));
+                        Assert.AreEqual(2, streak.positionCount, "Dashes have no tether bends or rings.");
+                        Assert.LessOrEqual(streak.widthMultiplier, .06f);
+                        if (streak.enabled) Assert.LessOrEqual(Vector3.Distance(streak.GetPosition(0), streak.GetPosition(1)), 2.3f,
+                            "A speed dash must never become a route-length cable.");
+                    }
+                    var memoryShader=Resources.Load<Shader>("Shaders/ZackTemporalMemory");
+                    Assert.IsNotNull(memoryShader); Assert.IsTrue(memoryShader.isSupported);
+                    Assert.Greater(rewind.GetComponentsInChildren<Renderer>(true).Count(v=>v.sharedMaterials.Any(m=>m.shader==memoryShader)),0,
+                        "Past selves must use textured transparency instead of opaque bronze coats.");
+                    Assert.IsEmpty(rewind.GetComponentsInChildren<Collider>(true));
+                    Assert.IsEmpty(rewind.GetComponentsInChildren<CharacterMotor>(true));
+                    int count = 1;
+                    var before = new Vector3[count];
+                    for (int i = 0; i < count; i++) Assert.IsTrue(rewind.TryMoment(i, out before[i], out _));
+                    var initialLead = before[0] - rewind.RenderedFeet; initialLead.y = 0;
+                    Assert.Greater(Vector3.Dot(initialLead, (to - from).normalized), .05f, "The hologram must lead toward the old spot.");
+                    Debug.Log($"[Rewind speed cost] reduced={calm} bodies=2 streaks={streaks.Length} renderers={rewind.GetComponentsInChildren<Renderer>(true).Length} skinned={rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length}");
+                    yield return new WaitForSeconds(.12f);
+                    for (int i = 0; i < count; i++)
+                    {
+                        Assert.IsTrue(rewind.TryMoment(i, out var now, out _));
+                        Assert.Less(Vector3.Distance(now, to), Vector3.Distance(before[i], to), "Every past moment must move toward the old location.");
+                        var closingLead = now - rewind.RenderedFeet; closingLead.y = 0;
+                        Assert.Less(closingLead.magnitude, initialLead.magnitude, "Zack must close the gap to his hologram.");
+                    }
+                    rig.SetDebugThirdPerson(false);
+                    float baseFov = Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov);
+                    rig.Camera.fieldOfView = baseFov;
+                    yield return null;
+                    if (calm) Assert.AreEqual(baseFov, rig.Camera.fieldOfView, .1f, "Reduced effects omit the rewind zoom.");
+                    else Assert.Greater(rig.Camera.fieldOfView, baseFov, "Only the caster's first-person lens receives the travel kick.");
+                    Assert.AreEqual(calm, Visual.TagExposure.OnFloor(_caster, .8f, out _, out _, out _),
+                        "The caster's own floor brackets step aside only while the rewind zoom is active.");
+                    Assert.AreEqual(0, Visual.ZackBacktrackLook.FovKick(GameServices.Round.PlayerAt(0)));
+                    rig.SetDebugThirdPerson(true);
+                    while (rewind != null && rewind.Age < .52f) yield return null;
+                    Assert.IsNotNull(rewind);
+                    Assert.IsTrue(Visual.TagExposure.OnFloor(_caster, .8f, out cueFeet, out _, out _));
+                    markerError = cueFeet - rewind.VisualFeet; markerError.y = 0;
+                    Assert.Less(markerError.magnitude, .08f, "The marker follows the projected catch overshoot too.");
+                    yield return new WaitForSeconds(.35f);
+                    Assert.IsTrue(rewind == null, "All temporal copies must retire after the catch.");
+                    Assert.IsTrue(streaks.All(s => s == null), "All speed dashes must retire with their rewind.");
+                    Assert.AreEqual(0, Visual.ZackBacktrackLook.FovKick(_caster), "The lens kick cannot outlive the effect.");
+                }
+            }
+            finally { Settings.SettingsStore.Current.ReducedEffects = reduced; }
+        }
+
         // ------------------------------------------------------------------ AFTERIMAGE
 
         [UnityTest, Timeout(60000)]
@@ -144,7 +263,11 @@ namespace TumbangPreso.PlayTests
                 carrier.HostPickUp(shoe);
             }
             Assert.IsNotNull(carrier.Held, "This case must exercise a copy carrying a slipper.");
-            yield return null;
+            // Picking up can change the model hierarchy. Exercise the real body copy after its history is ready.
+            var poses = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
+            float readyBy = Time.realtimeSinceStartup + 2;
+            while (poses?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsTrue(poses?.ForSeat(_caster.PlayerSlot)?.Ready == true, "The held-body fixture must have pose history.");
             Assert.IsTrue(Kit.AttackingSkill.CanActivate(Context()));
             Kit.AttackingSkill.Activate(Context());
             var copy = ZackAfterimage.Active.Single(c => c.OwnerSlot == _caster.PlayerSlot);

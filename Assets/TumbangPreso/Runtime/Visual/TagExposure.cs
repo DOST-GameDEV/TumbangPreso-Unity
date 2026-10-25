@@ -135,12 +135,18 @@ namespace TumbangPreso.Visual
         {
             at = default; tilt = Quaternion.identity; fade = 0;
             if (actor == null) return false;
+            if (ZackBacktrackLook.FovKick(actor) != 0)
+            {
+                var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
+                if (rig != null && rig.IsFollowing(actor) && ZackFx.InOwnFirstPerson(actor)) return false;
+            }
             if (!_floors.TryGetValue(actor, out var floor)) _floors[actor] = floor = new Floor();
             int frame = Time.frameCount;
             if (floor.Frame != frame)
             {
                 floor.Frame = frame;
-                Vector3 feet = actor.transform.position;
+                // A cosmetic rewind leaves the accepted motor at its destination while its body is still travelling.
+                Vector3 feet = actor.transform.position + ZackBacktrackLook.MarkerOffset(actor);
                 floor.Found = VfxShapes.TryGroundUnder(feet, .6f, FadeTo + 1, out float y);
                 if (floor.Found)
                 {
