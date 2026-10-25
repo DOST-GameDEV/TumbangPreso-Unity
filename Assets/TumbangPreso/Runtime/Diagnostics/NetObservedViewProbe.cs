@@ -239,6 +239,10 @@ namespace TumbangPreso.Diagnostics
     public sealed class NetObservedViewRenderProbe : MonoBehaviour
     {
         public NetObservedViewProbe Owner;
+        private void OnEnable() => UnityEngine.Rendering.RenderPipelineManager.beginCameraRendering += BeforeCamera;
+        private void OnDisable() => UnityEngine.Rendering.RenderPipelineManager.beginCameraRendering -= BeforeCamera;
+        private void BeforeCamera(UnityEngine.Rendering.ScriptableRenderContext context, Camera camera)
+        { if (camera == GetComponent<Camera>()) Owner?.DumpPrivateRender(); }
         private void OnPreRender() => Owner?.DumpPrivateRender();
     }
 }
