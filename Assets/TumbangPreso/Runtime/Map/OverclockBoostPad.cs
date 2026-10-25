@@ -58,7 +58,7 @@ namespace TumbangPreso
 
             // Audio & visual cues
             GameServices.Audio?.PlayAtVaried("sfx_super_ready", motor.transform.position, 1.1f, 1.3f, 0.9f);
-            ComicPopup.Spawn(motor.transform.position + Vector3.up * 1.0f, "OVERCLOCKED!", UI.UiTheme.Highlight, 1.2f);
+            ComicPopup.Spawn(motor.transform.position + Vector3.up * 1.0f, "TURBO!", UI.UiTheme.Highlight, 1.2f);
             ImpactBurst.SpawnAt(motor.transform.position);
         }
     }

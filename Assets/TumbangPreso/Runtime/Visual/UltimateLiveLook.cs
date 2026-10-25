@@ -26,7 +26,6 @@ namespace TumbangPreso.Visual
         public static bool AmihanAirburst = false;
         public static bool CheskaAbsoluteZero = false;
         public static bool RafiBaha = false;
-        public static bool ZackOverclock = false;
 
         private static Mesh _sectorHalf, _disc, _annulus, _shell, _strip, _crest;
         private static readonly Dictionary<string, Material> Materials = new Dictionary<string, Material>();
@@ -110,31 +109,6 @@ namespace TumbangPreso.Visual
             Piece(Strip, flood, origin + Vector3.up * .02f, rot, new Vector3(halfWidth, 1, length), length,
                 travel, fade, parent, born);
             Piece(Crest, crest, origin, rot, new Vector3(halfWidth, 1.4f, 1.2f), 1, travel, fade, parent, born);
-        }
-
-        /// <summary>Overclock: a bolt column on the strike point, and the ring it scorches into the ground.</summary>
-        public static void Zack(Vector3 at, float radius)
-        {
-            // ⚠️ q1 showed a faint orange ring for 0.2 s and almost no column: 0.26 to 0.72 alpha, a mask that rarely
-            // cleared the cut, and a shell that faded out above its lower third. Now the column is a solid painted
-            // gold bolt (white core cells, Quick Circuit's gold body, a deep orange band for contrast) standing its full
-            // 10 m, held 0.7 s before it erodes; the ground gets a solid gold band at the rule's 4.5 m edge and a
-            // scorched crackle inside it, both held about as long.
-            var bolt = Mat("zack_bolt", "zack_crackle", C(0xFFFFFF, 1f), C(0xFFC61A, .96f), C(0xE06A0E, .9f),
-                new Vector4(1f, 1.6f, 1.9f, 2.4f), new Vector4(-3.2f, .3f, -1.7f, -.5f),
-                new Vector4(.58f, 2.4f, .85f, 0), new Vector4(.18f, .5f, .95f, 0));
-            var ring = Mat("zack_ring", "zack_crackle", C(0xFFFFFF, 1f), C(0xFFC21A, .95f), C(0xD9620C, .9f),
-                new Vector4(1.4f, 9f, 2.3f, 6f), new Vector4(-1.6f, .2f, -.8f, -.3f),
-                new Vector4(.58f, 2.4f, .8f, 0), new Vector4(.18f, .5f, .95f, 0));
-            var scorch = Mat("zack_scorch", "zack_crackle", C(0xFFF4C0, 1f), C(0xFFB21A, .9f), C(0xB04A0C, .78f),
-                new Vector4(3f, 6f, 4.6f, 3.4f), new Vector4(-1.6f, .2f, -.8f, -.3f),
-                new Vector4(0, 3.2f, .5f, 0), new Vector4(.25f, .5f, .85f, 0));
-            Piece(Shell, bolt, at, Quaternion.identity, new Vector3(.7f, 10f, .7f), 10f,
-                new Vector4(0, 60, 10, 0), new Vector2(.7f, .3f));
-            Piece(Annulus, ring, at + Vector3.up * .05f, Quaternion.identity, new Vector3(radius, 1, radius), radius,
-                new Vector4(.03f, 28, radius, 0), new Vector2(.75f, .35f));
-            Piece(Disc, scorch, at + Vector3.up * .04f, Quaternion.identity, new Vector3(radius, 1, radius), radius,
-                new Vector4(.03f, 28, radius, 0), new Vector2(.6f, .4f));
         }
 
         // ------------------------------------------------------------------ pieces

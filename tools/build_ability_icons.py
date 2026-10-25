@@ -460,6 +460,57 @@ def zack_thunder(a):
     a.glint(500, 170, 34, 20)
 
 
+
+# Zack's speedster kit (2026-10-25, docs/reports/zack-kit-2026-10-25/plan.md): gold street electricity, every line inked.
+def _runner(a, dx, colour, shade=True):
+    """A small sprinting figure leaning right: head, torso, a reaching arm and a driving leg."""
+    body = a.circle(470 + dx, 250, 92)
+    body = np.maximum(body, a.poly([(400 + dx, 340), (560 + dx, 330), (600 + dx, 600), (430 + dx, 620)]))
+    body = np.maximum(body, a.band([(560 + dx, 380), (700 + dx, 470)], 70))
+    body = np.maximum(body, a.band([(420 + dx, 400), (300 + dx, 520)], 66))
+    body = np.maximum(body, a.band([(560 + dx, 590), (690 + dx, 760), (650 + dx, 900)], 78))
+    body = np.maximum(body, a.band([(470 + dx, 600), (360 + dx, 760), (220 + dx, 800)], 78))
+    return a.add(body, colour, shade=shade)
+
+
+def zack_backtrack(a):
+    a.add(a.arc_band(512, 540, 300, 200, 470, 96), GOLD)
+    a.add(a.poly([(150, 330), (330, 300), (250, 470)]), GOLD)
+    a.add(a.arc_band(512, 540, 300, 230, 330, 34), LEMON, shade=False)
+    a.add(a.poly(star_pts(512, 540, 150, 52, 4, rot=0)), LEMON)
+    a.glint(470, 470, 18, 30)
+
+
+def zack_afterimage(a):
+    for y, x0 in ((420, 60), (560, 40), (700, 70)):
+        a.add(a.band([(x0, y), (x0 + 120, y)], 44), HONEY, shade=False)
+    _runner(a, -60, HONEY, shade=False)
+    _runner(a, 150, LEMON)
+    a.add(a.poly(star_pts(860, 210, 90, 30, 4, rot=0)), GOLD)
+    a.glint(600, 210, 18, 30)
+
+
+def zack_live_wire(a):
+    for x in (170, 854):
+        a.add(a.rect(x - 52, 420, x + 52, 900), STONE)
+        a.add(a.rect(x - 70, 380, x + 70, 450), STONE_DK)
+    wire = [(170 + 684 * t / 20, 430 + 210 * 4 * (t / 20) * (1 - t / 20)) for t in range(21)]
+    a.add(a.band(wire, 40), LEMON, shade=False)
+    a.add(a.poly(star_pts(512, 640, 170, 56, 4, rot=0)), GOLD)
+    a.add(a.poly(star_pts(512, 640, 80, 28, 4, rot=45)), LEMON, shade=False)
+    a.glint(150, 470, 14, 30)
+
+
+def zack_overclock(a):
+    a.add(a.arc_band(512, 560, 340, 150, 390, 92), GOLD)
+    for k in range(5):
+        ang = math.radians(160 + k * 55)
+        x, y = 512 + 340 * math.cos(ang), 560 + 340 * math.sin(ang)
+        a.ink([(x, y), (512 + 260 * math.cos(ang), 560 + 260 * math.sin(ang))], 20)
+    a.add(a.poly([(600, 150), (380, 590), (520, 590), (420, 930), (720, 480), (580, 480), (700, 150)]), LEMON)
+    a.glint(610, 200, 16, 36)
+
+
 def nemu_phase(a):
     for y in (560, 700):
         a.add(a.band([(90, y), (240, y)], 54), LILAC, shade=False)
@@ -1116,6 +1167,8 @@ GLYPHS = {
     "CheskaFrostSheet": cheska_frost, "CheskaBarricade": cheska_barricade, "CheskaNova": cheska_nova,
     "CheskaFrostbite": cheska_frostbite,
     "ZackSprint": zack_sprint, "ZackOvercharge": zack_magnet, "ZackThunderstrike": zack_thunder,
+    "ZackBacktrack": zack_backtrack, "ZackAfterimage": zack_afterimage, "ZackLiveWire": zack_live_wire,
+    "ZackOverclock": zack_overclock,
     "NemuPhase": nemu_phase, "NemuAstralPet": nemu_pet, "NemuSeanceVoid": nemu_seance,
     "NemuTerrify": nemu_terrify, "NemuKuroGuard": nemu_guard,
     "NemuDontLook": nemu_dont_look, "NemuSkitter": nemu_skitter, "NemuLookout": nemu_lookout,

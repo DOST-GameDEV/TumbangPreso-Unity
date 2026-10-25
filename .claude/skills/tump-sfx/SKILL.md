@@ -37,6 +37,10 @@ Music can already supply an accent. Do not add literal foley to every movement, 
 
 Design a family through related material and behavior, not by applying the same noise recipe to every hero or map. Preserve distinct character identities and keep simultaneous gameplay cues readable.
 
+## Electrical effects and reusable tools
+
+For electrical gameplay sounds, read [electric-effects.md](references/electric-effects.md). The Zack builder in `tools/build_zack_skill_sfx.py` uses reusable primitives in `tools/sfx_electric.py`: original oversampled excitation, band-limited noise, irregular arcing, SciPy filters and Pedalboard saturation/compression. It defaults to a Logs audition directory and reports source hashes, peaks and RMS. Installed local synthesis uses no external generation credits. Do not call a paid generator without approval.
+
 ## Render, verify and listen
 
 Render through the real game's timing, volume, fades, voice and ambience. Also deliver music alone when it helps distinguish writing from the mix. Match loudness and channel layout for meaningful comparisons. Check the beginning, reveal, quiet moments, tails and transition into play.
@@ -47,7 +51,7 @@ Avoid narrow fixed resonances or heavy low-end buildup when trying to add body. 
 
 Label the new candidate clearly and deliver directly in chat. Record the owner's exact feedback, what changed and whether the result was approved. Revise the named problem while preserving working choices. Stop speculative alternate renders once the concrete candidate is ready to hear; the next useful evidence is the owner's reaction.
 
-Only integrate an audition into shipping resources once the owner selects it. Do not replace the incumbent builder or established skill just because a render passed technical checks. Keep useful source, patch state and current evidence; remove task-owned duplicate downloads, obsolete renders and idle helpers after verifying ownership.
+Integrate an audition when the owner selects it or explicitly delegates sound creation and asks to enable it. That authorization applies to the named work; preserve unrelated heroes and approved audio. Keep owner listening judgment separate from technical acceptance. Do not replace the incumbent builder or established skill just because a render passed technical checks. Keep useful source, patch state and current evidence; remove task-owned duplicate downloads, obsolete renders and idle helpers after verifying ownership.
 
 
 ## Approved Tondo implementation

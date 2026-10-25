@@ -41,6 +41,8 @@ namespace TumbangPreso.CameraSystem
             public bool Free;
             /// <summary>Seconds of Dante's MOUNTAIN FORM left (`DanteHeroKit.MountainLeft`), 0 when he is not in it.</summary>
             public float Mountain;
+            /// <summary>Zack's running steps and timed Overclock, for the electricity on his own hands.</summary>
+            public float Momentum, Overclock;
         }
 
         /// <summary>One hero's hand companion. Built once for the hero, stepped every frame, destroyed with them.</summary>
@@ -74,7 +76,7 @@ namespace TumbangPreso.CameraSystem
         private static HandCompanion CompanionFor(string heroId)
         {
             // Without a pet a hero's hands are still their own: what the bare arms do (one class a hero, as they are made).
-            if (!UnlockedHandPets) return heroId switch { "paete" => new PaeteVineHands(), "phaister" => new SorayaStageHands(), "amihan" => new AmihanWindHands(), "cheska" => new CheskaRimeHands(), "dante" => new DanteGauntletHands(), "sean" => new SeanFlameHands(), "rafi" => new RafiWaterHands(), "zack" => new ZackMagnetHands(), _ => null };
+            if (!UnlockedHandPets) return heroId switch { "paete" => new PaeteVineHands(), "phaister" => new SorayaStageHands(), "amihan" => new AmihanWindHands(), "cheska" => new CheskaRimeHands(), "dante" => new DanteGauntletHands(), "sean" => new SeanFlameHands(), "rafi" => new RafiWaterHands(), "zack" => new ZackCurrentHands(), _ => null };
             return heroId switch
             {
                 "sean" => new SeanEmberHand(),
@@ -232,6 +234,8 @@ namespace TumbangPreso.CameraSystem
             mood.VerticalSpeed = _characterMotor.Velocity.y;
             mood.Tagged = _characterMotor.IsStunned;
             mood.Mountain = _characterMotor.AbilitySystem?.Kit is Abilities.DanteHeroKit dante ? dante.MountainLeft : 0f;
+            if (_characterMotor.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
+            { mood.Momentum = zack.MomentumSeconds; mood.Overclock = zack.OverclockLeft; }
             mood.Free = _charge < 0 && _clip == null && _actionReturnLeft <= 0 && string.IsNullOrEmpty(_aimPreview)
                 && !_characterMotor.IsSwimming && !_characterMotor.IsEdgeRecovering && !_characterMotor.IsFlying && !_characterMotor.IsStunned;
             return mood;

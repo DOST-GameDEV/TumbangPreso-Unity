@@ -1,0 +1,182 @@
+{
+  "source": "6ebd1b2e667b81688defd02cb693fd2870bca504",
+  "runtimeSha256": "cf2e483514ac749cf1d869f4bbf17bc44d5293322f9b435feebc00757d99c847",
+  "peerPath": "C:\\Users\\Matthew\\dev\\TumbangPreso-Unity\\Logs\\view-private-peer-1025-07",
+  "peerResult": {
+    "passed": true,
+    "matched_packets": 156,
+    "matched_owner_packets": 159,
+    "private_requested": true,
+    "receipts": {
+      "host": {
+        "role": "host",
+        "error": "",
+        "local": 0,
+        "samples": 195,
+        "published": 0,
+        "received": 0,
+        "relayed": 162,
+        "match": 639285290145678855,
+        "maxEyeError": 0.0,
+        "minFov": 86.00009155273438,
+        "maxFov": 95.9982681274414,
+        "sentAt": 97.7594985961914,
+        "watched": false,
+        "unsubscribed": false,
+        "maxPhantoms": 9,
+        "maxHexShoes": 3,
+        "maxFakePlayers": 3,
+        "maxFakeShoes": 3,
+        "markerSamples": 195,
+        "beaconSamples": 103,
+        "renderedPhantoms": 0,
+        "renderedMarkerSamples": 0,
+        "privateRequested": true,
+        "privateReleased": false
+      },
+      "owner": {
+        "role": "owner",
+        "error": "",
+        "local": 1,
+        "samples": 281,
+        "published": 183,
+        "received": 0,
+        "relayed": 0,
+        "match": 639285290145678855,
+        "maxEyeError": 0.0,
+        "minFov": 86.00009155273438,
+        "maxFov": 95.9982681274414,
+        "sentAt": 97.99542236328125,
+        "watched": false,
+        "unsubscribed": false,
+        "maxPhantoms": 9,
+        "maxHexShoes": 3,
+        "maxFakePlayers": 3,
+        "maxFakeShoes": 3,
+        "markerSamples": 281,
+        "beaconSamples": 190,
+        "renderedPhantoms": 0,
+        "renderedMarkerSamples": 0,
+        "privateRequested": true,
+        "privateReleased": false
+      },
+      "observer": {
+        "role": "observer",
+        "error": "",
+        "local": -1,
+        "samples": 195,
+        "published": 0,
+        "received": 162,
+        "relayed": 0,
+        "match": 639285290145678855,
+        "maxEyeError": 0.01649465039372444,
+        "minFov": 86.00009155273438,
+        "maxFov": 95.9982681274414,
+        "sentAt": 97.7594985961914,
+        "watched": true,
+        "unsubscribed": true,
+        "maxPhantoms": 9,
+        "maxHexShoes": 3,
+        "maxFakePlayers": 3,
+        "maxFakeShoes": 3,
+        "markerSamples": 195,
+        "beaconSamples": 101,
+        "renderedPhantoms": 9,
+        "renderedMarkerSamples": 195,
+        "privateRequested": true,
+        "privateReleased": true
+      }
+    },
+    "errors": [],
+    "scope": "Three real processes on one Windows PC; controlled camera/optional private-status fixture, not natural/separate-machine/WAN/device acceptance."
+  },
+  "files": {
+    "host.csv": "3e700619b3d0242204a12a0b6283750acc664dbb8841ffec02bef3307672471a",
+    "host.csv.result.json": "ef06bd52daffbe5d7fdd72683bb2ea58e0fa22b3f3fae59d14f9df2b6a8fd96f",
+    "host.log": "088173c58e95c2a72ea2f856c21b616b1ebb4b60c19d0fc53c8e9c55575f45c4",
+    "job.json": "d18db2aed73280070411525e2fef47df94e64168a3ae208b161aa2ca5166d7d5",
+    "observer.csv": "e87016f4a9f636fc6a601d2a90a7a18c8f78ea4d903ee2be70e177a22b97d1ce",
+    "observer.csv.private.png": "cc5ce8f9be1ab2049c3e25ad72f1d378d09141235be76c1be62c679d59b71ea0",
+    "observer.csv.result.json": "4cf632aba6412996d3a8a0cabc66e11f92e1f067ea2a935f1c9ed49f7a1755bf",
+    "observer.log": "5cbf3ffc500707869bfd87f57653621c228be6763804bac718540841b8930171",
+    "owner.csv": "05fcdb413ca4aece0ca4909d19f4f77764349d2ad055870100dd5311e946321a",
+    "owner.csv.marker.txt": "310dfeab2bbe35a70575eecd4d93f48769bab054f8ad06adb1d666e4006ba7e9",
+    "owner.csv.private.png": "50b785cb646cf3c961d005069e2d5f6bdf21f95fea29aad243e7ba810f3adf8d",
+    "owner.csv.result.json": "11aec3ad745eb49416ff20c33f6934bdf36ae27f11390de1dd6a73e880498e96",
+    "owner.log": "f140b250a468f4e162299d2f55780ccdcd5adca9898eb42ff7203105a8e3fcd6",
+    "summary.json": "d9c0d7a82ffe6ff61d4e112fb6cb7c18bc754292ecd08852c82c2136b0fe9968"
+  },
+  "tests": {
+    "private-beacon-codec.xml": {
+      "total": "8",
+      "passed": "8",
+      "failed": "0",
+      "sha256": "61f4481d55fe1df0bd8a8c93f003971afd52758ae51eec5d8ff45806f615f701"
+    },
+    "private-final-play.xml": {
+      "total": "20",
+      "passed": "20",
+      "failed": "0",
+      "sha256": "54a73a9bd7059fef406d2aadbb86d8450986b0c3313011c479ed9bbb4717aeeb"
+    },
+    "private-menu-final.xml": {
+      "total": "15",
+      "passed": "15",
+      "failed": "0",
+      "sha256": "fcd0d9c7a959570c11f9259b2913197112b7054eaf55c81b46d8a4a53202f39b"
+    },
+    "visibility-final-play.xml": {
+      "total": "29",
+      "passed": "29",
+      "failed": "0",
+      "sha256": "b609eedeb033c40c392073cd512edb40e6b8921c401a3be255f9e01a6bbeabab"
+    },
+    "marker-map-play.xml": {
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "sha256": "80818ddd7bc03dfa72d798bb236d351e6059a31f15e31e627f47dbd6b1e59025"
+    },
+    "shoe-observation-play.xml": {
+      "total": "9",
+      "passed": "9",
+      "failed": "0",
+      "sha256": "3d9ce52d3084c3ca48026530554291ffa9b81f053351afa799641c1507cd4467"
+    },
+    "marker-inactive-baseline.xml": {
+      "total": "1",
+      "passed": "0",
+      "failed": "1",
+      "sha256": "b3d929dd2821ec9b5ec23e5e663ac2b42ebe26fb86f5e3544b5bb8e8416ac018"
+    },
+    "marker-inactive-fixed.xml": {
+      "total": "28",
+      "passed": "28",
+      "failed": "0",
+      "sha256": "68e3952efebc82f3e8df1145ba2e7055dde9d73f1a7a1d36518504233ecb7068"
+    }
+  },
+  "scope": "Focused suites overlap. The failed inactive-start baseline is retained. Three same-PC Windows peers with controlled camera/private-status fixture, not WAN/Relay/Android or natural play.",
+  "integratedMain": {
+    "source": "6d6cf69b97ecbffcfb4c03531424a8bc344b5852",
+    "main": "e843c300ca6f0583a76db397d45424563b151bb8",
+    "test": "Logs/spectator-1025/integrated-main-play.xml",
+    "result": {
+      "id": "2",
+      "testcasecount": "49",
+      "result": "Passed",
+      "total": "49",
+      "passed": "49",
+      "failed": "0",
+      "inconclusive": "0",
+      "skipped": "0",
+      "asserts": "0",
+      "engine-version": "3.5.0.0",
+      "clr-version": "4.0.30319.42000",
+      "start-time": "2026-10-25 12:52:01Z",
+      "end-time": "2026-10-25 12:52:11Z",
+      "duration": "10.3463633"
+    },
+    "xmlSha256": "c4bec64ea89d5e82c557c995ddfde350b8148d21741eb3c36b0852717cbff00a"
+  }
+}

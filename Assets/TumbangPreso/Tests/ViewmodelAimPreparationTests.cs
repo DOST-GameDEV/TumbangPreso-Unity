@@ -10,7 +10,7 @@ namespace TumbangPreso.Tests
         private const BindingFlags Private=BindingFlags.Instance|BindingFlags.NonPublic;
         [TestCase("frost-sweep")]
         [TestCase("raise-barricade")]
-        [TestCase("summon-lightning")]
+        [TestCase("livewire-throw")]
         [TestCase("cast-hex")]
         [TestCase("blink")]
         public void HeldPreparationAndCancellationConvergeAcrossFrameRates(string action)

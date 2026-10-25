@@ -302,9 +302,10 @@ namespace TumbangPreso.Tests
             AssertTelegraph("sean", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("sean", 3, 5.4f, 0.0f);     // Live blast and crater share the 5.4 m footprint.
 
-            AssertTelegraph("zack", 1, 0.0f, 0.0f);     // dash
-            AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
-            AssertTelegraph("zack", 3, 4.5f, 7.0f);     // CreateThunderstrike(aimed, max 7.0, 4.5)
+            AssertTelegraph("zack", 1, 0.0f, 0.0f);     // BACKTRACK goes to his own path, nothing aimed.
+            AssertTelegraph("zack", 2, 0.0f, 0.0f);     // AFTERIMAGE runs his aim; its path is solved, not placed.
+            AssertTelegraph("zack", 3, 0.0f, 0.0f);     // OVERCLOCK is on him.
+            AssertRoleTelegraph("zack", .35f, ZackRules.LiveWireMaxLength); // LIVE WIRE: post B's spot, up to 6 m.
 
             AssertTelegraph("phaister", 1, 1.15f, 5.5f); // TELEPORT's arrival mark and max reach.
 
@@ -756,10 +757,9 @@ namespace TumbangPreso.Tests
                 }
             }
 
-            CollectionAssert.AreEquivalent(new[] { "sean", "zack", "rafi" }, placeholderHeroes,
-                "Only the three explicitly unfinished defending powers share an unavailable symbol.");
-            Assert.AreEqual(33, totalAbilities, "Expected 33 implemented powers among the 36 displayed slots");
-            Assert.AreEqual(33, seenGlyphs.Count, "Every implemented power needs its own glyph");
+            Assert.IsEmpty(placeholderHeroes, "Every current hero has an implemented defending power.");
+            Assert.AreEqual(36, totalAbilities, "Expected 36 implemented powers among the 36 displayed slots");
+            Assert.AreEqual(36, seenGlyphs.Count, "Every implemented power needs its own glyph");
         }
 
         private static void AssertSameRgb(Color actual, Color expected, string name)
@@ -839,14 +839,14 @@ namespace TumbangPreso.Tests
         /// <summary>Every hero action, in the order `HeroAbility.CastAction` names them.</summary>
         private static readonly string[] Ultimates =
         {
-            "hero-sean-supernova", "hero-zack-summon", "hero-dante-fissure",
+            "hero-sean-supernova", "hero-zack-overclock", "hero-dante-fissure",
             "hero-cheska-nova", "hero-nemu-seance", "hero-phaister-eclipse",
         };
 
         private static readonly string[][] Kits =
         {
             new[] { "hero-sean-dash", "hero-sean-ignite", "hero-sean-supernova" },
-            new[] { "hero-zack-sprint", "hero-zack-charge", "hero-zack-summon" },
+            new[] { "hero-zack-backtrack", "hero-zack-afterimage", "hero-zack-wire", "hero-zack-overclock" },
             new[] { "hero-dante-stomp", "hero-dante-roar", "hero-dante-fissure" },
             new[] { "hero-cheska-frostwave", "hero-cheska-raise", "hero-cheska-nova" },
             new[] { "hero-nemu-ghoststep", "hero-nemu-project", "hero-nemu-seance" },

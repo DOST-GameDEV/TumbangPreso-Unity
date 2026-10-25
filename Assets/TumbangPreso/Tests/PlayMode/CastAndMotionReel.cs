@@ -135,9 +135,10 @@ namespace TumbangPreso.PlayTests
             { "hero-sean-dash", "thrust-fire" },
             { "hero-sean-ignite", "ignite" },
             { "hero-sean-supernova", "supernova-slam" },
-            { "hero-zack-sprint", "sprint-electric" },
-            { "hero-zack-charge", "overcharge" },
-            { "hero-zack-summon", "summon-lightning" },
+            { "hero-zack-backtrack", "backtrack-snap" },
+            { "hero-zack-afterimage", "afterimage-split" },
+            { "hero-zack-wire", "livewire-throw" },
+            { "hero-zack-overclock", "overclock-take" },
             { "hero-dante-stomp", "stomp-heavy" },
             { "hero-dante-roar", "carapace-guard" },
             { "hero-dante-fissure", "fissure-slam" },
@@ -166,7 +167,7 @@ namespace TumbangPreso.PlayTests
             switch (id)
             {
                 case "sean": return new[] { "hero-sean-dash", "hero-sean-ignite", "hero-sean-supernova" };
-                case "zack": return new[] { "hero-zack-sprint", "hero-zack-charge", "hero-zack-summon" };
+                case "zack": return new[] { "hero-zack-backtrack", "hero-zack-afterimage", "hero-zack-wire", "hero-zack-overclock" };
                 case "dante": return new[] { "hero-dante-stomp", "hero-dante-roar", "hero-dante-fissure" };
                 case "cheska": return new[] { "hero-cheska-frostwave", "hero-cheska-raise", "hero-cheska-nova" };
                 case "nemu": return new[] { "hero-nemu-ghoststep", "hero-nemu-project", "hero-nemu-seance" };

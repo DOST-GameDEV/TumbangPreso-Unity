@@ -50,106 +50,143 @@ namespace TumbangPreso.PlayTests
             Assert.True(bolt == null, "The strike remained after its authored duration.");
         }
 
-        [UnityTest, Timeout(60000)]
-        public IEnumerator ReplicatedMagnetShotConsumesOnceWithoutEndingThunderstrike()
+        private static Net.WorldEffectSnapshot.Field Wire(bool overcharged, bool snapped = false)
         {
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
-            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
-            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
-            NetAuthority.Provider = new SoloProvider();
-            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
-            foreach (var input in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) input.enabled = false;
-            foreach (var player in GameServices.Round.Players) { player.Intent.Clear(); player.Intent.Parked = true; }
-            var caster = GameServices.Round.PlayerAt(1); caster.IsBot = true;
-            caster.AbilitySystem.BindHero("zack"); caster.Intent.Parked = false;
-            var carrier = caster.GetComponent<Carrier>(); var shoe = carrier.Held;
-            var kit = (Abilities.ZackHeroKit)caster.AbilitySystem.Kit;
-            var context = new Abilities.AbilityContext(caster, carrier, caster.GetComponent<CombatVerbs>());
-            // Isolate the snapshot contract with both independent buffs present.
-            kit.IsOverchargeThrowActive = true; kit.Ultimate.Activate(context);
-            yield return new WaitForSeconds(.55f);
-            Assert.True(kit.IsThunderstrikeActive);
-            var at = caster.transform.position + Vector3.up + Vector3.forward;
-            shoe.ApplySnapshotState(SlipperState.InFlight, null, at, Quaternion.identity,
-                Vector3.forward * 8, 0, SlipperAffinity.ElectricZap, caster.PlayerSlot);
-            Assert.False(kit.IsOverchargeThrowActive);
-            Assert.True(kit.IsThunderstrikeActive, "A consumed Magnet shot ended the independent ultimate window.");
-            var flight = shoe.transform.Find("ZapSlipperVfx"); Assert.IsNotNull(flight);
-            kit.IsOverchargeThrowActive = true;
-            shoe.ApplySnapshotState(SlipperState.InFlight, null, at, Quaternion.identity,
-                Vector3.forward * 8, 0, SlipperAffinity.ElectricZap, caster.PlayerSlot);
-            Assert.True(kit.IsOverchargeThrowActive, "A repeated flight snapshot consumed another charge.");
-            Assert.AreSame(flight, shoe.transform.Find("ZapSlipperVfx"));
-            shoe.ApplySnapshotState(SlipperState.Loose, null, at, Quaternion.identity,
-                Vector3.zero, 0, SlipperAffinity.Normal, -1);
+            Vector3 a = new Vector3(-2, 0, 0), b = new Vector3(2, 0, 0);
+            return new Net.WorldEffectSnapshot.Field { Type = Net.WorldEffectSnapshot.Kind.LiveWire, EventId = 7, Owner = 1,
+                Position = a, Forward = Vector3.right, Radius = 4, Duration = ZackRules.LiveWireSeconds,
+                Remaining = ZackRules.LiveWireSeconds, SecondScale = overcharged ? 1 : 0, Split = snapped,
+                FirstScale = snapped ? 2 : 0, Path = new[] { a, b } };
+        }
+
+        private static Net.WorldEffectSnapshot.Field Copy(float length)
+            => new Net.WorldEffectSnapshot.Field { Type = Net.WorldEffectSnapshot.Kind.Afterimage, EventId = 9, Owner = 1,
+                Position = Vector3.zero, Forward = Vector3.forward, Radius = length, Duration = ZackRules.AfterimageLife(length),
+                Remaining = ZackRules.AfterimageLife(length), Path = System.Array.Empty<Vector3>() };
+
+        [UnityTest]
+        public IEnumerator TheFieldContractRefusesBadWiresAndCopies()
+        {
+            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Wire(false)));
+            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Wire(true, snapped: true)));
+            var longWire = Wire(false); longWire.Path = new[] { longWire.Position, longWire.Position + Vector3.right * 7 }; longWire.Radius = 7;
+            Assert.IsFalse(Net.WorldEffectSnapshot.Valid(longWire), "A 7 m wire is past the 6 m rule.");
+            var lying = Wire(false); lying.Radius = 3;
+            Assert.IsFalse(Net.WorldEffectSnapshot.Valid(lying), "The length must match the posts.");
+            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Copy(15)));
+            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Copy(4)));
+            var fast = Copy(15); fast.Duration = fast.Remaining = 1;
+            Assert.IsFalse(Net.WorldEffectSnapshot.Valid(fast), "A copy's life is solved from its length, never sent free.");
+            Assert.IsTrue(Net.WorldEffectSnapshot.UsesDynamicIdentity(Net.WorldEffectSnapshot.Kind.Afterimage));
+            Assert.IsTrue(Net.WorldEffectSnapshot.UsesDynamicIdentity(Net.WorldEffectSnapshot.Kind.LiveWire));
             yield return null;
-            Assert.IsNull(shoe.transform.Find("ZapSlipperVfx"));
         }
 
-        [UnityTest, Timeout(60000)]
-        public IEnumerator MagnetRecallsItsShoeAndClearsTheChargeAfterTheRealThrow()
+        [UnityTest]
+        public IEnumerator TheWireSagsAsTheRulesSayAndCarriesNoCollider()
         {
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
-            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
-            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
-            NetAuthority.Provider = new SoloProvider();
-            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
-            foreach (var input in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) input.enabled = false;
-            foreach (var player in GameServices.Round.Players) { player.Intent.Clear(); player.Intent.Parked = true; }
-            var caster = GameServices.Round.PlayerAt(1); caster.IsBot = true;
-            caster.AbilitySystem.BindHero("zack"); caster.Teleport(new Vector3(0, .12f, -8));
-            caster.Intent.Parked = false; caster.Intent.AimPoint = new Vector3(0, 1.2f, 7);
-            var carrier = caster.GetComponent<Carrier>(); var shoe = carrier.Held;
-            Assert.IsNotNull(shoe); Assert.True(shoe.HostDisarm());
-            var from = new Vector3(1, 0, -4); from.y = Slipper.GroundY(from) + shoe.RestHeight;
-            shoe.transform.position = from;
-            caster.Intent.Set(Verb.Skill2, true);
-            yield return new WaitForSeconds(.2f);
-            caster.Intent.Set(Verb.Skill2, false);
-            var kit = (Abilities.ZackHeroKit)caster.AbilitySystem.Kit;
-            Assert.AreSame(shoe, carrier.Held, "The real Magnet press did not return the owned shoe.");
-            Assert.True(kit.IsOverchargeThrowActive);
-            Assert.IsNotNull(shoe.GetComponentInChildren<Visual.ZackMagnetCharge>());
-            caster.Intent.Set(Verb.SpecialAbility, true);
-            yield return new WaitForSeconds(.5f);
-            caster.Intent.Set(Verb.SpecialAbility, false);
-            bool chargedFlight = false; float released = Time.time;
-            while (Time.time - released < .3f)
+            var root = new GameObject("WireStage");
+            try
             {
-                chargedFlight |= shoe.State == SlipperState.InFlight && shoe.Affinity == SlipperAffinity.ElectricZap;
+                var look = Visual.ZackLiveWireLook.Build(root.transform, Wire(true), renderOnly: true);
+                look.StepTo(1.0f);
                 yield return null;
+                Assert.IsEmpty(root.GetComponentsInChildren<Collider>().Where(c => c.enabled), "The wire and its posts must never block.");
+                var line = root.GetComponentsInChildren<LineRenderer>().First(l => l.name == "Wire");
+                var middle = line.GetPosition(line.positionCount / 2);
+                float ground = Visual.VfxShapes.GroundAt(Vector3.zero, 0);
+                Assert.AreEqual(ZackRules.LiveWireSagHeight, middle.y - ground, .06f, "The drawn sag is not the rule's sag.");
+                Assert.IsNotNull(root.GetComponentsInChildren<LineRenderer>().FirstOrDefault(l => l.name == "WireOvercharged"),
+                    "Overcharged is doubled.");
+                var anchor = root.GetComponentsInChildren<Transform>().First(t => t.name == "AnchorA");
+                var surfaces = anchor.GetComponentsInChildren<Renderer>();
+                Assert.Greater(surfaces.Length, 3, "The wire needs a mounted reel, cleat and socket, not a bare pole.");
+                Assert.Less(surfaces.Max(r => r.bounds.max.y) - ground, .40f, "The complete anchor stays low on the court.");
+                Assert.IsEmpty(Object.FindObjectsByType<Abilities.HazardVolume>(FindObjectsSortMode.None)
+                    .Where(h => h.transform.IsChildOf(root.transform)), "A look registers no hazard: the field does.");
             }
-            Assert.True(chargedFlight); Assert.False(kit.IsOverchargeThrowActive);
-            Assert.IsNull(carrier.Held);
-            Assert.IsNull(shoe.GetComponentInChildren<Visual.ZackMagnetCharge>());
-            Assert.IsEmpty(Object.FindObjectsByType<Visual.MagnetRecallTrace>(FindObjectsSortMode.None));
+            finally { Object.Destroy(root); }
         }
 
-        [UnityTest, Timeout(60000)]
-        public IEnumerator SprintIncludesTheInitialPatchInItsSixPatchLimit()
+        [UnityTest]
+        public IEnumerator ReplaysDrawZacksFieldsAsPresentationOnly()
         {
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            var stage = new GameObject("ReplayStage");
+            try
+            {
+                foreach (var field in new[] { Wire(false), Wire(true, snapped: true), Copy(15), Copy(3) })
+                {
+                    using (var view = new CameraSystem.RecordedFieldView(stage.transform, field))
+                    {
+                        view.Sample(field, 0.5f); view.Visible(true);
+                        yield return null;
+                        Assert.IsEmpty(view.Root.GetComponentsInChildren<Collider>().Where(c => c.enabled));
+                        Assert.IsEmpty(view.Root.GetComponentsInChildren<AudioSource>(), "Replay looks must not create live current emitters.");
+                        Assert.IsEmpty(view.Root.GetComponentsInChildren<Abilities.ZackLiveWire>());
+                        Assert.IsEmpty(view.Root.GetComponentsInChildren<Abilities.ZackAfterimage>());
+                    }
+                }
+                Assert.IsEmpty(Abilities.ZackLiveWire.Active); Assert.IsEmpty(Abilities.ZackAfterimage.Active);
+            }
+            finally { Object.Destroy(stage); }
+        }
+
+        [UnityTest]
+        public IEnumerator LiveWireCurrentFollowsSfxGainAndStopsOnSnap()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
-            NetAuthority.Provider = new SoloProvider();
-            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
-            foreach (var input in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) input.enabled = false;
-            foreach (var player in GameServices.Round.Players) { player.Intent.Clear(); player.Intent.Parked = true; }
-            var caster = GameServices.Round.PlayerAt(1);
-            caster.IsBot = true; caster.AbilitySystem.BindHero("zack");
-            caster.Teleport(new Vector3(0, .12f, -8)); caster.Intent.Parked = false;
-            float start = Time.time; int most = 0; bool accepted = false;
-            while (Time.time - start < 2.75f)
+            var root = new GameObject("Live wire audio lifecycle");
+            float volume = Settings.SettingsStore.Current.SfxVolume;
+            try
             {
-                caster.Intent.Set(Verb.Skill1, Time.time - start < .2f);
-                accepted |= caster.AbilitySystem.LastAnswer(Abilities.HeroAbilitySystem.Slot.Skill1) == Abilities.HeroKit.CastOutcome.Cast;
-                most = Mathf.Max(most, Object.FindObjectsByType<Abilities.HeroHazards.ShockTrailComponent>(FindObjectsSortMode.None)
-                    .Count(field => field.OwnerSlot == caster.PlayerSlot));
+                var look = Visual.ZackLiveWireLook.Build(root.transform, Wire(false));
+                look.StepTo(1);
                 yield return null;
+                var source = root.GetComponentInChildren<AudioSource>();
+                Assert.IsNotNull(source);
+                Assert.IsTrue(source.isPlaying, "The live wire needs actual current playback.");
+                Assert.IsTrue(source.loop);
+                Assert.AreEqual(1, source.spatialBlend);
+                Settings.SettingsStore.Current.SfxVolume = 0;
+                look.StepTo(1.1f);
+                Assert.Zero(source.volume, "The loop must obey the SFX slider.");
+                Settings.SettingsStore.Current.SfxVolume = volume;
+                look.StepTo(1.2f);
+                Assert.Greater(source.volume, 0);
+                look.Snap();
+                Assert.IsFalse(source.isPlaying, "Snapping must stop the live current immediately.");
             }
-            File.WriteAllText("Logs/zack-sprint-patch-count.csv", $"accepted,max_patches\n{accepted},{most}\n");
-            Assert.True(accepted); Assert.GreaterOrEqual(most, 4);
-            Assert.LessOrEqual(most, 6, "The initial patch escaped the live trail limit.");
+            finally { Settings.SettingsStore.Current.SfxVolume = volume; Object.Destroy(root); }
+        }
+
+        [UnityTest]
+        public IEnumerator InspectCardsShowTheWholeCurrentDescriptionInBothRoles()
+        {
+            var root = new GameObject("Zack inspect review");
+            try
+            {
+                var canvas = OwnerUiLayout.Canvas(root.transform, "ZackInspectCanvas");
+                var panel = AbilityInspectPanel.Create(canvas.transform);
+                var kit = new Abilities.ZackHeroKit();
+                foreach (bool defending in new[] { false, true })
+                {
+                    kit.SetRole(defending, null); panel.OpenForCapture(kit);
+                    Canvas.ForceUpdateCanvases(); yield return null; Canvas.ForceUpdateCanvases();
+                    string name = defending ? "Zack-inspect-live-wire" : "Zack-inspect-afterimage";
+                    yield return TumpUiCapture.Capture(name, canvas, 1600, 680, false);
+                    var bodies = panel.GetComponentsInChildren<UnityEngine.UI.Text>().Where(t => t.name == "Body").ToArray();
+                    Assert.AreEqual(3, bodies.Length);
+                    CollectionAssert.AreEquivalent(new[] { kit.Skill1.LiveDescription, kit.Skill2.LiveDescription, kit.Ultimate.LiveDescription },
+                        bodies.Select(t => t.text).ToArray());
+                    foreach (var body in bodies)
+                        Assert.LessOrEqual(body.preferredHeight, body.rectTransform.rect.height + 1, name + ": " + body.text);
+                    foreach (var title in panel.GetComponentsInChildren<UnityEngine.UI.Text>().Where(t => t.name == "Name"))
+                        Assert.LessOrEqual(title.preferredHeight, title.rectTransform.rect.height + 1, name + ": " + title.text);
+                }
+            }
+            finally { Object.Destroy(root); }
         }
     }
 }

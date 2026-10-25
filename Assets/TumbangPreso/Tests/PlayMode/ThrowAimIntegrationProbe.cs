@@ -60,8 +60,8 @@ namespace TumbangPreso.PlayTests
                 carrier.ApplyObservedCharge(true,.35f,0);
                 if(mode==GameMode.HeroStrike)
                 {
-                    who.AbilitySystem.BindHero("zack",new HeroBuild{HeroId="zack",Slot2VariantId="zack.2.discharge"});
-                    ((ZackHeroKit)who.AbilitySystem.Kit).IsOverchargeThrowActive=true;
+                    // A hero aim with no throw buff (Zack's Overcharge Throw was retired on 2026-10-25).
+                    who.AbilitySystem.BindHero("zack");
                 }
                 yield return GameplayShots.Render(rig.Camera,mode+"-steady-aim",true,output);
                 var aim=carrier.AimPoint();var expected=carrier.LaunchVelocityNow();

@@ -44,11 +44,13 @@ Native desktop control render:
 
 ## Remaining spectator scope
 
-Actual player eye/look/FOV and first-person presentation, body-size-aware framing,
-distinct skill/projectile/persistent-effect coverage, and the full current-map
-matrix remain in progress under SPECTATOR-1025. The old body-yaw/operator-pitch
-POV is not called an exact player view by this report. Real-peer view delivery,
-target replacement, pause, role/round and reconnect need their own evidence.
+Subsequent units cover [actual eye/look/FOV and first-person presentation](view-candidate.md),
+[all six maps, model sizes and placed effects](framing.md),
+[world/HUD perception](perception.md) and
+[private hallucinations/held markers](private-candidate.md). Their evidence and
+limits live with each unit. Broad live skills, role/round transitions and reconnect
+continue under SPECTATOR-1025 and NETWORKFIX; local framing is separate from
+network or device acceptance.
 
 The owner explicitly put a thorough mobile refresh **after NETWORKFIX**. The
 experimental expanded touch strip was restored to its previous implementation;

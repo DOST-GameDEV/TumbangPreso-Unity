@@ -456,7 +456,7 @@ namespace TumbangPreso.Abilities
         private CastOutcome CheckFire(HeroAbility ability,AbilityContext ctx)
         {
             if(ability==null)return CastOutcome.Missing;
-            if(ctx?.Motor==null || ((!ctx.Motor.CanAct() || ctx.Motor.IsZapped) && !ability.AllowsImpairedCast(ctx)))
+            if(ctx?.Motor==null || (!ctx.Motor.CanAct() && !ability.AllowsImpairedCast(ctx)))
                 return CastOutcome.CannotAct;
             if(ability.IsActive&&ability.CanReactivate)return ability.ReactivateReady?CastOutcome.Cast:CastOutcome.NotYet;
             if(PracticeMode)return CastOutcome.NotYet;

@@ -45,6 +45,11 @@ namespace TumbangPreso.CameraSystem
             {var fx=DanteDriftVisual.Build(Root.transform,field.Position,field.Forward,field.Radius,field.FirstScale);_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Gale)
             {var fx=AmihanGaleFront.Build(Root.transform,field.Position,field.Forward,field.Duration,Core.AmihanRules.WhirlwindSpeed,Core.AmihanRules.WhirlwindStart,Core.AmihanRules.WhirlwindRadius*2f);fx.enabled=false;_step=fx.StepTo;}
+            // Zack (protocol 182): presentation only, from the field and its age; the copy is the stand-in runner here.
+            else if(field.Type==WorldEffectSnapshot.Kind.Afterimage)
+            {var fx=ZackAfterimageBody.Build(Root.transform,field,renderOnly:true);if(field.Split)fx.Pop();_step=fx.StepTo;}
+            else if(field.Type==WorldEffectSnapshot.Kind.LiveWire)
+            {var fx=ZackLiveWireLook.Build(Root.transform,field,renderOnly:true);_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Blindfold)
             {var fx=NemuBlindfold.Recorded(Root.transform,field);_step=fx.StepRecorded;}
             // Paete (HERO-9): the render-only bodies, posed from age alone like every other field here.
@@ -93,14 +98,12 @@ namespace TumbangPreso.CameraSystem
                 _ward=DanteCarapaceVisual.Recorded(recordedOwnerModel,Root.transform,field.FirstScale>0,field.Duration,field.SecondScale);
                 if(_ward==null)throw new ArgumentException("Recorded armor torso was not found");_step=_ward.StepTo;
             }
-            else if(field.Type==RecordedSpecialFields.Ignition||field.Type==RecordedSpecialFields.Charge)
+            else if(field.Type==RecordedSpecialFields.Ignition)
             {
                 if(recordedPropModel==null)throw new ArgumentException("Recorded weapon effect requires its recorded prop");
                 var meshes=RecordedSpecialFields.PropMeshes(recordedPropModel);int index=(int)field.SecondScale;
                 if(index<0||index>=meshes.Length)throw new ArgumentException("Recorded weapon surface is missing");
-                if(field.Type==RecordedSpecialFields.Ignition)
-                {var fx=SeanIgnitionVisual.Recorded(meshes[index]);_attached=fx.gameObject;_step=fx.StepTo;}
-                else {var fx=ZackMagnetCharge.Recorded(meshes[index]);_attached=fx.gameObject;_step=fx.StepTo;}
+                var fx=SeanIgnitionVisual.Recorded(meshes[index]);_attached=fx.gameObject;_step=fx.StepTo;
             }
             else throw new ArgumentException("Unsupported recorded field");
             _renderers=_ward!=null?new System.Collections.Generic.List<Renderer>(_ward.VisiblePieces).ToArray():_attached!=null?_attached.GetComponentsInChildren<Renderer>(true):Root.GetComponentsInChildren<Renderer>(true);_lights=Root.GetComponentsInChildren<Light>(true);Visible(false);
@@ -114,7 +117,7 @@ namespace TumbangPreso.CameraSystem
         }
         public bool Matches(WorldEffectSnapshot.Field field)=>field.Type==_built.Type&&field.Split==_built.Split&&field.EventId==_built.EventId;
         public void Sample(WorldEffectSnapshot.Field field,float elapsed)
-        {if(_ward!=null)Root.transform.SetPositionAndRotation(field.Position,Quaternion.LookRotation(field.Forward));if(_mouth!=null)_mouth.position=field.Forward;_step?.Invoke(field.Type==RecordedSpecialFields.Ignition||field.Type==RecordedSpecialFields.Charge?field.FirstScale+elapsed:Mathf.Clamp(field.Duration-field.Remaining+elapsed,0,field.Duration));}
+        {if(_ward!=null)Root.transform.SetPositionAndRotation(field.Position,Quaternion.LookRotation(field.Forward));if(_mouth!=null)_mouth.position=field.Forward;_step?.Invoke(field.Type==RecordedSpecialFields.Ignition?field.FirstScale+elapsed:Mathf.Clamp(field.Duration-field.Remaining+elapsed,0,field.Duration));}
         public void Visible(bool on){foreach(var renderer in _renderers)if(renderer!=null)renderer.forceRenderingOff=!on;foreach(var light in _lights)if(light!=null)light.enabled=on;}
         public void Dispose(){if(_attached!=null)UnityEngine.Object.Destroy(_attached);_attached=null;if(_ward!=null)UnityEngine.Object.Destroy(_ward.gameObject);_ward=null;if(Root!=null)UnityEngine.Object.Destroy(Root);Root=null;}
     }

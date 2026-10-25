@@ -70,8 +70,8 @@ namespace TumbangPreso.EditorTools.MapKit
 
         internal static readonly string[] Looks =
         {
-            "rafi_skim", "cheska_coldfeet", "cheska_frostbite", "dante_refusal", "zack_circuit",
-            "sean_supernova", "ult_amihan", "ult_cheska", "ult_rafi", "ult_zack",
+            "rafi_skim", "cheska_coldfeet", "cheska_frostbite", "dante_refusal",
+            "sean_supernova", "ult_amihan", "ult_cheska", "ult_rafi",
         };
 
         private const BindingFlags Any = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
@@ -276,7 +276,6 @@ namespace TumbangPreso.EditorTools.MapKit
                     try
                     {
                         Build(stage, plan);
-                        if (name == "zack_circuit") TimeCheck(plan, Shoot, report);
                         string frames = Path.Combine(OutDir, "quickrework_" + name + "_" + tag + "_frames");
                         if (Directory.Exists(frames)) foreach (string old in Directory.GetFiles(frames)) File.Delete(old);
                         Directory.CreateDirectory(frames);
@@ -399,7 +398,6 @@ namespace TumbangPreso.EditorTools.MapKit
                     return;
                 }
                 case "dante_refusal": BuildRefusal(s, p, S, fwd, right); return;
-                case "zack_circuit": BuildCircuit(s, p, S, fwd, right); return;
                 case "sean_supernova":
                 {
                     Vector3 P = s.Ground(0f, 0f);
@@ -526,24 +524,6 @@ namespace TumbangPreso.EditorTools.MapKit
                         new View("bystander three-quarter (south alley)", R - fwd * 5f + right * 3f + up * 5f, R + fwd * 7f, 60f),
                         new View("side", R + fwd * 7.5f + right * 6.3f + up * 2f, R + fwd * 7.5f - right * 1f, 75f),
                         new View("from above", R + fwd * 7.5f + up * 24f, R + fwd * 7.5f, 62f),
-                    };
-                    return;
-                }
-                case "ult_zack":
-                {
-                    Vector3 Z = s.Ground(S.x, S.z + 3f);
-                    s.Person(p, "zack", S, 0f, out _);
-                    s.Person(p, "dante", Z + right * 2f, 270f, out _);
-                    var made = s.Capture(p, () => UltimateLiveLook.Zack(Z, 4.5f));
-                    Rebirth(made, 0f);
-                    s.Report.AppendLine("  Overclock at the game's call: strike 3 m ahead, ring 4.5 m; " + made.Count + " pieces");
-                    p.Pose = t => Show(made, t >= 0f);
-                    p.Segments.Add((-0.15f, 1.35f));
-                    p.Views = new[]
-                    {
-                        new View("bystander three-quarter", Z - fwd * 7.5f + right * 3.5f + up * 3.5f, Z + up * 1.5f, 60f),
-                        new View("side", Z + right * 6.3f + up * 1.5f, Z + up * 2.5f - right * 1f, 70f),
-                        new View("from above", Z + up * 14f, Z, 50f),
                     };
                     return;
                 }
@@ -689,60 +669,6 @@ namespace TumbangPreso.EditorTools.MapKit
             };
         }
 
-        // ---------------------------------------------------------------- Closed Circuit
 
-        private static void BuildCircuit(Stage s, Plan p, Vector3 S, Vector3 fwd, Vector3 right)
-        {
-            var caster = s.Person(p, "zack", S, 0f, out var zack);
-            var first = s.Person(p, "dante", S + fwd * 5f, 180f, out _);
-            var second = s.Person(p, "cheska", s.Ground(S.x - 3f, S.z + 3.5f), 140f, out _);
-            var t = typeof(ZackCircuitArc);
-            var go = s.In(new GameObject("Closed Circuit arc"), p);
-            go.AddComponent<MeshFilter>().sharedMesh = (Mesh)Invoke(t, null, "SharedMesh");
-            var renderer = go.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = (Material)Invoke(t, null, "SharedMaterial");
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; renderer.receiveShadows = false;
-            var block = new MaterialPropertyBlock();
-            // ZackCircuitArc.BindCastingHand/CastingHand: the left palm of his third-person model, else its fallback.
-            Transform arm = null; Vector3 palm = Vector3.zero;
-            var skin = zack != null ? zack.GetComponentInChildren<SkinnedMeshRenderer>() : null;
-            if (skin != null && CharacterVisual.HandBone(skin, "left", out int hand, out palm)) arm = skin.bones[hand];
-            s.Report.AppendLine("  two locks of 0.4 s (the lock's length) with the look's 0.16 s fade: on a target 5 m ahead at 0 s, then one 4.6 m off to his left at 1.0 s; strands from " + (arm != null ? "his left palm" : "the look's fallback point (no hand bone found)") + " to the target's middle (the look's 0.8 m fallback; there is no capsule here)");
-            var locks = new (float at, GameObject target)[] { (0f, first), (1.0f, second) };
-            const float lockSeconds = .4f, fadeSeconds = .16f;
-            p.Pose = time =>
-            {
-                renderer.enabled = false;
-                foreach (var (at, target) in locks)
-                {
-                    float local = time - at;
-                    if (local < 0f || local > lockSeconds + fadeSeconds) continue;
-                    // ZackCircuitArc.LateUpdate, with the kit's remaining lock read from the film's clock.
-                    bool live = local <= lockSeconds;
-                    float progress = Mathf.Clamp01(local / lockSeconds);
-                    float fade = live ? fadeSeconds : fadeSeconds - (local - lockSeconds);
-                    Vector3 from = arm != null ? arm.TransformPoint(palm) : caster.transform.position + Vector3.up * 1.05f + caster.transform.right * .14f;
-                    Vector3 to = target.transform.position + Vector3.up * .8f, delta = to - from;
-                    float length = delta.magnitude;
-                    caster.transform.rotation = Quaternion.LookRotation(new Vector3(delta.x, 0f, delta.z), Vector3.up);
-                    from = arm != null ? arm.TransformPoint(palm) : from; delta = to - from; length = delta.magnitude;
-                    go.transform.SetPositionAndRotation(from, Quaternion.LookRotation(delta / length, Vector3.up));
-                    go.transform.localScale = new Vector3(1, 1, length);
-                    block.SetFloat("_Reach", live ? Mathf.Clamp01(.15f + progress * 1.45f) : 1);
-                    block.SetFloat("_Erode", live ? 0 : 1 - Mathf.Clamp01(fade / fadeSeconds));
-                    block.SetFloat("_Length", length);
-                    renderer.SetPropertyBlock(block);
-                    renderer.enabled = true;
-                }
-            };
-            p.Segments.Add((-0.15f, 1.75f));
-            Vector3 mid = S + fwd * 2.5f;
-            p.Views = new[]
-            {
-                new View("caster's eyes (no first-person arms)", S + Vector3.up * 1.15f + fwd * 0.12f, S + fwd * 6f + Vector3.up * 0.8f - right * 1.2f, 75f, zack),
-                new View("bystander three-quarter", S - fwd * 2.5f + right * 4f + Vector3.up * 2f, mid + Vector3.up * 0.8f - right * 1f, 55f),
-                new View("side", mid + right * 6.3f + Vector3.up * 1.1f, mid + Vector3.up * 0.8f - right * 1.5f, 55f),
-            };
-        }
     }
 }

@@ -60,13 +60,15 @@ namespace TumbangPreso.Core.Tests
             Assert.False(possessed.BlocksMovement || possessed.BlocksInteraction
                 || possessed.BlocksSlipperRetrieval || possessed.DropsHeldSlipper);
             Assert.True(possessed.Removable && possessed.ImmunityApplies);
+            // Zack's rework (owner's V3 sheet, 2026-10-25): a 1 s full stun, clearly shorter than Frozen's 2.5 s.
             var zapped = StatusRules.For(StatusKind.Zapped);
-            Assert.Equal(5.0f, zapped.Seconds);
-            Assert.Equal(1.0f, zapped.SpeedScale);
-            Assert.Equal("Disabled Ability Cast", zapped.Tooltip);
-            Assert.False(zapped.BlocksMovement || zapped.BlocksInteraction
-                || zapped.BlocksSlipperRetrieval || zapped.DropsHeldSlipper);
+            Assert.Equal(1.0f, zapped.Seconds);
+            Assert.Equal("Cannot move or act for 1 second.", zapped.Description);
+            Assert.Equal(0.0f, zapped.SpeedScale);
+            Assert.True(zapped.BlocksMovement && zapped.BlocksInteraction && zapped.BlocksSlipperRetrieval);
+            Assert.False(zapped.DropsHeldSlipper);
             Assert.True(zapped.Removable && zapped.ImmunityApplies);
+            Assert.True(zapped.Seconds < StatusRules.For(StatusKind.Frozen).Seconds);
         }
 
         [Fact]

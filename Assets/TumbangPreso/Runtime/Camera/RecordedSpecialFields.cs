@@ -17,6 +17,7 @@ namespace TumbangPreso.CameraSystem
         public const WorldEffectSnapshot.Kind Nova=(WorldEffectSnapshot.Kind)104;
         public const WorldEffectSnapshot.Kind Ward=(WorldEffectSnapshot.Kind)105;
         public const WorldEffectSnapshot.Kind Ignition=(WorldEffectSnapshot.Kind)106;
+        // ⚠️ RETIRED (protocol 182): Zack's old magnet charge. The number stays taken; old clips that hold one skip it on load.
         public const WorldEffectSnapshot.Kind Charge=(WorldEffectSnapshot.Kind)107;
         // Amihan's Storm Surge: the fan while it gathers and the wall it releases (replay only;
         // a rejoiner mid-gather misses the telegraph, the host's push still lands).
@@ -52,8 +53,6 @@ namespace TumbangPreso.CameraSystem
                         Duration=ward.LifeSeconds,Remaining=ward.LifeSeconds-ward.RecordedAge,Radius=1,FirstScale=ward.RecordedHeavy?1:0,SecondScale=ward.RecordedFront,Owner=ward.RecordedOwner.PlayerSlot});
             foreach(var ember in Object.FindObjectsByType<SeanIgnitionVisual>())
                 if(ember.isActiveAndEnabled&&ember.RecordedWorld)AddWeapon(fields,Ignition,ember.gameObject,ember.RecordedShoe,ember.RecordedTarget,ember.RecordedAge);
-            foreach(var charge in Object.FindObjectsByType<ZackMagnetCharge>())
-                if(charge.isActiveAndEnabled&&charge.RecordedWorld)AddWeapon(fields,Charge,charge.gameObject,charge.RecordedShoe,charge.RecordedTarget,charge.RecordedAge);
             foreach(var storm in Object.FindObjectsByType<Abilities.AmihanStorm>())
             {
                 if(!storm.isActiveAndEnabled)continue;

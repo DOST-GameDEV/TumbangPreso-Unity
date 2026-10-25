@@ -53,6 +53,13 @@ namespace TumbangPreso.Visual
         /// <summary>Does this body have a clip, or a variant of one, for <paramref name="name"/>?</summary>
         private bool HasClip(string name) => name != null && _clips.ContainsKey(Variant(name));
 
+        /// <summary>
+        /// The clip this body would play for <paramref name="name"/> (its variant when it has one), or null. Read-only: for a
+        /// render-only copy that samples a pose (Zack's AFTERIMAGE runs his own sprint), never for this body's own graph.
+        /// </summary>
+        public UnityEngine.AnimationClip ClipNamed(string name)
+            => name != null && _clips.TryGetValue(Variant(name), out var clip) ? clip : null;
+
         /// <summary>Under a throw's release, the variant's own legs (null when this body has none).</summary>
         private string ThrowBase => _variant != null && _clips.ContainsKey(_variant + ThrowVariantClip) ? ThrowVariantClip : null;
 

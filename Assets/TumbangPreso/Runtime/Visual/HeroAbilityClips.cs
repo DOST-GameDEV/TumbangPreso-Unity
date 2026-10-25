@@ -458,9 +458,11 @@ namespace TumbangPreso.Visual
             dict["hero-sean-supernova"] = BuildSeanSupernova(paths);
 
             // ZACK
-            dict["hero-zack-sprint"] = BuildZackSprint(paths);
-            dict["hero-zack-charge"] = BuildZackCharge(paths);
-            dict["hero-zack-summon"] = BuildZackSummon(paths);
+            dict["hero-zack-backtrack"] = BuildZackBacktrack(paths);
+            dict["hero-zack-afterimage"] = BuildZackAfterimage(paths);
+            dict["hero-zack-wire-aim"] = BuildZackWireAim(paths);
+            dict["hero-zack-wire"] = BuildZackWire(paths);
+            dict["hero-zack-overclock"] = BuildZackOverclock(paths);
 
             // DANTE
             dict["hero-dante-stomp"] = BuildDanteStomp(paths);
@@ -858,133 +860,6 @@ namespace TumbangPreso.Visual
         // ===================================================================
         // § ZACK CLIPS
         // ===================================================================
-
-        private static AnimationClip BuildZackSprint(Dictionary<string, string> paths)
-        {
-            var b = new ClipBuilder("hero-zack-sprint", paths);
-            // ⚠️⚠️ NO `PunchAt`, AND THE ABSENCE IS THE DESIGN. Bolt Sprint is LOCOMOTION,
-            // not a strike: it is a skating cycle held for the whole dash, and there is no
-            // instant at which anything lands. Snapping a cycle to a stop would read as the
-            // animation breaking. The same goes for the vibration below.
-            // 0.60s Aerodynamic Speed Skate Grind
-            b.KeyPos(0.00f, 0, 0, 0);
-            b.KeyPos(0.15f, -0.03f, -0.04f, 0.06f);
-            b.KeyPos(0.30f, 0.03f, -0.03f, 0.09f);
-            b.KeyPos(0.45f, -0.02f, -0.04f, 0.06f);
-            b.KeyPos(0.60f, 0, 0, 0);
-
-            b.KeyRot("torso", 0.00f, 0, 0, 0);
-            b.KeyRot("torso", 0.15f, 32.0f, -12.0f, -14.0f);
-            b.KeyRot("torso", 0.30f, 35.0f, 12.0f, 14.0f);
-            b.KeyRot("torso", 0.45f, 30.0f, -8.0f, -10.0f);
-            b.KeyRot("torso", 0.60f, 0, 0, 0);
-
-            b.KeyRot("head", 0.00f, 0, 0, 0);
-            b.KeyRot("head", 0.15f, -20.0f, 10.0f, 8.0f);
-            b.KeyRot("head", 0.30f, -22.0f, -10.0f, -8.0f);
-            b.KeyRot("head", 0.60f, 0, 0, 0);
-
-            // Pumping arms
-            b.KeyRot("arm-left", 0.00f, 0, 0, 15.0f);
-            b.KeyRot("arm-left", 0.15f, -65.0f, 0, 30.0f);
-            b.KeyRot("arm-left", 0.30f, 50.0f, 0, 25.0f);
-            b.KeyRot("arm-left", 0.45f, -55.0f, 0, 30.0f);
-            b.KeyRot("arm-left", 0.60f, 0, 0, 15.0f);
-
-            b.KeyRot("arm-right", 0.00f, 0, 0, -15.0f);
-            b.KeyRot("arm-right", 0.15f, 55.0f, 0, -25.0f);
-            b.KeyRot("arm-right", 0.30f, -65.0f, 0, -30.0f);
-            b.KeyRot("arm-right", 0.45f, 45.0f, 0, -25.0f);
-            b.KeyRot("arm-right", 0.60f, 0, 0, -15.0f);
-
-            b.KeyRot("leg-left", 0.00f, 0, 0, 0);
-            b.KeyRot("leg-left", 0.15f, 25.0f, 0, 10.0f);
-            b.KeyRot("leg-left", 0.30f, -30.0f, 0, 8.0f);
-            b.KeyRot("leg-left", 0.60f, 0, 0, 0);
-
-            b.KeyRot("leg-right", 0.00f, 0, 0, 0);
-            b.KeyRot("leg-right", 0.15f, -30.0f, 0, -8.0f);
-            b.KeyRot("leg-right", 0.30f, 25.0f, 0, -10.0f);
-            b.KeyRot("leg-right", 0.60f, 0, 0, 0);
-
-            return b.Build();
-        }
-
-        private static AnimationClip BuildZackCharge(Dictionary<string, string> paths)
-        {
-            var b = new ClipBuilder("hero-zack-charge", paths);
-            // ⚠️ NO `PunchAt`. A high-frequency vibration is already all attack and no
-            // settle; the shape of it is the buzz, and a punch would flatten every second
-            // oscillation into a hold.
-            // 0.40s High-frequency electric vibration
-            for (int i = 0; i <= 8; i++)
-            {
-                float t = i * (0.40f / 8.0f);
-                float vib = (i % 2 == 0 ? 1.0f : -1.0f) * (1.0f - Mathf.Abs(t - 0.20f) / 0.25f);
-
-                b.KeyPos(t, vib * 0.015f, -0.02f * Mathf.Abs(vib), 0);
-                b.KeyRot("torso", t, 10.0f + vib * 6.0f, vib * 8.0f, vib * 5.0f);
-                b.KeyRot("head", t, -8.0f - vib * 4.0f, -vib * 6.0f, -vib * 4.0f);
-                b.KeyRot("arm-right", t, -85.0f + vib * 12.0f, vib * 10.0f, -30.0f + vib * 8.0f);
-                b.KeyRot("arm-left", t, 20.0f - vib * 8.0f, 0, 35.0f + vib * 6.0f);
-                b.KeyRot("leg-left", t, 5.0f, 0, 5.0f);
-                b.KeyRot("leg-right", t, -5.0f, 0, -5.0f);
-            }
-
-            return b.Build();
-        }
-
-        private static AnimationClip BuildZackSummon(Dictionary<string, string> paths)
-        {
-            var b = new ClipBuilder("hero-zack-summon", paths);
-            // ⚠️ THIS IS THE FRAME THE ABILITY LANDS ON, and `ClipBuilder.PunchAt` is what makes
-            // the difference between a pose and a blow: the wind-up hangs, the last few degrees
-            // are the fastest, and the body stops dead here instead of easing through. See the
-            // § TIMING note above `ClipBuilder` for why all fifteen used to feel the same.
-            // The bolt comes DOWN. The raise at 0.28 is the call and it stays smooth.
-            b.PunchAt(0.45f);
-            // 0.75s Sky Lightning Summon
-            b.KeyPos(0.00f, 0, 0, 0);
-            b.KeyPos(0.12f, 0, -0.05f, 0);
-            b.KeyPos(0.28f, 0, 0.10f, 0.02f);
-            b.KeyPos(0.45f, 0, -0.06f, 0.01f);
-            b.KeyPos(0.75f, 0, 0, 0);
-
-            b.KeyRot("torso", 0.00f, 0, 0, 0);
-            b.KeyRot("torso", 0.12f, 15.0f, 0, 0);
-            b.KeyRot("torso", 0.28f, -32.0f, 0, 0);
-            b.KeyRot("torso", 0.45f, 25.0f, 0, 0);
-            b.KeyRot("torso", 0.75f, 0, 0, 0);
-
-            b.KeyRot("head", 0.00f, 0, 0, 0);
-            b.KeyRot("head", 0.12f, 10.0f, 0, 0);
-            b.KeyRot("head", 0.28f, -45.0f, 0, 0);
-            b.KeyRot("head", 0.45f, 15.0f, 0, 0);
-            b.KeyRot("head", 0.75f, 0, 0, 0);
-
-            // Skyward hands invoke thunder, then crash
-            b.KeyRot("arm-left", 0.00f, 0, 0, 15.0f);
-            b.KeyRot("arm-left", 0.12f, 20.0f, 0, 20.0f);
-            b.KeyRot("arm-left", 0.28f, -155.0f, 0, 50.0f);
-            b.KeyRot("arm-left", 0.45f, 45.0f, 0, 25.0f);
-            b.KeyRot("arm-left", 0.75f, 0, 0, 15.0f);
-
-            b.KeyRot("arm-right", 0.00f, 0, 0, -15.0f);
-            b.KeyRot("arm-right", 0.12f, 20.0f, 0, -20.0f);
-            b.KeyRot("arm-right", 0.28f, -155.0f, 0, -50.0f);
-            b.KeyRot("arm-right", 0.45f, 45.0f, 0, -25.0f);
-            b.KeyRot("arm-right", 0.75f, 0, 0, -15.0f);
-
-            b.KeyRot("leg-left", 0.00f, 0, 0, 0);
-            b.KeyRot("leg-left", 0.28f, -15.0f, 0, 8.0f);
-            b.KeyRot("leg-left", 0.75f, 0, 0, 0);
-
-            b.KeyRot("leg-right", 0.00f, 0, 0, 0);
-            b.KeyRot("leg-right", 0.28f, -15.0f, 0, -8.0f);
-            b.KeyRot("leg-right", 0.75f, 0, 0, 0);
-
-            return b.Build();
-        }
 
         // ===================================================================
         // § DANTE CLIPS

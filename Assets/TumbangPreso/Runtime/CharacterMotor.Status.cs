@@ -20,9 +20,15 @@ namespace TumbangPreso
         // ------------------------------------------------------------------ WHIRLED and CHILLED
 
         private float _whirledLeft, _chilledLeft, _hauntedLeft;
-        private float _zappedLeft;
-        public float ZappedLeft => _zappedLeft;
-        public bool IsZapped => _zappedLeft > 0;
+        /// <summary>
+        /// ZAPPED (Zack's LIVE WIRE, protocol 182) is a Shock-element hold on the one stun stack, read off it as
+        /// <see cref="IsFrozen"/> reads Ice: every gate that respects a stun respects it, and the wire, replay and rejoin
+        /// already carry the stun.
+        /// </summary>
+        public bool IsZapped => _stunLeft > 0.0f && _stunElement == StunElement.Shock;
+        public float ZappedLeft => IsZapped ? _stunLeft : 0.0f;
+        // Edge detection only, so a peer raises the Zapped mark once when the host's stun state first carries it.
+        private bool _sawZapped;
         public float HauntedLeft => _hauntedLeft;
         public bool IsHaunted => _hauntedLeft > 0;
 
@@ -66,7 +72,7 @@ namespace TumbangPreso
                 case StatusKind.Drained: return _drainedLeft;
                 case StatusKind.Hexed: return _hexedLeft;
                 case StatusKind.Haunted: return _hauntedLeft;
-                case StatusKind.Zapped: return _zappedLeft;
+                case StatusKind.Zapped: return ZappedLeft;
                 case StatusKind.Possessed: return _possessedLeft;
                 case StatusKind.Blinded: return _blindedLeft;
                 default: return 0.0f;
@@ -157,10 +163,13 @@ namespace TumbangPreso
 
         public void ApplyZapped(float seconds = StatusRules.ZappedSeconds)
         {
-            if (!MayMutateGameplayState() || !float.IsFinite(seconds) || seconds <= 0 || AbilitySystem?.IsImmuneToStuns == true) return;
+            if (!MayMutateGameplayState() || !float.IsFinite(seconds) || seconds <= 0) return;
+            if (Refuses(StatusKind.Zapped, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
             bool fresh = !IsZapped;
-            _zappedLeft = StatusRules.Refresh(_zappedLeft, Mathf.Min(seconds, StatusRules.ZappedSeconds));
-            if (fresh) StatusGained?.Invoke(this, StatusKind.Zapped);
+            // "Cannot move or act for 1 second": a full stun, overlapping by Max, lengthened by Vulnerable like every stun.
+            ApplyStagger(Mathf.Min(seconds, StatusRules.ZappedSeconds), StunElement.Shock, Balance.StunBreakPressesDefault);
+            _sawZapped = IsZapped;
+            if (fresh && IsZapped) { StatusGained?.Invoke(this, StatusKind.Zapped); GameServices.Audio?.PlayAt("sfx_status_zapped", transform.position); }
         }
 
         public void ApplyHaunted(float seconds = StatusRules.HauntedSeconds)
@@ -297,7 +306,7 @@ namespace TumbangPreso
         /// <summary>Ends Whirled and Chilled. For the round reset and the respawn only.</summary>
         public void ClearStatuses()
         {
-            _zappedLeft = 0;
+            _sawZapped = false;
             _whirledLeft = 0.0f;
             _chilledLeft = 0.0f;
             _hauntedLeft = 0.0f;
@@ -316,9 +325,10 @@ namespace TumbangPreso
         /// <summary>The host's status timers, off the wire (`SyncUnit`).</summary>
         public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft, float rootedLeft = 0.0f, float hauntedLeft = 0.0f, float zappedLeft = 0)
         {
-            bool zapped = !IsZapped && zappedLeft > 0;
-            _zappedLeft = float.IsFinite(zappedLeft) ? Mathf.Clamp(zappedLeft, 0, StatusRules.ZappedSeconds) : 0;
-            if (zapped) StatusGained?.Invoke(this, StatusKind.Zapped);
+            // The stun itself arrives with the stun state; this float only marks the edge for the status mark and cue.
+            bool zappedNow = float.IsFinite(zappedLeft) && zappedLeft > 0;
+            if (zappedNow && !_sawZapped) { StatusGained?.Invoke(this, StatusKind.Zapped); GameServices.Audio?.PlayAt("sfx_status_zapped", transform.position); }
+            _sawZapped = zappedNow;
             bool haunted = !IsHaunted && hauntedLeft > 0;
             _hauntedLeft = float.IsFinite(hauntedLeft) ? Mathf.Clamp(hauntedLeft, 0, StatusRules.HauntedSeconds) : 0;
             if (haunted) StatusGained?.Invoke(this, StatusKind.Haunted);
@@ -342,7 +352,6 @@ namespace TumbangPreso
 
         private void StepStatuses(float dt)
         {
-            if (_zappedLeft > 0) _zappedLeft = Mathf.Max(0, _zappedLeft - dt);
             if (_hauntedLeft > 0) _hauntedLeft = Mathf.Max(0, _hauntedLeft - dt);
             StepPossession(dt);
             StepBlinded(dt);
@@ -443,6 +452,7 @@ namespace TumbangPreso
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
             if (!Finite(velocity) || float.IsNaN(seconds) || float.IsInfinity(seconds)) return;
+            if (!own) NoteImpactTaken();
             var flat = new Vector3(velocity.x, 0.0f, velocity.z);
             if (flat.magnitude > Balance.MaxKnockbackSpeed) flat = flat.normalized * Balance.MaxKnockbackSpeed;
             float scale=own?1.0f:IncomingKnockbackSpeedScale;

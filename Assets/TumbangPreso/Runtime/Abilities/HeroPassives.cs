@@ -35,9 +35,9 @@ namespace TumbangPreso.Abilities
                 // RafiHeroKit: 1.2x movement for 1.5 s on a genuine own retrieve.
                 case "rafi": return new Passive("BACKWASH",
                     "Retrieving your own thrown slipper grants 20% movement speed for 1.5 seconds, once per throw. Dropping and picking it up again does not count.");
-                // ZackHeroKit.OnObjectiveAwarded: 5 s off each non-ultimate cooldown per point.
-                case "zack": return new Passive("AMPED-UP",
-                    "Zack reduces his ability cooldowns by 5 seconds each time he gains an objective point.");
+                // ZackHeroKit MOMENTUM: `ZackRules.MomentumMaxBonus`, `MomentumRampSeconds`, `StepMomentum` (rework, 2026-10-25).
+                case "zack": return new Passive("MOMENTUM",
+                    "The longer Zack keeps running, the faster he gets, up to 20% faster after 3 seconds. Stopping, throwing or being hit resets it.");
                 // SeanHeroKit PRESSURE: `SeanRules.PressureBars`, `EruptDistanceScale`, `PressureCoolSeconds`.
                 case "sean": return new Passive("PRESSURE",
                     "Every shove, Lava Ram or Magma Fist that lands adds heat. At full heat your next shove or Lava Ram erupts: 40% farther, with a splash. Heat cools 6 s after a hit.");

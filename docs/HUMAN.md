@@ -311,20 +311,22 @@ id. Seven words at most; `HeroLinesTests` holds it.
 | `hvo_zack_reply_sean` | "Finishing is the boring part." | Round 1, answers (with Sean) |
 | `hvo_zack_round_1` | "Roof rules. Tara!" | Round start, as the taya (odd rounds) |
 | `hvo_zack_round_2` | "Easy one. Watch this." | Round start, as the taya (odd rounds) |
-| `hvo_zack_skill1_1` | "Try and keep up." | Casts skill 1 (rests 14 s after) |
-| `hvo_zack_skill1_2` | "Later!" | Casts skill 1 (rests 14 s after) |
-| `hvo_zack_skill1_3` | "Gone already." | Casts skill 1 (rests 14 s after) |
-| `hvo_zack_skill2_1` | "Come back here." | Casts skill 2 (rests 14 s after) |
-| `hvo_zack_skill2_2` | "Mine, thanks." | Casts skill 2 (rests 14 s after) |
-| `hvo_zack_skill2_3` | "Get over here, slipper." | Casts skill 2 (rests 14 s after) |
+| `hvo_zack_skill1_1` | "Try and keep up." | Casts Backtrack (rests 14 s after) |
+| `hvo_zack_skill1_4` | "Let's run that back." | Casts Backtrack (rests 14 s after) |
+| `hvo_zack_skill1_5` | "Didn't happen." | Casts Backtrack (rests 14 s after) |
+| `hvo_zack_skill2_4` | "Which one's me?" | Casts Afterimage (rests 14 s after) |
+| `hvo_zack_skill2_5` | "Chase that one." | Casts Afterimage (rests 14 s after) |
+| `hvo_zack_skill2_6` | "Over here. No, here." | Casts Afterimage (rests 14 s after) |
+| `hvo_zack_skill2d_1` | "Mind the wire." | Casts Live Wire (rests 14 s after) |
+| `hvo_zack_skill2d_2` | "Live line. Cross it, I dare you." | Casts Live Wire (rests 14 s after) |
+| `hvo_zack_ultally_3` | "Hold on, I'm charging up!" | Overclock, heard by the caster's side |
+| `hvo_zack_ultally_4` | "Full power. Watch me go!" | Overclock, heard by the caster's side |
+| `hvo_zack_ultopp_3` | "Too fast for you." | Overclock, heard by the other side |
+| `hvo_zack_ultopp_4` | "Try and catch me now." | Overclock, heard by the other side |
 | `hvo_zack_tag_1` | "Tag! Too easy." | Lands a tag |
 | `hvo_zack_tag_2` | "Should've zigged." | Lands a tag |
 | `hvo_zack_tagged_1` | "Okay, okay. Lucky." | Gets tagged |
 | `hvo_zack_tagged_2` | "That doesn't count." | Gets tagged |
-| `hvo_zack_ultally_1` | "Stay clear, I'm calling it down!" | Ultimate, heard by the caster's side |
-| `hvo_zack_ultally_2` | "Eyes up, it's gonna crackle!" | Ultimate, heard by the caster's side |
-| `hvo_zack_ultopp_1` | "Found your spot." | Ultimate, heard by the other side |
-| `hvo_zack_ultopp_2` | "Thunder's on you." | Ultimate, heard by the other side |
 | `hvo_zack_win_1` | "Tell the neighbours!" | Wins the match |
 | `hvo_zack_win_2` | "Title's coming home." | Wins the match |
 

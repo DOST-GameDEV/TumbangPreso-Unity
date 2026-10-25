@@ -1897,6 +1897,93 @@ namespace TumbangPreso
         /// <summary>A bot Phaister wakes her VOODOO DOLL while at least this much of the round is left for it to earn in.</summary>
         private const float PhaisterDollWorthSeconds = 20.0f;
 
+        // ---- ZACK (speedster rework, 2026-10-25, plan section 5) ------------------------------------------------
+
+        /// <summary>OVERCLOCK is 25 s: a bot spends it with at least this much of the round left.</summary>
+        private const float ZackOverclockWorthSeconds = 15.0f;
+
+        /// <summary>
+        /// LIVE WIRE across the lane from <paramref name="attacker"/> to the can: post A is his own feet (the rule), so he
+        /// strings it only from beside that lane, at most 3.5 m off it, across it, 4.5 m down to 2.5 m until it can be placed.
+        /// </summary>
+        private bool ZackWireAcrossLane(CharacterMotor attacker, Vector3 can, out Vector3 postB)
+        {
+            postB = default;
+            var me = transform.position; var them = At(attacker).Value;
+            var lane = can - them; lane.y = 0;
+            if (lane.sqrMagnitude < 1.0f || lane.magnitude > 9.0f) return false;
+            var dir = lane.normalized;
+            float along = Mathf.Clamp(Vector3.Dot(me - them, dir), 0.0f, lane.magnitude);
+            var nearest = them + dir * along;
+            var off = me - nearest; off.y = 0;
+            if (off.magnitude > 3.5f) return false;
+            var across = Vector3.Cross(Vector3.up, dir);
+            if (Vector3.Dot(off, across) > 0) across = -across;
+            foreach (float length in new[] { 4.5f, 3.5f, 2.5f })
+            {
+                var b = me + across * length;
+                b.y = Slipper.FindGroundY(b + Vector3.up, me.y);
+                if (Abilities.ZackLiveWire.CanPlace(_motor, me, b)) { postB = b; return true; }
+            }
+            return false;
+        }
+
+        /// <summary>AFTERIMAGE's moment: the taya stands between this attacker and its loose slipper, within 8 m.</summary>
+        private bool ZackDecoyAim(CharacterMotor taya, out Vector3 aim)
+        {
+            aim = default;
+            var me = transform.position; var them = At(taya).Value;
+            foreach (var s in BotSlipperInventory.All)
+            {
+                if (s == null || s.OwnerSlot != _motor.PlayerSlot || s.State != SlipperState.Loose) continue;
+                var toShoe = s.transform.position - me; toShoe.y = 0;
+                var toTaya = them - me; toTaya.y = 0;
+                if (toShoe.sqrMagnitude < 4.0f || toTaya.magnitude > 8.0f || toTaya.magnitude > toShoe.magnitude + 1.0f
+                    || Vector3.Angle(toShoe, toTaya) > 50.0f) continue;
+                aim = me - toShoe.normalized * 10.0f + Vector3.up * 1.2f;
+                return true;
+            }
+            return false;
+        }
+
+        // The AI taya and Zack's copies: a live copy in its chase range is a candidate it has not seen through yet.
+        private Abilities.ZackAfterimage _decoy;
+        private float _decoyChased;
+        private readonly HashSet<int> _decoysSeenThrough = new HashSet<int>();
+
+        /// <summary>How long a taya chases a copy before it "sees through it": the kid longest, the sharp tier least.</summary>
+        private float DecoyPatience => EffectiveDifficulty == Difficulty.Bata ? 1.4f
+            : EffectiveDifficulty == Difficulty.Astig ? 0.6f : 1.0f;
+
+        /// <summary>
+        /// ⚠️ THE TAYA'S HALF OF AFTERIMAGE. A copy is not a body (`round.Players` never holds one), so no plan can pick it.
+        /// This runs in front of Hunt and Guard: a live copy within 8 m, nearer than the real quarry, is chased until the
+        /// taya touches it (the host pops it) or its patience runs out, and then it is never chased again.
+        /// </summary>
+        private bool StepDecoyChase(InputIntent intent, float dt, CharacterMotor quarry)
+        {
+            if (!_motor.IsDefender) { _decoy = null; return false; }
+            if (_decoy != null && (!_decoy.IsDecoy || _decoysSeenThrough.Contains(_decoy.EventId))) _decoy = null;
+            var me = transform.position;
+            if (_decoy == null)
+            {
+                float quarryDistance = quarry != null ? Flat(me, At(quarry).Value) : float.MaxValue;
+                foreach (var copy in Abilities.ZackAfterimage.Active)
+                {
+                    if (copy == null || !copy.IsDecoy || copy.OwnerSlot == _motor.PlayerSlot || copy.Age < Me.React
+                        || _decoysSeenThrough.Contains(copy.EventId)) continue;
+                    float d = Flat(me, copy.Feet);
+                    if (d <= 8.0f && d < quarryDistance) { _decoy = copy; _decoyChased = 0; break; }
+                }
+                if (_decoy == null) return false;
+            }
+            _decoyChased += dt;
+            if (_decoyChased >= DecoyPatience) { _decoysSeenThrough.Add(_decoy.EventId); _decoy = null; return false; }
+            var toward = _decoy.Feet - me; toward.y = 0;
+            Drive(intent, toward, MaySprint());
+            return true;
+        }
+
         private CharacterMotor TagTarget()
         {
             var round = GameServices.Round;
@@ -2582,6 +2669,7 @@ namespace TumbangPreso
         private void DoHunt(InputIntent intent, float dt)
         {
             var victim = TagTarget();
+            if (StepDecoyChase(intent, dt, victim)) return;
 
             if (victim == null) { DoGuard(intent); return; }
 
@@ -2611,6 +2699,7 @@ namespace TumbangPreso
 
         private void DoGuard(InputIntent intent)
         {
+            if (StepDecoyChase(intent, Time.deltaTime, LiveThreat())) return;
             var lata = GameServices.Round?.Lata;
 
             if (lata == null) { Stop(intent); return; }
@@ -4496,7 +4585,7 @@ namespace TumbangPreso
             if (slipper == null || slipper.State != SlipperState.InFlight) return false;
             return SlipperLandingPrediction.TryPredictLanding(slipper.transform.position,
                 slipper.Velocity, slipper.PektusSpin, LandingHits, out landing, null,
-                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight, slipper.Affinity, slipper.BankCount);
+                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight, slipper.BankCount);
         }
 
         // These queries run synchronously on the same Unity thread as the
@@ -5461,8 +5550,8 @@ namespace TumbangPreso
                     || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds
                     // Phaister's doll needs nobody under it: its worth is the round it has left.
                     || (kit is Abilities.PhaisterHeroKit && round.TimeLeft >= PhaisterDollWorthSeconds)
-                    // Overclock is valuable for the rest of the match even without a zap victim.
-                    || (kit is Abilities.ZackHeroKit zack && !zack.IsOverclocked);
+                    // OVERCLOCK (2026-10-25) needs nobody under it: its worth is its 25 s, so it goes early in a round.
+                    || (kit is Abilities.ZackHeroKit zack && !zack.IsOverclocked && round.TimeLeft >= ZackOverclockWorthSeconds);
             }
 
             if (MayConsider(Verb.Ultimate) && kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
@@ -5487,8 +5576,7 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    // The nearby zap is secondary to the permanent self-upgrade. Opening,
-                    // cadence, deliberation and the kit's single-spend gate still apply.
+                    // OVERCLOCK is on him: nothing is aimed. The value gate above already asked for the round's time.
                     Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.NemuHeroKit)
@@ -5555,9 +5643,15 @@ namespace TumbangPreso
                         || (target != null && targetDistance <= 5.0f && Facing(target, 40.0f)))
                         Consider(intent, Verb.Skill1, dt);
                 }
-                else if (kit is Abilities.ZackHeroKit)
+                else if (kit is Abilities.ZackHeroKit backtrackKit)
                 {
-                    if (WorthTravelling()) Consider(intent, Verb.Skill1, dt);
+                    // BACKTRACK (2026-10-25) is his escape: an attacker who has just picked up its slipper inside the box, the
+                    // taya within 4.5 m, snaps back to where it was 3 s ago if that spot is outside the box and farther from
+                    // the taya than it is now. The spot is the kit's own (`TryBacktrackPoint`), the same one the cast takes.
+                    if (!_motor.IsDefender && _motor.HoldingSlipper && _motor.IsInsideBox() && target != null
+                        && targetDistance <= 4.5f && backtrackKit.TryBacktrackPoint(_motor, out var backTo)
+                        && !Confinement.IsInsideBox(backTo.x, backTo.z) && Flat(backTo, At(target).Value) > targetDistance)
+                        Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
@@ -5640,10 +5734,22 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.ZackHeroKit && _motor.IsDefender)
                 {
-                    if(target!=null && targetDistance<=6 && Facing(target,25))
+                    // LIVE WIRE (2026-10-25): the taya strings it across the lane between the nearest attacker and the can.
+                    if (lata != null && target != null && !target.IsTagged && ZackWireAcrossLane(target, lata.transform.position, out var postB))
                     {
-                        intent.AimPoint=target.transform.position+Vector3.up*.8f;
-                        Consider(intent,Verb.Skill2,dt);
+                        intent.AimPoint = postB; intent.FaceAimPoint = true;
+                        Consider(intent, Verb.Skill2, dt);
+                    }
+                }
+                else if (kit is Abilities.ZackHeroKit)
+                {
+                    // AFTERIMAGE (2026-10-25): about to go in for its slipper with the taya between it and the slipper, the
+                    // attacker sends its copy AWAY from the slipper, so a taya that bites runs the wrong way.
+                    if (!_motor.HoldingSlipper && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk) && target != null
+                        && ZackDecoyAim(target, out var decoyAt))
+                    {
+                        intent.AimPoint = decoyAt; intent.FaceAimPoint = true;
+                        Consider(intent, Verb.Skill2, dt);
                     }
                 }
                 else if (kit is Abilities.SeanHeroKit && _motor.IsDefender)
@@ -5660,7 +5766,7 @@ namespace TumbangPreso
                         Consider(intent, Verb.Skill2, dt);
                     }
                 }
-                else if (kit is Abilities.SeanHeroKit || kit is Abilities.ZackHeroKit)
+                else if (kit is Abilities.SeanHeroKit)
                 {
                     // ⚠️⚠️ THESE TWO WERE THE ONE PLACE A BOT SPENT A POWER WITH NO OPPORTUNITY
                     // TEST AT ALL, AND THEY ARE WHY 🧑 SAW THE SAME SKILLS EVERY ROUND. The gate
@@ -5965,7 +6071,7 @@ namespace TumbangPreso
             => verb == Verb.Skill1 ? 0 : verb == Verb.Skill2 ? 1 : 2;
 
         /// <summary>
-        /// Is there a shot worth arming right now? For Sean's and Zack's throw buffs.
+        /// Is there a shot worth arming right now? For Sean's throw buff (Zack's was retired on 2026-10-25).
         ///
         /// ⚠️⚠️ THE POWER BUFFS THE NEXT RELEASE, SO THE OPPORTUNITY IS THE RELEASE AND NOT THE
         /// SLIPPER. Arming while walking to a bearing five seconds away spends a charge on a

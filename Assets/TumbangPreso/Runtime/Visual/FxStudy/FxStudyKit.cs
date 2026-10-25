@@ -487,34 +487,6 @@ namespace TumbangPreso.Visual
                 case "featherfall": return new FxStudyFeatherfall(parent);
                 // The same from close under her, looking up at the time left.
                 case "featherfallbelow": return new FxStudyFeatherfall(parent, -1f, true, true);
-                case "zackcircuit": return new FxStudyZackCircuit(parent);
-                case "zackbank": return new FxStudyZackBank(parent);
-                case "zackbank1": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Single);
-                case "zackbankout": return new FxStudyZackBank(parent, FxStudyZackBank.Show.RunsOut);
-                case "zackbank8": return new FxStudyZackBank(parent, FxStudyZackBank.Show.EightMetres);
-                case "zackbankb3": return new FxStudyZackBankB3(parent);
-                case "zackbankb4": return new FxStudyZackBankB4(parent);
-                case "zackbankb4x8": return new FxStudyZackBankB4(parent, FxStudyZackBankB4.Show.EightMetres);
-                case "zackbankb5": return new FxStudyZackBankB5(parent);
-                case "zackbankb5x8": return new FxStudyZackBankB5(parent, FxStudyZackBankB5.Show.EightMetres);
-                case "zackbank1x8": return new FxStudyZackBank(parent, FxStudyZackBank.Show.EightMetresSingle);
-                case "zackbankb6": return new FxStudyZackBankB6(parent);
-                case "zackbankb6x8": return new FxStudyZackBankB6(parent, FxStudyZackBankB6.Show.EightMetres);
-                case "zackbankb7": return new FxStudyZackBankB7(parent);
-                case "zackbankb7x8": return new FxStudyZackBankB7(parent, FxStudyZackBankB7.Show.EightMetres);
-                case "zackbankb8": return new FxStudyZackBankB8(parent);
-                case "zackbankb8x8": return new FxStudyZackBankB8(parent, FxStudyZackBankB8.Show.EightMetres);
-                case "zackbankb9": return new FxStudyZackBankB9(parent);
-                case "zackbankb9x8": return new FxStudyZackBankB9(parent, FxStudyZackBankB9.Show.EightMetres);
-                case "zackbankb10": return new FxStudyZackBankB10(parent);
-                case "zackbankb10x8": return new FxStudyZackBankB10(parent, FxStudyZackBankB10.Show.EightMetres);
-                case "zackbankside": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Side);
-                case "zackbankbehind": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Behind);
-                case "zackbankfront": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Front);
-                case "zackbankabove": return new FxStudyZackBank(parent, FxStudyZackBank.Show.Above);
-                case "zackbankb11": return new FxStudyZackBankB11(parent);
-                case "zackbankb11front": return new FxStudyZackBankB11(parent, FxStudyZackBankB11.Show.Front);
-                case "zackbankb11behind": return new FxStudyZackBankB11(parent, FxStudyZackBankB11.Show.Behind);
                 // The whirlwind without its horn: the tapes, the ground and the motes the owner approved, alone.
                 case "whirlwindparts": return new FxStudyWhirlwind(parent, FxStudyWhirlwind.Look.Picture, FxStudyWhirlwind.Horn.None);
                 // The whirlwind with the horn of its first film (wisp shells and trail veins): "the original", kept to go back to.

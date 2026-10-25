@@ -1,0 +1,118 @@
+{
+  "engine": "Original oversampled synthesis, SciPy filtering and Pedalboard saturation/compression",
+  "external_generation_spend": 0,
+  "cues": [
+    {
+      "cue": "sfx_cast_zack_backtrack",
+      "seconds": 0.46,
+      "peak_dbfs": -5.187090873718262,
+      "rms_dbfs": -14.0,
+      "sha256": "d8399b5ecd9c62b98548a20cecc7bde8ed10b369d6f411dde928387ebb0b8b57"
+    },
+    {
+      "cue": "sfx_zack_backtrack_land",
+      "seconds": 0.32,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -15.102041244506836,
+      "sha256": "42aca39a117bfb6489c1ca9f188ab305a2c787e1ff741862d2b5e639a909a95c"
+    },
+    {
+      "cue": "sfx_cast_zack_afterimage",
+      "seconds": 0.48,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -15.276141166687012,
+      "sha256": "b8fc503e238f5c1f446942dee3aa32fece9a681f3f001f5decf4c1cb6a6d8d5f"
+    },
+    {
+      "cue": "sfx_zack_afterimage_pop",
+      "seconds": 0.4,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -15.5326509475708,
+      "sha256": "6be89e4308caabc49ded1e854ca13c313fa49fcf6032258493c0fa4301a48b1a"
+    },
+    {
+      "cue": "sfx_zack_afterimage_fizzle",
+      "seconds": 0.55,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -14.0421142578125,
+      "sha256": "e7542dfcfa88be9e8f75fbe17968699314f8e941cc3c2e4726f5d29a214c8376"
+    },
+    {
+      "cue": "sfx_zack_afterimage_loop",
+      "seconds": 1.99,
+      "peak_dbfs": -5.188535690307617,
+      "rms_dbfs": -14.0,
+      "sha256": "a857e2fc05ef5080b5f41879f7560fa0586e9c855cd8483f90c077d375cd17df"
+    },
+    {
+      "cue": "sfx_cast_zack_livewire",
+      "seconds": 0.5,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -15.409192085266113,
+      "sha256": "cd817f9709e33d0661aeea1945e6eeb85471fb4fbd7bde112106b240ec6f76ec"
+    },
+    {
+      "cue": "sfx_zack_livewire_taut",
+      "seconds": 0.7,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -14.156087875366211,
+      "sha256": "e47bb2e764ea6defc69ea6e9deef92e6ca5a78e83b0ac0a18b714f28c4b9e11f"
+    },
+    {
+      "cue": "sfx_zack_livewire_zap",
+      "seconds": 0.55,
+      "peak_dbfs": -3.9176669120788574,
+      "rms_dbfs": -14.0,
+      "sha256": "662c825e6235d6f1dc2b3d36ec35c9cff1d1352531d16a57bd608e2360f013cc"
+    },
+    {
+      "cue": "sfx_zack_livewire_snap",
+      "seconds": 0.45,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -17.0620174407959,
+      "sha256": "a981fe7845d69ea2fca6722a9c58ecf7b0e4ed2bfd3b2b1a054ed4595652a86b"
+    },
+    {
+      "cue": "sfx_zack_livewire_loop",
+      "seconds": 1.99,
+      "peak_dbfs": -5.280244827270508,
+      "rms_dbfs": -14.0,
+      "sha256": "103d7df4d8702c4a5334689ccc95105c9d18c6e7a5bcc9b139d1483eee4d3af2"
+    },
+    {
+      "cue": "sfx_zack_momentum_full",
+      "seconds": 0.6,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -14.031844139099121,
+      "sha256": "8be2021f1eedaff88957be07c59eb9b592589326cef328f1541a6453342f3b7c"
+    },
+    {
+      "cue": "sfx_status_zapped",
+      "seconds": 1.0,
+      "peak_dbfs": -5.13214635848999,
+      "rms_dbfs": -14.0,
+      "sha256": "da04b8109abc1e09ae0ec6f6299fd0ca1806acaf6dc33cc31481fbcddff1aa9c"
+    },
+    {
+      "cue": "sfx_zack_overclock_loop",
+      "seconds": 1.99,
+      "peak_dbfs": -4.448199272155762,
+      "rms_dbfs": -14.0,
+      "sha256": "594306b1931857a4b9364c53e63813c2ed85711b5dcdd5da646d1a8f0239a30f"
+    },
+    {
+      "cue": "sfx_zack_overclock_end",
+      "seconds": 0.6,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -15.968661308288574,
+      "sha256": "0d3a31dcc87ccc3e458f55efa221ba6855a605b06ae12d1260bcc4524fc6995e"
+    },
+    {
+      "cue": "sfx_ult_theme_zack",
+      "seconds": 4.5,
+      "peak_dbfs": -3.500000238418579,
+      "rms_dbfs": -15.35107135772705,
+      "sha256": "dbc907a818c3a7734118a816ebdef4dbb641b4378ea56ddc400e5b9108dd9a95"
+    }
+  ]
+}
