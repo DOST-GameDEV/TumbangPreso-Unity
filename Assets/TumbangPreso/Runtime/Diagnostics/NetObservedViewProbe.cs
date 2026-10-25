@@ -145,6 +145,9 @@ namespace TumbangPreso.Diagnostics
             { _nextGesture = Time.unscaledTime + 2; _ownerRig.GetComponentInChildren<ViewmodelArms>(true)?.PlayAction("grab"); }
             if (_private)
             {
+                // The explicit fixture owns this marker, not a simultaneous normal
+                // aim controller which would keep hiding it for unpressed inputs.
+                if (actor.AbilitySystem != null) actor.AbilitySystem.enabled = false;
                 if (_ownerMarker == null) _ownerMarker = actor.GetComponentInChildren<Visual.GroundReticle>(true);
                 if (_ownerMarker != null)
                 {
