@@ -38,6 +38,7 @@ namespace TumbangPreso.Diagnostics
         private float _privateStatusAt;
         private Visual.GroundReticle _ownerMarker;
         private bool _privateShot;
+        private bool _dumpPrivateRender;
         private static string Arg(string key)
         {
             var args = Environment.GetCommandLineArgs(); int at = Array.IndexOf(args, key);
@@ -193,7 +194,12 @@ namespace TumbangPreso.Diagnostics
             }
             if (_private && !_privateShot && _role != "host" && state.Private.Phantoms.Length >= 7
                 && state.Private.Marker.Present && Time.realtimeSinceStartup - _liveAt > 1)
-            { _privateShot = true; ScreenCapture.CaptureScreenshot(_path + ".private.png"); }
+            {
+                _privateShot = true; _dumpPrivateRender = true;
+                if (_role == "owner" && _ownerRig != null)
+                    _ownerRig.gameObject.AddComponent<NetObservedViewRenderProbe>().Owner = this;
+                ScreenCapture.CaptureScreenshot(_path + ".private.png");
+            }
             using var privateBytes = new FastBufferWriter(SpectatorPrivateView.MaxWireBytes, Allocator.Temp);
             state.Private.Write(privateBytes); string privateData = Convert.ToBase64String(privateBytes.ToArray());
             var e = state.Rotation.eulerAngles;
@@ -210,11 +216,29 @@ namespace TumbangPreso.Diagnostics
             Application.Quit(error == null ? 0 : 1);
         }
         private void OnDestroy() { _csv?.Dispose(); }
+        internal void DumpPrivateRender()
+        {
+            if (!_dumpPrivateRender || _ownerMarker == null) return; _dumpPrivateRender = false;
+            var camera = _ownerRig != null ? _ownerRig.Camera : null;
+            using var output = new StreamWriter(_path + ".marker.txt");
+            output.WriteLine($"main={Camera.main?.name} own={camera?.name} marker={_ownerMarker.name} active={_ownerMarker.gameObject.activeInHierarchy} pos={_ownerMarker.transform.position} scale={_ownerMarker.transform.lossyScale} cameraPos={camera?.transform.position} mask={camera?.cullingMask}");
+            var block = new MaterialPropertyBlock();
+            foreach (var surface in _ownerMarker.GetComponentsInChildren<Renderer>(true))
+            {
+                surface.GetPropertyBlock(block);
+                output.WriteLine($"{surface.name} active={surface.gameObject.activeInHierarchy} enabled={surface.enabled} visible={surface.isVisible} off={surface.forceRenderingOff} shadows={surface.shadowCastingMode} layer={surface.gameObject.layer} bounds={surface.bounds} material={surface.sharedMaterial?.name} shader={surface.sharedMaterial?.shader?.name} colour={surface.sharedMaterial?.color} blockColour={block.GetColor(Shader.PropertyToID("_Color"))}");
+            }
+        }
     }
     [DefaultExecutionOrder(15000)]
     public sealed class NetObservedViewDriver : MonoBehaviour
     {
         public NetObservedViewProbe Owner;
         private void LateUpdate() => Owner?.PoseOwnerCamera();
+    }
+    public sealed class NetObservedViewRenderProbe : MonoBehaviour
+    {
+        public NetObservedViewProbe Owner;
+        private void OnPreRender() => Owner?.DumpPrivateRender();
     }
 }
