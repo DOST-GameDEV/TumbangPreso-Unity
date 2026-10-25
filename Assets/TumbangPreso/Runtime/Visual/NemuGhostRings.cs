@@ -79,15 +79,21 @@ namespace TumbangPreso.Visual
         {
             foreach (var r in _rings.Values) r.Seen = false;
             foreach (var g in NemuBlindfold.Live) if (g != null && !g.Sprung && !g.Retiring) Mark(g, g.Spot, NecroRules.DontLookTriggerRadius);
-            bool spectating = GameLaunch.Spectator;
+            int privateSeat = GameLaunch.Spectator ? -1 : NetAuthority.LocalSlot;
+            var observer = Camera.main != null ? Camera.main.GetComponent<CameraSystem.SpectatorCamera>() : null;
+            if (observer != null) privateSeat = observer.PlayerViewTarget != null ? observer.PlayerViewTarget.PlayerSlot : -1;
             foreach (var g in NemuDormant.Live)
-                if (g != null && !g.Reclaimed && !g.Expired && !spectating && g.OwnerSlot == NetAuthority.LocalSlot) Mark(g, g.Position, NemuRules.ReclaimRadius);
+                if (g != null && !g.Reclaimed && !g.Expired && g.OwnerSlot == privateSeat) Mark(g, g.Position, NemuRules.ReclaimRadius);
 
             float dt = Time.deltaTime;
             _gone.Clear();
             foreach (var pair in _rings)
             {
                 var r = pair.Value;
+                // A private reclaim cue must leave a manual/free view immediately;
+                // public trap rings retain their normal retirement fade.
+                bool visible = !(pair.Key is NemuDormant) || r.Seen;
+                if (r.Go.activeSelf != visible) r.Go.SetActive(visible);
                 r.Grow = r.Seen ? Mathf.Min(1f, r.Grow + dt / GrowSeconds) : r.Grow - dt / ShrinkSeconds;
                 if (r.Grow <= 0f) { _gone.Add(pair.Key); continue; }
                 r.Clock += dt;

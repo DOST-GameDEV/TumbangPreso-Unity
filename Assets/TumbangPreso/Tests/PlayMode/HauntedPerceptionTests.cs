@@ -118,7 +118,9 @@ namespace TumbangPreso.PlayTests
             Vector3 screen=_view.WorldToViewportPoint(point); float sum=0;
             int x=Mathf.RoundToInt(screen.x*(frame.width-1)),y=Mathf.RoundToInt(screen.y*(frame.height-1));
             for(int dy=-2;dy<=2;dy++)for(int dx=-2;dx<=2;dx++)
-            { var c=frame.GetPixel(x+dx,y+dy);sum+=(c.r+c.g+c.b)/3; }
+            // The desktop readback is sRGB. Compare linear light, matching the
+            // shader's authored deep-purple ink rather than its gamma encoding.
+            { var c=frame.GetPixel(x+dx,y+dy).linear;sum+=(c.r+c.g+c.b)/3; }
             return sum/25;
         }
         [Test] public void ActualNearFarRenderImplementsNearSightAndRestoresTheOrdinaryFrame()

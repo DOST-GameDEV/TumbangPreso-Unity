@@ -15,7 +15,7 @@ namespace TumbangPreso.CameraSystem
             : PresentationClock.RequestedScale < .99f ? $"{PresentationClock.RequestedScale:0.##}x  /  " : "";
         private string CameraLabel => _replaying ? "INSTANT REPLAY"
             : AutopilotEngaged ? "AUTO CAMERA  /  " + _director.ShotName()
-            : _follow != null ? (_pov ? "FIRST PERSON  /  " : "THIRD PERSON  /  ") + FollowName()
+            : _follow != null ? (_pov ? ObservedPovLabel + "  /  " : "THIRD PERSON  /  ") + FollowName()
             : "FREE CAMERA";
 
         // Mouse, pad and touch share the same permission and state transitions.

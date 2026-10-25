@@ -50,6 +50,11 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _flash = active ? Hud.DownedFlashTime : 0;
         public void Tick(CharacterMotor local, bool spectator)
         {
+            if (spectator)
+            {
+                var viewed = CameraSystem.ViewPerspective.PlayerActor(Camera.main);
+                if (viewed != null) { local = viewed; spectator = false; }
+            }
             float dt = Time.unscaledDeltaTime;
             TickPossessed(local, spectator, dt);
             TickBlinded(local, spectator);

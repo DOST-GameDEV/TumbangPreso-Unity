@@ -68,6 +68,7 @@ namespace TumbangPreso.CameraSystem
     /// one trigger, the `SpectatorReplay` key, and the autopilot has no hands. See § THE REPLAY
     /// NEVER STARTS ITSELF ANY MORE.
     /// </summary>
+    [DefaultExecutionOrder(30000)]
     public sealed partial class SpectatorCamera : MonoBehaviour
     {
         /// Metres per second at the base speed. Faster than a Person's 4.6 walk — a
@@ -683,6 +684,7 @@ namespace TumbangPreso.CameraSystem
             // with a unit still set to `ShadowsOnly` deletes that player from every other view,
             // including their own, and nothing else would ever put them back. See `StepPovArms`.
             RestorePovBody();
+            ResetObservedView();
             if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
 
             if (_ownsTimeScale)
@@ -785,21 +787,8 @@ namespace TumbangPreso.CameraSystem
             {
                 if (_pov)
                 {
-                    // ⚠️ SNAPPED, NOT SMOOTHED. MoveSmoothRate is what makes a flown camera
-                    // read as flown, and it is exactly wrong here: an eye that lags its own
-                    // head by a few frames is the one camera artefact everybody reads as
-                    // nauseating. A POV shot is rigid or it is not a POV shot.
-                    _targetPosition = _follow.transform.position
-                        + Vector3.up * PovEyeHeight()
-                        + _follow.transform.forward * PovForwardOffset;
-                    transform.position = _targetPosition;
-
-                    // Yaw is TAKEN from the unit; pitch stays on the mouse.
-                    _yawDeg = _follow.transform.eulerAngles.y;
-                    ApplyRotation();
-
-                    // ⚠️ THE HANDS OF WHOEVER IS BEING WATCHED. See `StepPovArms`.
-                    StepPovArms(delta);
+                    // The final captured player view is applied after rigs and viewmodels.
+                    ObservedPlayerView.SetTarget(_follow);
                     return;
                 }
 
@@ -809,9 +798,10 @@ namespace TumbangPreso.CameraSystem
                 // Follow mode holds a fixed offset in the camera's own current bearing, so
                 // the player still owns the angle and only gives up the position.
                 Vector3 back = -transform.forward;
-                _targetPosition = _follow.transform.position
-                    + Vector3.up * (_followDistance * FollowLiftRatio)
-                    + back * _followDistance;
+                var body = SpectatorFraming.BodyBounds(_follow);
+                var wanted = body.center + back * _followDistance;
+                wanted += back * SpectatorFraming.Pullback(body, wanted, body.center, _camera.fieldOfView, _camera.aspect);
+                _targetPosition = SpectatorFraming.ClearFollowEye(body.center, wanted);
             }
             else
             {
@@ -835,7 +825,15 @@ namespace TumbangPreso.CameraSystem
             }
 
             float t = 1.0f - Mathf.Exp(-MoveSmoothRate * delta);
-            transform.position = Vector3.Lerp(transform.position, _targetPosition, t);
+            Vector3 next = Vector3.Lerp(transform.position, _targetPosition, t);
+            if (_follow != null && !_pov)
+            {
+                Vector3 focus = SpectatorFraming.BodyFocus(_follow);
+                next = SpectatorFraming.ClearFollowEye(focus, next);
+                if ((focus - next).sqrMagnitude > .001f)
+                { transform.rotation = Quaternion.LookRotation(focus - next, Vector3.up); SyncAnglesFromTransform(); }
+            }
+            transform.position = next;
         }
 
         private void ReclaimView()
@@ -868,6 +866,7 @@ namespace TumbangPreso.CameraSystem
 
         private void StepLook()
         {
+            if (_pov && _follow != null) return;
             Vector2 delta = SpectatorStickLook() * (150.0f * Time.unscaledDeltaTime);
             if (InputLayer.TouchInput.Active)
             {
@@ -2424,50 +2423,49 @@ namespace TumbangPreso.CameraSystem
 
         private void StepPovArms(float delta)
         {
-            bool wanted = _pov && _follow != null;
-
+            if (!_pov || _follow == null) ResetObservedView();
+            else ObservedPlayerView.SetTarget(_follow);
+            bool wanted = _pov && _follow != null && _observedViewAvailable && _observedFirstPerson
+                && !SpectatorCutscene.Hides && !_replaying;
             if (!wanted)
             {
                 if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
                 RestorePovBody();
                 return;
             }
-
-            EnsurePovArms();
-            if (_povArms == null) return;
-
             if (_povHidden != _follow) HidePovBody(_follow);
-
-            if (!_povViewmodel.gameObject.activeSelf) _povViewmodel.gameObject.SetActive(true);
-
+            if (!_observedHands)
+            {
+                if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
+                ApplyPovCarriedHide(_follow.GetComponent<Carrier>()?.Held);
+                return;
+            }
+            EnsurePovArms(); if (_povArms == null) return;
+            bool fresh = !_povViewmodel.gameObject.activeSelf;
+            if (fresh) _povViewmodel.gameObject.SetActive(true);
             _povArms.MatchCharacter(_follow);
-
-            // ⚠️ POLLED, NOT EVENT-DRIVEN, for the reason `CameraRig` gives on the same three
-            // lines: what a unit holds changes DURING a round, and an event-driven copy shows the
-            // wrong shoe until the next swap.
+            _povViewmodel.localPosition = _observedPose.HandsSeat;
+            _povViewmodel.localRotation = _observedPose.HandsRotation.normalized;
+            if (_observedMotionChanged || fresh)
+            {
+                _povArms.ApplyObservedMotion(_observedPose.Action.ToString(), _observedPose.ActionTime,
+                    _observedPose.ActionSequence, _observedPose.Aim.ToString(), _observedPose.VisualPhase, delta, _resetObservedMotion || fresh);
+                _observedMotionChanged = _resetObservedMotion = false;
+            }
             var carrier = _follow.GetComponent<Carrier>();
             var held = carrier != null ? carrier.Held : null;
             ApplyPovCarriedHide(held);
-
-            _povArms.SetHolding(held != null);
-
-            // ⚠️ THE SAME THREE SOURCES IN THE SAME ORDER AS THE LOCAL RIG: a throw wind-up needs
-            // something in hand, so a TAYA would fall through every branch and the POV cut of the
-            // one player everybody is watching would be the one with a dead arm.
-            float charge = -1.0f;
-            if (held != null && carrier != null) charge = carrier.ObservedChargePower;
-
-            if (charge < 0.0f)
+            bool stowed = held != null && _follow.StowsCarriedSlipper && (carrier == null || carrier.ObservedChargePower < 0);
+            _povArms.SetHolding(held != null && !stowed);
+            float charge = held != null && carrier != null ? carrier.ObservedChargePower : -1;
+            if (charge < 0)
             {
                 var verbs = _follow.GetComponent<CombatVerbs>();
                 if (verbs != null) charge = verbs.ObservedLungeCharge;
             }
-
-            _povArms.SetCharge(charge,held != null && carrier != null ? carrier.ObservedPektusSpin : 0);
-
+            _povArms.SetCharge(charge, held != null && carrier != null ? carrier.ObservedPektusSpin : 0);
             if (held != null) _povArms.MatchSkin(held);
-
-            _povArms.StepVisuals(delta);
+            _povArms.StepObservedPresentation(delta);
         }
 
         private void EnsurePovArms()
@@ -2484,6 +2482,9 @@ namespace TumbangPreso.CameraSystem
             go.transform.localRotation = Quaternion.identity;
 
             _povArms = go.AddComponent<CameraSystem.ViewmodelArms>();
+            // Advance this clone once, after applying the captured state. Its own
+            // LateUpdate previously doubled spectator hand-animation speed.
+            _povArms.enabled = false;
 
             foreach (var c in go.GetComponentsInChildren<Collider>(true)) Destroy(c);
 
@@ -2642,7 +2643,7 @@ namespace TumbangPreso.CameraSystem
         {
             var units = new List<CharacterMotor>();
             foreach (var unit in Spectatable)
-                if (unit != null) units.Add(unit);
+                if (unit != null && unit.gameObject.activeInHierarchy) units.Add(unit);
 
             if (units.Count == 0)
             {
@@ -2659,7 +2660,11 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            _followIndex += 1;
+            // Registration order changes after a respawn/rebind. Follow the visible seat
+            // order, starting after the actual current target (including an F1-F4 cut).
+            units.Sort((a, b) => a.PlayerSlot != b.PlayerSlot
+                ? a.PlayerSlot.CompareTo(b.PlayerSlot) : a.GetEntityId().CompareTo(b.GetEntityId()));
+            _followIndex = _follow != null ? units.IndexOf(_follow) + 1 : 0;
             if (_followIndex >= units.Count)
             {
                 _follow = null;

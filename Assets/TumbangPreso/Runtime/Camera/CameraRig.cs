@@ -30,7 +30,7 @@ namespace TumbangPreso.CameraSystem
     /// basis that has roll in it does not give back the yaw you want, which is precisely the
     /// situation this exists to survive.
     /// </summary>
-    public sealed class CameraRig : MonoBehaviour
+    public sealed partial class CameraRig : MonoBehaviour
     {
         // -------------------------------------------------------------------
         // Constants, carried over exactly.
@@ -340,6 +340,7 @@ namespace TumbangPreso.CameraSystem
         public static void PlayViewmodelAction(CharacterMotor who, string kind)
         {
             if (who == null) return;
+            ObservedPlayerView.NoteAction(who, kind);
 
             var rig = FindFirstObjectByType<CameraRig>();
             if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return;
@@ -411,6 +412,7 @@ namespace TumbangPreso.CameraSystem
 
         public static void CancelViewmodelAction(CharacterMotor who, string expected = null)
         {
+            ObservedPlayerView.NoteCancel(who, expected);
             var rig = FindFirstObjectByType<CameraRig>();
             if (rig != null && rig.IsFollowing(who)) rig._arms?.CancelAction(expected);
         }
@@ -764,6 +766,12 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
 
         private void LateUpdate()
+        {
+            UpdateView();
+            CaptureObservedView();
+        }
+
+        private void UpdateView()
         {
             if (_character == null || !_active || PresentationClock.Held) return;
 

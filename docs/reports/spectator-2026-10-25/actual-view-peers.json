@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "matched_packets": 188,
+  "receipts": {
+    "host": {
+      "role": "host",
+      "error": "",
+      "local": 0,
+      "samples": 196,
+      "published": 0,
+      "received": 0,
+      "relayed": 168,
+      "match": 639285129306236179,
+      "maxEyeError": 0.0,
+      "minFov": 86.0044937133789,
+      "maxFov": 95.99919128417969,
+      "sentAt": 94.19508361816406,
+      "watched": false,
+      "unsubscribed": false
+    },
+    "owner": {
+      "role": "owner",
+      "error": "",
+      "local": 1,
+      "samples": 279,
+      "published": 183,
+      "received": 0,
+      "relayed": 0,
+      "match": 639285129306236179,
+      "maxEyeError": 0.0,
+      "minFov": 86.0006103515625,
+      "maxFov": 95.99919128417969,
+      "sentAt": 0.0,
+      "watched": false,
+      "unsubscribed": false
+    },
+    "observer": {
+      "role": "observer",
+      "error": "",
+      "local": -1,
+      "samples": 189,
+      "published": 0,
+      "received": 167,
+      "relayed": 0,
+      "match": 639285129306236179,
+      "maxEyeError": 0.012568513862788677,
+      "minFov": 86.0044937133789,
+      "maxFov": 95.99919128417969,
+      "sentAt": 94.09406280517578,
+      "watched": true,
+      "unsubscribed": true
+    }
+  },
+  "errors": [],
+  "scope": "Three real processes on one Windows PC; controlled camera fixture, not separate-machine/WAN/device acceptance.",
+  "matching_distinct_serials": 163,
+  "sourceCommit": "6cdaef426154fd096c725ede512766fa5ecfcec7",
+  "runtimeSha256": "a06998bda859e5b23dc49f4c867fba3ef2aa3060c7368de1a029825b4d4c3e81",
+  "failedPredecessor": "view-peer-1025-01: observer got player seat; in-match seat switch correctly refused. Corrected fixture to Spectate in lobby before starting."
+}

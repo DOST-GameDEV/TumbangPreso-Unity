@@ -852,6 +852,7 @@ namespace TumbangPreso.Abilities
 
             // Cast callouts and the event feed (owner, 2026-10-22): this line runs once on every peer for every
             // accepted cast, the same reach the cast sound below relies on, so every screen announces it.
+            RecordPresentationFrame(slot, ability, acceptedContext ?? _context);
             if (ability != null && _motor != null) CastPresented?.Invoke(_motor, ability, slot == Slot.Ultimate);
 
             // ⚠️⚠️ EVERY CAST SOUNDS FROM HERE AND FROM NOWHERE ELSE. See `HeroAbility.CastCue`

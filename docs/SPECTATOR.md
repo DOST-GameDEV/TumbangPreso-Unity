@@ -12,7 +12,15 @@ Tab opens grouped controls using live desktop bindings. Space/right trigger fly
 up; T/Select cycles match speed; equals/right-stick press cycles framing/fly speed.
 Gamepad B recalls a saved camera position without also hiding the HUD. Camera
 movement/aim/drift are slower; ordinary event changes preserve a 4.5-second view.
-Height follows court elevation. Exact player-view and broader framing work remain open.
+Height follows court elevation. Followed first person now copies the active
+player rig's eye, full rotation, FOV and hand state through a bounded optional
+host relay. Missing/stale streams visibly fall back to third-person follow;
+bot/reference views are labeled. [Actual-view evidence](reports/spectator-2026-10-25/view-candidate.md)
+includes three real Windows processes. Body bounds, all current maps and placed
+effect framing have [focused native coverage](reports/spectator-2026-10-25/framing.md).
+Watched world filters, audio impairment and private ghost cues have
+[perception checks](reports/spectator-2026-10-25/perception.md). Hallucinations,
+exact held aim markers and broader live skill/event transitions remain open.
 
 - Manual free/follow/first-person/third-person controls must be understandable
   on desktop keyboard/controller. Help carries controls, without a wall

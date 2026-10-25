@@ -17,18 +17,23 @@ Updated 2026-10-25. Owner scope: [TODO](TODO.md).
 - Desktop controls and initial pacing/elevation unit complete with native checks;
   [report](reports/spectator-2026-10-25/README.md). Spectator work publishes to main.
   Network reliability fixes stay on NETWORKFIX; the mobile refresh follows network work.
-- Cleanup evidence: fresh Core 832/832, documentation checks pass, Unity compiles
-  without C# errors. Removed 112,453,059 asset bytes; seven entry docs 97.62% smaller.
-  Native baseline19, geometry21, binding/tuning12, desktop15 and final gamepad11
-  cases passed in separate focused receipts. No Unity job is active at publication.
-- Confirmed source defect: current spectator POV uses fixed eye position/body yaw
-  and operator pitch. Investigate actual player-view observation and borrowed
-  viewmodel behavior before changing it. Director cuts immediately on beat changes.
-- Next action: implement actual observed player eye/look/FOV and perspective
-  presentation without controlling the target, then body/effect/map coverage.
+- Cleanup: Core 832/832; 107.2 MiB removed and seven entry docs 97.62% smaller.
+  Focused native receipts and their limits live in the linked reports.
+- Actual observed player eye/full rotation/FOV/hand state implemented and checked
+  locally plus three real Windows processes. The observer received 167 views with
+  163 distinct relay serials matched to the host; unsubscribe stopped publication.
+  [Evidence and limits](reports/spectator-2026-10-25/view-candidate.md).
+- Body/effect framing now measures actual models and lenses, keeps all players
+  in quiet frames and validates covered-court fallbacks. All 21 authored bodies
+  and six current maps have [native checks](reports/spectator-2026-10-25/framing.md).
+- Watched world/HUD filters, audio and ghost cues now follow the actual player
+  view, with native perception and lifecycle checks. [Evidence](reports/spectator-2026-10-25/perception.md).
+- Next action: hallucination/held-marker parity and regular skill/live events, then
+  reliability on NETWORKFIX and mobile last. Current actual-view proof is same-PC
+  controlled motion, not natural/WAN/separate-machine/Android acceptance.
   Do not restore the old mobile-every-feature mandate; mobile is a separate assignment.
 
 Keep this file short. Record exact active jobs and next command in the task-local
 checkpoint while a run is live. Replace resolved state instead of prepending old
 checkpoints. [Previous checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md)
-preserve the earlier Rago, carry, HUD and replay evidence without assigning work.
+are history, not assignments.

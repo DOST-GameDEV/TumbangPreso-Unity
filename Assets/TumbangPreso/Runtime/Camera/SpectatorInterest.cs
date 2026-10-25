@@ -179,11 +179,12 @@ namespace TumbangPreso.CameraSystem
         /// <summary>Why the director chose this. Written to the capture log, never to the screen.</summary>
         public readonly string Reason;
         public readonly Slipper RetrievalShoe;
+        public readonly Bounds? EffectBounds;
 
         public SpectatorInterest(SpectatorBeat beat, CharacterMotor main, CharacterMotor secondary,
                                  Vector3 objective, bool hasObjective, ShotType shot,
                                  float startedAt, float expectedSeconds, float commitSeconds,
-                                 string reason, Slipper retrievalShoe = null)
+                                 string reason, Slipper retrievalShoe = null, Bounds? effectBounds = null)
         {
             Beat = beat;
             Main = main;
@@ -196,6 +197,7 @@ namespace TumbangPreso.CameraSystem
             CommitSeconds = commitSeconds;
             Reason = reason;
             RetrievalShoe = retrievalShoe;
+            EffectBounds = effectBounds;
         }
 
         public bool Valid => Main != null;
@@ -703,17 +705,21 @@ namespace TumbangPreso.CameraSystem
                 // No circle is drawn for the global freeze or the court-wide
                 // wave/fan. Their affected space still needs the wide composition.
                 bool courtEffect = kit is Abilities.CheskaHeroKit || kit is Abilities.DanteHeroKit
-                    || kit is Abilities.AmihanHeroKit;
+                    || kit is Abilities.AmihanHeroKit || kit is Abilities.NemuHeroKit;
                 if (courtEffect)
                     footprint = Mathf.Max(AIController.PlayableMaxX - AIController.PlayableMinX,
                         AIController.PlayableMaxZ - AIController.PlayableMinZ) * .5f;
 
+                Bounds? effect = casting.AbilitySystem != null && ult != null
+                    && casting.AbilitySystem.TryPresentedFrame(ult, out var acceptedFrame) ? acceptedFrame : null;
+                Vector3 objective = effect.HasValue ? effect.Value.center : casting.transform.position;
+
                 return new SpectatorInterest(
                     SpectatorBeat.Ultimate, casting, NearestOther(round, casting),
-                    casting.transform.position, true,
+                    objective, true,
                     courtEffect || footprint >= 3.0f ? ShotType.UltimateWide : ShotType.UltimateHero,
                     fromPulse ? _ultimateAt : now, UltimateSeconds, MinCommit,
-                    $"ultimate {(ult != null ? ult.Name : "?")}, footprint {footprint:0.0} m");
+                    $"ultimate {(ult != null ? ult.Name : "?")}, footprint {footprint:0.0} m", effectBounds: effect);
             }
 
             // ---- 3. the can ---------------------------------------------------------------

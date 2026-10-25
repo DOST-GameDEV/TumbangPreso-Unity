@@ -461,8 +461,7 @@ namespace TumbangPreso
         /// </summary>
         private float HeldBaseHeightFor(CharacterMotor who)
         {
-            var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
-            if (rig != null && rig.IsLocalFpp && rig.IsFollowing(who)) return HoldBaseHeight;
+            if (CameraSystem.ViewPerspective.IsEyesOf(Camera.main, who)) return HoldBaseHeight;
             var palm = who.GetComponent<Visual.CharacterVisual>()?.HandAnchor;
             if (palm == null) return HandsBaseHeight;
             return Mathf.Clamp(palm.position.y - who.transform.position.y - HeldGripAboveBase, .1f, HoldBaseHeight);

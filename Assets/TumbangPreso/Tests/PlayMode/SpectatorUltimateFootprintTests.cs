@@ -54,5 +54,21 @@ namespace TumbangPreso.PlayTests
         { Pulse("rafi");Assert.AreEqual(ShotType.UltimateWide,_model.Decide().Shot); }
         [Test] public void ExistingOverclockZapRetainsItsWideShot()
         { Pulse("zack");Assert.AreEqual(ShotType.UltimateWide,_model.Decide().Shot); }
+        [TestCase("sean"), TestCase("paete")]
+        public void PlacedUltimatesKeepTheirPresentedLocationAfterTheCasterMoves(string hero)
+        {
+            Pulse(hero);
+            var context = new AbilityContext(_actor, null, null, Vector3.zero, Vector3.forward, new Vector3(5, 0, 5));
+            typeof(HeroAbilitySystem).GetMethod("RecordPresentationFrame", Hidden).Invoke(_abilities,
+                new object[] { HeroAbilitySystem.Slot.Ultimate, _abilities.Kit.Ultimate, context });
+            Assert.IsTrue(_abilities.TryPresentedFrame(_abilities.Kit.Ultimate, out var before));
+            Assert.That(new Vector2(before.center.x, before.center.z).magnitude, Is.GreaterThan(2));
+            _actor.transform.SetPositionAndRotation(new Vector3(-6, 20, -6), Quaternion.Euler(0, 180, 0));
+            Assert.IsTrue(_abilities.TryPresentedFrame(_abilities.Kit.Ultimate, out var after));
+            Assert.AreEqual(before, after, "A later body or mouse pose moved the confirmed effect's camera framing.");
+            var interest = _model.Decide();
+            Assert.IsTrue(interest.EffectBounds.HasValue); Assert.AreEqual(before, interest.EffectBounds.Value);
+            Assert.AreEqual(before.center, interest.Objective);
+        }
     }
 }

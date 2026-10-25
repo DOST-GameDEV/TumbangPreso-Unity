@@ -157,17 +157,9 @@ namespace TumbangPreso.Abilities
         private void HideFromVictim(Camera camera)
         {
             if (_victim == null || camera == null || _body == null) return;
-            // A camera at their eyes is theirs (their first person, or a spectator riding it), whoever's seat this is.
-            Vector3 at = camera.transform.position;
-            float mine = (at - EyesOf(_victim)).sqrMagnitude;
-            if (mine >= 1.5f * 1.5f) return;
-            // ⚠️ ONLY ITS OWN VICTIM'S (owner 2026-10-21: *"it tries to attach to other players"*). Anyone standing beside the
-            // victim has their own camera within that reach too, and it jumped into their lens as well. A camera belongs to the
-            // body whose eyes are nearest it, so the ghost clings only to the view that is the victim's.
-            var round = GameServices.Round;
-            if (round != null)
-                foreach (var p in round.Players)
-                    if (p != null && p != _victim && p.gameObject.activeInHierarchy && (at - EyesOf(p)).sqrMagnitude < mine) return;
+            // View ownership is explicit: nearby players, a free camera and a
+            // third-person follow must not inherit this victim's private cover.
+            if (!CameraSystem.ViewPerspective.IsEyesOf(camera, _victim)) return;
             PoseForLens(camera);
         }
 

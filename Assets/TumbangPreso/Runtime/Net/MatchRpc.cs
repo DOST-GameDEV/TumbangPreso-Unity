@@ -28,6 +28,7 @@ namespace TumbangPreso.Net
     /// before it resolves; folding it into the result would show the tell and the tag on the
     /// same frame, which removes the only warning the game gives.
     /// </summary>
+    [DefaultExecutionOrder(20000)]
     public sealed partial class MatchRpc : MonoBehaviour
     {
         public static MatchRpc Instance { get; private set; }
@@ -230,6 +231,7 @@ namespace TumbangPreso.Net
             CancelSnapshotRefreshWork(clearSnapshotTimes: false);
             _pendingSkillCasts.Clear();
             ResetNemuGhostTransport();
+            SuspendSpectatorViews();
         }
 
         /// <summary>
@@ -464,6 +466,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
             cm.RegisterNamedMessageHandler("ReqTime", OnReqTimeMsg);
             cm.RegisterNamedMessageHandler("SyncTime", OnSyncTimeMsg);
+            RegisterSpectatorViewMessages(cm);
 
             _handlersOn = cm;
         }
