@@ -13,11 +13,13 @@ Updated 2026-10-25. Owner scope: [TODO](TODO.md).
   without C# errors. Removed 112,453,059 asset bytes; seven entry docs 97.62% smaller.
   Native baseline19, geometry21, binding/tuning12, desktop15 and final gamepad11
   cases passed in separate focused receipts. No Unity job is active at publication.
-- Confirmed source defect: current spectator POV uses fixed eye position/body yaw
-  and operator pitch. Investigate actual player-view observation and borrowed
-  viewmodel behavior before changing it. Director cuts immediately on beat changes.
-- Next action: implement actual observed player eye/look/FOV and perspective
-  presentation without controlling the target, then body/effect/map coverage.
+- Actual observed player eye/full rotation/FOV/hand state implemented and checked
+  locally plus three real Windows processes. The observer received 167 views with
+  163 distinct relay serials matched to the host; unsubscribe stopped publication.
+  [Evidence and limits](reports/spectator-2026-10-25/view-candidate.md).
+- Next action: body/effect/map framing and private-effect coverage, then network
+  reliability on NETWORKFIX and mobile last. Current actual-view proof is same-PC
+  controlled motion, not natural/WAN/separate-machine/Android acceptance.
   Do not restore the old mobile-every-feature mandate; mobile is a separate assignment.
 
 Keep this file short. Record exact active jobs and next command in the task-local
