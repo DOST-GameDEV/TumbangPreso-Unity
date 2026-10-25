@@ -26,8 +26,13 @@ def main():
     if not out.is_relative_to(ROOT/'Logs') or out == ROOT/'Logs':
         raise SystemExit('Use a fresh scoped Logs directory.')
     out.mkdir(parents=True, exist_ok=False)
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.bind(('127.0.0.1', 0)); port = sock.getsockname()[1]
+    sockets = [socket.socket(socket.AF_INET, socket.SOCK_DGRAM) for _ in range(3)]
+    try:
+        for sock in sockets: sock.bind(('127.0.0.1', 0))
+        ports = [sock.getsockname()[1] for sock in sockets]
+    finally:
+        for sock in sockets: sock.close()
+    port = ports[0]
     processes, commands, backups = [], [], []
     before = read_input_preferences()
     startup = subprocess.STARTUPINFO(); startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW; startup.wShowWindow = 0
@@ -40,10 +45,11 @@ def main():
                     backup.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(source, backup)
                     backups.append((source, backup, hashlib.sha256(source.read_bytes()).hexdigest()))
             command = [str(exe), '-screen-width', '960', '-screen-height', '540', '-screen-fullscreen', '0',
-                '-tp-framecap', '30', '-tp-autostart', '2', '-tp-map', 'Eskinita',
+                '-tp-framecap', '30', '-tp-map', 'Eskinita',
                 '-tp-profile', out.name+'-'+role, '-tp-viewrole', role, '-tp-viewtrace', str(out/(role+'.csv')),
                 '-logFile', str(out/(role+'.log'))]
-            command += ['-tp-host', str(port)] if index == 0 else ['-tp-join', '127.0.0.1', str(port)]
+            command += ['-tp-lobbyport', str(ports[index])]
+            command += ['-tp-lobby'] if index == 0 else ['-tp-lobbyjoin', '127.0.0.1:'+str(port)]
             commands.append(command)
             processes.append(subprocess.Popen(command, cwd=ROOT, env=unity_environment(), startupinfo=startup,
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))

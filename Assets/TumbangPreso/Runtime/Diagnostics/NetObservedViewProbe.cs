@@ -26,6 +26,8 @@ namespace TumbangPreso.Diagnostics
         private float _started, _liveAt = -1, _sampleAt, _seatAt, _nextGesture;
         private CameraRig _ownerRig;
         private SpectatorCamera _observer;
+        private ReadyGate _readyGate;
+        private bool _startSent, _readySent;
         private readonly Receipt _receipt = new();
         private bool _unsubscribed, _finished;
         private static string Arg(string key)
@@ -58,9 +60,28 @@ namespace TumbangPreso.Diagnostics
             if (_finished) return;
             if (Time.realtimeSinceStartup - _started > 160) { Finish("No complete live view before deadline."); return; }
             var rpc = MatchRpc.Instance; var net = NetSession.Instance;
+            _receipt.local = NetAuthority.LocalSlot;
             if (_role == "observer" && rpc != null && net != null && NetAuthority.IsNetworked
-                && !GameLaunch.Spectator && Time.unscaledTime >= _seatAt)
+                && !net.Lobby.MatchInProgress && !GameLaunch.Spectator && Time.unscaledTime >= _seatAt)
             { _seatAt = Time.unscaledTime + 1; rpc.RequestSeatServerRpc(-1); }
+            // Use the real lobby seat action before starting. A running match correctly
+            // refuses seat changes; the direct-arena bootstrap cannot set up this fixture.
+            if (_role == "host" && !_startSent && rpc != null && net != null && NetAuthority.IsHost
+                && !net.Lobby.MatchInProgress && net.Lobby.PlayingPeerCount() >= 2)
+            {
+                bool observerSeated = false;
+                foreach (var peer in net.Lobby.Peers) observerSeated |= peer.Spectator && peer.Seat < 0;
+                var hub = UI.Hub.TumpHub.Current;
+                if (observerSeated && hub?.Top is UI.Hub.HubLobby && hub.Canvas.enabled)
+                {
+                    _startSent = true; hub.Host.SelectMap(SceneFlow.Eskinita); hub.Host.StartGame();
+                    Debug.Log("[ViewProbe] Started from lobby with two players and a spectator.");
+                }
+            }
+            var gate = FindFirstObjectByType<ReadyGate>();
+            if (_readyGate != gate) { _readyGate = gate; _readySent = false; }
+            if (!_readySent && gate != null && gate.AwaitingReady && rpc != null)
+                _readySent = rpc.DeclareReadyServerRpc();
             if (GameServices.Round?.RoundActive != true || GameServices.Match?.IsWarmupBuffer == true || rpc == null) return;
             if (NetAuthority.IsHost)
                 foreach (var actor in GameServices.Round.Players)
