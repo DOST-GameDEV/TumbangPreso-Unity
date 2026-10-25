@@ -92,7 +92,7 @@ namespace TumbangPreso.PlayTests
         private IEnumerator Take(string name, float seconds, Action<int> drive, bool owner = false, bool intro = false)
         {
             string folder = Path.Combine(_output, name); Directory.CreateDirectory(folder);
-            var trace = new StringBuilder("frame,seconds,game_seconds,x,z,momentum,overclock,zapped,copies,wires,backtrack_cooldown,wire_snapped,a_zapped,b_zapped\n");
+            var trace = new StringBuilder("frame,seconds,game_seconds,x,z,momentum,overclock,zapped,copies,wires,backtrack_cooldown,wire_snapped,a_zapped,b_zapped,pull_age,pull_x,pull_z,drawn_x,drawn_y,drawn_z,body_drawn,live_hidden,off_route,ring_x,ring_z,tag_x,tag_z\n");
             bool sawScene = false;
             // The stock review mode lets the world looks draw as an observer sees them. His private return echo is
             // withheld from this court camera; the victim take keeps his actual first-person view and HUD.
@@ -155,7 +155,12 @@ namespace TumbangPreso.PlayTests
                         _late.Shoot(Path.Combine(folder, $"{f:D5}.jpg"));
                         audio.Frame();
                         var at = _zack.transform.position;
-                        trace.AppendLine(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count},{Kit.Skill1.CooldownRemaining:F3},{(ZackLiveWire.Active.Any(w=>w.Snapped)?1:0)},{(_a.IsZapped?1:0)},{(_b.IsZapped?1:0)}"));
+                        var pull = Object.FindAnyObjectByType<ZackBacktrackLook>();
+                        var seen = pull != null ? pull.VisualFeet : at; var drawn = pull != null ? pull.RenderedFeet : at;
+                        var plate = _zack.GetComponentInChildren<CharacterNameplate>();
+                        var ringAt = plate != null ? plate.transform.Find("NameplateRing").position : at;
+                        var tagAt = plate != null ? plate.transform.Find("NameplateLabel").position : at;
+                        trace.AppendLine(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count},{Kit.Skill1.CooldownRemaining:F3},{(ZackLiveWire.Active.Any(w=>w.Snapped)?1:0)},{(_a.IsZapped?1:0)},{(_b.IsZapped?1:0)},{(pull != null ? pull.Age : -1):F3},{seen.x:F3},{seen.z:F3},{drawn.x:F3},{drawn.y:F3},{drawn.z:F3},{(pull != null && pull.BodyDrawn ? 1 : 0)},{(pull != null && pull.LiveBodyHidden ? 1 : 0)},{(pull != null ? pull.OffRoute(drawn) : 0):F3},{ringAt.x:F3},{ringAt.z:F3},{tagAt.x:F3},{tagAt.z:F3}"));
                         f++;
                         if (f < count) { _frame++; drive(f); }
                     }
@@ -176,6 +181,8 @@ namespace TumbangPreso.PlayTests
             File.WriteAllText(Path.Combine(folder, "frames.csv"), trace.ToString());
             if (intro) Assert.IsTrue(sawScene, "The actual Overclock introduction was not shown.");
         }
+
+        private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0, v.z);
 
         [UnityTest, Timeout(900000)] public IEnumerator FilmEachSkillFromOneAngle()
         {
@@ -214,6 +221,9 @@ namespace TumbangPreso.PlayTests
             _late = new GameObject("Zack late film capture").AddComponent<LateFrameShot>();
             Time.captureFramerate = 30; double clockBase = Time.realtimeSinceStartupAsDouble;
             SharedUltimatePhase.FilmClock = () => clockBase + _frame / 30.0;
+            bool backtrackOnly = Environment.GetEnvironmentVariable("TUMP_ZACK_BACKTRACK_ONLY") == "1";
+            if (!backtrackOnly)
+            {
             Prepare(); yield return new WaitForSeconds(.2f);
             float maxMomentum = 0;
             yield return Take("01-momentum", 4.8f, f =>
@@ -226,16 +236,40 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(_zack.transform.position.x, 4f);
             Assert.Zero(Kit.MomentumSeconds); _observations.AppendLine("Momentum reached all three steps and reset on stopping.");
 
-            Prepare(); yield return new WaitForSeconds(.2f); bool rewound = false;
-            yield return Take("02-backtrack", 5.4f, f =>
+            }
+            foreach (var take in new[] { "02-backtrack", "02b-backtrack-first-person" })
             {
-                _zack.Intent.Move = f >= 9 && f < 112 ? Vector2.right : Vector2.zero;
-                _zack.Intent.Set(Verb.Skill1, f >= 113 && f < 118);
-                rewound |= Kit.Skill1.CooldownRemaining > 20;
-            });
-            Assert.IsTrue(rewound); Assert.IsTrue(_zack.HoldingSlipper);
-            _observations.AppendLine("Backtrack accepted through input and kept the held slipper.");
+                bool eyes = take.EndsWith("first-person");
+                Prepare(); yield return new WaitForSeconds(.2f);
+                bool rewound = false; ZackBacktrackLook pull = null; Vector3 departure = default, landing = default;
+                float offRoute = 0, lastLeft = float.PositiveInfinity; int drawnFrames = 0, closer = 0, frames = 0;
+                // An L-shaped run: along the near line, then up-court. The rewind must retrace both legs, not cut across.
+                yield return Take(take, 5.4f, f =>
+                {
+                    _zack.Intent.Move = f >= 9 && f < 58 ? Vector2.right : f >= 58 && f < 112 ? Vector2.up : Vector2.zero;
+                    _zack.Intent.Set(Verb.Skill1, f >= 113 && f < 118);
+                    if (f == 113) departure = _zack.transform.position;
+                    rewound |= Kit.Skill1.CooldownRemaining > 20;
+                    var live = Object.FindAnyObjectByType<ZackBacktrackLook>();
+                    if (live != null && pull == null) { pull = live; landing = _zack.transform.position; }
+                    if (live == null || !live.Pulling) return;
+                    frames++; var drawn = live.RenderedFeet; float left = Vector3.Distance(Flat(drawn), Flat(landing));
+                    if (left < lastLeft - .01f) closer++; lastLeft = left;
+                    offRoute = Mathf.Max(offRoute, live.OffRoute(drawn));
+                    if (live.BodyDrawn && live.LiveBodyHidden) drawnFrames++;
+                }, owner: eyes);
+                Assert.IsTrue(rewound); Assert.IsTrue(_zack.HoldingSlipper);
+                Assert.IsNotNull(pull, "No rewind presentation was created by the input cast.");
+                Assert.Greater(Vector3.Distance(Flat(departure), Flat(landing)), 5f, "The review run must give the return a visible distance.");
+                Assert.GreaterOrEqual(frames, 12, "The pull must last long enough to read at normal speed.");
+                Assert.Greater(closer, frames * 2 / 3, "The drawn body must travel steadily toward the old spot.");
+                Assert.Less(offRoute, .6f, "The drawn body left his recorded route.");
+                if (!eyes) Assert.GreaterOrEqual(drawnFrames, frames - 1, "An observer must see the actual body travel, with the gameplay body hidden.");
+                else Assert.Zero(drawnFrames, "His own first person must not draw his body across the view.");
+                _observations.AppendLine(FormattableString.Invariant($"{take}: departure {departure}, landing {landing}, route {pull.RouteLength:F2} m, {frames} pull frames, {closer} closer, max off-route {offRoute:F2} m, observer body frames {drawnFrames}."));
+            }
 
+            if (backtrackOnly) yield break;
             Prepare(); Place(_taya, new Vector3(3.5f, .12f, -5), true);
             yield return new WaitForSeconds(.2f); bool copySeen = false, popped = false;
             yield return Take("03-afterimage", 3.8f, f =>

@@ -1,5 +1,78 @@
 # Zack owner refinements, 2026-10-25
 
+## Latest Backtrack rewrite verification
+
+Technical candidate verified on main from base `f97da3be6`. The owner rejected
+the electric-tether art direction after viewing the reference and supplied a new
+direction: visible afterimages moving backward like Ekko, with electricity in
+sound rather than a rope pulling the character. Creative motion/VFX acceptance
+remains open. The earlier snapshot below is historical, including its former
+sound-audition boundary; enabled audio is documented in lightning-audio.md.
+
+The incoming rewrite uses one body, a 0.08 s snag, 0.40 s travel and 0.14 s catch,
+arc-length travel over pose-history roots and a moving seat ring/tag. Accepted
+teleport authority, statuses, facing, held slipper and cooldowns are unchanged.
+The current tether implementation is retained as a documented creative candidate,
+not an approved final look.
+
+### Technical corrections during verification
+
+- Corrected the recording's second leg from diagonal motion to a true L turn.
+  A backtrack-only recording mode preserves the all-skill mode while avoiding
+  unrelated recaptures. CSV traces now include ring and tag world positions.
+- The root-only history accessor now honors the same teleport discontinuities
+  as retained pose playback. Three cases verify interpolation and hard edges.
+- The Afterimage held-shoe fixture waits for actual pose-history readiness after
+  hierarchy changes, with a bounded wait and explicit readiness assertion. Its
+  original held-slipper assertion remains intact.
+- Normal-speed review found a color pop when the live body returned at 4.40 s.
+  Taggable-state tint is camera-scoped, so the moving copy now uses the same
+  readability scope at its drawn height. A regression case verifies application
+  and restoration of its material block. Updated playback retains the same body
+  coloration through the handoff to the live model.
+
+### Native evidence
+
+- `Logs/zack-backtrack-verify-20261025/play.xml`: 29/31 passed. The held-shoe
+  fixture readiness failure was corrected. The extra legacy water-marker case
+  still tries to load disabled `SaBubong`; it is unchanged at the source base
+  and was not weakened, disabled or represented as a passing regression.
+- `Logs/zack-backtrack-final-20261025/play.xml`: 6/6 passed, including the three
+  history cases, corrected Afterimage case, Backtrack acceptance and both views.
+- `Logs/zack-backtrack-scope-20261025/play.xml`: 17/17 passed, including the new
+  copied-body readability case, Backtrack acceptance, 13 spectator-view checks,
+  actual-map marker graphics and both final recordings. Unity compilation and
+  import succeeded in 6000.5.8f1 with D3D11. No skips in either passing run.
+- Unchanged kit/presentation cases retain the passing evidence from the first
+  run. Pure Core rules were not changed; the prior 840/840 result is historical.
+
+Final film root: `Logs/zack-backtrack-scope-20261025/zack-skills/`. Both takes have
+162 frames at 30 fps, 1280x720, with actual Unity DSP audio. Exported MP4s contain
+AAC and pass frame-count, duration and full-decode checks. Native audio is 5.3973 s
+against the 5.4 s frame sequence; export padding covers the sub-frame difference.
+All sixteen electrical source WAVs retain their shipped hashes.
+
+Observer: route 8.34 m, 15 pull frames, 14 closer to the old spot, all 15 body
+frames drawn with the live body hidden, maximum off-route 0.098 m. First person:
+route 8.29 m, 15 pull frames, 14 closer, zero own-body frames and maximum off-route
+0.107 m. Both ring/tag traces match the visual feet in X/Z to CSV precision.
+Cast is video 3.767 s, catch 4.267 s and renderer restoration 4.400 s. Native mix
+peaks are .224 and .261. These measurements establish playback and placement,
+not creative quality or listening approval.
+
+Both encoded exports were reviewed in a local player at 1x with sequential
+captures through departure, corner, catch and restoration. The observer shows
+one body being reeled along a tether, which is now explicitly rejected. The
+first-person return translates backward, but a long gold line crosses the view
+around 3.9-4.05 s. The next creative pass should rethink the temporal afterimage
+read and first-person treatment independently, using both reference videos.
+
+Owner visual/listening acceptance and actual-peer/WAN behavior remain open.
+One guarded graphics job ran at a time. Receipts preserve exact dirty inputs and
+restore the five owner files plus QualitySettings. No player build is claimed.
+
+## Earlier refinement snapshot
+
 Owner approved ongoing commits on main. Baseline kit: `e01da9d59`. Latest
 spectator work was integrated in `cecd06182`. Bare current hands are committed
 in `5105a70b4`; original SFX recipes and viewed-reference notes in `08f602c12`.

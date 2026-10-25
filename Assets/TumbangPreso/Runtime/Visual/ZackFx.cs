@@ -168,6 +168,21 @@ namespace TumbangPreso.Visual
                 }
             }
 
+            /// <summary>His own colours with only a gold rim of <paramref name="strength"/>: the body reads as Zack, not a copy.</summary>
+            public void Rim(float strength)
+            {
+                foreach (var surface in Copy.Renderers)
+                {
+                    if (surface == null) continue;
+                    surface.GetPropertyBlock(_block);
+                    _block.SetFloat("_FrostAmount", 0.0f);
+                    _block.SetFloat("_RimStrength", Mathf.Clamp01(strength));
+                    _block.SetFloat("_RimPower", 1.6f);
+                    _block.SetColor("_RimColor", Core);
+                    surface.SetPropertyBlock(_block);
+                }
+            }
+
             public void Visible(bool on) => Copy.ShowOnlyForCapture(on);
 
             /// <summary>The body as it was at <paramref name="time"/> on the history's clock.</summary>

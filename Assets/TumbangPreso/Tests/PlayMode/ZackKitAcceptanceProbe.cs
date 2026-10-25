@@ -130,6 +130,43 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(pull.Pulling);Assert.AreEqual(Vector3.zero,Visual.ZackBacktrackLook.EyeOffset(_caster));
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator BacktrackDrawnBodyUsesAndRestoresCameraScopedReadability()
+        {
+            var history = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
+            float readyBy = Time.realtimeSinceStartup + 2;
+            while (history?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsTrue(history?.ForSeat(_caster.PlayerSlot)?.Ready == true);
+            var from = _caster.transform.position; var to = from + Vector3.left * 4;
+            var pull = Visual.ZackBacktrackLook.Play(_caster, from, to, new[] { to, from });
+            _caster.Teleport(to, keepStatuses: true); pull.SealTeleport();
+            yield return new WaitForSeconds(.16f);
+            var surface = pull.GetComponentsInChildren<SkinnedMeshRenderer>(true).First();
+            var properties = new MaterialPropertyBlock(); surface.GetPropertyBlock(properties);
+            properties.SetFloat("_TayaCue", .37f); properties.SetVector("_WorldBody", new Vector4(0, 0, 0, 7));
+            surface.SetPropertyBlock(properties);
+            var camera = new GameObject("Backtrack readability observer").AddComponent<Camera>(); camera.enabled = false;
+            var visual = _caster.GetComponent<Visual.CharacterVisual>();
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                typeof(Visual.CharacterVisual).GetMethod("BeginReadability", hidden).Invoke(visual, new object[] { camera });
+                surface.GetPropertyBlock(properties);
+                Assert.AreEqual(pull.RenderedFeet.y, properties.GetVector("_WorldBody").x, .001f,
+                    "The moving copy must receive the actor's scoped cue at its drawn height.");
+                Assert.Zero(properties.GetVector("_WorldBody").w);
+                Assert.AreNotEqual(.37f, properties.GetFloat("_TayaCue"));
+            }
+            finally
+            {
+                typeof(Visual.CharacterVisual).GetMethod("EndReadability", hidden).Invoke(visual, new object[] { camera });
+                Object.Destroy(camera.gameObject);
+            }
+            surface.GetPropertyBlock(properties);
+            Assert.AreEqual(.37f, properties.GetFloat("_TayaCue"), .001f, "The camera override must restore the copy's own block.");
+            Assert.AreEqual(7, properties.GetVector("_WorldBody").w);
+        }
+
         // ------------------------------------------------------------------ AFTERIMAGE
 
         [UnityTest, Timeout(60000)]
@@ -144,7 +181,11 @@ namespace TumbangPreso.PlayTests
                 carrier.HostPickUp(shoe);
             }
             Assert.IsNotNull(carrier.Held, "This case must exercise a copy carrying a slipper.");
-            yield return null;
+            // Picking up can change the model hierarchy. Exercise the real body copy after its history is ready.
+            var poses = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
+            float readyBy = Time.realtimeSinceStartup + 2;
+            while (poses?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsTrue(poses?.ForSeat(_caster.PlayerSlot)?.Ready == true, "The held-body fixture must have pose history.");
             Assert.IsTrue(Kit.AttackingSkill.CanActivate(Context()));
             Kit.AttackingSkill.Activate(Context());
             var copy = ZackAfterimage.Active.Single(c => c.OwnerSlot == _caster.PlayerSlot);

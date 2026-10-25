@@ -2,14 +2,13 @@
 
 Updated 2026-10-25. Owner scope: [TODO](TODO.md).
 
-- Zack kit and pullback refinements are committed on main. Owner authorizes
-  publication and enabling the original electrical sound family. Sixteen cues,
-  current beds and the film track pass EditMode 1/1 and PlayMode 16/16. Six new
-  review videos include actual Unity DSP audio. Core 840/840 remains applicable
-  to unchanged rules. No Unity job is active. Five owner files stay excluded.
-  Next: owner SFX listening review, then further Backtrack VFX/animation polish.
-  Handoff waits for owner satisfaction; actual peers remain unverified.
-  [Evidence](reports/zack-kit-2026-10-25/lightning-audio.md).
+- Zack Backtrack technical candidate is verified on main: targeted native 6/6
+  and 17/17, observer/FPP recordings with actual sound, moving ring/tag and scoped
+  tint continuity. The owner rejects the electric tether and wants reverse-moving
+  afterimages like Ekko, with electricity in SFX. Next: independent creative
+  motion/VFX revision after watching both clips. Listening acceptance and actual
+  peers remain open. Five owner files remain excluded. No Unity job is active.
+  [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
   [Receipt](reports/repository-cleanup-2026-10-25.md).

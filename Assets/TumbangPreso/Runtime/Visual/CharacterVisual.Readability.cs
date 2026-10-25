@@ -62,9 +62,13 @@ namespace TumbangPreso.Visual
             // replay on this screen fades them (`TagExposure.Presence`, owner: "disappear during ult cutscenes").
             float presence=TagExposure.Presence;
             bool catchable=fill>.001f && presence>.01f && WorldCueProfile.Current.TayaTarget>0;
-            foreach(var surface in _renderers)
+            bool pulling = ZackBacktrackLook.TryReadabilityBody(_readActor, out var drawn, out var drawnFeet);
+            IReadOnlyList<Renderer> surfaces = _renderers;
+            if (pulling) surfaces = drawn;
+            for (int i = 0; i < surfaces.Count; i++)
             {
-                if(surface==null || Model==null || !surface.transform.IsChildOf(Model.transform))continue;
+                var surface = surfaces[i];
+                if(surface==null || (!pulling && (Model==null || !surface.transform.IsChildOf(Model.transform))))continue;
                 int at=scope.Surfaces.Count;
                 if(at==scope.Saved.Count)scope.Saved.Add(new MaterialPropertyBlock());
                 surface.GetPropertyBlock(scope.Saved[at]);scope.Surfaces.Add(surface);
@@ -78,7 +82,7 @@ namespace TumbangPreso.Visual
                 }
                 surface.SetPropertyBlock(original);surface.GetPropertyBlock(_readBlock);
                 var bodyCapsule=_readActor.GetComponent<CharacterController>();
-                _readBlock.SetVector("_WorldBody",new Vector4(_readActor.transform.position.y,bodyCapsule!=null?bodyCapsule.height:1.6f,1,0));
+                _readBlock.SetVector("_WorldBody",new Vector4(drawnFeet.y,bodyCapsule!=null?bodyCapsule.height:1.6f,1,0));
                 _readBlock.SetFloat("_DepthReadability",WorldCueProfile.Current.DistanceReadability);
                 _readBlock.SetFloat("_TayaCue",catchable?1:0);
                 _readBlock.SetFloat("_HunterGrow",0);
@@ -102,7 +106,7 @@ namespace TumbangPreso.Visual
                     _readBlock.SetFloat("_TayaOutlineGrow",Mathf.Lerp(1,OutlineGrowth,weight));
                     var capsule=_readActor.GetComponent<CharacterController>();
                     float height=capsule!=null?capsule.height:1.6f;
-                    _readBlock.SetVector("_CueHeight",new Vector4(_readActor.transform.position.y,height,0,0));
+                    _readBlock.SetVector("_CueHeight",new Vector4(drawnFeet.y,height,0,0));
                 }
                 surface.SetPropertyBlock(_readBlock);
             }

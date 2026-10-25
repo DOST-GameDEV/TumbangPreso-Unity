@@ -61,6 +61,7 @@ namespace TumbangPreso.Visual
         private Transform _head;
         private bool _placedOnWater;
         private bool _placedForFlight;
+        private bool _placedForPull;
         private TextMesh _label;
         private Transform _labelTransform;
         private Color _roleColor = UiTheme.Defense;
@@ -183,6 +184,21 @@ namespace TumbangPreso.Visual
         private void PlaceForCurrentSurface()
         {
             if (_character == null || _ring == null || _labelTransform == null) return;
+            // Zack's Backtrack draws his body travelling back to a spot the gameplay body already holds: the ring and tag
+            // stay with the body people can see until the catch.
+            var pull = ZackBacktrackLook.MarkerOffset(_character);
+            if (pull != Vector3.zero)
+            {
+                _ring.localPosition = _landRingPosition; _labelTransform.localPosition = _landLabelPosition;
+                _ring.position += pull; _labelTransform.position += pull;
+                _placedForPull = true;
+                return;
+            }
+            if (_placedForPull)
+            {
+                _ring.localPosition = _landRingPosition; _labelTransform.localPosition = _landLabelPosition;
+                _placedForPull = false;
+            }
             if (_character.IsFlying && _character.AbilitySystem?.Kit?.HeroId == "amihan")
             {
                 var feet = _character.transform.position;
