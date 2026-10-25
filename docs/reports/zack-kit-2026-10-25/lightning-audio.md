@@ -86,3 +86,10 @@ for this sound pass. The temporary exact-reproduction directory was removed
 after hash verification. Current native picture/audio evidence and guard
 preservation snapshots remain available. The five owner files stay excluded from
 staging, and the earlier cleanup-review rejection remains respected.
+
+## Owner review still open
+
+Backtrack's VFX and animation need another refinement for stronger feel and a
+cooler appearance. The owner deferred the requested handoff until satisfied with
+the work and sound. Deliver the new native-audio videos for listening review;
+keep that visual refinement open rather than treating it as accepted.

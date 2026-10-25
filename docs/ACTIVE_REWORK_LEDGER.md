@@ -7,7 +7,8 @@ Updated 2026-10-25. Owner scope: [TODO](TODO.md).
   current beds and the film track pass EditMode 1/1 and PlayMode 16/16. Six new
   review videos include actual Unity DSP audio. Core 840/840 remains applicable
   to unchanged rules. No Unity job is active. Five owner files stay excluded.
-  Next: owner visual/listening judgment and actual peers.
+  Next: owner SFX listening review, then further Backtrack VFX/animation polish.
+  Handoff waits for owner satisfaction; actual peers remain unverified.
   [Evidence](reports/zack-kit-2026-10-25/lightning-audio.md).
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
