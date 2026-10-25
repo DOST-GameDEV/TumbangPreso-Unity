@@ -12,8 +12,7 @@ namespace TumbangPreso.Net
             if(!NetAuthority.IsHost || GameServices.Match==null || _nm?.CustomMessagingManager==null || peer==_nm.LocalClientId) return;
             var kit=Unit(seat)?.AbilitySystem?.Kit;
             HeroMovementState state;
-            if(kit is ZackHeroKit zack) state=zack.CaptureMovementState();
-            else if(kit is SeanHeroKit sean) state=sean.CaptureMovementState();
+            if(kit is SeanHeroKit sean) state=sean.CaptureMovementState();
             else return;
             using var writer=new FastBufferWriter(160,Allocator.Temp);
             writer.WriteValueSafe(seat); writer.WriteValueSafe(GameServices.Match.RoundNumber);
@@ -24,7 +23,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(count);
             writer.WriteValueSafe(state.KnownWake);
             for(int i=0;i<count;i++) writer.WriteValueSafe(state.Wake[i]);
-            writer.WriteValueSafe((byte)((state.QuickFollowup ? 1 : 0) | (state.QuickSecondCut ? 2 : 0)));
+            // Protocol 182: the byte stays so the layout holds; it carried Zack's retired Quick Circuit and is always 0.
+            writer.WriteValueSafe((byte)0);
             _nm.CustomMessagingManager.SendNamedMessage("MovementWindow",peer,writer,NetworkDelivery.ReliableSequenced);
         }
 
@@ -48,12 +48,12 @@ namespace TumbangPreso.Net
             var wake=new Vector3[count];
             for(int i=0;i<count;i++) reader.ReadValueSafe(out wake[i]);
             reader.ReadValueSafe(out byte flags);
-            if (flags > 2 || (hero == "sean" && flags != 0)) return;
+            if (flags != 0) return;
             var system=Unit(seat)?.AbilitySystem;
-            if(system?.Kit?.HeroId!=hero || (hero!="zack" && hero!="sean")) return;
+            if(system?.Kit?.HeroId!=hero || hero!="sean") return;
             float age=Mathf.Max(0,(float)_nm.ServerTime.Time-sentAt);
-            var state=new HeroMovementState { Remaining=remaining,UntilNextEmission=untilNext,Wake=wake,KnownWake=knownWake,QuickFollowup=(flags & 1)!=0,QuickSecondCut=(flags & 2)!=0 };
-            float interval=hero=="zack"?.30f:0f;
+            var state=new HeroMovementState { Remaining=remaining,UntilNextEmission=untilNext,Wake=wake,KnownWake=knownWake };
+            float interval=0f;
             if(!state.Valid(system.Kit.Skill1.Duration,interval,age)) return;
             if(remaining>0 && age>=remaining)
                 Debug.Log($"[MovementWindow] expired in transit seat={seat} remaining={remaining:F4} age={age:F4}");

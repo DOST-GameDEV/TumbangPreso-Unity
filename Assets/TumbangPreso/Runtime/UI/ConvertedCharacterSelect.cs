@@ -2731,7 +2731,7 @@ namespace TumbangPreso.UI
                 case "dante": return "EARTH JUGGERNAUT\nBreak formations with tremors, armor, and a map-splitting fissure.";
                 case "cheska": return "ICE CONTROLLER\nCreate slip zones and barricades, then lock the lane with Glacial Nova.";
                 case "sean": return "FIRE BRAWLER\nRush the lane, blast open space, and finish with Supernova.";
-                case "zack": return "LIGHTNING SKIRMISHER\nSprint through fights, build charge, and call down Thunderstrike.";
+                case "zack": return "SPEEDSTER\nRun to get faster, rewind a bad run, and send a copy of yourself to fool the taya.";
                 case "nemu": return "SPIRIT TRICKSTER\nSlip beyond reach, possess the street, and turn a seance into a trap.";
                 case "phaister": return "STREET WITCH\nCurse the ground, blink out of trouble, and black out the whole street.";
                 case "rafi": return "CURRENT TRICKSTER\nBend a throw, leave a watery feint, and send a low wave through a chase.";

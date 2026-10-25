@@ -28,10 +28,11 @@ namespace TumbangPreso.UI
             { "cheska_skill2d", AbilityGlyph.CheskaBarricade },
             { "cheska_ultimate", AbilityGlyph.CheskaNova },
 
-            // Zack (Lightning Skater)
-            { "zack_skill1", AbilityGlyph.ZackSprint },
-            { "zack_skill2", AbilityGlyph.ZackOvercharge },
-            { "zack_ultimate", AbilityGlyph.ZackThunderstrike },
+            // Zack (the Speedster, 2026-10-25)
+            { "zack_skill1", AbilityGlyph.ZackBacktrack },
+            { "zack_skill2", AbilityGlyph.ZackAfterimage },
+            { "zack_skill2d", AbilityGlyph.ZackLiveWire },
+            { "zack_ultimate", AbilityGlyph.ZackOverclock },
 
             // Nemu (Spirit Summoner)
             { "nemu_skill1", AbilityGlyph.NemuDontLook },

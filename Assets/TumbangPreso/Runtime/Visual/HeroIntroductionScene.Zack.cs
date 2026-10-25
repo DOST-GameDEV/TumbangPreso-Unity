@@ -6,8 +6,15 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // OVERCLOCK, THE BOLT WAITS FOR HIM, 6.4 s (was 2.8 s: a finger spark, a storm, a bolt on his head).
+        // OVERCLOCK, THE BOLT WAITS FOR HIM, TRIMMED TO 4.5 s (owner, 2026-10-25: "trim the bolt one"; plan section 4).
         //
+        // ⚠️ THE TRIM IS ONE CLOCK, `ZackClock`. Everything below is still written on the 6.4 s film's times; the stage reads
+        // them through `ZackClock`, which runs THE CALL a little quicker, keeps THE STOP and THE POKE, and steps over THE LOOK
+        // (1.94 to 2.70) and THE SHRUG (3.60 to 4.50). THE LET GO keeps the bolt going into him but no longer sends the ring
+        // out or jolts the staged players (Zapped is Live Wire's now); the body ends in a sprinter's set and the cut comes as
+        // he goes. `tools/author_ultimate_intros.py` `zack()` retimes the body and the shots with the same map.
+        //
+        // The 6.4 s film's notes, kept for the beats that remain:
         // ⚠️ RESTAGED 2026-10-09, UNPITCHED. The owner was away and asked for "something for the rest of the heroes ...
         // surprise me with something really good", so this was not chosen from options as batch 1 was. BLOCKING until he
         // says the idea stays. The first cutscene is whole in `tools/cutscene_rework/old/`.
@@ -538,6 +545,29 @@ namespace TumbangPreso.Visual
         /// ⚠️ THE WORLD'S CLOCK. It runs with the real one, brakes to nothing between `ZkSlow` and `ZkStopped`, stands still
         /// until `ZkGo` and then runs again. Everything that is "the world" reads this, so it all stops as one thing.
         /// </summary>
+        /// <summary>The trimmed film's length (seconds) and the 6.4 s film it is cut from.</summary>
+        private const float ZkFilmSeconds = 6.4f;
+        private static readonly float[] ZackTrimAt = { 0f, 1.05f, 1.70f, 1.70f, 2.70f, 2.70f, 4.50f };
+        private static readonly float[] ZackFilmAt = { 0f, 1.20f, 1.94f, 2.70f, 3.60f, 4.50f, 6.40f };
+
+        /// <summary>
+        /// The 4.5 s cut's time on the 6.4 s film's clock: piecewise linear through `ZackTrimAt`/`ZackFilmAt`, so the cut
+        /// jumps from the stop straight to the poke and from the poke straight to the let go. The same map is in the author.
+        /// </summary>
+        private static float ZackClock(float trimmed)
+        {
+            if (trimmed <= 0f) return 0f;
+            for (int i = 1; i < ZackTrimAt.Length; i++)
+            {
+                if (trimmed > ZackTrimAt[i]) continue;
+                float span = ZackTrimAt[i] - ZackTrimAt[i - 1];
+                // A zero-length span is a cut: the film clock jumps there.
+                if (span <= 1e-5f) return ZackFilmAt[i];
+                return Mathf.Lerp(ZackFilmAt[i - 1], ZackFilmAt[i], (trimmed - ZackTrimAt[i - 1]) / span);
+            }
+            return ZackFilmAt[ZackFilmAt.Length - 1] + (trimmed - ZackTrimAt[ZackTrimAt.Length - 1]);
+        }
+
         private static float ZackWorld(float t)
         {
             if (t <= ZkSlow) return t;
@@ -593,7 +623,7 @@ namespace TumbangPreso.Visual
             if (since > 0 && t < ZkGo) tip.x += Mathf.Sin(since * 34f) * .07f * Mathf.Exp(-since * 4.5f);
             tip -= way * (.22f * Ease(ZkGo - .3f, ZkGo, t));
             float land = Mathf.Clamp01((t - ZkGo) / (ZkHit - ZkGo));
-            return Vector3.Lerp(tip, HeadPoint - Vector3.up * .25f, land * land);
+            return Vector3.Lerp(tip, FreePalm, land * land);
         }
 
         /// <summary>One small arc of the pool from one point to another, as thick as it is long times <paramref name="girth"/>.</summary>
@@ -608,7 +638,7 @@ namespace TumbangPreso.Visual
 
         private void SampleZack(float t)
         {
-            float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
+            float leave = 1 - Ease(ZkFilmSeconds - .45f, ZkFilmSeconds - .05f, t);
             float world = ZackWorld(t);
             float hung = Ease(ZkSlow, ZkStopped, t) * (1 - Ease(ZkGo, ZkGo + .1f, t));
             // The storm rolls in as the finger goes up; before that he is just on the court.
@@ -824,12 +854,13 @@ namespace TumbangPreso.Visual
             PlaceGlow(_zkColumn, new Vector3(0, 6.2f, .05f), new Vector3(2.4f + 1.6f * struck, 14f, 1f), Quaternion.identity, struck * .8f * storm * light);
             PlaceGlow(_snapGlow, new Vector3(0, .03f, 0), Vector3.one * (.8f + Ease(ZkHit, ZkHit + .35f, t) * 2.2f), Quaternion.Euler(90, 0, 0),
                 hit >= 0 ? (1 - Ease(ZkHit + .2f, ZkHit + .9f, t)) * storm : 0);
-            float ring = hit >= 0 ? (1 - Ease(ZkHit + .3f, ZkHit + .8f, t)) * storm : 0;
+            // No ring any more (2026-10-25): Overclock no longer Zaps a 4.5 m circle, so the strike shows only the bolt going in.
+            float ring = 0f;
             Place(_zkRing, Vector3.up * .06f, Vector3.one * Mathf.Lerp(.3f, ZkReach, ringOut), Quaternion.identity, ring);
             Place(_zkRingTeeth, Vector3.up * .09f, Vector3.one * Mathf.Lerp(.36f, ZkReach * 1.06f, ringOut), Quaternion.Euler(0, hit * 90f, 0), ring * .85f);
             float echoU = Mathf.Clamp01((hit - .09f) / .36f);
             Place(_zkRing2, Vector3.up * .05f, Vector3.one * Mathf.Lerp(.2f, ZkReach * .82f, 1 - (1 - echoU) * (1 - echoU)), Quaternion.identity,
-                hit >= .09f ? (1 - Ease(ZkHit + .3f, ZkHit + .75f, t)) * .7f * storm : 0);
+                0f);
 
             // What it leaves: the court broken under him, the breaks still gold, and gold on the ground round his feet.
             // These stay for as long as he does: it is the mark of what he is now.
@@ -854,7 +885,8 @@ namespace TumbangPreso.Visual
             {
                 var other = _others[i];
                 float reached = hit - other.Reach / ZkReach * .3f;
-                float jolt = other.Reach <= ZkReach && reached >= 0 ? Mathf.Exp(-reached * 5f) * Mathf.Clamp01(reached / .03f) : 0;
+                // No Zap of staged players (2026-10-25): they stand where they are.
+                float jolt = 0f * reached;
                 other.Holder.transform.localPosition = other.Home + new Vector3(Mathf.Sin(t * 91f + i), 0, Mathf.Cos(t * 77f + i * 2)) * (.07f * jolt)
                     + Vector3.up * (.18f * jolt);
                 Vector3 over = other.Home + Vector3.up * 2.35f;

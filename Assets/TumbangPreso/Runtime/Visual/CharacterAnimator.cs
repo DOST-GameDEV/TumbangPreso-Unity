@@ -217,11 +217,11 @@ namespace TumbangPreso.Visual
             { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
             { "hero-sean-supernova", new[] { "hero-sean-supernova", Jump, "attack-melee-right" } },
 
-            { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
-            { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
-            { "hero-zack-circuit", new[] { "hero-zack-circuit" } },
-            { "hero-zack-bankshot", new[] { "hero-zack-bankshot" } },
-            { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
+            // Zack's speedster kit (2026-10-25), baked by `ZackMotionAuthor`; the aim pose is played by `AimPose`, not this table.
+            { "hero-zack-backtrack", new[] { "hero-zack-backtrack", Sprint } },
+            { "hero-zack-afterimage", new[] { "hero-zack-afterimage", "emote-no" } },
+            { "hero-zack-wire", new[] { "hero-zack-wire", "attack-kick-right", Interact } },
+            { "hero-zack-overclock", new[] { "hero-zack-overclock", "holding-both-shoot", Jump } },
 
             { "hero-dante-boulder", new[] { "hero-dante-boulder" } },
             { "hero-dante-bastion", new[] { "hero-dante-bastion" } },
@@ -739,8 +739,8 @@ namespace TumbangPreso.Visual
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
             // These upper-body actions permit movement; their legs must follow the motor.
-            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-circuit"
-                || _current == "hero-zack-bankshot";
+            // Zack's Afterimage is cast on the run: the shrug is his upper body, his legs keep running.
+            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-afterimage";
             bool movingAction = _throwReleaseTime >= 0 || mobileUpperBody;
             // Carrying the can back (CAN-CARRY-1024): the legs walk under the held can while the raise owns the arms.
             bool carryWalk = _carrier != null && _carrier.IsCarryWalking;

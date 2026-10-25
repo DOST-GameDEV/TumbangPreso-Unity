@@ -260,45 +260,30 @@ namespace TumbangPreso.Core
                 "Use Ignition Cannon eight times", true, 8),
 
             // ---------------------------------------------------------------
-            // ZACK. BOLT SPRINT / MAGNET. `ZackHeroKit`.
+            // ZACK. BACKTRACK / AFTERIMAGE. `ZackHeroKit` (speedster rework, 2026-10-25).
+            // ⚠️ THE IDS ARE THE OLD KIT'S so saves, mastery and loadouts hold; the base names and glyphs are the new kit's,
+            // which `HeroLoadoutTests` compares with the real abilities. Sidegrades are closed (`SidegradesOpen`), so the two
+            // alternates change nothing; they are kept as rows rather than deleted for the same saves.
             // ---------------------------------------------------------------
-            new AbilityVariant("zack.1.sprint", "zack", 1, "BOLT SPRINT", "ZackSprint",
-                "BOLT SPRINT",
-                "You move faster and leave a wide live lane behind you.",
-                0.0f, 0.0f, "Covers your whole path", "Each shock is brief"),
+            new AbilityVariant("zack.1.sprint", "zack", 1, "BACKTRACK", "ZackBacktrack",
+                "BACKTRACK",
+                "Return to your 3-second-old spot with your held slipper.",
+                0.0f, 0.0f, "Keeps your slipper", "Returns to an old spot"),
 
-            // ⚠️⚠️ 45 PER CENT, UP FROM 30, AND THE GAIN REACHES TWO NUMBERS RATHER THAN ONE.
-            // At 30 per cent this row was the one alternate in the twelve a player could not
-            // feel: it bought 0.075 s of extra stagger on a 0.25 s stumble, which is four
-            // frames. It now scales the stagger AND divides the 1.1 s re-shock interval, so a
-            // runner caught in the lane is shocked half again as often and for half again as
-            // long, which is a decision (take the long way round) rather than a statistic.
-            // ⚠️ THE COST IS THE ONE THAT MATTERS MOST TO THE ROOM. `docs/VISION.md` § 2 records
-            // Zack's corridor at 27.2 per cent of the box off a 6.0 s cooldown, more floor than
-            // any ultimate; a 0.45 width cut takes one dash's lane to about 8 per cent.
-            new AbilityVariant("zack.1.arcline", "zack", 1, "BOLT SPRINT", "ZackSprint",
-                "ARC LINE", "One thin live wire. Whoever follows you down it pays for it.",
-                0.45f, -0.45f, "Punishes a chase", "One lane wide",
-                "Use Bolt Sprint eight times", true, 8),
+            new AbilityVariant("zack.1.arcline", "zack", 1, "BACKTRACK", "ZackBacktrack",
+                "ARC LINE", "Not available: retired with Bolt Sprint in the 2026-10-25 kit.",
+                0.45f, -0.45f, "Retired", "Unavailable",
+                "Use Backtrack eight times", true, 8),
 
-            // ⚠️⚠️ THE SLOT IS MAGNET NOW AND `BaseAbility` HAD TO MOVE WITH IT.
-            // `HeroLoadoutTests` reads the kit and compares this string to the ability's real
-            // name, which is the whole reason that field exists: STATIC CHARGE was deleted in
-            // `ZackHeroKit` on 2026-09-02 because it was Sean's Ignition Cannon with a different
-            // element on it, and a variant table naming an ability that no longer exists is the
-            // exact fault § 108.3 records about `berto`.
-            new AbilityVariant("zack.2.charge", "zack", 2, "MAGNET", "ZackOvercharge",
-                "MAGNET",
-                "Attacker only. Recall your slipper, charged for the next throw.",
-                0.0f, 0.0f, "You never walk in", "One use per knockdown"),
+            new AbilityVariant("zack.2.charge", "zack", 2, "AFTERIMAGE", "ZackAfterimage",
+                "AFTERIMAGE",
+                "Send a running copy for 3 s. The taya's touch pops it.",
+                0.0f, 0.0f, "Draws the taya away", "Runs straight"),
 
-            // ⚠️ THE ALTERNATE SELLS THE THROW AND PAYS WITH THE WINDOW, which is the same trade
-            // Snap Discharge made and the one row of the old pair that still describes something
-            // the ability does. What changed is what it is attached to.
-            new AbilityVariant("zack.2.discharge", "zack", 2, "MAGNET", "ZackOvercharge",
-                "SNAP DISCHARGE", "Attacker only. Recall it hot; throw before the charge fades.",
-                0.50f, -0.50f, "No time to read it", "Gone in a moment",
-                "Use Magnet eight times", true, 8),
+            new AbilityVariant("zack.2.discharge", "zack", 2, "AFTERIMAGE", "ZackAfterimage",
+                "SNAP DISCHARGE", "Not available: retired with Magnet in the 2026-10-25 kit.",
+                0.50f, -0.50f, "Retired", "Unavailable",
+                "Use Afterimage eight times", true, 8),
 
             // ---------------------------------------------------------------
             // NEMU. PHANTOM VEIL / ASTRAL HIJACK. `NemuHeroKit`.

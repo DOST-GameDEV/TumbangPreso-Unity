@@ -642,7 +642,7 @@ namespace TumbangPreso.Diagnostics
                     receipt.matchedTargetStatus |= ownedSentry != null;
                 }
                 if (hero == "zack" && slot == 1)
-                    receipt.effectStateObserved |= (system.Kit as ZackHeroKit)?.IsOverchargeThrowActive == true;
+                    receipt.effectStateObserved |= ZackAfterimage.Active.Exists(c => c != null && c.OwnerSlot == actor.PlayerSlot);
                 if (hero == "nemu" && slot == 0 && ability is IPreparedWorldReplication prepared
                     && prepared.CapturePreparedWorld(out var point, out _, out _))
                 {

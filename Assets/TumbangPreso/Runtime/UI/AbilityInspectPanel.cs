@@ -182,6 +182,9 @@ namespace TumbangPreso.UI
             go.transform.SetParent(parent, false);
             card.Rt = (RectTransform)go.transform;
             card.Group = go.AddComponent<CanvasGroup>();
+            // Equal shares keep a long description from stealing the ultimate's heading width.
+            var cardWidth = go.AddComponent<LayoutElement>();
+            cardWidth.minWidth = 0; cardWidth.preferredWidth = 0; cardWidth.flexibleWidth = 1;
 
             var bg = go.AddComponent<Image>();
             bg.sprite = GodotTheme.Box(UiTheme.HeroPlateRaised, UiTheme.HeroRim, 2, 6);

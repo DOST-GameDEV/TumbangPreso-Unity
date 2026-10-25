@@ -75,30 +75,29 @@ namespace TumbangPreso.CameraSystem
                 Rest(0), K(.30f, -.04f, .40f, .02f, .08f, .62f, .02f), K(.50f, -.06f, .46f, .00f, .10f, .66f, .00f),
                 K(.65f, -.14f, -.18f, .20f, .20f, .08f, .20f), K(.85f, -.13f, -.16f, .19f, .19f, .09f, .19f), Rest(1.2f)) },
 
-            // ---------------------------------------------------------------- ZACK: sideways, bladed
-            // QUICK CIRCUIT. Gather close, brace once at the .15s tell, recover.
-            // Small offsets keep the held shoe readable during either lateral cut.
-            { "sprint-electric", new CastPath(.15f, false,
+            // ---------------------------------------------------------------- ZACK: sideways, bladed (speedster kit, 2026-10-25)
+            // BACKTRACK. The inhale and the snap: gather close, brace once at the snap, recover. Small offsets keep a held shoe
+            // readable (he keeps it). The old Quick Circuit row, renamed: the motion is the same "snap, then chatter".
+            { "backtrack-snap", new CastPath(.15f, false,
                 Rest(0), K(.08f, -.04f, .02f, -.02f, .03f, .10f, -.02f),
                 K(.15f, .08f, -.03f, -.06f, -.06f, .18f, -.05f),
                 K(.28f, .06f, -.02f, -.04f, -.04f, .14f, -.03f),
                 K(.46f, .02f, 0, -.01f, -.01f, .05f, -.01f), Rest(.64f)) },
-            // MAGNET. The off hand aims out at the slipper, then the right snaps in to the chest as it
-            // arrives, with one electrical chatter before it lets go.
-            { "overcharge", new CastPath(.30f, false,
+            // AFTERIMAGE. The off hand flicks out to the side as the copy peels away, the right snaps in to the chest, one
+            // chatter, and lets go.
+            { "afterimage-split", new CastPath(.30f, false,
                 Rest(0), K(.14f, .02f, .02f, .04f, -.12f, .42f, .22f), K(.22f, .03f, .02f, .06f, -.14f, .44f, .24f),
                 K(.30f, -.08f, .10f, -.14f, -.06f, .36f, .10f), K(.36f, -.07f, .11f, -.13f, -.06f, .36f, .10f),
                 K(.42f, -.09f, .10f, -.14f, -.06f, .35f, .10f), Rest(.73f)) },
-            // BANK SHOT. The shoe is already held: offer its surface, brush the charge,
-            // then withdraw. No distant reach or recall motion.
-            { "bank-load", new CastPath(.28f, false,
+            // OVERCLOCK. The take: the hands come in and up, close on the charge, and settle crackling.
+            { "overclock-take", new CastPath(.28f, false,
                 Rest(0), K(.08f, .01f, .025f, .01f, .04f, .10f, .02f),
                 K(.18f, -.025f, .065f, .055f, .18f, .30f, .14f),
                 K(.28f, -.020f, .060f, .050f, .24f, .28f, .17f),
                 K(.42f, -.008f, .025f, .020f, .10f, .12f, .06f), Rest(.64f)) },
-            // THUNDERSTRIKE. One arm calls the sky and HOLDS ("hold to pick a spot"), then snaps down level
-            // to point at it while the left is thrown back as the counterweight; chatter after.
-            { "summon-lightning", new CastPath(.45f, false,
+            // LIVE WIRE. One arm draws the wire out and HOLDS while he aims ("hold to aim"), then throws the coil down level at
+            // the spot while the left is thrown back as the counterweight; chatter after.
+            { "livewire-throw", new CastPath(.45f, false,
                 Rest(0), K(.22f, .02f, .44f, .04f, -.04f, .20f, .00f), K(.36f, .02f, .50f, .04f, -.05f, .22f, .00f),
                 K(.45f, -.08f, .10f, .30f, -.12f, .12f, -.14f), K(.52f, -.07f, .11f, .29f, -.12f, .12f, -.14f),
                 K(.60f, -.08f, .10f, .30f, -.12f, .12f, -.14f), Rest(.97f)) },
@@ -326,7 +325,7 @@ namespace TumbangPreso.CameraSystem
         /// to key 1 and leaves them where they rest; a reach must hold the hand UP IN VIEW, palm out, for the whole 2 s, so these
         /// few keep key 1's offsets as well, eased in and out. Opt-in, so no other hero's hold moves.
         /// </summary>
-        private static readonly HashSet<string> HeldCastPaths = new HashSet<string> { "reach-drain", "reach-hex" };
+        private static readonly HashSet<string> HeldCastPaths = new HashSet<string> { "reach-drain", "reach-hex", "livewire-throw" };
         private float _heldPathBlend;
         private string _heldPath;
 

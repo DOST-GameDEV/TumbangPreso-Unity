@@ -29,7 +29,7 @@ namespace TumbangPreso.PlayTests
             _bots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;_seat=GameLaunch.SoloSeat;
             _rules=SceneFlow.SelectedRules.Clone();_pinned=SceneFlow.RulesPinned;_net=NetAuthority.Provider;
             yield return PlayModeWorld.Reset();
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,GameMode.HeroStrike);
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,GameMode.HeroStrike);
             NetAuthority.Provider=new SoloProvider();
             GameServices.Round.BeginRound();
             foreach(var player in GameServices.Round.Players)
@@ -55,17 +55,16 @@ namespace TumbangPreso.PlayTests
             WorldEffectSnapshot.Apply(Array.Empty<WorldEffectSnapshot.Field>(),0);
         }
 
-        private HeroMovementState Capture()=>System.Kit is ZackHeroKit zack
-            ?zack.CaptureMovementState():((SeanHeroKit)System.Kit).CaptureMovementState();
+        // Sean's Stoke Step alone uses the movement window now: Zack's Bolt Sprint and Quick Circuit were retired on 2026-10-25.
+        private HeroMovementState Capture()=>((SeanHeroKit)System.Kit).CaptureMovementState();
 
-        private static int Fields(string hero,int owner)=>hero=="zack"
-            ?Object.FindObjectsByType<HeroHazards.ShockTrailComponent>(FindObjectsSortMode.None).Count(f=>f.OwnerSlot==owner)
-            :Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None).Count(f=>f.OwnerSlot==owner);
+        private static int Fields(string hero,int owner)
+            =>Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None).Count(f=>f.OwnerSlot==owner);
 
         [UnityTest,Timeout(60000)]
         public IEnumerator RestoringMovementKeepsImpulseResourcesAndEmitterPhaseWithoutAnInitialDrop()
         {
-            foreach(string hero in new[]{"zack","sean"})
+            foreach(string hero in new[]{"sean"})
             {
                 Fresh(hero);var source=System.Kit.Skill1;
                 source.Activate(Context());if(hero=="sean")source.Tick(Context(),SeanHeroKit.StokeAnticipation);source.Tick(Context(),.08f);
@@ -96,7 +95,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest,Timeout(60000)]
         public IEnumerator ReplacedTrailObjectsKeepTheCapAndCancellationRetiresOnlyTheirOwner()
         {
-            foreach(string hero in new[]{"zack","sean"})
+            foreach(string hero in new[]{"sean"})
             {
                 Fresh(hero);var ability=System.Kit.Skill1;
                 ability.Activate(Context());
@@ -119,38 +118,16 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest,Timeout(60000)]
-        public IEnumerator LateWakeKeepsItsTimeSlotsWithoutInventingOrDelayingOldPoints()
-        {
-            Fresh("zack");
-            var newest=new Vector3(-1,.12f,-8);
-            var state=new HeroMovementState { Remaining=1.5f,UntilNextEmission=.10f,
-                Wake=new[]{new Vector3(-3,.12f,-8),newest},KnownWake=3 };
-            var invalid=state;invalid.KnownWake=4;
-            Assert.IsFalse(System.RestoreJoiningMovement(invalid,0));
-            Assert.IsTrue(System.RestoreJoiningMovement(state,.35f));
-            var restored=Capture();
-            Assert.AreEqual(2,restored.Wake.Length);Assert.AreEqual(1u,restored.KnownWake);
-            Assert.AreEqual(newest,restored.Wake[0]);
-            Assert.That(restored.UntilNextEmission,Is.EqualTo(.05f).Within(.001));
-            Assert.Zero(Fields("zack",1));
-            System.Kit.Skill1.Tick(Context(),.06f);
-            var field=Object.FindObjectsByType<HeroHazards.ShockTrailComponent>(FindObjectsSortMode.None).Single(f=>f.OwnerSlot==1);
-            Assert.That(field.transform.position.x,Is.EqualTo(newest.x).Within(.001));
-            System.Kit.Skill1.Tick(Context(),.31f);
-            Assert.AreEqual(1,Fields("zack",1),"A missing sample produced an invented trail point.");
-            Assert.AreEqual(3u,Capture().KnownWake,"New observed samples did not replace the gap.");
-            yield return null;
-        }
-
-        [UnityTest,Timeout(60000)]
         public IEnumerator InvalidEmptyExpiredAndNewerCastStatesCannotBeRearmed()
         {
-            foreach(string hero in new[]{"zack","sean"})
+            foreach(string hero in new[]{"sean"})
             {
                 Fresh(hero);
-                var state=new HeroMovementState { Remaining=.25f,UntilNextEmission=.10f,Wake=Array.Empty<Vector3>() };
+                var state=new HeroMovementState { Remaining=.25f,UntilNextEmission=0,Wake=Array.Empty<Vector3>() };
                 var invalid=state;invalid.Remaining=float.NaN;
                 Assert.IsFalse(System.RestoreJoiningMovement(invalid,0));
+                invalid=state;invalid.UntilNextEmission=.10f;
+                Assert.IsFalse(System.RestoreJoiningMovement(invalid,0),"Sean has no retired Zack trail-emission clock.");
                 Assert.IsTrue(System.RestoreJoiningMovement(state,0),"Invalid timing poisoned initial state.");
                 System.Kit.Skill1.Tick(Context(),.26f);
                 Assert.IsFalse(System.RestoreJoiningMovement(state,0));Assert.IsFalse(System.Kit.Skill1.IsActive);
@@ -161,7 +138,15 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(System.RestoreJoiningMovement(state,.3f));
                 Assert.IsFalse(System.Kit.Skill1.IsActive);
                 Assert.IsFalse(System.RestoreJoiningMovement(state,0));
-                Fresh(hero);System.Kit.Skill1.Activate(Context());
+                Fresh(hero);
+                _caster.enabled=true;_caster.Intent.Parked=false;_caster.Intent.Move=Vector2.zero;
+                for(int settle=0;settle<5;settle++)yield return new WaitForFixedUpdate();
+                _caster.enabled=false;
+                Assert.IsTrue(_caster.IsGrounded,"The new cast requires a body settled on the court.");
+                System.Kit.Skill1.Activate(Context());
+                System.Kit.Skill1.Tick(Context(),SeanHeroKit.StokeAnticipation);
+                System.Kit.Skill1.Tick(Context(),.08f);
+                Assert.IsTrue(System.Kit.Skill1.IsActive,"The newer cast must have reached its active movement window.");
                 float running=System.Kit.Skill1.DurationRemaining;
                 Assert.IsFalse(System.RestoreJoiningMovement(state,0));
                 Assert.AreEqual(running,System.Kit.Skill1.DurationRemaining);

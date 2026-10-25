@@ -208,8 +208,9 @@ namespace TumbangPreso
                     });
 
                 // Specific kit states
-                if (kit is ZackHeroKit zack && zack.IsOverchargeThrowActive)
-                    into.Add(new StatusRow { Label = "OVERCHARGE", Timed = false });
+                if (kit is ZackHeroKit zack && zack.IsOverclocked)
+                    into.Add(new StatusRow { Label = "OVERCLOCKED", Remaining = zack.OverclockLeft,
+                        Total = Core.ZackRules.OverclockSeconds, Timed = true });
 
                 if (kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
                     into.Add(new StatusRow { Label = "IGNITION", Timed = false });

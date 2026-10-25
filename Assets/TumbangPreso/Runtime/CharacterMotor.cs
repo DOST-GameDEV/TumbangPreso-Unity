@@ -380,7 +380,7 @@ namespace TumbangPreso
         /// only syncs transforms, it does not resolve the overlap. Three frames is 50 ms
         /// and is invisible. Let a probe decide whether it can go, not an assumption.
         /// </summary>
-        public void BeginSpawnSettle()
+        public void BeginSpawnSettle(bool keepStatuses = false)
         {
             unchecked { PresentationTeleportSerial++; }
             _spawnSettle = Balance.SpawnSettleFrames;
@@ -390,7 +390,9 @@ namespace TumbangPreso
             // ⚠️ A SPAWN IS A FRESH START FOR EVERY STATUS THAT IS NOT A STUN (the stun stack has
             // its own resets). A Whirl or a Chill must not follow a body across a round boundary,
             // and a flight must not survive a teleport to the mark.
-            ClearStatuses();
+            // ⚠️ ZACK'S BACKTRACK KEEPS THEM (`keepStatuses`): a snap back in time is not a fresh start, and a Backtrack that
+            // cleared Chilled or Concussed would be a cleanse, which is Dante's UNSTOPPABLE.
+            if (!keepStatuses) ClearStatuses();
         }
 
         /// <summary>
@@ -413,6 +415,12 @@ namespace TumbangPreso
         }
 
         public int MovementEpoch { get; private set; }
+        /// <summary>
+        /// Counts the host's impacts and carries this peer applied to the body (Zack's MOMENTUM resets on a hit). Local only:
+        /// never on the wire, and only ever compared with its own earlier value.
+        /// </summary>
+        public int ImpactSerial { get; private set; }
+        public void NoteImpactTaken() => ImpactSerial++;
         // Local presentation discontinuity, including offline teleports. Never
         // serialized onto the gameplay wire or used to decide movement/outcomes.
         public int PresentationTeleportSerial { get; private set; }
@@ -441,7 +449,13 @@ namespace TumbangPreso
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
         }
 
-        public void Teleport(Vector3 position)
+        public void Teleport(Vector3 position) => Teleport(position, keepStatuses: false);
+
+        /// <summary>
+        /// Moves this body. <paramref name="keepStatuses"/> keeps every status it carries (Zack's BACKTRACK); a respawn or a
+        /// blink to the mark clears them.
+        /// </summary>
+        public void Teleport(Vector3 position, bool keepStatuses)
         {
             if (!MayMutateGameplayState()) return;
             EndHaul();
@@ -471,7 +485,7 @@ namespace TumbangPreso
             _cc.enabled = false;      // CharacterController fights direct transform writes
             transform.position = position;
             _cc.enabled = true;
-            BeginSpawnSettle();
+            BeginSpawnSettle(keepStatuses);
             // A host-side replica still has an interpolation target. Recall must
             // replace that target too, or the next step slides back to the old body.
             _networkTargetPosition=position;
@@ -1978,6 +1992,7 @@ namespace TumbangPreso
                 Net.MatchRpc.Instance?.BroadcastImpact(_playerSlot,impulse);
                 return;
             }
+            NoteImpactTaken();
             ApplyImpulse(impulse);
         }
 

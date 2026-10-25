@@ -8,7 +8,7 @@ namespace TumbangPreso
     internal static class SlipperLandingPrediction
     {
         internal static bool TryPredictLanding(Vector3 origin, Vector3 velocity, float spin, RaycastHit[] buffer, out Vector3 landing, List<Vector3> path = null,
-            float skimDistance = 0, bool skimming = false, float restHeight = Balance.SlipperRestHeight, SlipperAffinity bankAffinity = SlipperAffinity.Normal, int initialBanks = 0)
+            float skimDistance = 0, bool skimming = false, float restHeight = Balance.SlipperRestHeight, int initialBanks = 0)
         {
             landing = default;
             Vector3 point = origin;
@@ -25,7 +25,7 @@ namespace TumbangPreso
                 Vector3 next = point + velocity * dt;
                 Vector3 disp = next - point;
                 float distance = disp.magnitude;
-                float restitution = Slipper.BankRestitution(spin, banks, bankAffinity);
+                float restitution = Slipper.BankRestitution(spin, banks);
                 if (distance > .001f)
                 {
                     int count = Physics.SphereCastNonAlloc(point, Balance.SlipperHitRadius, disp / distance, buffer, distance, ~0, QueryTriggerInteraction.Ignore);
@@ -49,22 +49,14 @@ namespace TumbangPreso
                         normal = normal.sqrMagnitude > .001f ? normal.normalized : -disp.normalized;
                         velocity = Vector3.Reflect(velocity, normal) * restitution;
                         next = wall.point + normal * (Balance.SlipperHitRadius + .02f); banks++;
-                        bankAffinity = Slipper.ConsumePoweredBank(bankAffinity);
                     }
                 }
-                restitution = Slipper.BankRestitution(spin, banks, bankAffinity);
-                bool powered = Slipper.IsPoweredBank(bankAffinity);
-                bool bounded = BounceAxis(ref next.x, ref velocity.x, AIController.PlayableMinX, AIController.PlayableMaxX, powered ? 1 : restitution);
-                bounded |= BounceAxis(ref next.z, ref velocity.z, AIController.PlayableMinZ, AIController.PlayableMaxZ, powered ? 1 : restitution);
-                bool sideBank = bounded;
+                restitution = Slipper.BankRestitution(spin, banks);
+                bool bounded = BounceAxis(ref next.x, ref velocity.x, AIController.PlayableMinX, AIController.PlayableMaxX, restitution);
+                bounded |= BounceAxis(ref next.z, ref velocity.z, AIController.PlayableMinZ, AIController.PlayableMaxZ, restitution);
                 float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
-                if (next.y > ceiling) { next.y = ceiling; velocity.y = -Mathf.Abs(velocity.y) * (powered ? Balance.BounceRestitution : restitution); bounded = true; }
-                if (sideBank)
-                {
-                    if (powered) velocity *= .85f;
-                    bankAffinity = Slipper.ConsumePoweredBank(bankAffinity);
-                }
-                if (bounded && (sideBank || !powered)) banks++;
+                if (next.y > ceiling) { next.y = ceiling; velocity.y = -Mathf.Abs(velocity.y) * restitution; bounded = true; }
+                if (bounded) banks++;
                 var support = next; support.y = Mathf.Max(point.y, next.y);
                 float ground = Slipper.FindGroundY(support, Balance.SlipperRestHeight);
                 path?.Add(next);

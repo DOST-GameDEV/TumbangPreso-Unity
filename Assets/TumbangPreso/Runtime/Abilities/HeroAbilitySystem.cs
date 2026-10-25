@@ -275,15 +275,12 @@ namespace TumbangPreso.Abilities
                 case "cheska.2.spires":
                     slot2?.ScaleLoadout(telegraphRadius: Gain("cheska.2.spires")); break;
 
-                // ⚠️ THE ARMED WINDOW IS THE COST ON BOTH OF THESE. Flare Shot and Snap Discharge
-                // both buy speed with how long the shoe stays armed after the cast, and that
+                // ⚠️ THE ARMED WINDOW IS THE COST HERE. Flare Shot (and Snap Discharge, retired with Magnet on 2026-10-25)
+                // buy speed with how long the shoe stays armed after the cast, and that
                 // window IS `HeroAbility.Duration`: the deck bar draining faster is the whole
                 // warning a player gets that they have to throw now.
                 case "sean.2.flare":
                     slot2?.ScaleLoadout(duration: Cost("sean.2.flare")); break;
-
-                case "zack.2.discharge":
-                    slot2?.ScaleLoadout(duration: Cost("zack.2.discharge")); break;
 
                 case "nemu.2.leash":
                     slot2?.ScaleLoadout(duration: Cost("nemu.2.leash")); break;
@@ -1504,8 +1501,6 @@ namespace TumbangPreso.Abilities
             if (NetAuthority.IsHost)
             {
                 Kit.OnObjectiveAwarded(amount);
-                if (Kit is ZackHeroKit && amount > 0)
-                    Net.MatchRpc.Instance?.BroadcastObjectiveCooldown(_motor.PlayerSlot, amount);
             }
         }
 
@@ -1575,8 +1570,7 @@ namespace TumbangPreso.Abilities
         {
             if(Kit==null || _motor==null) return false;
             bool wasActive=Kit.Skill1.IsActive;
-            bool applied=Kit is ZackHeroKit zack?zack.RestoreJoiningMovement(_motor,state,age)
-                :Kit is SeanHeroKit sean && sean.RestoreJoiningMovement(_motor,state,age);
+            bool applied=Kit is SeanHeroKit sean && sean.RestoreJoiningMovement(_motor,state,age);
             if(applied && !wasActive && Kit.Skill1.IsActive)
             {
                 var ability=Kit.Skill1;

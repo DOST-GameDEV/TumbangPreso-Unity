@@ -132,7 +132,9 @@ namespace TumbangPreso.Core
 
         /// <summary>*"Prevents movement or interaction for 2.5 seconds."* Glacial Nova's number already.</summary>
         public const float FrozenSeconds = 2.5f;
-        public const float ZappedSeconds = 5;
+        // Zack's rework (owner's V3 sheet, 2026-10-25): *"Cannot move or act for 1 second."* A full stun on the stun stack with
+        // `StunElement.Shock`, deliberately much shorter than Frozen's 2.5 s. It used to block ability casts only, for 5 s.
+        public const float ZappedSeconds = 1.0f;
 
         /// <summary>At most the sentry's life; the hold or a tag ends it sooner.</summary>
         public const float RootedSeconds = PaeteRules.SentryLifeSeconds;
@@ -249,9 +251,9 @@ namespace TumbangPreso.Core
                 HauntedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: false),
             new StatusRule(StatusKind.Zapped, "ZAPPED",
-                "Prevents ability casts for 5 seconds.", "Disabled Ability Cast",
-                ZappedSeconds, 1, blocksMovement: false, blocksInteraction: false,
-                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+                "Cannot move or act for 1 second.", "Disabled Movement and Actions",
+                ZappedSeconds, 0.0f, blocksMovement: true, blocksInteraction: true,
+                blocksSlipperRetrieval: true, dropsHeldSlipper: false, removable: true, immunityApplies: true),
             // ⚠️ APPENDED (the enum's note). Nemu's LET THEM IN, `docs/reports/nemu-ultimate-2026-10-11/direction.md`.
             new StatusRule(StatusKind.Possessed, "POSSESSED",
                 "For 15 seconds a ghost is inside you: 10% slower, and it drags your steering toward danger. Push against it to hold your ground; fighting wears its grip down.",

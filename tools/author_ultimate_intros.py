@@ -429,7 +429,18 @@ def zack():
     """
     # THE BOLT WAITS FOR HIM (2026-10-09, 6.4 s): the world stops with the lightning an arm's length over his hand, and he
     # is the only thing in it that moves. The times are the stage's (`HeroIntroductionScene.Zack.cs`).
-    p = Performance("zack", 6.4)
+    # TRIMMED TO 4.5 s (owner, 2026-10-25, "trim the bolt one"; docs/reports/zack-kit-2026-10-25/plan.md section 4): the keys
+    # below stay written on the 6.4 s film's times and `zk` maps them onto the cut, exactly as the stage's `ZackClock` maps
+    # back. THE LOOK (1.94 to 2.70) and THE SHRUG (3.60 to 4.50) are cut; the let go ends in a sprinter's set.
+    film = [(0.0, 0.0), (1.20, 1.05), (1.94, 1.70), (2.70, 1.70), (3.60, 2.70), (4.50, 2.70), (6.40, 4.50)]
+
+    def zk(t):
+        for (a, x), (b, y) in zip(film, film[1:]):
+            if t <= b:
+                return x if b - a < 1e-6 else x + (y - x) * (t - a) / (b - a)
+        return 4.50 + (t - 6.40)
+
+    p = Performance("zack", 4.5)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     cocky = Pose(torso=(0, -6, 4), head=(0, 8, -6), left=(58, 32, -18), right=(8, 20, 0),
                  legs=((2, 3), (-2, 8)))
@@ -449,29 +460,26 @@ def zack():
                   legs=((6, 4), (-6, 4)))
     strike = Pose(torso=(-12, 0, 0), head=(8, 0, 0), left=(42, 42, -10), right=(18, 30, 0),
                   legs=((8, 4), (-8, 4)))
-    settle = Pose(torso=(0, -4, 4), head=(-2, -10, -8), left=(6, 34, -12), right=(8, 24, 0),
-                  legs=((2, 3), (-2, 8)))
+    # The end (2026-10-25): no settle; he drops into a sprinter's set, the bolt in him, and the cut comes as he goes.
+    sprint_set = Pose(torso=(28, 0, 0), head=(-14, 0, 0), left=(-70, 10, 0), right=(20, 24, 0),
+                      legs=((-40, 6), (20, 6)))
     p.key(0, rest)
-    p.key(.26, cocky).key(.40, flick, punch=True).key(.50, cocky)
-    p.key(.66, point_up).hold(.66, 1.98, point_up)
-    p.key(2.22, aside).hold(2.22, 2.66, aside)
-    p.key(2.95, eyeing)
-    p.key(3.15, poke, punch=True).hold(3.15, 3.34, poke)
-    p.key(3.5, eyeing)
-    p.key(3.82, shrug).hold(3.82, 4.42, shrug)
-    p.key(4.72, gather).hold(4.72, 5.06, gather)
-    p.key(5.2, strike, punch=True).hold(5.2, 5.5, strike)
-    p.key(5.86, settle).hold(5.86, 6.4, settle)
+    p.key(zk(.26), cocky).key(zk(.40), flick, punch=True).key(zk(.50), cocky)
+    p.key(zk(.66), point_up).hold(zk(.66), zk(1.94), point_up)
+    p.key(zk(2.72), eyeing)
+    p.key(zk(3.15), poke, punch=True).hold(zk(3.15), zk(3.34), poke)
+    p.key(zk(3.5), eyeing)
+    p.key(zk(4.72), gather).hold(zk(4.72), zk(5.06), gather)
+    p.key(zk(5.2), strike, punch=True).hold(zk(5.2), zk(5.5), strike)
+    p.key(zk(5.86), sprint_set).hold(zk(5.86), 4.5, sprint_set)
     # A: the call, on the face's readable side.
-    p.shot(0, 1.2, (-2.2, 1.35, 3.1), (0, 1.15, 0), 42, eye_to=(-2.05, 1.35, 2.85))
+    p.shot(0, zk(1.2), (-2.2, 1.35, 3.1), (0, 1.15, 0), 42, eye_to=(-2.05, 1.35, 2.85))
     # B: from low, looking up past him at the sky the bolt comes down.
-    p.shot(1.2, 1.98, (-1.4, .4, 3.5), (-.2, 2.7, 0), 62, eye_to=(-1.3, .42, 3.3))
-    # C: close, his face and the hung tip over it. The look, then the poke.
-    p.shot(1.98, 3.62, (-1.5, 1.5, 3.3), (-.2, 1.5, 0), 48, eye_to=(-1.25, 1.5, 3.0), close=True)
-    # D: wide and high, travelling round the stopped court.
-    p.shot(3.62, 4.62, (5.2, 4.0, 6.2), (0, 1.7, 0), 52, eye_to=(3.0, 4.3, 7.4))
-    # E: front and low for the let go and what he is left as.
-    p.shot(4.62, 6.4, (-.8, .95, 4.3), (0, 1.5, 0), 50, eye_to=(-.7, 1.0, 3.6))
+    p.shot(zk(1.2), zk(1.94), (-1.4, .4, 3.5), (-.2, 2.7, 0), 62, eye_to=(-1.3, .42, 3.3))
+    # C: close, his face and the hung tip over it: the poke (the look is cut).
+    p.shot(zk(2.70), zk(3.60), (-1.5, 1.5, 3.3), (-.2, 1.5, 0), 48, eye_to=(-1.25, 1.5, 3.0), close=True)
+    # E: front and low for the let go and the set he goes from (the wide shrug, D, is cut).
+    p.shot(zk(4.50), 4.5, (-.8, .95, 4.3), (0, 1.5, 0), 50, eye_to=(-.7, 1.0, 3.6))
     p.locked((-1.9, 1.15, 4.3), (0, 1.15, 0), 46)
     return p
 

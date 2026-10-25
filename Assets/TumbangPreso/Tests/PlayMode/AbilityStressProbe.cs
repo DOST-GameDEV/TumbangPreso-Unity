@@ -136,33 +136,6 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator MagnetRecallTraceFollowsOnlyTheHandAndExpires()
-        {
-            var hand = new GameObject("Recall receiving hand");
-            hand.transform.position = new Vector3(3, 1, 0);
-            Vector3 from = new Vector3(-4, .1f, 0);
-            var go = Visual.MagnetRecallTrace.Spawn(from, hand.transform, hand.transform.position);
-            var line = go.GetComponent<LineRenderer>();
-            Assert.AreEqual(from, line.GetPosition(0));
-            Assert.AreEqual(hand.transform.position, line.GetPosition(line.positionCount - 1));
-            Assert.AreEqual(0, go.GetComponentsInChildren<Collider>().Length);
-            for (int i = 0; i < line.positionCount; i++)
-            {
-                Vector3 point = line.GetPosition(i);
-                Vector3 segment = hand.transform.position - from;
-                float u = Mathf.Clamp01(Vector3.Dot(point - from, segment) / segment.sqrMagnitude);
-                Assert.Less(Vector3.Distance(point, from + segment * u), .06f,
-                    "Recall must remain a narrow connection, not arc toward nearby objects.");
-            }
-            hand.transform.position += new Vector3(1, .3f, 2);
-            yield return null;
-            Assert.Less(Vector3.Distance(hand.transform.position, line.GetPosition(line.positionCount - 1)), .001f);
-            yield return new WaitForSeconds(Visual.MagnetRecallTrace.LifeSeconds + .1f);
-            Assert.IsTrue(go == null, "The brief recall trace outlived its presentation.");
-            Object.Destroy(hand);
-        }
-
-        [UnityTest]
         public IEnumerator ChargedHandAuraUsesTheMeasuredHandAnchor()
         {
             var actor = new GameObject("Charge anchor review");

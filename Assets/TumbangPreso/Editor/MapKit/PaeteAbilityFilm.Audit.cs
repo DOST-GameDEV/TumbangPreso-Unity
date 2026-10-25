@@ -55,14 +55,6 @@ namespace TumbangPreso.EditorTools.MapKit
                     string when = round == 0 ? "first cast" : "second cast";
                     Time(report, when + ": Whirlwind", () => { var f = new GameObject("f"); f.transform.SetParent(host.transform, false); var w = AmihanWhirlwind.Build(f.transform, 2.5f); w.Pose(1f); return () => { w.Free(); Object.DestroyImmediate(f); }; });
                     Time(report, when + ": Drift", () => { var d = AmihanDashWake.Build(Vector3.zero, new Vector3(0f, 0f, 4f), host.transform, null); d.StepTo(0.3f); return () => Object.DestroyImmediate(d.gameObject); });
-                    Time(report, when + ": Quick Circuit", () =>
-                    {
-                        var body = art != null && art.Model != null ? (GameObject)Object.Instantiate(art.Model) : new GameObject("body");
-                        body.hideFlags = HideFlags.DontSave;
-                        var flash = ZackCircuitFlash.Stage(body.transform, body, Vector3.right);
-                        flash.StagedCut(); flash.StagedView(eye, false); flash.StepTo(FxStudyZackCircuit.Tell + 0.1f);
-                        return () => { flash.Free(); Object.DestroyImmediate(flash.gameObject); Object.DestroyImmediate(body); };
-                    });
                     Time(report, when + ": Boulder (cast moment)", () =>
                     {
                         var g = new GameObject("b"); g.transform.SetParent(host.transform, false);
@@ -192,22 +184,17 @@ namespace TumbangPreso.EditorTools.MapKit
                     return new AuditRun(fx.Root.gameObject, t => fx.Pose(t, 2.8f, Mathf.Repeat(1f - t / 5f, 1f), t, -1f), fx.Dispose, 1.5f);
                 }, "");
 
-                // Zack's QUICK CIRCUIT as a cast builds it: the tell (bakes his body), then the cut (bakes it again).
-                var art = RosterBook.Load()?.FindPersonArt("zack");
-                if (art == null || art.Model == null) report.AppendLine("Zack's Quick Circuit | | | | | | | could not be measured: no model for 'zack' in the roster");
-                else Audit(report, "Zack's Quick Circuit (tell and cut)", 5, () =>
+                // Zack's LIVE WIRE as its field's look builds it (his retired Quick Circuit measured here until 2026-10-25).
+                Audit(report, "Zack's Live Wire (overcharged)", 5, () =>
                 {
-                    // The circuit stands itself in its body's scene, so the body is a loose object of the open scene (never saved,
-                    // destroyed straight after), not a child of the hidden host, which belongs to no scene.
-                    var body = (GameObject)Object.Instantiate(art.Model);
-                    body.hideFlags = HideFlags.DontSave;
-                    body.transform.localScale = Vector3.one * CharacterVisual.PersonScale;
-                    var flash = ZackCircuitFlash.Stage(body.transform, body, Vector3.right);
-                    if (flash == null) throw new InvalidOperationException("the circuit could not be staged on the model");
-                    flash.StagedCut();
-                    flash.StagedView(eye, false);
-                    return new AuditRun(flash.gameObject, t => flash.StepTo(FxStudyZackCircuit.Tell + (t % 0.9f)), () => { flash.Free(); Object.DestroyImmediate(flash.gameObject); Object.DestroyImmediate(body); }, FxStudyZackCircuit.Tell + 0.2f);
-                }, "the two bakes of his body are in the making time");
+                    var a = new Vector3(-2f, 0f, 0f); var b = new Vector3(2f, 0f, 0f);
+                    var field = new Net.WorldEffectSnapshot.Field { Type = Net.WorldEffectSnapshot.Kind.LiveWire, EventId = 1,
+                        Position = a, Forward = Vector3.right, Radius = 4f, Duration = Core.ZackRules.LiveWireSeconds,
+                        Remaining = Core.ZackRules.LiveWireSeconds, SecondScale = 1f, Path = new[] { a, b } };
+                    var look = ZackLiveWireLook.Build(host.transform, field, renderOnly: true);
+                    return new AuditRun(look.gameObject, t => look.StepTo(1f + t % 5f), () => Object.DestroyImmediate(look.gameObject), 1.5f);
+                }, "");
+
 
                 // Dante's BOULDER as the match plays it: the cast moment and the hit moment, each its own copy of the study.
                 Audit(report, "Dante's Boulder, cast moment", 5, () =>

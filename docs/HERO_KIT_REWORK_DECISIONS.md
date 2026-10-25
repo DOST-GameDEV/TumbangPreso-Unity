@@ -4,6 +4,22 @@
 
 # Hero kit decisions and distinct loadout jobs
 
+## Zack speedster decision, 2026-10-25
+
+The owner approved Momentum, Backtrack, Afterimage, Live Wire and a 25-second
+Overclock. This supersedes the historical Zack Q/E rows below. Arc Line and Snap
+Discharge retain their saved IDs and historical budget metadata but are retired;
+closed sidegrades always bind the current defaults. The exact rules and the four
+owner answers are in [the approved plan](reports/zack-kit-2026-10-25/plan.md).
+Zapped is a 1-second full Shock stun on the existing timed recovery path. Recovery
+input is disabled in the current motor, so no button mash shortens it.
+
+Implementation is committed on main. The owner refined Backtrack into a visible
+pull, removed the old magnet props, requested low floor-mounted wire anchors and
+authorized enabling original electrical SFX plus publication. See the
+[audio pass](reports/zack-kit-2026-10-25/lightning-audio.md). Owner visual/listening
+judgment and actual peer acceptance remain separate from local checks.
+
 ## Current interpretation, 2026-09-16
 
 The design candidates and source findings below are historical. The six kits

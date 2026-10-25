@@ -795,7 +795,6 @@ namespace TumbangPreso.Abilities
             if (IsWindingUp) return false;
 
             if (!ctx.Motor.CanAct() && !AllowsImpairedCast(ctx)) return false;
-            if (ctx.Motor.IsZapped && !AllowsImpairedCast(ctx)) return false;
             return true;
         }
 

@@ -371,12 +371,7 @@ namespace TumbangPreso
             SlipperAffinity affinity = Held.Affinity == SlipperAffinity.Concussed
                 ? SlipperAffinity.Concussed : SlipperAffinity.Normal;
 
-            if (ability?.Kit is ZackHeroKit zack && zack.IsBankShotLoadedFor(Held))
-            {
-                affinity = zack.BankShotAffinityFor(Held);
-                zack.ConsumeMagnetCharge();
-            }
-            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsEmpoweredThrowLoadedFor(Held))
+            if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsEmpoweredThrowLoadedFor(Held))
             {
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();

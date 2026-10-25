@@ -1,6 +1,6 @@
 # Zack rework: plan and direction (2026-10-25)
 
-Status: PLAN, approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
+Status: IMPLEMENTED ON MAIN, focused local validation complete; owner visual/audio review and actual peers pending. The owner authorized enabling Zack sounds and publication; see [electrical audio](lightning-audio.md). [Verification](verification-session3.md). Approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
 section 7. Every number is a starting value: section 8 lists the ones to watch in play. Research is `research.md` beside
 this file. Method: `docs/HERO_KIT_METHOD.md`. Network: `docs/SKILL_NETWORK_CONTRACT.md`.
 
@@ -16,7 +16,7 @@ strings a live wire across a lane (Live Wire). The ultimate is simply MORE of hi
 | | Zack |
 |---|---|
 | Colours | core `#FFE27A`, body `#FFC21A`, edge `#C8740E`, ink line `#2A2230`. Never white, never blue, never a flag colour |
-| Shapes | thin jagged lines with knees, short forks, sparks as four-point glints, his own body as the decoy, two small concrete posts |
+| Shapes | thin jagged lines with knees, short forks, sparks as four-point glints, his own body as the decoy, two compact floor-mounted reel anchors |
 | Motion | snap, then chatter: everything arrives in one frame and then crackles in short bursts; nothing glides |
 | Ends | a line breaks into three or four short sparks that fall and wink out; a body breaks into rising flecks from the feet up |
 | Sound family | dry snaps, a buzzing hum at mains frequency, wire twang, a rising whine for speed, a pop for the decoy |
@@ -53,13 +53,13 @@ mastery, loadouts and HUD slots hold.
   (`ZackMomentumLook` reads `PresentationTravelVelocity`), so every screen sees the same three steps within a frame.
 
 **Backtrack** (Predicted, the Phaister TELEPORT route: owner moves, host replays and broadcasts the teleport epoch)
-- Every peer keeps a 3.2 s ring of his planar positions at 20 Hz (`ZackPathHistory`, on every body that carries the kit).
+- Every peer keeps a 4.0 s ring of his planar positions at 20 Hz (on every body that carries the kit), covering the host's 3.5 s validation window.
 - The owner picks the destination from his own ring at 3.0 s ago (or the oldest sample this round if fewer than 3 s
   have passed, at least 0.5 s) in `CaptureLocalCastContext`, so the accepted cast carries it as the aim point.
 - The host accepts only a destination within `BacktrackTolerance` 2.5 m of its own ring of that body anywhere from 2.5 to
   3.5 s ago, inside the playable rectangle, on ground, with no wall between it and the ring point. Otherwise refused and
   refunded (the existing predicted-refusal path).
-- He keeps the slipper in hand, his statuses and his facing. The snap is instant; the rewind is drawn after it.
+- He keeps the slipper in hand, his statuses and his facing. The accepted gameplay snap is instant. Its render-only body and eye are pulled back along the actual path in 0.42 s (owner refinement, section 7).
 - Cannot be cast while stunned, Zapped, tagged, rooted, flying or carrying the can.
 - Cooldown 30 s; while Overclocked 3 s (and Overclock's start clamps a running cooldown to 3 s).
 - Momentum resets (he stopped).
@@ -79,10 +79,10 @@ mastery, loadouts and HUD slots hold.
 - Defending only. Hold to aim (0 to 6 m, `AimByHolding(1.5, 6, whereLooking: true)`), release: post A at his feet, post B at
   the aimed point (owner, 2026-10-25). Length 1.5 to 6.0 m. Both posts on ground within 0.3 m of his floor, inside the
   playable rectangle, with no wall between them at 0.9 m.
-- The wire sags from 1.15 m at the posts to 0.85 m at its middle: above any jump (apex 0.83 m), below a Featherfall flyer.
+- The tension wire sits at 0.28 m on compact floor anchors and 0.24 m in the middle. A timed jump clears it (owner refinement, 2026-10-25).
   It has NO collider: bodies, slippers and the can pass through it.
 - Crossing = an attacker's feet go from one side of the segment to the other between two host physics steps, within the
-  segment's length, feet below 1.6 m above the court. Taya, tagged and already-zapped-by-this-wire bodies are ignored.
+  segment's length, feet no more than 0.40 m above the wire floor at the crossing plane. Taya, tagged and already-zapped-by-this-wire bodies are ignored.
 - Normal wire: the first crosser is Zapped and the wire snaps. Overcharged wire (strung while Overclocked): every attacker
   is Zapped the first time they cross it, and it lasts its full 10 s.
 - Lasts 10 s. A new cast retires his old wire. Round end retires it.
@@ -110,7 +110,7 @@ mastery, loadouts and HUD slots hold.
 | Ability | Tell | Release | Travel | Contact | Linger | Dissipate |
 |---|---|---|---|---|---|---|
 | Momentum | none: it is earned | step 1 (1 s): sparks at his heels | step 2 (2 s): a short gold ribbon from his heels | step 3 (3 s, full): three ghost frames trail him, his FPP hands crackle | held while he runs | a stop: the ribbon breaks into sparks; a hit: one snap and it is gone |
-| Backtrack | (ready) his own faint echo at the 3 s-ago spot, only on his screen | a sharp inhale of current: his body flickers, a snap | the rewind: a gold streak runs BACKWARDS along his real path in 0.3 s, ghost frames pulling into the landing | he reappears in a ring of sparks on the court, a short static rewind sound | ring holds 0.4 s | the ring breaks into four sparks |
+| Backtrack | (ready) his own faint echo at the 3 s-ago spot, only on his screen | a sharp inhale of current: his body flickers, a snap | the rewind: a gold streak runs BACKWARDS along his real path in 0.42 s, ghost frames pulling into the landing | he reappears in a ring of sparks on the court, a short static rewind sound | ring holds 0.4 s | the ring breaks into four sparks |
 | Afterimage | a quick sideways shrug of his shoulders (the copy peels out) | a crackle at his feet, the copy steps out of him | the copy runs his real run, crackling, a thin trail at its heels | the taya touches it: it pops into flecks with a dry pop and a "zip" | none | after 3 s it stumbles a step and fizzles from the feet up |
 | Live Wire | hold: he pulls a wire out from one fist across his body (aim pose); the ring and a dotted line show where it will run | release: he throws the coil; post B drops on the spot, post A bangs into the court at his feet | the wire whips out between them and snaps taut with a twang | an attacker crosses: a flash at the crossing point, the wire jumps, the victim jolts (Zapped) | the wire hums and sparks at the tangles; overcharged it is doubled and sparks more | it snaps (normal) or after 10 s goes slack, sags to the court and the posts sink |
 | Overclock (play) | the cutscene | he sets off already charged | gold crackle round him, three ghost frames behind him, a lit trail at his feet | his skills show it: two copies, a double wire, the Backtrack tile cycling fast | the tile counts 25 s down | at 5 s left the crackle stutters; at 0 a last snap and the light drains down his body |
@@ -132,7 +132,7 @@ One travelling thing: the bolt, from the sky into his raised finger. The staging
 | THE LET GO: the world restarts, the bolt finishes into him | 4.50 to 6.40 | 2.70 to 4.50 | no ring, no Zap of staged players; the bolt enters his fist and runs down him; he drops into a sprinter's set and the cut comes as he goes |
 
 Play picks up with him Overclocked, his crackle already on (never charged twice). The held-equipment rule is unchanged
-(the carrying hand keeps its shoe). The theme cue keeps its name and stays silent until the owner picks a draft (section 6).
+(the carrying hand keeps its shoe). The theme cue keeps its name. The owner later authorized enabling the electrical family (section 9).
 
 ## 5 · Everything else the kit touches (and what each one needs)
 
@@ -156,7 +156,7 @@ Play picks up with him Overclocked, his crackle already on (never charged twice)
 
 ## 6 · Network contract
 
-- Protocol 182: Zapped means a 1 s full stun (a 181 peer would let a zapped body walk), Backtrack's host check,
+- Protocol 183 retains the 182 rework contract and adds the low, jumpable wire contact rule. Zapped means a 1 s full stun (a 181 peer would let a zapped body walk), Backtrack's host check,
   Overclock is timed (a 181 peer would keep it for the match), and two new dynamic-field kinds (20 Afterimage, 21 Live
   Wire) on the existing reliable dynamic-field message, validated by `WorldEffectSnapshot.Valid` before any mutation.
 - Afterimage: the host spawns it from the accepted cast (start, flat forward, solved end, copy index) and broadcasts the
@@ -176,6 +176,9 @@ Play picks up with him Overclocked, his crackle already on (never charged twice)
 | Overclocked and Momentum | Stack (1.68x) | both multiply the motor's speed; flagged for the taya role |
 | Who sees Backtrack's return point | Zack always, everyone on cast | a private echo while ready; a public rewind trail and landing ring at the cast |
 | The ultimate intro | Trim the bolt one | section 4, about 4.5 s |
+| Stun breakout, clarified in session 3 | Follow shared timer-only recovery | Zapped ends on its timer; no button mash shortens it |
+| Visual refinement | Ekko-like body pull, no old FPP magnets, low Cypher-like wire anchors | 0.42 s render-only reverse body travel, bare powered hands, low floor reels and a jumpable wire |
+| Publication branch | Commit on main as work progresses | Main is authorized for this rework including its required compatibility changes |
 
 ## 8 · Numbers to watch in play (starting values)
 
@@ -187,9 +190,9 @@ Play picks up with him Overclocked, his crackle already on (never charged twice)
 
 ## 9 · Sound
 
-Hero skill sounds are switched off game-wide until the owner picks each by ear (`AudioCues.SkillSfxOn`, the 2026-09-29
-instruction, and the tump-sfx method: integrate only what the owner selects). The kit names its own cues (one per beat,
-no shared recipe): `sfx_cast_zack_backtrack`, `sfx_zack_backtrack_land`, `sfx_cast_zack_afterimage`,
-`sfx_zack_afterimage_pop`, `sfx_zack_afterimage_fizzle`, `sfx_cast_zack_livewire`, `sfx_zack_livewire_taut`,
-`sfx_zack_livewire_zap`, `sfx_zack_livewire_snap`, `sfx_zack_momentum_full`, `sfx_status_zapped`, `sfx_ult_theme_zack`.
-Drafts are rendered for the owner to hear; none ships until picked.
+The owner later explicitly delegated creation/refinement, requested a stronger buzz
+and taser feel, authorized enabling Zack's sounds and requested publication on main.
+Zack's sixteen original electrical cues now enter the scoped allowlist. The global
+switch stays false and other heroes retain their existing release policy. The
+[implementation and native capture evidence](lightning-audio.md) supersede the
+earlier audition-only boundary for Zack. Owner listening judgment remains open.
