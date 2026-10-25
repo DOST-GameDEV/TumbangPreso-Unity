@@ -68,7 +68,7 @@ namespace TumbangPreso.CameraSystem
     /// one trigger, the `SpectatorReplay` key, and the autopilot has no hands. See § THE REPLAY
     /// NEVER STARTS ITSELF ANY MORE.
     /// </summary>
-    public sealed class SpectatorCamera : MonoBehaviour
+    public sealed partial class SpectatorCamera : MonoBehaviour
     {
         /// Metres per second at the base speed. Faster than a Person's 4.6 walk — a
         /// spectator is covering a whole map, not a lane.
@@ -622,7 +622,7 @@ namespace TumbangPreso.CameraSystem
 
             _move = map.FindAction("Move", false);
             _look = map.FindAction("Look", false);
-            _jump = map.FindAction("Jump", false);
+            _jump = map.FindAction("SpectatorUp", false) ?? map.FindAction("Jump", false);
             _sprint = map.FindAction("Sprint", false);
             // ⚠️ `SpectatorDown`, NOT a gameplay action. In Godot this read `guard_dash`,
             // which was deleted with Can-Dash and Flick Dash, and threw
@@ -646,6 +646,8 @@ namespace TumbangPreso.CameraSystem
             _mark = map.FindAction("SpectatorMark", false);
             _recall = map.FindAction("SpectatorRecall", false);
             _pauseKey = map.FindAction("SpectatorPause", false);
+            _speedCycle = map.FindAction("SpectatorSpeed", false);
+            _zoomCycle = map.FindAction("SpectatorZoom", false);
             _replayKey = map.FindAction("SpectatorReplay", false);
 
             map.Enable();
@@ -948,103 +950,13 @@ namespace TumbangPreso.CameraSystem
         //
         // Replay is a local pixel overlay and is safe on either side of the wire.
 
-        private void StepBroadcastKeys()
-        {
-            var kb = Keyboard.current;
-            if (kb == null) return;
-
-            if (_replaying)
-            {
-                if (Fired(_replayKey) || kb.escapeKey.wasPressedThisFrame)
-                {
-                    if (kb.escapeKey.wasPressedThisFrame) UI.ScreenTakeover.ConsumeEscape();
-                    EndReplay();
-                }
-                return;
-            }
-
-            if (!PresentationClock.Held && Fired(_mark))
-            {
-                _bookmarkPosition = transform.position;
-                _bookmarkRotation = transform.rotation;
-                _bookmarkFov = _camera != null ? _camera.fieldOfView : SpectatorFov;
-                _hasBookmark = true;
-                UI.Hud.Instance?.ShowToast($"CAMERA MARK SAVED  ·  {BoundKey("SpectatorRecall")} TO RECALL", 1.2f);
-            }
-
-            if (!PresentationClock.Held && Fired(_recall) && _hasBookmark)
-            {
-                _follow = null;
-                _followIndex = -1;
-                _pov = false;
-                transform.SetPositionAndRotation(_bookmarkPosition, _bookmarkRotation);
-                _targetPosition = _bookmarkPosition;
-                if (_camera != null) _camera.fieldOfView = _bookmarkFov;
-                SyncAnglesFromTransform();
-                UI.Hud.Instance?.ShowToast("CAMERA MARK RECALLED", 0.9f);
-            }
-
-            // The active watcher owns POV selection. The solo seat switcher
-            // yields while this camera is enabled, so a cut cannot claim a body.
-            if (kb.f1Key.wasPressedThisFrame) SelectPlayerPov(0);
-            if (kb.f2Key.wasPressedThisFrame) SelectPlayerPov(1);
-            if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
-            if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
-
-            // ⚠️ THE THREE SPEED DIGITS STAY LITERAL AND THAT IS DELIBERATE. They are a
-            // NUMBERED SET (quarter, half, three quarter speed) the way F1 to F4 are a POSITIONAL
-            // set, and splitting either into separate rebindable rows would add seven lines to
-            // the settings panel to let somebody move "2" to "5". `ControlsText` names them.
-            bool askedForTime = Fired(_pauseKey)
-                                || kb.digit1Key.wasPressedThisFrame
-                                || kb.digit2Key.wasPressedThisFrame
-                                || kb.digit3Key.wasPressedThisFrame;
-
-            // ⚠⚠ A NETWORKED TIME PRESS IS A REQUEST, AND ONLY A SPECTATOR MAY MAKE ONE. The
-            // host answers and tells everybody; see the header above and
-            // `MatchRpc.RequestTimeScaleServerRpc`. A peer holding a chair is refused there too,
-            // so this check is the courtesy message rather than the rule.
-            if (askedForTime && NetAuthority.IsNetworked)
-            {
-                if (!GameLaunch.Spectator)
-                {
-                    UI.Hud.Instance?.ShowToast("LIVE MATCH  ·  ONLY A SPECTATOR MAY PAUSE", 1.5f);
-                    return;
-                }
-
-                // ⚠ THE LOCAL BOOKKEEPING STILL MOVES, so the next press toggles the other way and
-                // the overlay reads correctly. What it does NOT do is write `Time.timeScale`: the
-                // number arrives back through `SyncTime`, which is what keeps four screens on one
-                // clock even when a packet is late.
-                if (Fired(_pauseKey))
-                {
-                    _broadcastPaused = !_broadcastPaused;
-                    Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(
-                        _broadcastPaused ? 0.0f : _selectedTimeScale);
-                }
-
-                if (kb.digit1Key.wasPressedThisFrame) RequestBroadcastScale(0.25f);
-                if (kb.digit2Key.wasPressedThisFrame) RequestBroadcastScale(0.50f);
-                if (kb.digit3Key.wasPressedThisFrame) RequestBroadcastScale(1.00f);
-                return;
-            }
-
-            if (Fired(_pauseKey)) ToggleBroadcastPause();
-            // ⚠️ THE ONE AND ONLY TRIGGER. See § THE REPLAY NEVER STARTS ITSELF ANY MORE. The
-            // reason is looked up rather than passed so the clip is titled after the play it
-            // actually contains.
-            if (Fired(_replayKey) || ConsumeProbeReplayRequest())
-                StartReplay(RecentHighlightReason());
-            if (kb.digit1Key.wasPressedThisFrame) SetBroadcastScale(0.25f);
-            if (kb.digit2Key.wasPressedThisFrame) SetBroadcastScale(0.50f);
-            if (kb.digit3Key.wasPressedThisFrame) SetBroadcastScale(1.00f);
-        }
+        private void StepBroadcastKeys() => StepOperatorKeys();
 
         private void ToggleBroadcastPause()
         {
             Hitstop.End();
             _ownsTimeScale = true;
-            _broadcastPaused = !_broadcastPaused;
+            _broadcastPaused = PresentationClock.RequestedScale > 0f;
             PresentationClock.RequestScale(_broadcastPaused ? 0.0f : _selectedTimeScale);
             UI.Hud.Instance?.ShowToast(_broadcastPaused
                 ? "TACTICAL PAUSE  ·  CAMERA STILL LIVE"
@@ -2309,14 +2221,16 @@ namespace TumbangPreso.CameraSystem
         public bool AutopilotEngaged => _director != null && _director.Engaged;
         public bool HasFollowTarget => _follow != null;
 
-        public enum ViewCommand { Autopilot, FollowNext, Pov, FreeFlight, CleanFeed, Controls }
+        public enum ViewCommand { Autopilot, FollowNext, Pov, FreeFlight, CleanFeed, Controls,
+            Pause, Replay, Save, Recall, Speed, Zoom, Rise, Lower }
 
         /// <summary>Local view controls shared by the touch strip and operator UI.</summary>
         public bool ExecuteViewCommand(ViewCommand command)
         {
-            if (!isActiveAndEnabled || PresentationClock.BlocksInput || UI.Panel.AnyOpen
+            if (!isActiveAndEnabled || PresentationClock.Held || SharedUltimatePhase.BlocksActions || UI.Panel.AnyOpen
                 || UI.ScreenTakeover.AnyOpenOutside(transform)) return false;
-            if ((uint)command > (uint)ViewCommand.Controls) return false;
+            if ((uint)command > (uint)ViewCommand.Lower) return false;
+            if ((uint)command >= (uint)ViewCommand.Pause) return ExecuteOperatorCommand(command);
             if (command == ViewCommand.CleanFeed)
             {
                 var hud = UI.Hud.Instance; if (hud == null || !hud.Spectating) return false;

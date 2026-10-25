@@ -6,75 +6,10 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     /// <summary>
-    /// THE AUTOPILOT CAMERA OPERATOR. It flies <see cref="SpectatorCamera"/> on its own,
-    /// decides what the match is ABOUT right now, and cuts between genuinely different shots the
-    /// way a broadcast director does.
-    ///
-    /// 🧑 2026-08-27: *"add autopilot option in spectator that moves on its own naturally and
-    /// looks good, assume A LOT OF PPL WILL be watching how it moves so make sure it moves
-    /// smooth and decides where to move camera properly"*. Then 2026-09-03, for the nationals:
-    /// make it look **intentionally directed** rather than merely automatic.
-    ///
-    /// ⚠️⚠️ THIS IS A SEPARATE COMPONENT BECAUSE `SpectatorCamera`'S OWN HEADER SAYS IT MUST BE:
-    /// *"If a cinematic auto-cam is ever wanted it is a new component with a new name."* That
-    /// line was written beside 🧑's 2026-07-31 instruction *"dont give spectator AI... spectator
-    /// should only be controllable by a person"*, and the 2026-08-27 request is the same person
-    /// changing their mind twenty-seven days later. **The old instruction is superseded, not
-    /// forgotten**, and the shape it asked for is honoured exactly: the spectator camera class
-    /// still reads hardware and only hardware, and this class writes a POSE onto a transform.
-    /// Nothing here writes gameplay state, sends an RPC, resolves a hit, or touches an
-    /// <see cref="InputIntent"/>. A bot is still one component away from flying the camera and
-    /// zero components away from anything else.
-    ///
-    /// ⚠️⚠️ AND IT NEVER PAUSES AND NEVER REPLAYS. 🧑: *"dont let autopilot spectator pause or
-    /// replay thats for human only"*. Nothing in this file calls `ToggleBroadcastPause`,
-    /// `StartReplay` or `SetBroadcastScale`, and there is no code path from here to any of them.
-    /// `SpectatorCamera` no longer self-replays either, so there is nothing left to suppress.
-    ///
-    /// § WHAT CHANGED ON 2026-09-04, AND WHY THE OLD VERSION LOOKED AUTOMATIC
-    ///
-    /// ⚠️⚠️ THE OLD DIRECTOR HAD EXACTLY ONE SHOT AND SCORED FOUR BODIES CONTINUOUSLY.
-    /// `ScoreSubject` summed six live terms every frame and `ComputeShot` solved one orbit
-    /// bearing around a focus point at a distance driven by the spread between two things. A
-    /// retrieval, an ultimate, a knockdown and a quiet beat were **that same solve at a different
-    /// radius**. `docs/TODO.md` § 134.3 is the full baseline; the three faults that mattered:
-    ///
-    ///   1. **It committed to a PERSON, never to a PLAY.** `MinShotSeconds` held the subject for
-    ///      2.4 s. A retrieval runs about four, so the camera could legitimately leave one
-    ///      two-thirds of the way through because somebody else briefly scored higher.
-    ///   2. **It never asked whether it could SEE anything.** The only spatial guard was a clamp
-    ///      to the playable box. Both maps are enclosed, Eskinita by house facades and Ilalim
-    ///      ng Tulay by viaduct pillars, so a bearing that landed on a pillar was taken, and
-    ///      on a broadcast that is indistinguishable from the stream having broken.
-    ///   3. **The lata left the frame in the one shot the whole game is about.** `FocusPoint`
-    ///      framed a retriever with the taya INSTEAD of the can, so the objective was absent from
-    ///      the retrieval.
-    ///
-    /// **All three are answered by structure rather than by tuning**: <see cref="SpectatorInterest"/>
-    /// is an EVENT with a start, a duration and a commitment window; <see cref="Solve"/> is nine
-    /// different camera solves rather than one; and <see cref="ValidatePose"/> refuses a pose that
-    /// cannot see what it was sent for.
-    ///
-    /// § THE THREE THINGS THE OLD VERSION GOT RIGHT, KEPT UNCHANGED
-    ///
-    /// ⚠️⚠️ 1. IT CUTS. IT DOES NOT WHIP-PAN ACROSS THE MAP. When the interesting thing moves
-    /// somewhere this camera cannot smoothly reach, the shot CUTS: the pose is written outright
-    /// and the smoothing state is cleared. Flying the whole way instead is the single most
-    /// amateur thing a camera can do, it arrives after the moment it was sent for, and on a
-    /// 14 by 14 m arena it sweeps the viewer past everything else on the way.
-    ///
-    /// ⚠️⚠️ 2. IT COMMITS. The mechanism moved from a subject to a beat; the reasoning is the
-    /// same one `AiTuning.TagSwitchMargin` and `HeadingCommitSeconds` record for the bots: a
-    /// decision that genuinely changes 60 times a second gets drawn faithfully as something that
-    /// cannot make its mind up.
-    ///
-    /// ⚠️⚠️ 3. IT IS NEVER COMPLETELY STILL. A locked-off camera on a quiet moment reads as a
-    /// frozen game. <see cref="DriftDegPerSecond"/> keeps a slow orbit running under every held
-    /// shot, small enough that nobody can name it and large enough that the picture is alive.
-    ///
-    /// ⚠️ IT AIMS WHERE THE SUBJECT IS GOING, NOT WHERE IT IS. <see cref="LeadSeconds"/> is why
-    /// the camera looks like it knew: an operator who tracks a runner is always slightly ahead of
-    /// them, and one who is exactly on them looks like they are being dragged.
+    /// Observes accepted match events and composes spectator shots. Holds readable
+    /// views across short event pulses, follows the court's elevation and avoids
+    /// opaque scenery/bodies. Never controls players, pauses or starts replays.
+    /// Manual input returns control through SpectatorCamera.
     /// </summary>
     [RequireComponent(typeof(SpectatorCamera))]
     public sealed class SpectatorDirector : MonoBehaviour
@@ -83,28 +18,11 @@ namespace TumbangPreso.CameraSystem
         // § THE SHOT
         // -------------------------------------------------------------------
 
-        /// <summary>
-        /// How long a shot must hold before another beat may take it, in seconds.
-        ///
-        /// ⚠️ 2.4 s IS A BROADCAST MINIMUM, NOT A GUESS. Under about two seconds a viewer has not
-        /// finished reading the frame before it changes, and a director who cuts faster than that
-        /// is editing rather than covering.
-        ///
-        /// ⚠️⚠️ IT IS NOW A DEFAULT RATHER THAN THE RULE. Each interest carries its own
-        /// `CommitSeconds` (`SpectatorInterestModel`), because a can falling over is done in about
-        /// a second and holding it for 2.4 is a shot of an empty street.
-        /// </summary>
-        public const float MinShotSeconds = SpectatorInterestModel.MinCommit;
+        /// <summary>Minimum continuous take across ordinary transient events; a new ultimate may settle sooner.</summary>
+        public const float MinShotSeconds = 4.5f;
 
-        /// <summary>
-        /// The longest a single shot holds before the director looks for a new ANGLE on the same
-        /// beat, in seconds.
-        ///
-        /// ⚠️ IT IS AN ANGLE CHANGE, NOT A SUBJECT CHANGE. A nine-second unbroken take on one
-        /// player is a security camera. This re-frames the same play from a different bearing,
-        /// which is what a second camera would be doing in a real gallery.
-        /// </summary>
-        public const float MaxShotSeconds = 9.0f;
+        /// <summary>Initial-pick tuning bound retained for callers; timer expiry alone never reverses a shot.</summary>
+        public const float MaxShotSeconds = 12.0f;
 
         /// <summary>
         /// Past this much movement, the shot CUTS instead of flying, in metres.
@@ -116,24 +34,17 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public const float CutDistance = 6.0f;
 
-        /// <summary>Seconds for the position spring to close most of its error.</summary>
-        public const float PositionSmoothTime = 0.55f;
+        /// <summary>Position easing for an automatic view, with bounded travel speed.</summary>
+        public const float PositionSmoothTime = 1.05f;
 
-        /// <summary>
-        /// Seconds for the aim to close most of its error.
-        ///
-        /// ⚠️ THE AIM IS SLOWER THAN THE BODY, WHICH IS BACKWARDS ON PAPER AND CORRECT ON SCREEN.
-        /// A camera whose rotation snaps to its target while its position eases reads as two
-        /// different cameras; letting the aim trail slightly is the lag a real head and a real
-        /// tripod have.
-        /// </summary>
-        public const float AimSmoothTime = 0.32f;
+        /// <summary>Aim easing keeps event handovers readable instead of whipping to the next target.</summary>
+        public const float AimSmoothTime = 0.65f;
 
-        /// <summary>How far ahead of a moving subject the camera aims, in seconds.</summary>
-        public const float LeadSeconds = 0.42f;
+        /// <summary>Small movement lead; avoid looking far ahead of a changing chase.</summary>
+        public const float LeadSeconds = 0.25f;
 
-        /// <summary>The slow orbit that keeps a held shot from reading as a freeze frame.</summary>
-        public const float DriftDegPerSecond = 3.4f;
+        /// <summary>Gentle breathing within a held shot, not a fast continuous orbit.</summary>
+        public const float DriftDegPerSecond = 0.6f;
 
         // -------------------------------------------------------------------
         // § THE FRAME
@@ -335,7 +246,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void LateUpdate()
         {
-            if (PresentationClock.Held) return;
+            if (PresentationClock.Held || Time.timeScale <= 0f) return;
             if (!_engaged || _camera == null) return;
             if (UI.Panel.AnyOpen || UI.ScreenTakeover.AnyOpenOutside(_camera.transform)) return;
 
@@ -363,16 +274,23 @@ namespace TumbangPreso.CameraSystem
 
             if (!sameBeat)
             {
+                bool subjectAvailable = _shot.Valid && _shot.Main.gameObject.activeInHierarchy;
+                // A director holds a readable view across short-lived score/charge pulses.
+                // A new ultimate may take over after a short settling beat; a missing subject
+                // must hand back immediately. Manual camera commands remain immediate.
+                bool newUltimate = next.Beat == SpectatorBeat.Ultimate
+                    && _shot.Beat != SpectatorBeat.Ultimate && _shotClock >= 1.75f;
+                if (subjectAvailable && _shotClock < MinShotSeconds && !newUltimate) return;
                 _shot = next;
+                _validatedAt = float.NegativeInfinity;
                 NewShot(cut: true);
                 return;
             }
 
             _shot = next;
 
-            // Same play, but the take has run long. Re-frame from somewhere else rather than
-            // holding one angle until it reads as a fixed camera.
-            if (_shotClock >= MaxShotSeconds) NewShot(cut: false);
+            // Keep the current side of the action. An expired timer alone is not a reason
+            // to reverse the lens or orbit to the other side of a quiet court.
         }
 
         /// <summary>
@@ -575,7 +493,7 @@ namespace TumbangPreso.CameraSystem
 
             Vector3 nextPosition = Vector3.SmoothDamp(transform.position, wantPos,
                                                      ref _posVelocity, PositionSmoothTime,
-                                                     Mathf.Infinity, dt);
+                                                     5.0f, dt);
             if (!TransitIsClear(transform.position, nextPosition)
                 || !BodyLensIsClear(nextPosition))
             {
@@ -589,9 +507,9 @@ namespace TumbangPreso.CameraSystem
             transform.position = nextPosition;
 
             _yawDeg = Mathf.SmoothDampAngle(_yawDeg, wantYaw, ref _yawVelocity, AimSmoothTime,
-                                            Mathf.Infinity, dt);
+                                            65.0f, dt);
             _pitchDeg = Mathf.SmoothDampAngle(_pitchDeg, wantPitch, ref _pitchVelocity,
-                                              AimSmoothTime, Mathf.Infinity, dt);
+                                              AimSmoothTime, 65.0f, dt);
 
             transform.rotation = Quaternion.Euler(_pitchDeg, _yawDeg, 0.0f);
             _camera.AdoptPose(transform.position, _yawDeg, _pitchDeg);
@@ -839,7 +757,7 @@ namespace TumbangPreso.CameraSystem
             Vector3 offset = new Vector3(Mathf.Sin(rad), 0.0f, Mathf.Cos(rad)) * distance;
 
             position = focus + offset;
-            position.y = height;
+            position.y = focus.y - SubjectEyeLine - Headroom + height;
 
             // ⚠️⚠️ CLAMPED TO THE PLAYABLE BOX PLUS A MARGIN, AND THIS IS NOT COSMETIC. Both maps
             // are enclosed: Eskinita by house facades and Ilalim ng Tulay by viaduct pillars. A
@@ -1052,7 +970,7 @@ namespace TumbangPreso.CameraSystem
         private static Vector3 SafePose(Vector3 focus)
         {
             Vector3 pose = focus;
-            pose.y = 11.0f;
+            pose.y = focus.y + 9.5f;
 
             // Pulled back a little along Z so the shot is a raked overhead rather than a plan
             // view, which reads as a security camera.

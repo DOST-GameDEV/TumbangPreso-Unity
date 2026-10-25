@@ -212,16 +212,7 @@ namespace TumbangPreso.UI
             Warnings(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
-            _spectator.enabled = spectating;
-            if (_spectator.enabled)
-            {
-                if (_spectatorCamera == null) _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
-                // The full list, not a pointer to it: the tournament's spectators never found the old hint.
-                _spectator.text = spectatorControls
-                    ? (_spectatorCamera != null ? _spectatorCamera.StatusText() : "Spectating")
-                        + "\n" + CameraSystem.SpectatorCamera.ControlsText()
-                    : Hud.KeyLabelFor("SpectatorControls") + " SHOW SPECTATOR CONTROLS";
-            }
+            TickSpectatorHelp(spectating, spectatorControls);
             Sandbox();
         }
 

@@ -7,7 +7,7 @@ Do not read every report or historical queue at session start.
 | Work | Current guide | Source to inspect |
 |---|---|---|
 | Rules, scoring, formats, bots | [Vision](VISION.md), [Design](Design.md), [Formats](Formats.md) | Core package, MatchDirector, RoundDirector, AIController |
-| Spectator, follow/POV, controls | [Spectator](SPECTATOR.md), [UI method](UI_DESIGN_METHOD.md) | SpectatorCamera, SpectatorDirector, SpectatorInterest, SpectatorHud, CameraRig |
+| Spectator, follow/POV, controls | [Spectator](SPECTATOR.md), [UI method](UI_DESIGN_METHOD.md) | SpectatorCamera, SpectatorDirector, SpectatorInterest, TumpMatchReadout, CameraRig |
 | Network, reconnect, remote skills | [Networking](NETWORKING.md), [skill contract](SKILL_NETWORK_CONTRACT.md) | NetSession, LobbySession, MatchRpc partials |
 | Tests, build, new machine | [Testing](TESTING.md), [setup](WORKSTATION_SETUP.md) | ProjectVersion, guard, test fixtures, GameBuilder |
 | Loading and performance | [Loading](LOADING_AND_PERFORMANCE.md) | Current boot/cache owners; profile before changing |

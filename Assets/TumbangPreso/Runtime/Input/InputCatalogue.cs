@@ -318,8 +318,11 @@ namespace TumbangPreso.InputLayer
             ("SpectatorFreeFly", "<Gamepad>/buttonNorth", "spectator context"),
             ("SpectatorPov", "<Gamepad>/buttonWest", "spectator context"),
             ("SpectatorDown", "<Gamepad>/leftTrigger", "spectator context"),
+            ("SpectatorUp", "<Gamepad>/rightTrigger", "separate from tactical pause on A"),
+            ("SpectatorSpeed", "<Gamepad>/select", "cycle match speed"),
+            ("SpectatorZoom", "<Gamepad>/rightStickPress", "cycle framing or fly speed"),
             ("SpectatorMark", "<Gamepad>/dpad/up", "spectator context"),
-            ("SpectatorRecall", "<Gamepad>/dpad/down", "spectator context"),
+            ("SpectatorRecall", "<Gamepad>/buttonEast", "separate from CleanFeed on dpad/down"),
             // ⚠️ A, BECAUSE IT WAS START UNTIL 2026-09-04 AND START IS THE PAUSE MENU NOW.
             // See the `Pause` row above for why the two could not share it. A is free in the
             // spectator context and is the one button an operator's thumb is already resting on.

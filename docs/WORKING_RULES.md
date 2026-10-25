@@ -36,8 +36,11 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 
 ## Input And Access
 
-- Mouse/keyboard,controller and touch are required for every feature. Gameplay and
-  spectating are different contexts; one control does one action within each.
+- Desktop mouse/keyboard and controller are the default feature scope. Preserve
+  existing touch behavior, but do not require a mobile update or Android test for
+  every unrelated feature/session. The owner explicitly assigns mobile work when
+  needed. Gameplay and spectating are different contexts; one control does one
+  action within each. Current assignments and their order belong in TODO.
 - Reader withdrawal and parked control zero a controlled familiar's cached
   movement while keeping its accepted possession. Retain explicit zero input
   and local/offline custody; do not fall back to body AI or clear another seat.

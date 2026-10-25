@@ -47,7 +47,7 @@ namespace TumbangPreso.UI
             Pin(_hitMark.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(64, 64));
             _hitMark.Kind = HudBadge.Glyph.Hit; _hitMark.RimWidth = 2; _hitMark.raycastTarget = false; _hitMark.enabled = false;
             _spectator = Ink(_root, "SpectatorReadout", "", 28, false);
-            Pin(_spectator.rectTransform, new Vector2(.5f, 0), new Vector2(0, 150), new Vector2(1760, 236));
+            Pin(_spectator.rectTransform, new Vector2(.5f, 0), new Vector2(0, 42), new Vector2(1300, 40));
             _sandbox = Ink(_root, "SandboxState", "", 28, false);
             Pin(_sandbox.rectTransform, new Vector2(1, 0), new Vector2(-286, 71), new Vector2(550, 54));
             var version = Ink(_root, "GameVersion", "", 28, false);

@@ -68,6 +68,9 @@ namespace TumbangPreso.Tests
             // with no warning, which is the original defect rather than the refinement.
             Assert.IsFalse(Rebinding.IsSpectatorAction("CleanFeed"));
         }
+        [TestCase("CleanFeed"), TestCase("Pause"), TestCase("Sprint")]
+        public void SharedWatchingControlsCannotBeReboundOntoAnotherSpectatorAction(string action)
+        { Assert.IsTrue(Rebinding.WouldClash(action, "SpectatorRecall")); }
     }
 
     /// <summary>

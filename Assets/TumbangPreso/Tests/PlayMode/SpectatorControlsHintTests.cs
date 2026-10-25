@@ -38,5 +38,20 @@ namespace TumbangPreso.PlayTests
         }
         [Test] public void PlayersDoNotReceiveTheSpectatorRestoreHint()
         { _view.Tick(null, false, false, false, false); Assert.IsFalse(_label.enabled); }
+        [UnityTest] public IEnumerator ControlsAreGroupedAndCanBeOpenedAndClosedWithoutLosingTheHint()
+        {
+            _view.Tick(null, true, false, false, true);
+            var panel = _view.Canvas.GetComponentsInChildren<RectTransform>(true)
+                .Single(t => t.name == "SpectatorControlsPanel");
+            Assert.IsTrue(panel.gameObject.activeSelf);
+            CollectionAssert.AreEquivalent(new[] { "WATCH", "FLY", "MATCH TIME", "CAMERA TOOLS" },
+                panel.GetComponentsInChildren<Text>().Where(t => t.name == "GroupHeading").Select(t => t.text).ToArray());
+            StringAssert.DoesNotContain("WATCH", _label.text, "The restore hint still contains the old wall of controls.");
+            yield return TumpUiCapture.Capture("spectator-controls-grouped-960", _view.Canvas, 960, 540, false);
+            yield return TumpUiCapture.Capture("spectator-controls-grouped-wide", _view.Canvas, 1600, 680, false);
+            _view.Tick(null, true, false, false, false);
+            Assert.IsFalse(panel.gameObject.activeSelf);
+            StringAssert.Contains("show controls", _label.text);
+        }
     }
 }

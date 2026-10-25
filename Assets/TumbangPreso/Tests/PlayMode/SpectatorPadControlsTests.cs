@@ -125,5 +125,45 @@ namespace TumbangPreso.PlayTests
         { FollowActor(); Press(GamepadButton.West, true); Assert.IsTrue((bool)typeof(SpectatorCamera).GetField("_pov", Hidden).GetValue(_spectator)); }
         [Test] public void ExistingPadTargetCycleWithAKeyboardStillWorks()
         { Assert.IsNotNull(Keyboard.current); Press(GamepadButton.RightShoulder, false); Assert.AreSame(_actor, Follow); }
+
+        private void OperatorPress(GamepadButton button)
+        {
+            foreach (var pair in new[] { new[] { "_pauseKey", "SpectatorPause" }, new[] { "_mark", "SpectatorMark" },
+                new[] { "_recall", "SpectatorRecall" }, new[] { "_jump", "SpectatorUp" } })
+                typeof(SpectatorCamera).GetField(pair[0], Hidden).SetValue(_spectator, _asset.FindAction(pair[1], true));
+            InputSystem.QueueStateEvent(_pad, new GamepadState().WithButton(button)); InputSystem.Update();
+            typeof(Keyboard).GetProperty("current", BindingFlags.Static | BindingFlags.Public).SetValue(null, null);
+            typeof(SpectatorCamera).GetMethod("StepBroadcastKeys", Hidden).Invoke(_spectator, null);
+        }
+        [UnityTest] public IEnumerator PadCanPauseAndResumeWithoutAKeyboardOrFlyingUp()
+        {
+            OperatorPress(GamepadButton.South);
+            Assert.That(PresentationClock.RequestedScale, Is.EqualTo(0));
+            StringAssert.Contains("PAUSED", _spectator.ViewLabel);
+            Assert.IsFalse(_asset.FindAction("SpectatorUp", true).IsPressed(), "Tactical pause also requested upward flight.");
+            yield return null;
+            InputSystem.QueueStateEvent(_pad, new GamepadState()); InputSystem.Update(); yield return null;
+            OperatorPress(GamepadButton.South);
+            Assert.That(PresentationClock.RequestedScale, Is.EqualTo(1));
+            StringAssert.DoesNotContain("PAUSED", _spectator.ViewLabel);
+        }
+        [UnityTest] public IEnumerator PadCanSaveAndRecallWithoutAKeyboardOrHidingTheHud()
+        {
+            Vector3 saved = new(4, 5, 6); _spectator.transform.position = saved;
+            OperatorPress(GamepadButton.DpadUp); Assert.IsTrue(_spectator.HasCameraMark); yield return null;
+            _spectator.transform.position = new Vector3(20, 3, -8);
+            OperatorPress(GamepadButton.East);
+            Assert.That(Vector3.Distance(saved, _spectator.transform.position), Is.LessThan(.001f));
+            Assert.IsFalse(_asset.FindAction("CleanFeed", true).WasPressedThisFrame(), "Recall also hid the HUD.");
+            yield return null;
+        }
+        [Test] public void SelectingManualFramingReleasesTheAutomaticDirector()
+        {
+            _spectator.enabled = true;
+            Assert.IsTrue(_spectator.ExecuteViewCommand(SpectatorCamera.ViewCommand.Autopilot));
+            Assert.IsTrue(_spectator.AutopilotEngaged);
+            Assert.IsTrue(_spectator.ExecuteViewCommand(SpectatorCamera.ViewCommand.Zoom));
+            Assert.IsFalse(_spectator.AutopilotEngaged, "Manual framing changed an invisible setting under the automatic camera.");
+        }
     }
 }

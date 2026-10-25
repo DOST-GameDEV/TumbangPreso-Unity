@@ -12,8 +12,9 @@ All original IDs and full bodies remain in the
 | ID | Status | Acceptance / next action |
 |---|---|---|
 | REPO-CLEANUP-1025 | DONE | Cleanup aaf96e52e1 integrated into main; BugFix deleted after ancestry verification; NETWORKFIX created at the merged commit. 107.2 MiB assets removed; entry docs 97.62% smaller. [Evidence](reports/repository-cleanup-2026-10-25.md) |
-| SPECTATOR-1025 | IN PROGRESS, main | Clear controls-only Tab help; calm readable director; full skills/props/cutscene visibility; target follow with actual FPP/TPP; graphics and regression evidence; push to main |
+| SPECTATOR-1025 | IN PROGRESS, main | Desktop grouped help, controls and initial pacing/elevation fixes implemented with native checks. Continue actual player FPP/TPP, body-size/effect framing and the current-map/ability coverage matrix. [Evidence](reports/spectator-2026-10-25/README.md) |
 | NETWORKFIX-1025 | OPEN, NETWORKFIX only | Reproduce disconnect/reconnect/lag/remote-state defects, fix causally, notify spectator on departure, exercise actual peers without regressing current behavior |
+| MOBILE-1025 | OPEN, after NETWORKFIX | Thoroughly refresh stale mobile input, UI/flows, map/kit presentation, performance and Android/network compatibility after networking is complete. Preserve existing support during earlier work; future unrelated sessions do not automatically owe mobile updates. |
 
 ## Existing evidence limits worth retaining
 

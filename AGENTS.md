@@ -31,8 +31,10 @@ Do not load historical TODO bodies or all reports to start a session.
   action scope, movement epochs, append-only roster/wire IDs and asset GUIDs.
 - Read [working rules](docs/WORKING_RULES.md) and the
   [skill network contract](docs/SKILL_NETWORK_CONTRACT.md) for affected systems.
-- Preserve GenericPadBridge, MenuNav and input contexts. Every user feature needs
-  mouse/keyboard, controller and touch entry, feedback and exit. Show live bindings.
+- Preserve GenericPadBridge, MenuNav and input contexts. Desktop keyboard/controller
+  is the default task scope; show live bindings and preserve existing touch behavior.
+  Mobile changes and Android validation are required when the owner asks for them,
+  not automatically in every feature/session. Task order belongs in TODO.
 - Preserve profiles, saves, private/source art and unrelated processes. Do not
   degrade authored assets as a speculative optimization.
 

@@ -85,7 +85,7 @@ namespace TumbangPreso.Settings
             // § SPECTATOR AND BROADCAST. See `SpectatorContext` for why these may share a key
             // with a gameplay action and nothing else may.
             "SpectatorAutopilot", "SpectatorCycleTarget", "SpectatorFreeFly", "SpectatorPov",
-            "SpectatorDown", "SpectatorMark", "SpectatorRecall",
+            "SpectatorDown", "SpectatorUp", "SpectatorSpeed", "SpectatorZoom", "SpectatorMark", "SpectatorRecall",
             "SpectatorPause", "SpectatorReplay", "SpectatorControls",
         };
 
@@ -115,7 +115,7 @@ namespace TumbangPreso.Settings
         public static readonly string[] SpectatorContext =
         {
             "SpectatorAutopilot", "SpectatorCycleTarget", "SpectatorFreeFly", "SpectatorPov",
-            "SpectatorDown", "SpectatorMark", "SpectatorRecall",
+            "SpectatorDown", "SpectatorUp", "SpectatorSpeed", "SpectatorZoom", "SpectatorMark", "SpectatorRecall",
             "SpectatorPause", "SpectatorReplay", "SpectatorControls",
         };
 
@@ -124,7 +124,13 @@ namespace TumbangPreso.Settings
 
         /// <summary>True when two actions can ever be pressed in the same screen.</summary>
         public static bool ShareAContext(string a, string b)
-            => IsSpectatorAction(a) == IsSpectatorAction(b);
+            => IsSpectatorAction(a) == IsSpectatorAction(b)
+               || SharedWhileWatching(a) || SharedWhileWatching(b);
+
+        private static bool SharedWhileWatching(string action)
+            => action == "CleanFeed" || action == "Pause" || action == "Sprint"
+               || action == "Move" || action == "MoveForward" || action == "MoveBackward"
+               || action == "MoveLeft" || action == "MoveRight";
 
         /// <summary>
         /// Contextual playing actions that share a key on purpose: Grab and Interact,
@@ -186,11 +192,14 @@ namespace TumbangPreso.Settings
             { "EmoteWheel", "Emote Wheel" },
             { "Pause", "Pause / Match Menu" },
             { "SpectatorDown", "Fly Down" },
+            { "SpectatorUp", "Fly Up" },
+            { "SpectatorSpeed", "Cycle Match Speed" },
+            { "SpectatorZoom", "Zoom / Camera Speed" },
             { "ToggleFullscreen", "Fullscreen" },
             { "SpectatorAutopilot", "Autopilot On / Off" },
             { "SpectatorCycleTarget", "Next Player" },
             { "SpectatorFreeFly", "Free Flight" },
-            { "SpectatorPov", "Through Their Eyes" },
+            { "SpectatorPov", "First / Third Person" },
             { "SpectatorMark", "Save Camera Mark" },
             { "SpectatorRecall", "Recall Camera Mark" },
             { "SpectatorPause", "Tactical Pause" },
@@ -233,9 +242,9 @@ namespace TumbangPreso.Settings
                                   "ToggleFullscreen" }),
             ("COMMUNICATIONS", new[] { "EmoteWheel" }),
             ("SPECTATOR CAMERA", new[] { "SpectatorAutopilot", "SpectatorCycleTarget",
-                                         "SpectatorFreeFly", "SpectatorPov", "SpectatorDown",
+                                         "SpectatorFreeFly", "SpectatorPov", "SpectatorDown", "SpectatorUp", "SpectatorZoom",
                                          "SpectatorMark", "SpectatorRecall" }),
-            ("BROADCAST GALLERY", new[] { "SpectatorPause", "SpectatorReplay",
+            ("BROADCAST GALLERY", new[] { "SpectatorPause", "SpectatorSpeed", "SpectatorReplay",
                                           "SpectatorControls" }),
         };
 

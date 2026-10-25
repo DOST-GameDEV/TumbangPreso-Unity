@@ -6,17 +6,19 @@ Updated 2026-10-25. Owner scope: [TODO](TODO.md).
   Remote BugFix is deleted; NETWORKFIX starts at the merged cleanup commit.
 - Task work area is separate from the dirty canonical checkout; preserve its
   existing asset metadata and ProjectSettings changes.
-- Current unit: spectator controls, camera pacing, view fidelity and event coverage.
-  Spectator changes publish to main; network reliability fixes stay on NETWORKFIX.
+- Desktop controls and initial pacing/elevation unit complete with native checks;
+  [report](reports/spectator-2026-10-25/README.md). Spectator work publishes to main.
+  Network reliability fixes stay on NETWORKFIX; the mobile refresh follows network work.
 - Cleanup evidence: fresh Core 832/832, documentation checks pass, Unity compiles
   without C# errors. Removed 112,453,059 asset bytes; seven entry docs 97.62% smaller.
-  Targeted native spectator baseline is still importing in the isolated work area;
-  its exact process/log are in the task-local checkpoint. Do not duplicate it.
+  Native baseline19, geometry21, binding/tuning12, desktop15 and final gamepad11
+  cases passed in separate focused receipts. No Unity job is active at publication.
 - Confirmed source defect: current spectator POV uses fixed eye position/body yaw
   and operator pitch. Investigate actual player-view observation and borrowed
   viewmodel behavior before changing it. Director cuts immediately on beat changes.
-- Next action: collect native baseline, then implement grouped controls and stable
-  camera holds; trace shared eye/look data and perspective effect ownership.
+- Next action: implement actual observed player eye/look/FOV and perspective
+  presentation without controlling the target, then body/effect/map coverage.
+  Do not restore the old mobile-every-feature mandate; mobile is a separate assignment.
 
 Keep this file short. Record exact active jobs and next command in the task-local
 checkpoint while a run is live. Replace resolved state instead of prepending old
