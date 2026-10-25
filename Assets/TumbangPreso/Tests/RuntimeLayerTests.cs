@@ -21,9 +21,9 @@ namespace TumbangPreso.Tests
         [TestCase(30)]
         [TestCase(60)]
         [TestCase(144)]
-        public void ThunderstrikeActiveTailDoesNotSteerTheCastersKnockback(int updatesPerSecond)
+        public void OverclockedDoesNotSteerTheCastersKnockback(int updatesPerSecond)
         {
-            var go = new GameObject("Thunderstrike movement contract");
+            var go = new GameObject("Overclocked movement contract");
             try
             {
                 var motor = go.AddComponent<CharacterMotor>();
@@ -35,17 +35,22 @@ namespace TumbangPreso.Tests
                 motor.ApplyImpulse(incoming);
                 Assert.AreEqual(incoming, (Vector3)external.GetValue(motor), "Fixture could not apply its incoming impulse.");
 
-                // Isolate the live tail from the one-shot lightning spawners. The
-                // aimed strike may empower throws, but it must not steer a body
-                // that is standing still or already being knocked sideways.
-                typeof(Abilities.HeroAbility).GetProperty("DurationRemaining")
-                    .SetValue(kit.Ultimate, kit.Ultimate.Duration);
+                // OVERCLOCKED (2026-10-25) only scales his own steering speed; it must not push a body that is standing
+                // still or already being knocked sideways, at any update rate.
+                kit.BeginOverclock(motor);
                 for (int frame = 0; frame < updatesPerSecond; frame++)
-                    kit.Ultimate.Tick(context, 1f / updatesPerSecond);
+                    kit.Tick(context, 1f / updatesPerSecond);
+                Assert.IsTrue(kit.IsOverclocked);
                 Assert.Less(Vector3.Distance(incoming, (Vector3)external.GetValue(motor)), 0.0001f,
-                    "The aimed ultimate added a self-impulse during its active tail.");
+                    "Overclocked added a self-impulse.");
             }
-            finally { Object.DestroyImmediate(go); }
+            finally
+            {
+                Object.DestroyImmediate(go);
+                foreach (var look in Object.FindObjectsByType<Visual.ZackOverclockLook>(FindObjectsSortMode.None)) Object.DestroyImmediate(look.gameObject);
+                foreach (var look in Object.FindObjectsByType<Visual.ZackMomentumLook>(FindObjectsSortMode.None)) Object.DestroyImmediate(look.gameObject);
+                foreach (var look in Object.FindObjectsByType<Visual.ZackBacktrackEcho>(FindObjectsSortMode.None)) Object.DestroyImmediate(look.gameObject);
+            }
         }
 
         // -------------------------------------------------------------------
@@ -271,8 +276,7 @@ namespace TumbangPreso.Tests
         /// ⚠️⚠️ THE HALFWAY POINT IS HALF OF `UltimateCost`, NOT HALF OF 100, AND WRITING 50.0f
         /// HERE IS WHAT BROKE THIS TEST. Until 2026-08-25 every hero's ultimate cost the same
         /// `HeroKit.UltimateMax`, so the two were interchangeable and a literal was harmless.
-        /// They are not interchangeable now: Zack pays 150 because Thunderstrike cannot miss,
-        /// and Nemu pays 90 because Seance Void ends no round on its own.
+        /// They are not interchangeable now: each hero's price is its own (Zack's OVERCLOCK is 15 points).
         ///
         /// Derived from the kit rather than restated, so this keeps testing "half fills half the
         /// bar" through any future retune instead of testing one hero's price.

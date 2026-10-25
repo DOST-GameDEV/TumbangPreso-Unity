@@ -1693,6 +1693,10 @@ namespace TumbangPreso.CameraSystem
             // every tag in a 90 s round would take the camera off the player four or five times
             // a match for no decision. Hero skills are refused by the same rule.
             bool held = _character != null && _character.StunElement != StunElement.None;
+            // ⚠️ ZAPPED STAYS IN FIRST PERSON (Zack rework plan, 2026-10-25): a 1 s jolt (1.5 s under Vulnerable) is over before
+            // a swing out and back would land, so it is noise. The victim keeps the lens, with the crackle at the frame edges.
+            if (held && _character.StunElement == StunElement.Shock && _character.StunTotal <= Core.StatusRules.ZappedSeconds * Core.StatusRules.VulnerableStunScale + 0.01f)
+                held = false;
             // ⚠️ ROOTED SWINGS OUT TOO (HERO-9, the owner's table for Paete's ultimate: *"they get stuck on it
             // (switches to tpp view)"*; planned in docs/reports/paete-kit-2026-09-25/plan.md and never wired
             // until the sentry film of 2026-09-26 showed a caught player still in first person). Unlike a tag

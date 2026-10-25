@@ -398,7 +398,7 @@ namespace TumbangPreso.Visual
             {
                 case "sean": SampleSean(t); break;
                 case "phaister": SamplePhaister(t); break;
-                case "zack": SampleZack(t); break;
+                case "zack": SampleZack(ZackClock(t)); break;
                 case "nemu": SampleNemu(t); break;
                 case "dante": SampleDante(t); break;
                 case "cheska": SampleCheska(t); break;
@@ -465,7 +465,7 @@ namespace TumbangPreso.Visual
             if (_hero == "amihan") AmihanGrade(Local(seconds), out brightness, out saturation);
             if (_hero == "sean") SeanGrade(Local(seconds), out brightness, out saturation);
             if (_hero == "nemu") NemuGrade(Local(seconds), out brightness, out saturation);
-            if (_hero == "zack") ZackGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "zack") ZackGrade(ZackClock(Local(seconds)), out brightness, out saturation);
             if (_hero == "dante") DanteGrade(Local(seconds), out brightness, out saturation);
         }
 

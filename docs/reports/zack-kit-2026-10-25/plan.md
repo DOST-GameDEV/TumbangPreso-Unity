@@ -1,6 +1,6 @@
 # Zack rework: plan and direction (2026-10-25)
 
-Status: PLAN, approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
+Status: IMPLEMENTED IN WORKING TREE, focused local validation complete; owner visual/audio review and actual peers pending. [Verification](verification-session3.md). Approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
 section 7. Every number is a starting value: section 8 lists the ones to watch in play. Research is `research.md` beside
 this file. Method: `docs/HERO_KIT_METHOD.md`. Network: `docs/SKILL_NETWORK_CONTRACT.md`.
 
@@ -53,7 +53,7 @@ mastery, loadouts and HUD slots hold.
   (`ZackMomentumLook` reads `PresentationTravelVelocity`), so every screen sees the same three steps within a frame.
 
 **Backtrack** (Predicted, the Phaister TELEPORT route: owner moves, host replays and broadcasts the teleport epoch)
-- Every peer keeps a 3.2 s ring of his planar positions at 20 Hz (`ZackPathHistory`, on every body that carries the kit).
+- Every peer keeps a 4.0 s ring of his planar positions at 20 Hz (on every body that carries the kit), covering the host's 3.5 s validation window.
 - The owner picks the destination from his own ring at 3.0 s ago (or the oldest sample this round if fewer than 3 s
   have passed, at least 0.5 s) in `CaptureLocalCastContext`, so the accepted cast carries it as the aim point.
 - The host accepts only a destination within `BacktrackTolerance` 2.5 m of its own ring of that body anywhere from 2.5 to
@@ -176,6 +176,7 @@ Play picks up with him Overclocked, his crackle already on (never charged twice)
 | Overclocked and Momentum | Stack (1.68x) | both multiply the motor's speed; flagged for the taya role |
 | Who sees Backtrack's return point | Zack always, everyone on cast | a private echo while ready; a public rewind trail and landing ring at the cast |
 | The ultimate intro | Trim the bolt one | section 4, about 4.5 s |
+| Stun breakout, clarified in session 3 | Follow shared timer-only recovery | Zapped ends on its timer; no button mash shortens it |
 
 ## 8 · Numbers to watch in play (starting values)
 

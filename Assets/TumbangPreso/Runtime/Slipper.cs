@@ -15,12 +15,14 @@ namespace TumbangPreso
     {
         Normal,
         FireExplosive,  // Sean Skill 2 (Ignition Cannon)
-        ElectricZap,    // Zack Skill 2 (Overcharge Throw)
+        ElectricZap,    // Zack's retired Overcharge Throw: nothing sends it now; the value stays taken
         Frost = 3,      // Cheska attacking: the player it hits is Frozen
         Concussed = 4,  // Dante Boulder held-slipper payload; stable wire value
         Skim = 5,       // Hydro first-ground continuation; stable wire value
-        BankShot = 6,   // Zack: one remaining powered wall bank
-        OverclockBank = 7, // Zack: two remaining powered wall banks
+        // ⚠️ RETIRED (protocol 182, Zack's speedster rework): Bank Shot's powered banks. The values stay taken so no later
+        // affinity reuses them; nothing sends or acts on them.
+        BankShot = 6,
+        OverclockBank = 7,
     }
 
     /// <summary>
@@ -241,13 +243,8 @@ namespace TumbangPreso
         }
         private int _bankCount;
         private int _bankCreditLimit = Balance.MaxScoringBanks;
-        internal static bool IsPoweredBank(SlipperAffinity affinity)
-            => affinity == SlipperAffinity.BankShot || affinity == SlipperAffinity.OverclockBank;
-        internal static SlipperAffinity ConsumePoweredBank(SlipperAffinity affinity)
-            => affinity == SlipperAffinity.OverclockBank ? SlipperAffinity.BankShot
-                : affinity == SlipperAffinity.BankShot ? SlipperAffinity.Normal : affinity;
-        internal static float BankRestitution(float spin, int banks, SlipperAffinity affinity)
-            => IsPoweredBank(affinity) ? .85f : Mathf.Abs(spin) >= Balance.PektusBankSpinThreshold && banks == 0
+        internal static float BankRestitution(float spin, int banks)
+            => Mathf.Abs(spin) >= Balance.PektusBankSpinThreshold && banks == 0
                 ? Balance.PektusBankRestitution : Balance.BounceRestitution;
         private float _closestCanFlat = float.PositiveInfinity;
         private bool _nearMissReported;
@@ -456,8 +453,6 @@ namespace TumbangPreso
             _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
             if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
             Visual.DanteBoulderStone.TrackWorld(this);
-            // Bank Shot's silk trail and head, drawn from this shoe's own state on every peer (`Visual.ZackBankFlight`).
-            Visual.ZackBankFlight.TrackWorld(this);
         }
 
         private void OnDestroy() => BotSlipperInventory.Invalidate();
@@ -1068,14 +1063,12 @@ namespace TumbangPreso
                                        SlipperAffinity affinity, int throwerSlot)
         {
             bool enteringEmpoweredFlight = state == SlipperState.InFlight
-                && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap || IsPoweredBank(affinity))
+                && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap)
                 && (State != SlipperState.InFlight || Affinity != affinity);
             if (enteringEmpoweredFlight && Holder != null && Holder.PlayerSlot == throwerSlot)
             {
                 if (affinity == SlipperAffinity.FireExplosive && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                     sean.ConsumeIgnition();
-                else if ((affinity == SlipperAffinity.ElectricZap || IsPoweredBank(affinity)) && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
-                    zack.ConsumeMagnetCharge();
             }
             ReleasePreviousHolder(holder);
 
@@ -1149,9 +1142,7 @@ namespace TumbangPreso
             {
                 if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
                 if (affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
-                // A loaded Bank Shot is drawn by `Visual.ZackBankFlight` while its switch is on. The two thin rails were
-                // only ever drawn here, on a client, so the host never showed them: the new look is the same on both.
-                else if (!(IsPoweredBank(affinity) && Visual.ZackBankFlight.Silk)) CreateZapFlightVisual();
+                else CreateZapFlightVisual();
             }
             else if (state != SlipperState.InFlight || affinity == SlipperAffinity.Normal)
             {
@@ -1259,7 +1250,7 @@ namespace TumbangPreso
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;
-            _bankCreditLimit = affinity == SlipperAffinity.OverclockBank ? 2 : Balance.MaxScoringBanks;
+            _bankCreditLimit = Balance.MaxScoringBanks;
             PektusSpin = Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
             _bankCount = 0;
             _airborneTotal = 0.0f;
@@ -1784,8 +1775,7 @@ namespace TumbangPreso
 
             if (!hitFound) return;
 
-            bool poweredContact = IsPoweredBank(Affinity);
-            float restitution = BankRestitution(PektusSpin, _bankCount, Affinity);
+            float restitution = BankRestitution(PektusSpin, _bankCount);
 
             Vector3 normal = closest.normal;
             normal.y = 0.0f;
@@ -1796,7 +1786,6 @@ namespace TumbangPreso
             transform.position = closest.point + normal * (Balance.SlipperHitRadius + 0.02f);
 
             if (Affinity == SlipperAffinity.FireExplosive) TriggerAffinityImpact();
-            Affinity = ConsumePoweredBank(Affinity);
             _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
@@ -1805,13 +1794,12 @@ namespace TumbangPreso
             if (NetAuthority.ShouldResolve())
                 closest.collider.GetComponentInParent<Abilities.HeroHazards.IceBarricadeComponent>()?.HostSlipperHit();
 
-            if (poweredContact || (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold))
+            if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
                 // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
                 // drawn on one screen. See `Visual.MatchFlair`.
                 Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
-                                           _throwerSlot, -1, transform.position,
-                                           poweredContact ? Visual.BankShotContact.FlairStrength : 0);
+                                           _throwerSlot, -1, transform.position, 0);
             }
 
             if (_bankCount > _bankCreditLimit)
@@ -1849,8 +1837,7 @@ namespace TumbangPreso
 
             Vector3 p = transform.position;
             bool bounced = false;
-            bool powered = IsPoweredBank(Affinity);
-            float restitution = powered ? 1 : BankRestitution(PektusSpin, _bankCount, Affinity);
+            float restitution = BankRestitution(PektusSpin, _bankCount);
 
             // ⚠️⚠️ EACH WALL TURNS THE SHOE BACK TOWARD THE MIDDLE, WHICHEVER SIDE IT IS ON.
             // The symmetric version read the side off `Mathf.Sign(p.x)`; with per-side walls the
@@ -1908,7 +1895,7 @@ namespace TumbangPreso
             if (p.y > ceiling)
             {
                 p.y = ceiling;
-                _velocity.y = -Mathf.Abs(_velocity.y) * (powered ? Balance.BounceRestitution : restitution);
+                _velocity.y = -Mathf.Abs(_velocity.y) * restitution;
                 bounced = true;
             }
 
@@ -1917,21 +1904,16 @@ namespace TumbangPreso
             if (!bounced) return;
 
             if (Affinity == SlipperAffinity.FireExplosive) TriggerAffinityImpact();
-            if (sideBank && powered) _velocity *= .85f;
-            if (sideBank) Affinity = ConsumePoweredBank(Affinity);
-            // A safety-ceiling return does not spend Zack's promised wall bank.
-            // Keep ordinary throws' existing bounded-contact credit rule.
-            bool spendsBank = sideBank || !powered;
-            if (spendsBank) _bankCount++;
+            // Ordinary throws' bounded-contact credit rule: every contact spends a bank.
+            _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
-            if (spendsBank && (powered || (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)))
+            if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
                 // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
                 // drawn on one screen. See `Visual.MatchFlair`.
                 Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
-                                           _throwerSlot, -1, transform.position,
-                                           powered ? Visual.BankShotContact.FlairStrength : 0);
+                                           _throwerSlot, -1, transform.position, 0);
             }
 
             // One authored bank can still score. Further wall contacts remain valid

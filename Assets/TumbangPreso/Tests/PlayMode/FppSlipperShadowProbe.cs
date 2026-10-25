@@ -69,8 +69,8 @@ namespace TumbangPreso.PlayTests
                 {
                     if(charged)
                     {
-                        if(who.AbilitySystem.Kit is ZackHeroKit zack) zack.RestoreJoiningCharges(who,2,0);
-                        else ((SeanHeroKit)who.AbilitySystem.Kit).RestoreJoiningIgnition(who,2);
+                        // Zack's held-shoe charge was retired with Bank Shot (2026-10-25); his "charged" frame is the plain one.
+                        if(who.AbilitySystem.Kit is SeanHeroKit sean) sean.RestoreJoiningIgnition(who,2);
                     }
                     arms.SetHolding(true); arms.MatchSkin(shoe);
                     yield return null; yield return null;

@@ -147,16 +147,16 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.CheskaFrostSheet: case AbilityGlyph.Zone:
                     P(vh,-.39f,-.04f,0,-.31f,.39f,-.04f,0,.17f,-.39f,-.04f);
                     P(vh,0,.40f,0,-.08f);P(vh,-.17f,.29f,.17f,.07f);P(vh,.17f,.29f,-.17f,.07f); break;
-                case AbilityGlyph.CheskaBarricade: case AbilityGlyph.Wall:
+                case AbilityGlyph.CheskaBarricade: case AbilityGlyph.Wall: case AbilityGlyph.ZackLiveWire:
                     P(vh,-.37f,-.33f,-.37f,.15f,-.17f,.31f,-.05f,.09f,.11f,.40f,.35f,.18f,.35f,-.33f,-.37f,-.33f);
                     P(vh,-.05f,.09f,-.05f,-.33f);P(vh,.15f,.14f,.15f,-.33f); break;
                 case AbilityGlyph.CheskaNova:
                     for(int i=0;i<3;i++){float a=i*Mathf.PI/3;V(vh,Dir(a)*.40f,Dir(a+Mathf.PI)*.40f);}
                     Ring(vh,0,0,.17f); break;
-                case AbilityGlyph.ZackSprint:
+                case AbilityGlyph.ZackSprint: case AbilityGlyph.ZackBacktrack: case AbilityGlyph.ZackOverclock:
                     P(vh,-.04f,.33f,-.10f,.02f,.18f,-.07f,.34f,-.26f,-.20f,-.26f,-.25f,-.14f,-.10f,.02f);
                     P(vh,-.39f,.17f,-.20f,.17f);P(vh,-.42f,.02f,-.24f,.02f);P(vh,.08f,.35f,.01f,.18f,.17f,.18f,.08f,.03f);break;
-                case AbilityGlyph.ZackOvercharge: case AbilityGlyph.Empower:
+                case AbilityGlyph.ZackOvercharge: case AbilityGlyph.Empower: case AbilityGlyph.ZackAfterimage:
                     P(vh,-.31f,.32f,-.31f,-.10f,-.19f,-.32f,.18f,-.32f,.31f,-.10f,.31f,.32f,.14f,.32f,.14f,-.06f,.07f,-.14f,-.07f,-.14f,-.14f,-.06f,-.14f,.32f,-.31f,.32f);
                     P(vh,-.31f,.17f,-.14f,.17f);P(vh,.14f,.17f,.31f,.17f);break;
                 case AbilityGlyph.ZackThunderstrike:

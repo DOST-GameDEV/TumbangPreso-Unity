@@ -96,18 +96,14 @@ namespace TumbangPreso.Visual
                 }
                 case 2:
                 {
-                    // Zack's QUICK CIRCUIT: the tell and the cut, baking a body if there is one in the match to bake.
-                    var body = new GameObject("PrewarmBody") { hideFlags = HideFlags.DontSave };
-                    body.transform.position = at;
-                    GameObject model = null;
-                    foreach (var visual in UnityEngine.Object.FindObjectsByType<CharacterVisual>(FindObjectsInactive.Exclude))
-                        if (visual.Model != null) { model = visual.Model; break; }
-                    var flash = ZackCircuitFlash.Stage(body.transform, model, Vector3.right);
-                    if (flash == null) { Kill(body); return null; }
-                    flash.StagedCut();
-                    flash.StagedView(eye, false);
-                    flash.StepTo(FxStudyZackCircuit.Tell + 0.1f);
-                    return () => { flash.Free(); Kill(flash.gameObject); Kill(body); };
+                    // Zack's LIVE WIRE, overcharged and humming, as the field's own look builds it (render only).
+                    var a = at + Vector3.left * 2f; var b = at + Vector3.right * 2f;
+                    var wire = new Net.WorldEffectSnapshot.Field { Type = Net.WorldEffectSnapshot.Kind.LiveWire, EventId = 1,
+                        Position = a, Forward = Vector3.right, Radius = 4f, Duration = Core.ZackRules.LiveWireSeconds,
+                        Remaining = Core.ZackRules.LiveWireSeconds, SecondScale = 1f, Path = new[] { a, b } };
+                    var look = ZackLiveWireLook.Build(holder, wire, renderOnly: true);
+                    look.StepTo(1.0f);
+                    return () => Kill(look.gameObject);
                 }
                 case 3:
                 {

@@ -113,7 +113,8 @@ namespace TumbangPreso.CameraSystem
         private readonly float[] _sparkAge = new float[Sparks];
         private int _sparkNext;
         private static Material _lineMaterial;
-        private static readonly Color Ink = new Color(.07f, .08f, .16f, 1f), Neon = new Color(.91f, .96f, .23f, 1f), Core = new Color(1f, 1f, .92f, 1f);
+        private static readonly Color Ink = Visual.ZackFx.Ink, Neon = Visual.ZackFx.Body, Core = Visual.ZackFx.Core;
+        private float _nextSpeedSpark;
 
         private float _clock, _fallSpeed, _nextLeap = 3.2f, _rebalanceAt, _lateLanding = -1f, _lateHit, _lateTakeOff = -1f;
         private int _foot;
@@ -652,6 +653,14 @@ namespace TumbangPreso.CameraSystem
                 piece.localScale = new Vector3(size * (1f - q * .5f), size * (1f - q * .5f), size * (1f + q));
             }
 
+            bool speedCharge = !mood.Tagged && (mood.Overclock > 0f || mood.Momentum >= TumbangPreso.Core.ZackRules.MomentumRampSeconds);
+            bool stutter = mood.Overclock > 0f && mood.Overclock < 5f && Mathf.Repeat(_clock, .23f) < .07f;
+            if (speedCharge && !stutter && _clock >= _nextSpeedSpark)
+            {
+                _nextSpeedSpark = _clock + (Settings.SettingsStore.Current.ReducedEffects ? .4f : .11f);
+                Spark(P(0, -.12f, FistY, FaceZ + .08f));
+                Spark(P(1, .12f, FistY, FaceZ + .08f));
+            }
             StepSparks(dt);
         }
 

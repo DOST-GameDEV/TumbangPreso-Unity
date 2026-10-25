@@ -683,7 +683,13 @@ namespace TumbangPreso.Net
         // 181 (2026-10-24): the Cinder Gate is retired. `WorldEffectSnapshot.Kind` 17 stays reserved (RetiredCinderGate) but is
         // no longer a dynamic field: a 181 peer neither sends nor accepts it, and reads a 180 peer's kind 17 with the wrong
         // layout. Nothing has cast a gate since protocol 176, but the two may not meet.
-        public const int ProtocolVersion = 181;
+        // 182 (2026-10-25): Zack's speedster kit (docs/reports/zack-kit-2026-10-25/plan.md section 6). ZAPPED is a 1 s full
+        // stun on the Shock element (a 181 peer would let a zapped body walk); the `SyncUnit` Zapped float stays in place and
+        // only marks the edge. BACKTRACK's spot is checked by the host against its own ring of the body. OVERCLOCKED is 25 s,
+        // carried to a joiner in the timed-kit passive fields (a 181 peer keeps it for the match). Two dynamic-field kinds are
+        // appended on the existing reliable message: 20 AFTERIMAGE and 21 LIVE WIRE. The circuit and objective-cooldown
+        // messages are gone and the movement window's flag byte is always 0. The two may not meet.
+        public const int ProtocolVersion = 182;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

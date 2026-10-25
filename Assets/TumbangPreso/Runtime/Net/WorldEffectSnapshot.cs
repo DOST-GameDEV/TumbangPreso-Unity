@@ -20,8 +20,11 @@ namespace TumbangPreso.Net
             RetiredCinderGate = 17,
             Baha = 18,
             // ⚠️ APPEND ONLY (protocol 161): Nemu's DON'T LOOK ghost, waiting (a sprung one is the victim's BLINDED clock).
-            Blindfold = 19 }
-        public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind);
+            Blindfold = 19,
+            // ⚠️ APPEND ONLY (protocol 182): Zack's AFTERIMAGE copy and LIVE WIRE, host-owned dynamic fields on Rafi's route.
+            Afterimage = 20, LiveWire = 21 }
+        public static bool UsesDynamicIdentity(Kind kind)
+            => RafiWaterField.IsWater(kind) || kind == Kind.Afterimage || kind == Kind.LiveWire;
         public struct Field
         {
             public Kind Type;
@@ -117,6 +120,10 @@ namespace TumbangPreso.Net
                 if (sentry.isActiveAndEnabled && sentry.Age >= 0f && sentry.Age < Core.PaeteRules.SentryLifeSeconds + .5f) fields.Add(sentry.Capture());
             foreach (var water in RafiWaterField.Active)
                 if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
+            foreach (var copy in ZackAfterimage.Active)
+                if (copy != null && copy.IsDecoy) fields.Add(copy.Capture());
+            foreach (var wire in ZackLiveWire.Active)
+                if (wire != null && wire.IsLive) fields.Add(wire.Capture());
             foreach (var blindfold in NemuBlindfold.Live)
                 if (blindfold != null && blindfold.isActiveAndEnabled && !blindfold.Sprung && blindfold.Remaining > .02f) fields.Add(blindfold.Capture());
             return fields;
@@ -133,6 +140,8 @@ namespace TumbangPreso.Net
                 || (field.TargetMask & ~((1 << Core.Balance.PlayerCount) - 1)) != 0
                 || (field.Type != Kind.Sentry && field.TargetMask != 0)) return false;
             if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
+            if (field.Type == Kind.Afterimage) return ZackAfterimage.Valid(field);
+            if (field.Type == Kind.LiveWire) return ZackLiveWire.Valid(field);
             if (field.Type == Kind.Drift)
                 return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.GeoRules.DriftSeconds) < .001f
                     && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .001f
@@ -190,6 +199,8 @@ namespace TumbangPreso.Net
                 float remaining = Mathf.Clamp(field.Remaining - elapsed, 0, field.Duration);
                 if (remaining <= .02f) continue;
                 if (RafiWaterField.IsWater(field.Type)) RafiWaterField.Restore(field, elapsed);
+                else if (field.Type == Kind.Afterimage) ZackAfterimage.Restore(field, elapsed);
+                else if (field.Type == Kind.LiveWire) ZackLiveWire.Restore(field, elapsed);
                 else if (field.Type == Kind.Sheet)
                 {
                     var go = HeroHazards.SpawnIceSheet(field.Position, field.Radius, field.Duration,
@@ -271,6 +282,8 @@ namespace TumbangPreso.Net
         public static void ClearPersistentFields()
         {
             Retire<RafiWaterField>();
+            Retire<ZackAfterimage>();
+            Retire<ZackLiveWire>();
             Retire<HeroHazards.IceSheetComponent>();
             Retire<HeroHazards.IceBarricadeComponent>();
             Retire<HeroHazards.FireTrailComponent>();

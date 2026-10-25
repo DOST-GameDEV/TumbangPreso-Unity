@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -308,42 +308,36 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator ZackSprintSustainsSpeedAfterTheInitialImpulseAndResets()
+        public IEnumerator ZackMomentumBuildsThreeStepsAndStoppingResetsItsSpeed()
         {
-            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
-            GameLaunch.SoloSeat = 1; GameLaunch.Spectator = false; GameLaunch.AllBots = false;
-            yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
-            yield return new WaitForSecondsRealtime(.5f);
-            Object.FindFirstObjectByType<SliceRunner>().Begin();
-            yield return new WaitForSecondsRealtime(.3f);
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
             foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
-            foreach (var player in GameServices.Round.Players) player.Intent.Clear();
+            foreach (var player in GameServices.Round.Players) { player.Intent.Clear(); player.Intent.Parked = true; }
             var who = GameServices.Round.PlayerAt(1);
-            who.IsBot = true;
-            who.CharacterIndex = Roster.HeroPeople.Select((p,i) => (p,i)).First(p => p.p.Id == "zack").i;
-            who.AbilitySystem.BindHero("zack");
-            who.Teleport(new Vector3(-6, who.transform.position.y, -5));
-            who.Intent.Parked = false;
-            who.Intent.Move = Vector2.right;
-            yield return new WaitForSeconds(.5f);
-            float before = new Vector2(who.Velocity.x, who.Velocity.z).magnitude;
-            Assert.Greater(before, 1, "Fixture never reached a normal walk.");
-            who.Intent.Set(Verb.Skill1, true);
-            yield return new WaitForSeconds(.1f);
-            who.Intent.Set(Verb.Skill1, false);
-            Assert.IsTrue(who.AbilitySystem.Kit.Skill1.IsActive, "Real sprint press was not accepted.");
-            yield return new WaitForSeconds(.65f);
+            who.IsBot = true; who.AbilitySystem.BindHero("zack");
+            who.Teleport(new Vector3(-6, .12f, -8));
+            var kit = (ZackHeroKit)who.AbilitySystem.Kit;
+            who.Intent.Parked = false; who.Intent.Move = Vector2.up;
+            yield return new WaitForSeconds(1.25f);
+            Assert.AreEqual(1, ZackRules.MomentumStep(kit.MomentumSeconds));
+            yield return new WaitForSeconds(1f);
+            Assert.AreEqual(2, ZackRules.MomentumStep(kit.MomentumSeconds));
+            yield return new WaitForSeconds(1f);
+            Assert.AreEqual(3, ZackRules.MomentumStep(kit.MomentumSeconds));
+            Assert.AreEqual(1.2f, kit.MovementSpeedScale, .001f);
             float boosted = new Vector2(who.Velocity.x, who.Velocity.z).magnitude;
-            Assert.AreEqual(before * Balance.ZackSprintSpeedScale, boosted, .1f,
-                "The skill lost its speed benefit after the initial dash impulse decayed.");
-            who.AbilitySystem.ResetKit();
-            yield return new WaitForSeconds(.3f);
-            float restored = new Vector2(who.Velocity.x, who.Velocity.z).magnitude;
-            Assert.AreEqual(before, restored, .1f, "Reset left a speed boost on the actor.");
-            Directory.CreateDirectory(Output);
-            File.WriteAllText(Path.Combine(Output, "zack-sprint-speed.csv"),
-                string.Format(CultureInfo.InvariantCulture, "phase,speed\nbefore,{0:F4}\nboosted,{1:F4}\nreset,{2:F4}\n", before, boosted, restored));
+            Assert.AreEqual(Balance.AttackerWalkSpeed * 1.2f, boosted, .15f);
+            kit.BeginOverclock(who);
+            Assert.AreEqual(1.68f, kit.MovementSpeedScale, .001f, "Momentum and Overclock multiply.");
+            who.Intent.Move = Vector2.zero;
+            yield return new WaitForSeconds(.5f);
+            Assert.Zero(kit.MomentumSeconds, "Stopping starts Momentum over.");
+            Assert.AreEqual(1.4f, kit.MovementSpeedScale, .001f, "Stopping does not cancel Overclock.");
+            kit.ResetForRound(new AbilityContext(who, who.GetComponent<Carrier>(), who.GetComponent<CombatVerbs>()));
+            Assert.AreEqual(1f, kit.MovementSpeedScale);
             who.Intent.Clear();
         }
 

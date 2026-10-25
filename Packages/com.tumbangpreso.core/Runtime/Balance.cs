@@ -1,4 +1,4 @@
-﻿namespace TumbangPreso.Core
+namespace TumbangPreso.Core
 {
     /// <summary>
     /// Every tuned number in the game, in one place.
@@ -144,12 +144,7 @@
         // Player walking/running uses the explicit role speeds below.
         public const float Speed = 4.6f;
 
-        // Bolt Sprint promises sustained skating speed. Its old 4 m/s² per-tick
-        // impulse was cancelled by Friction before movement. Keep its initial dash
-        // and add a bounded 25% wish-speed gain for the existing active duration.
-        public const float ZackSprintSpeedScale = 1.25f;
-
-        // Veil has a smaller sustained gain than Bolt Sprint, alongside tag immunity.
+        // Veil has a sustained speed gain alongside tag immunity.
         // The previous 3*dt impulse was erased by ordinary movement friction.
         public const float NemuPhaseSpeedScale = 1.20f;
 

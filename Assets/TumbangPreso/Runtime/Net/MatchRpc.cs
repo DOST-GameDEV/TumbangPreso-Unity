@@ -348,7 +348,6 @@ namespace TumbangPreso.Net
             ResetUltimateTransport();
             ResetTimedKitTransport();
             ResetPaeteVineTransport();
-            ResetObjectiveCooldownTransport();
             ResetNemuGhostTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
@@ -398,8 +397,6 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PayoMoon", OnPayoMoonMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
-            cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
-            cm.RegisterNamedMessageHandler("CircuitState", OnCircuitStateMsg);
             cm.RegisterNamedMessageHandler("NemuGhosts", OnNemuGhostsMsg);
             cm.RegisterNamedMessageHandler("PaeteVine", OnPaeteVineMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
@@ -433,7 +430,6 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SkipBuffer", OnSkipBufferMsg);
             cm.RegisterNamedMessageHandler("BufferVotes", OnBufferVotesMsg);
             cm.RegisterNamedMessageHandler("SyncAbility", OnSyncAbilityMsg);
-            cm.RegisterNamedMessageHandler("ObjectiveCooldown", OnObjectiveCooldownMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
             cm.RegisterNamedMessageHandler("PlayCue", OnPlayCueMsg);
@@ -2020,7 +2016,6 @@ namespace TumbangPreso.Net
             if(kit is Abilities.PaeteHeroKit)SendPaeteVineSnapshot(slot,peer);
             if (!(kit is Abilities.ITimedKitReplication replication)) return;
             SendBoundTimedKit(slot, peer, kit, replication);
-            if(kit is Abilities.ZackHeroKit)SendCircuitSnapshot(slot,peer);
         }
 
         private void OnTimedKitMsg(ulong senderClientId, FastBufferReader reader)
@@ -2315,6 +2310,7 @@ namespace TumbangPreso.Net
             var unit=Unit(slot);
             if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] receive slot={slot} epoch={epoch} localEpoch={unit?.MovementEpoch} sim={unit?.IsLocallySimulated()} impulse={impulse}");
             if(unit==null || epoch!=unit.MovementEpoch)return;
+            unit.NoteImpactTaken();
             unit.ApplyImpulse(impulse);
         }
 
@@ -2614,7 +2610,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.FearSource);
             writer.WriteValueSafe(flightEpisode);
             writer.WriteValueSafe(unit.HauntedLeft);
-            writer.WriteValueSafe(unit.ZappedLeft);
+            // Protocol 182: Zapped is the Shock stun, which Vulnerable stretches to 1.5 s; the float only marks the edge.
+            writer.WriteValueSafe(Mathf.Min(unit.ZappedLeft, StatusRules.ZappedSeconds));
             // Nemu's PRUSISYON (protocol 160): the POSSESSED clock. The body's own peer computes the pull from it.
             writer.WriteValueSafe(unit.PossessedLeft);
             // Nemu's DON'T LOOK (protocol 161): the BLINDED clock. The body's own peer reads its slow and its covered eyes from it.

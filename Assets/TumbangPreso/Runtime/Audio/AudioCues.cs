@@ -483,7 +483,7 @@ namespace TumbangPreso.Audio
         private static readonly string[] SkillSfxPrefixes =
         {
             "sfx_cast_", "sfx_var_", "sfx_ult_theme_", "sfx_sky_", "sfx_status_", "ability_",
-            "sfx_phaister_", "sfx_paete_", "sfx_amihan_", "sfx_nemu_", "sfx_cheska_", "sfx_dante_", "sfx_kuro_", "sfx_rafi_",
+            "sfx_phaister_", "sfx_paete_", "sfx_amihan_", "sfx_nemu_", "sfx_cheska_", "sfx_dante_", "sfx_kuro_", "sfx_rafi_", "sfx_zack_",
         };
 
         /// <summary>The element and payload cues the kits and their hazards play (`HeroHazards`, the kits' payloads).</summary>

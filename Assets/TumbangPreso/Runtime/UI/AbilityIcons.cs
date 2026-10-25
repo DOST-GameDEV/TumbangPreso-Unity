@@ -160,6 +160,16 @@ namespace TumbangPreso.UI
         // ⚠️ RAGO THE LAVA BRAWLER (owner 2026-10-24, "thoroughly redesign his icons"), appended to keep every serialized value.
         /// <summary>Sean while Molten: VOLCANIC BOMB (a black-glass ball split by a glowing crack, falling in a trail of fire).</summary>
         SeanVolcanicBomb,
+
+        // ⚠️ ZACK THE SPEEDSTER (2026-10-25 rework, docs/reports/zack-kit-2026-10-25/plan.md), appended to keep every serialized value.
+        /// <summary>Zack signature: BACKTRACK (a gold arc looping back on itself round a spark).</summary>
+        ZackBacktrack,
+        /// <summary>Zack attacking: AFTERIMAGE (a running figure with its gold copy stepping out ahead).</summary>
+        ZackAfterimage,
+        /// <summary>Zack defending: LIVE WIRE (two concrete posts and a sagging, sparking wire).</summary>
+        ZackLiveWire,
+        /// <summary>Zack ultimate: OVERCLOCK (a gauge pinned past its end by a bolt).</summary>
+        ZackOverclock,
     }
 
     /// <summary>
@@ -367,6 +377,10 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.ZackSprint: return "MOBILITY";
                 case AbilityGlyph.ZackOvercharge: return "SLIPPER BUFF";
                 case AbilityGlyph.ZackThunderstrike: return "FROM ABOVE";
+                case AbilityGlyph.ZackBacktrack: return "MOBILITY";
+                case AbilityGlyph.ZackAfterimage: return "DECOY";
+                case AbilityGlyph.ZackLiveWire: return "TRIPWIRE";
+                case AbilityGlyph.ZackOverclock: return "POWER-UP";
                 case AbilityGlyph.NemuPhase: return "EVASION";
                 case AbilityGlyph.NemuAstralPet: return "FETCH";
                 case AbilityGlyph.NemuSeanceVoid: return "GROUND ZONE";
@@ -597,6 +611,16 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.ZackThunderstrike:
                     // Storm cloud striking lightning down
                     return ThunderstrikeCloud(u, v);
+
+                // The painted icons are what show; these are the missing-file fallbacks.
+                case AbilityGlyph.ZackBacktrack:
+                    return Mathf.Max(EllipseRing(u, v, 0.62f, 0.62f, Stroke), Chevron(u + 0.62f, -v, 0.30f, Stroke));
+                case AbilityGlyph.ZackAfterimage:
+                case AbilityGlyph.ZackOverclock:
+                    return SprintBolt(u, v);
+                case AbilityGlyph.ZackLiveWire:
+                    return Mathf.Max(Mathf.Max(Box(u + 0.62f, v + 0.15f, 0.07f, 0.55f), Box(u - 0.62f, v + 0.15f, 0.07f, 0.55f)),
+                        Box(u, v - 0.25f, 0.62f, 0.05f));
 
                 case AbilityGlyph.NemuPhase:
                     // Crescent body with spirit trails, distinct from the generic phase glyph

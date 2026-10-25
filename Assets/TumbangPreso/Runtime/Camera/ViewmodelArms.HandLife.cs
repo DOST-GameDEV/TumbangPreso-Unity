@@ -41,6 +41,8 @@ namespace TumbangPreso.CameraSystem
             public bool Free;
             /// <summary>Seconds of Dante's MOUNTAIN FORM left (`DanteHeroKit.MountainLeft`), 0 when he is not in it.</summary>
             public float Mountain;
+            /// <summary>Zack's running steps and timed Overclock, for the electricity on his own hands.</summary>
+            public float Momentum, Overclock;
         }
 
         /// <summary>One hero's hand companion. Built once for the hero, stepped every frame, destroyed with them.</summary>
@@ -232,6 +234,8 @@ namespace TumbangPreso.CameraSystem
             mood.VerticalSpeed = _characterMotor.Velocity.y;
             mood.Tagged = _characterMotor.IsStunned;
             mood.Mountain = _characterMotor.AbilitySystem?.Kit is Abilities.DanteHeroKit dante ? dante.MountainLeft : 0f;
+            if (_characterMotor.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
+            { mood.Momentum = zack.MomentumSeconds; mood.Overclock = zack.OverclockLeft; }
             mood.Free = _charge < 0 && _clip == null && _actionReturnLeft <= 0 && string.IsNullOrEmpty(_aimPreview)
                 && !_characterMotor.IsSwimming && !_characterMotor.IsEdgeRecovering && !_characterMotor.IsFlying && !_characterMotor.IsStunned;
             return mood;

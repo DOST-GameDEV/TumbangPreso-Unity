@@ -316,8 +316,6 @@ namespace TumbangPreso.CameraSystem
             Visual.DanteBoulderStone.MatchOwner(filter, held);
             if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                 Visual.SeanIgnitionVisual.Ensure(filter, held, sean);
-            else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
-                Visual.ZackMagnetCharge.Ensure(filter, held, zack);
             else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.RafiHeroKit rafi)
                 Visual.RafiSkimCoating.Ensure(filter, held, rafi);
             else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.CheskaHeroKit cheska)
@@ -1057,7 +1055,7 @@ namespace TumbangPreso.CameraSystem
 
         private static Key[] AimClip(string action) => action == "frost-sweep" ? FrostSweepClip
             : action == "raise-barricade" ? RaiseBarricadeClip
-            : action == "summon-lightning" ? SummonLightningClip
+            : action == "summon-lightning" || action == "livewire-throw" ? SummonLightningClip
             : action == "cast-hex" ? CastHexClip
             : action == "blink" ? BlinkClip
             : action == "swarm-burst" ? SwarmBurstClip
@@ -1206,16 +1204,14 @@ namespace TumbangPreso.CameraSystem
                   : clip == "slide" ? SlideClip
                   : clip == "shove" ? ShoveClip
                   : clip == "slam" ? SlamClip
-                  : clip == "closed-circuit" ? ClosedCircuitClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : clip == "thrust-fire" ? ThrustFireClip
                   : clip == "cinder-draw" || clip == "magma-palms" ? CinderDrawClip
                   : clip == "ignite" ? IgniteClip
                   : clip == "supernova-slam" ? SupernovaSlamClip
-                  : clip == "sprint-electric" ? SprintElectricClip
-                  : clip == "bank-load" ? BankLoadClip
-                  : clip == "overcharge" ? OverchargeClip
-                  : clip == "summon-lightning" ? SummonLightningClip
+                  : clip == "sprint-electric" || clip == "backtrack-snap" ? SprintElectricClip
+                  : clip == "overcharge" || clip == "afterimage-split" || clip == "overclock-take" ? OverchargeClip
+                  : clip == "summon-lightning" || clip == "livewire-throw" ? SummonLightningClip
                   : clip == "boulder-load" ? BoulderLoadClip
                   : clip == "stomp-heavy" || clip == "stomp" ? StompHeavyClip
                   : clip == "bastion-brace" ? BastionBraceClip
@@ -1261,7 +1257,7 @@ namespace TumbangPreso.CameraSystem
 
             // A held gesture has already paid its preparation visually. Continue
             // from that key; a tap still plays the whole authored action.
-            _clipTime = _aimPreview == clip && AimClip(clip) != null && clip != "summon-lightning" ? _clip[1].T : 0.0f;
+            _clipTime = _aimPreview == clip && AimClip(clip) != null && clip != "summon-lightning" && clip != "livewire-throw" ? _clip[1].T : 0.0f;
             _clipBlendTime=0;
             _aimPreview=null;
             _actionReturnLeft = 0.0f;

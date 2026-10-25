@@ -144,12 +144,22 @@ namespace TumbangPreso.Tests
             sean.SetRole(true, null);
             Assert.AreSame(sean.AttackingSkill, sean.CaptureTimedKit().PersonalAbility);
             Assert.AreNotSame(sean.Skill2, sean.CaptureTimedKit().PersonalAbility);
+        }
+
+        [Test]
+        public void ZackTimedSnapshotCarriesOverclockIndependentlyOfTheRoleSlot()
+        {
+            // Zack (protocol 182): no personal window; OVERCLOCKED's 25 s rides the passive fields beside a pending ultimate.
             var zack = new ZackHeroKit();
             zack.SetRole(true, null);
-            var magnet = zack.CaptureTimedKit();
-            Assert.AreSame(zack.AttackingSkill, magnet.PersonalAbility);
-            Assert.AreSame(zack.Ultimate, magnet.UltimateAbility);
-            Assert.IsTrue(magnet.TryAge(1, 0, true, 0, out _));
+            var overclock = zack.CaptureTimedKit();
+            Assert.IsNull(overclock.PersonalAbility);
+            Assert.AreSame(zack.Ultimate, overclock.UltimateAbility);
+            Assert.AreEqual(ZackRules.OverclockSeconds, overclock.PassiveCapacity);
+            Assert.IsTrue(overclock.TryAge(0, 0, true, 0, out _));
+            Assert.IsTrue(overclock.TryAge(0, 0, false, 2, out var agedOverclock, passive: 12));
+            Assert.AreEqual(10, agedOverclock.PassiveRemaining, .001f);
+            Assert.IsFalse(overclock.TryAge(0, 0, false, 0, out _, passive: 26), "More than 25 s of Overclocked is refused.");
         }
 
         private static InputActionAsset LoadActions()
@@ -566,7 +576,7 @@ namespace TumbangPreso.Tests
                 ["dante"] = GeoRules.EarthquakeCost,
                 ["cheska"] = CryoRules.AbsoluteZeroCost,
                 ["sean"] = 15.0f,
-                ["zack"] = 20.0f,
+                ["zack"] = ZackRules.OverclockCost,
                 ["nemu"] = 10.0f,
                 ["phaister"] = VoodooRules.DollCost,
                 ["rafi"] = 16.0f,
@@ -635,9 +645,7 @@ namespace TumbangPreso.Tests
                 Assert.IsFalse(kit.Ultimate.UsesCharges,
                     hero + "'s ultimate is on ability charges as well as the ultimate meter");
             }
-            // Sean's defending slot is MAGMA FIST since 2026-10-24, not a placeholder.
-            CollectionAssert.AreEquivalent(new[] { "zack_skill2d", "rafi_skill2d" },
-                                           placeholders, "the three designed-later role slots changed");
+            Assert.IsEmpty(placeholders, "Every current defending slot is implemented.");
         }
 
         /// <summary>
@@ -652,8 +660,10 @@ namespace TumbangPreso.Tests
                 Assert.IsFalse(skill.UsesCharges, skill.Id + " still uses the retired ice charges");
             }
 
-            // Sean left this list on 2026-10-24: MOLTEN THROW is on a cooldown, not Empowered Throw's two charges.
-            foreach (string hero in new[] { "zack" })
+            // Sean left this list on 2026-10-24 (MOLTEN THROW is on a cooldown) and Zack on 2026-10-25 (AFTERIMAGE is 30 s):
+            // no attacking skill recharges on a knock any more. The loop stays for the next one that does.
+            Assert.IsFalse(HeroAbilitySystem.CreateKitFor("zack").AttackingSkill.UsesCharges);
+            foreach (string hero in new string[0])
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
                 var skill = kit.AttackingSkill;

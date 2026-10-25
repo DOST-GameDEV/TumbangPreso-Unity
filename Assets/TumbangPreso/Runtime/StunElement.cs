@@ -32,7 +32,7 @@ namespace TumbangPreso
         /// <summary>Sean. Fire trail and witchfire burns.</summary>
         Fire,
 
-        /// <summary>Zack. Shock trail, Bolt Sprint, Thunderstrike.</summary>
+        /// <summary>Zack. LIVE WIRE's Zapped (a 1 s Shock hold, protocol 182) and the legacy shock hazards.</summary>
         Shock,
 
         /// <summary>Dante. Seismic Stomp and Titan Fissure: buried rather than coated.</summary>

@@ -3,14 +3,13 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    // Remaining state for Sean Rush and Zack Sprint. This is not a new cast.
+    // Remaining state for Sean Rush. This is not a new cast.
     public struct HeroMovementState
     {
         public const int MaxWakePoints = 4;
         public float Remaining, UntilNextEmission;
         public Vector3[] Wake;
         public uint KnownWake;
-        public bool QuickFollowup, QuickSecondCut;
 
         public bool Valid(float duration, float interval, float age)
         {
