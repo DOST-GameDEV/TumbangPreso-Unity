@@ -1,45 +1,33 @@
 # Current checkpoint
 
-Updated 2026-10-26. Owner scope: [TODO](TODO.md).
+Updated 2026-10-26. [TODO](TODO.md) is the only active queue.
 
-<<<<<<< HEAD
-- Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; BugFix is deleted.
-  Proven unused assets removed: 107.2 MiB. Seven entry docs are 97.62% smaller.
-  Preserve owner metadata/ProjectSettings changes. [Receipt](reports/repository-cleanup-2026-10-25.md).
-- Spectator desktop work is on main through `f97da3be6`: grouped live controls,
-  calmer camera, actual eye/rotation/FOV/hand state, measured body/effect framing,
-  all 21 bodies and six maps, watched filters/audio and private cues.
-  [Reports](reports/spectator-2026-10-25/README.md).
-- Private view delivery matched 159 owner-to-host and 156 host-to-observer packets,
-  nine phantom roots, held marker/beacon and unsubscribe cleanup. Inactive reticles
-  survive both body-hide loops. [Receipt](reports/spectator-2026-10-25/private-candidate.md).
-- NETWORKFIX is verified within recorded Windows scope: host/referee loss stops
-  old simulation, retained departure notices and small yellow/red quality badge,
-  fresh RTT probes, role-preserving rejoin, full-room replacement and complete
-  unit packets. Actual hosted/referee pause, lag/outage/cold/same-process rejoin,
-  throws, recall, current dolls and round transitions were checked.
+- Cleanup aaf96e52e1 integrated BugFix47487eda7; BugFix is deleted. Removed
+  107.2 MiB of proven unused assets; seven entry docs are97.62% smaller.
+  Preserve owner metadata/settings. [Receipt](reports/repository-cleanup-2026-10-25.md).
+- Desktop spectator is on main: grouped live controls, calmer camera, actual
+  player eyes/hands/lens, all21 bodies/six maps and private cues. Actual private
+  payloads and cleanup passed controlled Windows peers.
+  [Evidence](reports/spectator-2026-10-25/README.md).
+- Network/mobile work stays on `mobile+network` until integration is requested.
+  Network loss revokes old simulation, retained notices and yellow/red quality
+  icons work, and seat/role-preserving rejoin is verified in controlled Windows
+  cases. Throws/current dolls/recall/round transitions have separate receipts.
   [Evidence and limits](reports/networkfix-2026-10-25/README.md).
-- Network/mobile changes stay on mobile+network until integration is requested.
-  Mobile is next; future unrelated work does not automatically owe mobile updates.
-- Mobile refresh is active on mobile+network, based on verified NETWORKFIX plus
-  main's newer Backtrack visuals. Do not overwrite owner art or restore the old
-  mobile-every-feature mandate.
-- Zack's lead-and-merge Backtrack visual candidate has its separate native 22/22
-  and film receipts; creative/listening review remains its owner's task.
-=======
-- Zack Backtrack electrical-outline look `308fb345f` is owner-approved on main:
-  no solid gold memory fill, contour persistence through arrival and curved
-  first-person wisps that follow both route legs. Final r11 passed 23/23 plus
-  r12 stroke capture 1/1; both final exports were reviewed at 1x. Evidence is
-  under `Logs/zack-backtrack-speed-20261026/`. The skin-mounted hand zigzag
-  overlay and its test are removed; final native hand capture passed 1/1.
-  Next: sound review. The procedural SFX
-  challenger was rejected; source auditions are not installed. Listening and
-  actual-peer acceptance remain open. Five owner files stay excluded.
->>>>>>> origin/main
-  [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
+- Mobile touch aiming/lifecycle, spectator tools, safe areas, real lens framing
+  and lossless packaging are implemented. Android rule drift is fixed without
+  weakening the compatibility guard. Actual Windows-to-Android FPP passed;
+  reverse streaming found recovery easing, now fixed with25/25 native cases.
+  Final builds/reconnect/touch journeys remain in validation.
+  [Evidence](reports/mobile-2026-10-26/README.md). Unrelated future sessions do
+  not automatically owe mobile updates.
+- Main through078f98e87 is merged into this candidate. Zack's electrical-outline
+  Backtrack look308fb345f is owner-approved; contour persistence/curved wisps
+  have23/23 native plus1/1 stroke capture. Skin-mounted hand zigzags were removed
+  with1/1 native capture. Sound review is next; procedural SFX were rejected,
+  source auditions are not installed. Listening/actual peers remain open and
+  five owner files remain excluded. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
-Peer proof is controlled Windows processes on one PC, separate from natural play,
-WAN/Relay/separate-machine/Android acceptance. Current jobs and exact commands
-belong in task-local receipts. [Older checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md)
-are history, not assignments.
+Android proof uses ARM translation in an API36 emulator. Physical Wi-Fi discovery,
+phone performance, separate machines, WAN/Relay and natural play remain distinct.
+[Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.
