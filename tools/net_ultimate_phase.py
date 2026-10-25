@@ -32,11 +32,13 @@ try:
   (out/'job.json').write_text(json.dumps({'exe':str(exe),'port':port,'commands':commands,'pids':[x.pid for x in processes]},indent=2))
   if index==0:time.sleep(7)
   elif index==1:
-   deadline=time.monotonic()+15
+   deadline=time.monotonic()+60
    while time.monotonic()<deadline:
     log=out/'scorer.log'
     if log.exists() and 'LocalSlot=1' in log.read_text(errors='replace'):break
+    if processes[-1].poll() is not None:raise RuntimeError('Scorer exited before its actual seat admission')
     time.sleep(.25)
+   else:raise RuntimeError('Scorer did not receive seat1; do not launch a competing peer before it')
  if a.late_join:
   deadline=time.monotonic()+50
   while time.monotonic()<deadline:
