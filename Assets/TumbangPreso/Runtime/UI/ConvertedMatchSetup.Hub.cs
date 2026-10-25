@@ -70,6 +70,18 @@ namespace TumbangPreso.UI
             if (!HubEnabled || _ownerPreparation == null) return;
             _hubView = TumpHub.Install(transform, this);
             _ownerPreparation.Canvas.gameObject.SetActive(false);
+            PresentPendingDisconnect();
+        }
+        private void PresentPendingDisconnect()
+        {
+            // Arena disconnects navigate here after the old hub was destroyed.
+            // The reason must survive that scene load and remain until acknowledged.
+            if (_hubView != null && !string.IsNullOrWhiteSpace(NetSession.LastDisconnectReason))
+            {
+                string reason = NetSession.LastDisconnectReason;
+                ShowDisconnectNotice(reason);
+                NetSession.LastDisconnectReason = "";
+            }
         }
 
         /// <summary>The parent the room chat hangs off: the hub when it is the view.</summary>
@@ -505,8 +517,15 @@ namespace TumbangPreso.UI
             // its delayed completion can change the route chosen after returning HOME.
             LeaveRoom();
             _hubView.Home();
-            _hubView.Toast(string.IsNullOrWhiteSpace(detail) ? "The room closed." : detail);
+            ShowDisconnectNotice(detail);
             return true;
+        }
+        private void ShowDisconnectNotice(string detail)
+        {
+            if (_hubView == null) return;
+            var existing = _hubView.Find<HubDisconnectedNotice>();
+            if (existing == null)
+                _hubView.Push<HubDisconnectedNotice>(notice => notice.Message = string.IsNullOrWhiteSpace(detail) ? "The room closed." : detail);
         }
     }
 }

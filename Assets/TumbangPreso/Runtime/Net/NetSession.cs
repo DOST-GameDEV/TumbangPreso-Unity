@@ -762,6 +762,7 @@ namespace TumbangPreso.Net
 
             _utp = GetComponent<UnityTransport>();
             if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
+            _utp.OnTransportEvent += ObserveLinkTraffic;
 
             ConfigureManager();
 
@@ -843,6 +844,7 @@ namespace TumbangPreso.Net
 
         private void OnDestroy()
         {
+            if (_utp != null) _utp.OnTransportEvent -= ObserveLinkTraffic;
             Lobby.JoinCodeChanged -= OnClientTitleCodeChanged;
             if (_nm != null)
             {
@@ -1124,6 +1126,16 @@ namespace TumbangPreso.Net
 
         private float _linkSampleLeft;
         private LinkState _lastReportedLink = LinkState.Unknown;
+        private double _lastLinkTrafficAt = -1;
+        // A client has one authority connection. RTT can retain its old good value
+        // throughout an outage, so also observe actual transport data arriving.
+        public double LinkSilenceSeconds => _nm != null && !_nm.IsServer && _nm.IsConnectedClient && _lastLinkTrafficAt >= 0
+            ? Math.Max(0, Time.realtimeSinceStartupAsDouble - _lastLinkTrafficAt) : -1;
+        private void ObserveLinkTraffic(NetworkEvent kind, ulong transportId, ArraySegment<byte> payload, float receivedAt)
+        {
+            if (kind == NetworkEvent.Connect || kind == NetworkEvent.Data)
+                _lastLinkTrafficAt = Time.realtimeSinceStartupAsDouble;
+        }
 
         /// <summary>
         /// ⚠️ THE HOST REPORTS ITS WORST PEER, NOT AN AVERAGE. A host with three good clients and
@@ -1173,12 +1185,14 @@ namespace TumbangPreso.Net
                  : worst >= BadRttMs ? LinkState.Bad
                  : worst >= PoorRttMs ? LinkState.Poor
                  : LinkState.Good;
+            if (LinkSilenceSeconds >= 4) Link = LinkState.Bad;
+            else if (LinkSilenceSeconds >= 2 && Link < LinkState.Poor) Link = LinkState.Poor;
 
             if (Link == _lastReportedLink) return;
 
             _lastReportedLink = Link;
             Debug.Log($"[Link] {Link} at {LinkRttMs} ms round trip " +
-                      $"({(_nm.IsServer ? "host, worst peer" : "client")}).");
+                      $"({(_nm.IsServer ? "host, worst peer" : "client")}; receive silence {LinkSilenceSeconds:F1}s).");
         }
 
         private void Update()
@@ -1828,6 +1842,8 @@ namespace TumbangPreso.Net
         /// </summary>
         private void ConfigureTimeouts()
         {
+            _lastLinkTrafficAt = -1;
+            _linkSampleLeft = 0;
             // ⚠️⚠️ 8000, DOWN FROM 30000, AND THIRTY SECONDS IS NOT A TIMEOUT ANYBODY CAN PLAY
             // THROUGH. This is the silence timer: how long a peer keeps believing in a machine it
             // has stopped hearing from. `Stop` now sends a real `DisconnectClient` so an orderly

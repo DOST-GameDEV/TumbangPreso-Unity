@@ -20,7 +20,7 @@ namespace TumbangPreso.Tests
         private LobbyJoinPanel _panel;
         private NetSession _previousNet;
         private bool _previousNetworked;
-        private string _previousTitle, _previousMap;
+        private string _previousTitle, _previousMap, _previousDisconnect;
         private int _previousVisibility;
         private readonly Dictionary<string, object> _queueState = new Dictionary<string, object>();
         private TaskCompletionSource<bool> _completion;
@@ -32,6 +32,7 @@ namespace TumbangPreso.Tests
         {
             Assert.IsNull(Matchmaker.Current, "This fixture must not share an active matchmaker.");
             _previousNet = NetSession.Instance;
+            _previousDisconnect = NetSession.LastDisconnectReason;
             typeof(NetSession).GetProperty("Instance").SetValue(null, null);
             _previousNetworked = SceneFlow.Networked;
             _previousTitle = NetSession.RoomTitle; _previousMap = NetSession.RoomMap;
@@ -46,6 +47,8 @@ namespace TumbangPreso.Tests
             var hub = Child("Hub").AddComponent<TumpHub>();
             var canvas = Child("Canvas").AddComponent<Canvas>();
             typeof(TumpHub).GetProperty("Canvas").SetValue(hub, canvas);
+            Field(hub, "_screens", (RectTransform)Child("Screens").transform);
+            Field(hub, "_popups", (RectTransform)Child("Popups").transform);
             Field(hub, "_shade", Child("Shade").AddComponent<Image>());
             Field(hub, "_plate", Child("QueuePlate").AddComponent<HubQueuePlate>());
             var toastRoot = Child("Toast");
@@ -78,6 +81,7 @@ namespace TumbangPreso.Tests
             SceneFlow.Networked = _previousNetworked;
             NetSession.RoomTitle = _previousTitle; NetSession.RoomMap = _previousMap;
             NetSession.RoomVisibility = _previousVisibility;
+            NetSession.LastDisconnectReason = _previousDisconnect;
         }
 
         private GameObject Child(string name)
@@ -93,6 +97,33 @@ namespace TumbangPreso.Tests
         private void Disconnect()
             => Assert.IsTrue((bool)typeof(ConvertedMatchSetup).GetMethod("HubDisconnected", Hidden)
                 .Invoke(_controller, new object[] { "The room closed." }));
+
+        [Test]
+        public void NewHomeConsumesTheArenaReasonOnceIntoAnAcknowledgedNotice()
+        {
+            NetSession.LastDisconnectReason = "The host connection closed. This match has stopped.";
+            var present = typeof(ConvertedMatchSetup).GetMethod("PresentPendingDisconnect", Hidden);
+            present.Invoke(_controller, null);
+            present.Invoke(_controller, null);
+            var notices = _root.GetComponentsInChildren<HubDisconnectedNotice>(true);
+            Assert.AreEqual(1, notices.Length);
+            Assert.IsEmpty(NetSession.LastDisconnectReason);
+            Assert.AreEqual("The host connection closed. This match has stopped.", notices[0].Message);
+            Assert.IsNotNull(notices[0].FirstFocus, "A persistent notice needs an acknowledgment control.");
+            var text = System.Array.Find(notices[0].GetComponentsInChildren<Text>(true), t => t.name == "DisconnectReason");
+            Assert.IsFalse(text.supportRichText);
+        }
+
+        [Test]
+        public void OfflineFallbackHostDoesNotIgnoreTheActualDisconnect()
+        {
+            NetSession.LastDisconnectReason = "The host connection closed.";
+            typeof(ConvertedMatchSetup).GetMethod("HandleClientDisconnected", Hidden)
+                .Invoke(_controller, new object[] { "The host connection closed." });
+            Assert.AreEqual(1, _root.GetComponentsInChildren<HubDisconnectedNotice>(true).Length);
+            Assert.IsEmpty(NetSession.LastDisconnectReason);
+            Assert.IsFalse(SceneFlow.Networked);
+        }
 
         [Test]
         public void HostLossCancelsThePendingNativeJoin()

@@ -26,5 +26,20 @@ namespace TumbangPreso
             string id=BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(profile.Trim()))).Replace("-","").ToLowerInvariant();
             return Path.Combine(root,"profiles",id);
         }
+
+        // UGS permits 1-30 ASCII letters, digits, underscores and hyphens. Keep
+        // existing valid accounts exactly as they are. Local stores and LAN tokens
+        // continue using the original profile; only the SDK name is normalized.
+        public static string AuthenticationProfile(string profile)
+        {
+            string name = string.IsNullOrWhiteSpace(profile) ? "default" : profile.Trim();
+            bool valid = name.Length <= 30;
+            foreach (char c in name)
+                valid &= c is >= 'a' and <= 'z' or >= 'A' and <= 'Z' or >= '0' and <= '9' or '_' or '-';
+            if (valid) return name;
+            using var hash = SHA256.Create();
+            string digest = BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(name))).Replace("-", "").ToLowerInvariant();
+            return "p-" + digest.Substring(0, 28);
+        }
     }
 }

@@ -40,6 +40,9 @@ namespace TumbangPreso.Net
 
         /// <summary>There is no network, or UGS itself did not answer.</summary>
         Unreachable,
+
+        /// <summary>A local SDK configuration error that retrying cannot repair.</summary>
+        ConfigurationError,
     }
 
     public static class NetIdentity
@@ -105,7 +108,8 @@ namespace TumbangPreso.Net
         /// answer that was never given.
         /// </summary>
         private static bool StateIsPermanent =>
-            State == OnlineState.SignedIn || State == OnlineState.NotLinked || _buildCannotSignIn;
+            State == OnlineState.SignedIn || State == OnlineState.NotLinked ||
+            State == OnlineState.ConfigurationError || _buildCannotSignIn;
 
         /// <summary>Batch mode, recorded when the attempt settled rather than asked again, so a
         /// probe that flips <c>Application.isBatchMode</c> cannot make this answer drift.</summary>
@@ -309,12 +313,13 @@ namespace TumbangPreso.Net
 
             try
             {
+                string authenticationProfile = ProfilePaths.AuthenticationProfile(_customProfile);
                 if (UnityServices.State == ServicesInitializationState.Uninitialized)
                 {
                     var options = new InitializationOptions();
                     if (!string.IsNullOrEmpty(_customProfile))
                     {
-                        options.SetProfile(_customProfile);
+                        options.SetProfile(authenticationProfile);
                     }
 
                     await UnityServices.InitializeAsync(options);
@@ -323,9 +328,9 @@ namespace TumbangPreso.Net
                 if (!AuthenticationService.Instance.IsSignedIn)
                 {
                     if (!string.IsNullOrEmpty(_customProfile) &&
-                        AuthenticationService.Instance.Profile != _customProfile)
+                        AuthenticationService.Instance.Profile != authenticationProfile)
                     {
-                        AuthenticationService.Instance.SwitchProfile(_customProfile);
+                        AuthenticationService.Instance.SwitchProfile(authenticationProfile);
                     }
 
                     await AuthenticationService.Instance.SignInAnonymouslyAsync();
@@ -355,6 +360,12 @@ namespace TumbangPreso.Net
             }
             catch (RequestFailedException e)
             {
+                if (e.ErrorCode == AuthenticationErrorCodes.ClientInvalidProfile)
+                {
+                    Settle(OnlineState.ConfigurationError,
+                        "Online sign-in has an invalid local profile configuration. LAN hosting and joining are unaffected.", e);
+                    return false;
+                }
                 Settle(OnlineState.Unreachable,
                     $"UGS could not be reached ({Describe(e.ErrorCode)}), so Relay and Lobby cannot " +
                     "be used right now. LAN hosting and joining are unaffected.", e);

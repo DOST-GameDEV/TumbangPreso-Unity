@@ -2786,7 +2786,9 @@ namespace TumbangPreso.UI
         /// </summary>
         private void HandleClientDisconnected(string reason)
         {
-            if (NetAuthority.IsHost) return;
+            // Offline fallback is considered a host elsewhere. Here only a live
+            // listen server may ignore a client's room-loss notification.
+            if (NetSession.Instance?.IsNetworked == true && NetSession.Instance.IsHost) return;
 
             string detail = !string.IsNullOrWhiteSpace(reason)
                 ? reason
