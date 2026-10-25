@@ -56,5 +56,16 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(Command(SpectatorCamera.ViewCommand.Pause));
             Assert.IsFalse(Command(SpectatorCamera.ViewCommand.Speed)); Assert.AreEqual(1, PresentationClock.RequestedScale);
         }
+        [TestCase(true,2)] [TestCase(false,0)]
+        public void ActualPlayerViewDemandUsesTheRefereeRoleWithoutGrantingItToAPlayingHost(bool referee,int expected)
+        {
+            _host.Referee=referee;Assert.IsFalse(GameLaunch.Spectator);
+            var body=new GameObject("Watched seat",typeof(CharacterController));body.transform.SetParent(_root.transform);
+            var actor=body.AddComponent<CharacterMotor>();actor.enabled=false;actor.PlayerSlot=1;
+            ObservedPlayerView.SetTarget(actor);Assert.AreEqual(1,ObservedPlayerView.RequestedSlot);
+            Assert.IsNotNull(MatchRpc.Instance);
+            var needed=typeof(MatchRpc).GetMethod("NeededViewMask",BindingFlags.Instance|BindingFlags.NonPublic);
+            Assert.AreEqual(expected,(byte)needed.Invoke(MatchRpc.Instance,null));
+        }
     }
 }

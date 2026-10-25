@@ -134,7 +134,8 @@ namespace TumbangPreso.Net
             int mask = 0;
             foreach (var watcher in _viewWatchers)
                 if (ViewPeerMayWatch(watcher.Key) && ValidSlot(watcher.Value)) mask |= 1 << watcher.Value;
-            if (GameLaunch.Spectator && ValidSlot(ObservedPlayerView.RequestedSlot)) mask |= 1 << ObservedPlayerView.RequestedSlot;
+            if ((GameLaunch.Spectator || NetAuthority.IsSeatlessReferee) && ValidSlot(ObservedPlayerView.RequestedSlot))
+                mask |= 1 << ObservedPlayerView.RequestedSlot;
             return (byte)mask;
         }
         private void SendViewReady(ulong peer, ulong nonce, byte mask)
