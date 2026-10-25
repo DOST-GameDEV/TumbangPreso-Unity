@@ -234,9 +234,7 @@ namespace TumbangPreso.Visual
         private bool HiddenFromThisViewer()
         {
             var cam = Camera.main;
-            if (cam == null || !_motor.IsLocalViewer) return false;
-            var rig = cam.GetComponent<CameraRig>();
-            return rig != null && rig.IsFollowing(_motor) && rig.IsLocalFpp;
+            return ViewPerspective.IsEyesOf(cam, _motor);
         }
 
         // ------------------------------------------------------------------ the body it is in, measured once at rest

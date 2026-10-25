@@ -406,11 +406,7 @@ namespace TumbangPreso.Visual
             float limit=Mathf.Min(visibleHeight*camera.aspect*.36f/_layoutSize.x,
                 visibleHeight*.11f/_layoutSize.y);
             float size=depth<=camera.nearClipPlane?0:Mathf.Min(_animatedScale,limit);
-            if(_firstPersonParticipant!=null && !GameLaunch.Spectator)
-            {
-                var rig=camera.GetComponent<CameraSystem.CameraRig>();
-                if(rig!=null && rig.IsLocalFpp && rig.IsFollowing(_firstPersonParticipant))size=0;
-            }
+            if(CameraSystem.ViewPerspective.IsEyesOf(camera,_firstPersonParticipant))size=0;
             var desired=Vector3.one*size;
             bool changed=Mathf.Abs(Quaternion.Dot(transform.rotation,rotation))<.999999f ||
                 (transform.localScale-desired).sqrMagnitude>1e-14f;

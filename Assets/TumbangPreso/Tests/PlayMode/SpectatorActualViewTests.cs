@@ -182,5 +182,59 @@ namespace TumbangPreso.PlayTests
             }
             finally { Abilities.NemuDormant.RetireAll(); }
         }
+        [Test] public void TheWatchedVictimsRiderAndOwnStatusBadgeRespectTheActualView()
+        {
+            GameLaunch.Spectator=true;_actor.ApplyNetworkPossessed(Core.NemuRules.PossessedSeconds-.5f);CopyFinalView();
+            var rider=_actor.GetComponentInChildren<Visual.PossessedPresence>();Assert.IsNotNull(rider);
+            var badges=_actor.GetComponent<Visual.StatusOverhead>()??_actor.gameObject.AddComponent<Visual.StatusOverhead>();
+            bool HiddenRider()=>(bool)typeof(Visual.PossessedPresence).GetMethod("HiddenFromThisViewer",Hidden).Invoke(rider,null);
+            bool OwnBadges()=>(bool)typeof(Visual.StatusOverhead).GetMethod("IsLocalView",Hidden).Invoke(badges,null);
+            Assert.IsTrue(HiddenRider());Assert.IsTrue(OwnBadges());
+            _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);Assert.IsFalse(HiddenRider());Assert.IsFalse(OwnBadges());
+            _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);_rig.BeginEmoteView();CopyFinalView();
+            Assert.IsFalse(HiddenRider(),"A third-person emote should show the rider on the visible body.");
+            Assert.IsTrue(OwnBadges(),"Actual player-view HUD status already replaces its own overhead badge.");
+        }
+        [Test] public void AWatchedOwnersDormantHighlightDoesNotGiveTheSpectatorAReclaimAction()
+        {
+            GameLaunch.Spectator=true;CopyFinalView();
+            var ghost=Abilities.NemuDormant.Spawn(Abilities.NemuDormant.Ghost.Peeker,_actor.transform.position+Vector3.right*.5f,Vector3.forward,_actor.PlayerSlot);
+            try
+            {
+                var near=typeof(Abilities.NemuDormant).GetMethod("HerReachIsHere",Hidden);
+                Assert.IsTrue((bool)near.Invoke(ghost,null));
+                _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);Assert.IsFalse((bool)near.Invoke(ghost,null));
+                Assert.IsFalse(ghost.Reclaimed);
+            }
+            finally { Abilities.NemuDormant.RetireAll(); }
+        }
+        [Test] public void WaitingGhostOverviewStaysVisibleAndPlayerViewUsesThatPlayersOpacity()
+        {
+            GameLaunch.Spectator=true;CopyFinalView();
+            float age=Core.NecroRules.DontLookArmSeconds+1;
+            var other=Abilities.NemuBlindfold.Place(new Vector3(3,0,2),Vector3.forward,0,age);
+            var visibility=typeof(Abilities.NemuBlindfold).GetMethod("Visibility",Hidden,null,new[]{typeof(float)},null);
+            float Seen(Abilities.NemuBlindfold ghost)=>(float)visibility.Invoke(ghost,new object[]{age});
+            float watchedOther=Seen(other);
+            _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);float overview=Seen(other);
+            Assert.Greater(overview,watchedOther,"Overview should retain the spectator's complete skill visibility.");
+            _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);CopyFinalView();
+            var own=Abilities.NemuBlindfold.Place(new Vector3(4,0,2),Vector3.forward,_actor.PlayerSlot,age);
+            Assert.That(Seen(own),Is.EqualTo(overview).Within(.001f));
+        }
+        [Test] public void AParticipantCaptionClearsFromTheirEyesButRemainsInManualViews()
+        {
+            GameLaunch.Spectator=true;CopyFinalView();
+            var root=new GameObject("Scoped caption");root.transform.SetParent(_root.transform);
+            var popup=root.AddComponent<Visual.ComicPopup>();
+            typeof(Visual.ComicPopup).GetField("_firstPersonParticipant",Hidden).SetValue(popup,_actor);
+            typeof(Visual.ComicPopup).GetField("_layoutSize",Hidden).SetValue(popup,new Vector2(2,1));
+            typeof(Visual.ComicPopup).GetField("_animatedScale",Hidden).SetValue(popup,1f);
+            root.transform.position=_watcher.transform.position+_watcher.transform.forward*4;
+            var render=typeof(Visual.ComicPopup).GetMethod("ApplyView",Hidden);
+            render.Invoke(popup,new object[]{_watcher.GetComponent<Camera>()});Assert.AreEqual(Vector3.zero,root.transform.localScale);
+            _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);
+            render.Invoke(popup,new object[]{_watcher.GetComponent<Camera>()});Assert.Greater(root.transform.localScale.x,0);
+        }
     }
 }

@@ -106,6 +106,16 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(matched,"The sampled hallucination was invented instead of copied from its owner.");
             }
         }
+        [Test] public void HidingAFirstPersonBodyDoesNotHideItsWorldAimMarker()
+        {
+            Capture();typeof(CameraRig).GetMethod("ApplyFppSelfHide",Hidden).Invoke(_rig,null);
+            Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly,
+                _owner.transform.Find("Body mesh").GetComponent<Renderer>().shadowCastingMode,"Body self-hide must remain intact.");
+            var marker=(GroundReticle)typeof(Abilities.HeroAbilitySystem).GetField("_reticle",Hidden).GetValue(_abilities);
+            foreach(var renderer in marker.GetComponentsInChildren<Renderer>(true))
+                Assert.AreNotEqual(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly,renderer.shadowCastingMode,
+                    "The actual player's world marker was hidden with their body: "+renderer.name);
+        }
         [Test] public void ObservedCopiesAreRenderOnlyAndDoNotMutateOrDestroyTheirSources()
         {
             var view=Capture();Vector3 owner=_owner.transform.position,other=_other.transform.position,shoe=_shoe.transform.position;

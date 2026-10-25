@@ -31,10 +31,19 @@ Native checks so far:
 - Final source-visibility/menu/actual-view suite: 15/15. Original private geometry
   hides after a late camera release; an open menu cannot retain a stale stream.
   Marker beacons and world scale are preserved. [Native receipt](private-native-validation.json).
+- Visibility/restoration follow-up: 29/29. An actual render capture exposed the
+  player's FPP body-hide loop hiding its world reticle. A baseline regression
+  reproduced it; both camera body-hide loops now preserve ground-marker geometry
+  while still hiding the body. Own captions, overhead status, possession riders
+  and Nemu's owner-only highlights/ghost opacity use the selected view identity.
 
 The opt-in three-process tool now compares the actual sent owner packet to the
 host by timestamp, then the host relay to the observer by scoped serial, including
 the exact private bytes. `--private` applies host status clocks and draws an owner
 marker through existing presentation paths; it checks all hallucination types,
 observer rendering, unsubscribe cleanup and actual owner/observer captures.
-Build and real-peer delivery remain pending; no natural/WAN/device claim follows.
+The initial v2 player passed raw private delivery, rendering and cleanup through
+three real processes. A repeat exposed a fixture shutdown race, which was fixed
+with ordered completion. Visual inspection then found the source reticle hiding
+defect above. Final player build and owner/observer visual comparison remain
+pending for that correction; no natural/WAN/device claim follows.

@@ -220,7 +220,10 @@ namespace TumbangPreso.Abilities
         /// <summary>Nemu herself, on her own screen, standing close enough to take it back.</summary>
         private bool HerReachIsHere()
         {
-            if (NetAuthority.LocalSlot != OwnerSlot || GameLaunch.Spectator) return false;
+            int seat = GameLaunch.Spectator ? -1 : NetAuthority.LocalSlot;
+            var observer = Camera.main != null ? Camera.main.GetComponent<CameraSystem.SpectatorCamera>() : null;
+            if (observer != null && observer.isActiveAndEnabled) seat = observer.PlayerViewTarget?.PlayerSlot ?? -1;
+            if (seat != OwnerSlot) return false;
             var her = GameServices.Round?.PlayerAt(OwnerSlot);
             if (her == null) return false;
             Vector3 d = her.transform.position - Position; d.y = 0f;

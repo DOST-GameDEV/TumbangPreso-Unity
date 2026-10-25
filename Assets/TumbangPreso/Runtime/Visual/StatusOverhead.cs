@@ -41,6 +41,9 @@ namespace TumbangPreso.Visual
 
         private bool IsLocalView()
         {
+            var observer = Camera.main != null ? Camera.main.GetComponent<CameraSystem.SpectatorCamera>() : null;
+            if (observer != null && observer.isActiveAndEnabled)
+                return !_body.IsBot && observer.PlayerViewTarget == _body;
             if (GameLaunch.Spectator || _body.IsBot) return false;
             int local = NetAuthority.IsNetworked ? NetAuthority.LocalSlot : GameLaunch.SoloSeat;
             return _body.PlayerSlot == local;

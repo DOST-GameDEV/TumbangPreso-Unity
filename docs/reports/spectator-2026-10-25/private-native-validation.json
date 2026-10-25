@@ -31,6 +31,12 @@
       "passed": 15,
       "end": "2026-10-25 10:13:30Z",
       "sha256": "fcd0d9c7a959570c11f9259b2913197112b7054eaf55c81b46d8a4a53202f39b"
+    },
+    {
+      "file": "Logs\\spectator-1025\\visibility-final-play.xml",
+      "passed": 29,
+      "end": "2026-10-25 11:09:52Z",
+      "sha256": "b609eedeb033c40c392073cd512edb40e6b8921c401a3be255f9e01a6bbeabab"
     }
   ],
   "viewCapability": 2,
@@ -38,5 +44,6 @@
   "maxPoseBytes": 686,
   "maxPrivatePhantoms": 9,
   "gameplayProtocol": 181,
-  "markerBeacon": "Packed marker flag, no packet-size increase"
+  "markerBeacon": "Packed marker flag, no packet-size increase",
+  "baselineMarkerFailure": "marker-self-hide-baseline.xml: existing CameraRig.ApplyFppSelfHide hid ReticleRim as ShadowsOnly; fixed exclusion preserves body self-hide."
 }
