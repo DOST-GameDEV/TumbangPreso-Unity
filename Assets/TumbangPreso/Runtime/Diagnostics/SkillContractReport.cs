@@ -24,9 +24,11 @@ namespace TumbangPreso.Diagnostics
             using var hash = SHA256.Create();
             string fresh = BitConverter.ToString(hash.ComputeHash(payload)).Replace("-", "");
             Debug.Log("[SkillContractDump] platform=" + Application.platform + " cached=" + current + " fresh=" + fresh);
-            string encoded = Convert.ToBase64String(payload); int parts = (encoded.Length + 1023) / 1024;
+            // Unity's Android logger truncates individual lines at1023 characters.
+            const int chunk = 512;
+            string encoded = Convert.ToBase64String(payload); int parts = (encoded.Length + chunk - 1) / chunk;
             for (int i = 0; i < parts; i++)
-                Debug.Log("[SkillContractDump:" + i + "/" + parts + "] " + encoded.Substring(i * 1024, Math.Min(1024, encoded.Length - i * 1024)));
+                Debug.Log("[SkillContractDump:" + i + "/" + parts + "] " + encoded.Substring(i * chunk, Math.Min(chunk, encoded.Length - i * chunk)));
             foreach (var hero in Roster.HeroPeople)
             {
                 var asset = Resources.Load<TextAsset>("UltimateIntros/" + hero.Id);

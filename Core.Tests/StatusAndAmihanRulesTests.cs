@@ -216,6 +216,18 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(-float.MaxValue,float.MaxValue,-float.MaxValue,float.MaxValue));
         }
         [Fact]
+        public void DriftHitTimingHasTheSameCanonicalFloatOnEveryTarget()
+        {
+            Assert.Equal(0x3ed07507, BitConverter.SingleToInt32Bits(AmihanRules.QuickDashHitSeconds));
+            double speed = AmihanRules.QuickDashSpeed;
+            double tail = speed / (2d * Balance.Friction);
+            double held = Math.Max(0d, AmihanRules.QuickDashDistance / speed - tail);
+            Assert.Equal(AmihanRules.QuickDashHitSeconds, (float)(held + tail + .05d));
+            Assert.InRange(Math.Abs(AmihanRules.QuickDashHitSeconds
+                - (AmihanRules.QuickDashHoldSeconds + AmihanRules.QuickDashSpeed / (2f * Balance.Friction) + .05f)), 0, .000001f);
+        }
+
+        [Fact]
         public void AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap()
         {
             Assert.Equal(35.0f, AmihanRules.QuickDashCooldown);
