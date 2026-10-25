@@ -363,8 +363,9 @@ namespace TumbangPreso.CameraSystem
 
         private float _slipperScanAt = -99.0f;
         private Slipper[] _slippers;
-        private readonly Dictionary<int, SlipperState> _lastSlipperState =
-            new Dictionary<int, SlipperState>();
+        private readonly Dictionary<EntityId, SlipperState> _lastSlipperState = new();
+        private readonly HashSet<EntityId> _liveSlipperIds = new();
+        private readonly List<EntityId> _retiredSlipperIds = new();
 
         /// <summary>
         /// Subscribes to whatever exists right now.
@@ -425,6 +426,7 @@ namespace TumbangPreso.CameraSystem
             _ultimateKit = null;
             _ultimateRound = null;
             _ultimateMatch = null;
+            _lastSlipperState.Clear(); _liveSlipperIds.Clear(); _retiredSlipperIds.Clear(); _slippers = null;
         }
 
         // -------------------------------------------------------------------
@@ -821,6 +823,11 @@ namespace TumbangPreso.CameraSystem
                 _slipperScanAt = now + SlipperScanInterval;
                 _slippers = Object.FindObjectsByType<Slipper>(
                     FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                _liveSlipperIds.Clear();
+                foreach (var shoe in _slippers) if (shoe != null) _liveSlipperIds.Add(shoe.GetEntityId());
+                _retiredSlipperIds.Clear();
+                foreach (var key in _lastSlipperState.Keys) if (!_liveSlipperIds.Contains(key)) _retiredSlipperIds.Add(key);
+                foreach (var key in _retiredSlipperIds) _lastSlipperState.Remove(key);
             }
 
             if (_slippers == null) return;
@@ -833,14 +840,9 @@ namespace TumbangPreso.CameraSystem
             {
                 if (s == null) continue;
 
-                // ⚠️⚠️ KEYED ON THE SEAT, NOT ON THE OBJECT. There is exactly one tsinelas per
-                // player by construction (`Balance.PlayerCount` of them, `OwnerSlot` 0 to 3), so
-                // the seat is a stable, meaningful key that survives a slipper being pooled or
-                // respawned between rounds. It also avoids `Object.GetInstanceID`, which Unity
-                // 6.5 marks obsolete in favour of `GetEntityId` and which `csc.rsp` therefore
-                // turns into a hard error in this assembly.
-                int id = s.OwnerSlot;
-                if (id < 0) continue;
+                // Ownership is a mutable label. Observe the actual shoe, including an
+                // unowned one, and retire removed objects on the bounded scene scan.
+                var id = s.GetEntityId();
 
                 var state = s.State;
 
