@@ -39,7 +39,7 @@ namespace TumbangPreso.Visual
     /// <remarks>
     /// THE MIX (2026-10-17). The owner, of s3, s4 and s6: "do the mix, i think the sean s3 fire trail was slightly better,
     /// just needs more refinement. it doesnt have the same quality as zack circuit though.." So the wake is s3's soft
-    /// flame curtains, with what makes Isagani's approved Quick Circuit read finished laid in: a crisp near-white core in
+    /// flame curtains, with what makes Zack's approved Quick Circuit read finished laid in: a crisp near-white core in
     /// thin lines inside the soft body (a second copy of each curtain cut to only the brightest of the same picture, so
     /// the lines sit exactly in the flames), a bright ground punctuation at BOTH ends (the cracks where he leaves and a
     /// smaller set where he plants), a clean birth (the brace) and a death that is eaten. From s6: the ring, the needles

@@ -9,7 +9,7 @@ namespace TumbangPreso.Visual
     /// for the circuit ability". Its successor is `FxStudyZackBank`.
     ///
     /// STUDY J, BANK SHOT (third rough sample, b4; b3 is kept as `FxStudyZackBankB3`, the owner's word on it: "zack's bank
-    /// shot definietly needs work"). Isagani loads the tsinelas he is holding for eight seconds
+    /// shot definietly needs work"). Zack loads the tsinelas he is holding for eight seconds
     /// (`ZackHeroKit.BankShotAbility`); its next throw keeps 85 per cent of its speed on the first wall bank, and under
     /// Overclock two banks are credited. The picture has four jobs, each a thing a player must read AT MATCH DISTANCE
     /// (the first sample was hairlines on the shoe's outline and could not be seen from 8 m):

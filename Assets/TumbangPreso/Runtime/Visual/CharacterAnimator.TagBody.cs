@@ -279,7 +279,7 @@ namespace TumbangPreso.Visual
                     // dash (`CharacterSquashStretch`) before this runs, and aiming an arm by rotation under a
                     // non-uniformly scaled parent skews it by a few per cent: over a metre of reach that left the hand
                     // 6 to 9 cm off the victim (Logs/tag-contact-silhouettes, 2026-10-22: Basilio on Nemu, Rago on
-                    // Isagani). Slide the body the remaining distance and aim again; two passes converge.
+                    // Zack). Slide the body the remaining distance and aim again; two passes converge.
                     for (int pass = 0; pass < 2; pass++)
                     {
                         Vector3 miss = Vector3.ProjectOnPlane(_tagContact - _tgArmR.TransformPoint(_tgPalmR), up);

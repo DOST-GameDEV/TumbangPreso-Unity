@@ -14,7 +14,7 @@ namespace TumbangPreso.EditorTools.MapKit
 {
     /// <summary>
     /// QUICK CIRCUIT, FILMED WHERE IT IS PLAYED. The bench is a dark floor with bloom; the game is a sunlit court and no
-    /// camera that blooms. This films Isagani's cut on a real map opened as a PREVIEW scene (the scene the owner has open
+    /// camera that blooms. This films Zack's cut on a real map opened as a PREVIEW scene (the scene the owner has open
     /// is not touched and nothing is saved), with his real model, the way `PaeteAbilityFilm.Gale.cs` films the Whirlwind.
     ///
     /// Each frame is twelve pictures. DOWN: third person from his front quarter, his own eyes, and the eyes of a target
@@ -247,7 +247,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
                 report.AppendLine("he stands at (" + stand.x.ToString("0.0") + ", " + stand.z.ToString("0.0") + ") facing " + ZackYaw.ToString("0") + " degrees");
                 var zack = Person("zack", stand, ZackYaw, out var zackModel);
-                if (zackModel == null) report.AppendLine("Isagani's model was not found: there is no body, no cracks and no afterimage in this film.");
+                if (zackModel == null) report.AppendLine("Zack's model was not found: there is no body, no cracks and no afterimage in this film.");
                 var target = Person("dante", targetAt, ZackYaw + 180f, out _);
                 Person("cheska", stand + forward * 3.5f - right * 4.2f, ZackYaw + 90f, out _);
 

@@ -60,7 +60,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 cam.clearFlags = RenderSettings.skybox != null ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor;
                 cam.backgroundColor = new Color(0.55f, 0.70f, 0.88f);
 
-                // Isagani's court spot on this map (`ZackCircuitFilm`): pale court, 8 m clear ahead.
+                // Zack's court spot on this map (`ZackCircuitFilm`): pale court, 8 m clear ahead.
                 Vector3 stand = new Vector3(-2.5f, 0f, -6.0f), forward = Vector3.forward, right = Vector3.right;
                 var physics = scene.GetPhysicsScene();
                 if (physics.IsValid() && physics.Raycast(stand + Vector3.up * 30f, Vector3.down, out var under, 80f, ~0, QueryTriggerInteraction.Ignore))

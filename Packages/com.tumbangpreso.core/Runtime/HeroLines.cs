@@ -324,11 +324,11 @@ namespace TumbangPreso.Core
         private static readonly List<HeroBanter> BanterList = new List<HeroBanter>
         {
             B("zack", "sean", "Rago, you're slow.", "I'm counting. You're behind."),
-            B("sean", "zack", "Finish one play first, Isagani.", "Finishing is the boring part."),
+            B("sean", "zack", "Finish one play first, Zack.", "Finishing is the boring part."),
             B("dante", "cheska", "Checked the footing, Yasmin?", "Twice. You'll still pick the wrong spot."),
             B("cheska", "dante", "Don't defend a bad spot all day.", "It's only bad until it works."),
             B("zack", "cheska", "Didn't plan for this, did you?", "I planned for you improvising."),
-            B("cheska", "zack", "Pick one route, Isagani.", "Where's the fun in one?"),
+            B("cheska", "zack", "Pick one route, Zack.", "Where's the fun in one?"),
             B("phaister", "nemu", "Nemu! Bet this one surprises you.", "Mm. Tell me on the walk home."),
             B("nemu", "phaister", "Kuro likes your hat.", "Finally, an audience with taste."),
             B("rafi", "sean", "Bet you can't read this throw.", "I don't need to. I'll wait."),

@@ -111,7 +111,7 @@ namespace TumbangPreso.PlayTests
                 // degrees), so "swung enough" means most of what that character's gait asks for.
                 var authored = sprint ? anim.Style.Run : anim.Style.Walk;
                 float need = .6f * (authored.ArmForward + authored.ArmBack);
-                // Isagani deliberately favours one arm while swaggering. Compare
+                // Zack deliberately favours one arm while swaggering. Compare
                 // each side with its own authored range, as GaitStyle.Evaluate does.
                 float leftNeed=need*(1f-authored.ArmFavour),rightNeed=need*(1f+authored.ArmFavour);
                 Assert.Greater(late.LMax - late.LMin, leftNeed, $"{name}: the left arm barely swung.");

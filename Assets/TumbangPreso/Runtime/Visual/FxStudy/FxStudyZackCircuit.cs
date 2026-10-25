@@ -5,7 +5,7 @@ using Knot = TumbangPreso.Visual.FxStudyKit.Knot;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// STUDY I, THE QUICK CIRCUIT (a rough sample, second pass). Isagani's cut: after a tell of 0.15 s he is thrown 2 m
+    /// STUDY I, THE QUICK CIRCUIT (a rough sample, second pass). Zack's cut: after a tell of 0.15 s he is thrown 2 m
     /// to one side and slides to a stop in 0.365 s (`ZackHeroKit.QuickCircuitAbility`: `CutDistance` 2 at a launch
     /// speed of the square root of 2 x `Balance.Friction` x 2, which friction 30 stops in that time). It stuns nobody
     /// and leaves nothing behind. So the picture is ONE STREAK OF CHARGED AIR from where he stood to where he is, there

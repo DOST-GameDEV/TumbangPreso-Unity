@@ -1,4 +1,4 @@
-// Isagani's Bank Shot trail (`FxStudyZackBank`): a ribbon whose INSIDE churns every frame.
+// Zack's Bank Shot trail (`FxStudyZackBank`): a ribbon whose INSIDE churns every frame.
 //
 // WHY IT IS ITS OWN SHADER. The owner, of trails that slide past as one picture: "it just loooks like stickers and flat",
 // and the recipe he sent for a living trail: a trail texture panned along the ribbon and MULTIPLIED BY ITSELF running at a

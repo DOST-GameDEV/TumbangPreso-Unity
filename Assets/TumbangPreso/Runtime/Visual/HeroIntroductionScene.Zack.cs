@@ -319,7 +319,7 @@ namespace TumbangPreso.Visual
             var piece = _pieces[index];
             // Drawn before every other see-through piece of the stage: sorted by distance with them, the sky was being
             // painted over whatever stood further from the lens than the stage's middle (the far bolt, the far rain).
-            var material = new Material(shader) { name = "Isagani storm backdrop", color = piece.Color, renderQueue = 2900 };
+            var material = new Material(shader) { name = "Zack storm backdrop", color = piece.Color, renderQueue = 2900 };
             piece.Renderer.sharedMaterial = material;
             VfxRenderTag.Own(piece.Renderer.gameObject, material);
         }
@@ -526,7 +526,7 @@ namespace TumbangPreso.Visual
             int centre = vertices.Count; vertices.Add(new Vector3(0, heights[heights.Length - 1], 0)); colours.Add(new Color(.05f, .055f, .08f, 1f));
             int last = (heights.Length - 1) * row;
             for (int i = 0; i < sides; i++) triangles.AddRange(new[] { centre, last + i, last + i + 1 });
-            var mesh = new Mesh { name = "Isagani storm sky" };
+            var mesh = new Mesh { name = "Zack storm sky" };
             mesh.SetVertices(vertices); mesh.SetColors(colours); mesh.SetTriangles(triangles, 0);
             mesh.RecalculateNormals(); mesh.RecalculateBounds();
             return mesh;

@@ -37,7 +37,7 @@ namespace TumbangPreso.Abilities
                     "Retrieving your own thrown slipper grants 20% movement speed for 1.5 seconds, once per throw. Dropping and picking it up again does not count.");
                 // ZackHeroKit.OnObjectiveAwarded: 5 s off each non-ultimate cooldown per point.
                 case "zack": return new Passive("AMPED-UP",
-                    "Isagani reduces his ability cooldowns by 5 seconds each time he gains an objective point.");
+                    "Zack reduces his ability cooldowns by 5 seconds each time he gains an objective point.");
                 // SeanHeroKit PRESSURE: `SeanRules.PressureBars`, `EruptDistanceScale`, `PressureCoolSeconds`.
                 case "sean": return new Passive("PRESSURE",
                     "Every shove, Lava Ram or Magma Fist that lands adds heat. At full heat your next shove or Lava Ram erupts: 40% farther, with a splash. Heat cools 6 s after a hit.");

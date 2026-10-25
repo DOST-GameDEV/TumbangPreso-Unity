@@ -6,7 +6,7 @@ namespace TumbangPreso.CameraSystem
     /// ⚠️⚠️ ZACK'S BARE HANDS: THE BANDS ON HIS FOREARMS ARE LIVE, AND HE WEARS THE CURRENT LIKE JEWELLERY.
     ///
     /// Owner, 2026-10-06, of the creatures of round one: *"i like it but we were trying to reserve the pet idea only for
-    /// nemu ... so i need something for the bare hands"*. So there is no creature here and no face. Zack (ISAGANI,
+    /// nemu ... so i need something for the bare hands"*. So there is no creature here and no face. Zack (ZACK,
     /// "Finds the angle before you see the opening") has a neon band on each forearm; each arm gets that band as a
     /// modelled ring in three tones (dead, softly lit, bright: one is shown and the other two hidden), a bar of three
     /// contact studs across the knuckles, and short solid arcs that jump between them (`tools/build_hands_zack.py`).
