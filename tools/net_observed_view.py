@@ -39,7 +39,10 @@ def main():
     startup = subprocess.STARTUPINFO(); startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW; startup.wShowWindow = 0
     try:
         for index, role in enumerate(['host', 'owner', 'observer']):
-            profile = profile_root(['-tp-profile', out.name+'-'+role])
+            # UGS accepts at most30 ASCII alphanumeric/hyphen/underscore characters.
+            # The human-readable output folder may be longer than an auth profile.
+            profile_name = 'view-'+hashlib.sha256(str(out).encode()).hexdigest()[:12]+'-'+role
+            profile = profile_root(['-tp-profile', profile_name])
             for source in profile.rglob('*'):
                 if source.is_file() and source.suffix != '.log':
                     backup = out/'private-profiles'/role/source.relative_to(profile)
@@ -47,7 +50,7 @@ def main():
                     backups.append((source, backup, hashlib.sha256(source.read_bytes()).hexdigest()))
             command = [str(exe), '-screen-width', '960', '-screen-height', '540', '-screen-fullscreen', '0',
                 '-tp-framecap', '30', '-tp-map', 'Eskinita',
-                '-tp-profile', out.name+'-'+role, '-tp-viewrole', role, '-tp-viewtrace', str(out/(role+'.csv')),
+                '-tp-profile', profile_name, '-tp-viewrole', role, '-tp-viewtrace', str(out/(role+'.csv')),
                 '-logFile', str(out/(role+'.log'))]
             if args.private: command.append('-tp-viewprivate')
             command += ['-tp-lobbyport', str(ports[index])]

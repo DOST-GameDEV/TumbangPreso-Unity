@@ -68,7 +68,19 @@ namespace TumbangPreso.Diagnostics
         private void Update()
         {
             if (_finished) return;
+            if (_liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > 29)
+            {
+                // End the observer first, then its owner, then the host. Simultaneous
+                // timers let host shutdown interrupt a client's final receipt.
+                string folder = Path.GetDirectoryName(_path);
+                bool observerDone = File.Exists(Path.Combine(folder, "observer.csv.result.json"));
+                bool ownerDone = File.Exists(Path.Combine(folder, "owner.csv.result.json"));
+                if (_role == "observer" || (_role == "owner" && observerDone) || (_role == "host" && observerDone && ownerDone))
+                { Finish(null); return; }
+            }
             if (Time.realtimeSinceStartup - _started > 160) { Finish("No complete live view before deadline."); return; }
+            if (_liveAt >= 0 && _role != "host" && NetworkManager.Singleton?.IsConnectedClient != true)
+            { Finish("Peer link ended before fixture completion."); return; }
             var rpc = MatchRpc.Instance; var net = NetSession.Instance;
             _receipt.local = NetAuthority.LocalSlot;
             if (_role == "observer" && rpc != null && net != null && NetAuthority.IsNetworked
@@ -106,6 +118,7 @@ namespace TumbangPreso.Diagnostics
             if (_role == "observer" && GameLaunch.Spectator)
             {
                 if (_observer == null) _observer = FindAnyObjectByType<SpectatorCamera>();
+                UI.Hud.Instance?.SetSpectatorControlsVisible(false); // Keep this fixture's world capture unobstructed.
                 if (_observer != null && !_unsubscribed && _observer.FollowedPlayer?.PlayerSlot != 1) _observer.TryWatchPlayer(1);
                 if (_observer != null && _liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > 20 && !_unsubscribed)
                 { _observer.ExecuteViewCommand(SpectatorCamera.ViewCommand.FreeFlight); _unsubscribed = true; _receipt.unsubscribed = true; }
@@ -115,7 +128,6 @@ namespace TumbangPreso.Diagnostics
             bool flowing = _role == "owner" ? rpc.SpectatorViewsPublished > 0
                 : _role == "observer" ? rpc.SpectatorViewsReceived > 0 : rpc.SpectatorViewsRelayed > 0;
             if (_liveAt < 0 && flowing) _liveAt = Time.realtimeSinceStartup;
-            if (_liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > 29) Finish(null);
         }
         internal void PoseOwnerCamera()
         {
