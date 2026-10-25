@@ -31,7 +31,7 @@ namespace TumbangPreso.Net
     /// "do I decide this, or do I ask?" through that seam, so making multiplayer real is a
     /// matter of installing this provider rather than editing every verb.
     /// </summary>
-    public sealed class NetSession : MonoBehaviour, INetProvider
+    public sealed partial class NetSession : MonoBehaviour, INetProvider
     {
         /// <summary>
         /// UX-1.6's custom room settings, written by the HOST form before a host starts.
@@ -831,6 +831,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private void RebuildManager()
         {
+            ResetQualityProbe();
             Debug.LogWarning("[Net] rebuilding the NetworkManager after a failed start.");
             if (_nm != null)
             {
@@ -851,6 +852,7 @@ namespace TumbangPreso.Net
 
         private void OnDestroy()
         {
+            ResetQualityProbe();
             if (_utp != null) _utp.OnTransportEvent -= ObserveLinkTraffic;
             Lobby.JoinCodeChanged -= OnClientTitleCodeChanged;
             if (_nm != null)
@@ -1174,13 +1176,13 @@ namespace TumbangPreso.Net
                     // meaningless, so it is skipped rather than measured as a perfect link.
                     if (client == _nm.LocalClientId) continue;
 
-                    long rtt = (long)_utp.GetCurrentRtt(client);
+                    long rtt = MeasuredPeerRtt(client, (long)_utp.GetCurrentRtt(client));
                     if (rtt > worst) worst = rtt;
                 }
             }
             else
             {
-                worst = (long)_utp.GetCurrentRtt(NetworkManager.ServerClientId);
+                worst = MeasuredPeerRtt(NetworkManager.ServerClientId, (long)_utp.GetCurrentRtt(NetworkManager.ServerClientId));
             }
 
             LinkRttMs = worst;
@@ -1194,6 +1196,9 @@ namespace TumbangPreso.Net
                  : LinkState.Good;
             if (LinkSilenceSeconds >= 4) Link = LinkState.Bad;
             else if (LinkSilenceSeconds >= 2 && Link < LinkState.Poor) Link = LinkState.Poor;
+            double probeAge = WorstQualityReplyAge();
+            if (probeAge >= 5.5) Link = LinkState.Bad;
+            else if (probeAge >= 3.5 && Link < LinkState.Poor) Link = LinkState.Poor;
 
             if (Link == _lastReportedLink) return;
 
@@ -1218,6 +1223,7 @@ namespace TumbangPreso.Net
             // ⚠️ BEFORE THE SERVER-ONLY RETURN BELOW, AND THAT IS THE WHOLE POINT. A client is
             // the peer that suffers a bad link and the one whose player needs telling, so
             // sampling only on the host would measure the machine least likely to be the problem.
+            UpdateQualityProbe();
             SampleLink();
 
 #if MULTIPLAY_SDK
@@ -1849,6 +1855,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private void ConfigureTimeouts()
         {
+            ResetQualityProbe();
             _lastLinkTrafficAt = -1;
             _linkSampleLeft = 0;
             // ⚠️⚠️ 8000, DOWN FROM 30000, AND THIRTY SECONDS IS NOT A TIMEOUT ANYBODY CAN PLAY
@@ -2486,6 +2493,7 @@ namespace TumbangPreso.Net
 
         private void OnClientDisconnected(ulong clientId)
         {
+            _qualityTrips.Remove(clientId); _qualityEchoAt.Remove(clientId);
             Debug.Log($"[NetDisconnect] peer={clientId} local={_nm?.LocalClientId} server={_nm?.IsServer} connected={_nm?.IsConnectedClient}");
             if (IsHost && clientId != _nm.LocalClientId)
             {
