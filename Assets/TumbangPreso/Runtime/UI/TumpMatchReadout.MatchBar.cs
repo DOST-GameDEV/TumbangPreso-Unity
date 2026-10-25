@@ -283,7 +283,7 @@ namespace TumbangPreso.UI
 
         private void BuildStaminaArc()
         {
-            var root = OwnerUiLayout.Rect(_root, "StaminaArc");
+            var root = OwnerUiLayout.Rect(Canvas.transform, "StaminaArc");
             Pin(root, new Vector2(.5f, .5f), Vector2.zero, new Vector2(128, 128));
             _staminaGroup = root.gameObject.AddComponent<CanvasGroup>();
             _staminaGroup.alpha = 0; _staminaGroup.blocksRaycasts = false; _staminaGroup.interactable = false;

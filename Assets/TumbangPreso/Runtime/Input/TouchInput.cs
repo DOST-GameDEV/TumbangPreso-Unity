@@ -34,6 +34,7 @@ namespace TumbangPreso.InputLayer
     {
         private static readonly HashSet<Verb> Held = new HashSet<Verb>();
         private static bool _recoveryPressed;
+        public static uint ReleaseVersion { get; private set; }
 
         /// <summary>
         /// True while the on-screen layer is drawn. Everything below is inert when it is not, so
@@ -81,6 +82,7 @@ namespace TumbangPreso.InputLayer
         /// </summary>
         public static void ReleaseAll()
         {
+            unchecked { ReleaseVersion++; }
             Held.Clear();
             _recoveryPressed=false;
             Move = Vector2.zero;

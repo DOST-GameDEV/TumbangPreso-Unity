@@ -631,22 +631,33 @@ namespace TumbangPreso.InputLayer
     /// ⚠️ `delta` IS IN SCREEN PIXELS AND THE GAME'S SENSITIVITY IS IN MOUSE UNITS. The scale
     /// below is the conversion and it is measured rather than picked: see its note.
     /// </summary>
-    public sealed class TouchLookArea : MonoBehaviour, IDragHandler, IPointerUpHandler
+    public sealed class TouchLookArea : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
-        /// <summary>
-        /// Screen pixels to the raw units `CameraRig.LookThisFrame` scales.
-        ///
-        /// ⚠️ THE ARITHMETIC. `CameraRig` turns one raw unit into 1.5 degrees at sensitivity 1.0.
-        /// A comfortable phone swipe is about a third of the screen width, call it 400 px on a
-        /// 1200 px landscape panel, and that should turn the player about 90 degrees: 90 / 1.5 is
-        /// 60 raw units over 400 px, so **0.15 raw units per pixel**. It rides the player's own
-        /// sensitivity slider for the same reason the stick does.
-        /// </summary>
-        private const float PixelsToLookUnits = 0.15f;
+        private (int Id, PointerEventData.InputButton Button)? _owner;
+        private uint _version;
+        private Canvas _canvas;
+
+        // A third-width swipe is 90 degrees at default player sensitivity, on every resolution.
+        public static Vector2 LookUnits(Vector2 delta, float viewportWidth)
+            => viewportWidth > 0 ? delta * (180f / viewportWidth) : Vector2.zero;
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left || TouchButton.Customising) return;
+            if (_version != TouchInput.ReleaseVersion) _owner = null;
+            if (_owner.HasValue) return;
+            _owner = (eventData.pointerId, eventData.button); _version = TouchInput.ReleaseVersion;
+        }
+
+        private bool Owns(PointerEventData data) => _version == TouchInput.ReleaseVersion && _owner.HasValue
+            && _owner.Value.Id == data.pointerId && _owner.Value.Button == data.button;
 
         public void OnDrag(PointerEventData eventData)
         {
-            TouchInput.LookDelta += eventData.delta * PixelsToLookUnits;
+            if (!Owns(eventData) || TouchButton.Customising) return;
+            if (_canvas == null) _canvas = GetComponentInParent<Canvas>();
+            float width = _canvas != null ? _canvas.pixelRect.width : Screen.width;
+            TouchInput.LookDelta += LookUnits(eventData.delta, width);
         }
 
         /// <summary>
@@ -655,8 +666,9 @@ namespace TumbangPreso.InputLayer
         /// few degrees after the thumb stopped. Small, and exactly the kind of thing that makes
         /// a control feel loose.
         /// </summary>
-        public void OnPointerUp(PointerEventData eventData) => TouchInput.LookDelta = Vector2.zero;
+        public void OnPointerUp(PointerEventData eventData) { if (Owns(eventData)) Cancel(); }
 
-        private void OnDisable() => TouchInput.LookDelta = Vector2.zero;
+        public void Cancel() { _owner = null; TouchInput.LookDelta = Vector2.zero; }
+        private void OnDisable() => Cancel();
     }
 }

@@ -278,11 +278,13 @@ namespace TumbangPreso.Net
                 // re-arm at the end of it is skipped, so discovery dies on the first packet of a
                 // busy network. Setting it first costs nothing: the failure path below clears it.
                 Listening = true;
+                AndroidLanDiscovery.Acquire();
                 _listener.BeginReceive(OnReceive, _listener);
             }
             catch (Exception e)
             {
                 Listening = false;
+                AndroidLanDiscovery.Release();
                 // Bind/receive setup may fail after allocating the UDP socket.
                 try { _listener?.Close(); } catch { }
                 _listener = null;
@@ -327,6 +329,7 @@ namespace TumbangPreso.Net
         {
             Advertising = false;
             Listening = false;
+            AndroidLanDiscovery.Release();
 
             try { _sender?.Close(); } catch { }
             try { _listener?.Close(); } catch { }
@@ -353,6 +356,11 @@ namespace TumbangPreso.Net
 
         private void OnDisable() => StopAll();
         private void OnDestroy() => StopAll();
+        private void OnApplicationPause(bool paused)
+        {
+            if (paused) AndroidLanDiscovery.Release();
+            else if (Listening) AndroidLanDiscovery.Acquire();
+        }
 
         private void Update()
         {

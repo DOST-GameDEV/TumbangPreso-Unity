@@ -8,10 +8,10 @@ namespace TumbangPreso.UI
         public void Build(Transform owner)
         {
             Canvas = OwnerUiLayout.Canvas(owner, "OwnerMatchCanvas", 100);
-            Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = (RectTransform)Canvas.transform;
+            Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = UiSafeArea.Content(Canvas, "HudSafeArea");
             _openingUi = Canvas.gameObject.AddComponent<CanvasGroup>();
             RefreshOpeningVisibility();
-            _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build(_root);
+            _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build((RectTransform)Canvas.transform);
             // VISUAL-1.4: the match bar replaces the corner score slabs and the clock box.
             // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
             // the record and no longer called.
@@ -42,12 +42,12 @@ namespace TumbangPreso.UI
             Pin(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180)); _countdown.enabled = false;
             // VISUAL-1.6: a drawn reticle that carries charge, pektus, cooldown, refusal and
             // (for the taya) reach, instead of a "+" in the display face.
-            _reticle = OwnerUiLayout.Rect(_root, "Reticle").gameObject.AddComponent<HudReticle>();
+            _reticle = OwnerUiLayout.Rect(Canvas.transform, "Reticle").gameObject.AddComponent<HudReticle>();
             _reticle.color = CourtPresentationPalette.Paper; _reticle.raycastTarget = false; _crosshair = _reticle;
             Pin(_reticle.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(96, 96));
             // VISUAL-1.4: a drawn hit mark (four ticks on black keels) instead of a "x" in the
             // display face. Same name, so the reading layout still scales it.
-            _hitMark = OwnerUiLayout.Rect(_root, "HitConfirmation").gameObject.AddComponent<HudBadge>();
+            _hitMark = OwnerUiLayout.Rect(Canvas.transform, "HitConfirmation").gameObject.AddComponent<HudBadge>();
             Pin(_hitMark.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(64, 64));
             _hitMark.Kind = HudBadge.Glyph.Hit; _hitMark.RimWidth = 2; _hitMark.raycastTarget = false; _hitMark.enabled = false;
             _spectator = Ink(_root, "SpectatorReadout", "", 28, false);

@@ -290,7 +290,10 @@ namespace TumbangPreso.EditorTools
             // moved by one year of phones and the argument survives it. **If this ever needs to go
             // lower, the blocker is the editor and not this file.**
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
-            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
+            // Reproducible API36 target: Auto can silently adopt a new LAN permission model.
+            // Android17 grants local networking to <=36 targets through INTERNET. A future
+            // target37 upgrade must introduce the explicit LAN runtime-permission journey.
+            PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)36;
 
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
             PlayerSettings.allowedAutorotateToPortrait = false;

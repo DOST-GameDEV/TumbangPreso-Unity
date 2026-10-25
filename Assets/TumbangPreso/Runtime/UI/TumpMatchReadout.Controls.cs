@@ -88,6 +88,8 @@ namespace TumbangPreso.UI
 
         private void TickSpectatorHelp(bool spectating, bool showControls)
         {
+            bool touch = TouchHud.ShouldShow;
+            if (touch) showControls = false;
             if (spectating && _spectatorViewMode == null)
             {
                 _spectatorViewMode = Ink(_root, "SpectatorViewMode", "", 28, false);
@@ -130,6 +132,7 @@ namespace TumbangPreso.UI
             string hint = Hud.KeyLabelFor("SpectatorControls")
                 + (showControls ? " hide controls" : " show controls");
             if (showControls) hint += "  |  " + Hud.KeyLabelFor("CleanFeed") + " hide HUD";
+            if (touch) hint = "Left stick: fly  |  Drag right: look  |  More tools: camera and match";
             if (_spectator.text != hint) _spectator.text = hint;
         }
     }

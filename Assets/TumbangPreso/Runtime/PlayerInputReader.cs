@@ -654,6 +654,8 @@ namespace TumbangPreso
             return held;
         }
 
+        private void OnApplicationPause(bool paused) => OnApplicationFocus(!paused);
+
         private void OnApplicationFocus(bool focused)
         {
             _focused = focused;

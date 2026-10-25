@@ -39,7 +39,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest]public IEnumerator WatcherHasViewControlsAndNoGameplayButtons()
         {
             Assert.IsTrue(_touch.ShouldBeOnScreen);Assert.IsTrue(Canvas.enabled);
-            Assert.AreEqual(7,_touch.Canvas.GetComponentsInChildren<Button>().Count(b=>b.name.StartsWith("SpectatorTouch")));
+            Assert.AreEqual(5,_touch.Canvas.GetComponentsInChildren<Button>().Count(b=>b.name.StartsWith("SpectatorTouch")));
             Assert.IsFalse(_touch.Canvas.GetComponentsInChildren<TouchButton>().Any());Assert.IsFalse(Button("Pov").interactable);
             Assert.IsFalse(_touch.Canvas.GetComponentsInChildren<Button>().Any(b=>b.name=="SandboxToggle"));
             yield return TumpUiCapture.Capture("spectator-touch-landscape",Canvas,960,540,false,underlays:new[]{_hud.GetComponent<TumpMatchReadout>().Canvas});
@@ -55,10 +55,35 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTest]public IEnumerator CleanFeedAndControlHintsCanBeRestoredFromTouch()
         {
+            Button("Tools").onClick.Invoke();yield return null;Button("MatchTab").onClick.Invoke();
             Button("Feed").onClick.Invoke();Assert.IsTrue(_hud.IsCleanFeed);yield return null;Assert.IsTrue(Canvas.enabled);
             Button("Feed").onClick.Invoke();Assert.IsFalse(_hud.IsCleanFeed);
-            Button("Controls").onClick.Invoke();Assert.IsFalse(_hud.SpectatorControlsVisible);
-            Button("Controls").onClick.Invoke();Assert.IsTrue(_hud.SpectatorControlsVisible);yield return null;
+            var help=Canvas.GetComponentsInChildren<Text>(true).Single(t=>t.name=="TouchHelp");
+            Button("Controls").onClick.Invoke();Assert.IsFalse(help.enabled);
+            Button("Controls").onClick.Invoke();Assert.IsTrue(help.enabled);yield return null;
+            yield return TumpUiCapture.Capture("spectator-touch-match-tools",Canvas,1280,720,false,underlays:new[]{_hud.GetComponent<TumpMatchReadout>().Canvas});
+        }
+        [UnityTest]public IEnumerator PauseKeepsResumeAndCameraToolsReachable()
+        {
+            Button("Pause").onClick.Invoke();yield return null;Assert.AreEqual(0,PresentationClock.RequestedScale);
+            Assert.IsTrue(Canvas.enabled);Assert.IsTrue(Button("Pause").isActiveAndEnabled);
+            StringAssert.Contains("RESUME",Button("Pause").GetComponentInChildren<Text>().text);
+            Button("Tools").onClick.Invoke();yield return null;Assert.IsTrue(Button("Save").isActiveAndEnabled);
+            Button("Save").onClick.Invoke();yield return null;Assert.IsTrue(Button("Return").interactable);
+            yield return TumpUiCapture.Capture("spectator-touch-camera-tools-paused",Canvas,1600,680,false,underlays:new[]{_hud.GetComponent<TumpMatchReadout>().Canvas});
+            Button("Pause").onClick.Invoke();yield return null;Assert.Greater(PresentationClock.RequestedScale,0);
+        }
+        [UnityTest]public IEnumerator BackgroundCancelsTouchesAndRequiresAFreshLookPress()
+        {
+            var look=Canvas.GetComponentInChildren<TouchLookArea>();
+            var data=new PointerEventData(EventSystem.current){pointerId=18,button=PointerEventData.InputButton.Left,delta=Vector2.right*30};
+            look.OnPointerDown(data);look.OnDrag(data);Assert.Greater(TouchInput.LookDelta.x,0);
+            TouchInput.Move=Vector2.one;TouchInput.Set(Verb.SpecialAbility,true);
+            _touch.SendMessage("OnApplicationPause",true);yield return null;
+            Assert.AreEqual(Vector2.zero,TouchInput.Move);Assert.IsFalse(TouchInput.Pressed(Verb.SpecialAbility));Assert.IsFalse(Canvas.enabled);
+            _touch.SendMessage("OnApplicationPause",false);yield return null;Assert.IsTrue(Canvas.enabled);
+            look.OnDrag(data);Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);
+            look.OnPointerDown(data);look.OnDrag(data);Assert.Greater(TouchInput.LookDelta.x,0);
         }
         [UnityTest]public IEnumerator MenuRetiresTouchAxesAndRestoresTheStripAfterResume()
         {

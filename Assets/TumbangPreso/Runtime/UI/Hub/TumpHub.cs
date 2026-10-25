@@ -83,14 +83,15 @@ namespace TumbangPreso.UI.Hub
             var vignette = HubKit.Stretch(HubKit.Rect(root, "Vignette")).gameObject.AddComponent<HubVignette>();
             vignette.raycastTarget = false;
 
-            _screens = HubKit.Stretch(HubKit.Rect(root, "Screens"));
-            _overlay = HubKit.Stretch(HubKit.Rect(root, "Overlay"));
-            _popups = HubKit.Stretch(HubKit.Rect(root, "Popups"));
+            var safe = UiSafeArea.Content(Canvas, "HubSafeArea");
+            _screens = HubKit.Stretch(HubKit.Rect(safe, "Screens"));
+            _overlay = HubKit.Stretch(HubKit.Rect(safe, "Overlay"));
+            _popups = HubKit.Stretch(HubKit.Rect(safe, "Popups"));
 
             _plate = HubQueuePlate.Build(_overlay, this);
             // ⚠️ THE TOAST IS OVER THE POPUPS, NOT UNDER THEM. The first capture drew the sentence
             // a press had just produced beneath a popup's dim, where it read as a stale leftover.
-            _toast = HubToast.Build(HubKit.Stretch(HubKit.Rect(root, "Toasts")));
+            _toast = HubToast.Build(HubKit.Stretch(HubKit.Rect(safe, "Toasts")));
 
             var entry = PendingEntry;
             PendingEntry = HubEntry.Home;
