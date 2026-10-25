@@ -29,6 +29,6 @@ test compared sRGB readback values against a linear-light threshold. Its
 measurement now decodes to linear light; the threshold, authored purple ink,
 shader and gameplay were preserved. Both failed receipts remain in scoped Logs.
 
-Private hallucination geometry and the owner's exact held aim marker still need
-observed-view data and real-peer checks. Broader skill/flight coverage, NETWORKFIX
-reliability and the final mobile refresh remain active work.
+Private hallucination geometry and the owner's exact held aim marker now have
+[native and real-peer checks](private-candidate.md). Broader live-event coverage,
+NETWORKFIX reliability and the final mobile refresh remain active work.

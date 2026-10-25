@@ -13,8 +13,9 @@ eye drop, viewmodel pose/action/aim/time and match/round/body epoch/serial. Only
 current seat owner may submit; only the host relays to subscribed spectators.
 Validate complete payload, identity/scope, finite/range values, age and ordering
 before updating presentation. Camera data cannot drive a motor, contact or score.
-Native codec/local-view tests are scoped evidence; real-peer qualification is
-still required before this candidate is integrated.
+Native codec/local-view tests and controlled three-process Windows delivery
+checks are [recorded separately](reports/spectator-2026-10-25/private-candidate.md).
+WAN, Relay, natural play and device qualification require their own evidence.
 
 Optional view capability v2 adds at most nine private phantom render records and
 the actual held aim marker, with a total pose size of 111-686 bytes. Private data
@@ -22,7 +23,9 @@ is visible only during selected player-view playback and clears on stale data,
 manual/free view, cutscene or camera disposal. Copies contain render geometry,
 never actor/input/collision components. Older optional-view versions fall back
 without receiving an incompatible pose stream. Gameplay protocol 181 and existing
-movement/cast/outcome formats are unchanged by this presentation extension.
+movement/cast/outcome formats were unchanged by this presentation extension.
+That receipt used gameplay protocol 181; current protocol/fingerprint values
+remain owned by source and may advance for independent gameplay changes.
 
 Live authoring rules, 2026-10-25. Verify details against the owning codec and
 runtime path before editing. `NetSession.ProtocolVersion` and

@@ -22,8 +22,11 @@ Updated 2026-10-25. Owner scope: [TODO](TODO.md).
   [native checks](reports/spectator-2026-10-25/framing.md).
 - World/HUD filters, audio and ghost cues follow actual watched views, with
   [native lifecycle evidence](reports/spectator-2026-10-25/perception.md).
-  Next: hallucination/held-marker parity and regular skill/live events. Current
-  peer proof is controlled on one PC, not natural/WAN/separate-machine/Android.
+  Private hallucinations/held markers now passed native and real three-process
+  checks: 159 owner-to-host and 156 host-to-observer packet matches, nine render
+  roots and unsubscribe cleanup. [Receipt](reports/spectator-2026-10-25/private-candidate.md).
+  Next: regular skill/live events alongside NETWORKFIX. Current peer proof is
+  controlled on one PC, not natural/WAN/separate-machine/Android.
 - General reliability stays on NETWORKFIX; the mobile refresh follows it.
   Do not restore a mobile-every-feature mandate.
 
