@@ -161,7 +161,11 @@ def main():
             link.args.outage_at = time.monotonic() - link.started
             link.args.outage_for = 5
             outage = hold_stage('five-second-outage', 6)
-            assert any(s.get('tier') == 'Severe' and s.get('silence', 0) >= 4 for s in outage), outage[-1]
+            # Sampling and the deliberate UI settle time are separate clocks. At
+            # a five-second outage's boundary, traffic can resume before the red
+            # tier settles; prove the measured fault and its displayed response.
+            assert any(s.get('link') == 'Bad' and s.get('silence', 0) >= 4 for s in outage), outage[-1]
+            assert any(s.get('tier') == 'Severe' for s in outage), outage[-1]
             recovered = hold_stage('outage-recovered', 9)
             assert recovered[-1]['networked'] and recovered[-1]['active'] and recovered[-1]['tier'] == 'Healthy', recovered[-1]
             processes['client'].kill()
