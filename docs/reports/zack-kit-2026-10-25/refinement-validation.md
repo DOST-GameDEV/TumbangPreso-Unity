@@ -1,6 +1,85 @@
 # Zack owner refinements, 2026-10-25
 
-## Current single-hologram Backtrack candidate, 2026-10-26
+## Current lead-and-merge speed candidate, 2026-10-26
+
+Based on main `903482cc1`. The new direction keeps one gold hologram ahead of
+Zack toward the old spot, closing into him at the 0.48 s catch. It supersedes
+the trailing-hologram candidate below. Gameplay authority, held slipper, facing,
+statuses and cooldowns remain unchanged.
+
+### Motion and polish
+
+- Lead starts from a 0.5 share of the remaining route and closes as travel
+  completes. Contour layers fill the gap back toward the real body. The travelling
+  hologram uses lower opacity so the body silhouette and red hair remain more
+  legible where the two overlap. Fill is .18 and edge opacity multiplier .6.
+- The body stretches up to 30 percent on its local forward axis at peak speed.
+  Fourteen short world-space dashes live for .09 s each. First-person dashes
+  align with the view axis; reduced effects omit them.
+- First-person lens feedback is added above the existing smoothed lens: a
+  -3 degree reveal coefficient, +8 travel coefficient and -6 catch coefficient.
+  Reduced effects omit the kick. A view switch or completed effect removes it.
+- The .26 m catch coefficient creates a short overshoot and crouch settle.
+  Activation, destination and catch sparks remain. The landing sound still fires
+  at the 0.48 s catch; all sixteen shipped electrical WAVs are unchanged.
+- Ring, tag and red floor brackets evaluate the same current-time body position,
+  including the overshoot. An intermediate change read the previous rendered
+  pose and introduced a one-frame lag; this was corrected before qualification.
+- Lowering the lens kick alone still exposed the caster's red floor brackets.
+  They now step aside only during his own first-person rewind kick. Other
+  players, observer views and reduced-effects floor cues remain visible.
+
+### Verification and review
+
+Evidence root: `Logs/zack-backtrack-speed-20261026/`.
+
+- Incoming `r2.xml`: 21/22. The old test counted dash objects as body copies
+  and expected two children rather than sixteen. It was updated to distinguish
+  two bodies from bounded short dashes, with explicit shape and cleanup checks.
+- `r3.xml`: 1/1 film comparison after the lead/fill changes. The gold overlap and
+  first-person floor artifact still needed work. This is a superseded study.
+- `r4.xml`: 21/22. Dashes under a separate root escaped the new test traversal.
+  They now belong to the rewind root, making their lifetime and cost explicit.
+- `r5.xml`: 2/2 focused checks, no skips. Normal and reduced modes verify one
+  leading hologram, closing gap, bounded short dashes, camera kick scope/recovery,
+  own floor-cue suppression, catch marker alignment and complete retirement.
+- Final `r6.xml`: **22/22 passed, no skips**. The same frozen runtime candidate
+  passes Backtrack authority/held slipper, copied-body tint, normal/reduced
+  lifecycle and lens checks, three history cases, thirteen spectator-view cases,
+  shared tag-floor readability, actual-map marker graphics and film capture.
+
+The `r5` native observer and first-person films were exported with actual Unity
+DSP audio and reviewed at 1x, alongside contact sheets for frames 112 through
+131. Both contain 162 frames, 1280x720 at 30 fps, 5.4 s, with AAC and successful
+full-file decoding. Both traces have zero ring/tag/floor X/Z error at CSV
+precision through the catch. The intentional catch excursion is about .152 m.
+Observer dashes reach 1.295 m and first-person dashes 2.072 m in these takes.
+
+The caster's floor cue is suppressed on the fourteen nonzero-kick pull frames;
+its cast frame remains valid before the kick begins. Other players' floor cues
+remain in the first-person picture. Maximum normal cost is two body copies,
+fourteen dashes, twenty renderers and four skinned renderers. Reduced mode has
+two bodies, zero dashes, six renderers and four skinned renderers. These counts
+are not a player-performance benchmark.
+
+Normal-speed review shows a lead silhouette closing into Zack with short speed
+dashes and a catch flash, plus first-person reverse translation and a clean floor
+view. The gold image still overlaps the body on the collinear first leg and
+tints parts of the head through transparency; the red silhouette is discernible
+and separates more clearly around the turn. Creative and listening acceptance
+remain open. This work does not claim a player build or actual-peer/WAN proof.
+
+The delivered Observer-Speed and First-Person-Speed MP4s are bit-identical copies
+of the reviewed `r5` exports. The final `r6` integration run used identical
+runtime/shader/test inputs and provides another pair of native recordings.
+Frozen-source hashes, all sixteen sound hashes and exact preservation of the
+five owner files plus QualitySettings are verified in the run receipts and
+`r5-metrics.json` / `r6-metrics.json`. One guarded graphics job ran at a time.
+The temporary review tab and server were closed after playback review.
+Automatic cleanup review blocked removal of duplicate review MP4s; those copies
+were retained without retry. Final videos, native evidence and profiles remain.
+
+## Previous trailing single-hologram candidate, 2026-10-26
 
 Based on main `c8af2d6ce`. The owner rejected the tether and the separate group
 of four past selves, then requested one afterimage that suggests many images.

@@ -2,12 +2,13 @@
 
 Updated 2026-10-26. Owner scope: [TODO](TODO.md).
 
-- Zack Backtrack single-hologram candidate is verified on main from `c8af2d6ce`:
-  native 22/22, observer/FPP recordings with actual sound and a gold contour trail.
-  The red floor brackets now follow the drawn body alongside its ring/tag. The
-  owner rejected the tether and separate past-body group. Next: owner review of
-  the new videos and any creative refinement. Listening acceptance and actual
-  peers remain open. Five owner files remain excluded. No Unity job is active.
+- Zack Backtrack lead-and-merge speed candidate is verified on main from
+  `903482cc1`: final native 22/22, reviewed observer/FPP films with actual sound,
+  bounded dashes and same-frame markers through the catch. Own floor marks step
+  aside during the first-person kick. No Unity job or preview is active.
+  Receipts are under `Logs/zack-backtrack-speed-20261026/`. Next: owner review of
+  both Speed videos. Creative/listening acceptance and actual peers remain open.
+  Five owner files remain excluded.
   [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.

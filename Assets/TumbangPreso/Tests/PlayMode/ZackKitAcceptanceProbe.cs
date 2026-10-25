@@ -174,23 +174,37 @@ namespace TumbangPreso.PlayTests
             float readyBy = Time.realtimeSinceStartup + 2;
             while (history?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
             Assert.IsTrue(history?.ForSeat(_caster.PlayerSlot)?.Ready == true);
-            var rig = Camera.main.GetComponent<CameraSystem.CameraRig>(); rig.SetDebugThirdPerson(true);
+            var rig = Camera.main.GetComponent<CameraSystem.CameraRig>();
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
             try
             {
                 foreach (bool calm in new[] { false, true })
                 {
+                    rig.Follow(_caster); rig.SetDebugThirdPerson(true);
                     Settings.SettingsStore.Current.ReducedEffects = calm;
                     var from = _caster.transform.position; var to = from + Vector3.left * 4;
                     var rewind = Visual.ZackBacktrackLook.Play(_caster, from, to, new[] { to, from });
                     _caster.Teleport(to, keepStatuses: true); rewind.SealTeleport();
                     yield return new WaitForSeconds(.15f);
-                    Assert.AreEqual(2, rewind.transform.childCount, "The reel must bound its body copies.");
+                    var streaks = rewind.GetComponentsInChildren<LineRenderer>(true);
+                    Assert.AreEqual(2, rewind.transform.Cast<Transform>().Count(t => t.GetComponent<LineRenderer>() == null),
+                        "Only the travelling body and one hologram may be copied.");
+                    Assert.AreEqual(4, rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length);
                     Assert.AreEqual(1, rewind.MomentsDrawn);
+                    Assert.IsFalse(rewind.TryMoment(1, out _, out _), "There is only one historical subject.");
                     Assert.IsTrue(Visual.TagExposure.OnFloor(_caster, .8f, out var cueFeet, out _, out _));
                     var markerError = cueFeet - rewind.VisualFeet; markerError.y = 0;
                     Assert.Less(markerError.magnitude, .08f, "The taggability floor brackets must follow the drawn body, not the instant teleport.");
-                    Assert.IsEmpty(rewind.GetComponentsInChildren<LineRenderer>(true), "The rewind has no electric cable or ring geometry.");
+                    if (calm) Assert.IsEmpty(streaks, "Reduced effects omit speed dashes.");
+                    else Assert.That(streaks.Length, Is.InRange(1, 20), "Speed dashes must remain bounded.");
+                    foreach (var streak in streaks)
+                    {
+                        Assert.IsTrue(streak.name.StartsWith("RewindStreak"));
+                        Assert.AreEqual(2, streak.positionCount, "Dashes have no tether bends or rings.");
+                        Assert.LessOrEqual(streak.widthMultiplier, .06f);
+                        if (streak.enabled) Assert.LessOrEqual(Vector3.Distance(streak.GetPosition(0), streak.GetPosition(1)), 2.3f,
+                            "A speed dash must never become a route-length cable.");
+                    }
                     var memoryShader=Resources.Load<Shader>("Shaders/ZackTemporalMemory");
                     Assert.IsNotNull(memoryShader); Assert.IsTrue(memoryShader.isSupported);
                     Assert.Greater(rewind.GetComponentsInChildren<Renderer>(true).Count(v=>v.sharedMaterials.Any(m=>m.shader==memoryShader)),0,
@@ -200,15 +214,36 @@ namespace TumbangPreso.PlayTests
                     int count = 1;
                     var before = new Vector3[count];
                     for (int i = 0; i < count; i++) Assert.IsTrue(rewind.TryMoment(i, out before[i], out _));
-                    Debug.Log($"[Rewind reel cost] reduced={calm} copies={rewind.transform.childCount} renderers={rewind.GetComponentsInChildren<Renderer>(true).Length} skinned={rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length}");
+                    var initialLead = before[0] - rewind.RenderedFeet; initialLead.y = 0;
+                    Assert.Greater(Vector3.Dot(initialLead, (to - from).normalized), .05f, "The hologram must lead toward the old spot.");
+                    Debug.Log($"[Rewind speed cost] reduced={calm} bodies=2 streaks={streaks.Length} renderers={rewind.GetComponentsInChildren<Renderer>(true).Length} skinned={rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length}");
                     yield return new WaitForSeconds(.12f);
                     for (int i = 0; i < count; i++)
                     {
                         Assert.IsTrue(rewind.TryMoment(i, out var now, out _));
                         Assert.Less(Vector3.Distance(now, to), Vector3.Distance(before[i], to), "Every past moment must move toward the old location.");
+                        var closingLead = now - rewind.RenderedFeet; closingLead.y = 0;
+                        Assert.Less(closingLead.magnitude, initialLead.magnitude, "Zack must close the gap to his hologram.");
                     }
-                    yield return new WaitForSeconds(.55f);
+                    rig.SetDebugThirdPerson(false);
+                    float baseFov = Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov);
+                    rig.Camera.fieldOfView = baseFov;
+                    yield return null;
+                    if (calm) Assert.AreEqual(baseFov, rig.Camera.fieldOfView, .1f, "Reduced effects omit the rewind zoom.");
+                    else Assert.Greater(rig.Camera.fieldOfView, baseFov, "Only the caster's first-person lens receives the travel kick.");
+                    Assert.AreEqual(calm, Visual.TagExposure.OnFloor(_caster, .8f, out _, out _, out _),
+                        "The caster's own floor brackets step aside only while the rewind zoom is active.");
+                    Assert.AreEqual(0, Visual.ZackBacktrackLook.FovKick(GameServices.Round.PlayerAt(0)));
+                    rig.SetDebugThirdPerson(true);
+                    while (rewind != null && rewind.Age < .52f) yield return null;
+                    Assert.IsNotNull(rewind);
+                    Assert.IsTrue(Visual.TagExposure.OnFloor(_caster, .8f, out cueFeet, out _, out _));
+                    markerError = cueFeet - rewind.VisualFeet; markerError.y = 0;
+                    Assert.Less(markerError.magnitude, .08f, "The marker follows the projected catch overshoot too.");
+                    yield return new WaitForSeconds(.35f);
                     Assert.IsTrue(rewind == null, "All temporal copies must retire after the catch.");
+                    Assert.IsTrue(streaks.All(s => s == null), "All speed dashes must retire with their rewind.");
+                    Assert.AreEqual(0, Visual.ZackBacktrackLook.FovKick(_caster), "The lens kick cannot outlive the effect.");
                 }
             }
             finally { Settings.SettingsStore.Current.ReducedEffects = reduced; }

@@ -14,7 +14,8 @@ namespace TumbangPreso.Visual
         public const float RevealSeconds = .06f, TravelSeconds = .42f, CatchSeconds = .14f;
         /// <summary>The catch: the body reaches the old spot and the landing cue plays. Matches the 0.46 s pull cue.</summary>
         public const float PullSeconds = RevealSeconds + TravelSeconds;
-        private const float Linger = .16f, EchoDelay = .055f, EchoSpacing = .026f;
+        private const float Linger = .16f, LeadStart = .5f, MergeFlash = .12f, StreakLife = .09f;
+        private const int Streaks = 14;
         private static readonly Dictionary<int,ZackBacktrackLook> Live = new Dictionary<int,ZackBacktrackLook>();
         private CharacterMotor _motor;
         private Transform _model;
@@ -26,12 +27,14 @@ namespace TumbangPreso.Visual
         private ZackFx.Echo _body;
         private ZackFx.Echo[] _moments = new ZackFx.Echo[0];
         private readonly Vector4[] _echoTrail = new Vector4[5];
+        private LineRenderer[] _streaks = new LineRenderer[0];
+        private float[] _streakBorn = new float[0];
         private Renderer[] _hidden;
         private bool[] _wasHidden;
         private bool _restored, _landed;
         public float Age => Mathf.Max(0,Time.time-_born);
         public bool Pulling => _motor!=null && Age<PullSeconds;
-        public Vector3 VisualFeet => FeetAt(Age);
+        public Vector3 VisualFeet => FeetAt(Age) + CatchOffset(Mathf.Clamp01((Age-PullSeconds)/CatchSeconds));
         /// <summary>Where the drawn body's model root actually is (minus the model's own offset).</summary>
         public Vector3 RenderedFeet => _body!=null?_body.Copy.Root.transform.position-_modelOffset:VisualFeet;
         public bool BodyDrawn { get; private set; }
@@ -79,17 +82,44 @@ namespace TumbangPreso.Visual
                 var echo=ZackFx.Echo.Of(motor.PlayerSlot,v.transform);
                 if(echo!=null){v.CopyShoe(echo);echo.Past(.1f);v._moments=new[]{echo};}
             }
-            ZackFx.Sparks(to+Vector3.up*.15f,.22f,Settings.SettingsStore.Current.ReducedEffects?1:3,1.3f);
+            bool calm=Settings.SettingsStore.Current.ReducedEffects;
+            ZackFx.Sparks(to+Vector3.up*.15f,.22f,calm?1:3,1.3f);
+            // The kick-off: a crack of sparks at his feet where the present lets go of him.
+            ZackFx.Sparks(from+Vector3.up*.2f,.35f,calm?2:5,.6f);
+            if(!calm)
+            {
+                v._streaks=new LineRenderer[Streaks];v._streakBorn=new float[Streaks];
+                for(int i=0;i<Streaks;i++)
+                {
+                    v._streaks[i]=ZackFx.Line(v.transform,"RewindStreak"+i,2,.022f+.012f*(i%3),i%2==0?ZackFx.Core:ZackFx.Body,1.5f);
+                    v._streaks[i].enabled=false;v._streakBorn[i]=-1;
+                }
+            }
             Live[motor.PlayerSlot]=v;v.Step();return v;
         }
         public void SealTeleport(){if(_motor!=null)_serial=_motor.PresentationTeleportSerial;}
         public static Vector3 EyeOffset(CharacterMotor motor)
             => motor!=null&&Live.TryGetValue(motor.PlayerSlot,out var v)&&v!=null&&v._motor==motor&&v.Pulling
                 ?v.VisualFeet-motor.transform.position:Vector3.zero;
+        /// <summary>
+        /// Degrees added to his own first-person lens: the view yawns wide as he is rewound down the route (speed reads in
+        /// the periphery), then punches in on the catch. Zero for every other body and after the settle.
+        /// </summary>
+        public static float FovKick(CharacterMotor motor)
+        {
+            if(motor==null||!Live.TryGetValue(motor.PlayerSlot,out var v)||v==null||v._motor!=motor
+                ||Settings.SettingsStore.Current.ReducedEffects)return 0;
+            float age=v.Age;
+            if(age<RevealSeconds)return -3*Mathf.Sin(Mathf.PI*age/RevealSeconds);
+            if(age<PullSeconds)return 8*Mathf.Sin(Mathf.PI*Mathf.Pow(Travel(age),.7f));
+            float c=Mathf.Clamp01((age-PullSeconds)/CatchSeconds);
+            return -6*Mathf.Sin(Mathf.PI*c)*(1-c);
+        }
         /// <summary>The flat offset of the drawn body from the gameplay body, for its seat ring and name tag.</summary>
         public static Vector3 MarkerOffset(CharacterMotor motor)
         {
             if(motor==null||!Live.TryGetValue(motor.PlayerSlot,out var v)||v==null||v._motor!=motor||v._restored)return Vector3.zero;
+            // Evaluate the same frame as the body, including its catch. Reading the rendered root here would lag one frame.
             var d=v.VisualFeet-motor.transform.position;d.y=0;return d;
         }
 
@@ -168,6 +198,17 @@ namespace TumbangPreso.Visual
         private static float Travel(float age)=>Mathf.Clamp01((age-RevealSeconds)/TravelSeconds);
         // A reel rewinding: it spins up quickly, runs, and eases into the catch.
         private static float Progress(float age){float x=Travel(age);return .02f*Mathf.SmoothStep(0,1,Mathf.Clamp01(age/RevealSeconds))+.98f*(.4f*x+.6f*x*x*(3-2*x));}
+        // How far ahead (as a share of the route still to go) the hologram runs: it springs out of him during the reveal,
+        // then the gap closes steadily until it is zero at the catch.
+        private static float Lead(float age)
+            =>LeadStart*Mathf.SmoothStep(0,1,Mathf.Clamp01(age/(RevealSeconds+.05f)))*Mathf.Pow(1-Travel(age),1.3f);
+        // 0 to 1: how fast the rewind is going right now, for stretch and streaks.
+        private static float Speed(float age){float x=Travel(age);return age<RevealSeconds||x>=1?0:Mathf.Clamp01((.4f+3.6f*x*(1-x))/1.3f);}
+        private Vector3 CatchOffset(float c)
+        {
+            Route(1,out _,out var arrival);
+            return arrival*(.26f*Mathf.Sin(Mathf.PI*Mathf.Min(1,c*1.6f))*(1-c));
+        }
         private Vector3 FeetAt(float age)
         {
             var p=Route(Progress(age),out _,out _);if(_motor==null)return p;
@@ -223,44 +264,83 @@ namespace TumbangPreso.Visual
                 var root=_body.Copy.Root.transform;
                 var live=_model!=null?_model.rotation:root.rotation;
                 var facing=catching||!travelling?live:Quaternion.Slerp(root.rotation,live,Mathf.SmoothStep(0,1,Mathf.InverseLerp(.75f,1,x)));
-                float settle=Mathf.Sin(Mathf.PI*c);
-                root.SetPositionAndRotation(feet+_modelOffset-Vector3.up*.04f*settle,facing);
-                root.localScale=Vector3.Scale(root.localScale,new Vector3(1+.08f*settle,1-.1f*settle,1+.08f*settle));
+                // Speed: stretched along the line of travel at full rewind (he moves mostly along his own forward axis,
+                // backwards), thinned a little to keep the blocky volume. The catch overshoots the old spot by a hand and
+                // springs back with a crouch, so the stop has weight.
+                float speed=calm?0:Speed(age),settle=Mathf.Sin(Mathf.PI*c);
+                var overshoot=CatchOffset(c);
+                root.SetPositionAndRotation(feet+_modelOffset+overshoot-Vector3.up*.06f*settle,facing);
+                root.localScale=Vector3.Scale(root.localScale,new Vector3((1-.07f*speed)*(1+.12f*settle),(1-.05f*speed)*(1-.16f*settle),(1+.3f*speed)*(1+.12f*settle)));
                 // Each past moment he folds into brightens his rim; the catch is the last and brightest.
-                _body.Rim(travelling?.35f+.35f*e:Mathf.Lerp(.9f,.2f,c));
+                _body.Rim(travelling?.35f+.35f*e:Mathf.Lerp(1,.2f,Mathf.Sqrt(c)));
                 BodyDrawn=c<1&&!eyes;Show(_body,BodyDrawn);
                 if(c<1){foreach(var r in _hidden)if(r!=null)r.forceRenderingOff=true;}else Restore();
             }
-            // The single hologram repeats the travelling pose a fraction later. Its faint contour layers follow the
-            // same traversed route, so the image reads as one fast subject with temporal persistence.
+            // The single hologram is his past running ahead of him. It springs out of his body toward the old spot at the
+            // cast, stays a stride or two ahead down the route playing its own reversed run, and he closes on it until they
+            // merge exactly at the catch. Its contour layers fill the gap back toward him, so one figure reads as many and
+            // the gap itself shows the rewind. On the first leg "ahead" is toward an observer, so nothing hides it.
             MomentsDrawn=0;
             if(_moments.Length>0)
             {
-                var echo=_moments[0];float echoAge=age-EchoDelay;
-                var p=Route(Progress(Mathf.Clamp(echoAge,0,PullSeconds)),out float then,out _);
+                var echo=_moments[0];
+                float lead=Lead(age),ahead=e+(1-e)*lead;
+                var p=Route(ahead,out float then,out _);
                 echo.PoseAt(then);var root=echo.Copy.Root.transform;
                 root.SetPositionAndRotation(p+_modelOffset,root.rotation);
-                float enter=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.015f,.065f,echoAge));
-                float leave=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(PullSeconds,PullSeconds+.065f,echoAge));
+                // Merged: one bright beat as the past closes over him, then it is gone.
+                float merged=Mathf.Clamp01((age-PullSeconds)/MergeFlash);
+                float enter=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/RevealSeconds));
+                float glow=travelling?.45f+.1f*(1-lead/LeadStart):Mathf.Lerp(1.4f,0,merged);
                 float near=eyes?Mathf.SmoothStep(0,1,Mathf.InverseLerp(1.1f,1.8f,Vector3.Distance(p+Vector3.up*1.2f,eye))):1;
-                echo.Past(.1f,enter*leave*near);
+                echo.Past(.1f,enter*glow*near);
                 for(int layer=0;layer<_echoTrail.Length;layer++)
                 {
-                    float lagAge=echoAge-layer*EchoSpacing;
-                    var q=Route(Progress(Mathf.Clamp(lagAge,0,PullSeconds)),out _,out _);
-                    float visible=layer==0?1:calm?0:Mathf.Clamp01(lagAge/.045f)*(1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(PullSeconds,PullSeconds+.055f,lagAge)));
-                    _echoTrail[layer]=new Vector4(q.x-p.x,q.y-p.y,q.z-p.z,visible*Mathf.Pow(.58f,layer));
+                    // Layer 0 is the hologram; the rest step back toward his body, fainter the closer they are to him.
+                    float k=layer/(float)_echoTrail.Length;
+                    var q=Route(Mathf.Lerp(ahead,e,k),out _,out _);
+                    float visible=layer==0?1:calm?0:Mathf.Pow(.62f,layer)*Mathf.Clamp01((ahead-e)*length/.4f);
+                    _echoTrail[layer]=new Vector4(q.x-p.x,q.y-p.y,q.z-p.z,visible);
                 }
                 echo.Trail(_echoTrail);
-                bool on=enter*leave*near>.015f;Show(echo,on);MomentsDrawn=on?1:0;
+                bool on=enter*glow*near>.015f;Show(echo,on);MomentsDrawn=on?1:0;
+            }
+            // Speed streaks: short gold dashes left hanging in the air along his line of travel, each alive for about three
+            // frames. He outruns them, so they whip past him (an observer) or stream away into the distance (his own eyes,
+            // a zoom tunnel kept off the screen centre). Many tiny lines, never one long one.
+            Route(e,out _,out var along);
+            float rush=calm?0:Speed(age);
+            for(int i=0;i<_streaks.Length;i++)
+            {
+                var streak=_streaks[i];float life=age-_streakBorn[i];
+                if((_streakBorn[i]<0||life>StreakLife)&&travelling&&rush>.15f&&along.sqrMagnitude>0)
+                {
+                    float h=Hash(i,Mathf.FloorToInt(age*90)),g=Hash(i+31,Mathf.FloorToInt(age*70));
+                    // In his own eyes the dashes run along the view axis, so they radiate from the screen centre.
+                    var axis=eyes&&UnityEngine.Camera.main!=null?-UnityEngine.Camera.main.transform.forward:along;
+                    var side=Vector3.Cross(axis,Vector3.up).normalized;
+                    var centre=eyes?eye:feet+Vector3.up*.9f;
+                    float spin=h*Mathf.PI*2,radius=eyes?Mathf.Lerp(.75f,1.7f,g):Mathf.Lerp(.35f,1.05f,g);
+                    var offset=(side*Mathf.Cos(spin)+Vector3.up*Mathf.Sin(spin)*(eyes?.75f:.8f))*radius;
+                    if(!eyes&&offset.y<-.75f)offset.y=-.75f;
+                    var start=centre+offset-axis*Mathf.Lerp(eyes?1f:.2f,eyes?4f:1.6f,Hash(i+57,Mathf.FloorToInt(age*50)));
+                    float reach=Mathf.Lerp(.5f,1.4f,g)*rush;
+                    streak.SetPosition(0,start);streak.SetPosition(1,start-axis*reach*(eyes?1.6f:1));
+                    _streakBorn[i]=age;life=0;
+                }
+                bool on=_streakBorn[i]>=0&&life<=StreakLife&&age<PullSeconds+.03f;
+                streak.enabled=on;
+                if(on){var tint=i%2==0?ZackFx.Core:ZackFx.Body;ZackFx.Tint(streak,new Color(tint.r,tint.g,tint.b,(1-life/StreakLife)*.9f));}
             }
             if(!_landed&&!travelling)
             {
                 _landed=true;
                 ZackFx.Sparks(_to+Vector3.up*.12f,.38f,calm?2:5,2.1f);
+                if(!calm)ZackFx.Sparks(_to+Vector3.up*1.1f,.3f,3,4.7f);
                 GameServices.Audio?.PlayAt("sfx_zack_backtrack_land",_to);
             }
         }
+        private static float Hash(int a,int b){float v=Mathf.Sin(a*127.1f+b*311.7f)*43758.5453f;return v-Mathf.Floor(v);}
         private void Restore()
         {
             if(_restored||_hidden==null)return;_restored=true;

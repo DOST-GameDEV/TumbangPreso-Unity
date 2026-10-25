@@ -92,7 +92,7 @@ namespace TumbangPreso.PlayTests
         private IEnumerator Take(string name, float seconds, Action<int> drive, bool owner = false, bool intro = false)
         {
             string folder = Path.Combine(_output, name); Directory.CreateDirectory(folder);
-            var trace = new StringBuilder("frame,seconds,game_seconds,x,z,momentum,overclock,zapped,copies,wires,backtrack_cooldown,wire_snapped,a_zapped,b_zapped,pull_age,pull_x,pull_z,drawn_x,drawn_y,drawn_z,body_drawn,live_hidden,off_route,ring_x,ring_z,tag_x,tag_z,moments,rewind_copies,rewind_renderers,rewind_skinned,rewind_transforms,m0_x,m0_z,m0_on,m1_x,m1_z,m1_on,m2_x,m2_z,m2_on,m3_x,m3_z,m3_on\n");
+            var trace = new StringBuilder("frame,seconds,game_seconds,x,z,momentum,overclock,zapped,copies,wires,backtrack_cooldown,wire_snapped,a_zapped,b_zapped,pull_age,pull_x,pull_z,drawn_x,drawn_y,drawn_z,body_drawn,live_hidden,off_route,ring_x,ring_z,tag_x,tag_z,moments,rewind_copies,rewind_renderers,rewind_skinned,rewind_transforms,m0_x,m0_z,m0_on,m1_x,m1_z,m1_on,m2_x,m2_z,m2_on,m3_x,m3_z,m3_on,speed_streaks,max_streak_length,camera_fov,floor_marker_on,floor_x,floor_z\n");
             bool sawScene = false;
             // The stock review mode lets the world looks draw as an observer sees them. His private return echo is
             // withheld from this court camera; the victim take keeps his actual first-person view and HUD.
@@ -160,14 +160,17 @@ namespace TumbangPreso.PlayTests
                         var plate = _zack.GetComponentInChildren<CharacterNameplate>();
                         var ringAt = plate != null ? plate.transform.Find("NameplateRing").position : at;
                         var tagAt = plate != null ? plate.transform.Find("NameplateLabel").position : at;
-                        trace.Append(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count},{Kit.Skill1.CooldownRemaining:F3},{(ZackLiveWire.Active.Any(w=>w.Snapped)?1:0)},{(_a.IsZapped?1:0)},{(_b.IsZapped?1:0)},{(pull != null ? pull.Age : -1):F3},{seen.x:F3},{seen.z:F3},{drawn.x:F3},{drawn.y:F3},{drawn.z:F3},{(pull != null && pull.BodyDrawn ? 1 : 0)},{(pull != null && pull.LiveBodyHidden ? 1 : 0)},{(pull != null ? pull.OffRoute(drawn) : 0):F3},{ringAt.x:F3},{ringAt.z:F3},{tagAt.x:F3},{tagAt.z:F3},{(pull != null ? pull.MomentsDrawn : 0)},{(pull != null ? pull.transform.childCount : 0)},{(pull != null ? pull.GetComponentsInChildren<Renderer>(true).Length : 0)},{(pull != null ? pull.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length : 0)},{(pull != null ? pull.GetComponentsInChildren<Transform>(true).Length - 1 : 0)}"));
+                        trace.Append(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count},{Kit.Skill1.CooldownRemaining:F3},{(ZackLiveWire.Active.Any(w=>w.Snapped)?1:0)},{(_a.IsZapped?1:0)},{(_b.IsZapped?1:0)},{(pull != null ? pull.Age : -1):F3},{seen.x:F3},{seen.z:F3},{drawn.x:F3},{drawn.y:F3},{drawn.z:F3},{(pull != null && pull.BodyDrawn ? 1 : 0)},{(pull != null && pull.LiveBodyHidden ? 1 : 0)},{(pull != null ? pull.OffRoute(drawn) : 0):F3},{ringAt.x:F3},{ringAt.z:F3},{tagAt.x:F3},{tagAt.z:F3},{(pull != null ? pull.MomentsDrawn : 0)},{(pull != null ? pull.transform.Cast<Transform>().Count(t=>t.GetComponent<LineRenderer>()==null) : 0)},{(pull != null ? pull.GetComponentsInChildren<Renderer>(true).Length : 0)},{(pull != null ? pull.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length : 0)},{(pull != null ? pull.GetComponentsInChildren<Transform>(true).Length - 1 : 0)}"));
                         for (int moment = 0; moment < 4; moment++)
                         {
                             Vector3 position = Vector3.zero; bool visible = false;
                             if (pull != null) pull.TryMoment(moment, out position, out visible);
                             trace.Append(FormattableString.Invariant($",{position.x:F3},{position.z:F3},{(visible ? 1 : 0)}"));
                         }
-                        trace.AppendLine();
+                        var streaks = pull != null ? pull.GetComponentsInChildren<LineRenderer>(true) : Array.Empty<LineRenderer>();
+                        float longest = streaks.Where(s => s.enabled).Select(s => Vector3.Distance(s.GetPosition(0), s.GetPosition(1))).DefaultIfEmpty(0).Max();
+                        bool floorOn = TagExposure.OnFloor(_zack, .8f, out var floorFeet, out _, out _);
+                        trace.AppendLine(FormattableString.Invariant($",{streaks.Count(s => s.enabled)},{longest:F3},{Camera.main.fieldOfView:F3},{(floorOn ? 1 : 0)},{floorFeet.x:F3},{floorFeet.z:F3}"));
                         f++;
                         if (f < count) { _frame++; drive(f); }
                     }

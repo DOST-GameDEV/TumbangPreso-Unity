@@ -37,13 +37,13 @@ Shader "TumbangPreso/ZackTemporalMemory"
    float3 paint=tex2D(_MainTex,i.uv).rgb;
    if(_UsePalette>.5){float2 cell=floor(clamp(i.uv,0,.9999)*16);int c=(int)cell.x,r=(int)cell.y;if(r<=7)paint=_Palette[(c/2)+(r<=3?8:0)].rgb;}
    paint*=_Color.rgb;
-   float3 core=float3(1,.78,.25);
+   float3 core=float3(1,.72,.12);
    float edge=pow(1-saturate(abs(dot(normalize(i.normal),normalize(_WorldSpaceCameraPos-i.world)))),1.6);
-   float stripe=lerp(.65,1,smoothstep(.3,.7,frac(i.world.y*8)));
-   float fill=i.echo.x<.5?.22:.035;
-   float alpha=_MemoryOpacity*i.echo.y*(fill+edge*.75)*stripe;
+   float stripe=lerp(.55,1,smoothstep(.3,.7,frac(i.world.y*9+_Time.y*7)));
+   float fill=i.echo.x<.5?.18:.05;
+   float alpha=_MemoryOpacity*i.echo.y*(fill+edge*.6)*stripe;
    alpha*=smoothstep(.65,1.3,distance(i.world,_WorldSpaceCameraPos));
-   return fixed4(lerp(paint,core,.58)+core*edge*.75,alpha);
+   return fixed4(lerp(paint,core,.62)+core*edge*.9,saturate(alpha));
   }
   ENDCG
   Pass { Name "MEMORY_CORE"
