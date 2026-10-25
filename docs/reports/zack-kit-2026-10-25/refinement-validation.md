@@ -2,6 +2,23 @@
 
 ## Current electrical-outline rewind candidate, 2026-10-26
 
+The owner approved the exported electrical-outline look with "push that i like
+it". Main `308fb345f` was already pushed and its remote SHA was verified. The
+next request removes the zigzag marks on Zack's first-person hands. These came
+from the skin-mounted `ZackCurrentHands` line overlay, including its .027 m dark
+backing. A first capture with only the backing removed still showed a yellow
+zigzag on the skin, so that partial fix was rejected. The final change removes
+the overlay and its retired test entirely. The hand mesh, sleeve, slipper and
+skill effects in the world remain.
+
+Final cleanup verification: `Logs/zack-backtrack-speed-20261026/bare-hands-film.xml`
+passed 1/1 with D3D11 graphics and no skips. The two native 5.4 s takes retain
+the held slipper and exercise the actual bent-route Backtrack. First-person
+frame 100, at full Momentum, shows clear skin without either dark or yellow
+zigzag strokes. The retired overlay's presence test was removed with its
+implementation. The earlier `hand-cleanup-edit` and `hand-cleanup-film` runs
+tested the discarded backing-only fix and do not certify the final deletion.
+
 Based on main `0589a749e`. The owner's latest direction removes the solid gold
 hologram, retains the electrical contour image through arrival and replaces the
 straight first-person speed tunnel with an effect that follows the turn.
@@ -50,7 +67,7 @@ The final `r12` observer and first-person exports were reviewed at 1x through
 arrival and renderer restoration. The observer retains a bright electrical
 contour through the approach without the solid gold flash. First-person strokes
 are tapered, irregular and bend with the turn. The normal-speed result is a
-candidate for owner review, not human feel approval.
+the version the owner subsequently approved for publication.
 
 Both final takes contain 162 frames, 1280x720 at 30 fps, 5.4 s, with actual Unity
 DSP audio muxed to AAC. Frame counts, duration and full-file decode passed.
@@ -72,7 +89,7 @@ No source audio assets changed in this visual pass. The owner rejected the new
 standalone procedural sound challenger as unlike electricity from games, films
 or anime. It remains outside Resources and is marked rejected. Small licensed
 source-material auditions are separate, unapproved and not shipped. Sound
-acceptance remains open alongside visual feel and actual-peer/WAN checks.
+acceptance remains open alongside actual-peer/WAN checks.
 
 ## Previous lead-and-merge speed candidate, 2026-10-26
 

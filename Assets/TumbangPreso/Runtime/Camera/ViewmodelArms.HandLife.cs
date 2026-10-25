@@ -76,7 +76,8 @@ namespace TumbangPreso.CameraSystem
         private static HandCompanion CompanionFor(string heroId)
         {
             // Without a pet a hero's hands are still their own: what the bare arms do (one class a hero, as they are made).
-            if (!UnlockedHandPets) return heroId switch { "paete" => new PaeteVineHands(), "phaister" => new SorayaStageHands(), "amihan" => new AmihanWindHands(), "cheska" => new CheskaRimeHands(), "dante" => new DanteGauntletHands(), "sean" => new SeanFlameHands(), "rafi" => new RafiWaterHands(), "zack" => new ZackCurrentHands(), _ => null };
+            // Zack keeps bare hands without the rejected skin-mounted zigzag overlay.
+            if (!UnlockedHandPets) return heroId switch { "paete" => new PaeteVineHands(), "phaister" => new SorayaStageHands(), "amihan" => new AmihanWindHands(), "cheska" => new CheskaRimeHands(), "dante" => new DanteGauntletHands(), "sean" => new SeanFlameHands(), "rafi" => new RafiWaterHands(), _ => null };
             return heroId switch
             {
                 "sean" => new SeanEmberHand(),

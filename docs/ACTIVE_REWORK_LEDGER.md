@@ -2,15 +2,15 @@
 
 Updated 2026-10-26. Owner scope: [TODO](TODO.md).
 
-- Zack Backtrack electrical-outline candidate is verified on main from `0589a749e`:
+- Zack Backtrack electrical-outline look `308fb345f` is owner-approved on main:
   no solid gold memory fill, contour persistence through arrival and curved
   first-person wisps that follow both route legs. Final r11 passed 23/23 plus
   r12 stroke capture 1/1; both final exports were reviewed at 1x. Evidence is
-  under `Logs/zack-backtrack-speed-20261026/`. Next: owner review of the Electric
-  videos and source-material audio test. No Unity or review server is active.
-  The procedural SFX challenger was rejected; separate source
-  auditions are unapproved and not installed. Visual/listening acceptance and
-  actual peers remain open. Five owner files remain excluded.
+  under `Logs/zack-backtrack-speed-20261026/`. The skin-mounted hand zigzag
+  overlay and its test are removed; final native hand capture passed 1/1.
+  Next: sound review. The procedural SFX
+  challenger was rejected; source auditions are not installed. Listening and
+  actual-peer acceptance remain open. Five owner files stay excluded.
   [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
