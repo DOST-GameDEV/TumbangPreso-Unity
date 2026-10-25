@@ -24,6 +24,9 @@ namespace TumbangPreso.Diagnostics
             public bool watched, unsubscribed;
             public int maxPhantoms, maxHexShoes, maxFakePlayers, maxFakeShoes, markerSamples, beaconSamples, renderedPhantoms, renderedMarkerSamples;
             public bool privateRequested, privateReleased;
+            public int viewVersion;
+            public int legacyPeers, currentPeers;
+            public float sourceAspect, maxProjectionAspectError, maxClipError, minViewportWidth = 1, minViewportHeight = 1;
         }
         private string _role, _path;
         private StreamWriter _csv;
@@ -63,7 +66,7 @@ namespace TumbangPreso.Diagnostics
             probe._receipt.privateRequested = probe._private;
             Directory.CreateDirectory(Path.GetDirectoryName(probe._path));
             probe._csv = new StreamWriter(probe._path) { AutoFlush = true };
-            probe._csv.WriteLine("time,role,match,round,slot,epoch,serial,sent,eye_x,eye_y,eye_z,pitch,yaw,roll,fov,action,aim,published,received,relayed,applied_error,phantoms,marker,private");
+            probe._csv.WriteLine("time,role,match,round,slot,epoch,serial,sent,eye_x,eye_y,eye_z,pitch,yaw,roll,fov,action,aim,published,received,relayed,applied_error,phantoms,marker,private,aspect,viewport_width,viewport_height");
             root.AddComponent<NetObservedViewDriver>().Owner = probe;
         }
         private void Update()
@@ -175,6 +178,18 @@ namespace TumbangPreso.Diagnostics
             _receipt.minFov = Mathf.Min(_receipt.minFov, state.Fov); _receipt.maxFov = Mathf.Max(_receipt.maxFov, state.Fov);
             float error = _role == "observer" && _observer != null ? Vector3.Distance(state.Eye, _observer.transform.position) : 0;
             _receipt.maxEyeError = Mathf.Max(_receipt.maxEyeError, error); _receipt.sentAt = state.SentAt;
+            _receipt.viewVersion = rpc.SpectatorViewWireVersion; _receipt.sourceAspect = state.Aspect;
+            _receipt.legacyPeers = Mathf.Max(_receipt.legacyPeers, rpc.SpectatorViewPeersAtVersion(2));
+            _receipt.currentPeers = Mathf.Max(_receipt.currentPeers, rpc.SpectatorViewPeersAtVersion(3));
+            if (_role == "observer" && _observer != null && state.Aspect > 0)
+            {
+                var lens = _observer.GetComponent<Camera>();
+                _receipt.maxProjectionAspectError = Mathf.Max(_receipt.maxProjectionAspectError, Mathf.Abs(lens.aspect - state.Aspect));
+                if (state.NearClip > 0) _receipt.maxClipError = Mathf.Max(_receipt.maxClipError,
+                    Mathf.Max(Mathf.Abs(lens.nearClipPlane - state.NearClip), Mathf.Abs(lens.farClipPlane - state.FarClip)));
+                _receipt.minViewportWidth = Mathf.Min(_receipt.minViewportWidth, _observer.ObservedViewport.width);
+                _receipt.minViewportHeight = Mathf.Min(_receipt.minViewportHeight, _observer.ObservedViewport.height);
+            }
             _receipt.watched |= _role == "observer" && _observer != null && _observer.IsWatchingEyes(actor);
             int hex = 0, players = 0, shoes = 0;
             foreach (var phantom in state.Private.Phantoms)
@@ -207,7 +222,8 @@ namespace TumbangPreso.Diagnostics
             _csv.WriteLine(string.Join(",", F(Time.unscaledTime), _role, state.Match, state.Round, state.Slot, state.Epoch,
                 state.Sequence, F(state.SentAt), F(state.Eye.x), F(state.Eye.y), F(state.Eye.z), F(e.x), F(e.y), F(e.z), F(state.Fov),
                 state.Action.ToString(), state.Aim.ToString(), rpc.SpectatorViewsPublished, rpc.SpectatorViewsReceived, rpc.SpectatorViewsRelayed,
-                F(error), state.Private.Phantoms.Length, state.Private.Marker.Present ? 1 : 0, privateData));
+                F(error), state.Private.Phantoms.Length, state.Private.Marker.Present ? 1 : 0, privateData, F(state.Aspect),
+                F(_observer != null ? _observer.ObservedViewport.width : 1), F(_observer != null ? _observer.ObservedViewport.height : 1)));
         }
         private void Finish(string error)
         {

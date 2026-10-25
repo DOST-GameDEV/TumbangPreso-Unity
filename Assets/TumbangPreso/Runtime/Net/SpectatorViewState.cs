@@ -8,13 +8,16 @@ namespace TumbangPreso.Net
     public struct SpectatorViewState
     {
         public const int MinWireBytes = 111, MaxWireBytes = 686;
+        public const byte LegacyVersion = 2, CurrentVersion = 3;
+        public const int LensBytes = 12;
+        public static bool Supports(byte version) => version == LegacyVersion || version == CurrentVersion;
         public const byte FirstPerson = 1, HandsVisible = 2, BotView = 4;
         public long Match;
         public int Round, Slot, Epoch;
         public uint Sequence;
         public Vector3 Eye;
         public Quaternion Rotation;
-        public float Fov, EyeDrop, SentAt;
+        public float Fov, EyeDrop, SentAt, Aspect, NearClip, FarClip;
         public Vector3 HandsSeat;
         public Quaternion HandsRotation;
         public FixedString64Bytes Action, Aim;
@@ -28,6 +31,9 @@ namespace TumbangPreso.Net
             && Finite(Rotation.x) && Finite(Rotation.y) && Finite(Rotation.z) && Finite(Rotation.w)
             && Quaternion.Dot(Rotation, Rotation) > .8f && Quaternion.Dot(Rotation, Rotation) < 1.2f
             && Finite(Fov) && Fov >= 20 && Fov <= 140 && Finite(EyeDrop) && EyeDrop >= 0 && EyeDrop <= 10
+            && Finite(Aspect) && (Aspect == 0 || (Aspect >= .2f && Aspect <= 5f))
+            && Finite(NearClip) && Finite(FarClip) && ((NearClip == 0 && FarClip == 0)
+                || (NearClip >= .001f && NearClip <= 5 && FarClip > NearClip && FarClip <= 10000))
             && Finite(SentAt) && SentAt >= 0 && (Flags & ~7) == 0
             && Finite(HandsSeat.x) && Finite(HandsSeat.y) && Finite(HandsSeat.z) && HandsSeat.sqrMagnitude < 64
             && Finite(HandsRotation.x) && Finite(HandsRotation.y) && Finite(HandsRotation.z) && Finite(HandsRotation.w)
@@ -42,7 +48,7 @@ namespace TumbangPreso.Net
         public static bool Newer(uint value, uint previous) => value != 0 && unchecked((int)(value - previous)) > 0;
         public bool Timely(float now) => Finite(now) && SentAt <= now + .5f && now - SentAt <= 1.2f;
 
-        public void Write(FastBufferWriter writer)
+        public void Write(FastBufferWriter writer, byte version = LegacyVersion)
         {
             writer.WriteValueSafe(Match); writer.WriteValueSafe(Round); writer.WriteValueSafe(Slot);
             writer.WriteValueSafe(Epoch); writer.WriteValueSafe(Sequence); writer.WriteValueSafe(Eye);
@@ -51,12 +57,16 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(ActionTime); writer.WriteValueSafe(VisualPhase); writer.WriteValueSafe(ActionSequence);
             WriteName(writer, Action); WriteName(writer, Aim);
             Private.Write(writer);
+            if (version == CurrentVersion)
+            { writer.WriteValueSafe(Aspect); writer.WriteValueSafe(NearClip); writer.WriteValueSafe(FarClip); }
         }
-        public static bool TryRead(ref FastBufferReader reader, out SpectatorViewState state)
+        public static bool TryRead(ref FastBufferReader reader, out SpectatorViewState state, byte version = LegacyVersion)
         {
             state = default;
+            if (!Supports(version)) return false;
+            int lens = version == CurrentVersion ? LensBytes : 0;
             int length = reader.Length - reader.Position;
-            if (length < MinWireBytes || length > MaxWireBytes || !reader.TryBeginRead(105)) return false;
+            if (length < MinWireBytes + lens || length > MaxWireBytes + lens || !reader.TryBeginRead(105)) return false;
             reader.ReadValueSafe(out state.Match); reader.ReadValueSafe(out state.Round); reader.ReadValueSafe(out state.Slot);
             reader.ReadValueSafe(out state.Epoch); reader.ReadValueSafe(out state.Sequence); reader.ReadValueSafe(out state.Eye);
             reader.ReadValueSafe(out state.Rotation); reader.ReadValueSafe(out state.Fov); reader.ReadValueSafe(out state.EyeDrop);
@@ -66,6 +76,12 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out state.ActionTime); reader.ReadValueSafe(out state.VisualPhase); reader.ReadValueSafe(out state.ActionSequence);
             if (!ReadName(ref reader, out state.Action) || !ReadName(ref reader, out state.Aim)
                 || !SpectatorPrivateView.TryRead(ref reader, out state.Private)) return false;
+            if (lens != 0)
+            {
+                if (!reader.TryBeginRead(LensBytes)) return false;
+                reader.ReadValueSafe(out state.Aspect);
+                reader.ReadValueSafe(out state.NearClip); reader.ReadValueSafe(out state.FarClip);
+            }
             return reader.Position == reader.Length && state.IsValid;
         }
         private static void WriteName(FastBufferWriter writer, FixedString64Bytes value)

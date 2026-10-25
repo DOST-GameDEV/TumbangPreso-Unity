@@ -31,12 +31,13 @@ namespace TumbangPreso.CameraSystem
 
         private void LateUpdate()
         {
-            if (!_pov || _follow == null) { _privateView?.Clear(); return; }
+            if (!_pov || _follow == null) { ApplyObservedLens(0); _privateView?.Clear(); return; }
             if (_observedActor != _follow || _observedEpoch != _follow.MovementEpoch)
             { _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0); }
             ObservedPlayerView.SetTarget(_follow);
             if (SpectatorCutscene.Hides || PresentationClock.Held || _replaying)
             {
+                ApplyObservedLens(0);
                 _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0); return;
             }
             if (!_follow.gameObject.activeInHierarchy)
@@ -48,7 +49,7 @@ namespace TumbangPreso.CameraSystem
                 // A translucent menu can hold the camera, but cannot keep stale private
                 // geometry alive after its source stream or body scope is gone.
                 if (!ObservedPlayerView.TryGet(_follow, out _, out _))
-                { _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0); }
+                { ApplyObservedLens(0); _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0); }
                 return;
             }
             float dt = Time.unscaledDeltaTime;
@@ -61,6 +62,7 @@ namespace TumbangPreso.CameraSystem
                     Quaternion.Slerp(transform.rotation, view.Rotation.normalized, blend));
                 _targetPosition = transform.position; SyncAnglesFromTransform();
                 if (_camera != null) _camera.fieldOfView = snap ? view.Fov : Mathf.Lerp(_camera.fieldOfView, view.Fov, blend);
+                ApplyObservedLens(view.Aspect, view.NearClip, view.FarClip);
                 Shader.SetGlobalFloat(Visual.NearFade.EyeDropId, view.EyeDrop);
                 _resetObservedMotion |= _observedActor != _follow || _observedEpoch != view.Epoch;
                 _observedMotionChanged = local || _resetObservedMotion || _observedPose.Sequence != view.Sequence;
@@ -80,6 +82,7 @@ namespace TumbangPreso.CameraSystem
                 // A missing/legacy stream is a labeled follow view, not a fabricated
                 // "actual" eye pose driven by the operator's mouse pitch.
                 _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0);
+                ApplyObservedLens(0);
                 if (_camera != null) _camera.fieldOfView = SpectatorFov;
                 Shader.SetGlobalFloat(Visual.NearFade.EyeDropId, 0);
                 Vector3 focus = _follow.transform.position + Vector3.up * PovEyeHeight();
@@ -90,6 +93,7 @@ namespace TumbangPreso.CameraSystem
         }
         private void ResetObservedView()
         {
+            ApplyObservedLens(0);
             _observedViewAvailable = _observedFirstPerson = _observedHands = _observedBot = false;
             _observedActor = null; _observedEpoch = -1;
             _observedMotionChanged = _resetObservedMotion = false; _observedPose = default;

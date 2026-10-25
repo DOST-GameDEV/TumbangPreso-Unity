@@ -9,9 +9,11 @@ namespace TumbangPreso.Net
 {
     public sealed partial class MatchRpc
     {
-        private const byte ViewVersion = 2;
+        private const byte ViewVersion = SpectatorViewState.CurrentVersion;
         private const float ViewInterval = .1f;
         private readonly Dictionary<ulong, ulong> _viewPeers = new();
+        private readonly Dictionary<ulong, byte> _viewVersions = new();
+        private byte _viewVersion = SpectatorViewState.LegacyVersion;
         private readonly Dictionary<ulong, int> _viewWatchers = new();
         private readonly List<ulong> _retiredViewPeers = new();
         private readonly SpectatorViewState[] _pendingViews = new SpectatorViewState[Core.Balance.PlayerCount];
@@ -31,11 +33,18 @@ namespace TumbangPreso.Net
         public int SpectatorViewsPublished { get; private set; }
         public int SpectatorViewsReceived { get; private set; }
         public int SpectatorViewsRelayed { get; private set; }
+        public byte SpectatorViewWireVersion => _viewVersion;
+        public int SpectatorViewPeersAtVersion(byte version)
+        {
+            int count = 0; foreach (byte peerVersion in _viewVersions.Values) if (peerVersion == version) count++;
+            return count;
+        }
         public SpectatorViewState LastPublishedSpectatorView { get; private set; }
 
         private void ResetSpectatorViewTransport()
         {
-            _viewPeers.Clear(); _viewWatchers.Clear(); _retiredViewPeers.Clear();
+            _viewPeers.Clear(); _viewVersions.Clear(); _viewWatchers.Clear(); _retiredViewPeers.Clear();
+            _viewVersion = SpectatorViewState.LegacyVersion;
             Array.Clear(_hasPendingView, 0, _hasPendingView.Length);
             Array.Clear(_viewOwnerSequence, 0, _viewOwnerSequence.Length);
             Array.Clear(_viewRelaySequence, 0, _viewRelaySequence.Length);
@@ -81,10 +90,14 @@ namespace TumbangPreso.Net
             if (!_nm.IsConnectedClient) return;
             if (!_viewHelloSent)
             {
-                // A legacy host sees at most one optional capability message, not a pose stream.
+                // Establish v2 first, then offer v3 with the same nonce. A v2 host ignores
+                // the offer and keeps its original pose stream, without repeated probes.
                 using var hello = new FastBufferWriter(9, Allocator.Temp);
-                hello.WriteValueSafe(ViewVersion); hello.WriteValueSafe(_viewNonce);
+                hello.WriteValueSafe(SpectatorViewState.LegacyVersion); hello.WriteValueSafe(_viewNonce);
                 _nm.CustomMessagingManager.SendNamedMessage("SpectatorViewHello", NetworkManager.ServerClientId, hello);
+                using var lensHello = new FastBufferWriter(9, Allocator.Temp);
+                lensHello.WriteValueSafe(ViewVersion); lensHello.WriteValueSafe(_viewNonce);
+                _nm.CustomMessagingManager.SendNamedMessage("SpectatorViewHello", NetworkManager.ServerClientId, lensHello);
                 _viewHelloSent = true;
             }
             if (!_viewAcknowledged) return;
@@ -103,8 +116,8 @@ namespace TumbangPreso.Net
             if (!ObservedPlayerView.TryLocal(actor, out var state) || !state.Matches(PresentationMatchId, GameServices.Match?.RoundNumber ?? 0, actor)) return;
             state.Sequence = NextViewSerial(ref _viewPublishedSequence); state.SentAt = (float)_nm.ServerTime.Time;
             if (!state.IsValid) return;
-            using var writer = new FastBufferWriter(SpectatorViewState.MaxWireBytes + 8, Allocator.Temp);
-            writer.WriteValueSafe(_viewNonce); state.Write(writer);
+            using var writer = new FastBufferWriter(SpectatorViewState.MaxWireBytes + SpectatorViewState.LensBytes + 8, Allocator.Temp);
+            writer.WriteValueSafe(_viewNonce); state.Write(writer, _viewVersion);
             _nm.CustomMessagingManager.SendNamedMessage("SubmitSpectatorView", NetworkManager.ServerClientId, writer, NetworkDelivery.UnreliableSequenced);
             LastPublishedSpectatorView = state;
             SpectatorViewsPublished++;
@@ -127,7 +140,8 @@ namespace TumbangPreso.Net
         private void SendViewReady(ulong peer, ulong nonce, byte mask)
         {
             using var writer = new FastBufferWriter(10, Allocator.Temp);
-            writer.WriteValueSafe(ViewVersion); writer.WriteValueSafe(nonce); writer.WriteValueSafe(mask);
+            writer.WriteValueSafe(_viewVersions.TryGetValue(peer, out byte version) ? version : SpectatorViewState.LegacyVersion);
+            writer.WriteValueSafe(nonce); writer.WriteValueSafe(mask);
             _nm.CustomMessagingManager.SendNamedMessage("SpectatorViewReady", peer, writer);
         }
         private void OnViewHello(ulong sender, FastBufferReader reader)
@@ -135,21 +149,24 @@ namespace TumbangPreso.Net
             if (!_nm.IsServer || sender == _nm.LocalClientId || reader.Length - reader.Position != 9 || !reader.TryBeginRead(9)
                 || !_nm.ConnectedClients.ContainsKey(sender)) return;
             reader.ReadValueSafe(out byte version); reader.ReadValueSafe(out ulong nonce);
-            if (version != ViewVersion || nonce == 0) return;
+            if (!SpectatorViewState.Supports(version) || nonce == 0) return;
             if (!_viewPeers.TryGetValue(sender, out var previous) || previous != nonce)
             {
                 _viewWatchers.Remove(sender);
                 var record = sender <= int.MaxValue ? NetSession.Instance?.Lobby?.PeerById((int)sender) : null;
                 if (record != null && ValidSlot(record.Seat)) _viewOwnerSequence[record.Seat] = 0;
+                _viewVersions.Remove(sender);
             }
             _viewPeers[sender] = nonce;
+            if (!_viewVersions.TryGetValue(sender, out byte known) || version > known) _viewVersions[sender] = version;
             SendViewReady(sender, nonce, NeededViewMask());
         }
         private void OnViewReady(ulong sender, FastBufferReader reader)
         {
             if (_nm.IsServer || !FromHost(sender) || !_viewHelloSent || reader.Length - reader.Position != 10 || !reader.TryBeginRead(10)) return;
             reader.ReadValueSafe(out byte version); reader.ReadValueSafe(out ulong nonce); reader.ReadValueSafe(out byte mask);
-            if (version != ViewVersion || nonce != _viewNonce || (mask & ~15) != 0) return;
+            if (!SpectatorViewState.Supports(version) || nonce != _viewNonce || (mask & ~15) != 0 || version < _viewVersion) return;
+            _viewVersion = version;
             _viewAcknowledged = true; _viewPublishMask = mask;
         }
         private void OnViewRequest(ulong sender, FastBufferReader reader)
@@ -171,10 +188,11 @@ namespace TumbangPreso.Net
         private void OnSubmitView(ulong sender, FastBufferReader reader)
         {
             int length = reader.Length - reader.Position;
-            if (!_nm.IsServer || length < SpectatorViewState.MinWireBytes + 8 || length > SpectatorViewState.MaxWireBytes + 8 || !reader.TryBeginRead(8)) return;
+            if (!_nm.IsServer || length < SpectatorViewState.MinWireBytes + 8 || length > SpectatorViewState.MaxWireBytes + SpectatorViewState.LensBytes + 8 || !reader.TryBeginRead(8)) return;
             reader.ReadValueSafe(out ulong nonce);
             if (!_viewPeers.TryGetValue(sender, out var expected) || expected != nonce || sender > int.MaxValue
-                || !SpectatorViewState.TryRead(ref reader, out var state) || (state.Flags & SpectatorViewState.BotView) != 0
+                || !_viewVersions.TryGetValue(sender, out byte version)
+                || !SpectatorViewState.TryRead(ref reader, out var state, version) || (state.Flags & SpectatorViewState.BotView) != 0
                 || !SenderOwnsClaimedSeat(sender, state.Slot, out var actor)
                 || !state.Matches(PresentationMatchId, GameServices.Match?.RoundNumber ?? 0, actor)
                 || !state.Timely((float)_nm.ServerTime.Time) || Vector3.Distance(actor.transform.position, state.Eye) > 80
@@ -196,7 +214,7 @@ namespace TumbangPreso.Net
         {
             _retiredViewPeers.Clear();
             foreach (var peer in _viewPeers) if (!_nm.ConnectedClients.ContainsKey(peer.Key)) _retiredViewPeers.Add(peer.Key);
-            foreach (var peer in _retiredViewPeers) { _viewPeers.Remove(peer); _viewWatchers.Remove(peer); }
+            foreach (var peer in _retiredViewPeers) { _viewPeers.Remove(peer); _viewVersions.Remove(peer); _viewWatchers.Remove(peer); }
             RefreshViewMask();
             if (Time.unscaledTime - _viewRelayedAt < ViewInterval) return;
             _viewRelayedAt = Time.unscaledTime;
@@ -216,10 +234,11 @@ namespace TumbangPreso.Net
                 if (!state.IsValid || !state.Matches(PresentationMatchId, GameServices.Match?.RoundNumber ?? 0, actor)
                     || !state.Timely((float)_nm.ServerTime.Time)) continue;
                 ObservedPlayerView.InstallRemote(state, actor);
-                using var writer = new FastBufferWriter(SpectatorViewState.MaxWireBytes, Allocator.Temp); state.Write(writer);
                 foreach (var watcher in _viewWatchers)
                     if (watcher.Value == slot && ViewPeerMayWatch(watcher.Key) && _viewPeers.ContainsKey(watcher.Key))
                     {
+                        using var writer = new FastBufferWriter(SpectatorViewState.MaxWireBytes + SpectatorViewState.LensBytes, Allocator.Temp);
+                        state.Write(writer, _viewVersions.TryGetValue(watcher.Key, out byte version) ? version : SpectatorViewState.LegacyVersion);
                         _nm.CustomMessagingManager.SendNamedMessage("SpectatorViewPose", watcher.Key, writer, NetworkDelivery.UnreliableSequenced);
                         SpectatorViewsRelayed++;
                     }
@@ -228,7 +247,7 @@ namespace TumbangPreso.Net
         private void OnViewPose(ulong sender, FastBufferReader reader)
         {
             if (_nm.IsServer || !FromHost(sender) || !_viewAcknowledged || !GameLaunch.Spectator
-                || !SpectatorViewState.TryRead(ref reader, out var state) || state.Slot != ObservedPlayerView.RequestedSlot
+                || !SpectatorViewState.TryRead(ref reader, out var state, _viewVersion) || state.Slot != ObservedPlayerView.RequestedSlot
                 || !state.Timely((float)_nm.ServerTime.Time)) return;
             if (ObservedPlayerView.InstallRemote(state, Unit(state.Slot))) SpectatorViewsReceived++;
         }
