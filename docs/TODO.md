@@ -11,8 +11,8 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
-| REPO-CLEANUP-1025 | IN PROGRESS | Shorten instructions and live docs, audit all Markdown, retire obsolete queues, remove proven unused assets and obsolete Kenney credit; validate before integrating BugFix into main, delete BugFix, create NETWORKFIX |
-| SPECTATOR-1025 | OPEN, main | Clear controls-only Tab help; calm readable director; full skills/props/cutscene visibility; target follow with actual FPP/TPP; graphics and regression evidence; push to main |
+| REPO-CLEANUP-1025 | DONE | Cleanup aaf96e52e1 integrated into main; BugFix deleted after ancestry verification; NETWORKFIX created at the merged commit. 107.2 MiB assets removed; entry docs 97.62% smaller. [Evidence](reports/repository-cleanup-2026-10-25.md) |
+| SPECTATOR-1025 | IN PROGRESS, main | Clear controls-only Tab help; calm readable director; full skills/props/cutscene visibility; target follow with actual FPP/TPP; graphics and regression evidence; push to main |
 | NETWORKFIX-1025 | OPEN, NETWORKFIX only | Reproduce disconnect/reconnect/lag/remote-state defects, fix causally, notify spectator on departure, exercise actual peers without regressing current behavior |
 
 ## Existing evidence limits worth retaining

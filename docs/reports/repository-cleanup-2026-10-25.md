@@ -66,7 +66,9 @@ checks below. No Git history rewrite or source-art quality reduction is part of 
   and the targeted native tests are still running at this checkpoint; no runtime
   or multiplayer acceptance is claimed from compilation.
 
-The owner authorized a fast-forward integration into main, deletion of BugFix
-after ancestry verification, then NETWORKFIX creation. Exact refs are checked
-against the remote at publication; ongoing spectator/network evidence belongs
-to its own report rather than expanding this cleanup record.
+Published as `aaf96e52e114e362149dbc47ca587dbaeea2ecb1`. Original BugFix
+`47487eda7` and previous main `2239d8d1b` are ancestors. The remote main was
+fast-forwarded, BugFix deleted after verification, and NETWORKFIX created at
+the merged cleanup commit. The old checked-out local branch was renamed to
+preserve existing dirty work. Ongoing spectator/network evidence belongs to
+its own report rather than expanding this cleanup record.

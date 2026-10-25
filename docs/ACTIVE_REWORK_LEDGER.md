@@ -2,19 +2,21 @@
 
 Updated 2026-10-25. Owner scope: [TODO](TODO.md).
 
-- Source baseline: `BugFix` at `47487eda7`; `main` at `2239d8d1b` is an ancestor.
-  The apparent divergence was a shallow-history boundary, recovered before merging.
+- Cleanup/integration: `aaf96e52e1` on main, containing original BugFix `47487eda7`.
+  Remote BugFix is deleted; NETWORKFIX starts at the merged cleanup commit.
 - Task work area is separate from the dirty canonical checkout; preserve its
   existing asset metadata and ProjectSettings changes.
-- Current unit: documentation/token cleanup and unused-asset dependency audit.
-  No gameplay or network behavior is changed by the documentation cleanup.
-- Publication order: cleaned BugFix into main, verify ancestry, delete BugFix,
-  create NETWORKFIX; spectator refinements publish to main; network changes stay
-  on NETWORKFIX. Check live refs before each mutation.
-- Evidence baseline: prior Rago/local carry tests are dated, not new qualification.
-  Fresh documentation/Core checks and targeted runtime checks must be recorded.
-- Next action: finish asset/credit cleanup, run docs/source/Core checks, inspect
-  the diff and integrate the verified documentation unit.
+- Current unit: spectator controls, camera pacing, view fidelity and event coverage.
+  Spectator changes publish to main; network reliability fixes stay on NETWORKFIX.
+- Cleanup evidence: fresh Core 832/832, documentation checks pass, Unity compiles
+  without C# errors. Removed 112,453,059 asset bytes; seven entry docs 97.62% smaller.
+  Targeted native spectator baseline is still importing in the isolated work area;
+  its exact process/log are in the task-local checkpoint. Do not duplicate it.
+- Confirmed source defect: current spectator POV uses fixed eye position/body yaw
+  and operator pitch. Investigate actual player-view observation and borrowed
+  viewmodel behavior before changing it. Director cuts immediately on beat changes.
+- Next action: collect native baseline, then implement grouped controls and stable
+  camera holds; trace shared eye/look data and perspective effect ownership.
 
 Keep this file short. Record exact active jobs and next command in the task-local
 checkpoint while a run is live. Replace resolved state instead of prepending old
