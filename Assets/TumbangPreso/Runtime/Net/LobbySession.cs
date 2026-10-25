@@ -165,6 +165,10 @@ namespace TumbangPreso.Net
         /// <summary>Seats vacated mid-match, held for their original token.</summary>
         private readonly Dictionary<int, string> _heldSeats = new Dictionary<int, string>();
         private readonly Dictionary<int, HeldPicks> _heldPicks = new Dictionary<int, HeldPicks>();
+        // Keep recent audience roles for brief reconnects without holding a chair
+        // or growing a history for every spectator who visits a long-running room.
+        private const int MaxRecentSpectators = 32;
+        private readonly List<string> _recentSpectators = new List<string>(MaxRecentSpectators);
         private readonly struct HeldPicks
         {
             public readonly int Character, Can, Slipper, Rating;
@@ -225,6 +229,7 @@ namespace TumbangPreso.Net
             _seenThisMatch.Clear();
             _heldSeats.Clear();
             _heldPicks.Clear();
+            _recentSpectators.Clear();
             MatchInProgress = false;
             _benchedSeats.Clear();
 
@@ -266,6 +271,8 @@ namespace TumbangPreso.Net
             // 1. They were here, in THIS match, and left. Their seat is waiting.
             foreach (var kv in _heldSeats)
                 if (kv.Value == token) return MidMatchRuling.Reclaim;
+
+            if (MatchInProgress && _recentSpectators.Contains(token)) return MidMatchRuling.Spectate;
 
             // 2. A seat is genuinely free.
             if (FreeSeatCount() > 0) return MidMatchRuling.Seat;
@@ -409,6 +416,7 @@ namespace TumbangPreso.Net
             }
 
             _peers[peerId] = record;
+            _recentSpectators.Remove(record.Token);
             if (record.Seat >= 0) _seenThisMatch.Add(record.Token);
 
             ClaimLeaderIfVacant(peerId);
@@ -462,6 +470,11 @@ namespace TumbangPreso.Net
             {
                 _heldSeats[record.Seat] = record.Token;
                 _heldPicks[record.Seat] = new HeldPicks(record);
+            }
+            else if (MatchInProgress && record.Spectator && !IsSeatlessReferee(peerId) && !string.IsNullOrEmpty(record.Token))
+            {
+                _recentSpectators.Remove(record.Token); _recentSpectators.Add(record.Token);
+                if (_recentSpectators.Count > MaxRecentSpectators) _recentSpectators.RemoveAt(0);
             }
 
             _peers.Remove(peerId);
@@ -895,6 +908,19 @@ namespace TumbangPreso.Net
 
         /// <summary>Is there room for one more person, in any role?</summary>
         public bool HasRoomForAnother() => ConnectedHumanCount() < MaxConnections;
+        public bool HasConnectedToken(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return false;
+            foreach (var peer in _peers.Values) if (peer.Token == token) return true;
+            return false;
+        }
+        public bool HasRoomForAnother(string token)
+        {
+            if (HasConnectedToken(token)) return true; // Replaces its own transport.
+            if (!HasRoomForAnother()) return false;
+            var role = RuleOnArrival(token);
+            return role != MidMatchRuling.Refuse && (role != MidMatchRuling.Spectate || SpectatorCount() < MaxSpectators);
+        }
 
         public int OccupiedSeatCount()
         {
@@ -976,6 +1002,7 @@ namespace TumbangPreso.Net
         /// lobby phase, before the match starts, were legitimately seen in it.
         public void StartMatch()
         {
+            _recentSpectators.Clear();
             MatchInProgress = true;
             _heldSeats.Clear();
             _benchedSeats.Clear();
@@ -1009,6 +1036,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public void ReturnToLobby()
         {
+            _recentSpectators.Clear();
             MatchInProgress = false;
             _heldSeats.Clear();
             _benchedSeats.Clear();
@@ -1017,6 +1045,7 @@ namespace TumbangPreso.Net
 
         public void EndMatch()
         {
+            _recentSpectators.Clear();
             MatchInProgress = false;
             _heldSeats.Clear();
             _benchedSeats.Clear();

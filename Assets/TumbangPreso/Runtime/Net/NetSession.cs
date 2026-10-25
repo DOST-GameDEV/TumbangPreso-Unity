@@ -811,14 +811,21 @@ namespace TumbangPreso.Net
         }
 
         private bool _stopWasRequested;
+        private bool _serverWasRunning;
         private void OnTransportFailure() => Debug.LogWarning(
             $"[NetLifecycle] transport-failure server={_nm?.IsServer} relay={IsRelay} requestedStop={_stopWasRequested}");
         private void OnServerStopped(bool wasHost)
         {
             Debug.Log($"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
+            bool lostServer = _serverWasRunning && !_stopWasRequested;
+            _serverWasRunning = false;
             if (_stopWasRequested) return;
             _beacon?.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
+            // A seatless server has no local client-disconnect callback. It must
+            // retire through the same authority latch and Home route as its peers.
+            if (!lostServer || MatchAbandon.AuthorityRevoked) return;
+            EndTransportPresentation(); ResetJoinedRoom(); PublishRoomLoss(null);
         }
 
         /// <summary>
@@ -1051,6 +1058,7 @@ namespace TumbangPreso.Net
             }
 
             bool ok = StartNetcode(() => dedicated ? _nm.StartServer() : _nm.StartHost(), "hosting");
+            _serverWasRunning = ok;
 
             // ⚠️ ALL FOUR START PATHS REGISTER THE SEAT HANDLER, and this one was the last that
             // did not. A listen host is its own client, so `SendSeatAssignment` applies its seat
@@ -1471,6 +1479,7 @@ namespace TumbangPreso.Net
                 ConfigureClientHello();
 
                 bool ok = StartNetcode(() => _nm.StartHost(), "relay hosting");
+                _serverWasRunning = ok;
 
                 // ⚠️ THE RELAY HOST REGISTERS THE SEAT HANDLER TOO, exactly as `StartHost` does.
                 // A listen host is also its own client, so the message can reach it, and the two
@@ -1855,6 +1864,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private void ConfigureTimeouts()
         {
+            _serverWasRunning = false;
             ResetQualityProbe();
             _lastLinkTrafficAt = -1;
             _linkSampleLeft = 0;
@@ -2183,9 +2193,9 @@ namespace TumbangPreso.Net
             var hello = DecodeHello(request.Payload);
             bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
             bool skillsMatch = protocolMatches && SkillContractFingerprint.Matches(hello.SkillContract);
-            bool hasCapacity = _nm == null ||
+            bool hasCapacity = (_nm == null || Lobby.HasConnectedToken(hello?.Token) ||
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
-                               < LobbySession.MaxConnections;
+                               < LobbySession.MaxConnections) && Lobby.HasRoomForAnother(hello?.Token);
 
             // ⚠️⚠️ THE BLOCK LIST IS ENFORCED HERE, AND THIS IS THE ONLY PLACE IN THE GAME IT
             // CAN DO ANYTHING TODAY. `FUTURE.md` § 6 asks for *"blocking, which must survive
@@ -2536,12 +2546,7 @@ namespace TumbangPreso.Net
             _localShutdown = false;
             _everConnected = false;
 
-            LocalSlot = 0;
-            _seatApplied = false;
-            IsRelay = false;
-            RelayJoinCode = null;
-            _helloByClient.Clear();
-            Lobby.Reset();
+            ResetJoinedRoom();
 
             // ⚠️ A CONNECTION THAT NEVER COMPLETED IS NOT A DISCONNECTION. The join screen is
             // already showing the attempt and reports its own failure; navigating from here as
@@ -2552,11 +2557,19 @@ namespace TumbangPreso.Net
             // `MatchRpc.HandleClientDisconnected` is a subscriber and it starts a scene load; a
             // latch armed after that has already lost the frames in which this peer was standing
             // in an arena answering `IsHost == true`. `docs/TODO.md` § 143.9.
+            PublishRoomLoss(reason);
+            return;
+        }
+        private void ResetJoinedRoom()
+        {
+            LocalSlot = 0; _seatApplied = false; IsRelay = false; RelayJoinCode = null;
+            _helloByClient.Clear(); Lobby.Reset();
+        }
+        private void PublishRoomLoss(string reason)
+        {
             MatchAbandon.Note(reason, wasLocal: false);
-
             LastDisconnectReason = PlayerFacingDisconnectReason(reason);
             ClientDisconnected?.Invoke(LastDisconnectReason);
-            return;
         }
 
         /// <summary>
@@ -2582,7 +2595,7 @@ namespace TumbangPreso.Net
         private static string PlayerFacingDisconnectReason(string raw)
         {
             var cause = Core.SessionEndRules.Classify(raw, wasLocal: false);
-            if (cause == Core.SessionEndCause.HostLost && MatchAbandon.MatchWasCompleted)
+            if (cause == Core.SessionEndCause.HostLost)
                 return MatchAbandon.PlayerLine;
 
             // ⚠️ THE HOST'S OWN SENTENCE STILL WINS WHERE IT IS ONE. `ApproveConnection` writes

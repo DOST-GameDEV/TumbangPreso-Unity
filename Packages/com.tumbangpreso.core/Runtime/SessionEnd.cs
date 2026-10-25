@@ -85,6 +85,8 @@ namespace TumbangPreso.Core
             if (trimmed.Length > 0 && trimmed[0] == '[') return SessionEndCause.HostLost;
 
             string lower = trimmed.ToLowerInvariant();
+            if (lower.Contains("server shutting down") || lower.Contains("server is shutting down"))
+                return SessionEndCause.HostLost;
 
             if (lower.Contains("protocol") || lower.Contains("version"))
                 return SessionEndCause.VersionMismatch;

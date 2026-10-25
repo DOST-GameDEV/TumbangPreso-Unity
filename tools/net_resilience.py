@@ -189,6 +189,13 @@ def main():
             signal(watcher, '.shot')
             wait_for(lambda: (out / (watcher + '.png')).exists(), 12, 'Departure notice screenshot missing.')
             shutil.copy2(out / (watcher + '.png'), out / 'departure-notice.png')
+            assert all(read(out / (n + '.state')).get('scale') == 1 for n in names if n != 'client'), 'Departure paused without an operator action.'
+            signal(watcher, '.pause')
+            wait_for(lambda: all(read(out / (n + '.state')).get('scale') == 0 for n in names if n != 'client'),
+                     12, 'The spectator pause did not reach all surviving peers.', ['host', 'observer'])
+            signal(watcher, '.pause')
+            wait_for(lambda: all(read(out / (n + '.state')).get('scale') == 1 for n in names if n != 'client'),
+                     12, 'The spectator resume did not reach all surviving peers.', ['host', 'observer'])
             launch('client', 'rejoined')
             wait_for(lambda: read(out / 'rejoined.ready').get('sawLive'), 60, 'Durable client could not rejoin.', ['host', 'observer', 'rejoined'])
             restored = read(out / 'rejoined.ready')

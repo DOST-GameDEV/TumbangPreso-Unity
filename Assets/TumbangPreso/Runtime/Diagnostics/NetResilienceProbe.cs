@@ -20,7 +20,7 @@ namespace TumbangPreso.Diagnostics
         {
             public string role, scene, error, link, tier, notice, cause, lastDeparture;
             public bool networked, active, spectator, host, sawLive, revokedAtLoss, oldRoundStopped, peerNoticeVisible;
-            public float peerNoticeSeconds;
+            public float peerNoticeSeconds, scale;
             public int local, round, ended, epoch, departures;
             public int[] scores;
             public long match, rtt;
@@ -73,7 +73,7 @@ namespace TumbangPreso.Diagnostics
                 time = Time.realtimeSinceStartupAsDouble - _began, local = NetAuthority.LocalSlot,
                 networked = net?.IsNetworked == true, host = net?.IsNetworked == true && net.IsHost,
                 active = GameServices.Round?.RoundActive == true, round = match?.RoundNumber ?? 0,
-                match = MatchRpc.Instance?.PresentationMatchId ?? 0, spectator = GameLaunch.Spectator,
+                match = MatchRpc.Instance?.PresentationMatchId ?? 0, spectator = GameLaunch.Spectator || NetAuthority.IsSeatlessReferee,
                 epoch = own?.MovementEpoch ?? 0, scores = Enumerable.Range(0, 4).Select(i => match?.ScoreFor(i) ?? 0).ToArray(),
                 link = NetSession.Link.ToString(), rtt = NetSession.LinkRttMs, silence = net?.LinkSilenceSeconds ?? -1,
                 tier = FindAnyObjectByType<ConnectionQualityIcon>()?.Tier.ToString() ?? "Absent",
@@ -82,6 +82,7 @@ namespace TumbangPreso.Diagnostics
                 lastDeparture = MatchRpc.Instance?.LastPeerDepartureText ?? "",
                 peerNoticeVisible = FindAnyObjectByType<PeerConnectionNotice>()?.IsShowing == true,
                 peerNoticeSeconds = FindAnyObjectByType<PeerConnectionNotice>()?.VisibleSecondsLeft ?? 0,
+                scale = PresentationClock.RequestedScale,
                 sawLive = _live, revokedAtLoss = _revoked, ended = _ended,
                 oldRoundStopped = _oldRound == null || !_oldRound.RoundActive };
         }
@@ -126,6 +127,12 @@ namespace TumbangPreso.Diagnostics
                 { File.Delete(_path + ".stop"); net?.Stop(); Save(".stopped", Read()); }
                 if (File.Exists(_path + ".shutdown"))
                 { File.Delete(_path + ".shutdown"); NetworkManager.Singleton?.Shutdown(); Save(".shutdown-started", Read()); }
+                if (File.Exists(_path + ".pause"))
+                {
+                    var watcher = FindAnyObjectByType<CameraSystem.SpectatorCamera>();
+                    if (watcher != null && watcher.ExecuteViewCommand(CameraSystem.SpectatorCamera.ViewCommand.Pause))
+                    { File.Delete(_path + ".pause"); Save(".pause-requested", Read()); }
+                }
                 if (!_rejoining && File.Exists(_path + ".rejoin"))
                 {
                     string address = File.ReadAllText(_path + ".rejoin"); File.Delete(_path + ".rejoin");
@@ -149,6 +156,15 @@ namespace TumbangPreso.Diagnostics
         }
         private IEnumerator Capture(string suffix)
         {
+            if ((GameLaunch.Spectator || NetAuthority.IsSeatlessReferee) && SceneManager.GetActiveScene().name == SceneFlow.Eskinita)
+            {
+                var watcher = FindAnyObjectByType<CameraSystem.SpectatorCamera>();
+                if (watcher != null)
+                {
+                    if (!watcher.AutopilotEngaged) watcher.ExecuteViewCommand(CameraSystem.SpectatorCamera.ViewCommand.Autopilot);
+                    yield return new WaitForSecondsRealtime(5);
+                }
+            }
             yield return new WaitForEndOfFrame();
             var picture = ScreenCapture.CaptureScreenshotAsTexture();
             if (picture != null) { File.WriteAllBytes(_path + suffix, picture.EncodeToPNG()); Destroy(picture); }
