@@ -88,6 +88,8 @@ namespace TumbangPreso.Diagnostics
                 bot = GameServices.Round.PlayerAt(1)?.IsBot == true };
             row.visibleToast = FindObjectsByType<UnityEngine.UI.Text>(FindObjectsSortMode.None)
                 .Any(text => text.text == row.text && text.isActiveAndEnabled && text.canvas != null && text.canvas.enabled);
+            var retained = FindAnyObjectByType<PeerConnectionNotice>();
+            row.visibleToast |= retained != null && retained.IsShowing && retained.RawNotice == row.text;
             var image = ScreenCapture.CaptureScreenshotAsTexture();
             if (image == null)
             {

@@ -280,18 +280,30 @@ namespace TumbangPreso.UI
         /// (about 200 units) ends well clear of the bar's right end at every supported width. On a
         /// phone it keeps its old height: the touch chips (EMOTE and the rest) own the top right.
         /// </summary>
-        private static float TopFor(bool touch) => touch ? -170 : -30;
+        private static float TopFor(bool touch) => PeerConnectionNotice.TopFor(touch);
         private bool _placedForTouch;
+        private bool _connectionSpace;
+        public void ReserveConnectionSpace(bool reserved)
+        {
+            if (_connectionSpace == reserved) return;
+            _connectionSpace = reserved; PlaceRail(Hud.OnTouch);
+        }
+        private void PlaceRail(bool touch)
+        {
+            _placedForTouch = touch;
+            var root = (RectTransform)transform;
+            root.anchoredPosition = new Vector2(root.anchoredPosition.x,
+                // Entry badges/score flyouts extend above the row's layout rect.
+                TopFor(touch) - (_connectionSpace ? PeerConnectionNotice.CardHeight + 40 : 0));
+            GetComponentInParent<HudReadingLayout>()?.RebasePlacement(root);
+        }
 
         private void Update()
         {
             bool touch = Hud.OnTouch;
             if (touch != _placedForTouch)
             {
-                _placedForTouch = touch;
-                var root = (RectTransform)transform;
-                root.anchoredPosition = new Vector2(root.anchoredPosition.x, TopFor(touch));
-                GetComponentInParent<HudReadingLayout>()?.RebasePlacement(root);
+                PlaceRail(touch);
             }
             Bind(); Paint(Time.unscaledTime);
         }

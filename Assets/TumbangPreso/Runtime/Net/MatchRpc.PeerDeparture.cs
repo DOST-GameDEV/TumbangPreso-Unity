@@ -13,6 +13,10 @@ namespace TumbangPreso.Net
         private int _peerDepartureSequence, _lastPeerDepartureSequence;
         public string LastPeerDepartureText { get; private set; } = "";
         public int PeerDepartureNotices { get; private set; }
+        public int LastPeerDepartureSeat { get; private set; } = -1;
+        public string LastPeerDepartureName { get; private set; } = "";
+        public bool LastPeerDepartureIntentional { get; private set; }
+        public bool LastPeerDepartureBot { get; private set; }
 
         private void ClearPeerDepartureState()
         {
@@ -20,6 +24,8 @@ namespace TumbangPreso.Net
             _peerDepartureSequence = _lastPeerDepartureSequence = 0;
             LastPeerDepartureText = "";
             PeerDepartureNotices = 0;
+            LastPeerDepartureSeat = -1; LastPeerDepartureName = "";
+            LastPeerDepartureIntentional = LastPeerDepartureBot = false;
         }
 
         // A hint about THIS sender, never a request to remove another seat. NGO's
@@ -118,10 +124,12 @@ namespace TumbangPreso.Net
 
         private void PresentPeerDeparture(int seat, string name, bool intentional, bool bot)
         {
+            LastPeerDepartureSeat = seat; LastPeerDepartureName = name;
+            LastPeerDepartureIntentional = intentional; LastPeerDepartureBot = bot;
             LastPeerDepartureText = "P" + (seat + 1) + " · " + name + (intentional ? " LEFT" : " DISCONNECTED")
                 + (bot ? " · BOT TAKES OVER" : " · SEAT RESERVED");
             PeerDepartureNotices++;
-            if (!GameLaunch.Spectator || UI.Hud.Instance?.NativePresentation != true)
+            if (!(GameLaunch.Spectator || NetAuthority.IsSeatlessReferee) || UI.Hud.Instance?.NativePresentation != true)
                 UI.Hud.Instance?.ShowToast(LastPeerDepartureText, 3.2f);
         }
     }

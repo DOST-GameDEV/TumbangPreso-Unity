@@ -10,16 +10,18 @@ namespace TumbangPreso.UI
             Canvas = OwnerUiLayout.Canvas(owner, "OwnerMatchCanvas", 100);
             Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = (RectTransform)Canvas.transform;
             _openingUi = Canvas.gameObject.AddComponent<CanvasGroup>();
-            var connection = OwnerUiLayout.Rect(_root, "ConnectionQuality").gameObject.AddComponent<ConnectionQualityIcon>();
-            Pin(connection.rectTransform, new Vector2(1, 1), new Vector2(-32, -92), new Vector2(22, 22));
             RefreshOpeningVisibility();
             _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build(_root);
             // VISUAL-1.4: the match bar replaces the corner score slabs and the clock box.
             // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
             // the record and no longer called.
             BuildMatchBar(); BuildCourtCan(); BuildCourtPersonal(); BuildStaminaArc(); BuildCourtPrompts();
+            var connection = OwnerUiLayout.Rect(_scoreRoot, "ConnectionQuality").gameObject.AddComponent<ConnectionQualityIcon>();
+            connection.rectTransform.anchorMin = connection.rectTransform.anchorMax = new Vector2(1, .5f);
+            connection.rectTransform.pivot = new Vector2(.5f, .5f);
+            connection.rectTransform.anchoredPosition = new Vector2(26, 0); connection.rectTransform.sizeDelta = new Vector2(22, 22);
             BuildStatusChips(); BuildWarnings();
-            MatchEventFeed.Create(_root);
+            var eventFeed = MatchEventFeed.Create(_root);
             _momentBanner = MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
             // ⚠️ 2026-10-20 OVERHAUL: an announcement is big italic ivory words on a strip of smoked
@@ -55,9 +57,9 @@ namespace TumbangPreso.UI
             var version = Ink(_root, "GameVersion", "", 28, false);
             Pin(version.rectTransform, new Vector2(1, 0), new Vector2(-230, 22), new Vector2(420, 40)); GameVersion.ApplyTo(version);
             CalloutCaption.Create(_root);
+            PeerConnectionNotice.Create(_root).ShareRailWith(eventFeed);
             HudReadingLayout.Install(_root);
             HudContrast.Install(_root);
-            PeerConnectionNotice.Create(_root);
         }
         private void BuildCourtScores()
         {

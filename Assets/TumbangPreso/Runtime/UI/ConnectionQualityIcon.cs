@@ -23,6 +23,7 @@ namespace TumbangPreso.UI
             mesh.Clear(); if (_drawn == ConnectionQualityDisplay.Tier.Healthy) return;
             Color warning = _drawn == ConnectionQualityDisplay.Tier.Mild ? new Color(1, .79f, .12f) : new Color(1, .22f, .17f);
             var rect = GetPixelAdjustedRect(); float unit = Mathf.Min(rect.width, rect.height) / 20f;
+            Quad(mesh, rect, new Color(.07f, .045f, .03f, .9f));
             var origin = rect.center - new Vector2(8, 7) * unit;
             for (int i = 0; i < 3; i++)
             {

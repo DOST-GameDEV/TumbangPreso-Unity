@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.UI;
 using UnityEngine;
@@ -75,6 +76,21 @@ namespace TumbangPreso.PlayTests
             GameLaunch.Spectator = false;
             yield return null;
             Assert.IsFalse(_notice.IsShowing); Assert.AreEqual(0, _notice.VisibleSecondsLeft);
+        }
+        [UnityTest] public IEnumerator TheRightRailKeepsLongNamesAndTheEventFeedInsideTheirOwnSpace()
+        {
+            var feed = MatchEventFeed.Create((RectTransform)_root.transform); _notice.ShareRailWith(feed);
+            _notice.Present("full authoritative notice", 1, new string('M', 32), false, false);
+            yield return null; yield return null; Canvas.ForceUpdateCanvases();
+            var panel = (RectTransform)_notice.transform;
+            Assert.AreEqual(new Vector2(1, 1), panel.anchorMax);
+            var cardBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(_root.transform, panel);
+            var feedBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(_root.transform, feed.transform);
+            Assert.LessOrEqual(feedBounds.max.y, cardBounds.min.y - 10);
+            var name = _notice.GetComponentsInChildren<UnityEngine.UI.Text>(true).Single(t => t.name == "ConnectionPlayer");
+            Assert.GreaterOrEqual(name.fontSize, 28);
+            Assert.LessOrEqual(name.preferredWidth, name.rectTransform.rect.width);
+            Assert.AreEqual("full authoritative notice", _notice.RawNotice);
         }
     }
 }
