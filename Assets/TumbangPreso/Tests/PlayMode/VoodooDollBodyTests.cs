@@ -30,7 +30,7 @@ namespace TumbangPreso.PlayTests
         {
             _net = NetAuthority.Provider;
             yield return PlayModeWorld.Reset();
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider = new SoloProvider();
@@ -100,11 +100,16 @@ namespace TumbangPreso.PlayTests
             var match = GameServices.Match;
             int hers = match.ScoreFor(her.PlayerSlot);
             var companionPoints = new System.Collections.Generic.List<(int, ScoreEvent)>();
+            var awards = new System.Collections.Generic.List<(int slot, ScoreEvent kind)>();
             System.Action<int, ScoreEvent> onCompanionPoint = (body, e) => companionPoints.Add((body, e));
+            System.Action<int, ScoreEvent> onAward = (slot, e) => awards.Add((slot, e));
             match.CompanionScored += onCompanionPoint;
+            match.Scored += onAward;
             try { match.AddScore(seat, ScoreEvent.LataKnocked); }
-            finally { match.CompanionScored -= onCompanionPoint; }
-            Assert.AreEqual(hers + MatchRules.PointsFor(ScoreEvent.LataKnocked), match.ScoreFor(her.PlayerSlot),
+            finally { match.CompanionScored -= onCompanionPoint; match.Scored -= onAward; }
+            Assert.AreEqual(1, awards.Count(award => award.kind == ScoreEvent.LataKnocked));
+            Assert.IsTrue(awards.All(award => award.slot == her.PlayerSlot), "A companion award credited another player.");
+            Assert.AreEqual(hers + awards.Sum(award => MatchRules.PointsFor(award.kind)), match.ScoreFor(her.PlayerSlot),
                 "A knockdown by the doll did not score for her.");
             CollectionAssert.AreEqual(new[] { (seat, ScoreEvent.LataKnocked) }, companionPoints, "The doll's point was not announced as the doll's.");
             yield return null;

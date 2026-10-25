@@ -161,7 +161,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
-        public void FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime()
+        public void RetiredHauntRecoveryCannotStartOrMoveNemusCurrentUltimate()
         {
             var system = Owner("nemu"); var body = system.GetComponent<CharacterMotor>();
             var kit = (NemuHeroKit)system.Kit;
@@ -199,35 +199,18 @@ namespace TumbangPreso.PlayTests
                 GameServices.Round.ApplySnapshot(100, true, 0, true);
                 Assert.IsEmpty(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None));
                 kit.AddUltimateCharge(3); float meter = kit.UltimateCharge;
-                Assert.IsTrue(Apply(state)); Assert.IsTrue(pet.IsDevouring);
-                Assert.AreEqual(4, kit.Ultimate.AcceptedUltimatePhase); Assert.AreEqual(4, kit.Ultimate.DurationRemaining, .001f);
-                Assert.AreEqual(meter, kit.UltimateCharge);
-                Assert.IsEmpty(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None));
+                float duration = kit.Ultimate.DurationRemaining;
                 typeof(HeroAbility).GetProperty("DurationRemaining").SetValue(kit.Skill2, 2f);
-                Assert.IsFalse(Apply(state)); Assert.AreEqual(2, kit.Skill2.DurationRemaining);
+                // SOULBOUND/LET THEM IN no longer restores a chasing KURO. Its
+                // victim POSSESSED clocks use SyncUnit; the old endpoint is inert.
+                Assert.IsFalse(Apply(state)); Assert.IsFalse(pet.IsDevouring);
                 var moved = state; moved.RoundClock = 99; moved.Position = new Vector3(2, 0, 2); moved.Remaining = 3;
-                Assert.IsTrue(Apply(moved)); Assert.AreEqual(moved.Position.x, pet.DevourGround.x, .001f);
-                Assert.AreEqual(3, kit.Ultimate.DurationRemaining, .001f);
-                Assert.IsFalse(Apply(state), "An older movement snapshot rewound the chase.");
-                moved.RoundClock = 98; moved.Remaining = 0;
-                Assert.IsTrue(Apply(moved)); Assert.IsFalse(pet.IsDevouring);
-                Assert.IsFalse(Apply(state), "A terminal lifetime was resurrected by delayed movement.");
-                bad = state; bad.Phase = 3; Assert.IsFalse(Apply(bad));
-                var context = new AbilityContext(body, body.GetComponent<Carrier>(), body.GetComponent<CombatVerbs>());
-                kit.Ultimate.EndEarly(context); pet.StopDevouring();
-                Assert.IsFalse(Apply(state), "A completed lifetime was resurrected.");
-                Assert.IsFalse(pet.IsDevouring); Assert.AreEqual(0, kit.Ultimate.DurationRemaining);
+                Assert.IsFalse(Apply(moved));
+                moved.Remaining = 0; Assert.IsFalse(Apply(moved));
+                Assert.IsFalse(Apply(state), "Retired recovery cannot resurrect a familiar effect.");
+                Assert.AreEqual(duration, kit.Ultimate.DurationRemaining);
+                Assert.AreEqual(meter, kit.UltimateCharge);
                 Assert.AreEqual(2, kit.Skill2.DurationRemaining);
-                typeof(HeroAbility).GetProperty("Windup").SetValue(kit.Ultimate, .4f);
-                using (NetCue.SuppressRelay()) kit.Ultimate.Activate(context);
-                kit.Ultimate.AdoptUltimatePhase(5);
-                Assert.IsTrue(kit.Ultimate.IsWindingUp);
-                var closedDuringWindup = state; closedDuringWindup.Phase = 5;
-                closedDuringWindup.Remaining = 0; closedDuringWindup.RoundClock = 97;
-                Assert.IsTrue(Apply(closedDuringWindup));
-                Assert.IsFalse(kit.Ultimate.IsWindingUp);
-                using (NetCue.SuppressRelay()) kit.Ultimate.Tick(context, 1);
-                Assert.IsFalse(kit.Ultimate.IsActive, "Delayed activation restarted a terminal lifetime.");
                 Assert.IsFalse(pet.IsDevouring);
             }
             finally { Object.DestroyImmediate(root); Object.DestroyImmediate(petRoot); }
@@ -1139,8 +1122,9 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(0f); // Zapped status.
                 writer.WriteValueSafe(0f); // Possessed status, protocol160.
                 writer.WriteValueSafe(0f); // Blinded status, protocol161.
+                writer.WriteValueSafe(0f); // Seared status, protocol178.
                 writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-                Assert.AreEqual(225 + VoodooBodySnapshot.WireBytes, writer.Length);
+                Assert.AreEqual(229 + VoodooBodySnapshot.WireBytes, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
             }
@@ -1300,11 +1284,10 @@ namespace TumbangPreso.PlayTests
             verbs.RollBackRefusedVerb(MatchRpc.DeniedVerb.Shove, refundResources: false);
             Assert.AreEqual(0, verbs.ShoveCooldownLeft);
             Assert.AreEqual(50, motor.Stamina.Current, "Refusal refunded a cost already absent from the authoritative pool.");
-            typeof(CombatVerbs).GetField("_slideCooldown", flags).SetValue(verbs, 2f);
             motor.Commit(1f);
             verbs.RollBackRefusedVerb(MatchRpc.DeniedVerb.Slide, refundResources: false);
             Assert.AreEqual(0, verbs.SlideCooldownLeft);
-            Assert.AreEqual(0, motor.CommitLeft);
+            Assert.AreEqual(1, motor.CommitLeft, "A retired slide refusal cannot retire a current commitment.");
             Assert.AreEqual(50, motor.Stamina.Current);
             yield return null;
         }
@@ -1422,7 +1405,7 @@ namespace TumbangPreso.PlayTests
                 int bytes = 0;
                 manager.CustomMessagingManager.RegisterNamedMessageHandler("SyncUnit", (_, reader) => bytes = reader.Length);
                 rpc.SyncUnitTransformClientRpc(1, motor.transform.position, 0, Vector3.zero);
-                Assert.AreEqual(313, bytes, "The complete maximum-size body packet did not reach the actual named-message callback.");
+                Assert.AreEqual(317, bytes, "The complete maximum-size body packet did not reach the actual named-message callback.");
                 Object.Destroy(router);
             }
             finally { net.Stop(); }
@@ -1591,26 +1574,27 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime()
+        public IEnumerator CurrentSkillEligibilityDoesNotMutateHeldTimeOrResources()
         {
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
             var actor=GameServices.Round.PlayerAt(1);actor.AbilitySystem.BindHero("nemu");yield return null;
             var system=actor.AbilitySystem;var kit=system.Kit;
             var context=new AbilityContext(actor,actor.GetComponent<Carrier>(),actor.GetComponent<CombatVerbs>());
-            Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(context));Assert.AreEqual(0,kit.Skill2.ChargesRemaining);
-            Assert.IsTrue(kit.Skill2.IsActive);Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(context));
-            kit.Skill2.RollBackPredictedCast(context,refundResources:false);
-            Assert.AreEqual(0,kit.Skill2.ChargesRemaining,"A free reactivation has no charge to refund");
             float heldBefore=kit.Skill1.HeldSecondsOnCast;
             Assert.AreEqual(HeroKit.CastOutcome.Cast,system.CheckNetworkSkill(HeroAbilitySystem.Slot.Skill1,actor.transform.position,actor.transform.forward,actor.transform.position+Vector3.forward*3,1.1f));
             Assert.AreEqual(heldBefore,kit.Skill1.HeldSecondsOnCast);Assert.AreEqual(0,kit.Skill1.CooldownRemaining);
             Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill1(context));
             float cooldown=kit.Skill1.CooldownRemaining;
-            Assert.AreEqual(HeroKit.CastOutcome.Cooling,system.CheckNetworkSkill(HeroAbilitySystem.Slot.Skill1,actor.transform.position,actor.transform.forward,actor.transform.position+Vector3.forward*3,2));
+            int charges=kit.Skill1.ChargesRemaining; float meter=kit.UltimateCharge;
+            system.CheckNetworkSkill(HeroAbilitySystem.Slot.Skill1,actor.transform.position,actor.transform.forward,actor.transform.position+Vector3.forward*3,2);
+            Assert.AreEqual(charges,kit.Skill1.ChargesRemaining); Assert.AreEqual(meter,kit.UltimateCharge);
             Assert.AreEqual(heldBefore,kit.Skill1.HeldSecondsOnCast);Assert.AreEqual(cooldown,kit.Skill1.CooldownRemaining);
             system.TrackSkillRequest(0,1);system.TrackSkillRequest(0,2);
-            Assert.IsFalse(system.PendingSkillReceipt(0,1));Assert.IsTrue(system.PendingSkillReceipt(0,2));
+            Assert.IsFalse(system.MatchesSkillRequest(0,1));Assert.IsTrue(system.MatchesSkillRequest(0,2));
+            Assert.IsTrue(system.PendingSkillReceipt(0,1),"A deferred accepted effect still needs its own receipt.");
+            Assert.IsTrue(system.PendingSkillReceipt(0,2));
             system.ResetKit();Assert.IsFalse(system.PendingSkillReceipt(0,2),"Round resets retire outstanding predictions");
+            Assert.IsFalse(system.PendingSkillReceipt(0,1));
         }
 
         [UnityTest, Timeout(30000)]

@@ -2544,7 +2544,7 @@ namespace TumbangPreso.Net
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
             =>SendUnitPose(slot,pos,yaw,velocity,false);
 
-        private const int UnitPoseFixedBytes = 210; // Through BlindedLeft, before the variable tails.
+        private const int UnitPoseFixedBytes = 214; // Through SearedLeft, before the variable tails.
 
         private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null,
                                   bool ownerCorrection = true)
