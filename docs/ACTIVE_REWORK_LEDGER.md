@@ -2,6 +2,7 @@
 
 Updated 2026-10-26. Owner scope: [TODO](TODO.md).
 
+<<<<<<< HEAD
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; BugFix is deleted.
   Proven unused assets removed: 107.2 MiB. Seven entry docs are 97.62% smaller.
   Preserve owner metadata/ProjectSettings changes. [Receipt](reports/repository-cleanup-2026-10-25.md).
@@ -25,6 +26,17 @@ Updated 2026-10-26. Owner scope: [TODO](TODO.md).
   mobile-every-feature mandate.
 - Zack's lead-and-merge Backtrack visual candidate has its separate native 22/22
   and film receipts; creative/listening review remains its owner's task.
+=======
+- Zack Backtrack electrical-outline look `308fb345f` is owner-approved on main:
+  no solid gold memory fill, contour persistence through arrival and curved
+  first-person wisps that follow both route legs. Final r11 passed 23/23 plus
+  r12 stroke capture 1/1; both final exports were reviewed at 1x. Evidence is
+  under `Logs/zack-backtrack-speed-20261026/`. The skin-mounted hand zigzag
+  overlay and its test are removed; final native hand capture passed 1/1.
+  Next: sound review. The procedural SFX
+  challenger was rejected; source auditions are not installed. Listening and
+  actual-peer acceptance remain open. Five owner files stay excluded.
+>>>>>>> origin/main
   [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
 Peer proof is controlled Windows processes on one PC, separate from natural play,

@@ -34,7 +34,7 @@ namespace TumbangPreso.Visual
             {
                 _echo = ZackFx.Echo.Of(_motor.PlayerSlot, transform);
                 if (_echo == null) _nextTry = Time.time + 1.0f;
-                else _echo.Coat(1.0f);
+                else _echo.Past(.65f, .35f);
             }
             if (_echo == null) return;
             if (show && _kit.TryBacktrackPoint(_motor, out var point))

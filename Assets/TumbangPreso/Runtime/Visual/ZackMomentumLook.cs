@@ -102,7 +102,11 @@ namespace TumbangPreso.Visual
                 }
                 var ghost = _ghosts[i];
                 if (ghost == null) continue;
-                if (ghosts) ghost.PoseAt(ghost.Track.Newest - 0.06f * (i + 1));
+                if (ghosts)
+                {
+                    ghost.PoseAt(ghost.Track.Newest - 0.06f * (i + 1));
+                    ghost.Past(.55f + .1f * i, .25f);
+                }
                 ghost.Visible(ghosts && Mathf.Repeat(_age * 12.0f + i, 2.0f) < 1.0f);
             }
         }
