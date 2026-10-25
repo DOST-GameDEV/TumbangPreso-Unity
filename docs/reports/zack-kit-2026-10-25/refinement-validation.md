@@ -1,6 +1,84 @@
 # Zack owner refinements, 2026-10-25
 
-## Latest Backtrack rewrite verification
+## Current single-hologram Backtrack candidate, 2026-10-26
+
+Based on main `c8af2d6ce`. The owner rejected the tether and the separate group
+of four past selves, then requested one afterimage that suggests many images.
+The latest direction permits small electrical sparks and stronger reverse
+animation. This candidate implements that direction; creative acceptance remains
+open. The earlier sections below document superseded candidates.
+
+### Result and integration
+
+- One travelling body and one gold hologram follow the actual recorded route.
+  The hologram repeats it 55 ms later. Five contour passes on the same hologram
+  use 26 ms route offsets with declining opacity. There is no group of separately
+  animated historical actors, frozen departure body or persistent tether.
+- A 0.06 s pose stutter leads into 0.42 s reverse travel. The catch occurs at
+  0.48 s with a short settle, then all copies retire. Brief electrical sparks
+  accent activation and arrival. The existing electrical sound family stays
+  enabled and all sixteen shipped WAV hashes remain unchanged.
+- The resource-backed hologram shader preserves texture/palette detail beneath
+  gold contours and scan bands. Materials are cached by source, shadows are off
+  and near-camera fading protects first-person clearance. Reduced effects use
+  one shader pass and smaller bursts instead of the five-pass trail.
+- Fixed the separate red taggability floor brackets: their ground projection
+  now follows the drawn feet during the cosmetic rewind. The seat ring and name
+  tag already used the presentation offset. Tag outcomes and accepted motor
+  positions are unchanged.
+- Gameplay teleport authority, held slipper, facing, statuses and cooldowns
+  remain unchanged. The visual sequence adds no invulnerability.
+
+The official [Ekko ability reference](https://www.leagueoflegends.com/en-us/champions/ekko/)
+was viewed at normal speed. The useful motion cue is one bright subject collapsing
+through a curved route with pose persistence and a distinct arrival, rather than
+a parallel group of washed-out bodies. This candidate keeps Zack's gold identity.
+
+### Fresh native verification and recordings
+
+`Logs/zack-rewind-reel-20261025/final.xml`: **22/22 passed, no skips** in Unity
+6000.5.8f1 with D3D11. The passing set covers Backtrack authority and held slipper,
+camera-scoped body tint, normal/reduced copy lifetime and backward motion, shader
+support, actual floor-cue alignment, three history cases, thirteen spectator-view
+cases, shared tag-floor readability, actual-map marker graphics and both films.
+All six assemblies also passed direct compilation; native import/compilation and
+rendered films establish the stronger evidence for this candidate.
+
+Earlier `initial.xml` and `refined.xml` each passed 7/7, but their multi-body art
+directions were rejected. They are historical technical evidence, not the current
+visual result. The older disabled-SaBubong setup failure remains documented below.
+
+Both final takes are under `Logs/zack-rewind-reel-20261025/final/zack-skills/`:
+
+- `02-backtrack`: fixed observer view, 8.31 m route, 15 pull frames, all 15 closer
+  to the old location, all 15 travelling-body frames drawn.
+- `02b-backtrack-first-person`: same route length, 15 pull frames, all 15 closer,
+  zero own travelling-body frames drawn.
+- Both traces have maximum route error 0.000 m and ring/tag X/Z error 0.000 m at
+  CSV precision. The red floor-bracket integration is asserted separately and
+  was visually checked in the observer recording.
+- Maximum two body copies, six renderers, four skinned renderers and 32 transforms
+  per take. Normal and reduced lifecycle checks retain the same copy bound.
+  Normal mode adds four contour passes; these counts are not an FPS benchmark.
+- Each export contains 162 frames, 1280x720 at 30 fps, 5.4 s, with actual Unity
+  AudioRenderer capture muxed to AAC. Full decoding, frame count and duration
+  passed. Native peaks are .224 observer and .261 first person, below clipping.
+  Cast is video 3.767 s and catch cue 4.267 s on the 30 fps capture clock.
+
+Both encoded final exports were reviewed at 1x through the rewind. The red
+brackets stay under the moving body. The single gold hologram is clearest around
+the corner and second leg; the first leg can partly occlude it behind the body.
+First person shows a brief gold silhouette receding along the reverse route.
+Those are observed presentation limits, not owner approval or equivalence to the
+reference. Further creative refinement may change the timing, shader or poses.
+
+One guarded graphics job ran at a time. `final-receipt.json` and
+`final-metrics.json` verify frozen runtime inputs and exact preservation of the
+five owner files plus QualitySettings from the start of this pass. Profiles and
+recording evidence are retained. No player build, actual-peer/WAN check or new
+human listening acceptance is claimed.
+
+## Previous tether candidate verification
 
 Technical candidate verified on main from base `f97da3be6`. The owner rejected
 the electric-tether art direction after viewing the reference and supplied a new

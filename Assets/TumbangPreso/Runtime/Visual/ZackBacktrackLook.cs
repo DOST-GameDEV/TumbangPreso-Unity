@@ -4,16 +4,17 @@ using UnityEngine;
 
 namespace TumbangPreso.Visual
 {
-    // Render-only reverse travel. The accepted teleport still owns gameplay; this body, eye and marker offset own the pull.
-    // One real-coloured Zack is snagged at the departure, yanked backwards along his recorded route while his run plays in
-    // reverse, then caught at the old spot. A chattering gold tether reels him toward an anchor ring; no trailing copies.
+    // Render-only rewind. The accepted teleport still owns gameplay; this body, eye and marker offset own the presentation.
+    // One travelling body and one hologram rewind through the recorded route. Layered contours belong to the hologram
+    // material, giving a dense temporal smear without independently moving past actors. Small electrical bursts mark
+    // the activation and catch; gameplay still uses the accepted instant teleport.
     [DefaultExecutionOrder(2500)]
     public sealed class ZackBacktrackLook : MonoBehaviour
     {
-        public const float SnagSeconds = .08f, TravelSeconds = .40f, CatchSeconds = .14f;
+        public const float RevealSeconds = .06f, TravelSeconds = .42f, CatchSeconds = .14f;
         /// <summary>The catch: the body reaches the old spot and the landing cue plays. Matches the 0.46 s pull cue.</summary>
-        public const float PullSeconds = SnagSeconds + TravelSeconds;
-        private const float RingHold = .4f, HipHeight = .7f, WaistHeight = .78f;
+        public const float PullSeconds = RevealSeconds + TravelSeconds;
+        private const float Linger = .16f, EchoDelay = .055f, EchoSpacing = .026f;
         private static readonly Dictionary<int,ZackBacktrackLook> Live = new Dictionary<int,ZackBacktrackLook>();
         private CharacterMotor _motor;
         private Transform _model;
@@ -23,16 +24,30 @@ namespace TumbangPreso.Visual
         private float _born, _poseNow;
         private int _serial, _round;
         private ZackFx.Echo _body;
+        private ZackFx.Echo[] _moments = new ZackFx.Echo[0];
+        private readonly Vector4[] _echoTrail = new Vector4[5];
         private Renderer[] _hidden;
         private bool[] _wasHidden;
-        private LineRenderer _tether, _tetherInk, _wake, _wakeInk, _crown, _ring, _ringInk, _leave;
         private bool _restored, _landed;
         public float Age => Mathf.Max(0,Time.time-_born);
         public bool Pulling => _motor!=null && Age<PullSeconds;
         public Vector3 VisualFeet => FeetAt(Age);
-        /// <summary>Where the drawn body's model root actually is, lift and lean included (minus the model's own offset).</summary>
+        /// <summary>Where the drawn body's model root actually is (minus the model's own offset).</summary>
         public Vector3 RenderedFeet => _body!=null?_body.Copy.Root.transform.position-_modelOffset:VisualFeet;
         public bool BodyDrawn { get; private set; }
+        /// <summary>How many past moments are drawn this frame, for review traces.</summary>
+        public int MomentsDrawn { get; private set; }
+        /// <summary>Read-only moment pose and renderer state for recording and lifecycle checks.</summary>
+        public bool TryMoment(int index, out Vector3 position, out bool drawn)
+        {
+            position = Vector3.zero; drawn = false;
+            if (index < 0 || index >= _moments.Length || _moments[index]?.Copy.Root == null) return false;
+            var moment = _moments[index]; position = moment.Copy.Root.transform.position;
+            foreach (var surface in moment.Copy.Renderers)
+                if (surface != null && surface.enabled && surface.gameObject.activeInHierarchy && !surface.forceRenderingOff)
+                { drawn = true; break; }
+            return true;
+        }
         public bool LiveBodyHidden => _hidden!=null&&!_restored;
         public float RouteLength => _routeDistance!=null&&_routeDistance.Length>0?_routeDistance[_routeDistance.Length-1]:0;
 
@@ -40,16 +55,16 @@ namespace TumbangPreso.Visual
         {
             if(motor==null)return null;
             if(Live.TryGetValue(motor.PlayerSlot,out var old)&&old!=null)old.Finish();
-            var v=new GameObject("ZackBacktrackPull").AddComponent<ZackBacktrackLook>();
+            var v=new GameObject("ZackBacktrackRewind").AddComponent<ZackBacktrackLook>();
             v._motor=motor;v._from=from;v._to=to;v._born=Time.time;v._serial=motor.PresentationTeleportSerial;
             v._round=GameServices.Match?.RoundNumber??0;v._model=motor.GetComponent<CharacterVisual>()?.Model?.transform;
             v._body=ZackFx.Echo.Of(motor.PlayerSlot,v.transform);
             if(v._body!=null)
             {
-                v._poseNow=v._body.Track.Newest;v._body.PoseAt(v._poseNow);v._body.Rim(.5f);
+                v._poseNow=v._body.Track.Newest;v._body.PoseAt(v._poseNow);v._body.Rim(.35f);
                 v._modelOffset=v._body.Copy.Root.transform.position-from;v._modelOffset.y=0;
                 foreach(var r in v._body.Copy.Renderers)if(r!=null)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.On;
-                v.CopyShoe();
+                v.CopyShoe(v._body);
                 // His seat ring and tag are not hidden: `CharacterNameplate` carries them along with the drawn body.
                 var surfaces=new List<Renderer>();
                 foreach(var r in motor.GetComponentsInChildren<Renderer>(true))if(r.GetComponentInParent<CharacterNameplate>()==null)surfaces.Add(r);
@@ -58,16 +73,13 @@ namespace TumbangPreso.Visual
                 for(int i=0;i<surfaces.Count;i++){v._wasHidden[i]=surfaces[i].forceRenderingOff;surfaces[i].forceRenderingOff=true;}
             }
             if(!v.RouteFromHistory())v.RouteFromPath(path);
-            v._tetherInk=ZackFx.Line(v.transform,"PullTetherInk",28,.1f,ZackFx.Ink,0);
-            v._tether=ZackFx.Line(v.transform,"PullTether",28,.04f,ZackFx.Core,1.6f);
-            v._wakeInk=ZackFx.Line(v.transform,"PullWakeInk",16,.15f,ZackFx.Ink,0);
-            v._wake=ZackFx.Line(v.transform,"PullWake",16,.07f,ZackFx.Body,1.4f);
-            v._crown=ZackFx.Line(v.transform,"PullWakeCrown",16,.03f,ZackFx.Core,1.4f);
-            v._ringInk=ZackFx.Line(v.transform,"AnchorRingInk",24,.09f,ZackFx.Ink,0);
-            v._ring=ZackFx.Line(v.transform,"AnchorRing",24,.045f,ZackFx.Body,1.3f);
-            v._leave=ZackFx.Line(v.transform,"DepartureRing",20,.05f,ZackFx.Core,1.5f);
-            v._ring.loop=v._ringInk.loop=v._leave.loop=true;
-            ZackFx.Sparks(from+Vector3.up*.5f,.4f,5,1.3f);
+            if(v._body!=null)
+            {
+                // One hologram carries a layered contour trail in its shader, rather than a group of actors.
+                var echo=ZackFx.Echo.Of(motor.PlayerSlot,v.transform);
+                if(echo!=null){v.CopyShoe(echo);echo.Past(.1f);v._moments=new[]{echo};}
+            }
+            ZackFx.Sparks(to+Vector3.up*.15f,.22f,Settings.SettingsStore.Current.ReducedEffects?1:3,1.3f);
             Live[motor.PlayerSlot]=v;v.Step();return v;
         }
         public void SealTeleport(){if(_motor!=null)_serial=_motor.PresentationTeleportSerial;}
@@ -153,21 +165,20 @@ namespace TumbangPreso.Visual
 
         // ------------------------------------------------------------------ timing
 
-        private static float Snag(float age)=>Mathf.SmoothStep(0,1,Mathf.Clamp01(age/SnagSeconds));
-        private static float Travel(float age)=>Mathf.Clamp01((age-SnagSeconds)/TravelSeconds);
-        // Yanked: fastest at the start, slowing into the catch. A small hitch during the snag starts him moving.
-        private static float Progress(float age)=>.025f*Snag(age)+.975f*(1-Mathf.Pow(1-Travel(age),2.2f));
+        private static float Travel(float age)=>Mathf.Clamp01((age-RevealSeconds)/TravelSeconds);
+        // A reel rewinding: it spins up quickly, runs, and eases into the catch.
+        private static float Progress(float age){float x=Travel(age);return .02f*Mathf.SmoothStep(0,1,Mathf.Clamp01(age/RevealSeconds))+.98f*(.4f*x+.6f*x*x*(3-2*x));}
         private Vector3 FeetAt(float age)
         {
             var p=Route(Progress(age),out _,out _);if(_motor==null)return p;
-            float merge=age>=PullSeconds?1:Mathf.SmoothStep(0,1,Mathf.InverseLerp(.75f,1,Travel(age)));
+            float merge=age>=PullSeconds?1:Mathf.SmoothStep(0,1,Mathf.InverseLerp(.8f,1,Travel(age)));
             return Vector3.Lerp(p,_motor.transform.position,merge);
         }
 
-        private void CopyShoe()
+        private void CopyShoe(ZackFx.Echo echo)
         {
             var held=_motor.GetComponent<Carrier>()?.Held;var liveHand=_motor.GetComponent<CharacterVisual>()?.HandAnchor;
-            Transform grip=null;foreach(var bone in _body.Copy.Bones)if(bone.name=="HandAnchor"){grip=bone;break;}
+            Transform grip=null;foreach(var bone in echo.Copy.Bones)if(bone.name=="HandAnchor"){grip=bone;break;}
             if(held==null||liveHand==null||grip==null)return;
             var root=new GameObject("RewindingHeldSlipper");root.transform.SetParent(grip,false);
             foreach(var surface in held.GetComponentsInChildren<MeshRenderer>(true))
@@ -179,102 +190,87 @@ namespace TumbangPreso.Visual
                 var r=part.AddComponent<MeshRenderer>();r.sharedMaterials=surface.sharedMaterials;
             }
         }
+        private static void Show(ZackFx.Echo echo,bool on)
+        {
+            echo.Visible(on);
+            foreach(var r in echo.Copy.Root.GetComponentsInChildren<MeshRenderer>())if(r.name=="HeldShoeSurface")r.forceRenderingOff=!on;
+        }
         private void LateUpdate()
         {
             if(_motor==null||_motor.AbilitySystem?.HeroId!="zack"||_motor.IsTagged||_motor.IsStunned||_motor.IsTripped
                 ||GameServices.Round?.RoundActive!=true||(GameServices.Match?.RoundNumber??0)!=_round||_motor.PresentationTeleportSerial!=_serial)
-            {Finish();return;}Step();if(Age>PullSeconds+CatchSeconds+RingHold)Finish();
+            {Finish();return;}Step();if(Age>PullSeconds+CatchSeconds+Linger)Finish();
         }
 
         // ------------------------------------------------------------------ one frame of the look
 
         private void Step()
         {
-            float age=Age,snag=Snag(age),x=Travel(age),e=Progress(age),c=Mathf.Clamp01((age-PullSeconds)/CatchSeconds);
+            float age=Age,x=Travel(age),e=Progress(age),c=Mathf.Clamp01((age-PullSeconds)/CatchSeconds);
             bool travelling=age<PullSeconds,catching=!travelling&&c<1,eyes=ZackFx.InOwnFirstPerson(_motor);
             bool calm=Settings.SettingsStore.Current.ReducedEffects;
-            var feet=FeetAt(age);Route(e,out float time,out var heading);
-            float lift=travelling?.2f*Mathf.Sin(Mathf.PI*x):0;
+            var eye=UnityEngine.Camera.main!=null?UnityEngine.Camera.main.transform.position:Vector3.zero;
+            float length=RouteLength;
+            var feet=FeetAt(age);Route(e,out float time,out _);
             if(_body!=null)
             {
                 var track=_body.Track;
-                // The run plays backwards in step with the route, then the catch takes up his live stance.
-                float poseTime=catching||!travelling?track.Newest:age<SnagSeconds?_poseNow:time;
+                // The reveal is a tape catching: his pose flicks back and forth twice before the rewind takes it. Then the run
+                // plays backwards in step with the route, and the catch takes up his live stance.
+                float stutter=calm?0:.12f*Mathf.Abs(Mathf.Sin(Mathf.Clamp01(age/RevealSeconds)*Mathf.PI*2));
+                float poseTime=!travelling?track.Newest:age<RevealSeconds?_poseNow-stutter:time;
                 _body.PoseAt(poseTime);
                 var root=_body.Copy.Root.transform;
                 var live=_model!=null?_model.rotation:root.rotation;
-                var facing=catching?live:Quaternion.Slerp(root.rotation,live,Mathf.SmoothStep(0,1,Mathf.InverseLerp(.7f,1,x)));
-                // Pulled from the waist: the head and arms trail toward where he is leaving, then he settles forward on the catch.
-                float lean=travelling?Mathf.Lerp(16*snag,24,Mathf.Sin(Mathf.PI*Mathf.Min(1,x*1.4f)))*(1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.8f,1,x)))
-                    :-7*Mathf.Sin(Mathf.PI*c);
-                var dir=heading.sqrMagnitude>0?heading:(_to-_from).normalized;dir.y=0;
-                float rad=lean*Mathf.Deg2Rad;var up=(Vector3.up*Mathf.Cos(rad)-dir*Mathf.Sin(rad)).normalized;
-                var tilt=Quaternion.FromToRotation(Vector3.up,up);
-                var basePos=feet+_modelOffset+Vector3.up*(lift-.05f*Mathf.Sin(Mathf.PI*c));
-                var pivot=basePos+Vector3.up*HipHeight;
-                root.SetPositionAndRotation(pivot+tilt*(basePos-pivot),tilt*facing);
-                float squash=Mathf.Sin(Mathf.PI*c);
-                root.localScale=Vector3.Scale(root.localScale,new Vector3(1+.09f*squash,1-.11f*squash,1+.09f*squash));
-                float flicker=calm?0:.25f*Mathf.Abs(Mathf.Sin(age*95));
-                _body.Rim(travelling?Mathf.Lerp(.5f,.75f,snag)+flicker:Mathf.Lerp(1,.25f,c));
-                BodyDrawn=c<1&&!eyes;_body.Visible(BodyDrawn);
-                foreach(var r in _body.Copy.Root.GetComponentsInChildren<MeshRenderer>())if(r.name=="HeldShoeSurface")r.forceRenderingOff=!BodyDrawn;
+                var facing=catching||!travelling?live:Quaternion.Slerp(root.rotation,live,Mathf.SmoothStep(0,1,Mathf.InverseLerp(.75f,1,x)));
+                float settle=Mathf.Sin(Mathf.PI*c);
+                root.SetPositionAndRotation(feet+_modelOffset-Vector3.up*.04f*settle,facing);
+                root.localScale=Vector3.Scale(root.localScale,new Vector3(1+.08f*settle,1-.1f*settle,1+.08f*settle));
+                // Each past moment he folds into brightens his rim; the catch is the last and brightest.
+                _body.Rim(travelling?.35f+.35f*e:Mathf.Lerp(.9f,.2f,c));
+                BodyDrawn=c<1&&!eyes;Show(_body,BodyDrawn);
                 if(c<1){foreach(var r in _hidden)if(r!=null)r.forceRenderingOff=true;}else Restore();
             }
-            // The tether: from his waist along the route still to come, into the anchor ring. It shoots out during the snag.
-            int seed=Mathf.FloorToInt(age*40);float reach=Mathf.Lerp(e,1,snag);
-            var waist=feet+Vector3.up*(WaistHeight+lift);
-            for(int i=0;i<28;i++)
+            // The single hologram repeats the travelling pose a fraction later. Its faint contour layers follow the
+            // same traversed route, so the image reads as one fast subject with temporal persistence.
+            MomentsDrawn=0;
+            if(_moments.Length>0)
             {
-                float k=i/27f;var p=Route(Mathf.Lerp(e,reach,k),out _,out var h);
-                p+=Vector3.up*Mathf.Lerp(WaistHeight+lift,.08f,k*k);if(i==0)p=waist;
-                var side=Vector3.Cross(h.sqrMagnitude>0?h:Vector3.forward,Vector3.up);
-                float knee=i==0||i==27||calm?0:((i+seed)%2==0?1:-1)*.07f*(.4f+.6f*Mathf.Abs(Mathf.Sin(i*2.3f+seed*1.7f)));
-                p+=side*knee+Vector3.up*knee*.5f;_tether.SetPosition(i,p);_tetherInk.SetPosition(i,p-Vector3.up*.01f);
+                var echo=_moments[0];float echoAge=age-EchoDelay;
+                var p=Route(Progress(Mathf.Clamp(echoAge,0,PullSeconds)),out float then,out _);
+                echo.PoseAt(then);var root=echo.Copy.Root.transform;
+                root.SetPositionAndRotation(p+_modelOffset,root.rotation);
+                float enter=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.015f,.065f,echoAge));
+                float leave=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(PullSeconds,PullSeconds+.065f,echoAge));
+                float near=eyes?Mathf.SmoothStep(0,1,Mathf.InverseLerp(1.1f,1.8f,Vector3.Distance(p+Vector3.up*1.2f,eye))):1;
+                echo.Past(.1f,enter*leave*near);
+                for(int layer=0;layer<_echoTrail.Length;layer++)
+                {
+                    float lagAge=echoAge-layer*EchoSpacing;
+                    var q=Route(Progress(Mathf.Clamp(lagAge,0,PullSeconds)),out _,out _);
+                    float visible=layer==0?1:calm?0:Mathf.Clamp01(lagAge/.045f)*(1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(PullSeconds,PullSeconds+.055f,lagAge)));
+                    _echoTrail[layer]=new Vector4(q.x-p.x,q.y-p.y,q.z-p.z,visible*Mathf.Pow(.58f,layer));
+                }
+                echo.Trail(_echoTrail);
+                bool on=enter*leave*near>.015f;Show(echo,on);MomentsDrawn=on?1:0;
             }
-            _tether.enabled=_tetherInk.enabled=travelling&&RouteLength>.1f;
-            // The wake: a short streak along the route he has just been pulled through.
-            float tail=Mathf.Max(0,e-.22f);
-            for(int i=0;i<16;i++)
-            {
-                float k=i/15f;var p=Route(Mathf.Lerp(tail,e,k),out _,out _);float rise=lift*k;
-                _wake.SetPosition(i,p+Vector3.up*(WaistHeight+rise));_wakeInk.SetPosition(i,p+Vector3.up*(WaistHeight+rise-.01f));
-                _crown.SetPosition(i,p+Vector3.up*(1.45f+rise+.04f*Mathf.Sin(i*2.9f+age*80)));
-            }
-            _wake.widthMultiplier=.07f*WakeWidth(x);_wakeInk.widthMultiplier=.15f*WakeWidth(x);_crown.widthMultiplier=.03f*WakeWidth(x);
-            _wake.enabled=_wakeInk.enabled=_crown.enabled=travelling&&x>0;
-            // The anchor ring tightens as he nears it, then flashes outward on the catch.
-            float radius=travelling?Mathf.Lerp(.9f,.5f,e):Mathf.Lerp(.5f,1.15f,Mathf.Sqrt(Mathf.Clamp01((age-PullSeconds)/RingHold)));
-            float alpha=travelling?.55f+.4f*snag:Mathf.Clamp01(1-(age-PullSeconds)/RingHold);
-            for(int i=0;i<24;i++)
-            {
-                float a=i/24f*Mathf.PI*2,wobble=calm?0:.035f*Mathf.Sin(i*3.1f+seed);
-                var ring=_to+new Vector3(Mathf.Cos(a)*(radius+wobble),.055f,Mathf.Sin(a)*(radius+wobble));
-                _ring.SetPosition(i,ring);_ringInk.SetPosition(i,ring-Vector3.up*.01f);
-            }
-            ZackFx.Tint(_ring,new Color(ZackFx.Body.r,ZackFx.Body.g,ZackFx.Body.b,alpha));
-            ZackFx.Tint(_ringInk,new Color(ZackFx.Ink.r,ZackFx.Ink.g,ZackFx.Ink.b,alpha));
-            // The departure snaps shut where he stood.
-            float shut=Mathf.Clamp01(age/.22f);
-            for(int i=0;i<20;i++)
-            {
-                float a=i/20f*Mathf.PI*2,r=Mathf.Lerp(.85f,.08f,shut);
-                _leave.SetPosition(i,_from+new Vector3(Mathf.Cos(a)*r,.06f,Mathf.Sin(a)*r));
-            }
-            _leave.enabled=shut<1;ZackFx.Tint(_leave,new Color(ZackFx.Core.r,ZackFx.Core.g,ZackFx.Core.b,1-shut*shut));
             if(!_landed&&!travelling)
             {
-                _landed=true;ZackFx.Sparks(_to+Vector3.up*.15f,.5f,6,2.1f);
+                _landed=true;
+                ZackFx.Sparks(_to+Vector3.up*.12f,.38f,calm?2:5,2.1f);
                 GameServices.Audio?.PlayAt("sfx_zack_backtrack_land",_to);
             }
         }
-        private static float WakeWidth(float x)=>Mathf.Clamp01(x*6)*(1-.5f*x);
         private void Restore()
         {
             if(_restored||_hidden==null)return;_restored=true;
             for(int i=0;i<_hidden.Length;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_wasHidden[i];
         }
         private void Finish(){Restore();if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);Destroy(gameObject);}
-        private void OnDestroy(){Restore();_body?.Destroy();if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);}
+        private void OnDestroy()
+        {
+            Restore();_body?.Destroy();foreach(var m in _moments)m?.Destroy();
+            if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);
+        }
     }
 }

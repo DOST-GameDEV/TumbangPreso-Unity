@@ -140,7 +140,8 @@ namespace TumbangPreso.Visual
             if (floor.Frame != frame)
             {
                 floor.Frame = frame;
-                Vector3 feet = actor.transform.position;
+                // A cosmetic rewind leaves the accepted motor at its destination while its body is still travelling.
+                Vector3 feet = actor.transform.position + ZackBacktrackLook.MarkerOffset(actor);
                 floor.Found = VfxShapes.TryGroundUnder(feet, .6f, FadeTo + 1, out float y);
                 if (floor.Found)
                 {

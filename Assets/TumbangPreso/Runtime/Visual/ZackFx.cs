@@ -183,6 +183,85 @@ namespace TumbangPreso.Visual
                 }
             }
 
+            private Renderer[] _pastSurfaces;
+            private static readonly System.Collections.Generic.Dictionary<Material, Material> PastMaterials
+                = new System.Collections.Generic.Dictionary<Material, Material>();
+            private static Shader _pastShader;
+            private static readonly int MemoryTrailId = Shader.PropertyToID("_MemoryTrail");
+            private static readonly Vector4[] DefaultTrail = { new Vector4(0,0,0,1), Vector4.zero, Vector4.zero, Vector4.zero, Vector4.zero };
+            private static readonly int MemoryAgeId = Shader.PropertyToID("_MemoryAge");
+            private static readonly int MemoryOpacityId = Shader.PropertyToID("_MemoryOpacity");
+
+            [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+            private static void ReleasePastMaterials()
+            {
+                foreach (var material in PastMaterials.Values) if (material != null) Object.Destroy(material);
+                PastMaterials.Clear(); _pastShader = null;
+            }
+
+            private static Material PastMaterial(Material source)
+            {
+                if (source == null) return null;
+                if (PastMaterials.TryGetValue(source, out var existing) && existing != null)
+                {
+                    for(int i=1;i<5;i++) existing.SetShaderPassEnabled("MEMORY_ECHO"+i,!Settings.SettingsStore.Current.ReducedEffects);
+                    return existing;
+                }
+                if (_pastShader == null) _pastShader = Resources.Load<Shader>("Shaders/ZackTemporalMemory");
+                if (_pastShader == null) { Debug.LogError("Missing Zack temporal memory shader"); return source; }
+                var material = new Material(source)
+                {
+                    shader = _pastShader, name = source.name + "-ZackMemory",
+                    hideFlags = HideFlags.HideAndDontSave, renderQueue = 2990
+                };
+                if (source.HasProperty("_UsePalette") && source.GetFloat("_UsePalette") > .5f)
+                {
+                    var palette = source.GetVectorArray("_Palette");
+                    if (palette.Length > 0) material.SetVectorArray("_Palette", palette);
+                }
+                for(int i=1;i<5;i++) material.SetShaderPassEnabled("MEMORY_ECHO"+i,!Settings.SettingsStore.Current.ReducedEffects);
+                PastMaterials[source] = material;
+                return material;
+            }
+
+            /// <summary>A textured, translucent past self. Materials are shared; only age and visibility vary per copy.</summary>
+            public void Past(float age, float visibility = 1)
+            {
+                if (_pastSurfaces == null)
+                {
+                    // The caller has attached the render-only slipper before installing the memory treatment.
+                    _pastSurfaces = Copy.Root.GetComponentsInChildren<Renderer>(true);
+                    foreach (var surface in _pastSurfaces)
+                    {
+                        var materials = surface.sharedMaterials;
+                        for (int i = 0; i < materials.Length; i++) materials[i] = PastMaterial(materials[i]);
+                        surface.sharedMaterials = materials;
+                        surface.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        if(surface is SkinnedMeshRenderer skin){var bounds=skin.localBounds;bounds.Expand(new Vector3(6,1,6));skin.localBounds=bounds;}
+                    }
+                }
+                age = Mathf.Clamp01(age);
+                foreach (var surface in _pastSurfaces)
+                {
+                    if (surface == null) continue;
+                    surface.GetPropertyBlock(_block);
+                    _block.SetFloat(MemoryAgeId, age);
+                    _block.SetFloat(MemoryOpacityId, Mathf.Lerp(.68f, .4f, age) * Mathf.Clamp01(visibility));
+                    _block.SetVectorArray(MemoryTrailId, DefaultTrail);
+                    surface.SetPropertyBlock(_block);
+                }
+            }
+
+            public void Trail(Vector4[] samples)
+            {
+                if(_pastSurfaces==null || samples==null || samples.Length!=5)return;
+                foreach(var surface in _pastSurfaces)
+                {
+                    if(surface==null)continue;
+                    surface.GetPropertyBlock(_block);_block.SetVectorArray(MemoryTrailId,samples);surface.SetPropertyBlock(_block);
+                }
+            }
+
             public void Visible(bool on) => Copy.ShowOnlyForCapture(on);
 
             /// <summary>The body as it was at <paramref name="time"/> on the history's clock.</summary>

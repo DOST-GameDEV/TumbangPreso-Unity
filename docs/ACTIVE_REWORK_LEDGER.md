@@ -1,12 +1,12 @@
 # Current checkpoint
 
-Updated 2026-10-25. Owner scope: [TODO](TODO.md).
+Updated 2026-10-26. Owner scope: [TODO](TODO.md).
 
-- Zack Backtrack technical candidate is verified on main: targeted native 6/6
-  and 17/17, observer/FPP recordings with actual sound, moving ring/tag and scoped
-  tint continuity. The owner rejects the electric tether and wants reverse-moving
-  afterimages like Ekko, with electricity in SFX. Next: independent creative
-  motion/VFX revision after watching both clips. Listening acceptance and actual
+- Zack Backtrack single-hologram candidate is verified on main from `c8af2d6ce`:
+  native 22/22, observer/FPP recordings with actual sound and a gold contour trail.
+  The red floor brackets now follow the drawn body alongside its ring/tag. The
+  owner rejected the tether and separate past-body group. Next: owner review of
+  the new videos and any creative refinement. Listening acceptance and actual
   peers remain open. Five owner files remain excluded. No Unity job is active.
   [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and

@@ -167,6 +167,53 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(7, properties.GetVector("_WorldBody").w);
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator RewindMomentsMoveBackwardStayBoundedAndRetire()
+        {
+            var history = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
+            float readyBy = Time.realtimeSinceStartup + 2;
+            while (history?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsTrue(history?.ForSeat(_caster.PlayerSlot)?.Ready == true);
+            var rig = Camera.main.GetComponent<CameraSystem.CameraRig>(); rig.SetDebugThirdPerson(true);
+            bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+            try
+            {
+                foreach (bool calm in new[] { false, true })
+                {
+                    Settings.SettingsStore.Current.ReducedEffects = calm;
+                    var from = _caster.transform.position; var to = from + Vector3.left * 4;
+                    var rewind = Visual.ZackBacktrackLook.Play(_caster, from, to, new[] { to, from });
+                    _caster.Teleport(to, keepStatuses: true); rewind.SealTeleport();
+                    yield return new WaitForSeconds(.15f);
+                    Assert.AreEqual(2, rewind.transform.childCount, "The reel must bound its body copies.");
+                    Assert.AreEqual(1, rewind.MomentsDrawn);
+                    Assert.IsTrue(Visual.TagExposure.OnFloor(_caster, .8f, out var cueFeet, out _, out _));
+                    var markerError = cueFeet - rewind.VisualFeet; markerError.y = 0;
+                    Assert.Less(markerError.magnitude, .08f, "The taggability floor brackets must follow the drawn body, not the instant teleport.");
+                    Assert.IsEmpty(rewind.GetComponentsInChildren<LineRenderer>(true), "The rewind has no electric cable or ring geometry.");
+                    var memoryShader=Resources.Load<Shader>("Shaders/ZackTemporalMemory");
+                    Assert.IsNotNull(memoryShader); Assert.IsTrue(memoryShader.isSupported);
+                    Assert.Greater(rewind.GetComponentsInChildren<Renderer>(true).Count(v=>v.sharedMaterials.Any(m=>m.shader==memoryShader)),0,
+                        "Past selves must use textured transparency instead of opaque bronze coats.");
+                    Assert.IsEmpty(rewind.GetComponentsInChildren<Collider>(true));
+                    Assert.IsEmpty(rewind.GetComponentsInChildren<CharacterMotor>(true));
+                    int count = 1;
+                    var before = new Vector3[count];
+                    for (int i = 0; i < count; i++) Assert.IsTrue(rewind.TryMoment(i, out before[i], out _));
+                    Debug.Log($"[Rewind reel cost] reduced={calm} copies={rewind.transform.childCount} renderers={rewind.GetComponentsInChildren<Renderer>(true).Length} skinned={rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length}");
+                    yield return new WaitForSeconds(.12f);
+                    for (int i = 0; i < count; i++)
+                    {
+                        Assert.IsTrue(rewind.TryMoment(i, out var now, out _));
+                        Assert.Less(Vector3.Distance(now, to), Vector3.Distance(before[i], to), "Every past moment must move toward the old location.");
+                    }
+                    yield return new WaitForSeconds(.55f);
+                    Assert.IsTrue(rewind == null, "All temporal copies must retire after the catch.");
+                }
+            }
+            finally { Settings.SettingsStore.Current.ReducedEffects = reduced; }
+        }
+
         // ------------------------------------------------------------------ AFTERIMAGE
 
         [UnityTest, Timeout(60000)]

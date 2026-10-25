@@ -1,6 +1,6 @@
 # Current work
 
-This is the only active queue. Updated 2026-10-25 from source and the owner's
+This is the only active queue. Updated 2026-10-26 from source and the owner's
 current assignment. Older unchecked boxes are not automatically unfinished work.
 [Retirement decisions](RETIRED_WORK.md) explain superseded requirements.
 All original IDs and full bodies remain in the
@@ -12,7 +12,7 @@ All original IDs and full bodies remain in the
 | ID | Status | Acceptance / next action |
 |---|---|---|
 | REPO-CLEANUP-1025 | DONE | Cleanup aaf96e52e1 integrated into main; BugFix deleted after ancestry verification; NETWORKFIX created at the merged commit. 107.2 MiB assets removed; entry docs 97.62% smaller. [Evidence](reports/repository-cleanup-2026-10-25.md) |
-| ZACK-SPEEDSTER-1025 | CREATIVE REVISION, technical candidate verified on main | Backtrack rewrite and integration fixes pass targeted native runs of 6/6 and 17/17, with observer/FPP videos and actual audio. Owner rejects the electric tether and requests visible reverse-moving afterimages like Ekko, with electricity in SFX. Creative motion/VFX revision, listening acceptance and actual peers remain open. The extra legacy SaBubong water-marker failure remains documented. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md). |
+| ZACK-SPEEDSTER-1025 | OWNER REVIEW, single-hologram candidate verified on main | Backtrack now has one gold hologram with layered contour persistence, reverse pose-history travel and short electrical bursts. The separate red floor brackets follow the drawn body. Native 22/22 passed with observer/FPP videos and actual audio; the rejected multi-body studies are historical. Creative refinement, listening acceptance and actual peers remain open. The extra legacy SaBubong setup failure remains documented. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md). |
 | SPECTATOR-1025 | IN PROGRESS, main | Controls/pacing, actual player FPP, body/effect framing, all six maps and private hallucination/held-marker delivery are checked. Continue regular skill/flight and live event transitions alongside current network checks. [Evidence](reports/spectator-2026-10-25/README.md) |
 | NETWORKFIX-1025 | OPEN, NETWORKFIX only | Reproduce disconnect/reconnect/lag/remote-state defects, fix causally, notify spectator on departure, exercise actual peers without regressing current behavior |
 | MOBILE-1025 | OPEN, after NETWORKFIX | Thoroughly refresh stale mobile input, UI/flows, map/kit presentation, performance and Android/network compatibility after networking is complete. Preserve existing support during earlier work; future unrelated sessions do not automatically owe mobile updates. |
