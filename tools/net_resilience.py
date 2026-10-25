@@ -28,7 +28,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('exe', type=Path)
     parser.add_argument('--out', required=True, type=Path)
-    parser.add_argument('--case', required=True, choices=['host-leave', 'host-drop', 'link-rejoin', 'outage-rejoin'])
+    parser.add_argument('--case', required=True, choices=['host-leave', 'host-drop', 'host-shutdown', 'link-rejoin', 'outage-rejoin'])
+    parser.add_argument('--dedicated', action='store_true', help='Use the existing seatless spectator server with two playing clients.')
     args = parser.parse_args()
     exe, out = args.exe.resolve(), args.out.resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT / 'Builds'):
@@ -68,11 +69,14 @@ def main():
                     backups.append((source, backup, hashlib.sha256(source.read_bytes()).hexdigest()))
         command = [str(exe), '-screen-width', '960', '-screen-height', '540', '-screen-fullscreen', '0',
                    '-force-d3d11', '-tp-framecap', '30', '-tp-map', 'Eskinita', '-tp-profile', profiles[role],
-                   '-tp-resilience', str(out / tag), '-tp-resilience-role', role,
+                   '-tp-resilience', str(out / tag), '-tp-resilience-role', 'other' if args.dedicated and role == 'observer' else role,
                    '-tp-lobbyport', str(ports[['host', 'client', 'observer'].index(role)]),
                    '-logFile', str(out / (tag + '.log'))]
         join_port = ports[3] if link is not None else ports[0]
-        command += ['-tp-lobby'] if role == 'host' else ['-tp-lobbyjoin', '127.0.0.1:' + str(join_port)]
+        if role == 'host':
+            command += ['-tp-dedicated', str(ports[0])] if args.dedicated else ['-tp-lobby']
+        else:
+            command += ['-tp-lobbyjoin', '127.0.0.1:' + str(join_port)]
         processes[tag] = subprocess.Popen(command, cwd=ROOT, env=unity_environment(), startupinfo=startup,
                                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         commands.append(command)
@@ -123,16 +127,23 @@ def main():
         (out / 'initial.json').write_text(json.dumps(initial, indent=2))
         match = initial['host']['match']
         assert match > 0 and all(s['match'] == match for s in initial.values()), initial
-        assert initial['client']['local'] in (1, 2, 3) and initial['observer']['local'] == -1 and initial['observer']['spectator'], initial
+        assert initial['client']['local'] in (0, 1, 2, 3) and initial['client']['local'] != initial['host']['local'], initial
+        watched = initial['host'] if args.dedicated else initial['observer']
+        assert watched['local'] == -1 and watched['spectator'], initial
+        if args.dedicated:
+            assert initial['observer']['local'] in (0, 1, 2, 3) and initial['observer']['local'] != initial['client']['local'], initial
         if args.case.startswith('host-'):
             if args.case == 'host-leave':
                 signal('host', '.stop')
-            else:
+            elif args.case == 'host-drop':
                 processes['host'].kill()
                 processes['host'].wait(timeout=10)
-            wait_for(lambda: all(read(out / (n + '.lost')) for n in ['client', 'observer']), 40,
-                     'Host loss did not reach a persistent Home notice.', ['client', 'observer'])
-            for name in ['client', 'observer']:
+            else:
+                signal('host', '.shutdown')
+            survivors = names if args.case == 'host-shutdown' else ['client', 'observer']
+            wait_for(lambda: all(read(out / (n + '.lost')) for n in survivors), 40,
+                     'Host loss did not reach a persistent Home notice.', survivors)
+            for name in survivors:
                 state = read(out / (name + '.lost'))
                 assert state['revokedAtLoss'] and state['oldRoundStopped'], state
                 assert state['scene'] == 'MatchSetup' and not state['networked'] and not state['active'], state
@@ -172,6 +183,12 @@ def main():
             processes['client'].wait(timeout=10)
             wait_for(lambda: read(out / 'host.state').get('departures', 0) == 1,
                      12, 'Departure did not settle.', ['host', 'observer'])
+            watcher = 'host' if args.dedicated else 'observer'
+            wait_for(lambda: read(out / (watcher + '.state')).get('peerNoticeVisible'),
+                     5, 'The actual spectator did not see the retained departure notice.', [watcher])
+            signal(watcher, '.shot')
+            wait_for(lambda: (out / (watcher + '.png')).exists(), 5, 'Departure notice screenshot missing.')
+            shutil.copy2(out / (watcher + '.png'), out / 'departure-notice.png')
             launch('client', 'rejoined')
             wait_for(lambda: read(out / 'rejoined.ready').get('sawLive'), 60, 'Durable client could not rejoin.', ['host', 'observer', 'rejoined'])
             restored = read(out / 'rejoined.ready')
@@ -226,7 +243,7 @@ def main():
             errors.append('Shared input preferences changed.')
         if hashlib.sha256(runtime.read_bytes()).hexdigest() != runtime_sha:
             errors.append('Player runtime changed during the run.')
-    result = dict(passed=not errors, errors=errors, case=args.case, stages=stages, runtimeSha256=runtime_sha,
+    result = dict(passed=not errors, errors=errors, case=args.case, dedicated=args.dedicated, stages=stages, runtimeSha256=runtime_sha,
         link=None if link is None else dict(forwarded=link.sent, dropped=link.dropped, outageDrops=link.outage_drops),
         scope='Three controlled real Windows peers on one PC. Actual UDP shaping and durable-profile restart where selected; not WAN/Relay/Android or human playtesting.')
     (out / 'result.json').write_text(json.dumps(result, indent=2))

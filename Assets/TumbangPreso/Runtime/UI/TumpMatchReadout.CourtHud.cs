@@ -57,6 +57,7 @@ namespace TumbangPreso.UI
             CalloutCaption.Create(_root);
             HudReadingLayout.Install(_root);
             HudContrast.Install(_root);
+            PeerConnectionNotice.Create(_root);
         }
         private void BuildCourtScores()
         {

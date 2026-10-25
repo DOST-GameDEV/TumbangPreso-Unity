@@ -28,8 +28,7 @@ namespace TumbangPreso.UI
             {
                 float height = (5 + 5 * i) * unit; float x = origin.x + i * 6 * unit;
                 Quad(mesh, new Rect(x - unit, origin.y - unit, 5 * unit, height + 2 * unit), UiTheme.InGameOutline);
-                Quad(mesh, new Rect(x, origin.y, 3 * unit, height), i == 0 || _drawn == ConnectionQualityDisplay.Tier.Mild
-                    ? warning : new Color(.22f, .12f, .12f, 1));
+                Quad(mesh, new Rect(x, origin.y, 3 * unit, height), warning);
             }
         }
         private static void Quad(VertexHelper mesh, Rect rect, Color colour)

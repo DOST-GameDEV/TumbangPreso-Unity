@@ -121,7 +121,8 @@ namespace TumbangPreso.Net
             LastPeerDepartureText = "P" + (seat + 1) + " · " + name + (intentional ? " LEFT" : " DISCONNECTED")
                 + (bot ? " · BOT TAKES OVER" : " · SEAT RESERVED");
             PeerDepartureNotices++;
-            UI.Hud.Instance?.ShowToast(LastPeerDepartureText, 3.2f);
+            if (!GameLaunch.Spectator || UI.Hud.Instance?.NativePresentation != true)
+                UI.Hud.Instance?.ShowToast(LastPeerDepartureText, 3.2f);
         }
     }
 }

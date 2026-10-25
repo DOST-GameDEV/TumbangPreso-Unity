@@ -23,8 +23,8 @@ namespace TumbangPreso.Net
         }
         private bool IsQualityPeer(ulong sender)
         {
-            if (_nm == null || !_nm.IsListening || !_nm.IsConnectedClient) return false;
-            if (!_nm.IsServer) return _everConnected && sender == NetworkManager.ServerClientId;
+            if (_nm == null || !_nm.IsListening) return false;
+            if (!_nm.IsServer) return _nm.IsConnectedClient && _everConnected && sender == NetworkManager.ServerClientId;
             if (sender == _nm.LocalClientId || sender > int.MaxValue || Lobby.PeerById((int)sender) == null) return false;
             foreach (ulong peer in _nm.ConnectedClientsIds) if (peer == sender) return true;
             return false;
@@ -38,7 +38,7 @@ namespace TumbangPreso.Net
                 _qualityRouter = router;
                 if (router != null) router.OnUnnamedMessage += OnQualityPacket;
             }
-            if (router == null || _nm == null || !_nm.IsConnectedClient) return;
+            if (router == null || _nm == null || (!_nm.IsServer && !_nm.IsConnectedClient)) return;
             double now = Time.realtimeSinceStartupAsDouble;
             if (now < _qualityNextAt) return;
             _qualityNextAt = now + 1;

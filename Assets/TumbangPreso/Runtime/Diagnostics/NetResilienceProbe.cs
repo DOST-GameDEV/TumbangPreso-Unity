@@ -19,7 +19,8 @@ namespace TumbangPreso.Diagnostics
         [Serializable] private sealed class State
         {
             public string role, scene, error, link, tier, notice, cause, lastDeparture;
-            public bool networked, active, spectator, host, sawLive, revokedAtLoss, oldRoundStopped;
+            public bool networked, active, spectator, host, sawLive, revokedAtLoss, oldRoundStopped, peerNoticeVisible;
+            public float peerNoticeSeconds;
             public int local, round, ended, epoch, departures;
             public int[] scores;
             public long match, rtt;
@@ -79,6 +80,8 @@ namespace TumbangPreso.Diagnostics
                 notice = notice != null ? notice.Message : "", cause = MatchAbandon.Cause.ToString(),
                 departures = MatchRpc.Instance?.PeerDepartureNotices ?? 0,
                 lastDeparture = MatchRpc.Instance?.LastPeerDepartureText ?? "",
+                peerNoticeVisible = FindAnyObjectByType<PeerConnectionNotice>()?.IsShowing == true,
+                peerNoticeSeconds = FindAnyObjectByType<PeerConnectionNotice>()?.VisibleSecondsLeft ?? 0,
                 sawLive = _live, revokedAtLoss = _revoked, ended = _ended,
                 oldRoundStopped = _oldRound == null || !_oldRound.RoundActive };
         }
@@ -101,7 +104,13 @@ namespace TumbangPreso.Diagnostics
                 var gate = FindFirstObjectByType<ReadyGate>();
                 if (gate != _gate) { _gate = gate; _readySent = false; }
                 if (!_readySent && gate != null && gate.AwaitingReady && rpc != null) _readySent = rpc.DeclareReadyServerRpc();
-                if (GameServices.Round?.RoundActive == true && GameServices.Match?.IsWarmupBuffer != true)
+                // A late-join snapshot can mark the shared round active while
+                // Home is still loading the arena. That is not a live body yet.
+                bool arenaReady = SceneManager.GetActiveScene().name == SceneFlow.Eskinita && net?.IsAdmitted == true
+                    && rpc != null && rpc.PresentationMatchId > 0 && GameServices.Round != null
+                    && GameServices.Round.Players.Count() == Balance.PlayerCount
+                    && GameServices.Round.Players.All(actor => actor != null && actor.MovementEpoch > 0);
+                if (arenaReady && GameServices.Round.RoundActive && GameServices.Match?.IsWarmupBuffer != true)
                 {
                     foreach (var brain in FindObjectsByType<AIController>()) brain.enabled = false;
                     foreach (var input in FindObjectsByType<PlayerInputReader>()) input.enabled = false;
@@ -115,6 +124,8 @@ namespace TumbangPreso.Diagnostics
                 }
                 if (File.Exists(_path + ".stop"))
                 { File.Delete(_path + ".stop"); net?.Stop(); Save(".stopped", Read()); }
+                if (File.Exists(_path + ".shutdown"))
+                { File.Delete(_path + ".shutdown"); NetworkManager.Singleton?.Shutdown(); Save(".shutdown-started", Read()); }
                 if (!_rejoining && File.Exists(_path + ".rejoin"))
                 {
                     string address = File.ReadAllText(_path + ".rejoin"); File.Delete(_path + ".rejoin");
