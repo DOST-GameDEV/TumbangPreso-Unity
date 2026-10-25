@@ -15,8 +15,9 @@ Do not load historical TODO bodies or all reports to start a session.
 
 - `main` is the integration branch. The owner authorized merging `BugFix`, deleting
   it after verified integration, and publishing spectator refinements to `main`.
-- Network changes belong on `NETWORKFIX`, created from merged `main`. Keep that
-  branch separate until the owner requests its integration.
+- The owner combined network and mobile work on `mobile+network` (formerly
+  `NETWORKFIX`/`MOBILEFIX`). Keep that branch separate from main until integration
+  is requested. Mobile follows the verified network work.
 - Fetch and inspect before publication. Never reset, clean, force-push or discard
   unrelated changes. Delete a branch only after checking ancestry and worktrees.
 - Stage explicit owned paths. Commit with `git commit -F`; author M4tyu633.

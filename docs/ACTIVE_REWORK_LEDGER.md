@@ -18,9 +18,9 @@ Updated 2026-10-26. Owner scope: [TODO](TODO.md).
   unit packets. Actual hosted/referee pause, lag/outage/cold/same-process rejoin,
   throws, recall, current dolls and round transitions were checked.
   [Evidence and limits](reports/networkfix-2026-10-25/README.md).
-- Network changes stay on NETWORKFIX until the owner asks for integration.
+- Network/mobile changes stay on mobile+network until integration is requested.
   Mobile is next; future unrelated work does not automatically owe mobile updates.
-- Mobile refresh is active on MOBILEFIX, based on verified NETWORKFIX plus
+- Mobile refresh is active on mobile+network, based on verified NETWORKFIX plus
   main's newer Backtrack visuals. Do not overwrite owner art or restore the old
   mobile-every-feature mandate.
 - Zack's lead-and-merge Backtrack visual candidate has its separate native 22/22

@@ -1,7 +1,8 @@
 # Network reliability candidate
 
-Work stays on `NETWORKFIX`. Spectator integration is on main; mobile follows
-network acceptance. Current changes preserve gameplay protocol 183 and existing
+The owner combined the verified network work and following mobile refresh on
+`mobile+network`, formerly `NETWORKFIX`. Spectator integration is on main.
+Current changes preserve gameplay protocol 183 and existing
 movement, cast and score packet layouts.
 
 ## Behavior
