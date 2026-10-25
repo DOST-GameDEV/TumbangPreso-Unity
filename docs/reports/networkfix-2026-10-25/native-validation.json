@@ -1,0 +1,146 @@
+{
+  "source": "3a99849f1362d91e7e11767c4debd364701698e8",
+  "scope": "Scoped native runs overlap; initial broad failure and focused corrections retained. No fresh combined 86/86 claim.",
+  "receipts": {
+    "Logs/networkfix-1025/role-edit.xml": {
+      "sha256": "2e9d8e85090cda2f406d9f995c7390efdf7b848f18725baabf1be8b6651245c7",
+      "root": {
+        "id": "2",
+        "testcasecount": "135",
+        "result": "Passed",
+        "total": "135",
+        "passed": "135",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-25 15:28:16Z",
+        "end-time": "2026-10-25 15:28:17Z",
+        "duration": "0.7766774"
+      }
+    },
+    "Logs/networkfix-1025/layout-play-b.xml": {
+      "sha256": "059f8f7165f369ff3133da9166a5cf5a99e2790a44f2822170f508d440c5dabb",
+      "root": {
+        "id": "2",
+        "testcasecount": "6",
+        "result": "Passed",
+        "total": "6",
+        "passed": "6",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-25 15:43:57Z",
+        "end-time": "2026-10-25 15:44:05Z",
+        "duration": "7.1505551"
+      }
+    },
+    "Logs/networkfix-1025/core/network-session-1025.trx": {
+      "sha256": "23b15fcb6270d8f3fcfea54e5cb415ba5b47fc0f0aafbe98f52677700c1fb146",
+      "root": {
+        "id": "963b83ef-9add-4fd2-893a-6537f45757d8",
+        "name": "Matthew@GAMERGMAE 2026-10-25 23:23:56",
+        "runUser": "GAMERGMAE\\Matthew"
+      }
+    },
+    "Logs/shots-native-ui/network-host-loss2-1600x680.png": {
+      "sha256": "8f8451e62c2a18cf1364cd58fc9f4652ed56aaad3a5139839b3f1fd60db67305"
+    },
+    "Logs/shots-native-ui/network-host-loss2-960x540.png": {
+      "sha256": "a060308384dfe94618f3dc709327e7cc7a6f4b03fd713e19289a0f2bc6aab139"
+    },
+    "Logs/shots-native-ui/network-layout2-Mild-1600x680.png": {
+      "sha256": "73fbed91e4a97837efc46fa847682ee1970527d5889e0bc53b327b42394bdf61"
+    },
+    "Logs/shots-native-ui/network-layout2-Mild-960x540.png": {
+      "sha256": "d61def48c48e1c423501999418aeddce032718c51df699544ca6e89d1d76045e"
+    },
+    "Logs/shots-native-ui/network-layout2-Severe-1600x680.png": {
+      "sha256": "5a4adfb6e1cf8863090fcbf345a045793fcdeef18aa1699fbd7282f187a57aa1"
+    },
+    "Logs/shots-native-ui/network-layout2-Severe-960x540.png": {
+      "sha256": "54599b8f66958b1190986fc1da4e758ad232eda116cca82f543bd2246a7db1a5"
+    },
+    "Logs/networkfix-1025/referee-clock.xml": {
+      "sha256": "ae5ff2b4c5d7adc9b0a7db26351ccf705afefcd27891970cb51af642c82b6efc",
+      "root": {
+        "id": "2",
+        "testcasecount": "3",
+        "result": "Passed",
+        "total": "3",
+        "passed": "3",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-25 16:12:07Z",
+        "end-time": "2026-10-25 16:12:08Z",
+        "duration": "0.7211601"
+      }
+    },
+    "Logs/networkfix-1025/gameplay-native.xml": {
+      "sha256": "8c7d57a01085ad751588d9226036d6e3d8631986ba89e84444be2e66067a5a24",
+      "root": {
+        "id": "2",
+        "testcasecount": "86",
+        "result": "Failed(Child)",
+        "total": "86",
+        "passed": "75",
+        "failed": "11",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-25 16:42:52Z",
+        "end-time": "2026-10-25 16:45:21Z",
+        "duration": "149.6416892"
+      }
+    },
+    "Logs/networkfix-1025/gameplay-repairs.xml": {
+      "sha256": "567ec9c600c9a1151d423b91275ee2a692050d4848759985418a4ad4b217ba60",
+      "root": {
+        "id": "2",
+        "testcasecount": "11",
+        "result": "Failed(Child)",
+        "total": "11",
+        "passed": "8",
+        "failed": "3",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-25 16:57:49Z",
+        "end-time": "2026-10-25 17:00:26Z",
+        "duration": "157.4480318"
+      }
+    },
+    "Logs/networkfix-1025/gameplay-fixture-final.xml": {
+      "sha256": "dddbc9d56642857fa21269d582c64dc9e1fc61ecaa73f1e0b4e891f8b853017c",
+      "root": {
+        "id": "2",
+        "testcasecount": "3",
+        "result": "Passed",
+        "total": "3",
+        "passed": "3",
+        "failed": "0",
+        "inconclusive": "0",
+        "skipped": "0",
+        "asserts": "0",
+        "engine-version": "3.5.0.0",
+        "clr-version": "4.0.30319.42000",
+        "start-time": "2026-10-25 17:07:28Z",
+        "end-time": "2026-10-25 17:08:31Z",
+        "duration": "62.7559101"
+      }
+    }
+  }
+}
