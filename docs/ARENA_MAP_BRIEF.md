@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # The arena map: brief (ARENA-1)
 
 Status: THE MAP IS BUILT AND IN PLAY-TEST (2026-10-05). **Read [ARENA_HANDOFF](ARENA_HANDOFF.md) first for the current

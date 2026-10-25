@@ -131,7 +131,7 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 ## Validation And Publication
 
 - Use [TESTING](TESTING.md) for current commands and evidence levels. One focused
-  pass per coherent change,at most one bounded tooling retry. Reuse unaffected
+  pass per coherent change,a focused tooling repair when needed. Reuse unaffected
   evidence; no broad suite/film repeats for minor or cosmetic edits.
 - Freeze tested inputs. One heavy job; isolated writable caches/profiles/output.
   Use run_unity_guarded.py with a named profile. Never launch a diagnostic against
@@ -145,11 +145,11 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
   Source-text checks and native scene checks are complementary,not interchangeable.
   Use actual network-link tools,not obsolete simulator APIs that do nothing.
 - Discover installed tools/current ProjectVersion and use the guarded build workflow.
-  Builds go to explicit internal Builds/<candidate>/TumbangPreso.exe,never overwrite
-  the Desktop player without a new owner instruction. Verify/run the exact output.
+  Playable builds go only to the canonical checkout's Builds/<platform>/
+  with explicit -buildOutput; one current build per platform. Verify/run that output.
 - Preserve profiles,unfinished changes,source assets and unrelated processes.
-  Stage explicit owned paths; fetch,inspect divergence,integrate and push ASTRAReworks
-  without reset/clean/force. Sole author M4tyu633; git commit -F,no attribution trailers,
+  Stage explicit owned paths; fetch,inspect divergence and publish to the
+  owner-selected branch without reset/clean/force. Sole author M4tyu633; git commit -F,no attribution trailers,
   tooling references or em dashes in repository prose/commit messages.
 - A handoff belongs in chat,not a committed prompt. Include rules,branch/HEAD,
   actual checks/build state,changed behavior and the next TODO pointer. Never turn

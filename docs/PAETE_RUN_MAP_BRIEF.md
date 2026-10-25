@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # Paete's run: a hidden obstacle-run and surf mode (BRIEF, nothing built)
 
 Written 2026-10-10 as the handoff into the next map. STATE: an idea in the owner's words, the facts that bear on it, and

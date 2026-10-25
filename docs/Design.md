@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 ## Current basic-action revision, October 3
 
 Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative

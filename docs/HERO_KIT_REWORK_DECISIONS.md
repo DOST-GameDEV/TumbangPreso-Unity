@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # Hero kit decisions and distinct loadout jobs
 
 ## Current interpretation, 2026-09-16

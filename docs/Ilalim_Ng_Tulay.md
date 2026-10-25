@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # Ilalim ng Tulay: the map, and why it is shaped this way
 
 The LRT Gilmore strip. A length of Aurora Boulevard under the elevated guideway, with a PC

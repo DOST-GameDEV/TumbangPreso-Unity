@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # The arena: art brief for the kits (ARENA-1.4)
 
 Written 2026-10-05. The gameplay design is in [ARENA_MAP_BRIEF](ARENA_MAP_BRIEF.md); this is what the

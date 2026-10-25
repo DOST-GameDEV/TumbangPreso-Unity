@@ -6,8 +6,8 @@ installed modules and available builds are historical evidence,not instructions.
 ## Checkout
 
 - Repository: https://github.com/DOST-GameDEV/TumbangPreso-Unity.git
-- Work/integrate on ASTRAReworks. Inspect status,fetch,inspect divergence and
-  integrate safely. No main/reset/clean/force,profile copying or discarded dirt.
+- Use the owner-selected branch in [AGENTS](../AGENTS.md). Fetch and inspect
+  divergence before integrating. No reset/clean/force or discarded dirty work.
 - Preserve tracked Assets and .meta,ProjectSettings,Packages,Core/Core.Tests,
   tools,ArtSource,MapSource and docs. Embedded packages are intentional.
 - Library,Temp,Logs,Builds and player profiles do not arrive through Git.
@@ -31,26 +31,11 @@ historical command run.
 
 ## Isolation And Profiles
 
-### Cloud recovery receipt, October 1, 2026
+### Recovery
 
-The owner authorizes restoring this approved setup without a new request for
-routine official software installation. Preserve existing account sessions and
-source work. Diagnose missing paths before attributing them to a reset.
-
-The owner explicitly accepted the Hub's presented
-[Unity Terms of Service](https://unity.com/legal/terms-of-service) and
-[Editor Software Terms](https://unity.com/legal/editor-terms-of-service/software)
-on October 1, 2026. The Hub showed Terms last updated June 30, 2026. Reuse this
-acceptance for the same agreement; changed agreements need their own review.
-
-Restoration verified Unity6000.5.8f1 extraction from the official changeset archive,
-Hub3.22.0 launch, Blender4.3.2 and .NET9.0.318. The eight ThrowAimRulesTests passed
-on source9590f4bd. These are managed tooling checks, not native Unity qualification.
-Hub Personal activation and two fresh KitRecallParityChecks PlayMode cases then
-passed on the isolated9590 candidate. The memory guard requested termination
-during first import; Unity nevertheless completed both cases and wrote fresh XML
-before orderly exit. This is scoped native evidence, not clean memory-headroom
-or full-player qualification. Preserve that warning before heavier runs.
+Discover existing official tools before reinstalling. Preserve accounts,
+profiles and authored source. Historical installation receipts do not prove
+that the current Editor is installed, licensed or running.
 
 Keep DOTNET_CLI_HOME, NUGET_PACKAGES, NUGET_HTTP_CACHE_PATH and
 NUGET_PLUGINS_CACHE_PATH in writable task-owned directories. A read-only default
@@ -71,8 +56,9 @@ instead of repeatedly restarting an unchanged blocked job. See [TESTING](TESTING
 
 ## Player Review
 
-Build only when the coherent candidate needs it,with explicit internal
-Builds/<candidate>/TumbangPreso.exe. Keep the Desktop player intact. Verify data and
+Build only when the coherent candidate needs it, with explicit -buildOutput
+under the canonical checkout's Builds/<platform>/. One playable build per platform;
+no Desktop, candidate or worktree player builds. Verify data and
 Runtime.dll as well as the launcher; an unchanged executable stub does not prove
 source freshness.
 

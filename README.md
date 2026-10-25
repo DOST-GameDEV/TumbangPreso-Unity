@@ -1,108 +1,49 @@
-# Tumbang Preso, Unity build
+# Tumbang Preso
 
-The Unity 6 build of **Tumbang Preso**, 1st place at the Gear Up NCR Esports Game Dev
-Challenge and NCR's entry at the nationals in General Santos City.
-
-Four players. Eight rounds. One *taya*. A defender guards the lata inside a chalk box while
-three attackers throw tsinelas at it, then have to run in and get them back. **The tension is
-the retrieval, not the throw.**
-
-## Two modes
-
-| | **CLASSIC** | **HERO STRIKE** |
-|---|---|---|
-| | The street game. Twelve characters, no powers. | The competitive mode. Six heroes, two skills and an ultimate each. |
-| For | Players who want less happening on screen | A higher skill ceiling, aimed at bracket play |
-
-Both ship and neither is the "real" one. The reasoning, and everything that follows from it,
-is in **[`docs/VISION.md`](docs/VISION.md)**.
-
-## What you pick
-
-Three tabs, and the three meters are the same three keys behind every one of them: a person's
-SPEED is a lata's RESET is a tsinelas's FLIGHT.
-
-| | |
-|---|---|
-| **12 people** in Classic, **6** in Hero Strike | Two separate casts, not a subset |
-| **6 lata** | Each identifiable by silhouette alone, because a label dies at arena distance |
-| **10 tsinelas** | Entry 0 stays neutral: it is what an unpicked slipper resolves to |
-
-⚠️ **These three lists are APPEND-ONLY.** The index of an entry crosses the wire as a bare
-int, so inserting or deleting a row silently repoints every pick above it on any peer or save
-file holding the old number. `Roster.cs` carries the full reasoning.
+A Unity 6 game about the Filipino street game: one taya guards a tin can while
+three attackers throw their slippers and run back to retrieve them. Four players,
+normally eight rounds. Classic keeps the street-game rules; Hero Strike adds kits.
 
 ## Start here
 
-| Read | For |
+- [AGENTS](AGENTS.md): short working rules.
+- [Project context](docs/UnityProjectContext.md): architecture, source map and setup.
+- [Current work](docs/TODO.md) and [checkpoint](docs/ACTIVE_REWORK_LEDGER.md): priorities and resume state.
+- [Documentation routes](docs/README.md): read only the relevant topic.
+
+## Current source
+
+Unity version comes from `ProjectSettings/ProjectVersion.txt`. The project uses
+URP, the Input System, uGUI, Netcode for GameObjects and UGS Lobby/Relay.
+
+`Roster.cs` defines the append-only character, can and slipper catalogs.
+There are nine hero entries; the current playable gate is
+`EconomyRules.UnlockedHeroes`: Dante, Rago, Nemu, Phaister, Amihan and Paete.
+The other hero entries remain visible but locked. Stable IDs retain their original
+names for saves, replay and network compatibility. Never reorder the catalogs.
+
+| Path | Responsibility |
 |---|---|
-| [`CLAUDE.md`](CLAUDE.md) | The rules of this repository. Read first, always. |
-| [`docs/VISION.md`](docs/VISION.md) | What the game is FOR. The two modes, the readability budget, how a player learns a power. |
-| [`docs/TODO.md`](docs/TODO.md) | What is actually open right now. |
-| [`docs/README.md`](docs/README.md) | Index of every other document. |
+| `Packages/com.tumbangpreso.core/Runtime/` | Engine-free rules, scoring, geometry and tuning |
+| `Core/`, `Core.Tests/` | .NET project compiling the same rules, plus tests |
+| `Assets/TumbangPreso/Runtime/` | Gameplay, input, camera, UI and networking |
+| `Assets/TumbangPreso/Editor/`, `Tests/` | Authoring tools and Unity checks |
+| `ArtSource/`, `MapSource/` | Authored sources and provenance |
+| `tools/` | Authoring, source audits, build and peer-validation tools |
+| `docs/` | Live guides; dated reports and archives are loaded on demand |
 
-## Where things stand
+## Test and build
 
-The game runs end to end in both modes: menus, character select, eight-round matches with
-bots, the hero ability layer, spectator, reconnect and the netcode layer.
-[`docs/Port_Ledger.md`](docs/Port_Ledger.md) is the file-by-file status and the definition of
-done; [`docs/TODO.md`](docs/TODO.md) is what is left.
-
-## Repository layout
-
-```
-Packages/com.tumbangpreso.core/   the rules, as plain C# with no UnityEngine reference
-Core/                             the same files, compiled by dotnet for `dotnet test`
-Core.Tests/                       the balance assertions that prove the tuning survived
-Assets/TumbangPreso/Runtime/      the game
-Assets/TumbangPreso/Editor/       builders, probes and the five checks
-Assets/TumbangPreso/Shaders/      the toon pass, the colour grade, the world outline
-Assets/TumbangPreso/Tests/        EditMode tests, and PlayMode tests and probes
-docs/                             plan, ledger, design, vision, open work
-tools/                            asset generators, source audits, and player capture scripts
+```powershell
+dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --nologo
+python tools/audit_docs.py
 ```
 
-## Build and test
+Use [TESTING](docs/TESTING.md) for isolated Unity tests and fresh XML checks.
+PlayMode and visual tests require graphics. Compilation, local tests and real
+multiplayer acceptance are separate evidence. [Setup](docs/WORKSTATION_SETUP.md)
+describes Editor discovery and profiles. Player builds go only to the canonical
+checkout's `Builds/<platform>/` with an explicit output argument.
 
-```bash
-dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
-```
-
-```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/tests.xml -logFile Logs/tests.log
-```
-
-```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
-```
-
-All five editor checks in one launch:
-
-```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.Checks.RunAll -logFile Logs/checks.log
-```
-
-⚠️ **PlayMode must NOT be given `-nographics`; it crashes the editor and still exits 0.**
-
-⚠️ **`-testCategory "!WallClock"` is part of that command, not an optimisation.** One probe
-runs a round at 1x for about 80 real seconds, so its result depends on how busy the machine
-is; it has failed and passed on consecutive runs with nothing changed.
-
-⚠️ **Always read the result `.xml`, never the exit code.** A crash and a genuine failure both
-come back as 0. `CLAUDE.md` § 7 has the rest of the traps on this machine, including the stale
-`Temp/UnityLockfile` that looks exactly like a broken install.
-
-## The one rule that matters
-
-**`Packages/com.tumbangpreso.core/` must never acquire a `UnityEngine` reference.** It holds
-the match rules, the scoring, the trait tables, the stamina model, throw legality and the
-combat geometry: every number in the game that was arrived at by measurement rather than by
-taste. Keeping it engine-free is what lets those numbers be asserted in a second instead of
-playtested for an afternoon, and it is the entire verification strategy. The asmdef enforces
-it with `noEngineReferences`. Do not add an exception.
-
-## The original
-
-The Godot 4.7 original is [DOST-GameDev](https://github.com/DOST-GameDEV/DOST-GameDev). It is
-**frozen reference for the old version and is not edited.** Where the two disagree about
-anything, including a design document, this repository is the current one. `CLAUDE.md` § 1.
+The [Godot original](https://github.com/DOST-GameDEV/DOST-GameDev) is historical
+reference. This Unity repository owns the current game.

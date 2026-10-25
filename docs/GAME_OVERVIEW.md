@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # Tumbang Preso: the whole game, in one file
 
 **What this is.** A broad reference originally written2026-08-26 from code and

@@ -1,0 +1,347 @@
+# Documentation: Start Here
+
+Opening HUD half-second fade before the countdown:
+[implementation, compiler checks and pending native regression](reports/opening-hud-2026-10-22.md).
+
+Four-round halftime scheduling:
+[live ordinary-break diagnosis and owner-approved change](reports/four-round-halftime-2026-10-21.md).
+
+Actual halftime Blindfold rendering failure:
+[saved owner footage and playback investigation](reports/halftime-live-blindfold-2026-10-21.md).
+
+Removed train/Overclock announcements and distant can-reset instruction:
+[scope and compilation evidence](reports/hud-text-removal-2026-10-21.md).
+
+Delayed halftime highlights: [reproduction, timing correction and native checks](reports/halftime-highlight-2026-10-21.md).
+
+Penalty crosshair ownership and warnings:
+[investigation and focused validation](reports/penalty-feedback-2026-10-21.md).
+
+Warning banner typography, size, repeat appearance and error cue:
+[native previews and checks](reports/warning-banner-2026-10-21/README.md).
+
+Main integration and all six current previews: [branch history and preview validation](reports/main-merge-preview-2026-10-20.md).
+
+Current five-map pool and refreshed video previews: [source receipts, native playback and selection layout](reports/map-preview-refresh-2026-10-18/README.md).
+
+Current Nemu ghost replication and mixed-character cutscenes: [host state, real Relay/LAN delivery and native rig checks](reports/nemu-network-2026-10-15/README.md).
+
+Current network resource and possession packet bounds: [reproductions, native controls and peer limits](reports/network-refinement-2026-10-15/README.md).
+
+Player render-copy sampling: [actual Windows rejection, inert Animator endpoints and scoped native controls](reports/render-copy-sampling-2026-10-08/README.md).
+
+Current roster preparation: [ready-state regression, missing rooted sets, 36 actual current-rig samples and preserved startup](reports/home-roster-preparation-2026-10-08/README.md).
+
+Current ordinary Windows loading: [same-binary graphics-thread comparison, retained repeat variation and rejected setting change](reports/loading-render-modes-2026-10-08/README.md).
+
+Ilyas prethrow Skim AI: [original missed opportunity and actual input/load/throw controls](reports/ai-skim-prethrow-2026-10-07/README.md).
+
+Nine-hero live AI input coverage: [actual roster IDs, retained invalid selection coverage and remaining decisions](reports/hero-bot-roster-2026-10-07/README.md).
+
+Current ordinary Desktop release: [installede1c1/protocol154, actual startup/replay/preview acceptance and remaining performance scope](reports/companion-title-windows-2026-10-09/README.md).
+
+Previous October7 combined release: [installed725e package and historical acceptance](reports/combined-replay-desktop-2026-10-07/README.md).
+
+Current PC AI/replay integration: [exact tested-source proof, actual archive/viewer controls and retained fixture failure](reports/pc-local-replay-integration-2026-10-07/README.md).
+
+Bot consumer charge timing: [long-frame release failure and19 native power/obstacle/lifetime controls](reports/bot-lunge-consumer-power-2026-10-07/README.md).
+
+Four-bot natural decision window: [actual one-start readiness, live40second samples and retained legacy limits](reports/natural-four-bot-decisions-2026-10-07/README.md).
+
+Bot charged travel around world obstacles: [original wall failure, actual capsule clearance and post/kerb controls](reports/bot-lunge-obstacles-2026-10-07/README.md).
+
+Bot charge ownership on target/plan loss: [original four failures, legal reset and10 native controls](reports/bot-lunge-plan-lifetime-2026-10-07/README.md).
+
+Actual new-opening Windows package: [startup order, first Home frames and three automatic map flows](reports/new-openings-package-2026-10-07/README.md).
+
+Natural LAN rematch: [strict two-record/rotation expectations and pending paired acceptance](reports/lan-rematch-2026-10-07/README.md).
+
+Packaged preview lifetime: [actual Windows Canvas and motion controls with preserved build/profile evidence](reports/packaged-preview-lifetime-2026-10-07/README.md).
+
+Hidden-Canvas map playback: [native decoder failures and pause/resume correction](reports/map-preview-canvas-visibility-2026-10-07/README.md).
+
+Reduced motion during native video preparation: [callback race, original failure and restored native controls](reports/map-preview-prepare-motion-2026-10-07/README.md).
+
+Actual active host-loss client: [strict recovery, preserved results and paired stop scope](reports/lan-host-loss-2026-10-07/README.md).
+
+Live map-preview motion settings: [native direct-setting failure and pause/poster/resume correction](reports/map-preview-motion-setting-2026-10-07/README.md).
+
+Charged bot lunge aiming: [original blind-release failure and consumer/native traces](reports/bot-lunge-aim-2026-10-07/README.md).
+
+Full-resolution packaged map previews: [actual host-screen playback, first/repeat timings and batch-route controls](reports/fullhd-map-preview-player-2026-10-07/README.md).
+
+Inactive map-view preparation: [native allocation failures and activation recovery](reports/inactive-map-preview-2026-10-07/README.md).
+
+Current combined Desktop package: [startup, exact files and two-machine result parity](reports/combined-desktop-2026-10-07/README.md).
+
+Actual two-machine LAN completion and observation timing: [matching saved records, retained failures and coordinated launch](reports/two-machine-lan-cb5f-2026-10-07/README.md).
+
+Explicit bot policy and the full automatic arrival path: [native preview/confirmation/start and no-bots admission control](reports/arrival-policy-2026-10-07/README.md).
+
+Grounded tags through adopted elbow rigs: [real contact, footwear and recovery checks](reports/tag-rig-contact-2026-10-07/README.md).
+
+Settled all-map preview recordings: [lighting-flash correction, source matches, native loops and remaining seams](reports/settled-map-previews-2026-10-07/README.md).
+
+Results court preview before confirmation: [native focus, seat identity, cancellation and paused playback checks](reports/result-court-preview-2026-10-07/README.md).
+
+Recorded preview interruption recovery and regeneration: [native failures, source receipts and normal vote deadline](reports/map-preview-lifetime-2026-10-07/README.md), [map-maker recording method](MAP_PREVIEW_RECORDING.md).
+
+Caught-player framing and recorded touch: [native map frames and remaining hero-contact failures](reports/catch-framing-2026-10-07/README.md).
+
+Corrected startup order and first Home playback: [cold native evidence and package gate](reports/startup-order-2026-10-07/README.md).
+Background map voting and all-map recordings: [native browse/confirm evidence](reports/map-vote-background-2026-10-07/README.md).
+
+Recorded Arena preview and map voting: [native playback/layout evidence](reports/recorded-map-preview-2026-10-07/README.md).
+Skill HUD reference: [native circles, bindings, fonts and timed-state evidence](reports/skill-hud-reference-2026-10-07/README.md).
+
+Conditional login terms spacing: [native feedback and position evidence](reports/login-terms-spacing-2026-10-07/README.md).
+
+Custom-room choice arrows: [native selector and input evidence](reports/room-arrows-2026-10-07/README.md).
+
+Automatic startup and Home doors: [full boot and pointer-flow checks](reports/laptop-validation-2026-10-06/startup-auto-home-flow/README.md).
+
+Map preview pixels and failed-selection recovery: [native checks](reports/laptop-validation-2026-10-06/preview-selection-recovery/README.md).
+
+Gameplay preload during usable login: [native cache and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
+
+Responsive login and automatic Home loading: [native preparation evidence](reports/laptop-validation-2026-10-06/login-video-preload/README.md).
+
+Real editor online lifetime: [Play-session mismatch and focused correction](reports/reliability-2026-10-05/editor-online-lifetime/README.md).
+
+Browser feedback and editable text: [native correction evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
+
+Current Windows UI/public and code joins: [actual player evidence](reports/reliability-2026-10-05/current-ui-online151/README.md).
+
+Network shutdown origin: [native lifecycle evidence](reports/reliability-2026-10-05/network-shutdown-origin/README.md).
+
+Menu text and future import guards: [native evidence and limits](reports/reliability-2026-10-05/ui-text-quality/README.md).
+
+UI source quality: [native viewport, import and allocation evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
+
+Current-source Paete Linux player and impaired transport: [build provenance and peer checks](reports/paete-current-player-2026-10-05/README.md).
+
+Owner follow-up readiness: [real ability and HUD-state correction](reports/power-recast-readiness-2026-10-04/README.md).
+
+First-person source-mesh preservation: [ownership correction and native evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+
+Owner arms catalog fallback: [causal native checks](reports/viewmodel-roster-fallback-2026-10-04/README.md).
+
+Zack powered wall contact: [compact cue and scoped native evidence](reports/zack-bank-contact-2026-10-04/validation.md).
+
+Friends acceptance capacity: [two-account server flow and correction](reports/reliability-2026-10-04/friends-capacity/README.md).
+
+Background input ownership: [focus-loss failures and checked recovery](reports/laptop-validation-2026-10-04/background-focus/README.md).
+
+Record measurement integrity: [NaN normalization and profile evidence](reports/reliability-2026-10-04/match-record-nan/README.md).
+
+Server history write recovery: [failure reproduction and correction](reports/reliability-2026-10-04/cloud-history-write/README.md).
+
+Server travel-bound parity: [current movement correction and focused evidence](reports/reliability-2026-10-04/cloud-travel-bound/README.md).
+
+Latest playtested movement revision: [measured speeds, jump and free shove/lunge](reports/movement-playtest-2026-10-03/README.md).
+Earlier same-day movement values are superseded; their evidence remains historical.
+
+Objective income revision: [rules and four-case native evidence](reports/feedback-2026-10-03/objective-economy/README.md).
+
+Latest human Feedback: [Cheska caster exclusion](reports/feedback-2026-10-03/cheska-caster.md).
+
+LAN participant identity and missing client result: [native boundary evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
+
+HOME pinned-rules preservation: [native causal and control evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
+
+Current Windows integration build and normal-lobby mode/client-save findings: [1002m evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+
+Slide prediction and retrieval inventory optimization: [native timing and behavior evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
+
+Read only the current route needed for the task. Full history is retained, but
+old prompts, counts and work orders are not current instructions.
+
+1. [AGENTS](../AGENTS.md): current working instructions.
+2. [VISION](VISION.md): what the game is for and what must remain true.
+3. [TODO](TODO.md#current-implementation-queue): the only current work-status queue.
+4. [ACTIVE_REWORK_LEDGER](ACTIVE_REWORK_LEDGER.md): current checkpoint and evidence limits.
+5. The topic below, plus the relevant [working rules](WORKING_RULES.md).
+
+[CLAUDE.md](../CLAUDE.md) is a short compatibility entry point, not another rulebook.
+[REFERENCE_INDEX](REFERENCE_INDEX.md) lists every root document and its status.
+[Archive](archive/README.md) maps historical documents to their current replacements.
+
+Current owner-priority research/design: [full hero quality brief](reports/hero-quality-2026-10-01/brief.md).
+
+## Pick The Task
+
+| Task | Read first | Then inspect |
+|---|---|---|
+| Network bugs, ranked, reconnect, spectator, client-only skills | [Networking](NETWORKING.md), [skill contract](SKILL_NETWORK_CONTRACT.md) | MatchRpc/NetSession/Matchmaker and [current evidence](reports/stability-2026-09-27/multiplayer.md) |
+| Loading, first-click/cast hitches, optimization | [Loading/performance](LOADING_AND_PERFORMANCE.md) | SplashScreen, retained caches and [loading evidence](reports/stability-2026-09-27/loading-audit.md) |
+| Main menu/HOME/season/showcase animation | [HOME animation method](HOME_SCREEN_ANIMATION_METHOD.md) | [Zack](reports/home-scene/README.md), [Phaister](reports/home-scene/phaister.md), ArtSource/home-scene and HubSceneVideo |
+| Character building/remodel | [Character method](CHARACTER_MODEL_METHOD.md), [art direction](Art_Direction.md), [clothing constraints](CAST_CLOTHING_STYLE.md) | [Voxel guide](Voxel_Person_Guide.md), that hero's builder/ArtSource, [rig notes](../ASTRA.md) |
+| Ultimate cutscene reworks (Paete's done 2026-10-08; the other eight in batches of three, uncommitted) | [Cutscene rework handoff](CUTSCENE_REWORK_HANDOFF.md) | Paete's record is section 15.11 of the redesign handoff; tools/author_ultimate_intros.py, tools/build_paete_ult_sfx.py, Editor/MapKit/PaeteAbilityFilm.Intro.cs |
+| Character redesign prototypes (seven heroes: rounded box heads at 0.84, painted atlases, elbows, new clips; test wiring in Unity, uncommitted) | [Redesign handoff](CHARACTER_REDESIGN_DANTE.md) | [Pictures](reports/character-redesign-dante-2026-10-05/README.md), tools/author_character_redesign_dante*.py, Assets/TumbangPreso/Art/CharacterRedesign/dante; start at section 15 of the handoff; Editor/CharacterRedesignLineup.cs builds the test lineup |
+| Ability and ultimate VFX: the bench, references, locks, daylight, how an effect is made and refined (2026-10-11) | [VFX bench method](VFX_BENCH_METHOD.md) | Runtime/Visual/FxStudy, tools/build_ultimate_fx_textures.py, tools/cutscene_rework/fxbench.sh, fxsame.py, approved/ |
+| Character motion, skills, VFX, sound, ultimate cutscene | [Hero-kit method](HERO_KIT_METHOD.md), [network contract](SKILL_NETWORK_CONTRACT.md) | [Kit decisions](HERO_KIT_REWORK_DECISIONS.md), current ability source and hero-specific reports |
+| Map intro films (match openings per map) | [Map film method](MAP_FILM_METHOD.md) | `Runtime/Map/MapFilm*.cs`, `Tests/PlayMode/MapFilmTests.cs`, Logs/map-films |
+| Native rendering, lineup, motion samples, player build | [Canonical pipeline](CANONICAL_RENDERING_PIPELINE.md), [testing](TESTING.md) | Existing probes and exact source/asset candidate; preserve authored materials |
+| Login, menu, HUD, navigation, accessibility | [UI method](UI_DESIGN_METHOD.md), [authorship](OWNER_UI_AUTHORING.md), [fonts](FONT_USAGE.md) | Current UI owner/helpers, [UX-1 routes](reports/front-end-flow-2026-09-23/ux1-plan.md), [surface inventory](reports/front-end-flow-2026-09-23/ui-authorship-inventory.md) |
+| Rules, scoring, retrieval, formats, bots | [VISION](VISION.md), [Design](Design.md), [Formats](Formats.md), working rules | Core package, MatchDirector, RoundDirector, CharacterMotor and AIController |
+| Setup, tests, profiles, target platforms | [Workstation setup](WORKSTATION_SETUP.md), [testing](TESTING.md) | ProjectVersion, Packages, guarded runners and current ledger |
+| Environment/map reference | [Reference index](REFERENCE_INDEX.md#environment-references) | Current contributor ownership, actual source and dated evidence before interpreting old plans |
+| Eskinita (2026-10-09: REPLACED by the stepped alley, built over the shipped Eskinita.unity; old scene in Scenes/Vault; tests not yet run against it) | [Eskinita rebuild](ESKINITA_REBUILD.md) | tools/author_eskinita_alley.py and the props, chickens, pets, textures scripts; Editor/MapKit/EskinitaAlley*.cs; Runtime/Map/MapRoutes.cs, Alley*.cs; Logs/eskinita/unity |
+| PAETE'S RUN (2026-10-10: BUILT and playable as the unregistered scene PaeteRun.unity; a play probe completes the course; an art pass and a look, life and sound pass were in flight; uncommitted) | [Paete's run brief](PAETE_RUN_MAP_BRIEF.md) | tools/paete_run_course.py, paete_run_stages.py, author_paete_run_layout.py, author_paete_run_art*.py; Runtime/Run; Editor/MapKit/PaeteRunSceneBuilder.cs, PaeteRunPlayProbe.cs; Logs/paete-run |
+| PAYO (2026-10-12: BUILT and playable as the unregistered scene Payo.unity: the Arena's stage system in stone blocks over a pit, night from half time; play probes ran; nobody has played it; uncommitted) | [Payo brief](PAYO_MAP_BRIEF.md) | Art/Payo/payo_layout.json and payo_art.json; Runtime/Map/Payo*.cs and the block kind in ArenaStage.cs; Editor/MapKit/PayoSceneBuilder*.cs, PayoPlayProbe.cs; Logs/payo |
+| Kanto or Lagoon Cove (Blender-built maps) | [Kanto guide](KANTO_DESIGN_GUIDE.md), [Lagoon rework guide](LAGOON_REWORK_GUIDE.md) (its CURRENT STATE block first) | The authoring tools they name (tools/author_kanto_*.py, tools/author_lagoon_cove.py and the lagoon kits), Editor/MapKit builders, TODO KANTO-1 and LAGOON-1 |
+| The arena map (the NEXT map: crowd, celebrations, holograms, pads, falls, rotating layouts) | [Arena HANDOFF](ARENA_HANDOFF.md) first, then the [Arena brief](ARENA_MAP_BRIEF.md) and the [Arena art brief](ARENA_ART_BRIEF.md) | Built and in play-test: `Runtime/Map/Arena*.cs`, `Editor/MapKit/Arena*.cs`, `tools/author_arena_*.py`, the Arena probes, TODO ARENA-1 |
+| Ilalim ng Tulay rebuild (parked 2026-10-05) | [Ilalim rework guide](ILALIM_REWORK_GUIDE.md) (CURRENT STATE first), [map design](Ilalim_Ng_Tulay.md) | IlalimNgTulayBuilder and the Ilalim*Author passes, LrtTrainFlyby, BridgeHoop, [map-integration issues](reports/map-integration-2026-09-28/issues.md), TODO ILALIM-1 |
+| Lore, story, human voice/reference | [Origins](CHARACTER_ORIGINS.md), [LORE](../LORE.md), [HUMAN](HUMAN.md) | Current hero records and human-recording requirements |
+| Historical decision or retired implementation | [Archive index](archive/README.md) | Original document/section and the linked current replacement; do not execute old prompts |
+
+## Where Information Belongs
+
+- **Instructions:** AGENTS and WORKING_RULES. No duplicated phase schedules.
+- **Status:** TODO; open numbered detail in TODO_Backlog, finished bodies in TODO_Archive.
+  Preserve IDs and history. A report is not a new open task.
+- **Checkpoint:** a concise ledger entry with revision, changes, jobs, limits and next action.
+  Move accumulated old entries to dated history instead of making every session read them.
+- **Methods:** the live topic method, including pitfalls and source ownership.
+- **Evidence:** dated reports, exact revisions/receipts and clearly labelled limits.
+  Do not rewrite old results to imply qualification of newer source.
+  [September 30 feedback fixes](reports/feedback-2026-09-30/README.md) records the
+  current Tasks/round-standings batch; its status lives in TODO FEEDBACK-0930.
+  [Cheska expiry presentation](reports/cheska-expiry-2026-09-30/plan.md) records
+  the scoped field-melt/wall-shatter plan and current reference limits.
+  [Dante barrier visibility](reports/dante-visibility-2026-09-30/result.md) records
+  the palette-aware half-alpha fix and native capture limits.
+  [Dante active ward cue](reports/dante-ward-2026-09-30/result.md) records
+  the clock-bound shield badge and native camera/lifecycle check.
+- **History:** archive, with original-path pointers and a replacement/reason in its index.
+  Old documents keep their useful context; reusable methods remain live.
+- **Media:** latest two generated iterations per coherent subject/action/view when pruning
+  authorized old captures. Keep shipped/source/supplied and essential method/decision assets.
+  Log removals so old evidence references can be traced through Git.
+
+## Avoid Stale Instructions
+
+A dated OPEN label is not proof the feature is absent. Compare source, current
+owner direction and newer evidence. The systems roadmap, old port phases and old
+exclusive contributor lanes are historical. Broad tests after every edit, raw Unity
+launches, Desktop replacement and UI version stamps are not the current workflow.
+
+The pre-cleanup index/rules/ledger are preserved in
+[snapshots-2026-09-27](archive/snapshots-2026-09-27/README.md). Documents originating
+from Godot now live here as Unity-owned references; never overwrite them from the
+frozen Godot repository.
+
+Bank Shot mechanics and validation: [current report](reports/feedback-2026-09-30/bank-shot.md).
+
+Rebuilt Ilalim generated-scenery preview isolation: [native evidence](reports/reliability-2026-10-02/ilalim-preview-scope/README.md).
+
+Rebuilt Ilalim under-viaduct preview framing: [native evidence](reports/reliability-2026-10-02/ilalim-preview-framing/README.md).
+
+Replay trail capture inventory reuse: [native evidence](reports/reliability-2026-10-02/replay-shoe-lookup/README.md).
+
+Zack bot Overclock decision repair: [native evidence](reports/reliability-2026-10-02/bot-overclock/README.md).
+
+Current129 Windows rebuilt-Ilalim player observations: [evidence](reports/reliability-2026-10-02/ilalim-player129/README.md).
+
+Rebuilt Ilalim late preview-audio playback fix: [native evidence](reports/reliability-2026-10-02/ilalim-preview-audio/README.md).
+
+Empty replay sample allocation removal: [native evidence](reports/reliability-2026-10-02/replay-empty-capture/README.md).
+
+Queue connection startup exception recovery: [native evidence](reports/reliability-2026-10-02/queue-start-fault/README.md).
+
+Career submission acknowledgement and saved-result retention: [native evidence](reports/reliability-2026-10-02/career-submit-ack/README.md).
+
+Shared Cloud Code missing-output failure boundary: [native evidence](reports/reliability-2026-10-02/cloud-output/README.md).
+
+Bounded shared service-request timeout: [native evidence](reports/reliability-2026-10-02/http-timeout/README.md).
+
+Late career submission identity and pending-result preservation: [native evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).
+
+Refreshed129 Windows Classic tournament-context observations: [evidence](reports/reliability-2026-10-02/current-tournament129/README.md).
+
+Career refresh account-cache ownership: [native evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
+
+Abandon/history account-response ownership: [native evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
+
+Queued-result verification alignment after refusals: [native evidence](reports/reliability-2026-10-02/career-witness/README.md).
+
+Late history UI completion and navigation safety: [native evidence](reports/reliability-2026-10-02/history-navigation/README.md).
+
+Automatic career sync after pending older-account work: [native evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
+All-nine-hero official footage research and implementation plans: [October 2 review](reports/hero-reference-footage-2026-10-02/README.md).
+
+Displayed match and career-dispute identity: [native evidence](reports/reliability-2026-10-02/result-verdict/README.md).
+
+Late career acknowledgements refresh visible result details: [native evidence](reports/reliability-2026-10-02/result-late-ack/README.md).
+
+Wallet account ownership and deferred refresh: [native evidence](reports/reliability-2026-10-02/wallet-owner/README.md).
+
+Full current Windows Classic tournament-context match: [actual peer evidence](reports/reliability-2026-10-02/full-classic-match/README.md).
+
+Inactive bot-body observation isolation: [native evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
+
+Social reply and handle lookup account ownership: [native evidence](reports/reliability-2026-10-02/social-owner/README.md).
+
+Sean held-shoe body preparation: [evidence](reports/sean-empowered-presentation-2026-10-02/README.md).
+
+Amihan presentation: Airburst and cutscene, Drift, her light body and floating run: [report](reports/amihan-presentation-2026-10-02/README.md).
+
+Cheska held Frostbite surface cue and low-memory qualification: [October 2 result](reports/cheska-frostbite-load-2026-10-02/result.md).
+
+Distinct Cheska held-shoe cast: [native review and preservation proof](reports/cheska-frostbite-motion-2026-10-02/README.md).
+
+Dante Boulder weight-bearing preparation: [native review and preserved assets](reports/dante-boulder-motion-2026-10-02/README.md).
+
+- [Boulder loaded-shoe surface and lifecycle](reports/dante-boulder-load-2026-10-02/README.md): affinity-bound world/owner inlay, retained baseline and serial checks.
+
+- [Bastion forward-brace motion](reports/dante-bastion-motion-2026-10-02/README.md): distinct body/FPP action with existing field behavior preserved.
+
+- [Attacking tutorial barrier warning](reports/tutorial-barrier-warning-2026-10-02/README.md): one actual-route case, real throw and visible-warning control.
+
+- [Tutorial Block attacker placement](reports/tutorial-block-placement-2026-10-02/README.md): behind-centre spawn, genuine misses and player interception.
+
+- [Latest3.5second Next Round timing](reports/round-timer-35-2026-10-02/README.md): shared ordinary deadline and unchanged10second halftime.
+
+Timed status recovery without mashing: [native evidence](reports/timed-recovery-2026-10-02/README.md).
+
+Studio intro before loading: [native evidence](reports/studio-intro-2026-10-02/README.md).
+
+Cloud tool recovery and bounded smoke results: [October3 evidence](reports/cloud-recovery-2026-10-03/README.md).
+
+Continental Drift irregular-fracture unit: [scoped plan](reports/dante-drift-fractures-2026-10-03/plan.md).
+
+Account canonical refresh ownership: [native causal and control evidence](reports/reliability-2026-10-03/account-refresh-ownership/README.md).
+
+Local account/lobby resumption qualification: [25 unique native checks](reports/reliability-2026-10-03/local-resume-qualification/README.md).
+
+Competition work continuity: [persistent coordination directives](COMPETITION_COORDINATION.md).
+
+Replay new-match history isolation: [native boundary evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).
+
+Portable save backup preservation: [native file I/O evidence](reports/reliability-2026-10-03/portable-store-backup/README.md).
+
+Spectator footage and local match identity: [native prerequisite and boundary evidence](reports/reliability-2026-10-03/spectator-match-lifetime/README.md).
+
+First PC/laptop LAN match: [actual paired baseline evidence](reports/reliability-2026-10-03/two-machine-lan/README.md).
+
+Ice diagnostic admission timing: [native setup evidence](reports/reliability-2026-10-03/ice-admission-role/README.md).
+
+Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).
+
+Local match replays, library/folder controls and explorable playback: [method](LOCAL_REPLAYS.md) and [native evidence](reports/laptop-gameplay-2026-10-07/local-replays/README.md).
+
+Late-join opening hold: [native failure, corrected adoption and countdown regression evidence](reports/late-join-start-hold-2026-10-07/README.md).
+
+Match opening on joining players: [eight real host/joiner pairs, the attacker closing beat, rejected framings and two-player Relay check](reports/arrival-own-beat-2026-10-19/README.md).
+
+Player's room on QoLUpdates: [merge, protocol 174, merged-tree tests and the QoLUpdates baseline](reports/room-qol-merge-2026-10-19/README.md).
+
+Summoned doll replay bodies and held slippers: [original failure, native capture, codec bounds and admission evidence](reports/recorded-companion-2026-10-09/README.md).
+
+Current ordinary Desktop e1c1/protocol154: [actual startup, replay/preview/controlled gameplay and exact in-place installation](reports/companion-title-windows-2026-10-09/README.md).
+
+Loose footwear floor support: [actual30pair float, upright-pivot correction and12 scoped native controls](reports/loose-slipper-surface-2026-10-09/README.md).
+
+Bot social clip availability: [unavailable-rig pause, preserved playable delivery grace and6 native consumer controls](reports/ai-unavailable-emote-2026-10-09/README.md).
+
+October11 QoLUpdates merge: [combined protocol159,21 native controls and retained private work](reports/qol-integration-2026-10-11/README.md).

@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # Kanto design guide
 
 The sample map **Kanto**: a city park block in the style of Tiny Talisman's "Stylized Modern

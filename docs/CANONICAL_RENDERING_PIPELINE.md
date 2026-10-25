@@ -59,10 +59,11 @@ decision references and authored source. No native render uses `-nographics`.
 
 ## 4. Internal Player Build
 
-After the coherent work warrants a player, use an explicit owned internal target:
+After the coherent work warrants a playable player, use the canonical checkout
+and the platform's single output folder. Do not build a player in a worktree:
 
 ```powershell
-python tools/run_unity_guarded.py -batchmode -force-d3d11 -tp-profile presentation-validation-20260921 -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -buildOutput Builds/candidate/TumbangPreso.exe -logFile Logs/build-candidate.log
+python tools/run_unity_guarded.py -batchmode -force-d3d11 -tp-profile validation-20261025 -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -buildOutput Builds/Windows/TumbangPreso.exe -logFile Logs/build-windows.log
 ```
 
 Use the platform's installed module/build method. The builder purges recognized
@@ -81,4 +82,3 @@ image names; reason about parent/model yaw before changing a pet's facing; check
 which arm dimension the hand-anchor probe measures; and inspect thin decals against
 the actual inverted-hull outline. Historical millimetre values are examples,not
 permission to apply one geometry correction to every character.
-

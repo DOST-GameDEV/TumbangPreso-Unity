@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # Payo: a stone stage over a pit, on a mountainside (BUILT as an unregistered sample, 2026-10-12)
 
 Written 2026-10-12 by the session that built the playable side while the owner was away. STATE: the map can be opened

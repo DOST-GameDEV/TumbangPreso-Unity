@@ -73,8 +73,6 @@ namespace TumbangPreso.UI
         /// but they sit on the same screen as the CC-BY table rather than in a docs file.</summary>
         public static readonly Credit[] CourtesyCredits =
         {
-            new Credit("ENVIRONMENT & KITS",
-                "Kenney kits (Mini Characters, City, Suburban, Fantasy Town, Mini Forest, Food, Furniture, Car) — CC0, kenney.nl. Attribution is courtesy, not required."),
             // ⚠️ Keep retained font credits alongside the current three-face brief.
             // FONT_USAGE records the supplied Lydian permission and metric correction;
             // Kawit's required attribution is in the CC BY list above.

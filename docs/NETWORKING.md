@@ -1,279 +1,59 @@
-# Networking: Where To Work
+# Networking
 
-Current Nemu ghosts: [protocol163 complete host-state delivery, actual UDP/Relay and mixed-roster checks](reports/nemu-network-2026-10-15/README.md).
+Read the [authoring contract](SKILL_NETWORK_CONTRACT.md) before changing match
+delivery. Live compatibility is `NetSession.ProtocolVersion` and
+`SkillContractFingerprint`; branch names and old report protocol numbers are
+not compatibility identities. Current work belongs in [TODO](TODO.md).
 
-Current source contract is protocol 174 on QoLUpdates (`NetSession.ProtocolVersion`;
-read the source, this line can lag). Use matching packages for actual peers; branch
-names are not compatibility identifiers. The work-status queue is [TODO](TODO.md), not
-the older evidence narrative below.
+## Ownership and source map
 
-## LAN over a VPN (Hamachi, Radmin, ZeroTier)
-
-A LAN room can be played over a virtual LAN. What has to be true, and what goes wrong:
-
-- **Ports.** The game listens on UDP 8910 on every adapter (`NetSession` binds `0.0.0.0`);
-  the room beacon is UDP 8911 (`LanBeacon`). The JOIN row dials the beacon packet's source
-  address and the advertised port.
-- **The host's firewall decides.** The beacon is an outbound broadcast from the host, so a
-  room can be listed while the host's Windows Firewall drops every inbound packet to 8910.
-  Windows files Hamachi-style adapters under **Public** networks, and a game (or the Unity
-  Editor) allowed on Private only is blocked there. The joiner then waits about 24 s and
-  fails with "No answer from <address>" (`JoinFailureRules`). The joiner's firewall normally
-  lets the host's replies back in, because they answer packets the joiner sent first (not yet
-  verified on a blocked joiner).
-- **Block beats allow.** Answering Windows' first-run prompt with Public unticked writes an
-  explicit inbound BLOCK rule for the program on Public (the reporting PC has one for the Unity
-  Editor). An allow rule added beside it changes nothing until that block rule is gone.
-- **The game's one rule.** `Tumbang Preso (LAN)`: inbound, allow, UDP, Private and Public,
-  scoped to the program's own path. No port rule, nothing for TCP, nothing for any other
-  program. The host needs both UDP 8910 and 8911 inbound (the beacon answers discovery
-  queries); the program-scoped rule covers both. Command text: `Core.LanFirewallRules`.
-  - **Installed copies** get it from the installer (`installer/TumbangPreso.iss`, built by
-    `python tools/build_installer.py --source <GameBuilder output>`; Inno Setup 6.3+). It asks
-    for admin once at install, adds the rule for `{app}\TumbangPreso.exe`, launches the game as
-    the original user, and removes exactly that rule on uninstall.
-  - **Zip copies and the Editor**: the room tells the host. When the local player hosts a LAN
-    room on Windows, `LanFirewall` reads without admin (rule strings in the local and Group
-    Policy stores, the active profiles from `HNetCfg.FwPolicy2`) whether this exe is reachable
-    on every active Private or Public network. If not, the room shows one line by the address
-    and **ALLOW LAN PLAY**, which starts a PowerShell helper with the "runas" verb: Windows
-    shows its UAC prompt, the helper removes only the block rules naming this exact exe, runs the
-    installer's own `netsh` delete and add, and exits. The game stays unelevated, and the line only
-    says allowed once a fresh read agrees. Hidden for online (Relay) rooms, clients and non-Windows.
-    Shields up ("Block all incoming connections") or a block rule for every program is reported
-    and never touched. Not detected: a third-party firewall that replaces Windows Firewall.
-    Windows' UAC prompt itself needs a mouse, keyboard or touch; a controller cannot answer it.
-- **Checking it by hand** (host PC, no game change): `wf.msc` > Inbound Rules, sort by Program.
-  The game's path should have `Tumbang Preso (LAN)` (Allow, UDP, Private, Public) and no Block
-  rule. Or in PowerShell: `Get-NetFirewallRule -DisplayName 'Tumbang Preso (LAN)' |
-  Get-NetFirewallApplicationFilter`. Marking the VPN network Private also works, but only for
-  hosts whose rule covers Private.
-- **Same build.** Beacon v3 (`LanBeacon.MagicV3`) carries the host's protocol and map, so a
-  host on another protocol is listed as DIFFERENT VERSION with no JOIN, and the MAP column
-  names the map. A host from before v3 (v1 or v2 beacon) says neither: its row reads MAP
-  UNKNOWN and stays joinable, and approval refuses a real mismatch with "That host runs
-  another version (protocol N, yours M)". A code join that finds a v3 LAN host on another
-  protocol refuses with that sentence before connecting. A host sends v3 and v2, so a build
-  from before v3 still lists it ([contract](SKILL_NETWORK_CONTRACT.md#lan-beacon-v3-2026-10-20-no-protocol-step)).
-- **Two adapters.** When one host is heard on two adapters, an address on a subnet this
-  machine shares wins, and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin);
-  a tie keeps the address already shown (`LanBeacon.AddressPreference`). A VPN address both
-  machines share still beats a LAN address this machine is not on.
-- **REFRESH** on the JOIN GAME list forgets the LAN rows and asks again at once (live hosts
-  return within about a second), or queries the online list at once.
-
-The matched0358 Windows package qualifies natural PC-hosted LAN discovery, row
-admission, code rejoin and an already-open client Rules panel. The corrected917
-package qualifies reverse-host completed-match return Home without automatic
-client rehosting. [LAN/Rules acceptance](reports/reliability-2026-10-06/lan-and-live-rules-operator/README.md)
-and [completed recovery](reports/reliability-2026-10-06/corrected-reverse-lan/README.md).
-These scoped passes do not close the tester's Relay timeout/host-kick report,
-non-host delay, all skills, physical input or cross-platform acceptance.
-
-Accepted owner-pose echoes now preserve current local prediction while explicit
-corrections and movement epochs remain authoritative. The causal native evidence
-is [owner feedback](reports/reliability-2026-10-05/owner-pose-feedback/README.md);
-controlled-latency and physical-feel acceptance remain separate. Current source
-also includes the later queued-focus and bunting fixes, which0358 does not carry.
-
-## October15 resource and body-packet refinement
-
-Owner sprint intent excludes an actual crouch; the host applies the existing
-curse-reach sprint restriction. Crouch/slide tell bits remain presentation only.
-SyncUnit reserves313 bytes for its largest valid aim identity and requires252
-bytes for an empty aim tail. Both bounds share the same fixed prefix and codec
-limits. The protocol160 schema is retained. Native21-case passing evidence and
-the original failures are in the [refinement report](reports/network-refinement-2026-10-15/README.md).
-Matching remote peers and the movement rework's hop recovery/crouch collision
-gaps remain unqualified.
-
-## Historical September30 contracts and qualification
-
-The September30 gameplay contract was protocol124, including adopted Hydro Crosscurrent,
-Skim, Water wall, can-down charge cancellation, revised penalty/fatigue timings
-finite can-height contact, revised knockdown/catch announcement rewards and
-live Frostbite timed recovery, authoritative Amped-Up objective discounts and
-match-long Overclock/Zapped recovery. Actual124player/peer qualification remains open.
-Latest general Windows direct-peer qualification
-is protocol120on committed c26c5c34b: actual identical host/client players reach
-active round2, defender1and matching structural state. Clean local admission and
-round transition only; not all skills, Relay/loss/rejoin or cross-platform proof.
-[Current player evidence](reports/feedback-2026-09-30/network120-actual-player.md).
-Earlier114CLI admission evidence is retained with its original scope.
-[Admission repair](reports/feedback-2026-09-30/cli-admission-handoff.md).
-The120pair predates the121announcement rules and the later bot landing helper;
-it does not qualify those changes. Announcement Core/native receipts are scoped
-separately. [Announcement evidence](reports/feedback-2026-09-30/announcement-checks/README.md).
-
-Actual121cold-process rejoin now passes on e47fa2719: peer1crashes, peer2with the
-same saved identity reclaims seat1and servercharacter2despite local preference0.
-The client-controlled seat and host progress to active round2with matching
-defender/structural state. Explicit later195/120second samples preserve the old
-117failure and add stronger round/ownership gates. Separate launches/sample times;
-no every-skill/physical-feel/loss/account-proof or later-presentation claim.
-[Current rejoin evidence](reports/feedback-2026-09-30/reconnect121-actual-player.md).
-That121case predates the new Frostbite timed binding. Four scoped native recovery/
-real-hit checks qualify the122change locally.
-[Frostbite recovery](reports/feedback-2026-09-30/frostbite-recovery.md).
-Protocol123adds explicit scoped objective cooldown grants for predicted owners;
-ordinary snapshots keep their no-refund policy. Six native objective/owner/replay/
-watermark/framing cases pass. [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
-[Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
-[Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
-[Water wall/tutorial evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
-
-A separate actual116Windows owner-client Haunt fixture passes with host contacts,
-replicated clocks, moving familiar and terminal cleanup. Stationary bystanders,
-not whole-match/rejoin/loss/other-kit qualification.
-[Exact evidence and boundaries](reports/feedback-2026-09-30/haunt-actual-peers.md).
-
-Actual117crash/relaunch restores the same identity/seat and selected character on
-the changed pre-round handover candidate. Aggregate gate remains failed at the
-host's later round-boundary sample; no118/119or complete-round proof is claimed.
-[Preserved results and limits](reports/feedback-2026-09-30/reconnect-actual-player.md).
-
-Departure notice payloads must end exactly after the declared name, before the
-receiver commits the sequence or toast. Six native receiver checks pass, including
-the consumed NGO name envelope and malformed suffix recovery.
-[Evidence](reports/feedback-2026-09-30/peer-departure-framing.md).
-
-Earlier Windows peer evidence: frozen committed overlaysffe5030c5, protocol103,
-same fresh internal binary on actual localhost UDP host/client. Both reach active
-HeroStrike/Eskinita round2 with matching structural state and no hard faults.
-This is direct local session qualification, not individual skill/online/Relay/
-lossy/reconnect/cross-platform delivery.
-[Evidence](reports/feedback-2026-09-30/engineering-player-1001.md).
-
-Protocol103 requires current Cheska field/delay/passive/all-player targeting rules.
-Cold Feet lasts7.5s, Absolute Zero waits1.5s and includes its caster, and landed
-Hero Strike Cheska shoves apply Chilled. Native cases pass; protocol103 actual
-peers are not yet qualified. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
-
-Protocol101 also requires the corrected Frostbite hit/held-slipper contract.
-Both body-hit paths apply Frozen before generic impact consumes the payload.
-Native real-flight checks pass; protocol101 actual peers remain unqualified.
-[Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
-
-Queue cancellation only withdraws an active search's advert. A locally refused
-attempt cannot clear an existing room's backfill offer; replacing an active search
-retires it before a replacement can refuse. Four native offline ownership cases
-pass; actual online browse/backfill delivery remains separate.
-[Evidence](reports/feedback-2026-09-30/queue-advert-ownership.md).
-
-Protocol100 requires matching builds for the5-second ordinary round boundary and
-10-second halftime package. Both freeze simulation and reject gameplay/UI input.
-Halftime can play a retained authoritative clip before standings; unavailable or
-late footage falls back to the same frozen image without extending the host end.
-The latest ordinary/late-deadline and halftime cases pass locally. Earlier eight
-focused native cases cover visible retained playback, late clients,
-input/image locking and round5 return. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md). Earlier [protocol98 evidence](reports/feedback-2026-09-30/round-freeze.md)
-covered the former uniform10-second frozen boundary and is not peer qualification
-of protocol100.
-
-Latest timing revision: [match UI evidence](reports/feedback-2026-09-30/match-ui-revision.md). Actual protocol100 peers remain unqualified.
-
-Read [AGENTS](../AGENTS.md),[working rules](WORKING_RULES.md#gameplay-and-authority),
-[skill contract](SKILL_NETWORK_CONTRACT.md),then the current NET-SKILLS-1 queue and
-[multiplayer evidence](reports/stability-2026-09-27/multiplayer.md).
-This is a source map,not another backlog or a declaration of complete replication.
-
-## Runtime Ownership
-
-A frozen c55574cd6 internal Windows player now passes a real two-process direct
-LAN check through round2, with matching protocol/seat/character/defender state.
-[Exact scope and limitations](reports/feedback-2026-09-30/player-lan.md). This does
-not qualify unexercised skills, online/ranked, loss, reconnect or later integrations.
-
-Protocol97 also gates the requested3m ordinary defender lunge. Local prediction
-and host resolution share the derived impulse; the movement ceiling remains28m/s.
-Bot attempt distances, safe-emote clearance and pressure stats follow actual reach.
-Local native travel/sweep checks are in [the lunge report](reports/feedback-2026-09-30/defender-lunge.md);
-they do not qualify real peer transport.
-
-Legacy seat-assignment reception now requires exactly4bytes and a valid player
-seat0..3 or spectator-1 before notifying local controls. Sender and repeated-seat
-semantics stay intact; protocol97 is unchanged. Native19-case receiver proof and
-the reproduced malformed baseline are in [seat packet evidence](reports/feedback-2026-09-30/seat-assignment-packets.md).
-
-Runtime files below are in `Assets/TumbangPreso/Runtime/`.
-
-| Concern | Entry points and invariant |
+| Responsibility | Owner |
 |---|---|
-| Session/hello/seat ownership | Net/NetSession.cs,Net/LobbySession.cs,NetAuthority. Authentication or stable ID does not grant another seat. Read the current hello/protocol,not old literals. |
-| Presentation teardown/reconnect | NetSession.EndTransportPresentation cancels local match presenters and hitstop before normal speed. Fresh MatchRpc handler binding resets received cohort/pending-request state,not the host lifetime sequence. Ordinary Cancel retains duplicate protection. |
-| Ready and countdown | ReadyGate and MatchRpc use protocol83 match identity (zero only for lobby READY). Exact payload bounds and current seated membership precede votes; quorum waits for host loading. Manual votes retry until countdown acknowledgment, and a completed countdown stays consumed until the gate explicitly reopens. |
-| Intermission votes | BufferSkipVote and MatchRpc use protocol88 match/round requests and host tally/seat-mask acknowledgement. Requests accept seated clients, not only the host. World state precedes tally; client buffer state mirrors without authoritative round events, and client Update does not erase the received count. |
-| Rematch lifetime | Protocol89 rotates the host's PresentationMatchId from the ended match before reloading. The previous/next announcement adopts only a matching forward transition; repeated announcements cannot reload twice. Votes/tallies identify the old result, validate current seated membership and acknowledge the local seat. Existing rotation/result policies stay separate. |
-| Discovery and ranked/casual pairing | Net/ServerQuery.cs,Matchmaker.cs,MatchmakingCandidateCache.cs; Core MatchmakingRules owns pool/band rules. Skill contract and reserved-seat capacity filter automatic pairing. |
-| Requests and received state | Net/MatchRpc.cs and its partials. Check sender,seat,match/round,epoch,request/event freshness BEFORE gameplay or presentation. Ordinary requests/refusals/actions/charge tells share GameplayActionScope; it scopes context,not per-request receipts. |
-| Skill identity/authority | Abilities/HeroAbility.cs,AbilityNetworking,HeroAbilitySystem; Net/SkillCastMessage.cs. Stable IDs and explicit initial/command intent,not temporary art names. |
-| Cooldowns and charges | AbilityResourceSnapshot,MatchRpc.AbilityResources and HeroKit.AllAbilities. Scoped,ordered hero/ability identities include both roles; validate the complete set before mutation,and retain owner-live anti-refund behavior. |
-| Timed skill recovery | TimedKitState and MatchRpc.TimedKits bind both optional channels to stable ability IDs, world/body scope and per-seat order. Age against the bound ability's duration, keep consumed-state guards and reset receive cursors on new transport. Specialized flight recovery remains separate. |
-| Recovery aging | Generic timed and familiar recovery use positive progress of the host's remaining round clock, matching prepared-world aging. Pauses/introduction holds do not age simulation effects; non-live rounds reject nonempty recovery. Do not substitute server wall time for gameplay time. |
-| Prediction and delayed bodies | HeroAbilitySystem.SkillReceipts,MatchRpc.SkillReceipts,MatchRpc.SkillDelivery. Independent effect receipts,ordered bounded delivery and recovery are not interchangeable. |
-| Body-held aiming | HeroAbilitySystem.AimReplication,Net/AbilityAimSnapshot,CharacterAnimator.AimPose. Private target guidance stays local; body tells are shared presentation only. |
-| Remote resources | CharacterMotor.NetworkStamina advances host resource clocks from accepted pose intent without a second movement simulation. Input leases/epochs bound it; Stamina resource corrections preserve held-sprint continuation. |
-| Voodoo body state | Net/VoodooBodySnapshot prefixes SyncUnit's aim tail; bounded status/mark/reach state and explicit reach result. Apply status before the authoritative pool; gameplay wiring is separate. |
-| Body snapshot scope | SyncUnit uses GameplayActionScope before its ordered pose/status payload. Validate match/round before a fresh body's serial cursor; movement epoch and cross-delivery serial rules still apply. |
-| Combat refusals | MatchRpc.VerbReceipts and Core PredictionReceiptWindow bind denial to the newest prediction per verb; host fixed-seat cursors reject repeats. Network rollback does not add stamina; a targeted reliable SyncUnit corrects the authoritative pool. |
-| Held interactions | CharacterMotor.InteractionHeldForSimulation reads local or accepted leased host input. Root/plant hold clocks run on the host; scoped client completion notifications cannot skip time. Visual progress is not authoritative. |
-| Ultimate cutscene/preparation | SharedUltimatePhase,HeroAbilitySystem.SharedUltimate,MatchRpc.UltimatePhase. Host-sealed duration travels with the cohort so missing caster bodies cannot choose a short local fallback; one shared hold/handback,no duplicate gameplay. |
-| Ultimate identity | UltimateCommit carries hero/ability IDs; ReqUltimate uses GameplayActionScope including body epoch. Host checks current kit and ownership,preparation waits for matching kit,and execution refuses a changed one. |
-| Requested match clock | MatchClockMessage and MatchRpc.Clock scope pause/speed to match/round and sequence. SyncWorld precedes recovery rate on the reliable stream. PresentationClock excludes temporary Hitstop; spectators retain existing request permissions. |
-| Persistent recovery | WorldSnapshotHeader,PreparedWorldSnapshot,HeroAbilitySystem.WorldRecovery,IPreparedWorldReplication,IWorldEffectBinding,ITimedKitReplication. Restore state at elapsed simulation time; do not recast. |
-| Persistent lifetime | HeroAbility.AcceptedCastEvent and WorldEffectSnapshot.Field.InstanceId; ordinary initial cast identity survives commands/recovery. Plant removal matches exact lifetime plus match/round and remembers retirement before late installation. |
-| Recovered target sets | WorldEffectSnapshot.Field.TargetMask and PaeteSentry; preserve host-selected seats rather than rerunning distance checks. Missing bodies bind once; restoration never recatches. |
-| Live sentry targets | SentryTargetState and MatchRpc.SentryTargets deliver the host mask by match/round/owner/ultimate cohort,with bounded pre-birth delivery. PaeteSentry live registry binds it once; replicas never infer or catch. |
-| Live familiar recovery | FamiliarEffectState and MatchRpc.FamiliarEffects bind the seance to world/body scope, stable hero/ultimate IDs and accepted phase. Active duplicates, older phases and completed lifetimes cannot recreate its field or end a newly active role skill. Retired possession poses are not part of this recovery contract. |
-| Effect cleanup ownership | PaeteHeroKit's ultimate tracks its exact fresh sentries and adopts recovered owner instances through IWorldEffectBinding. One kit reset must not destroy other casters' effects. |
-| Contact presentation | Visual/MatchFlair announces accepted outcomes with match/round scope. Ordinary player tag posing consumes the existing actor/subject/contact point; its supporting visual step and bounded hand aim cannot award a hit or move a motor. UltimateImpact reuses HitFeel on the victim's own view; no gameplay mutation or caster confirmation. |
-| Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |
+| Seat reservation, reconnect, stable identity | `Net/LobbySession.cs`; identity never grants control by itself |
+| Transport start/stop, approval, callback lifetime | `Net/NetSession.cs`, `JoinAttemptGate`, `NetBootstrapRunner` |
+| LAN discovery / online listing | `LanBeacon`, `ServerQuery`, `Matchmaker`; UGS Lobby/Relay peer hosting |
+| Gameplay requests and snapshots | `MatchRpc.cs` and partials, `GameplayActionScope` |
+| Movement/prediction | `MatchRpc.Movement`, CharacterMotor; accepted owner simulation and host validation |
+| Match clock / pause | `MatchClockMessage`, `MatchRpc.Clock`; shared host clock, ordered recovery |
+| Abilities and remote presentation | HeroAbilitySystem, SkillCastMessage, typed world/timed/familiar/ghost state |
+| Peer departure and returning bodies | `MatchRpc.PeerDeparture`, LobbySession, reconnect hydration |
+| Results/rematch/replays | Existing result identity, seat membership, replay and queue-arrival routes |
 
-Ranked,casual,custom,LAN/online and spectators share match delivery. Read the queue,
-admission,reconnect and results callers as well as MatchRpc. Preserve rating,result,
-leave/backfill rules and ranked device pools when fixing transport or presentation.
-Online currently uses UGS Lobby/Relay peer hosting; the old Godot VPS plan is history.
+Host owns outcomes and score. Validate sender, current seat control, match/round,
+movement epoch, serial order, finite values and exact payload bounds before
+mutation. Preserve ranked device pools and existing casual/custom rules.
 
-## When A Character Is Reworked
+## LAN and VPN
 
-Keep authored models,clips,effects,timing and intended mechanics. Cosmetic swaps use
-existing cast/state/body hooks. Only Paete's VFX were considered substantial at the
-owner's 2026-09-27 checkpoint; temporary effects are not permanent transport APIs.
-Read the [authoring contract](SKILL_NETWORK_CONTRACT.md) before adding a new RPC.
-New gameplay data needs an explicit reusable state/recovery contract; no promise
-that every future mechanic fits the current centre-plus-clocks adapter.
+Game UDP defaults to 8910; discovery uses 8911. Beacon v3 carries protocol/map,
+retains v1/v2 reading and emits the older compatible beacon as required. A
+version mismatch must remain a clear refusal. Prefer the existing address ranking
+when the same room is heard on LAN and VPN adapters.
 
-## Score And Stock Packet Bounds
+A visible beacon does not prove the game port is reachable. The host's firewall,
+VPN adapter and program path matter. Use the existing LanFirewall UI/installer
+route and readable failure; do not silently alter OS security during a test.
+Never diagnose a game-code defect solely from a third-party firewall timeout.
 
-Score requires exactly12remaining bytes. Last Tsinelas checks its8-byte header,
-existing0-4count bound and exact declared table length before any stock update.
-Both reject truncated/trailing messages without events or partial state changes.
-Published layouts, count semantics and protocol97 remain unchanged.
-[Native before/after evidence](reports/feedback-2026-09-30/score-stock-packets.md)
-separates packet-handler checks from actual-peer qualification.
+## Reconnect and replicated presentation
 
-## Map Ballot Packet Bounds
+- Retire stale callbacks/cursors when a transport ends. A late completion cannot
+  resurrect an old join attempt or shut down a new session.
+- Reclaim only the accepted identity/reservation and current seat ownership.
+  Restore the current match/round/body state, not old local selections.
+- Hydrate durable state without replaying casts, hits, score or expired effects.
+  Age simulation clocks from host round progress; holds/pauses do not age them.
+- Observers/spectators receive accepted bodies, aim, held/loose slippers, can
+  carry, fields, ghost/companion states, ultimate phases and cleanup.
+- Do not replace durable state with a one-shot cosmetic event or introduce
+  character-specific RPCs where a shared typed contract already exists.
 
-SelectMapVote requires exactly one integer and a sender ID representable by the
-lobby's peer key. MapVoteTally validates its count, exact payload size and every map
-entry before applying any ballot. QueueVoteState requires exactly its published
-28 bytes. Existing packet layouts and map-selection rules remain unchanged.
-[Native malformed/valid packet evidence](reports/feedback-2026-09-30/map-vote-packets.md)
-also records four previously unrun rematch/intermission cases now passing locally.
-Actual-peer qualification remains separate.
+## Validation
 
-## Evidence And Remaining Limits
-
-Use [TESTING](TESTING.md) for guarded runs. Existing focused fixtures include
-SkillReceiptTests,IceSnapshotBatchTests,MatchmakingWireTests and protocol/approval
-checks in ChatAndLobbyChromeTests. tools/net_link.py and tools/net_matrix.py drive
-actual peers; a source helper test is not a ranked/reconnect/cross-platform match.
-
-Current reports separate compiler checks,pure managed checks,native local cases
-and actual peers. Real ranked/party/reconnect/results qualification is still open.
-Persistent world collections retain explicit kinds beyond the generic prepared
-adapter. Correlated ordinary-verb refusals are implemented; native and real-peer
-qualification of the new receipt/resource path remains open.
-Do not mark NET-SKILLS-1 complete from declarations or compilation alone.
-Old C4/engineering assignments and port mappings live in [archive](archive/README.md);
-their exclusive reservations and historical counts are not current instructions.
+Use scoped native tests plus actual host/owner/observer processes for behavior.
+Exercise join, departure, reconnect, late arrival, round transition, repeated
+shutdown and relevant latency/loss. Label same-PC peers accurately; Relay,
+separate machines and Android require their own evidence.
+Existing `tools/net_*.py`, wire audits and test fixtures are starting points.
+[Historical guide](archive/cleanup-2026-10-25/docs/NETWORKING.md) retains packet
+reasoning and exact dated peer receipts; it does not qualify current source.

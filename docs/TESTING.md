@@ -177,8 +177,9 @@ for preserved importer churn; build preservation and identity gates still apply.
 The loss scenario still requires both live receipts before terminating only its
 owned host and refuses resumed rounds or fabricated completion/results.
 
-The builder can purge a prior player at its target; choose an owned candidate path
-and preserve any needed existing output. Never target the Desktop player by default.
+The builder can purge a prior player at its target; preserve a usable previous
+build until its replacement is verified. Use only the canonical checkout's
+Builds/<platform>/ output with explicit -buildOutput; no candidate/worktree players.
 Verify executable/data and run the exact produced player before claiming it works.
 
 Keep profiles,source/supplied art,contributor dirt and unrelated processes intact.

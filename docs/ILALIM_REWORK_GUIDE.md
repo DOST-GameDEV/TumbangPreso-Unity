@@ -1,3 +1,7 @@
+> Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
+> govern behavior and assignments. Historical values, proposals and unchecked
+> boxes below are context, not automatic work orders.
+
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
 ⚠️⚠️⚠️ **HANDOFF FOR THE NEXT SESSION (written 2026-10-05). Read this first; the CURRENT STATE
