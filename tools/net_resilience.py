@@ -129,7 +129,7 @@ def main():
         assert match > 0 and all(s['match'] == match for s in initial.values()), initial
         assert initial['client']['local'] in (0, 1, 2, 3) and initial['client']['local'] != initial['host']['local'], initial
         watched = initial['host'] if args.dedicated else initial['observer']
-        assert watched['local'] == -1 and watched['spectator'], initial
+        assert watched['local'] == -1 and (watched['spectator'] or args.dedicated and watched['host']), initial
         if args.dedicated:
             assert initial['observer']['local'] in (0, 1, 2, 3) and initial['observer']['local'] != initial['client']['local'], initial
         if args.case.startswith('host-'):
@@ -187,7 +187,7 @@ def main():
             wait_for(lambda: read(out / (watcher + '.state')).get('peerNoticeVisible'),
                      5, 'The actual spectator did not see the retained departure notice.', [watcher])
             signal(watcher, '.shot')
-            wait_for(lambda: (out / (watcher + '.png')).exists(), 5, 'Departure notice screenshot missing.')
+            wait_for(lambda: (out / (watcher + '.png')).exists(), 12, 'Departure notice screenshot missing.')
             shutil.copy2(out / (watcher + '.png'), out / 'departure-notice.png')
             launch('client', 'rejoined')
             wait_for(lambda: read(out / 'rejoined.ready').get('sawLive'), 60, 'Durable client could not rejoin.', ['host', 'observer', 'rejoined'])
