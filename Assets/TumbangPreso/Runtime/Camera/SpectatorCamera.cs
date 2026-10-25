@@ -2172,6 +2172,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void OnDestroy()
         {
+            _privateView?.Dispose(); _privateView = null;
             UI.ScreenTakeover.Unregister(this);
             _captureGeneration++;
 

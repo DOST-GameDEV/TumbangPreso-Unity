@@ -24,6 +24,13 @@ namespace TumbangPreso.CameraSystem
                 VisualPhase = hands && _arms != null ? _arms.ObservedVisualPhase : 0,
                 ActionSequence = hands && _arms != null ? _arms.ObservedActionSequence : 0
             };
+            var main = UnityEngine.Camera.main;
+            if (main == _camera)
+            {
+                Visual.HexedPhantomSlippers.CaptureObserved(_character, ref state.Private);
+                Visual.DisorientedHallucinations.CaptureObserved(_character, ref state.Private);
+                state.Private.Marker = _character.AbilitySystem != null ? _character.AbilitySystem.CaptureObservedMarker() : default;
+            }
             return state.PoseIsValid;
         }
     }

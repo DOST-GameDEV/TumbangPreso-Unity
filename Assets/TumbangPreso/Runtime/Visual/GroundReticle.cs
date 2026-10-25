@@ -155,6 +155,20 @@ namespace TumbangPreso.Visual
         private float _flashTotal;
 
         private CharacterMotor _owner;
+        internal Net.SpectatorAimMarker CaptureObservedMarker() => new Net.SpectatorAimMarker
+        {
+            Present = _held && gameObject.activeInHierarchy,
+            Beacon = _held && gameObject.activeInHierarchy && _wantsBeacon,
+            Position = transform.position, Radius = _radius, Style = (byte)_style, Colour = _colour
+        };
+        internal void ShowObservedMarker(Net.SpectatorAimMarker marker)
+        {
+            if (_owner != null || !marker.Present || !marker.IsValid) { Hide(); return; }
+            _style = (Style)marker.Style;
+            SetBeacon(marker.Beacon);
+            Show(marker.Position, marker.Radius, marker.Colour);
+            transform.position = marker.Position; // Preserve the actual sampled moving-floor height.
+        }
 
         public static GroundReticle Create(Transform parent)
         {

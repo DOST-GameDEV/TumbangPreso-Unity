@@ -9,7 +9,7 @@ namespace TumbangPreso.Net
 {
     public sealed partial class MatchRpc
     {
-        private const byte ViewVersion = 1;
+        private const byte ViewVersion = 2;
         private const float ViewInterval = .1f;
         private readonly Dictionary<ulong, ulong> _viewPeers = new();
         private readonly Dictionary<ulong, int> _viewWatchers = new();
@@ -31,6 +31,7 @@ namespace TumbangPreso.Net
         public int SpectatorViewsPublished { get; private set; }
         public int SpectatorViewsReceived { get; private set; }
         public int SpectatorViewsRelayed { get; private set; }
+        public SpectatorViewState LastPublishedSpectatorView { get; private set; }
 
         private void ResetSpectatorViewTransport()
         {
@@ -45,6 +46,7 @@ namespace TumbangPreso.Net
             _viewSentMask = -1; _viewRequestedSlot = -2; _viewPublishedSequence = 0;
             _viewPublishedAt = _viewRelayedAt = -99;
             SpectatorViewsPublished = SpectatorViewsReceived = SpectatorViewsRelayed = 0;
+            LastPublishedSpectatorView = default;
             ObservedPlayerView.ClearRemote();
         }
         private void SuspendSpectatorViews()
@@ -104,6 +106,7 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(SpectatorViewState.MaxWireBytes + 8, Allocator.Temp);
             writer.WriteValueSafe(_viewNonce); state.Write(writer);
             _nm.CustomMessagingManager.SendNamedMessage("SubmitSpectatorView", NetworkManager.ServerClientId, writer, NetworkDelivery.UnreliableSequenced);
+            LastPublishedSpectatorView = state;
             SpectatorViewsPublished++;
             _viewPublishedAt = Time.unscaledTime;
         }

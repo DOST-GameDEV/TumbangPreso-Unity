@@ -6,12 +6,14 @@ using TumbangPreso.Core;
 using TumbangPreso.Net;
 using TumbangPreso.UI;
 using Unity.Netcode;
+using Unity.Collections;
 using UnityEngine;
 
 namespace TumbangPreso.Diagnostics
 {
-    // Explicit local-player transport fixture. Only its owner camera is posed;
-    // gameplay state, ownership checks and received view data remain untouched.
+    // Explicit transport fixture: posed owner camera; optional private-view mode
+    // applies host statuses and draws an owner marker through existing presentation.
+    // No movement, casts or scores are forced; ordinary packet ownership still applies.
     [DefaultExecutionOrder(31000)]
     public sealed class NetObservedViewProbe : MonoBehaviour
     {
@@ -20,6 +22,8 @@ namespace TumbangPreso.Diagnostics
             public string role, error; public int local, samples, published, received, relayed;
             public long match; public float maxEyeError, minFov = 999, maxFov, sentAt;
             public bool watched, unsubscribed;
+            public int maxPhantoms, maxHexShoes, maxFakePlayers, maxFakeShoes, markerSamples, beaconSamples, renderedPhantoms, renderedMarkerSamples;
+            public bool privateRequested, privateReleased;
         }
         private string _role, _path;
         private StreamWriter _csv;
@@ -30,6 +34,10 @@ namespace TumbangPreso.Diagnostics
         private bool _startSent, _readySent;
         private readonly Receipt _receipt = new();
         private bool _unsubscribed, _finished;
+        private bool _private;
+        private float _privateStatusAt;
+        private Visual.GroundReticle _ownerMarker;
+        private bool _privateShot;
         private static string Arg(string key)
         {
             var args = Environment.GetCommandLineArgs(); int at = Array.IndexOf(args, key);
@@ -50,9 +58,11 @@ namespace TumbangPreso.Diagnostics
             var probe = root.AddComponent<NetObservedViewProbe>();
             probe._path = Path.GetFullPath(path); probe._role = Arg("-tp-viewrole") ?? "host";
             probe._receipt.role = probe._role; probe._started = Time.realtimeSinceStartup;
+            probe._private = Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-viewprivate") >= 0;
+            probe._receipt.privateRequested = probe._private;
             Directory.CreateDirectory(Path.GetDirectoryName(probe._path));
             probe._csv = new StreamWriter(probe._path) { AutoFlush = true };
-            probe._csv.WriteLine("time,role,match,round,slot,epoch,serial,sent,eye_x,eye_y,eye_z,pitch,yaw,roll,fov,action,aim,published,received,relayed,applied_error");
+            probe._csv.WriteLine("time,role,match,round,slot,epoch,serial,sent,eye_x,eye_y,eye_z,pitch,yaw,roll,fov,action,aim,published,received,relayed,applied_error,phantoms,marker,private");
             root.AddComponent<NetObservedViewDriver>().Owner = probe;
         }
         private void Update()
@@ -84,14 +94,23 @@ namespace TumbangPreso.Diagnostics
                 _readySent = rpc.DeclareReadyServerRpc();
             if (GameServices.Round?.RoundActive != true || GameServices.Match?.IsWarmupBuffer == true || rpc == null) return;
             if (NetAuthority.IsHost)
+            {
                 foreach (var actor in GameServices.Round.Players)
                 { var brain = actor != null ? actor.GetComponent<AIController>() : null; if (brain != null) brain.enabled = false; }
+                if (_private && Time.unscaledTime >= _privateStatusAt)
+                {
+                    _privateStatusAt = Time.unscaledTime + 6;
+                    var subject = GameServices.Round.PlayerAt(1); subject?.ApplyHexed(); subject?.ApplyDisoriented();
+                }
+            }
             if (_role == "observer" && GameLaunch.Spectator)
             {
                 if (_observer == null) _observer = FindAnyObjectByType<SpectatorCamera>();
                 if (_observer != null && !_unsubscribed && _observer.FollowedPlayer?.PlayerSlot != 1) _observer.TryWatchPlayer(1);
                 if (_observer != null && _liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > 20 && !_unsubscribed)
                 { _observer.ExecuteViewCommand(SpectatorCamera.ViewCommand.FreeFlight); _unsubscribed = true; _receipt.unsubscribed = true; }
+                if (_unsubscribed && _observer != null && _observer.PrivatePhantomCount == 0 && !_observer.PrivateMarkerVisible)
+                    _receipt.privateReleased = true;
             }
             bool flowing = _role == "owner" ? rpc.SpectatorViewsPublished > 0
                 : _role == "observer" ? rpc.SpectatorViewsReceived > 0 : rpc.SpectatorViewsRelayed > 0;
@@ -112,6 +131,18 @@ namespace TumbangPreso.Diagnostics
             _ownerRig.Camera.fieldOfView = 91 + 5 * Mathf.Sin(t * .9f);
             if (Time.unscaledTime >= _nextGesture)
             { _nextGesture = Time.unscaledTime + 2; _ownerRig.GetComponentInChildren<ViewmodelArms>(true)?.PlayAction("grab"); }
+            if (_private)
+            {
+                if (_ownerMarker == null) _ownerMarker = actor.GetComponentInChildren<Visual.GroundReticle>(true);
+                if (_ownerMarker != null)
+                {
+                    Vector3 along = _ownerRig.Camera.transform.forward; along.y = 0; along.Normalize();
+                    var point = actor.transform.position + along * 4 + Vector3.Cross(Vector3.up, along) * (.8f * Mathf.Sin(t * .8f));
+                    _ownerMarker.SetStyle(Mathf.Sin(t * .5f) > 0 ? Visual.GroundReticle.Style.Maw : Visual.GroundReticle.Style.Ember);
+                    _ownerMarker.SetBeacon(Mathf.Cos(t * .45f) > 0);
+                    _ownerMarker.Show(point, 3 + .5f * Mathf.Sin(t), UI.UiTheme.HeroSpiritBright); _ownerMarker.Tick(0);
+                }
+            }
         }
         private void LateUpdate()
         {
@@ -119,7 +150,9 @@ namespace TumbangPreso.Diagnostics
             _sampleAt = Time.unscaledTime + .1f;
             var actor = GameServices.Round?.PlayerAt(1); if (actor == null) return;
             var rpc = MatchRpc.Instance; SpectatorViewState state;
-            bool has = _role == "owner" ? ObservedPlayerView.TryLocal(actor, out state) : ObservedPlayerView.TryGet(actor, out state, out _);
+            bool has;
+            if (_role == "owner") { state = rpc.LastPublishedSpectatorView; has = state.IsValid; }
+            else has = ObservedPlayerView.TryGet(actor, out state, out _);
             if (!has || (_role == "observer" && _unsubscribed)) return;
             _receipt.samples++; _receipt.local = NetAuthority.LocalSlot; _receipt.match = state.Match;
             _receipt.published = rpc.SpectatorViewsPublished; _receipt.received = rpc.SpectatorViewsReceived; _receipt.relayed = rpc.SpectatorViewsRelayed;
@@ -127,11 +160,33 @@ namespace TumbangPreso.Diagnostics
             float error = _role == "observer" && _observer != null ? Vector3.Distance(state.Eye, _observer.transform.position) : 0;
             _receipt.maxEyeError = Mathf.Max(_receipt.maxEyeError, error); _receipt.sentAt = state.SentAt;
             _receipt.watched |= _role == "observer" && _observer != null && _observer.IsWatchingEyes(actor);
+            int hex = 0, players = 0, shoes = 0;
+            foreach (var phantom in state.Private.Phantoms)
+            {
+                if (phantom.Kind == SpectatorPhantom.HexShoe) hex++;
+                else if (phantom.Kind == SpectatorPhantom.DisorientedPlayer) players++;
+                else if (phantom.Kind == SpectatorPhantom.DisorientedShoe) shoes++;
+            }
+            _receipt.maxPhantoms = Mathf.Max(_receipt.maxPhantoms, state.Private.Phantoms.Length);
+            _receipt.maxHexShoes = Mathf.Max(_receipt.maxHexShoes, hex); _receipt.maxFakePlayers = Mathf.Max(_receipt.maxFakePlayers, players);
+            _receipt.maxFakeShoes = Mathf.Max(_receipt.maxFakeShoes, shoes); if (state.Private.Marker.Present) _receipt.markerSamples++;
+            if (state.Private.Marker.Present && state.Private.Marker.Beacon) _receipt.beaconSamples++;
+            if (_role == "observer" && _observer != null)
+            {
+                _receipt.renderedPhantoms = Mathf.Max(_receipt.renderedPhantoms, _observer.PrivatePhantomCount);
+                if (_observer.PrivateMarkerVisible) _receipt.renderedMarkerSamples++;
+            }
+            if (_private && !_privateShot && _role != "host" && state.Private.Phantoms.Length >= 7
+                && state.Private.Marker.Present && Time.realtimeSinceStartup - _liveAt > 1)
+            { _privateShot = true; ScreenCapture.CaptureScreenshot(_path + ".private.png"); }
+            using var privateBytes = new FastBufferWriter(SpectatorPrivateView.MaxWireBytes, Allocator.Temp);
+            state.Private.Write(privateBytes); string privateData = Convert.ToBase64String(privateBytes.ToArray());
             var e = state.Rotation.eulerAngles;
             string F(float value) => value.ToString("F5", CultureInfo.InvariantCulture);
             _csv.WriteLine(string.Join(",", F(Time.unscaledTime), _role, state.Match, state.Round, state.Slot, state.Epoch,
                 state.Sequence, F(state.SentAt), F(state.Eye.x), F(state.Eye.y), F(state.Eye.z), F(e.x), F(e.y), F(e.z), F(state.Fov),
-                state.Action.ToString(), state.Aim.ToString(), rpc.SpectatorViewsPublished, rpc.SpectatorViewsReceived, rpc.SpectatorViewsRelayed, F(error)));
+                state.Action.ToString(), state.Aim.ToString(), rpc.SpectatorViewsPublished, rpc.SpectatorViewsReceived, rpc.SpectatorViewsRelayed,
+                F(error), state.Private.Phantoms.Length, state.Private.Marker.Present ? 1 : 0, privateData));
         }
         private void Finish(string error)
         {

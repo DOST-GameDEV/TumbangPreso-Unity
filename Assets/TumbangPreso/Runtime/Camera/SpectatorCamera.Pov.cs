@@ -10,11 +10,14 @@ namespace TumbangPreso.CameraSystem
         private int _observedEpoch = -1;
         private SpectatorViewState _observedPose;
         private bool _observedMotionChanged, _resetObservedMotion;
+        private ObservedPrivateView _privateView;
+        public int PrivatePhantomCount => _privateView?.Count ?? 0;
+        public bool PrivateMarkerVisible => _privateView?.MarkerVisible ?? false;
         private string ObservedPovLabel => !_observedViewAvailable ? "WAITING FOR PLAYER VIEW"
             : _observedBot ? (_follow != null && _follow.IsBot ? "BOT VIEW" : "REFERENCE VIEW")
             : _observedFirstPerson ? "FIRST PERSON" : "PLAYER VIEW";
         public CharacterMotor PlayerViewTarget => isActiveAndEnabled && _pov && _follow != null && _observedActor == _follow
-            && _observedViewAvailable && !SpectatorCutscene.Hides && !_replaying ? _follow : null;
+            && _observedEpoch == _follow.MovementEpoch && _observedViewAvailable && !SpectatorCutscene.Hides && !_replaying ? _follow : null;
         public bool IsWatchingEyes(CharacterMotor actor) => actor != null && PlayerViewTarget == actor && _observedFirstPerson;
         public CharacterMotor EyesTarget => IsWatchingEyes(_follow) ? _follow : null;
         public CharacterMotor FollowedPlayer => _follow;
@@ -28,16 +31,25 @@ namespace TumbangPreso.CameraSystem
 
         private void LateUpdate()
         {
-            if (!_pov || _follow == null) return;
+            if (!_pov || _follow == null) { _privateView?.Clear(); return; }
+            if (_observedActor != _follow || _observedEpoch != _follow.MovementEpoch)
+            { _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0); }
             ObservedPlayerView.SetTarget(_follow);
-            if (UI.Panel.AnyOpen || UI.ScreenTakeover.AnyOpenOutside(transform)) return;
             if (SpectatorCutscene.Hides || PresentationClock.Held || _replaying)
             {
-                _observedViewAvailable = false; StepPovArms(0); return;
+                _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0); return;
             }
             if (!_follow.gameObject.activeInHierarchy)
             {
                 _follow = null; _followIndex = -1; _pov = false; ResetObservedView(); StepPovArms(0); return;
+            }
+            if (UI.Panel.AnyOpen || UI.ScreenTakeover.AnyOpenOutside(transform))
+            {
+                // A translucent menu can hold the camera, but cannot keep stale private
+                // geometry alive after its source stream or body scope is gone.
+                if (!ObservedPlayerView.TryGet(_follow, out _, out _))
+                { _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0); }
+                return;
             }
             float dt = Time.unscaledDeltaTime;
             if (ObservedPlayerView.TryGet(_follow, out var view, out bool local))
@@ -59,12 +71,15 @@ namespace TumbangPreso.CameraSystem
                 _observedHands = (view.Flags & SpectatorViewState.HandsVisible) != 0;
                 _observedBot = (view.Flags & SpectatorViewState.BotView) != 0;
                 StepPovArms(Time.deltaTime);
+                if (local) _privateView?.Clear();
+                else if (view.Private.Phantoms.Length > 0 || view.Private.Marker.Present || _privateView != null)
+                { _privateView ??= new ObservedPrivateView(transform); _privateView.Apply(view.Private); }
             }
             else
             {
                 // A missing/legacy stream is a labeled follow view, not a fabricated
                 // "actual" eye pose driven by the operator's mouse pitch.
-                _observedViewAvailable = false; StepPovArms(0);
+                _observedViewAvailable = false; _privateView?.Clear(); StepPovArms(0);
                 if (_camera != null) _camera.fieldOfView = SpectatorFov;
                 Shader.SetGlobalFloat(Visual.NearFade.EyeDropId, 0);
                 Vector3 focus = _follow.transform.position + Vector3.up * PovEyeHeight();
@@ -78,6 +93,7 @@ namespace TumbangPreso.CameraSystem
             _observedViewAvailable = _observedFirstPerson = _observedHands = _observedBot = false;
             _observedActor = null; _observedEpoch = -1;
             _observedMotionChanged = _resetObservedMotion = false; _observedPose = default;
+            _privateView?.Dispose(); _privateView = null;
             ObservedPlayerView.SetTarget(null);
             if (_camera != null) _camera.fieldOfView = SpectatorFov;
             Shader.SetGlobalFloat(Visual.NearFade.EyeDropId, 0);

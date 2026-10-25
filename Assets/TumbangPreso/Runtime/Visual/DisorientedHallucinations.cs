@@ -16,6 +16,7 @@ namespace TumbangPreso.Visual
     /// Each phantom stands off its source by a hand-set offset and wanders, so it reads as "one of them is
     /// over there" rather than a double image. They fade in and out at the edges of the 4 s.
     /// </summary>
+    [DefaultExecutionOrder(29000)]
     public sealed class DisorientedHallucinations : MonoBehaviour
     {
         private static DisorientedHallucinations _live;
@@ -30,6 +31,9 @@ namespace TumbangPreso.Visual
         private sealed class Phantom
         {
             public Transform Source; public GameObject Body; public Vector3 Offset; public float Phase;
+            public byte Kind, SourceSeat;
+            public ushort Skin;
+            public uint Id;
             public readonly List<(SkinnedMeshRenderer skin, MeshFilter filter)> Skins = new List<(SkinnedMeshRenderer, MeshFilter)>();
         }
 
@@ -37,7 +41,11 @@ namespace TumbangPreso.Visual
         public static void Begin(CharacterMotor victim)
         {
             if (victim == null) return;
-            if (_live != null) { _live._age = Mathf.Min(_live._age, 0.3f); return; }
+            if (_live != null)
+            {
+                if (_live._victim == victim) { _live._age = Mathf.Min(_live._age, 0.3f); return; }
+                _live.End();
+            }
             var go = new GameObject("~DisorientedHallucinations");
             _live = go.AddComponent<DisorientedHallucinations>();
             _live._victim = victim;
@@ -62,11 +70,17 @@ namespace TumbangPreso.Visual
                 _phantoms.Add(Copy(s.transform, Offsets[(used + shoes + 2) % Offsets.Length] * 0.6f, shoes * 2.3f + 0.5f));
                 shoes++;
             }
+            for (int i = 0; i < _phantoms.Count; i++) _phantoms[i].Id = (uint)(i + 1);
         }
 
         private static Phantom Copy(Transform source, Vector3 offset, float phase)
         {
             var ph = new Phantom { Source = source, Offset = offset, Phase = phase, Body = new GameObject("phantom-" + source.name) };
+            var actor = source.GetComponent<CharacterMotor>(); var shoe = source.GetComponent<Slipper>();
+            ph.Kind = actor != null ? Net.SpectatorPhantom.DisorientedPlayer : Net.SpectatorPhantom.DisorientedShoe;
+            int seat = actor != null ? actor.PlayerSlot : shoe != null ? shoe.SeatOfOrigin : -1;
+            ph.SourceSeat = seat >= 0 && seat < Balance.PlayerCount ? (byte)seat : byte.MaxValue;
+            ph.Skin = (ushort)(shoe != null ? Mathf.Clamp(shoe.SkinIndex, 0, Roster.Slippers.Count - 1) : 0);
             foreach (var r in source.GetComponentsInChildren<Renderer>())
             {
                 if (r == null || !r.enabled || r is ParticleSystemRenderer) continue;
@@ -93,9 +107,11 @@ namespace TumbangPreso.Visual
             _rebake -= Time.deltaTime;
             bool rebake = _rebake <= 0f;
             if (rebake) _rebake = 0.2f;
+            bool visible = SourceView(_victim);
             foreach (var ph in _phantoms)
             {
                 if (ph.Source == null || ph.Body == null) continue;
+                if (ph.Body.activeSelf != visible) ph.Body.SetActive(visible);
                 // A slow wander so it never sits still like a mirror.
                 float t = _age + ph.Phase;
                 Vector3 wander = new Vector3(Mathf.Sin(t * 0.9f) * 0.6f, 0f, Mathf.Cos(t * 0.7f) * 0.6f);
@@ -107,8 +123,39 @@ namespace TumbangPreso.Visual
                         if (skin != null && filter != null) skin.BakeMesh(filter.sharedMesh);
             }
         }
+        private static bool SourceView(CharacterMotor victim)
+        {
+            var camera = Camera.main; var rig = camera != null ? camera.GetComponent<CameraSystem.CameraRig>() : null;
+            return rig != null && rig.IsFollowing(victim);
+        }
+        private void LateUpdate()
+        {
+            bool visible = _victim != null && SourceView(_victim);
+            foreach (var phantom in _phantoms)
+                if (phantom.Body != null && phantom.Body.activeSelf != visible) phantom.Body.SetActive(visible);
+        }
+        internal static void CaptureObserved(CharacterMotor victim, ref Net.SpectatorPrivateView view)
+        {
+            if (_live == null || _live._victim != victim || !SourceView(victim)) return;
+            foreach (var phantom in _live._phantoms)
+            {
+                if (view.Phantoms.Length >= Net.SpectatorPrivateView.MaxPhantoms) break;
+                if (phantom.Body == null || !phantom.Body.activeInHierarchy) continue;
+                var root = phantom.Body.transform;
+                var record = new Net.SpectatorPhantom { Kind = phantom.Kind, Id = phantom.Id,
+                    SourceSeat = phantom.SourceSeat, Skin = phantom.Skin,
+                    Position = root.position, Rotation = root.rotation, Scale = root.lossyScale };
+                if (record.IsValid) view.Phantoms.Add(record);
+            }
+        }
 
         private void End()
+        {
+            ReleasePhantoms();
+            if (_live == this) _live = null;
+            Destroy(gameObject);
+        }
+        private void ReleasePhantoms()
         {
             foreach (var ph in _phantoms)
             {
@@ -117,8 +164,7 @@ namespace TumbangPreso.Visual
                 Destroy(ph.Body);
             }
             _phantoms.Clear();
-            if (_live == this) _live = null;
-            Destroy(gameObject);
         }
+        private void OnDestroy() { ReleasePhantoms(); if (_live == this) _live = null; }
     }
 }

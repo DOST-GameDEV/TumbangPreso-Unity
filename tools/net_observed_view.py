@@ -19,6 +19,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('exe', type=Path)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--private', action='store_true', help='Exercise host statuses and actual private hallucinations/held marker too.')
     args = parser.parse_args()
     exe, out = args.exe.resolve(), args.out.resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):
@@ -48,6 +49,7 @@ def main():
                 '-tp-framecap', '30', '-tp-map', 'Eskinita',
                 '-tp-profile', out.name+'-'+role, '-tp-viewrole', role, '-tp-viewtrace', str(out/(role+'.csv')),
                 '-logFile', str(out/(role+'.log'))]
+            if args.private: command.append('-tp-viewprivate')
             command += ['-tp-lobbyport', str(ports[index])]
             command += ['-tp-lobby'] if index == 0 else ['-tp-lobbyjoin', '127.0.0.1:'+str(port)]
             commands.append(command)
@@ -97,19 +99,29 @@ def main():
             rows[role] = list(csv.DictReader(file))
         if receipts[role]['samples'] < 30:
             errors.append(role+': fewer than30 view samples')
-    matched = 0
+    matched, owner_matched = set(), set()
+    def compare(left, reference, stage):
+        for field in ['eye_x', 'eye_y', 'eye_z', 'pitch', 'yaw', 'roll', 'fov', 'sent']:
+            if abs(float(left[field])-float(reference[field])) > .0001:
+                errors.append(stage+' changed '+field)
+        for field in ['action', 'aim', 'private']:
+            if left.get(field) != reference.get(field): errors.append(stage+' changed '+field)
+    if 'owner' in rows and 'host' in rows:
+        source = {(r['match'], r['round'], r['epoch'], r['sent']): r for r in rows['owner']}
+        for row in rows['host']:
+            key = (row['match'], row['round'], row['epoch'], row['sent'])
+            reference = source.get(key)
+            if reference is None: continue
+            owner_matched.add(key); compare(row, reference, 'Owner-to-host')
+        if len(owner_matched) < 20: errors.append('Fewer than20 matching owner/host packets')
     if 'host' in rows and 'observer' in rows:
         host = {(r['match'], r['round'], r['epoch'], r['serial']): r for r in rows['host']}
         for row in rows['observer']:
             reference = host.get((row['match'], row['round'], row['epoch'], row['serial']))
             if reference is None: continue
-            matched += 1
-            for field in ['eye_x', 'eye_y', 'eye_z', 'pitch', 'yaw', 'roll', 'fov', 'sent']:
-                if abs(float(row[field])-float(reference[field])) > .0001:
-                    errors.append('Relay changed '+field); break
-            if row['action'] != reference['action'] or row['aim'] != reference['aim']:
-                errors.append('Relay changed viewmodel state')
-        if matched < 20: errors.append('Fewer than20 matching host/observer packets')
+            matched.add((row['match'], row['round'], row['epoch'], row['serial']))
+            compare(row, reference, 'Host-to-observer')
+        if len(matched) < 20: errors.append('Fewer than20 matching host/observer packets')
     if 'observer' in receipts:
         receipt = receipts['observer']
         if not receipt['watched'] or not receipt['unsubscribed'] or receipt['received'] < 20:
@@ -121,8 +133,23 @@ def main():
         tail = [r for r in rows['owner'] if float(r['time']) >= last-2]
         if len({r['published'] for r in tail}) != 1:
             errors.append('Owner kept publishing after spectator unsubscribed')
-    report = {'passed': not errors, 'matched_packets': matched, 'receipts': receipts, 'errors': sorted(set(errors)),
-              'scope': 'Three real processes on one Windows PC; controlled camera fixture, not separate-machine/WAN/device acceptance.'}
+    if args.private:
+        for role in ['owner', 'host', 'observer']:
+            receipt = receipts.get(role, {})
+            if any(receipt.get(field, 0) < 1 for field in ['maxHexShoes', 'maxFakePlayers', 'maxFakeShoes']):
+                errors.append(role+': missing actual private hallucination kinds')
+            if receipt.get('markerSamples', 0) < 10: errors.append(role+': missing held-marker samples')
+            if receipt.get('beaconSamples', 0) < 5: errors.append(role+': missing held-marker beacon samples')
+        observer = receipts.get('observer', {})
+        if observer.get('renderedPhantoms', 0) < observer.get('maxPhantoms', 1) or observer.get('renderedMarkerSamples', 0) < 10:
+            errors.append('Observer did not render all private roots and the held marker')
+        if not observer.get('privateReleased'): errors.append('Private render copies remained after leaving player view')
+        for role in ['owner', 'observer']:
+            picture = out/(role+'.csv.private.png')
+            if not picture.is_file() or picture.stat().st_size < 1000: errors.append(role+': missing real private-view capture')
+    report = {'passed': not errors, 'matched_packets': len(matched), 'matched_owner_packets': len(owner_matched),
+              'private_requested': args.private, 'receipts': receipts, 'errors': sorted(set(errors)),
+              'scope': 'Three real processes on one Windows PC; controlled camera/optional private-status fixture, not natural/separate-machine/WAN/device acceptance.'}
     (out/'summary.json').write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2), flush=True)
     return bool(errors)

@@ -15,6 +15,7 @@ namespace TumbangPreso.Visual
     /// and how: slippers only, one at a time, placed where a player looks (in front of the victim, or beside a real loose
     /// slipper so a pair lies where one should), settling at full size on plausible ground rather than growing from miniature shoes.
     /// </summary>
+    [DefaultExecutionOrder(29000)]
     public sealed class HexedPhantomSlippers : MonoBehaviour
     {
         private static HexedPhantomSlippers _live;
@@ -47,10 +48,33 @@ namespace TumbangPreso.Visual
             }
             return _rig != null && _rig.IsFollowing(_victim);
         }
+        private void LateUpdate()
+        {
+            bool visible = _victim != null && VictimView();
+            foreach (var phantom in _phantoms)
+                if (phantom.Body != null && phantom.Body.activeSelf != visible) phantom.Body.SetActive(visible);
+        }
 
         private sealed class Phantom
         {
             public GameObject Body; public float Age, Life; public Vector3 Rest;
+            public byte SourceSeat;
+            public ushort Skin;
+            public uint Id;
+        }
+        internal static void CaptureObserved(CharacterMotor victim, ref Net.SpectatorPrivateView view)
+        {
+            if (_live == null || _live._victim != victim || !_live.VictimView()) return;
+            foreach (var phantom in _live._phantoms)
+            {
+                if (view.Phantoms.Length >= Net.SpectatorPrivateView.MaxPhantoms) break;
+                if (phantom.Body == null || !phantom.Body.activeInHierarchy) continue;
+                var root = phantom.Body.transform;
+                var record = new Net.SpectatorPhantom { Kind = Net.SpectatorPhantom.HexShoe, Id = phantom.Id,
+                    SourceSeat = phantom.SourceSeat, Skin = phantom.Skin,
+                    Position = root.position, Rotation = root.rotation, Scale = root.lossyScale };
+                if (record.IsValid) view.Phantoms.Add(record);
+            }
         }
 
         /// <summary>Start (or refresh) the hallucination for the local player's body.</summary>
@@ -132,7 +156,9 @@ namespace TumbangPreso.Visual
             float lowest = float.PositiveInfinity;
             foreach (var renderer in renderers) lowest = Mathf.Min(lowest, renderer.bounds.min.y);
             body.transform.position += Vector3.up * (at.y + .01f - lowest);
-            var ph = new Phantom { Body = body, Life = Lives[turn % Lives.Length], Rest = body.transform.position };
+            var ph = new Phantom { Body = body, Life = Lives[turn % Lives.Length], Rest = body.transform.position,
+                SourceSeat = source.SeatOfOrigin >= 0 && source.SeatOfOrigin < Core.Balance.PlayerCount ? (byte)source.SeatOfOrigin : byte.MaxValue,
+                Skin = (ushort)Mathf.Clamp(source.SkinIndex, 0, Core.Roster.Slippers.Count - 1), Id = (uint)turn + 1 };
             body.transform.position += Vector3.up * .035f;
             _phantoms.Add(ph);
         }

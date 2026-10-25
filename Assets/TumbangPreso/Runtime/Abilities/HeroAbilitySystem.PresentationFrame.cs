@@ -14,6 +14,7 @@ namespace TumbangPreso.Abilities
             public long Match;
         }
         private readonly PresentedFrame[] _presentedFrames = new PresentedFrame[3];
+        internal Net.SpectatorAimMarker CaptureObservedMarker() => _reticle != null ? _reticle.CaptureObservedMarker() : default;
 
         // Capture at the existing presentation confirmation, before its event is raised.
         // Future mouse movement, a changed hold or a replica's empty Intent cannot move it.

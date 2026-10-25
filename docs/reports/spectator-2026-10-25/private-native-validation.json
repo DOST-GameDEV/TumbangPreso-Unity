@@ -1,0 +1,42 @@
+{
+  "candidate": true,
+  "scope": "Native local D3D11 codec/capture/render-only/lifecycle checks; overlapping suites. Real private-view transport and backbuffer captures pending.",
+  "receipts": [
+    {
+      "file": "Logs\\spectator-1025\\private-beacon-codec.xml",
+      "passed": 8,
+      "end": "2026-10-25 10:16:39Z",
+      "sha256": "61f4481d55fe1df0bd8a8c93f003971afd52758ae51eec5d8ff45806f615f701"
+    },
+    {
+      "file": "Logs\\spectator-1025\\private-final-play.xml",
+      "passed": 20,
+      "end": "2026-10-25 09:42:22Z",
+      "sha256": "54a73a9bd7059fef406d2aadbb86d8450986b0c3313011c479ed9bbb4717aeeb"
+    },
+    {
+      "file": "Logs\\spectator-1025\\private-roots-play.xml",
+      "passed": 4,
+      "end": "2026-10-25 09:45:11Z",
+      "sha256": "280e2f434035679cd6ab17909ba049bab39a66bf05c4c510e3ad06c8749895b5"
+    },
+    {
+      "file": "Logs\\spectator-1025\\private-scope-play.xml",
+      "passed": 14,
+      "end": "2026-10-25 09:53:32Z",
+      "sha256": "fd600bf7dbf621dff12b419696e73f592efaf470a6a53272a0eb72ca62489846"
+    },
+    {
+      "file": "Logs\\spectator-1025\\private-menu-final.xml",
+      "passed": 15,
+      "end": "2026-10-25 10:13:30Z",
+      "sha256": "fcd0d9c7a959570c11f9259b2913197112b7054eaf55c81b46d8a4a53202f39b"
+    }
+  ],
+  "viewCapability": 2,
+  "minPoseBytes": 111,
+  "maxPoseBytes": 686,
+  "maxPrivatePhantoms": 9,
+  "gameplayProtocol": 181,
+  "markerBeacon": "Packed marker flag, no packet-size increase"
+}
