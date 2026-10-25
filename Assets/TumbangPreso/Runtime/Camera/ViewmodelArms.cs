@@ -1272,6 +1272,7 @@ namespace TumbangPreso.CameraSystem
             // top of this class: they fed `ViewmodelClothPhysics`, and the recoil they added was
             // paid for by the outer sleeve walking through its own lining on every cast.
 
+            if (_clip != null) { _visualActionSequence++; if (_visualActionSequence == 0) _visualActionSequence++; }
             return _clip != null;
         }
 
@@ -1337,7 +1338,7 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            float seanTime = _actionName == "supernova-slam"
+            float seanTime = !_usesObservedMotion && _actionName == "supernova-slam"
                 && _characterMotor?.AbilitySystem?.Kit is Abilities.SeanHeroKit sean
                 ? sean.SupernovaPoseTime : -1;
             _clipTime = seanTime >= 0 ? seanTime : _clipTime + dt;

@@ -1,5 +1,21 @@
 # Skill network contract
 
+## Optional spectator view data
+
+The spectator-view candidate uses a separate capability-negotiated cosmetic
+channel. It does not extend movement, cast or score packets. Versioned Hello/Ready
+messages bind a transport nonce; a spectator subscribes to one seat and the host
+enables only the required owner's camera publication. A legacy peer does not get
+a repeated unknown pose stream.
+
+`SpectatorViewState` owns its bounded codec: camera eye/full rotation/FOV, near-fade
+eye drop, viewmodel pose/action/aim/time and match/round/body epoch/serial. Only a
+current seat owner may submit; only the host relays to subscribed spectators.
+Validate complete payload, identity/scope, finite/range values, age and ordering
+before updating presentation. Camera data cannot drive a motor, contact or score.
+Native codec/local-view tests are scoped evidence; real-peer qualification is
+still required before this candidate is integrated.
+
 Live authoring rules, 2026-10-25. Verify details against the owning codec and
 runtime path before editing. `NetSession.ProtocolVersion` and
 `SkillContractFingerprint` own compatibility. The complete
