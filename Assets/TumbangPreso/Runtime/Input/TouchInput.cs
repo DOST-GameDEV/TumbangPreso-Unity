@@ -35,6 +35,21 @@ namespace TumbangPreso.InputLayer
         private static readonly HashSet<Verb> Held = new HashSet<Verb>();
         private static bool _recoveryPressed;
         public static uint ReleaseVersion { get; private set; }
+        private static object _lookOwner;
+        private static int _lookPointer, _lookButton;
+        public static bool CaptureLook(object owner, int pointer, int button)
+        {
+            if (owner == null) return false;
+            if (_lookOwner != null) return OwnsLook(owner, pointer, button);
+            _lookOwner = owner; _lookPointer = pointer; _lookButton = button; return true;
+        }
+        public static bool OwnsLook(object owner, int pointer, int button)
+            => ReferenceEquals(_lookOwner, owner) && _lookPointer == pointer && _lookButton == button;
+        public static void ReleaseLook(object owner)
+        {
+            if (!ReferenceEquals(_lookOwner, owner)) return;
+            _lookOwner = null; LookDelta = Vector2.zero;
+        }
 
         /// <summary>
         /// True while the on-screen layer is drawn. Everything below is inert when it is not, so
@@ -83,6 +98,7 @@ namespace TumbangPreso.InputLayer
         public static void ReleaseAll()
         {
             unchecked { ReleaseVersion++; }
+            _lookOwner = null;
             Held.Clear();
             _recoveryPressed=false;
             Move = Vector2.zero;

@@ -219,9 +219,14 @@ namespace TumbangPreso.InputLayer
         private RectTransform _lookArea;
         private RectTransform _touchRoot;
         private bool _backgrounded, _touchFocused = true;
+        private Rect _touchSafeArea;
+        private ScreenOrientation _touchOrientation;
+        private Vector2 _touchPixels;
+        private bool _touchSurfaceKnown;
 
         private void CancelTouches()
         {
+            if (!ReferenceEquals(Instance, this)) return;
             foreach (var button in _buttons) if (button != null) button.SetHeld(false);
             _stick?.SetValue(Vector2.zero);
             if (_lookArea != null) _lookArea.GetComponent<TouchLookArea>()?.Cancel();
@@ -267,6 +272,9 @@ namespace TumbangPreso.InputLayer
         {
             Instance = this;
             Build();
+            foreach (var button in _buttons) button.BindHudOwner(this);
+            _stick?.BindHudOwner(this);
+            if (_lookArea != null) _lookArea.GetComponent<TouchLookArea>()?.BindHudOwner(this);
             _openingUi = _canvas.gameObject.AddComponent<CanvasGroup>();
             _openingUi.alpha = ReadyGate.HudAlpha;
         }
@@ -704,6 +712,14 @@ namespace TumbangPreso.InputLayer
 
         private void Update()
         {
+            if (!ReferenceEquals(Instance, this)) return;
+            var pixels = _canvas != null ? _canvas.pixelRect.size : Vector2.zero;
+            if (_touchSafeArea != Screen.safeArea || _touchOrientation != Screen.orientation || _touchPixels != pixels)
+            {
+                _touchSafeArea = Screen.safeArea; _touchOrientation = Screen.orientation; _touchPixels = pixels;
+                if (_touchSurfaceKnown) CancelTouches();
+                _touchSurfaceKnown = true;
+            }
             RefreshSpectatorControls();
             if (_openingUi != null)
             {

@@ -50,5 +50,40 @@ namespace TumbangPreso.PlayTests
             finally { Object.DestroyImmediate(owner); }
             yield return PlayModeWorld.Reset();
         }
+        [UnityTest] public IEnumerator CurrentKitsUseDragAimOnlyForTheirActualHeldAbilitiesInBothRoles()
+        {
+            yield return PlayModeWorld.Reset();GameServices.Ensure();bool active=TouchInput.Active;TouchInput.Active=true;
+            var body=new GameObject("Mobile current kit policy",typeof(CharacterController));
+            var actor=body.AddComponent<CharacterMotor>();actor.enabled=false;actor.PlayerSlot=1;actor.IsPerson=true;
+            var system=actor.AbilitySystem??body.AddComponent<Abilities.HeroAbilitySystem>();system.enabled=false;
+            var face=new GameObject("Current skill touch",typeof(RectTransform),typeof(CanvasGroup));
+            var painter=face.AddComponent<OwnerTouchSurface>();var button=face.AddComponent<TouchButton>();
+            var pointer=new PointerEventData(EventSystem.current){pointerId=7,delta=Vector2.right*24};
+            int aimed=0,immediate=0;
+            try
+            {
+                foreach(var hero in Core.Roster.HeroPeople)
+                {
+                    system.BindHero(hero.Id);
+                    foreach(bool defending in new[]{false,true})
+                    {
+                        system.Kit.SetRole(defending,new Abilities.AbilityContext(actor,null,null));
+                        foreach(var verb in new[]{Verb.Skill1,Verb.Skill2,Verb.Ultimate})
+                        {
+                            var ability=verb==Verb.Skill1?system.Kit.Skill1:verb==Verb.Skill2?system.Kit.Skill2:system.Kit.Ultimate;
+                            button.BindOwnerPresentation(InputCatalogue.For(verb),face.GetComponent<CanvasGroup>(),painter,null,null);
+                            button.RefreshIcon(actor);TouchInput.ReleaseAll();button.OnPointerDown(pointer);button.OnDrag(pointer);
+                            Assert.IsTrue(TouchInput.Pressed(verb));
+                            if(ability!=null&&ability.HoldToAim){aimed++;Assert.Greater(TouchInput.LookDelta.x,0,hero.Id+" "+verb+" role="+defending);}
+                            else {immediate++;Assert.AreEqual(Vector2.zero,TouchInput.LookDelta,hero.Id+" "+verb+" role="+defending);}
+                            button.OnPointerUp(pointer);Assert.IsFalse(TouchInput.Pressed(verb));
+                        }
+                    }
+                }
+                Assert.Greater(aimed,0);Assert.Greater(immediate,0);
+            }
+            finally { Object.DestroyImmediate(face);Object.DestroyImmediate(body);TouchInput.ReleaseAll();TouchInput.Active=active; }
+            yield return PlayModeWorld.Reset();
+        }
     }
 }

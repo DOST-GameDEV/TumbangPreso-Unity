@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine.EventSystems;
 using System.Linq;
 using NUnit.Framework;
@@ -84,6 +85,49 @@ namespace TumbangPreso.PlayTests
             _touch.SendMessage("OnApplicationPause",false);yield return null;Assert.IsTrue(Canvas.enabled);
             look.OnDrag(data);Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);
             look.OnPointerDown(data);look.OnDrag(data);Assert.Greater(TouchInput.LookDelta.x,0);
+        }
+        [UnityTest]public IEnumerator ReplayHasItsOwnVisibleRaycastableReturnToLive()
+        {
+            const BindingFlags hidden=BindingFlags.NonPublic|BindingFlags.Instance;
+            typeof(SpectatorCamera).GetMethod("CheckReplayMatch",hidden).Invoke(_watcher,null);
+            var ring=(IList)typeof(SpectatorCamera).GetField("_replayFrames",hidden).GetValue(_watcher);
+            var type=typeof(SpectatorCamera).GetNestedType("ReplayFrame",BindingFlags.NonPublic);
+            for(int i=0;i<60;i++)
+            {
+                var frame=System.Activator.CreateInstance(type,true);
+                var image=new Texture2D(2,2,TextureFormat.RGB565,false);image.Apply();
+                type.GetField("Image").SetValue(frame,image);type.GetField("Aspect").SetValue(frame,16f/9);
+                type.GetField("CapturedAt").SetValue(frame,Time.unscaledTime-6f+i*.1f);type.GetField("Slot").SetValue(frame,-1);
+                ring.Add(frame);
+            }
+            Assert.IsTrue(_watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Replay));Assert.IsTrue(_watcher.Replaying);
+            var replay=_watcher.GetComponentsInChildren<Canvas>(true).Single(c=>c.name=="InstantReplayOverlay");
+            var exit=replay.GetComponentsInChildren<Button>().Single(b=>b.name=="ReplayReturnToLive");
+            Assert.IsTrue(exit.IsInteractable());float before=PresentationClock.RequestedScale;
+            RaycastResult HitReturn()
+            {
+                var rect=(RectTransform)exit.transform;var point=RectTransformUtility.WorldToScreenPoint(replay.worldCamera,rect.TransformPoint(rect.rect.center));
+                var pointer=new PointerEventData(EventSystem.current){position=point,button=PointerEventData.InputButton.Left};
+                var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(pointer,hits);Assert.Greater(hits.Count,0);
+                Assert.AreSame(exit,hits[0].gameObject.GetComponentInParent<Button>());
+                return hits[0];
+            }
+            yield return TumpUiCapture.Capture("spectator-touch-replay-controls",replay,1280,720,false,inspectViewport:()=>{HitReturn();});
+            UnityEngine.Canvas.ForceUpdateCanvases();var hit=HitReturn();
+            ExecuteEvents.ExecuteHierarchy(hit.gameObject,new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left},ExecuteEvents.pointerClickHandler);
+            Assert.IsFalse(_watcher.Replaying);Assert.IsFalse(replay.enabled);Assert.AreEqual(before,PresentationClock.RequestedScale);
+        }
+        [UnityTest]public IEnumerator ResizingTheTouchSurfaceRetiresOldFingerCoordinates()
+        {
+            var look=Canvas.GetComponentInChildren<TouchLookArea>();
+            var pointer=new PointerEventData(EventSystem.current){pointerId=11,delta=Vector2.right*30};
+            look.OnPointerDown(pointer);look.OnDrag(pointer);_touch.Stick.SetValue(Vector2.one);TouchInput.Set(Verb.Grab,true);
+            bool wide=Mathf.RoundToInt(Canvas.pixelRect.width)!=1600;
+            yield return TumpUiCapture.Capture("spectator-touch-resized",Canvas,wide?1600:720,wide?680:1280,false,inspectViewport:()=>
+            {
+                Assert.AreEqual(Vector2.zero,TouchInput.Move);Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);
+                Assert.IsFalse(TouchInput.Pressed(Verb.Grab));look.OnDrag(pointer);Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);
+            });
         }
         [UnityTest]public IEnumerator MenuRetiresTouchAxesAndRestoresTheStripAfterResume()
         {

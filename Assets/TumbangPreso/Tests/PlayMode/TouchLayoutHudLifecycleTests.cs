@@ -86,7 +86,7 @@ namespace TumbangPreso.PlayTests
             var replacement = new GameObject("Replacement touch lifecycle owner").AddComponent<TouchHud>();
             Assert.AreSame(replacement, TouchHud.Instance);
             TouchInput.Set(Verb.Sprint, true); TouchInput.Move = Vector2.right;
-            Object.Destroy(old.gameObject); yield return null;
+            Object.Destroy(old.gameObject); yield return null; yield return null; yield return null;
             Assert.AreSame(replacement, TouchHud.Instance); Assert.IsTrue(TouchInput.Active);
             Assert.IsTrue(TouchInput.Pressed(Verb.Sprint), "An old HUD teardown released the replacement's held input.");
             Assert.AreEqual(Vector2.right, TouchInput.Move);

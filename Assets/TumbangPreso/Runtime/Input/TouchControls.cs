@@ -205,6 +205,10 @@ namespace TumbangPreso.InputLayer
         public bool IsHeld { get; private set; }
 
         private readonly System.Collections.Generic.HashSet<(int Id, PointerEventData.InputButton Button)> _pointerOwners = new();
+        private bool _dragAim;
+        private TouchHud _hudOwner;
+        public void BindHudOwner(TouchHud owner) => _hudOwner = owner;
+        private bool MayPublish => ReferenceEquals(_hudOwner, null) || TouchHud.Instance == null || ReferenceEquals(TouchHud.Instance, _hudOwner);
         private CanvasGroup _group;
         private WoodCraft.Surface _surface;
         private TumpSurface _nativeSurface;
@@ -279,9 +283,10 @@ namespace TumbangPreso.InputLayer
         /// </summary>
         public void RefreshIcon(CharacterMotor local = null)
         {
+            var skill = AbilityForSlot(local); _dragAim = skill != null && skill.HoldToAim;
             if (_nativeSurface != null || _ownerSurface != null)
             {
-                var current = AbilityForSlot(local);
+                var current = skill;
                 if (_nativeVerb != null)
                 {
                     _nativeVerb.gameObject.SetActive(current == null);
@@ -298,7 +303,7 @@ namespace TumbangPreso.InputLayer
             }
             if (_icon == null) return;
 
-            var ability = AbilityForSlot(local);
+            var ability = skill;
             // Keyed on what the button does now, so Sean's E changes its icon while he is Molten.
             string id = ability != null ? ability.Id + "/" + (int)ability.LiveGlyph : null;
 
@@ -377,7 +382,7 @@ namespace TumbangPreso.InputLayer
         {
             // Global release (including customization) invalidates captured fingers.
             // Synchronize lifts too, so an old lift cannot restore another old hold.
-            if (!Customising && TouchInput.Pressed(Entry.Verb)) return;
+            if (MayPublish && !Customising && TouchInput.Pressed(Entry.Verb)) return;
             _pointerOwners.Clear();
             if (IsHeld) SetHeld(false);
         }
@@ -385,7 +390,7 @@ namespace TumbangPreso.InputLayer
         public void OnPointerDown(PointerEventData eventData)
         {
             SynchronizePointerOwners();
-            if (Customising) return;
+            if (Customising || !MayPublish) return;
             _pointerOwners.Add((eventData.pointerId, eventData.button));
             SetHeld(true);
         }
@@ -393,6 +398,7 @@ namespace TumbangPreso.InputLayer
         public void OnPointerUp(PointerEventData eventData)
         {
             SynchronizePointerOwners();
+            if (TouchInput.OwnsLook(this, eventData.pointerId, (int)eventData.button)) TouchInput.ReleaseLook(this);
             if (_pointerOwners.Count > 0 && !_pointerOwners.Remove((eventData.pointerId, eventData.button))) return;
             SetHeld(_pointerOwners.Count > 0);
         }
@@ -412,7 +418,17 @@ namespace TumbangPreso.InputLayer
         /// </summary>
         public void OnDrag(PointerEventData eventData)
         {
-            if (!Customising) return;
+            if (!Customising)
+            {
+                SynchronizePointerOwners();
+                bool aiming = _dragAim || Entry.Verb == Verb.SpecialAbility || Entry.Verb == Verb.Lunge;
+                if (!aiming || !_pointerOwners.Contains((eventData.pointerId, eventData.button))
+                    || !TouchInput.CaptureLook(this, eventData.pointerId, (int)eventData.button)) return;
+                var view = GetComponentInParent<Canvas>();
+                float width = view != null && view.pixelRect.width > 0 ? view.pixelRect.width : Screen.width;
+                TouchInput.LookDelta += TouchLookArea.LookUnits(eventData.delta, width);
+                return;
+            }
 
             var rt = (RectTransform)transform;
             var canvas = GetComponentInParent<Canvas>();
@@ -492,9 +508,10 @@ namespace TumbangPreso.InputLayer
         /// <summary>Presses this control exactly as a finger does. The probe's only entry point.</summary>
         public void SetHeld(bool held)
         {
-            if (!held) _pointerOwners.Clear();
+            held &= MayPublish;
+            if (!held) { _pointerOwners.Clear(); TouchInput.ReleaseLook(this); }
             IsHeld = held;
-            TouchInput.Set(Entry.Verb, held);
+            if (MayPublish) TouchInput.Set(Entry.Verb, held);
             Repaint();
         }
     }
@@ -520,6 +537,9 @@ namespace TumbangPreso.InputLayer
         private float _radius;
         private CanvasGroup _group;
         private (int Id, PointerEventData.InputButton Button)? _pointerOwner;
+        private TouchHud _hudOwner;
+        public void BindHudOwner(TouchHud owner) => _hudOwner = owner;
+        private bool MayPublish => ReferenceEquals(_hudOwner, null) || TouchHud.Instance == null || ReferenceEquals(TouchHud.Instance, _hudOwner);
 
         public Vector2 Value { get; private set; }
 
@@ -538,6 +558,7 @@ namespace TumbangPreso.InputLayer
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            if (!MayPublish) return;
             if (_pointerOwner.HasValue && !OwnsPointer(eventData)) return;
             _pointerOwner = (eventData.pointerId, eventData.button);
             Move(eventData);
@@ -545,7 +566,7 @@ namespace TumbangPreso.InputLayer
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (OwnsPointer(eventData)) Move(eventData);
+            if (MayPublish && OwnsPointer(eventData)) Move(eventData);
         }
 
         public void OnPointerUp(PointerEventData eventData)
@@ -559,7 +580,7 @@ namespace TumbangPreso.InputLayer
         {
             _pointerOwner = null;
             Value = Vector2.zero;
-            TouchInput.Move = Vector2.zero;
+            if (MayPublish) TouchInput.Move = Vector2.zero;
             if (_knob != null) _knob.anchoredPosition = Vector2.zero;
         }
 
@@ -611,9 +632,10 @@ namespace TumbangPreso.InputLayer
         /// <summary>Pushes the stick as a thumb does, in -1..1. The probe's only entry point.</summary>
         public void SetValue(Vector2 value)
         {
+            if (!MayPublish && value != Vector2.zero) return;
             if (value.x == 0.0f && value.y == 0.0f) _pointerOwner = null;
             Value = Vector2.ClampMagnitude(value, 1.0f);
-            TouchInput.Move = Value;
+            if (MayPublish) TouchInput.Move = Value;
 
             if (_knob != null) _knob.anchoredPosition = Value * _radius;
         }
@@ -636,6 +658,9 @@ namespace TumbangPreso.InputLayer
         private (int Id, PointerEventData.InputButton Button)? _owner;
         private uint _version;
         private Canvas _canvas;
+        private TouchHud _hudOwner;
+        public void BindHudOwner(TouchHud owner) => _hudOwner = owner;
+        private bool MayPublish => ReferenceEquals(_hudOwner, null) || TouchHud.Instance == null || ReferenceEquals(TouchHud.Instance, _hudOwner);
 
         // A third-width swipe is 90 degrees at default player sensitivity, on every resolution.
         public static Vector2 LookUnits(Vector2 delta, float viewportWidth)
@@ -643,20 +668,22 @@ namespace TumbangPreso.InputLayer
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (eventData.button != PointerEventData.InputButton.Left || TouchButton.Customising) return;
+            if (!MayPublish || eventData.button != PointerEventData.InputButton.Left || TouchButton.Customising) return;
             if (_version != TouchInput.ReleaseVersion) _owner = null;
             if (_owner.HasValue) return;
+            if (!TouchInput.CaptureLook(this, eventData.pointerId, (int)eventData.button)) return;
             _owner = (eventData.pointerId, eventData.button); _version = TouchInput.ReleaseVersion;
         }
 
-        private bool Owns(PointerEventData data) => _version == TouchInput.ReleaseVersion && _owner.HasValue
-            && _owner.Value.Id == data.pointerId && _owner.Value.Button == data.button;
+        private bool Owns(PointerEventData data) => MayPublish && _version == TouchInput.ReleaseVersion && _owner.HasValue
+            && _owner.Value.Id == data.pointerId && _owner.Value.Button == data.button
+            && TouchInput.OwnsLook(this, data.pointerId, (int)data.button);
 
         public void OnDrag(PointerEventData eventData)
         {
             if (!Owns(eventData) || TouchButton.Customising) return;
             if (_canvas == null) _canvas = GetComponentInParent<Canvas>();
-            float width = _canvas != null ? _canvas.pixelRect.width : Screen.width;
+            float width = _canvas != null && _canvas.pixelRect.width > 0 ? _canvas.pixelRect.width : Screen.width;
             TouchInput.LookDelta += LookUnits(eventData.delta, width);
         }
 
@@ -668,7 +695,7 @@ namespace TumbangPreso.InputLayer
         /// </summary>
         public void OnPointerUp(PointerEventData eventData) { if (Owns(eventData)) Cancel(); }
 
-        public void Cancel() { _owner = null; TouchInput.LookDelta = Vector2.zero; }
+        public void Cancel() { _owner = null; TouchInput.ReleaseLook(this); }
         private void OnDisable() => Cancel();
     }
 }
