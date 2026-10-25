@@ -146,6 +146,8 @@ namespace TumbangPreso.CameraSystem
         private float _pitchVelocity;
         private float _yawDeg;
         private float _pitchDeg;
+        private Bounds _framingBounds;
+        private bool _hasFramingBounds;
 
         /// <summary>How many times the pose validator has had to move a shot. For the capture log.</summary>
         public int OccludedPoseRejections { get; private set; }
@@ -439,11 +441,12 @@ namespace TumbangPreso.CameraSystem
                     return Mathf.Atan2(axis.x, axis.z) * Mathf.Rad2Deg + 70.0f * _driftSign;
                 }
 
-                // ⚠️ THE QUIET SHOT LOOKS ALONG THE LONG AXIS OF THE MAP. The box is 8.6 by 13.0,
-                // so a shot down the 13 is a street and a shot across the 8.6 is a wall. This is
-                // the one composition whose job is to say where we are.
+                // A three-quarter view along this court's long axis separates the
+                // attackers from the taya and avoids staring straight through their backs.
                 default:
-                    return _driftSign > 0.0f ? 0.0f : 180.0f;
+                    bool longX = AIController.PlayableMaxX - AIController.PlayableMinX
+                        > AIController.PlayableMaxZ - AIController.PlayableMinZ;
+                    return (longX ? 90f : 0f) + (_driftSign > 0f ? 30f : 210f);
             }
         }
 
@@ -531,14 +534,32 @@ namespace TumbangPreso.CameraSystem
         private Vector3 FocusPoint(out float spread)
         {
             spread = 0.0f;
+            _hasFramingBounds = false;
 
             if (!_shot.Valid || _shot.Main == null) return Vector3.up * SubjectEyeLine;
 
-            Vector3 primary = _shot.Main.transform.position + Vector3.up * SubjectEyeLine;
+            _framingBounds = SpectatorFraming.BodyBounds(_shot.Main);
+            _hasFramingBounds = true;
+            Vector3 primary = _framingBounds.center;
 
             Vector3 v = _shot.Main.Velocity;
             v.y = 0.0f;
             primary += v * LeadSeconds;
+
+            if (_shot.Shot == ShotType.QuietEstablish)
+            {
+                var round = GameServices.Round;
+                if (round != null)
+                {
+                    foreach (var actor in round.Players)
+                        if (actor != null && actor.gameObject.activeInHierarchy)
+                            _framingBounds.Encapsulate(SpectatorFraming.BodyBounds(actor));
+                    if (round.Lata != null)
+                        _framingBounds.Encapsulate(new Bounds(round.Lata.transform.position, Vector3.one * .6f));
+                }
+                spread = Mathf.Max(_framingBounds.size.x, _framingBounds.size.z);
+                return _framingBounds.center + Vector3.up * Headroom;
+            }
 
             Vector3 secondary = primary;
             bool hasSecondary = false;
@@ -554,7 +575,8 @@ namespace TumbangPreso.CameraSystem
 
                     if (_shot.Secondary != null)
                     {
-                        sum += _shot.Secondary.transform.position + Vector3.up * SubjectEyeLine;
+                        sum += SpectatorFraming.BodyFocus(_shot.Secondary);
+                        _framingBounds.Encapsulate(SpectatorFraming.BodyBounds(_shot.Secondary));
                         count++;
                     }
 
@@ -586,7 +608,8 @@ namespace TumbangPreso.CameraSystem
                 case ShotType.UltimateWide:
                     if (_shot.Secondary != null)
                     {
-                        secondary = _shot.Secondary.transform.position + Vector3.up * SubjectEyeLine;
+                        secondary = SpectatorFraming.BodyFocus(_shot.Secondary);
+                        _framingBounds.Encapsulate(SpectatorFraming.BodyBounds(_shot.Secondary));
                         hasSecondary = true;
                     }
                     break;
@@ -598,6 +621,16 @@ namespace TumbangPreso.CameraSystem
                 default:
                     break;
             }
+
+            if (_shot.HasObjective)
+            {
+                _framingBounds.Encapsulate(new Bounds(_shot.Objective + Vector3.up * .2f, Vector3.one * .8f));
+                // Wide abilities may originate away from the caster. Keep that accepted
+                // world point in both the composition and the lens fit.
+                if (_shot.Shot == ShotType.UltimateWide)
+                { secondary = _shot.Objective + Vector3.up * .4f; hasSecondary = true; }
+            }
+            if (_shot.EffectBounds.HasValue) _framingBounds.Encapsulate(_shot.EffectBounds.Value);
 
             if (!hasSecondary) return primary + Vector3.up * Headroom;
 
@@ -675,7 +708,7 @@ namespace TumbangPreso.CameraSystem
                 else
                 {
                     SafePoseFallbacks++;
-                    position = SafePose(focus);
+                    position = VisibleFallback(ref focus);
                 }
             }
 
@@ -742,8 +775,8 @@ namespace TumbangPreso.CameraSystem
                     break;
 
                 case ShotType.QuietEstablish:
-                    distance = ShotDistanceMax;
-                    height = 7.2f;
+                    distance = 7.5f + spread * .1f;
+                    height = 4.5f;
                     break;
 
                 default:
@@ -769,6 +802,22 @@ namespace TumbangPreso.CameraSystem
             // A negative inset is the margin outward; on a symmetric arena `Min - m` and
             // `Max + m` are the old `-(half + m)` and `half + m` to the bit.
             position = AIController.ClampToPlayable(position, -BoundsMargin);
+            if (_hasFramingBounds)
+            {
+                var lens = _camera != null ? _camera.GetComponent<Camera>() : GetComponent<Camera>();
+                float fov = lens != null ? lens.fieldOfView : SpectatorCamera.SpectatorFov;
+                float aspect = lens != null ? lens.aspect : 16f / 9f;
+                for (int i = 0; i < 3; i++)
+                {
+                    float pull = SpectatorFraming.Pullback(_framingBounds, position, focus, fov, aspect);
+                    if (pull < .01f) break;
+                    Vector3 back = (position - focus).normalized;
+                    var expanded = AIController.ClampToPlayable(position + back * pull, -BoundsMargin);
+                    // At a court edge, gain height rather than pushing through its walls.
+                    if ((expanded - position).sqrMagnitude < pull * pull * .25f) expanded.y += pull;
+                    position = expanded;
+                }
+            }
         }
 
         // -------------------------------------------------------------------
@@ -917,7 +966,7 @@ namespace TumbangPreso.CameraSystem
             if (!CanSee(position, focus)) return false;
 
             if (_shot.Main != null
-                && !CanSee(position, _shot.Main.transform.position + Vector3.up * SubjectEyeLine))
+                && !CanSee(position, SpectatorFraming.BodyFocus(_shot.Main)))
                 return false;
 
             if (!requireSecondary) return true;
@@ -927,7 +976,7 @@ namespace TumbangPreso.CameraSystem
             // the taya happened to stand behind the can.
             if (_shot.Secondary != null)
                 return CanSee(position,
-                              _shot.Secondary.transform.position + Vector3.up * SubjectEyeLine);
+                              SpectatorFraming.BodyFocus(_shot.Secondary));
 
             if (_shot.HasObjective) return CanSee(position, _shot.Objective + Vector3.up * 0.4f);
 
@@ -940,11 +989,15 @@ namespace TumbangPreso.CameraSystem
             float length = delta.magnitude;
             if (length < 0.05f) return true;
 
-            var hits = Physics.RaycastAll(from, delta / length, length, ~0,
-                                          QueryTriggerInteraction.Ignore);
-
-            foreach (var hit in hits)
-                if (!IsSceneryFree(hit.collider)) return false;
+            int count;
+            while (true)
+            {
+                count = Physics.RaycastNonAlloc(from, delta / length, SightHits, length, ~0, QueryTriggerInteraction.Ignore);
+                if (count < SightHits.Length) break;
+                System.Array.Resize(ref SightHits, SightHits.Length * 2);
+            }
+            for (int i = 0; i < count; i++)
+                if (!IsSceneryFree(SightHits[i].collider)) return false;
 
             return true;
         }
@@ -959,13 +1012,7 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>
-        /// The pose used when no bearing works: high over the arena, looking down at the action.
-        ///
-        /// ⚠️⚠️ A KNOWN SAFE ESTABLISHING POSE IS PART OF THE BRIEF AND IT HAS TO BE SAFE BY
-        /// CONSTRUCTION RATHER THAN BY VALIDATION. Nothing in either map is 11 m in the air over
-        /// the middle of the court, so this cannot be inside anything, and looking down means
-        /// nothing can be between it and the floor. A fallback that could itself fail is not a
-        /// fallback.
+        /// Nominal elevated view; VisibleFallback still validates roofs and scenery.
         /// </summary>
         private static Vector3 SafePose(Vector3 focus)
         {
@@ -978,6 +1025,31 @@ namespace TumbangPreso.CameraSystem
             pose.z = AIController.ClampPlayableZ(pose.z);
 
             return pose;
+        }
+
+        private static RaycastHit[] SightHits = new RaycastHit[32];
+        private static readonly float[] FallbackHeights = { .35f, 1.3f, 2.8f, 5.5f };
+        private static readonly float[] FallbackDistances = { 4.5f, 7, 2.5f, 10 };
+        private Vector3 VisibleFallback(ref Vector3 focus)
+        {
+            if (ValidatePose(transform.position, focus, requireSecondary: false)) return transform.position;
+            var elevated = SafePose(focus);
+            if (ValidatePose(elevated, focus, requireSecondary: false)) return elevated;
+            // Bridges and covered courts cannot use a roofless-sky assumption. If the
+            // full action is hidden, find a clear closer view of the main subject.
+            Vector3 primary = _shot.Main != null ? SpectatorFraming.BodyFocus(_shot.Main) : focus;
+            foreach (float height in FallbackHeights)
+                foreach (float distance in FallbackDistances)
+                    for (int i = 0; i < BearingAttempts; i++)
+                    {
+                        float rad = (_bearingDeg + i * 360f / BearingAttempts) * Mathf.Deg2Rad;
+                        var candidate = AIController.ClampToPlayable(primary
+                            + new Vector3(Mathf.Sin(rad) * distance, height, Mathf.Cos(rad) * distance), -BoundsMargin);
+                        if (!ValidatePose(candidate, primary, requireSecondary: false)) continue;
+                        focus = primary; return candidate;
+                    }
+            // No new unvalidated overhead jump if the subject is completely enclosed.
+            return transform.position;
         }
 
         // -------------------------------------------------------------------

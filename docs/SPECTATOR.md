@@ -16,7 +16,9 @@ Height follows court elevation. Followed first person now copies the active
 player rig's eye, full rotation, FOV and hand state through a bounded optional
 host relay. Missing/stale streams visibly fall back to third-person follow;
 bot/reference views are labeled. [Actual-view evidence](reports/spectator-2026-10-25/view-candidate.md)
-includes three real Windows processes. Broader framing and private-effect coverage remain open.
+includes three real Windows processes. Body bounds, all current maps and placed
+effect framing have [focused native coverage](reports/spectator-2026-10-25/framing.md).
+Private-effect parity and broader live skill/event transitions remain open.
 
 - Manual free/follow/first-person/third-person controls must be understandable
   on desktop keyboard/controller. Help carries controls, without a wall

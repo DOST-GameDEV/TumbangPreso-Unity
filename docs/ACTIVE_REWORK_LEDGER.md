@@ -17,7 +17,10 @@ Updated 2026-10-25. Owner scope: [TODO](TODO.md).
   locally plus three real Windows processes. The observer received 167 views with
   163 distinct relay serials matched to the host; unsubscribe stopped publication.
   [Evidence and limits](reports/spectator-2026-10-25/view-candidate.md).
-- Next action: body/effect/map framing and private-effect coverage, then network
+- Body/effect framing now measures actual models and lenses, keeps all players
+  in quiet frames and validates covered-court fallbacks. All 21 authored bodies
+  and six current maps have [native checks](reports/spectator-2026-10-25/framing.md).
+- Next action: private-effect parity and regular skill/live event coverage, then
   reliability on NETWORKFIX and mobile last. Current actual-view proof is same-PC
   controlled motion, not natural/WAN/separate-machine/Android acceptance.
   Do not restore the old mobile-every-feature mandate; mobile is a separate assignment.

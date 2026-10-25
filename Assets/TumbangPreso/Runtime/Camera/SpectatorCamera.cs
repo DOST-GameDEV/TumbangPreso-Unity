@@ -798,9 +798,10 @@ namespace TumbangPreso.CameraSystem
                 // Follow mode holds a fixed offset in the camera's own current bearing, so
                 // the player still owns the angle and only gives up the position.
                 Vector3 back = -transform.forward;
-                _targetPosition = _follow.transform.position
-                    + Vector3.up * (_followDistance * FollowLiftRatio)
-                    + back * _followDistance;
+                var body = SpectatorFraming.BodyBounds(_follow);
+                var wanted = body.center + back * _followDistance;
+                wanted += back * SpectatorFraming.Pullback(body, wanted, body.center, _camera.fieldOfView, _camera.aspect);
+                _targetPosition = SpectatorFraming.ClearFollowEye(body.center, wanted);
             }
             else
             {
@@ -824,7 +825,15 @@ namespace TumbangPreso.CameraSystem
             }
 
             float t = 1.0f - Mathf.Exp(-MoveSmoothRate * delta);
-            transform.position = Vector3.Lerp(transform.position, _targetPosition, t);
+            Vector3 next = Vector3.Lerp(transform.position, _targetPosition, t);
+            if (_follow != null && !_pov)
+            {
+                Vector3 focus = SpectatorFraming.BodyFocus(_follow);
+                next = SpectatorFraming.ClearFollowEye(focus, next);
+                if ((focus - next).sqrMagnitude > .001f)
+                { transform.rotation = Quaternion.LookRotation(focus - next, Vector3.up); SyncAnglesFromTransform(); }
+            }
+            transform.position = next;
         }
 
         private void ReclaimView()
@@ -2634,7 +2643,7 @@ namespace TumbangPreso.CameraSystem
         {
             var units = new List<CharacterMotor>();
             foreach (var unit in Spectatable)
-                if (unit != null) units.Add(unit);
+                if (unit != null && unit.gameObject.activeInHierarchy) units.Add(unit);
 
             if (units.Count == 0)
             {
@@ -2651,7 +2660,11 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            _followIndex += 1;
+            // Registration order changes after a respawn/rebind. Follow the visible seat
+            // order, starting after the actual current target (including an F1-F4 cut).
+            units.Sort((a, b) => a.PlayerSlot != b.PlayerSlot
+                ? a.PlayerSlot.CompareTo(b.PlayerSlot) : a.GetEntityId().CompareTo(b.GetEntityId()));
+            _followIndex = _follow != null ? units.IndexOf(_follow) + 1 : 0;
             if (_followIndex >= units.Count)
             {
                 _follow = null;

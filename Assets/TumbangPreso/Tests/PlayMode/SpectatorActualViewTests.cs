@@ -53,6 +53,26 @@ namespace TumbangPreso.PlayTests
             ObservedPlayerView.Capture(_rig, _actor);
             typeof(SpectatorCamera).GetMethod("LateUpdate", Hidden).Invoke(_watcher, null);
         }
+        [Test] public void FollowNextUsesSeatOrderAfterADirectPovSelection()
+        {
+            CharacterMotor Add(int slot)
+            {
+                var body = new GameObject("Seat " + slot); body.transform.SetParent(_root.transform);
+                var actor = body.AddComponent<CharacterMotor>(); actor.enabled = false; actor.PlayerSlot = slot;
+                GameServices.Round.Register(actor); SpectatorCamera.Register(actor); return actor;
+            }
+            var last = Add(3); var first = Add(0);
+            try
+            {
+                Assert.AreSame(_actor, _watcher.FollowedPlayer);
+                _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.FollowNext);
+                Assert.AreSame(last, _watcher.FollowedPlayer); Assert.IsTrue(_watcher.WatchingFirstPerson);
+                _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.FollowNext); Assert.IsNull(_watcher.FollowedPlayer);
+                _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.FollowNext);
+                Assert.AreSame(first, _watcher.FollowedPlayer); Assert.IsTrue(_watcher.WatchingFirstPerson);
+            }
+            finally { SpectatorCamera.Unregister(first); SpectatorCamera.Unregister(last); }
+        }
         [Test] public void ObservesTheActualEyePitchRollAndFovWithoutTakingPlayerInput()
         {
             Vector3 body = _actor.transform.position;

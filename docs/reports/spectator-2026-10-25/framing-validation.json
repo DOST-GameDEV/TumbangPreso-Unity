@@ -1,0 +1,68 @@
+{
+  "scope": "Local native D3D11 fixtures; full automatic map arrival, then stationary actors for camera isolation. Final comparison disables/restores cinematic motion only in the test. Not natural multiplayer/WAN/device proof.",
+  "receipts": [
+    {
+      "file": "Logs\\spectator-1025\\framing-covered-edit.xml",
+      "total": 26,
+      "passed": 26,
+      "start": "2026-10-25 08:26:37Z",
+      "end": "2026-10-25 08:26:37Z",
+      "sha256": "bbc7dd763473e410e17fa7ed5827f4901cdc8d908db4ef5d87e4d914c9fe39d7"
+    },
+    {
+      "file": "Logs\\spectator-1025\\framing-play.xml",
+      "total": 33,
+      "passed": 33,
+      "start": "2026-10-25 08:23:09Z",
+      "end": "2026-10-25 08:23:12Z",
+      "sha256": "bbab21301da195ab98dae1ad2ebcd4f35ba3aa4f31f1d0330e50850d795af9dd"
+    },
+    {
+      "file": "Logs\\spectator-1025\\map-body-play.xml",
+      "total": 26,
+      "passed": 26,
+      "start": "2026-10-25 08:29:46Z",
+      "end": "2026-10-25 08:35:47Z",
+      "sha256": "efa78c9e21d56112e12daa0ecf4658108ed4a306b5e16da367f05faa13061e40"
+    },
+    {
+      "file": "Logs\\spectator-1025\\map-quarter-play.xml",
+      "total": 7,
+      "passed": 7,
+      "start": "2026-10-25 08:43:14Z",
+      "end": "2026-10-25 08:45:56Z",
+      "sha256": "8e60abc112207670c778320867b9231983133ba977d8c68a47580f5fe73f74e9"
+    }
+  ],
+  "finalMapShots": [
+    "Arena: the street, cuts=1, fallback=0, eye=(5.46, 4.67, 11.46)",
+    "Eskinita: the street, cuts=1, fallback=0, eye=(4.76, 4.74, -6.16)",
+    "IlalimNgTulay: the street, cuts=1, fallback=0, eye=(7.65, 4.34, -1.72)",
+    "Kanto: the street, cuts=1, fallback=0, eye=(5.64, 4.91, 12.03)",
+    "LagoonCove: the street, cuts=1, fallback=0, eye=(5.64, 4.76, 12.03)",
+    "Payo: the street, cuts=1, fallback=0, eye=(5.64, 4.76, 12.03)"
+  ],
+  "finalCaptureSha256": {
+    "Arena-auto.png": "46d6155b3745b208fb46968f051cf98ba0f4fcdb91f1bec691af29ba08a71ac5",
+    "Arena-eyes.png": "4fc6720a963c29e251d78bebabadef35685752c9761fd6b0ce297514f070d222",
+    "Arena-follow.png": "8770995ec739e8bfa07a4908ea0936cf6f6b27ffd90b9418e3bcc23403440020",
+    "Eskinita-auto.png": "584e55c78852b508774258168df65f99c0cde7b79eec87feff87f96dd5bd5506",
+    "Eskinita-eyes.png": "89c527bee6fbae774f662248ea3a82552f63dc70c48f3c14760408fd3e2b1c84",
+    "Eskinita-follow.png": "31cce83d6047a424f9f82d2aaa55af712558f67035819a2bf227b9f911e5a63c",
+    "IlalimNgTulay-auto.png": "740a84666b4773ded2927b9b26fe2d7d333d9effbac76889ccb699e988365fdc",
+    "IlalimNgTulay-eyes.png": "914fc1defeac5b79a92e1165c1ae7a96cef805841ca0b10599b7ead417978172",
+    "IlalimNgTulay-follow.png": "caaff241ddee3e1d77fa9ee5fc81f985ff21e80aace0bb26b34fc9d7606bc918",
+    "Kanto-auto.png": "6884eb2848d78a39bbfe3aa3c09cfb85bf590a60a801abd42bd55a7b61708df0",
+    "Kanto-eyes.png": "4224e52b804028ef12799ced76c22091f6c0b4ad5280d32a09d0b9c92d5d6023",
+    "Kanto-follow.png": "a5e9523d055ac2e2f0e5e57b98896d712da487e306094d7fa2e5d82840589eff",
+    "LagoonCove-auto.png": "aef5c728291dee9511ba5e026a833406bdae93bda3610bcf790b3aac2d20f595",
+    "LagoonCove-eyes.png": "d29509a24c03b443bccf828cab0ae75c7ca4c04c632d9ba957b00a295cf2c9e3",
+    "LagoonCove-follow.png": "1befc2c00171c6deb4a8b51f0457e8bfe22cbe728641258d83952a68d8a76446",
+    "Payo-auto.png": "f9304358ccbd5c143706dbe16d14645e1e756b731f748255eb2a57eff254f581",
+    "Payo-eyes.png": "c5a7d7b5fefee67d776911d7ffa59c35335e83e3f3768688946c2619dcbc599a",
+    "Payo-follow.png": "0790d19c3bd8bac299b374b9e586cf361aeb5b08760fc96f87a7df3bba9d4360"
+  },
+  "rosterBodies": 21,
+  "currentMaps": 6,
+  "remaining": "Private view parity, regular skills/flight/live transitions, NETWORKFIX reliability and then mobile."
+}
