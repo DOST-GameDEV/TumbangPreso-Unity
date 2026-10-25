@@ -23,6 +23,9 @@ namespace TumbangPreso.PlayTests
         private sealed class Solo : INetProvider
         { public bool IsHost => true; public bool IsNetworked => false; public int LocalSlot => 1;
           public int LocalPeerId => 1; public bool IsSeatlessReferee => false; }
+        private sealed class RemoteWatcher : INetProvider
+        { public bool IsHost => false; public bool IsNetworked => true; public int LocalSlot => -1;
+          public int LocalPeerId => 2; public bool IsSeatlessReferee => false; }
         [UnitySetUp] public IEnumerator Before()
         {
             yield return PlayModeWorld.Reset(); _previous = NetAuthority.Provider; NetAuthority.Provider = new Solo();
@@ -53,6 +56,30 @@ namespace TumbangPreso.PlayTests
         {
             ObservedPlayerView.Capture(_rig, _actor);
             typeof(SpectatorCamera).GetMethod("LateUpdate", Hidden).Invoke(_watcher, null);
+        }
+        [Test] public void ARecoveredRemoteViewReturnsDirectlyToTheOwnersEyes()
+        {
+            var router=new GameObject("Recovered view scope");
+            try
+            {
+                var rpc=router.AddComponent<Net.MatchRpc>();
+                typeof(Net.MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc,100L);
+                NetAuthority.Provider=new RemoteWatcher();GameLaunch.Spectator=true;_rig.SetActive(false);
+                var state=new Net.SpectatorViewState {Match=100,Round=1,Slot=1,Epoch=_actor.MovementEpoch,Sequence=1,
+                    Eye=_actor.transform.position+Vector3.up,Rotation=Quaternion.Euler(10,120,0),Fov=91,
+                    HandsRotation=Quaternion.identity,Flags=Net.SpectatorViewState.FirstPerson};
+                var late=typeof(SpectatorCamera).GetMethod("LateUpdate",Hidden);
+                Assert.IsTrue(ObservedPlayerView.InstallRemote(state,_actor));late.Invoke(_watcher,null);
+                Assert.IsTrue(_watcher.IsWatchingEyes(_actor));
+                ObservedPlayerView.ClearRemote();late.Invoke(_watcher,null);
+                Assert.IsFalse(_watcher.IsWatchingEyes(_actor));
+                Assert.Greater(Vector3.Distance(state.Eye,_watcher.transform.position),1);
+                state.Sequence++;Assert.IsTrue(ObservedPlayerView.InstallRemote(state,_actor));late.Invoke(_watcher,null);
+                Assert.IsTrue(_watcher.IsWatchingEyes(_actor));
+                Assert.Less(Vector3.Distance(state.Eye,_watcher.transform.position),.0001f);
+                Assert.Less(Quaternion.Angle(state.Rotation,_watcher.transform.rotation),.001f);
+            }
+            finally { Object.DestroyImmediate(router);ObservedPlayerView.ClearRemote(); }
         }
         [TestCase(16f/9,20f/9)] [TestCase(20f/9,16f/9)] [TestCase(4f/3,20f/9)]
         public void ObservedViewportPreservesTheOwnersFrustum(float source,float output)

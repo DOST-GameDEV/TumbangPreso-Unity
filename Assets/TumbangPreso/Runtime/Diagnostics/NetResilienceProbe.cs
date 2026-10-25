@@ -22,12 +22,14 @@ namespace TumbangPreso.Diagnostics
             public bool networked, active, spectator, host, sawLive, revokedAtLoss, oldRoundStopped, peerNoticeVisible;
             public float peerNoticeSeconds, scale;
             public int local, round, ended, epoch, departures;
+            public int displayWidth, displayHeight;
             public int[] scores;
             public long match, rtt;
             public double time, silence;
         }
         private string _path, _role;
         private double _began, _next, _seatAt, _lostAt = -1;
+        private int _timeoutSeconds = 240;
         private bool _started, _readySent, _live, _revoked, _capturing, _done, _rejoining;
         private ReadyGate _gate;
         private RoundDirector _oldRound;
@@ -52,8 +54,10 @@ namespace TumbangPreso.Diagnostics
             if (path == null || Environment.GetCommandLineArgs().Contains("-tp-tournament")) return;
             var go = new GameObject("~NetResilienceProbe"); DontDestroyOnLoad(go);
             var probe = go.AddComponent<NetResilienceProbe>();
+            NetObservedViewProbe.ConfigurePeerWindow();
             probe._path = Path.GetFullPath(path); probe._role = Arg("-tp-resilience-role") ?? "host";
             probe._began = Time.realtimeSinceStartupAsDouble;
+            if (int.TryParse(Arg("-tp-resilience-timeout"), out int timeout)) probe._timeoutSeconds = Mathf.Clamp(timeout,240,600);
             Directory.CreateDirectory(Path.GetDirectoryName(probe._path));
             probe._trace = new StreamWriter(probe._path + ".trace") { AutoFlush = true };
             NetSession.ClientDisconnected += probe.Lost;
@@ -71,6 +75,7 @@ namespace TumbangPreso.Diagnostics
             var notice = TumpHub.Current?.Find<HubDisconnectedNotice>();
             return new State { role = _role, scene = SceneManager.GetActiveScene().name,
                 time = Time.realtimeSinceStartupAsDouble - _began, local = NetAuthority.LocalSlot,
+                displayWidth = Screen.width, displayHeight = Screen.height,
                 networked = net?.IsNetworked == true, host = net?.IsNetworked == true && net.IsHost,
                 active = GameServices.Round?.RoundActive == true, round = match?.RoundNumber ?? 0,
                 match = MatchRpc.Instance?.PresentationMatchId ?? 0, spectator = GameLaunch.Spectator || NetAuthority.IsSeatlessReferee,
@@ -92,7 +97,7 @@ namespace TumbangPreso.Diagnostics
             if (_done) return;
             try
             {
-                if (Time.realtimeSinceStartupAsDouble - _began > 240)
+                if (Time.realtimeSinceStartupAsDouble - _began > _timeoutSeconds)
                     throw new InvalidOperationException("Resilience fixture exceeded its bounded window.");
                 var rpc = MatchRpc.Instance; var net = NetSession.Instance;
                 if (!_live && _role == "observer" && rpc != null && net?.IsAdmitted == true &&

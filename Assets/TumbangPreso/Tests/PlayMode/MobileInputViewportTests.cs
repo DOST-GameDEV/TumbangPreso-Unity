@@ -10,6 +10,42 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class MobileInputViewportTests
     {
+        [UnityTest] public IEnumerator TouchSettingsHaveWorkingSwipeControlsAndCutoutInsets()
+        {
+            yield return PlayModeWorld.Reset();
+            string saved=JsonUtility.ToJson(Settings.SettingsStore.Current);
+            var root=new GameObject("Touch settings journey");
+            var view=root.AddComponent<TumpSettingsView>();
+            try
+            {
+                view.Open(root.transform,()=>{},()=>{},()=>{});
+                typeof(TumpSettingsView).GetField("_device",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance)
+                    .SetValue(view,InputDeviceKind.Touch);
+                view.ShowSection(0);yield return null;
+                var canvas=(Canvas)typeof(TumpSettingsView).GetField("_canvas",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).GetValue(view);
+                var sensitivity=System.Array.Find(Object.FindObjectsByType<UnityEngine.UI.Slider>(FindObjectsInactive.Exclude),
+                    slider=>slider.name=="TouchSensitivityValue");
+                Assert.IsNotNull(sensitivity,"The touch page must expose the swipe setting used by actual look input.");
+                sensitivity.value=2.5f;
+                Assert.AreEqual(2.5f,Settings.SettingsStore.Current.MouseSensitivity,.001f);
+                var invert=System.Array.Find(Object.FindObjectsByType<UnityEngine.UI.Toggle>(FindObjectsInactive.Exclude),
+                    toggle=>toggle.name=="TouchInvertYValue");
+                Assert.IsNotNull(invert);invert.isOn=!invert.isOn;
+                Assert.AreEqual(invert.isOn,Settings.SettingsStore.Current.InvertY);
+                var safe=canvas.GetComponentInChildren<UiSafeArea>();Assert.IsNotNull(safe);
+                safe.Fit(new Rect(90,24,2220,1056),new Vector2(2400,1080));
+                Canvas.ForceUpdateCanvases();
+                var design=(RectTransform)safe.transform.GetChild(0);safe.KeepDesignInside(design);
+                Assert.AreEqual(90f/2400,((RectTransform)safe.transform).anchorMin.x,.0001f);
+                Assert.LessOrEqual(design.rect.width*design.localScale.x,((RectTransform)safe.transform).rect.width+.01f);
+                Assert.LessOrEqual(design.rect.height*design.localScale.y,((RectTransform)safe.transform).rect.height+.01f);
+                Assert.IsTrue(view.Session.Dirty);
+                view.Session.Discard();
+                Assert.AreEqual(JsonUtility.FromJson<Settings.GameSettings>(saved).MouseSensitivity,Settings.SettingsStore.Current.MouseSensitivity);
+            }
+            finally { Object.DestroyImmediate(root);Settings.SettingsStore.Restore(JsonUtility.FromJson<Settings.GameSettings>(saved)); }
+            yield return PlayModeWorld.Reset();
+        }
         [TestCase(960)] [TestCase(1200)] [TestCase(2400)]
         public void EqualScreenFractionProducesEqualLook(float width)
         {

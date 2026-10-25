@@ -55,7 +55,7 @@ namespace TumbangPreso.CameraSystem
             float dt = Time.unscaledDeltaTime;
             if (ObservedPlayerView.TryGet(_follow, out var view, out bool local))
             {
-                bool snap = local || _observedActor != _follow || _observedEpoch != view.Epoch
+                bool snap = local || !_observedViewAvailable || _observedActor != _follow || _observedEpoch != view.Epoch
                     || (view.Eye - transform.position).sqrMagnitude > 64;
                 float blend = snap ? 1 : 1 - Mathf.Exp(-28f * dt);
                 transform.SetPositionAndRotation(Vector3.Lerp(transform.position, view.Eye, blend),

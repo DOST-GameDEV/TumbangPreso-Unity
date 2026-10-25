@@ -650,7 +650,9 @@ namespace TumbangPreso.Settings
         /// </summary>
         public void ApplyDisplay()
         {
-            if (Application.isBatchMode) return;
+            // Android owns the landscape surface and its cutout insets. A saved
+            // desktop window preference must not resize that surface at boot or Save.
+            if (Application.isBatchMode || Application.isMobilePlatform) return;
 
             if (Fullscreen)
             {

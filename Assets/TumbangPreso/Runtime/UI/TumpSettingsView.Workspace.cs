@@ -33,7 +33,9 @@ namespace TumbangPreso.UI
             panel.rectTransform.anchorMin = new Vector2(.5f, 0); panel.rectTransform.anchorMax = Vector2.one;
             panel.rectTransform.offsetMin = new Vector2(-450, 0); panel.rectTransform.offsetMax = Vector2.zero;
             panel.color = SettingsPalette.Surface; panel.raycastTarget = false;
-            var root = OwnerUiLayout.DesignArea(_canvas.transform, "SettingsComposition");
+            var safe = UiSafeArea.Content(_canvas, "SettingsSafeArea");
+            var root = OwnerUiLayout.DesignArea(safe, "SettingsComposition");
+            safe.GetComponent<UiSafeArea>().KeepDesignInside(root);
             var back = SettingsWorkspaceRows.Action(root, "TumpSettingsBack", "BACK", Back, 190);
             OwnerUiLayout.Place((RectTransform)back.transform, 61, 25, 190, 78);
             back.GetComponentInChildren<Text>().text="";

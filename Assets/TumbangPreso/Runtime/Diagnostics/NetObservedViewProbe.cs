@@ -25,6 +25,7 @@ namespace TumbangPreso.Diagnostics
             public int maxPhantoms, maxHexShoes, maxFakePlayers, maxFakeShoes, markerSamples, beaconSamples, renderedPhantoms, renderedMarkerSamples;
             public bool privateRequested, privateReleased;
             public int viewVersion;
+            public int displayWidth, displayHeight;
             public int legacyPeers, currentPeers;
             public float sourceAspect, maxProjectionAspectError, maxClipError, minViewportWidth = 1, minViewportHeight = 1;
         }
@@ -61,6 +62,7 @@ namespace TumbangPreso.Diagnostics
             string path = Arg("-tp-viewtrace"); if (path == null) return;
             var root = new GameObject("~NetObservedViewProbe"); DontDestroyOnLoad(root);
             var probe = root.AddComponent<NetObservedViewProbe>();
+            ConfigurePeerWindow();
             probe._path = Path.GetFullPath(path); probe._role = Arg("-tp-viewrole") ?? "host";
             probe._receipt.role = probe._role; probe._started = Time.realtimeSinceStartup;
             if (int.TryParse(Arg("-tp-view-seconds"), out int seconds))
@@ -178,6 +180,7 @@ namespace TumbangPreso.Diagnostics
             else has = ObservedPlayerView.TryGet(actor, out state, out _);
             if (!has || (_role == "observer" && _unsubscribed)) return;
             _receipt.samples++; _receipt.local = NetAuthority.LocalSlot; _receipt.match = state.Match;
+            _receipt.displayWidth = Screen.width; _receipt.displayHeight = Screen.height;
             _receipt.published = rpc.SpectatorViewsPublished; _receipt.received = rpc.SpectatorViewsReceived; _receipt.relayed = rpc.SpectatorViewsRelayed;
             _receipt.minFov = Mathf.Min(_receipt.minFov, state.Fov); _receipt.maxFov = Mathf.Max(_receipt.maxFov, state.Fov);
             float error = _role == "observer" && _observer != null ? Vector3.Distance(state.Eye, _observer.transform.position) : 0;
@@ -228,6 +231,16 @@ namespace TumbangPreso.Diagnostics
                 state.Action.ToString(), state.Aim.ToString(), rpc.SpectatorViewsPublished, rpc.SpectatorViewsReceived, rpc.SpectatorViewsRelayed,
                 F(error), state.Private.Phantoms.Length, state.Private.Marker.Present ? 1 : 0, privateData, F(state.Aspect),
                 F(_observer != null ? _observer.ObservedViewport.width : 1), F(_observer != null ? _observer.ObservedViewport.height : 1)));
+        }
+        internal static void ConfigurePeerWindow()
+        {
+            if (Application.isMobilePlatform) return;
+            if (!int.TryParse(Arg("-screen-width"), out int width) || !int.TryParse(Arg("-screen-height"), out int height)
+                || width < 320 || height < 180) return;
+            // These explicit peer fixtures run after saved display preferences load.
+            // Honor their requested surface, and record the delivered one in receipts.
+            _ = Settings.SettingsStore.Current;
+            Screen.SetResolution(width, height, FullScreenMode.Windowed);
         }
         private void Finish(string error)
         {

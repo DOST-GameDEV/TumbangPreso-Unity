@@ -27,6 +27,15 @@ movement/cast/outcome formats were unchanged by this presentation extension.
 That receipt used gameplay protocol 181; current protocol/fingerprint values
 remain owned by source and may advance for independent gameplay changes.
 
+Mobile candidate v3 adds source camera aspect and near/far clip planes (123-698 bytes).
+Clients establish v2, then offer v3 once with the same nonce. The host records
+each peer's negotiated version and serializes its corresponding layout; a v2
+host/client retains the existing v2 stream. Unknown source aspect remains0.
+The observer fits that frustum inside its display with presentation-only bars,
+and restores the full viewport on free/third-person/stale/cutscene cleanup.
+This extension is pending native and actual cross-platform qualification in the
+[mobile report](reports/mobile-2026-10-26/README.md); it changes no gameplay packet.
+
 Live authoring rules, 2026-10-25. Verify details against the owning codec and
 runtime path before editing. `NetSession.ProtocolVersion` and
 `SkillContractFingerprint` own compatibility. The complete

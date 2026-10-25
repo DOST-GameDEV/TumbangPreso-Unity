@@ -118,10 +118,12 @@ namespace TumbangPreso.UI
                 v=>{s.AntiAliasMode=v;AntiAliasModes.Apply(v);});
             // Read every frame by `Visual.WorldOutline`, so the pick shows at once and needs no Apply.
             Choice("CharacterShading","Character shading",GameSettings.CharacterShadingLabels,s.CharacterShading,v=>s.CharacterShading=v);
-            Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
+            if (!Application.isMobilePlatform)
+                Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
             Header("PERFORMANCE");
-            Choice("VSync","Vertical sync",VSyncModes.All.Select(p=>p.Label).ToArray(),s.VSyncMode,
-                v=>{s.VSyncMode=v;VSyncModes.Apply(v);FrameRateOptions.Apply(s.FrameRateLimit);UpdateFrameCapState();});
+            if (!Application.isMobilePlatform)
+                Choice("VSync","Vertical sync",VSyncModes.All.Select(p=>p.Label).ToArray(),s.VSyncMode,
+                    v=>{s.VSyncMode=v;VSyncModes.Apply(v);FrameRateOptions.Apply(s.FrameRateLimit);UpdateFrameCapState();});
             _ownerFrameCap=SettingsOptionMenu.Create(Row("FrameRate","Frame rate limit"),"FrameRateValue",
                 FrameRateOptions.All.Select(FrameRateOptions.Label).ToArray(),Array.IndexOf(FrameRateOptions.All,s.FrameRateLimit),
                 v=>{s.FrameRateLimit=FrameRateOptions.All[v];FrameRateOptions.Apply(s.FrameRateLimit);_session.Preview();});
@@ -131,10 +133,11 @@ namespace TumbangPreso.UI
         private void UpdateFrameCapState()
         {
             if(_ownerFrameCap==null || _frameReason==null)return;
-            bool sync=VSyncModes.Of(SettingsStore.Current.VSyncMode).Count>0;
+            bool sync=FrameRateOptions.ControlledByDisplay;
             int launch=FrameRateOptions.ReadOperatorLimit(Environment.GetCommandLineArgs());
             _ownerFrameCap.Button.interactable=!sync && launch<=0;
             _frameReason.text=launch>0?"Launch settings control the frame rate: "+launch+" FPS.":
+                Application.isMobilePlatform?"Device default aims for up to 60 FPS. Lower limits can reduce heat and battery use.":
                 sync?"Turn vertical sync off to use your saved frame rate limit.":"Your saved limit applies while vertical sync is off.";
         }
         private void Player()
@@ -188,7 +191,13 @@ namespace TumbangPreso.UI
                 v=>{_device=(InputDeviceKind)v;ShowSection(0);});
             if(_device==InputDeviceKind.Touch)
             {
-                ActionRow("TouchLayout","Touch controls","ARRANGE",()=>{Suspend();_touch?.Invoke();});return;
+                var s=SettingsStore.Current;
+                SettingsWorkspaceRows.Slider(Row("TouchSensitivity","Swipe sensitivity"),"TouchSensitivityValue",s.MouseSensitivity,.1f,5,
+                    v=>{s.MouseSensitivity=v;_session.Preview();},v=>v.ToString("0.0")+"×");
+                Toggle("TouchInvertY","Invert vertical swipe",s.InvertY,v=>s.InvertY=v);
+                ActionRow("TouchLayout","Touch controls","ARRANGE",()=>{Suspend();_touch?.Invoke();});
+                Note("Drag the clear right side to look. Hold and drag THROW or a targeted skill to aim with the same thumb.");
+                return;
             }
             var controller=ActionRow("ControllerMap","Controller map","OPEN",()=>
             { _device=InputDeviceKind.Gamepad;Suspend();_controller?.Invoke(); });

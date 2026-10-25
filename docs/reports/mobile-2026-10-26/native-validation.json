@@ -1,0 +1,53 @@
+{
+  "source": "3a65352773641207a258315c8f24810290f8bdde",
+  "groups": [
+    {
+      "artifact": "Logs/mobilefix-1026/v3-edit-b.xml",
+      "cases": 38,
+      "passed": 38,
+      "sha256": "9b1b38a77803e47277f80f12a47e6df6deea8bf120084cd7af6cc2f4961e2f3d",
+      "startUtc": "2026-10-25 19:46:25Z",
+      "scope": "Current v2/v3 codec, malformed lens/clip data and touch pointer lifetimes"
+    },
+    {
+      "artifact": "Logs/mobilefix-1026/v3-play-b.xml",
+      "cases": 41,
+      "passed": 41,
+      "sha256": "7f8eb69863785c265cc23e895651f1e4cc4467532cb85c82f4f410fd64373e4d",
+      "startUtc": "2026-10-25 19:27:01Z",
+      "scope": "Current kit drag aiming, touch/replay/resize/HUD lifetime and actual lens framing"
+    },
+    {
+      "artifact": "Logs/mobilefix-1026/referee-view.xml",
+      "cases": 5,
+      "passed": 5,
+      "sha256": "97bc3eda6d2dc690f73999fb0cfe1c545620f34d19412eb087b0cbcbd4c76e14",
+      "startUtc": "2026-10-25 19:56:43Z",
+      "scope": "Referee clock/view demand and playing-host rejection"
+    }
+  ],
+  "renders": [
+    {
+      "artifact": "Logs/shots-native-ui/spectator-touch-landscape.png",
+      "sha256": "51fb66c2ee43796aa026b1c4b74136954c4caa316cbee7169f124fcd21b73c1d"
+    },
+    {
+      "artifact": "Logs/shots-native-ui/spectator-touch-camera-tools-paused.png",
+      "sha256": "7468da4578de8acd61d55e845ace6c88d61f732731d5efdb1f3221eaeee8251d"
+    },
+    {
+      "artifact": "Logs/shots-native-ui/spectator-touch-match-tools.png",
+      "sha256": "fcdd9313934ca578bb0b54d378dd7b6fe1395c00b0a2224184b89b7ead05a414"
+    },
+    {
+      "artifact": "Logs/shots-native-ui/spectator-touch-replay-controls.png",
+      "sha256": "8b08d069f08ed3abeb4248aeb9c7afd80cae01d864b89e4a269b8d0b37774aa0"
+    }
+  ],
+  "renderScope": "Native UI fixtures, including synthetic ready replay frames for the return control. Separate from natural playback and Android peers.",
+  "limits": [
+    "Groups overlap earlier evidence; do not add them to previous run totals.",
+    "Actual Android/Windows peers and physical device qualification remain separate.",
+    "Earlier v3-play-a replacement regression and initial Android Gradle failure logs are retained."
+  ]
+}
