@@ -360,7 +360,7 @@ namespace TumbangPreso.Visual
         /// Where the band sits on each head, in metres above the `head` bone. Every hero's head is one block drawn by a
         /// single `head-mesh` (face, hair, hat and all), so the brow cannot be told from the hair by bone or by bounds; it
         /// was read off each hero's side view against a centimetre ruler (Logs/taya-identity, 2026-10-22): on the
-        /// hairline for Basilio, Amihan and Isagani; round the hood above the face for Nemu; on top of Paete's face
+        /// hairline for Basilio, Amihan and Zack; round the hood above the face for Nemu; on top of Paete's face
         /// panel; round the crown of Phaister's hat, just above the brim, as a hatband; at the base of Yasmin's box hat
         /// under the goggles; mid-forehead for Rago; over Ilyas's own bandana. A model not in the table gets 45 per cent
         /// of what it draws above the neck.

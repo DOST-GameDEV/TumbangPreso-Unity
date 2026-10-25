@@ -3,8 +3,9 @@
 Owner-requested direction, 2026-09-14. These are original fictional biographies
 for TUMP's existing sporting world. Real places ground the stories; they do not
 make these athletes historical people or representatives of everyone from a region.
-Owner-approved names, October4: Dante, Yasmin, Rago, Isagani, Nemu, Phaister,
+Owner-approved names, October4: Dante, Yasmin, Rago, Zack, Nemu, Phaister,
 Ilyas, Amihan and Paete. Stable roster/save IDs retain existing progression.
+Owner, 2026-10-25: Isagani is renamed back to Zack; the stable `zack` ID is unchanged.
 
 ## Rago: born near Mayon, Albay; plays in San Fernando, Pampanga
 
@@ -18,7 +19,7 @@ Rago was born at the foot of Mayon and played his first games of tumbang preso
 on the slopes in the mountain's shadow. His family moved to San Fernando when he
 was a kid, and the lane between the houses there became his court, where an
 afternoon match could hold up the walk home for hours. He plays the way the
-mountain behaves: quiet for a long time, then all at once. Isagani calls him
+mountain behaves: quiet for a long time, then all at once. Zack calls him
 slow. Rago keeps the score. His strength gets the crowd's attention, but the
 clean retrieval afterward is the part he wants them to remember.
 
@@ -28,7 +29,7 @@ lava from his own fists, cooling to black glass); it is his birthplace and his
 heat, not a disaster story, a costume or a sacred power. Owner, 2026-10-24: born
 near Mayon, moved to San Fernando as a kid, and the Eskinita stays his court.
 
-## Isagani: Pasig, Metro Manila
+## Zack: Pasig, Metro Manila
 
 Home court: **Sa Bubong**, the condo roofdeck where he grew up playing.
 
@@ -36,15 +37,15 @@ Character-select line: **Finds the angle before you see the opening.**
 
 Long introduction:
 
-Isagani learned tumbang preso on the roofdeck of his family's condo in Pasig. The
+Zack learned tumbang preso on the roofdeck of his family's condo in Pasig. The
 court changed with laundry days, resident gatherings and whoever had claimed the
 shade, so he got good at finding an angle before anyone else settled in. Now he
 makes difficult plays look casual and casual plays unnecessarily difficult.
-Rago is usually the first to call him on it. Isagani wants a national title, partly
+Rago is usually the first to call him on it. Zack wants a national title, partly
 for himself and partly so the neighbours can say they used to beat him upstairs.
 
 Pasig is the fictional condo's chosen locality, not a claim that the current map
-copies a real building. Electricity belongs to Isagani's talent, not a named deity.
+copies a real building. Electricity belongs to Zack's talent, not a named deity.
 
 ## Dante: Montalban, Rizal
 
@@ -79,7 +80,7 @@ walks its edges, tests the footing and remembers where everyone likes to run.
 Friends mistake her quietness for caution until their easiest route freezes
 shut. Away from competition she is the practical one who remembered the water
 and checked the ride home. Losing bothers her more than she admits, especially
-when an untidy play works. Dante can make her wait; Isagani can make her improvise.
+when an untidy play works. Dante can make her wait; Zack can make her improvise.
 She is learning to enjoy both problems.
 
 Benguet's highland terrain and cool climate anchor her atmosphere. Her ice is
@@ -139,7 +140,7 @@ remove existing access to manufacture a character-unlock screen. Share biography
 data with the introduction view and future genuine hero-unlock event. UI wiring
 and aspect/focus verification remain explicit tasks, not claims made by this file.
 
-The four existing map identities remain intact: Rago/Eskinita, Isagani/Sa Bubong,
+The four existing map identities remain intact: Rago/Eskinita, Zack/Sa Bubong,
 Dante/Bayan, Phaister's adopted court/Ilalim. Yasmin and Nemu have off-screen home
 courts until a separately scheduled map expansion. All athletes can play all maps.
 
@@ -209,7 +210,7 @@ you leave with it. And when one tree is not enough, he opens his hand, and she p
 
 His calm is the flaw inside the strength: so sure of his reach that he lets a moment pass. Amihan
 cannot stand him (she hates a stalled game and he is one). Dante, the other mountain in the cast,
-is the only one who waits as long as he does. Isagani still thinks he is a prop.
+is the only one who waits as long as he does. Zack still thinks he is a prop.
 
 ⚠️ REVERSED BY THE OWNER, 2026-09-26: *"i want the lore for this character to be that its the guardian
 of mount makiling"*, and her spirit watching over him in his ultimate (*"make it seem like the spirit of

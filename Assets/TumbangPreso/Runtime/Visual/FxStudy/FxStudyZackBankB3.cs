@@ -7,7 +7,7 @@ namespace TumbangPreso.Visual
     /// ⚠️ KEPT AS FILMED: BANK SHOT b3, so it can be filmed again by name (`zackbankb3`) beside later passes. The owner's
     /// word on it, 2026-10-17: "zack's bank shot definietly needs work". Its successor is `FxStudyZackBank`.
     ///
-    /// STUDY J, BANK SHOT (second rough sample, b3). Isagani loads the tsinelas he is holding for eight seconds
+    /// STUDY J, BANK SHOT (second rough sample, b3). Zack loads the tsinelas he is holding for eight seconds
     /// (`ZackHeroKit.BankShotAbility`); its next throw keeps 85 per cent of its speed on the first wall bank, and under
     /// Overclock two banks are credited. The picture has four jobs, each a thing a player must read AT MATCH DISTANCE
     /// (the first sample was hairlines on the shoe's outline and could not be seen from 8 m):

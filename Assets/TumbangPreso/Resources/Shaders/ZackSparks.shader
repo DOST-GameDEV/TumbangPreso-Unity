@@ -1,4 +1,4 @@
-// A burst of Isagani's forked sparks (`FxStudyZackBank`), drawn as ONE prebuilt mesh with ONE shared material.
+// A burst of Zack's forked sparks (`FxStudyZackBank`), drawn as ONE prebuilt mesh with ONE shared material.
 //
 // WHY. The first Bank Shot sample flew six sparks as six pieces, each its own object and material, posed every frame on
 // the CPU. A bank happens a few times a throw and a load fizzles out once, so this is the same few sparks over and over,

@@ -5,7 +5,7 @@ namespace TumbangPreso.CameraSystem
     /// <summary>
     /// ⚠️⚠️ ZACK'S HANDS: KISLAP, THE SPARK THAT LIVES IN HIS FOREARM BANDS.
     ///
-    /// Zack (ISAGANI, "Finds the angle before you see the opening") wears a neon band on each forearm. The charge in
+    /// Zack (ZACK, "Finds the angle before you see the opening") wears a neon band on each forearm. The charge in
     /// them is a creature: a fat battery-bean in his yellow with navy shorts, an ochre belt, a charcoal terminal cap,
     /// two plug prongs for ears, a bolt for a tail and a cocky face, about the size of a fist
     /// (`tools/build_hand_zack.py` types him). He "makes casual plays look difficult", and so does the spark. Each arm

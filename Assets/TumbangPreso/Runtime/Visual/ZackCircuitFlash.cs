@@ -7,7 +7,7 @@ namespace TumbangPreso.Visual
 {
     /// <summary>
     /// QUICK CIRCUIT'S LOOK IN A MATCH: the effects study's `FxStudyZackCircuit`, as the owner approved it on the bench
-    /// ("zack looks good to go", 2026-10-11), set down where Isagani stands and driven by his real body.
+    /// ("zack looks good to go", 2026-10-11), set down where Zack stands and driven by his real body.
     ///
     /// IT IS A LOOK ONLY. The cut, its distance, its timing and who may cast it are `ZackHeroKit.QuickCircuitAbility`'s
     /// and know nothing of this; nothing here is sent anywhere. Every peer already runs that ability's `Activate` at
