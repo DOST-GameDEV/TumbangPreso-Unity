@@ -28,7 +28,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('exe', type=Path)
     parser.add_argument('--out', required=True, type=Path)
-    parser.add_argument('--case', required=True, choices=['host-leave', 'host-drop', 'link-rejoin'])
+    parser.add_argument('--case', required=True, choices=['host-leave', 'host-drop', 'link-rejoin', 'outage-rejoin'])
     args = parser.parse_args()
     exe, out = args.exe.resolve(), args.out.resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT / 'Builds'):
@@ -105,7 +105,7 @@ def main():
         return samples
 
     try:
-        if args.case == 'link-rejoin':
+        if args.case in ('link-rejoin', 'outage-rejoin'):
             config = SimpleNamespace(to_host='127.0.0.1', to_port=ports[0], listen=ports[3], bind='127.0.0.1',
                 delay=0, jitter=0, loss=0, seed=20261025, outage_at=0, outage_for=0, seconds=240)
             link = Link(config)
@@ -138,7 +138,7 @@ def main():
                 assert state['scene'] == 'MatchSetup' and not state['networked'] and not state['active'], state
                 assert state['ended'] == 0 and state['notice'] and state['cause'] == 'HostLost', state
                 wait_for(lambda: (out / (name + '.lost.png')).exists(), 8, 'Notice screenshot missing.')
-        else:
+        elif args.case == 'link-rejoin':
             for shaper in [link.to_host, link.to_client]:
                 shaper.delay, shaper.jitter, shaper.loss = .135, .015, .01
             mild = hold_stage('mild', 11)
@@ -174,6 +174,24 @@ def main():
             assert restored['local'] == initial['client']['local'] and restored['match'] == match, restored
             assert restored['epoch'] >= initial['client']['epoch'] and restored['ended'] == 0, restored
             signal('rejoined', '.finish')
+        else:
+            link.args.outage_at = time.monotonic() - link.started
+            link.args.outage_for = 11
+            wait_for(lambda: all(read(out / (n + '.lost')) for n in ['client', 'observer']), 45,
+                     'A real timeout did not retire both clients into the notice.', ['host', 'client', 'observer'])
+            for name in ['client', 'observer']:
+                lost = read(out / (name + '.lost'))
+                assert lost['revokedAtLoss'] and lost['oldRoundStopped'] and not lost['networked'] and lost['ended'] == 0, lost
+                wait_for(lambda: (out / (name + '.lost.png')).exists(), 8, 'Timeout notice screenshot missing.')
+                (out / (name + '.ready')).unlink()
+                (out / (name + '.rejoin')).write_text('127.0.0.1:' + str(ports[3]))
+                wait_for(lambda: read(out / (name + '.ready')).get('sawLive'), 65,
+                         name + ' could not rejoin in the same process through the ordinary hub.', ['host', name])
+                restored = read(out / (name + '.ready'))
+                assert restored['local'] == initial[name]['local'] and restored['match'] == match and restored['ended'] == 0, restored
+                assert restored['spectator'] == initial[name]['spectator'], restored
+                shutil.copy2(out / (name + '.ready'), out / (name + '.same-process-rejoined.json'))
+                print(name, 'same-process rejoin admitted to original seat', restored['local'], flush=True)
         # Preserve client receipts before the host deliberately closes the room.
         for name in sorted(processes, key=lambda n: n == 'host'):
             child = processes[name]

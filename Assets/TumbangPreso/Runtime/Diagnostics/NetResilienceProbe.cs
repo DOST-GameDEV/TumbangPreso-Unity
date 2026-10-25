@@ -27,7 +27,7 @@ namespace TumbangPreso.Diagnostics
         }
         private string _path, _role;
         private double _began, _next, _seatAt, _lostAt = -1;
-        private bool _started, _readySent, _live, _revoked, _capturing, _done;
+        private bool _started, _readySent, _live, _revoked, _capturing, _done, _rejoining;
         private ReadyGate _gate;
         private RoundDirector _oldRound;
         private MatchDirector _oldMatch;
@@ -115,6 +115,11 @@ namespace TumbangPreso.Diagnostics
                 }
                 if (File.Exists(_path + ".stop"))
                 { File.Delete(_path + ".stop"); net?.Stop(); Save(".stopped", Read()); }
+                if (!_rejoining && File.Exists(_path + ".rejoin"))
+                {
+                    string address = File.ReadAllText(_path + ".rejoin"); File.Delete(_path + ".rejoin");
+                    Rejoin(address);
+                }
                 if (Time.realtimeSinceStartupAsDouble >= _next)
                 {
                     _next = Time.realtimeSinceStartupAsDouble + .2;
@@ -137,6 +142,26 @@ namespace TumbangPreso.Diagnostics
             var picture = ScreenCapture.CaptureScreenshotAsTexture();
             if (picture != null) { File.WriteAllBytes(_path + suffix, picture.EncodeToPNG()); Destroy(picture); }
             _capturing = false;
+        }
+        private async void Rejoin(string address)
+        {
+            _rejoining = true;
+            try
+            {
+                var hub = TumpHub.Current;
+                if (hub == null || _lostAt < 0 || NetSession.Instance?.IsNetworked == true)
+                    throw new InvalidOperationException("Rejoin requires the actual disconnected Home state.");
+                if (hub.Find<HubDisconnectedNotice>()?.FirstFocus is UnityEngine.UI.Button acknowledge)
+                    acknowledge.onClick.Invoke();
+                if (_oldMatch != null) _oldMatch.MatchEnded -= Ended;
+                _oldMatch = null; _oldRound = null; _live = false; _lostAt = -1;
+                string error = await hub.Host.Join(address.Trim());
+                if (!string.IsNullOrEmpty(error)) throw new InvalidOperationException(error);
+                Save(".joined", Read());
+            }
+            catch (Exception error)
+            { var state = Read(); state.error = error.ToString(); Save(".result", state); _done = true; Application.Quit(1); }
+            finally { _rejoining = false; }
         }
         private void OnDestroy()
         {
