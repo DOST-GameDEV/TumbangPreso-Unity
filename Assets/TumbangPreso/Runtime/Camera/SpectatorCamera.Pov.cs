@@ -13,8 +13,9 @@ namespace TumbangPreso.CameraSystem
         private string ObservedPovLabel => !_observedViewAvailable ? "WAITING FOR PLAYER VIEW"
             : _observedBot ? (_follow != null && _follow.IsBot ? "BOT VIEW" : "REFERENCE VIEW")
             : _observedFirstPerson ? "FIRST PERSON" : "PLAYER VIEW";
-        public bool IsWatchingEyes(CharacterMotor actor) => actor != null && isActiveAndEnabled && _pov && _follow == actor
-            && _observedViewAvailable && _observedFirstPerson && !SpectatorCutscene.Hides && !_replaying;
+        public CharacterMotor PlayerViewTarget => isActiveAndEnabled && _pov && _follow != null && _observedActor == _follow
+            && _observedViewAvailable && !SpectatorCutscene.Hides && !_replaying ? _follow : null;
+        public bool IsWatchingEyes(CharacterMotor actor) => actor != null && PlayerViewTarget == actor && _observedFirstPerson;
         public CharacterMotor EyesTarget => IsWatchingEyes(_follow) ? _follow : null;
         public CharacterMotor FollowedPlayer => _follow;
         public bool TryWatchPlayer(int slot)

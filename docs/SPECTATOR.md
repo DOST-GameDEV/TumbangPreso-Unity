@@ -18,7 +18,9 @@ host relay. Missing/stale streams visibly fall back to third-person follow;
 bot/reference views are labeled. [Actual-view evidence](reports/spectator-2026-10-25/view-candidate.md)
 includes three real Windows processes. Body bounds, all current maps and placed
 effect framing have [focused native coverage](reports/spectator-2026-10-25/framing.md).
-Private-effect parity and broader live skill/event transitions remain open.
+Watched world filters, audio impairment and private ghost cues have
+[perception checks](reports/spectator-2026-10-25/perception.md). Hallucinations,
+exact held aim markers and broader live skill/event transitions remain open.
 
 - Manual free/follow/first-person/third-person controls must be understandable
   on desktop keyboard/controller. Help carries controls, without a wall

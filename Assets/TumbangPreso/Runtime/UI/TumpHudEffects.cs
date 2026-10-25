@@ -52,7 +52,7 @@ namespace TumbangPreso.UI
         {
             if (spectator)
             {
-                var viewed = CameraSystem.ViewPerspective.EyesActor(Camera.main);
+                var viewed = CameraSystem.ViewPerspective.PlayerActor(Camera.main);
                 if (viewed != null) { local = viewed; spectator = false; }
             }
             float dt = Time.unscaledDeltaTime;

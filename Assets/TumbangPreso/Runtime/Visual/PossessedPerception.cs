@@ -18,12 +18,12 @@ namespace TumbangPreso.Visual
         public static float Weight(Camera camera)
         {
             if (camera == null || !camera.enabled || camera != Camera.main ||
-                GameServices.Round?.RoundActive != true || GameLaunch.Spectator ||
+                GameServices.Round?.RoundActive != true ||
                 GameServices.Audio?.IsInReplayMix == true) return 0f;
-            var rig = camera.GetComponent<CameraRig>();
-            var body = rig != null ? rig.Following : null;
-            if (body == null || !body.gameObject.activeInHierarchy || !rig.IsFollowing(body) ||
-                !body.IsLocalViewer || !body.IsPossessed) return 0f;
+            var body = ViewPerspective.PlayerActor(camera);
+            bool observing = camera.GetComponent<SpectatorCamera>() != null;
+            if (body == null || !body.gameObject.activeInHierarchy ||
+                (!observing && (GameLaunch.Spectator || !body.IsLocalViewer)) || !body.IsPossessed) return 0f;
             float elapsed = body.PossessionElapsed;
             return Mathf.Clamp01(elapsed / NemuRules.SettleSeconds) *
                    Mathf.Clamp01((NemuRules.PossessedSeconds - elapsed) / NemuRules.LeaveSeconds);

@@ -27,12 +27,12 @@ namespace TumbangPreso.Visual
         public static CharacterMotor Victim(Camera camera)
         {
             if (camera == null || !camera.enabled || camera != Camera.main ||
-                GameServices.Round?.RoundActive != true || GameLaunch.Spectator ||
+                GameServices.Round?.RoundActive != true ||
                 GameServices.Audio?.IsInReplayMix == true) return null;
-            var rig = camera.GetComponent<CameraRig>();
-            var body = rig != null ? rig.Following : null;
-            if (body == null || !body.gameObject.activeInHierarchy || !rig.IsFollowing(body) ||
-                !body.IsLocalViewer || !body.IsConcussed) return null;
+            var body = ViewPerspective.PlayerActor(camera);
+            bool observing = camera.GetComponent<SpectatorCamera>() != null;
+            if (body == null || !body.gameObject.activeInHierarchy ||
+                (!observing && (GameLaunch.Spectator || !body.IsLocalViewer)) || !body.IsConcussed) return null;
             return body;
         }
 

@@ -1,0 +1,22 @@
+{
+  "scope": "Local native D3D11 presentation; suites overlap. No new transport/gameplay packet changes.",
+  "receipts": [
+    {
+      "file": "Logs\\spectator-1025\\private-filters-final.xml",
+      "passed": 22,
+      "sha256": "6317678cfd851c694fdba794c41256e5717a15239509fbe0c9b70de764e989e4",
+      "end": "2026-10-25 09:00:03Z"
+    },
+    {
+      "file": "Logs\\spectator-1025\\private-ring-play.xml",
+      "passed": 13,
+      "sha256": "c735c276e1e9aebb85196976bbb2bf65b40f41ac8065fd1eaef4b9c0111e52f8",
+      "end": "2026-10-25 09:03:42Z"
+    }
+  ],
+  "preservedBaselineFailures": [
+    "private-filters-play.xml (18/19, sRGB measurement mismatch)",
+    "private-filters-old-haunted.xml (same failing case and pixel value with previous predicate)"
+  ],
+  "remaining": "Exact private hallucination and held-marker data, broader skills/live transitions, NETWORKFIX reliability and mobile last."
+}

@@ -133,12 +133,54 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(ViewPerspective.IsEyesOf(_watcher.GetComponent<Camera>(), _actor));
             Assert.IsFalse(ViewPerspective.IsEyesOf(_watcher.GetComponent<Camera>(), person));
         }
+        [Test] public void WorldFiltersAndAudioFollowActualPlayerViewAndReleaseInManualViews()
+        {
+            _actor.Mode=Core.GameMode.HeroStrike;GameLaunch.Spectator=true;
+            GameServices.Round.ApplySnapshot(100,true,0,true);
+            _actor.ApplyHaunted();_actor.ApplyConcussed(Core.StatusRules.ConcussedSeconds-.3f);
+            _actor.ApplyNetworkPossessed(Core.NemuRules.PossessedSeconds-.5f);CopyFinalView();
+            var lens=_watcher.GetComponent<Camera>();var audio=GameServices.Audio;
+            void Check(bool active)
+            {
+                Assert.AreEqual(active,Visual.HauntedPerception.Applies(lens));
+                Assert.AreEqual(active,Visual.PossessedPerception.Weight(lens)>.1f);
+                Assert.AreEqual(active,Visual.ConcussedPerception.Weight(lens)>.1f);
+                typeof(AudioDirector).GetMethod("LateUpdate",Hidden).Invoke(audio,null);
+                Assert.AreEqual(active,audio.HauntedMuffle);
+            }
+            Check(true);
+            _rig.BeginEmoteView();CopyFinalView();Assert.IsFalse(_watcher.IsWatchingEyes(_actor));
+            Check(true); // This is still the player's actual camera, including their emote view.
+            _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);Check(false);
+            _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);CopyFinalView();Check(true);
+            using(audio.EnterReplayMix())Check(false);
+            Check(true);_watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.FreeFlight);Check(false);
+        }
         [Test] public void WatchedFirstPersonCanCarryUsesTheSameDrawingHeight()
         {
             CopyFinalView(); var can = new GameObject("View-specific carried can"); can.transform.SetParent(_root.transform);
             var lata = can.AddComponent<Lata>(); lata.enabled = false;
             float height = (float)typeof(Lata).GetMethod("HeldBaseHeightFor", Hidden).Invoke(lata, new object[] { _actor });
             Assert.That(height, Is.EqualTo(Lata.HoldBaseHeight).Within(.001f));
+        }
+        [Test] public void PrivateGhostReclaimCuesFollowTheViewedOwnerWithoutReclaiming()
+        {
+            GameLaunch.Spectator=true;CopyFinalView();
+            var ghost=Abilities.NemuDormant.Spawn(Abilities.NemuDormant.Ghost.Peeker,_actor.transform.position+Vector3.right*3,
+                Vector3.forward,_actor.PlayerSlot);
+            try
+            {
+                Visual.NemuGhostRings.Ensure();var rings=Object.FindAnyObjectByType<Visual.NemuGhostRings>();Assert.IsNotNull(rings);
+                var tick=typeof(Visual.NemuGhostRings).GetMethod("LateUpdate",Hidden);tick.Invoke(rings,null);
+                Assert.AreEqual(1,Visual.NemuGhostRings.Count);
+                _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);tick.Invoke(rings,null);
+                Assert.AreEqual(0,Visual.NemuGhostRings.Count);Assert.IsFalse(ghost.Reclaimed);
+                foreach(var child in rings.GetComponentsInChildren<MeshRenderer>(true))
+                    if(child.name=="NemuGhostRing")Assert.IsFalse(child.gameObject.activeInHierarchy);
+                _watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Pov);CopyFinalView();tick.Invoke(rings,null);
+                Assert.AreEqual(1,Visual.NemuGhostRings.Count);Assert.IsFalse(ghost.Reclaimed);
+            }
+            finally { Abilities.NemuDormant.RetireAll(); }
         }
     }
 }
