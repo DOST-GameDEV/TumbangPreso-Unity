@@ -44,6 +44,11 @@ namespace TumbangPreso.Audio
         public static readonly IReadOnlyDictionary<string, float> TrimDb =
             new Dictionary<string, float>
             {
+                { "sfx_zack_afterimage_loop", -10f },
+                { "sfx_zack_livewire_loop", -8f },
+                { "sfx_zack_overclock_loop", -10f },
+                { "sfx_zack_overclock_end", -4f },
+                { "sfx_status_zapped", -4f },
                 // ⚠⚠ THE THREE ZONE ENDINGS SIT LOWEST IN THE WHOLE MIX, AND THAT IS THE
                 // POINT OF THEM. An expiry is INFORMATION, not an event: it has to be audible to
                 // somebody who has been watching that patch of ground and must never compete
@@ -260,6 +265,23 @@ namespace TumbangPreso.Audio
         /// <summary>Every cue the live game can fire. Aliases included; they are real names.</summary>
         public static readonly IReadOnlyList<string> Live = new[]
         {
+            "sfx_cast_zack_backtrack",
+            "sfx_zack_backtrack_land",
+            "sfx_cast_zack_afterimage",
+            "sfx_zack_afterimage_pop",
+            "sfx_zack_afterimage_fizzle",
+            "sfx_zack_afterimage_loop",
+            "sfx_cast_zack_livewire",
+            "sfx_zack_livewire_taut",
+            "sfx_zack_livewire_zap",
+            "sfx_zack_livewire_snap",
+            "sfx_zack_livewire_loop",
+            "sfx_zack_momentum_full",
+            "sfx_status_zapped",
+            "sfx_zack_overclock_loop",
+            "sfx_zack_overclock_end",
+            "sfx_ult_theme_zack",
+
             // The lata, which is what the whole game is built around.
             "lata_impact", "lata_knockdown", "lata_seal",
             "reset_channel_start", "reset_channel_complete",
@@ -506,12 +528,28 @@ namespace TumbangPreso.Audio
         }
 
         /// <summary>
-        /// ⚠️ THE REWORKED SKILL SOUNDS, released from the switch one by one as each is rebuilt. AIRBURST v3 (2026-10-03,
-        /// `docs/reports/amihan-presentation-2026-10-02/airburst-v3.md`, `tools/build_amihan_ult_audio.py`): Amihan's ultimate
-        /// only. Every other hero's skill sounds, and her other skills, stay off.
+        /// Skill sounds released individually by owner authorization. Zack's electrical family was enabled
+        /// on 2026-10-25. Preserve the approved Paete cues and the mute on unrelated skill sounds.
         /// </summary>
         private static readonly HashSet<string> ReworkedSkillSfx = new HashSet<string>
         {
+            // Zack enabled by the owner, 2026-10-25: sustained current and arcing.
+            "sfx_cast_zack_backtrack",
+            "sfx_zack_backtrack_land",
+            "sfx_cast_zack_afterimage",
+            "sfx_zack_afterimage_pop",
+            "sfx_zack_afterimage_fizzle",
+            "sfx_zack_afterimage_loop",
+            "sfx_cast_zack_livewire",
+            "sfx_zack_livewire_taut",
+            "sfx_zack_livewire_zap",
+            "sfx_zack_livewire_snap",
+            "sfx_zack_livewire_loop",
+            "sfx_zack_momentum_full",
+            "sfx_status_zapped",
+            "sfx_zack_overclock_loop",
+            "sfx_zack_overclock_end",
+            "sfx_ult_theme_zack",
             // Amihan's were removed on the owner's instruction (2026-10-03, *"i meant remove all sfx"*).
             // ⚠️ THE REWORK BEGINS WITH PAETE, ONE ABILITY AT A TIME, EACH PICKED BY THE OWNER'S EAR FROM DRAFTS FIRST. LIANA
             // LEAP, 2026-10-07: *"lets try option E"* (real CC0 recordings, `tools/build_paete_skill_sfx.py`, the sources

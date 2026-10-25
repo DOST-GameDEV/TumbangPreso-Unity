@@ -29,6 +29,7 @@ namespace TumbangPreso.Abilities
 
         private WorldEffectSnapshot.Field _state;
         private ZackAfterimageBody _body;
+        private ZackCurrentAudio _current;
         private float _age, _poppedAt = -1.0f;
         private int _round;
         private long _epoch;
@@ -136,6 +137,7 @@ namespace TumbangPreso.Abilities
             copy._epoch = MatchRpc.Instance?.PresentationMatchId ?? 0;
             copy._body = ZackAfterimageBody.Build(go.transform, state);
             copy._body.StepTo(copy._age);
+            copy._current = ZackCurrentAudio.Attach(go.transform, "sfx_zack_afterimage_loop");
             Active.Add(copy);
             return copy;
         }
@@ -151,7 +153,12 @@ namespace TumbangPreso.Abilities
             _age += Time.deltaTime;
             _body?.StepTo(_age);
             if (_state.Split && _poppedAt >= 0.0f && Time.time - _poppedAt > PopSeconds) { Retire(); return; }
-            if (Remaining <= 0.0f) Retire();
+            _current?.Step(Feet + Vector3.up * .8f, !_state.Split && Remaining > 0);
+            if (Remaining <= 0.0f)
+            {
+                if (!_state.Split && NetAuthority.ShouldResolve()) NetCue.Play("sfx_zack_afterimage_fizzle", Feet);
+                Retire();
+            }
         }
 
         /// <summary>⚠️ HOST ONLY: the taya's feet within `AfterimagePopRadius` (flat) of the copy's pop it. Never a trigger.</summary>
@@ -179,6 +186,7 @@ namespace TumbangPreso.Abilities
         {
             if (_poppedAt >= 0.0f) return;
             _poppedAt = Time.time;
+            _current?.Step(Feet, false);
             _body?.Pop();
         }
 

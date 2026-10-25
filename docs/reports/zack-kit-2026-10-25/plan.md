@@ -1,6 +1,6 @@
 # Zack rework: plan and direction (2026-10-25)
 
-Status: IMPLEMENTED IN WORKING TREE, focused local validation complete; owner visual/audio review and actual peers pending. [Verification](verification-session3.md). Approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
+Status: IMPLEMENTED ON MAIN, focused local validation complete; owner visual/audio review and actual peers pending. The owner authorized enabling Zack sounds and publication; see [electrical audio](lightning-audio.md). [Verification](verification-session3.md). Approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
 section 7. Every number is a starting value: section 8 lists the ones to watch in play. Research is `research.md` beside
 this file. Method: `docs/HERO_KIT_METHOD.md`. Network: `docs/SKILL_NETWORK_CONTRACT.md`.
 
@@ -110,7 +110,7 @@ mastery, loadouts and HUD slots hold.
 | Ability | Tell | Release | Travel | Contact | Linger | Dissipate |
 |---|---|---|---|---|---|---|
 | Momentum | none: it is earned | step 1 (1 s): sparks at his heels | step 2 (2 s): a short gold ribbon from his heels | step 3 (3 s, full): three ghost frames trail him, his FPP hands crackle | held while he runs | a stop: the ribbon breaks into sparks; a hit: one snap and it is gone |
-| Backtrack | (ready) his own faint echo at the 3 s-ago spot, only on his screen | a sharp inhale of current: his body flickers, a snap | the rewind: a gold streak runs BACKWARDS along his real path in 0.3 s, ghost frames pulling into the landing | he reappears in a ring of sparks on the court, a short static rewind sound | ring holds 0.4 s | the ring breaks into four sparks |
+| Backtrack | (ready) his own faint echo at the 3 s-ago spot, only on his screen | a sharp inhale of current: his body flickers, a snap | the rewind: a gold streak runs BACKWARDS along his real path in 0.42 s, ghost frames pulling into the landing | he reappears in a ring of sparks on the court, a short static rewind sound | ring holds 0.4 s | the ring breaks into four sparks |
 | Afterimage | a quick sideways shrug of his shoulders (the copy peels out) | a crackle at his feet, the copy steps out of him | the copy runs his real run, crackling, a thin trail at its heels | the taya touches it: it pops into flecks with a dry pop and a "zip" | none | after 3 s it stumbles a step and fizzles from the feet up |
 | Live Wire | hold: he pulls a wire out from one fist across his body (aim pose); the ring and a dotted line show where it will run | release: he throws the coil; post B drops on the spot, post A bangs into the court at his feet | the wire whips out between them and snaps taut with a twang | an attacker crosses: a flash at the crossing point, the wire jumps, the victim jolts (Zapped) | the wire hums and sparks at the tangles; overcharged it is doubled and sparks more | it snaps (normal) or after 10 s goes slack, sags to the court and the posts sink |
 | Overclock (play) | the cutscene | he sets off already charged | gold crackle round him, three ghost frames behind him, a lit trail at his feet | his skills show it: two copies, a double wire, the Backtrack tile cycling fast | the tile counts 25 s down | at 5 s left the crackle stutters; at 0 a last snap and the light drains down his body |
@@ -132,7 +132,7 @@ One travelling thing: the bolt, from the sky into his raised finger. The staging
 | THE LET GO: the world restarts, the bolt finishes into him | 4.50 to 6.40 | 2.70 to 4.50 | no ring, no Zap of staged players; the bolt enters his fist and runs down him; he drops into a sprinter's set and the cut comes as he goes |
 
 Play picks up with him Overclocked, his crackle already on (never charged twice). The held-equipment rule is unchanged
-(the carrying hand keeps its shoe). The theme cue keeps its name and stays silent until the owner picks a draft (section 6).
+(the carrying hand keeps its shoe). The theme cue keeps its name. The owner later authorized enabling the electrical family (section 9).
 
 ## 5 · Everything else the kit touches (and what each one needs)
 
@@ -190,9 +190,9 @@ Play picks up with him Overclocked, his crackle already on (never charged twice)
 
 ## 9 · Sound
 
-Hero skill sounds are switched off game-wide until the owner picks each by ear (`AudioCues.SkillSfxOn`, the 2026-09-29
-instruction, and the tump-sfx method: integrate only what the owner selects). The kit names its own cues (one per beat,
-no shared recipe): `sfx_cast_zack_backtrack`, `sfx_zack_backtrack_land`, `sfx_cast_zack_afterimage`,
-`sfx_zack_afterimage_pop`, `sfx_zack_afterimage_fizzle`, `sfx_cast_zack_livewire`, `sfx_zack_livewire_taut`,
-`sfx_zack_livewire_zap`, `sfx_zack_livewire_snap`, `sfx_zack_momentum_full`, `sfx_status_zapped`, `sfx_ult_theme_zack`.
-Drafts are rendered for the owner to hear; none ships until picked.
+The owner later explicitly delegated creation/refinement, requested a stronger buzz
+and taser feel, authorized enabling Zack's sounds and requested publication on main.
+Zack's sixteen original electrical cues now enter the scoped allowlist. The global
+switch stays false and other heroes retain their existing release policy. The
+[implementation and native capture evidence](lightning-audio.md) supersede the
+earlier audition-only boundary for Zack. Owner listening judgment remains open.

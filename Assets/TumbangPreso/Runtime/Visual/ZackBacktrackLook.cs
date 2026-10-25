@@ -120,7 +120,7 @@ namespace TumbangPreso.Visual
             _streak.enabled=_ink.enabled=u<1;float alpha=u<1?0:Mathf.Clamp01(1-(Age-PullSeconds)/RingHold);
             ZackFx.Tint(_ring,new Color(ZackFx.Body.r,ZackFx.Body.g,ZackFx.Body.b,alpha));
             ZackFx.Tint(_ringInk,new Color(ZackFx.Ink.r,ZackFx.Ink.g,ZackFx.Ink.b,alpha));
-            if(!_landed&&u>=1){_landed=true;ZackFx.Sparks(_to+Vector3.up*.12f,.45f,4);}
+            if(!_landed&&u>=1){_landed=true;ZackFx.Sparks(_to+Vector3.up*.12f,.45f,4);GameServices.Audio?.PlayAt("sfx_zack_backtrack_land",_to);}
         }
         private void Restore()
         {

@@ -139,21 +139,30 @@ namespace TumbangPreso.PlayTests
                 }
                 finally { _late.Pending = null; }
             };
+            using var audio = new ZackFilmAudio(folder);
             try
             {
                 int f = 0, count = Mathf.RoundToInt(seconds * 30);
                 float gameStart = Time.time;
                 _frame++; drive(0);
+                Exception captureError = null;
                 _late.Each = () =>
                 {
-                    if (f >= count) return;
-                    _late.Shoot(Path.Combine(folder, $"{f:D5}.jpg"));
-                    var at = _zack.transform.position;
-                    trace.AppendLine(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count},{Kit.Skill1.CooldownRemaining:F3},{(ZackLiveWire.Active.Any(w=>w.Snapped)?1:0)},{(_a.IsZapped?1:0)},{(_b.IsZapped?1:0)}"));
-                    f++;
-                    if (f < count) { _frame++; drive(f); }
+                    if (f >= count || captureError != null) return;
+                    try
+                    {
+                        if (!owner) Camera.main.transform.SetPositionAndRotation(_wide.transform.position, _wide.transform.rotation);
+                        _late.Shoot(Path.Combine(folder, $"{f:D5}.jpg"));
+                        audio.Frame();
+                        var at = _zack.transform.position;
+                        trace.AppendLine(FormattableString.Invariant($"{f},{f/30f:F3},{Time.time-gameStart:F3},{at.x:F3},{at.z:F3},{Kit.MomentumSeconds:F3},{Kit.OverclockLeft:F3},{_zack.ZappedLeft:F3},{ZackAfterimage.Active.Count},{ZackLiveWire.Active.Count},{Kit.Skill1.CooldownRemaining:F3},{(ZackLiveWire.Active.Any(w=>w.Snapped)?1:0)},{(_a.IsZapped?1:0)},{(_b.IsZapped?1:0)}"));
+                        f++;
+                        if (f < count) { _frame++; drive(f); }
+                    }
+                    catch (Exception error) { captureError = error; }
                 };
-                while (f < count) yield return null;
+                while (f < count && captureError == null) yield return null;
+                if (captureError != null) throw new InvalidOperationException("Native film capture failed", captureError);
                 if (!intro) Assert.AreEqual(seconds, Time.time - gameStart, .15f, "The saved frame clock diverged from simulation.");
             }
             finally
@@ -177,6 +186,10 @@ namespace TumbangPreso.PlayTests
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             NetAuthority.Provider = new SoloProvider();
+            Settings.SettingsStore.Current.MasterVolume = 1;
+            Settings.SettingsStore.Current.SfxVolume = 1;
+            Settings.SettingsStore.Current.MusicVolume = .25f;
+            Settings.SettingsStore.Current.AmbienceVolume = .35f;
             foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
             foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
             foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>(FindObjectsSortMode.None)) switcher.enabled = false;

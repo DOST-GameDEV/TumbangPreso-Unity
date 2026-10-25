@@ -18,6 +18,7 @@ namespace TumbangPreso.Visual
         private LineRenderer _ink, _wire, _second, _tangleA, _tangleB;
         private float _age, _snapAge = -1.0f;
         private bool _renderOnly;
+        private ZackCurrentAudio _current;
 
         public float LifeSeconds => _state.Duration;
 
@@ -29,6 +30,7 @@ namespace TumbangPreso.Visual
             var look = go.AddComponent<ZackLiveWireLook>();
             look._state = state;
             look._renderOnly = renderOnly;
+            if (!renderOnly) look._current = ZackCurrentAudio.Attach(go.transform, "sfx_zack_livewire_loop");
             look._postA = Anchor(go.transform, state.Path[0], state.Forward, "AnchorA");
             look._postB = Anchor(go.transform, state.Path[1], -state.Forward, "AnchorB");
             look._ink = ZackFx.Line(go.transform, "WireInk", Points, 0.075f, ZackFx.Ink, 0.0f);
@@ -84,6 +86,7 @@ namespace TumbangPreso.Visual
             _age = Mathf.Max(0.0f, seconds);
             float left = _state.Duration - _age;
             bool snapped = _snapAge >= 0.0f;
+            _current?.Step((_state.Path[0] + _state.Path[1]) * .5f + Vector3.up * .25f, !snapped && left > 0, _second != null ? 1f : .75f);
             float fall = snapped ? Mathf.Clamp01((_age - _snapAge) / 0.35f) : 0.0f;
             // The last 0.6 s: it goes slack, sags to the court, and the posts sink.
             float slack = snapped ? fall : Mathf.Clamp01(1.0f - left / 0.6f);

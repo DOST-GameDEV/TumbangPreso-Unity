@@ -14,8 +14,11 @@ owner answers are in [the approved plan](reports/zack-kit-2026-10-25/plan.md).
 Zapped is a 1-second full Shock stun on the existing timed recovery path. Recovery
 input is disabled in the current motor, so no button mash shortens it.
 
-Implementation is uncommitted on main at `1395ce099`. Owner visual/audio approval
-and actual peer acceptance remain separate from local compilation and tests.
+Implementation is committed on main. The owner refined Backtrack into a visible
+pull, removed the old magnet props, requested low floor-mounted wire anchors and
+authorized enabling original electrical SFX plus publication. See the
+[audio pass](reports/zack-kit-2026-10-25/lightning-audio.md). Owner visual/listening
+judgment and actual peer acceptance remain separate from local checks.
 
 ## Current interpretation, 2026-09-16
 

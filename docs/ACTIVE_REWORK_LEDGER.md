@@ -2,13 +2,13 @@
 
 Updated 2026-10-25. Owner scope: [TODO](TODO.md).
 
-- Zack baseline: `e01da9d59` on main; old magnets removed in `5105a70b4`, sound
-  auditions in `08f602c12`. Owner authorizes ongoing main commits. Pullback,
-  bare hands and low jumpable wire pass Core 840/840, EditMode 31/31 and PlayMode
-  19/19. Updated clips contain offline audition SFX, not enabled game sounds.
-  Five owner files remain excluded. No Unity job is active; no push requested.
-  Next: owner visual/listening review and actual peers.
-  [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
+- Zack kit and pullback refinements are committed on main. Owner authorizes
+  publication and enabling the original electrical sound family. Sixteen cues,
+  current beds and the film track pass EditMode 1/1 and PlayMode 16/16. Six new
+  review videos include actual Unity DSP audio. Core 840/840 remains applicable
+  to unchanged rules. No Unity job is active. Five owner files stay excluded.
+  Next: owner visual/listening judgment and actual peers.
+  [Evidence](reports/zack-kit-2026-10-25/lightning-audio.md).
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
   [Receipt](reports/repository-cleanup-2026-10-25.md).

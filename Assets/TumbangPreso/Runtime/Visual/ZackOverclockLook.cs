@@ -13,6 +13,7 @@ namespace TumbangPreso.Visual
         private const int Arcs = 3, Ghosts = 3, TrailPoints = 10;
         private CharacterMotor _motor;
         private ZackHeroKit _kit;
+        private ZackCurrentAudio _current;
         private readonly LineRenderer[] _arcs = new LineRenderer[Arcs];
         private readonly ZackFx.Echo[] _ghosts = new ZackFx.Echo[Ghosts];
         private LineRenderer _trail, _trailInk;
@@ -26,6 +27,7 @@ namespace TumbangPreso.Visual
             var go = new GameObject("ZackOverclocked-P" + (motor.PlayerSlot + 1));
             var look = go.AddComponent<ZackOverclockLook>();
             look._motor = motor; look._kit = kit;
+            look._current = ZackCurrentAudio.Attach(go.transform, "sfx_zack_overclock_loop");
             for (int i = 0; i < Arcs; i++) look._arcs[i] = ZackFx.Line(go.transform, "Crackle" + i, 6, 0.03f, ZackFx.Core, 1.5f);
             look._trailInk = ZackFx.Line(go.transform, "FootTrailInk", TrailPoints, 0.12f, ZackFx.Ink, 0.0f);
             look._trail = ZackFx.Line(go.transform, "FootTrail", TrailPoints, 0.06f, ZackFx.Body, 1.3f);
@@ -51,6 +53,7 @@ namespace TumbangPreso.Visual
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
             bool firstPerson = ZackFx.InOwnFirstPerson(_motor);
             float left = _kit.OverclockLeft;
+            _current?.Step(at + Vector3.up * .8f, true, left < 5 && Mathf.Repeat(_age, .25f) < .07f ? .3f : 1f);
             // At 5 s left it stutters: whole beats drop out, faster as it runs down.
             bool stutter = left < 5.0f && Mathf.Repeat(_age, Mathf.Lerp(0.18f, 0.5f, left / 5.0f)) < 0.07f;
             int strike = reduced ? 0 : Mathf.FloorToInt(_age / 0.08f);

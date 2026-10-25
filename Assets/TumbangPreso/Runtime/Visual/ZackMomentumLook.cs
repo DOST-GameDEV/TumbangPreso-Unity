@@ -64,6 +64,7 @@ namespace TumbangPreso.Visual
             var at = _motor.transform.position;
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
             if (step == 0 && _step >= 2) ZackFx.Sparks(at + Vector3.up * 0.15f, 0.25f, 3, _motor.PlayerSlot);
+            if (step == 3 && _step < 3) GameServices.Audio?.PlayAt("sfx_zack_momentum_full", at);
             _step = step;
             // Step 1: sparks at the heels, re-striking.
             bool heel = step >= 1 && (reduced || Mathf.Repeat(_age, 0.12f) < 0.06f);

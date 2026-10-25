@@ -169,7 +169,7 @@ namespace TumbangPreso
             // "Cannot move or act for 1 second": a full stun, overlapping by Max, lengthened by Vulnerable like every stun.
             ApplyStagger(Mathf.Min(seconds, StatusRules.ZappedSeconds), StunElement.Shock, Balance.StunBreakPressesDefault);
             _sawZapped = IsZapped;
-            if (fresh && IsZapped) StatusGained?.Invoke(this, StatusKind.Zapped);
+            if (fresh && IsZapped) { StatusGained?.Invoke(this, StatusKind.Zapped); GameServices.Audio?.PlayAt("sfx_status_zapped", transform.position); }
         }
 
         public void ApplyHaunted(float seconds = StatusRules.HauntedSeconds)
@@ -327,7 +327,7 @@ namespace TumbangPreso
         {
             // The stun itself arrives with the stun state; this float only marks the edge for the status mark and cue.
             bool zappedNow = float.IsFinite(zappedLeft) && zappedLeft > 0;
-            if (zappedNow && !_sawZapped) StatusGained?.Invoke(this, StatusKind.Zapped);
+            if (zappedNow && !_sawZapped) { StatusGained?.Invoke(this, StatusKind.Zapped); GameServices.Audio?.PlayAt("sfx_status_zapped", transform.position); }
             _sawZapped = zappedNow;
             bool haunted = !IsHaunted && hauntedLeft > 0;
             _hauntedLeft = float.IsFinite(hauntedLeft) ? Mathf.Clamp(hauntedLeft, 0, StatusRules.HauntedSeconds) : 0;

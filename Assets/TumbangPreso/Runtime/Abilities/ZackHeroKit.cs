@@ -258,7 +258,7 @@ namespace TumbangPreso.Abilities
             if (OverclockLeft > 0.0f)
             {
                 if (float.IsFinite(dt) && dt > 0.0f) OverclockLeft = Mathf.Max(0.0f, OverclockLeft - dt);
-                if (OverclockLeft <= 0.0f) EndOverclock();
+                if (OverclockLeft <= 0.0f) { GameServices.Audio?.PlayAt("sfx_zack_overclock_end", motor != null ? motor.transform.position : Vector3.zero); EndOverclock(); }
                 else DressOverclock(motor);
             }
             SamplePath(motor, dt);
@@ -370,7 +370,7 @@ namespace TumbangPreso.Abilities
                 motor.Teleport(to, keepStatuses: true);
                 pull?.SealTeleport();
                 _kit.ResetMomentum();
-                NetCue.Play("sfx_zack_backtrack_land", to);
+                // The accepted pullback look plays the catch when the body arrives.
             }
         }
 

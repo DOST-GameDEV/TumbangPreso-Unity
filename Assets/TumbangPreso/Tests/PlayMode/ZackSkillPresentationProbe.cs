@@ -121,6 +121,7 @@ namespace TumbangPreso.PlayTests
                         view.Sample(field, 0.5f); view.Visible(true);
                         yield return null;
                         Assert.IsEmpty(view.Root.GetComponentsInChildren<Collider>().Where(c => c.enabled));
+                        Assert.IsEmpty(view.Root.GetComponentsInChildren<AudioSource>(), "Replay looks must not create live current emitters.");
                         Assert.IsEmpty(view.Root.GetComponentsInChildren<Abilities.ZackLiveWire>());
                         Assert.IsEmpty(view.Root.GetComponentsInChildren<Abilities.ZackAfterimage>());
                     }
@@ -128,6 +129,36 @@ namespace TumbangPreso.PlayTests
                 Assert.IsEmpty(Abilities.ZackLiveWire.Active); Assert.IsEmpty(Abilities.ZackAfterimage.Active);
             }
             finally { Object.Destroy(stage); }
+        }
+
+        [UnityTest]
+        public IEnumerator LiveWireCurrentFollowsSfxGainAndStopsOnSnap()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
+            var root = new GameObject("Live wire audio lifecycle");
+            float volume = Settings.SettingsStore.Current.SfxVolume;
+            try
+            {
+                var look = Visual.ZackLiveWireLook.Build(root.transform, Wire(false));
+                look.StepTo(1);
+                yield return null;
+                var source = root.GetComponentInChildren<AudioSource>();
+                Assert.IsNotNull(source);
+                Assert.IsTrue(source.isPlaying, "The live wire needs actual current playback.");
+                Assert.IsTrue(source.loop);
+                Assert.AreEqual(1, source.spatialBlend);
+                Settings.SettingsStore.Current.SfxVolume = 0;
+                look.StepTo(1.1f);
+                Assert.Zero(source.volume, "The loop must obey the SFX slider.");
+                Settings.SettingsStore.Current.SfxVolume = volume;
+                look.StepTo(1.2f);
+                Assert.Greater(source.volume, 0);
+                look.Snap();
+                Assert.IsFalse(source.isPlaying, "Snapping must stop the live current immediately.");
+            }
+            finally { Settings.SettingsStore.Current.SfxVolume = volume; Object.Destroy(root); }
         }
 
         [UnityTest]
