@@ -200,9 +200,9 @@ namespace TumbangPreso.PlayTests
                     foreach (var streak in streaks)
                     {
                         Assert.IsTrue(streak.name.StartsWith("RewindStreak"));
-                        Assert.AreEqual(2, streak.positionCount, "Dashes have no tether bends or rings.");
+                        Assert.That(streak.positionCount, Is.InRange(3, 6), "Electrical wisps must have curved, bounded geometry.");
                         Assert.LessOrEqual(streak.widthMultiplier, .06f);
-                        if (streak.enabled) Assert.LessOrEqual(Vector3.Distance(streak.GetPosition(0), streak.GetPosition(1)), 2.3f,
+                        if (streak.enabled) Assert.LessOrEqual(LengthOf(streak), 2.3f,
                             "A speed dash must never become a route-length cable.");
                     }
                     var memoryShader=Resources.Load<Shader>("Shaders/ZackTemporalMemory");
@@ -245,6 +245,64 @@ namespace TumbangPreso.PlayTests
                     Assert.IsTrue(streaks.All(s => s == null), "All speed dashes must retire with their rewind.");
                     Assert.AreEqual(0, Visual.ZackBacktrackLook.FovKick(_caster), "The lens kick cannot outlive the effect.");
                 }
+            }
+            finally { Settings.SettingsStore.Current.ReducedEffects = reduced; }
+        }
+
+        internal static float LengthOf(LineRenderer line)
+        {
+            float result = 0;
+            for (int i = 1; i < line.positionCount; i++) result += Vector3.Distance(line.GetPosition(i - 1), line.GetPosition(i));
+            return result;
+        }
+
+        internal static float CurveOf(LineRenderer line)
+        {
+            if (line == null || line.positionCount < 3) return 0;
+            var a = line.GetPosition(0); var b = line.GetPosition(line.positionCount - 1); var ab = b - a;
+            float result = 0;
+            for (int i = 1; i < line.positionCount - 1; i++)
+            {
+                var p = line.GetPosition(i);
+                float u = ab.sqrMagnitude > 1e-6f ? Mathf.Clamp01(Vector3.Dot(p - a, ab) / ab.sqrMagnitude) : 0;
+                result = Mathf.Max(result, Vector3.Distance(p, a + ab * u));
+            }
+            return result;
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator FirstPersonElectricalWispsFollowBothLegsAndStayUntilArrival()
+        {
+            var history = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
+            float readyBy = Time.realtimeSinceStartup + 2;
+            while (history?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsTrue(history?.ForSeat(_caster.PlayerSlot)?.Ready == true);
+            var rig = Camera.main.GetComponent<CameraSystem.CameraRig>(); rig.Follow(_caster); rig.SetDebugThirdPerson(false);
+            bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedEffects = false;
+                var from = _caster.transform.position; var corner = from + Vector3.forward * 4;
+                var to = corner + Vector3.left * 4;
+                var rewind = Visual.ZackBacktrackLook.Play(_caster, from, to, new[] { to, corner, from });
+                _caster.Teleport(to, keepStatuses: true); rewind.SealTeleport();
+                bool zLeg = false, xLeg = false, curved = false, lateEcho = false;
+                while (rewind != null && rewind.Age < Visual.ZackBacktrackLook.PullSeconds)
+                {
+                    yield return null;
+                    Assert.LessOrEqual(rewind.OffRoute(rewind.RenderedFeet), .06f, "The eye/body must use the bent route, not its chord.");
+                    foreach (var line in rewind.GetComponentsInChildren<LineRenderer>(true).Where(l => l.enabled))
+                    {
+                        var d = line.GetPosition(line.positionCount - 1) - line.GetPosition(0); d.y = 0;
+                        zLeg |= Mathf.Abs(d.z) > .08f && Mathf.Abs(d.z) > Mathf.Abs(d.x) * 1.5f;
+                        xLeg |= Mathf.Abs(d.x) > .08f && Mathf.Abs(d.x) > Mathf.Abs(d.z) * 1.5f;
+                        curved |= CurveOf(line) > .015f;
+                    }
+                    if (rewind.Age > .4f) lateEcho |= rewind.GetComponentsInChildren<LineRenderer>(true).Any(l => l.enabled);
+                }
+                Assert.IsTrue(zLeg && xLeg, "First-person wisps must follow both route legs rather than one camera-forward axis.");
+                Assert.IsTrue(curved, "First-person electricity must bend rather than remain straight speed lines.");
+                Assert.IsTrue(lateEcho, "The rewind look remains active through the approach to arrival.");
             }
             finally { Settings.SettingsStore.Current.ReducedEffects = reduced; }
         }

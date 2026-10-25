@@ -1,6 +1,80 @@
 # Zack owner refinements, 2026-10-25
 
-## Current lead-and-merge speed candidate, 2026-10-26
+## Current electrical-outline rewind candidate, 2026-10-26
+
+Based on main `0589a749e`. The owner's latest direction removes the solid gold
+hologram, retains the electrical contour image through arrival and replaces the
+straight first-person speed tunnel with an effect that follows the turn.
+The earlier filled-projection candidates below are superseded.
+
+### Result
+
+- The memory shader has transparent faces, sparse broken scan wires and a hot
+  narrow rim. A small .018 m shell offset preserves the contour when the echo
+  merges with the body. The original body keeps its own readable colours.
+- Momentum's running ghosts and the private ready echo use the same thin memory
+  treatment. Their earlier opaque Shock coat caused the dense gold flash seen
+  before the cast. Momentum rules and private-echo ownership are unchanged.
+- One temporal subject remains, with contour persistence behind the travelling
+  body. Visibility now holds until the catch rather than fading as the lead gap
+  closes. The catch still occurs at .48 s, followed by the existing short settle.
+- Short five-point electrical wisps sample the recorded route, including its
+  corner. First person places them in the periphery and lets their direction
+  change with the route instead of keeping every stroke on the view axis.
+  The final treatment uses tapered widths and irregular knees. Route fragments
+  retain their span near departure instead of collapsing into checkmark shapes.
+- Body/eye travel, marker following, accepted host teleport, slipper, statuses
+  and cooldowns remain unchanged. Reduced effects omit the wisps and lens kick.
+
+### Verification
+
+`Logs/zack-backtrack-speed-20261026/r10.xml`: 23/23 passed, no skips. This includes
+the previous integration set and a new first-person bent-route regression. It
+requires fragments along both route legs, nonzero curve deviation, body travel
+on the route rather than its chord and active electrical wisps on final approach.
+Normal/reduced copy bounds, floor-marker alignment, lens recovery and cleanup
+remain asserted.
+
+Final `r11.xml`: 23/23 passed, no skips, including the taper/fragment polish and
+full-polyline length bound. The earlier two-point length measurement was replaced
+because a five-point wisp must be measured over all of its segments. A final
+stroke-opacity/colour adjustment reused that integration result and passed
+`r12.xml` film capture, 1/1 with no skips. That adjustment changes no route,
+ownership, lifecycle, input or marker calculation.
+
+The `r10` native observer frames show the solid gold flash removed, with the
+body's red hair visible through a thin electrical projection. First-person 1x
+playback follows the recorded turn with bent electrical strokes. The first pass
+looked too much like chunky checkmarks, which prompted the taper/fragment polish.
+The final `r12` observer and first-person exports were reviewed at 1x through
+arrival and renderer restoration. The observer retains a bright electrical
+contour through the approach without the solid gold flash. First-person strokes
+are tapered, irregular and bend with the turn. The normal-speed result is a
+candidate for owner review, not human feel approval.
+
+Both final takes contain 162 frames, 1280x720 at 30 fps, 5.4 s, with actual Unity
+DSP audio muxed to AAC. Frame counts, duration and full-file decode passed.
+Final traces show 0.000 m ring/tag/floor X/Z error through the catch at CSV
+precision, an intentional .152 m catch excursion and zero body route error
+during travel. Maximum full wisp length is .990 m observer and .700 m first
+person, with curve deviations up to .094 m and .103 m respectively. The observer
+echo remains enabled on all four late-approach capture frames. Renderer state
+does not alone prove pixel visibility; the final pictures were also reviewed.
+
+The bounds remain two body copies, fourteen wisps, twenty renderers and four
+skinned renderers in normal mode. Reduced effects retain two copies with zero
+wisps. These counts do not establish player performance. Guard receipts and
+`r12-metrics.json` verify frozen inputs, sixteen unchanged source WAVs and exact
+preservation of the five owner files plus QualitySettings. No player build or
+actual-peer/WAN test is claimed.
+
+No source audio assets changed in this visual pass. The owner rejected the new
+standalone procedural sound challenger as unlike electricity from games, films
+or anime. It remains outside Resources and is marked rejected. Small licensed
+source-material auditions are separate, unapproved and not shipped. Sound
+acceptance remains open alongside visual feel and actual-peer/WAN checks.
+
+## Previous lead-and-merge speed candidate, 2026-10-26
 
 Based on main `903482cc1`. The new direction keeps one gold hologram ahead of
 Zack toward the old spot, closing into him at the 0.48 s catch. It supersedes

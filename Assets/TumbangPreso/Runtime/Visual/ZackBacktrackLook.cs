@@ -15,7 +15,7 @@ namespace TumbangPreso.Visual
         /// <summary>The catch: the body reaches the old spot and the landing cue plays. Matches the 0.46 s pull cue.</summary>
         public const float PullSeconds = RevealSeconds + TravelSeconds;
         private const float Linger = .16f, LeadStart = .5f, MergeFlash = .12f, StreakLife = .09f;
-        private const int Streaks = 14;
+        private const int Streaks = 14, StreakPoints = 5;
         private static readonly Dictionary<int,ZackBacktrackLook> Live = new Dictionary<int,ZackBacktrackLook>();
         private CharacterMotor _motor;
         private Transform _model;
@@ -91,7 +91,8 @@ namespace TumbangPreso.Visual
                 v._streaks=new LineRenderer[Streaks];v._streakBorn=new float[Streaks];
                 for(int i=0;i<Streaks;i++)
                 {
-                    v._streaks[i]=ZackFx.Line(v.transform,"RewindStreak"+i,2,.022f+.012f*(i%3),i%2==0?ZackFx.Core:ZackFx.Body,1.5f);
+                    v._streaks[i]=ZackFx.Line(v.transform,"RewindStreak"+i,StreakPoints,.012f+.005f*(i%3),i%2==0?ZackFx.Core:ZackFx.Body,1.5f);
+                    v._streaks[i].widthCurve=new AnimationCurve(new Keyframe(0,.08f),new Keyframe(.3f,1),new Keyframe(.7f,.7f),new Keyframe(1,.04f));
                     v._streaks[i].enabled=false;v._streakBorn[i]=-1;
                 }
             }
@@ -285,29 +286,39 @@ namespace TumbangPreso.Visual
             {
                 var echo=_moments[0];
                 float lead=Lead(age),ahead=e+(1-e)*lead;
-                var p=Route(ahead,out float then,out _);
+                var p=Route(ahead,out float then,out var forward);
+                // Out of phase: when the route runs straight at this screen's camera the hologram would sit on top of him,
+                // so it slips sideways on screen in proportion to that alignment, and slides back into him as the gap closes.
+                var view=UnityEngine.Camera.main;
+                if(view!=null&&!eyes&&forward.sqrMagnitude>0)
+                {
+                    var look=view.transform.forward;look.y=0;
+                    float aligned=look.sqrMagnitude>1e-4f?Mathf.Abs(Vector3.Dot(look.normalized,forward)):0;
+                    var right=view.transform.right;right.y=0;
+                    p+=right.normalized*(.8f*Mathf.SmoothStep(0,1,Mathf.InverseLerp(.35f,.9f,aligned))*(lead/LeadStart));
+                }
                 echo.PoseAt(then);var root=echo.Copy.Root.transform;
                 root.SetPositionAndRotation(p+_modelOffset,root.rotation);
                 // Merged: one bright beat as the past closes over him, then it is gone.
                 float merged=Mathf.Clamp01((age-PullSeconds)/MergeFlash);
                 float enter=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/RevealSeconds));
-                float glow=travelling?.45f+.1f*(1-lead/LeadStart):Mathf.Lerp(1.4f,0,merged);
+                float glow=travelling?1f:Mathf.Lerp(1.4f,0,merged);
                 float near=eyes?Mathf.SmoothStep(0,1,Mathf.InverseLerp(1.1f,1.8f,Vector3.Distance(p+Vector3.up*1.2f,eye))):1;
                 echo.Past(.1f,enter*glow*near);
                 for(int layer=0;layer<_echoTrail.Length;layer++)
                 {
                     // Layer 0 is the hologram; the rest step back toward his body, fainter the closer they are to him.
-                    float k=layer/(float)_echoTrail.Length;
-                    var q=Route(Mathf.Lerp(ahead,e,k),out _,out _);
-                    float visible=layer==0?1:calm?0:Mathf.Pow(.62f,layer)*Mathf.Clamp01((ahead-e)*length/.4f);
+                    // Keep the base projection at its readable screen offset; only the trailing contours follow the route.
+                    float spacing=Mathf.Lerp(.08f,.2f,Speed(age))*(1-merged);
+                    var q=layer==0?p:Route(Mathf.Clamp01(e-layer*spacing/Mathf.Max(.1f,length)),out _,out _);
+                    float visible=layer==0?1:calm?0:Mathf.Pow(.62f,layer)*(1-merged);
                     _echoTrail[layer]=new Vector4(q.x-p.x,q.y-p.y,q.z-p.z,visible);
                 }
                 echo.Trail(_echoTrail);
                 bool on=enter*glow*near>.015f;Show(echo,on);MomentsDrawn=on?1:0;
             }
-            // Speed streaks: short gold dashes left hanging in the air along his line of travel, each alive for about three
-            // frames. He outruns them, so they whip past him (an observer) or stream away into the distance (his own eyes,
-            // a zoom tunnel kept off the screen centre). Many tiny lines, never one long one.
+            // Short electrical wisps sample the traversed route, including its bends. In first person they occupy the
+            // periphery and sweep across the turn instead of remaining parallel to the camera's forward axis.
             Route(e,out _,out var along);
             float rush=calm?0:Speed(age);
             for(int i=0;i<_streaks.Length;i++)
@@ -315,17 +326,7 @@ namespace TumbangPreso.Visual
                 var streak=_streaks[i];float life=age-_streakBorn[i];
                 if((_streakBorn[i]<0||life>StreakLife)&&travelling&&rush>.15f&&along.sqrMagnitude>0)
                 {
-                    float h=Hash(i,Mathf.FloorToInt(age*90)),g=Hash(i+31,Mathf.FloorToInt(age*70));
-                    // In his own eyes the dashes run along the view axis, so they radiate from the screen centre.
-                    var axis=eyes&&UnityEngine.Camera.main!=null?-UnityEngine.Camera.main.transform.forward:along;
-                    var side=Vector3.Cross(axis,Vector3.up).normalized;
-                    var centre=eyes?eye:feet+Vector3.up*.9f;
-                    float spin=h*Mathf.PI*2,radius=eyes?Mathf.Lerp(.75f,1.7f,g):Mathf.Lerp(.35f,1.05f,g);
-                    var offset=(side*Mathf.Cos(spin)+Vector3.up*Mathf.Sin(spin)*(eyes?.75f:.8f))*radius;
-                    if(!eyes&&offset.y<-.75f)offset.y=-.75f;
-                    var start=centre+offset-axis*Mathf.Lerp(eyes?1f:.2f,eyes?4f:1.6f,Hash(i+57,Mathf.FloorToInt(age*50)));
-                    float reach=Mathf.Lerp(.5f,1.4f,g)*rush;
-                    streak.SetPosition(0,start);streak.SetPosition(1,start-axis*reach*(eyes?1.6f:1));
+                    WriteStreak(streak,i,age,e,rush,eyes,eye,along);
                     _streakBorn[i]=age;life=0;
                 }
                 bool on=_streakBorn[i]>=0&&life<=StreakLife&&age<PullSeconds+.03f;
@@ -338,6 +339,30 @@ namespace TumbangPreso.Visual
                 ZackFx.Sparks(_to+Vector3.up*.12f,.38f,calm?2:5,2.1f);
                 if(!calm)ZackFx.Sparks(_to+Vector3.up*1.1f,.3f,3,4.7f);
                 GameServices.Audio?.PlayAt("sfx_zack_backtrack_land",_to);
+            }
+        }
+        private void WriteStreak(LineRenderer streak,int index,float age,float progress,float rush,bool eyes,Vector3 eye,Vector3 along)
+        {
+            float h=Hash(index,Mathf.FloorToInt(age*90)),g=Hash(index+31,Mathf.FloorToInt(age*70));
+            var camera=UnityEngine.Camera.main;
+            var side=eyes&&camera!=null?camera.transform.right:Vector3.Cross(along,Vector3.up).normalized;
+            var up=eyes&&camera!=null?camera.transform.up:Vector3.up;
+            float spin=h*Mathf.PI*2,radius=eyes?Mathf.Lerp(.65f,1.15f,g):Mathf.Lerp(.35f,.9f,g);
+            var offset=(side*Mathf.Cos(spin)+up*Mathf.Sin(spin)*.8f)*radius;
+            float height=eyes?Mathf.Clamp(eye.y-FeetAt(age).y,.8f,2f):.9f;
+            var forward=eyes&&camera!=null?camera.transform.forward*1.15f:Vector3.zero;
+            float behind=Mathf.Lerp(.12f,eyes?.85f:.65f,Hash(index+57,Mathf.FloorToInt(age*50)));
+            float reach=Mathf.Lerp(.32f,eyes?.72f:1.05f,g)*rush;
+            // Retain a full route fragment at departure instead of collapsing its points into an arrow-shaped stamp.
+            float anchor=Mathf.Max(reach,progress*RouteLength-behind);
+            for(int j=0;j<StreakPoints;j++)
+            {
+                float u=j/(StreakPoints-1f);
+                var p=Route(Mathf.Clamp01((anchor-reach*u)/Mathf.Max(.1f,RouteLength)),out _,out _);
+                float curl=Mathf.Sin(Mathf.PI*u)*(.04f+.05f*g);
+                float knee=j==0||j==StreakPoints-1?0:(Hash(index*7+j,Mathf.FloorToInt(age*90))-.5f)*.06f;
+                p+=Vector3.up*height+offset+forward+side*curl*(index%2==0?1:-1)+up*knee;
+                streak.SetPosition(j,p);
             }
         }
         private static float Hash(int a,int b){float v=Mathf.Sin(a*127.1f+b*311.7f)*43758.5453f;return v-Mathf.Floor(v);}

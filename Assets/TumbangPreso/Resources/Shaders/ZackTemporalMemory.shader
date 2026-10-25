@@ -22,7 +22,7 @@ Shader "TumbangPreso/ZackTemporalMemory"
   struct v2f {float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float3 normal:TEXCOORD1;float3 world:TEXCOORD2;float2 echo:TEXCOORD3;};
   v2f MemoryVertex(appdata_base v,int layer)
   {
-   v2f o;float4 world=mul(unity_ObjectToWorld,v.vertex);world.xyz+=_MemoryTrail[layer].xyz;
+   v2f o;float4 world=mul(unity_ObjectToWorld,v.vertex);world.xyz+=_MemoryTrail[layer].xyz+UnityObjectToWorldNormal(v.normal)*.018;
    o.pos=mul(UNITY_MATRIX_VP,world);o.world=world.xyz;o.normal=UnityObjectToWorldNormal(v.normal);
    o.uv=TRANSFORM_TEX(v.texcoord,_MainTex);o.echo=float2(layer,_MemoryTrail[layer].w);return o;
   }
@@ -37,13 +37,20 @@ Shader "TumbangPreso/ZackTemporalMemory"
    float3 paint=tex2D(_MainTex,i.uv).rgb;
    if(_UsePalette>.5){float2 cell=floor(clamp(i.uv,0,.9999)*16);int c=(int)cell.x,r=(int)cell.y;if(r<=7)paint=_Palette[(c/2)+(r<=3?8:0)].rgb;}
    paint*=_Color.rgb;
-   float3 core=float3(1,.72,.12);
-   float edge=pow(1-saturate(abs(dot(normalize(i.normal),normalize(_WorldSpaceCameraPos-i.world)))),1.6);
-   float stripe=lerp(.55,1,smoothstep(.3,.7,frac(i.world.y*9+_Time.y*7)));
-   float fill=i.echo.x<.5?.18:.05;
-   float alpha=_MemoryOpacity*i.echo.y*(fill+edge*.6)*stripe;
+   // Electrical contour memory: transparent faces, broken scan wires and a narrow hot rim. No solid gold body.
+   float3 core=float3(1,.62,.06),hot=float3(1,.9,.45);
+   float facing=saturate(abs(dot(normalize(i.normal),normalize(_WorldSpaceCameraPos-i.world))));
+   float edge=pow(1-facing,4);
+   float band=abs(frac(i.world.y*8+_Time.y*3)-.5);
+   float scan=1-smoothstep(.012,.055,band);
+   float vertical=1-smoothstep(.012,.05,abs(frac((i.world.x+i.world.z)*5)-.5));
+   float broken=step(.26,frac(sin(floor(i.world.y*8)+floor((i.world.x+i.world.z)*5)*17+floor(_Time.y*15))*43758.5));
+   float flicker=.85+.15*frac(sin(floor(_Time.y*24)+i.echo.x*7.1)*43758.5);
+   float wires=(scan*.6+vertical*.25)*broken;
+   float alpha=_MemoryOpacity*i.echo.y*(wires+edge*1.4)*flicker;
    alpha*=smoothstep(.65,1.3,distance(i.world,_WorldSpaceCameraPos));
-   return fixed4(lerp(paint,core,.62)+core*edge*.9,saturate(alpha));
+   float3 colour=lerp(core,hot,edge)+core*edge*.45;
+   return fixed4(colour,saturate(alpha));
   }
   ENDCG
   Pass { Name "MEMORY_CORE"

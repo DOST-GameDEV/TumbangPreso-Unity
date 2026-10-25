@@ -2,13 +2,15 @@
 
 Updated 2026-10-26. Owner scope: [TODO](TODO.md).
 
-- Zack Backtrack lead-and-merge speed candidate is verified on main from
-  `903482cc1`: final native 22/22, reviewed observer/FPP films with actual sound,
-  bounded dashes and same-frame markers through the catch. Own floor marks step
-  aside during the first-person kick. No Unity job or preview is active.
-  Receipts are under `Logs/zack-backtrack-speed-20261026/`. Next: owner review of
-  both Speed videos. Creative/listening acceptance and actual peers remain open.
-  Five owner files remain excluded.
+- Zack Backtrack electrical-outline candidate is verified on main from `0589a749e`:
+  no solid gold memory fill, contour persistence through arrival and curved
+  first-person wisps that follow both route legs. Final r11 passed 23/23 plus
+  r12 stroke capture 1/1; both final exports were reviewed at 1x. Evidence is
+  under `Logs/zack-backtrack-speed-20261026/`. Next: owner review of the Electric
+  videos and source-material audio test. No Unity or review server is active.
+  The procedural SFX challenger was rejected; separate source
+  auditions are unapproved and not installed. Visual/listening acceptance and
+  actual peers remain open. Five owner files remain excluded.
   [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
