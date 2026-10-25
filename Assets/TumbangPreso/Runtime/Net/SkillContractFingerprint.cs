@@ -33,6 +33,16 @@ namespace TumbangPreso.Net
         // explicit versioning and coverage of their own serialization/state contract.
         public static string Compute(IEnumerable<HeroKit> kits, Func<string, bool, float> introductionSeconds)
         {
+            byte[] payload = CaptureMetadata(kits, introductionSeconds);
+            using var hash = SHA256.Create();
+            return BitConverter.ToString(hash.ComputeHash(payload)).Replace("-", "");
+        }
+
+        public static byte[] CaptureCurrentMetadata()
+            => CaptureMetadata(CurrentKits(), (hero, held) => UltimatePerformance.For(hero, held)?.Seconds ?? UltimatePerformance.DefaultSeconds);
+
+        private static byte[] CaptureMetadata(IEnumerable<HeroKit> kits, Func<string, bool, float> introductionSeconds)
+        {
             if (kits == null) throw new ArgumentNullException(nameof(kits));
             if (introductionSeconds == null) throw new ArgumentNullException(nameof(introductionSeconds));
             using var bytes = new MemoryStream();
@@ -57,8 +67,7 @@ namespace TumbangPreso.Net
                 }
                 writer.Write(count);
             }
-            using var hash = SHA256.Create();
-            return BitConverter.ToString(hash.ComputeHash(bytes.ToArray())).Replace("-", "");
+            return bytes.ToArray();
         }
 
         private static void WriteAbility(BinaryWriter writer, HeroAbility ability)
