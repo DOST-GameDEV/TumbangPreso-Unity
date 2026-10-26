@@ -893,8 +893,10 @@ namespace TumbangPreso
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
             // HERO-10 (plan 9.5): Phaister walks while she reaches for someone with a curse, but she cannot sprint.
+            var kit = AbilitySystem?.Kit;
+            Stamina.Profile = kit?.StaminaProfile ?? Core.StaminaProfile.Shared;
             Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching && !IsCarryingCan
-                                                   && !ReworkCrouched
+                                                   && !ReworkCrouched && !(kit?.BlocksSprint ?? false)
                                                    && Intent.Pressed(Verb.Sprint));
 
             // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.

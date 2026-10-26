@@ -135,7 +135,10 @@ namespace TumbangPreso.Net
         {
             if (!Finite(field.Position) || !Finite(field.Forward) || !Finite(field.Duration) || !Finite(field.Remaining)
                 || !Finite(field.Radius) || !Finite(field.FirstScale) || !Finite(field.SecondScale)
-                || field.Duration <= 0 || field.Duration > 60 || field.Remaining < 0 || field.Remaining > field.Duration + .05f
+                // ⚠️ Live Wire (2026-10-26) stays until round end: its lifetime is `ZackRules.LiveWireLifeBound`, a validation
+                // bound past any round, so the general 60 s cap would refuse every live wire on the network and in replays.
+                || field.Duration <= 0 || field.Duration > (field.Type == Kind.LiveWire ? Core.ZackRules.LiveWireLifeBound + .05f : 60)
+                || field.Remaining < 0 || field.Remaining > field.Duration + .05f
                 || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount || field.InstanceId < 0
                 || (field.TargetMask & ~((1 << Core.Balance.PlayerCount) - 1)) != 0
                 || (field.Type != Kind.Sentry && field.TargetMask != 0)) return false;

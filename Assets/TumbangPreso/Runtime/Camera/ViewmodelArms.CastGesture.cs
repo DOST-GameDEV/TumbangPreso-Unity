@@ -89,6 +89,12 @@ namespace TumbangPreso.CameraSystem
                 Rest(0), K(.14f, .02f, .02f, .04f, -.12f, .42f, .22f), K(.22f, .03f, .02f, .06f, -.14f, .44f, .24f),
                 K(.30f, -.08f, .10f, -.14f, -.06f, .36f, .10f), K(.36f, -.07f, .11f, -.13f, -.06f, .36f, .10f),
                 K(.42f, -.09f, .10f, -.14f, -.06f, .35f, .10f), Rest(.73f)) },
+            // FULL THROTTLE (2026-10-26). Recharged: both fists yank down to the hips and clench (the charge goes in, one
+            // chatter), then snap up and forward together as the bolts land, and drop back ready to run.
+            { "throttle-rev", new CastPath(.20f, false,
+                Rest(0), K(.08f, .03f, -.10f, -.06f, -.03f, -.10f, -.06f), K(.13f, .035f, -.11f, -.055f, -.035f, -.105f, -.055f),
+                K(.17f, .03f, -.10f, -.06f, -.03f, -.10f, -.06f),
+                K(.24f, -.02f, .09f, .14f, .02f, .09f, .14f), K(.36f, -.015f, .07f, .11f, .015f, .07f, .11f), Rest(.62f)) },
             // OVERCLOCK. The take: the hands come in and up, close on the charge, and settle crackling.
             { "overclock-take", new CastPath(.28f, false,
                 Rest(0), K(.08f, .01f, .025f, .01f, .04f, .10f, .02f),

@@ -9,7 +9,8 @@ using Object=UnityEngine.Object;
 namespace TumbangPreso.EditorTools
 {
     // Zack's speedster kit clips (2026-10-25 rework), baked from his rig on every
-    // roster build: Backtrack, Afterimage, the held wire and its throw, and Overclock's set-off (`HeroAbilityClips.Zack.cs`).
+    // roster build: Backtrack, Full Throttle, the retired Afterimage, the held wire and its throw, and Overclock's set-off
+    // (`HeroAbilityClips.Zack.cs`).
     //
     // ⚠️ BAKED, BECAUSE `AnimationClip.SetCurve` IS EDITOR-ONLY FOR THESE CLIPS: a clip built at runtime in a player is valid
     // and EMPTY (`GeneratedAnimationAuthor`'s header). `PhaisterMotionAuthor` is the precedent this copies.

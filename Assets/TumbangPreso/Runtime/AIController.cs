@@ -1928,25 +1928,26 @@ namespace TumbangPreso
             return false;
         }
 
-        /// <summary>AFTERIMAGE's moment: the taya stands between this attacker and its loose slipper, within 8 m.</summary>
-        private bool ZackDecoyAim(CharacterMotor taya, out Vector3 aim)
+        /// <summary>
+        /// FULL THROTTLE's moment (2026-10-26): going in for its loose slipper, at least 2 m away, with the taya within 9 m of
+        /// it or of the slipper; or holding a slipper with the taya closing inside 5 m. Press, go in, grab, get out.
+        /// </summary>
+        private bool ZackThrottleMoment(CharacterMotor taya)
         {
-            aim = default;
             var me = transform.position; var them = At(taya).Value;
+            if (_motor.HoldingSlipper) return Flat(me, them) < 5.0f;
             foreach (var s in BotSlipperInventory.All)
             {
                 if (s == null || s.OwnerSlot != _motor.PlayerSlot || s.State != SlipperState.Loose) continue;
-                var toShoe = s.transform.position - me; toShoe.y = 0;
-                var toTaya = them - me; toTaya.y = 0;
-                if (toShoe.sqrMagnitude < 4.0f || toTaya.magnitude > 8.0f || toTaya.magnitude > toShoe.magnitude + 1.0f
-                    || Vector3.Angle(toShoe, toTaya) > 50.0f) continue;
-                aim = me - toShoe.normalized * 10.0f + Vector3.up * 1.2f;
-                return true;
+                var at = s.transform.position;
+                if (Flat(me, at) < 2.0f) continue;
+                if (Flat(me, them) < 9.0f || Flat(at, them) < 9.0f) return true;
             }
             return false;
         }
 
-        // The AI taya and Zack's copies: a live copy in its chase range is a candidate it has not seen through yet.
+        // The AI taya and Zack's copies (AFTERIMAGE, retired 2026-10-26): no copy is cast any more, so this never fires; it
+        // stays inert rather than half-removed while replays still restore copies on the host.
         private Abilities.ZackAfterimage _decoy;
         private float _decoyChased;
         private readonly HashSet<int> _decoysSeenThrough = new HashSet<int>();
@@ -5743,14 +5744,10 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    // AFTERIMAGE (2026-10-25): about to go in for its slipper with the taya between it and the slipper, the
-                    // attacker sends its copy AWAY from the slipper, so a taya that bites runs the wrong way.
-                    if (!_motor.HoldingSlipper && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk) && target != null
-                        && ZackDecoyAim(target, out var decoyAt))
-                    {
-                        intent.AimPoint = decoyAt; intent.FaceAimPoint = true;
+                    // FULL THROTTLE (2026-10-26): top speed at once for the run in to its slipper past the taya, or out again.
+                    if ((Plan == AiPlan.Fetch || Plan == AiPlan.Stalk || _motor.HoldingSlipper) && target != null
+                        && !_motor.IsCarryingCan && ZackThrottleMoment(target))
                         Consider(intent, Verb.Skill2, dt);
-                    }
                 }
                 else if (kit is Abilities.SeanHeroKit && _motor.IsDefender)
                 {

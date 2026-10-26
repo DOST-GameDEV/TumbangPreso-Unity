@@ -2,16 +2,16 @@
 
 Updated 2026-10-26. Owner scope: [TODO](TODO.md).
 
-- Zack Backtrack electrical-outline look `308fb345f` is owner-approved on main:
-  no solid gold memory fill, contour persistence through arrival and curved
-  first-person wisps that follow both route legs. Final r11 passed 23/23 plus
-  r12 stroke capture 1/1; both final exports were reviewed at 1x. Evidence is
-  under `Logs/zack-backtrack-speed-20261026/`. The skin-mounted hand zigzag
-  overlay and its test are removed; final native hand capture passed 1/1.
-  Next: sound review. The procedural SFX
-  challenger was rejected; source auditions are not installed. Listening and
-  actual-peer acceptance remain open. Five owner files stay excluded.
-  [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
+- Zack owner refinement (2026-10-26) in progress on main from `078f98e87`: base
+  speed, faster Momentum with a dash gait, Charge in the stamina arc, Backtrack
+  past moments on the approved outline look, persistent Live Wire with dark/rearm
+  and host-timed reel-in, Overclock fuel with a held two-handed zap; protocol 184,
+  clip schema 17. Full Throttle replaces Afterimage (owner pick); Momentum speed language.
+  Wiki still names Afterimage.
+  Audio is Codex's lane. Evidence: `Logs/zack-refine-20261026/`.
+  [Refinement](reports/zack-kit-2026-10-25/refinement-2026-10-26.md).
+  Focused Zack Unity cases pass. Next: owner review, Wiki text, real peers.
+  Five owner files stay excluded.
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
   [Receipt](reports/repository-cleanup-2026-10-25.md).

@@ -57,6 +57,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 3d322f2d0980c634cbba0d670f279391, type: 2}
   - {fileID: 7400000, guid: 390ea5aa8f165394b972ca375cefc2c3, type: 2}
   - {fileID: 7400000, guid: 97a83b0475077354c8c683143c3e5b29, type: 2}
+  - {fileID: 7400000, guid: f5136fdc7982d8045975f135834cd920, type: 2}
   Palette:
   - {r: 0.909804, g: 0.819608, b: 0.121569, a: 1}
   - {r: 0.078431, g: 0.070588, b: 0.101961, a: 1}

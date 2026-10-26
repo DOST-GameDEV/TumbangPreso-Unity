@@ -12,7 +12,7 @@ namespace TumbangPreso.PlayTests
 {
     /// <summary>
     /// Zack's speedster kit (2026-10-25 rework, `docs/reports/zack-kit-2026-10-25/plan.md`) on a real court: BACKTRACK keeps
-    /// the slipper and the host checks the spot, AFTERIMAGE pops on the taya's touch, LIVE WIRE Zaps the first crosser (every
+    /// the slipper and the host checks the spot, FULL THROTTLE fills Momentum and Charge and holds them, LIVE WIRE Zaps the first crosser (every
     /// crosser when overcharged), ZAPPED is a 1 s full stun that Dante's immunity refuses, and OVERCLOCKED lasts 25 s.
     /// </summary>
     public sealed class ZackKitAcceptanceProbe
@@ -307,56 +307,71 @@ namespace TumbangPreso.PlayTests
             finally { Settings.SettingsStore.Current.ReducedEffects = reduced; }
         }
 
-        // ------------------------------------------------------------------ AFTERIMAGE
+        // ------------------------------------------------------------------ FULL THROTTLE
 
         [UnityTest, Timeout(60000)]
-        public IEnumerator AfterimageRunsAheadAndPopsWhenTheTayaTouchesIt()
+        public IEnumerator FullThrottleFillsMomentumAndChargeAndHoldsThemThroughAStop()
         {
-            var taya = GameServices.Round.PlayerAt(0); taya.IsDefender = true;
-            var carrier = _caster.GetComponent<Carrier>();
-            if (carrier.Held == null)
-            {
-                var shoe = Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None).First(s => s.SeatOfOrigin == _caster.PlayerSlot);
-                shoe.transform.position = _caster.transform.position;
-                carrier.HostPickUp(shoe);
-            }
-            Assert.IsNotNull(carrier.Held, "This case must exercise a copy carrying a slipper.");
-            // Picking up can change the model hierarchy. Exercise the real body copy after its history is ready.
-            var poses = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
-            float readyBy = Time.realtimeSinceStartup + 2;
-            while (poses?.ForSeat(_caster.PlayerSlot)?.Ready != true && Time.realtimeSinceStartup < readyBy) yield return null;
-            Assert.IsTrue(poses?.ForSeat(_caster.PlayerSlot)?.Ready == true, "The held-body fixture must have pose history.");
+            // An empty bar and no Momentum: everything the cast promises must visibly arrive at once.
+            _caster.Stamina.Deplete();
+            Kit.ResetMomentum();
+            Assert.Less(_caster.Stamina.Ratio, .05f);
             Assert.IsTrue(Kit.AttackingSkill.CanActivate(Context()));
             Kit.AttackingSkill.Activate(Context());
-            var copy = ZackAfterimage.Active.Single(c => c.OwnerSlot == _caster.PlayerSlot);
-            Assert.IsTrue(copy.IsDecoy);
-            Assert.IsFalse(GameServices.Round.Players.Any(p => p != null && p.gameObject == copy.gameObject), "A copy is never a body.");
-            Assert.IsEmpty(copy.GetComponentsInChildren<Collider>().Where(c => c.enabled), "A copy has no collider.");
-            var history = Object.FindAnyObjectByType<CameraSystem.MatchPoseHistory>();
-            var track = history != null ? history.ForSeat(_caster.PlayerSlot) : null;
-            Debug.Log("[Afterimage shoe] holding=" + carrier.Held + " flag=" + copy.Capture().SecondScale
-                + " history=" + (track != null && track.Ready) + " skinned=" + copy.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length
-                + " anchor=" + _caster.GetComponent<Visual.CharacterVisual>().HandAnchor);
-            Assert.IsNotNull(copy.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "AfterimageHeldSlipper"),
-                "The copy must draw the slipper its caster holds.");
-            yield return new WaitForSeconds(.6f);
-            Assert.Greater(Vector3.Distance(copy.Feet, _caster.transform.position), 2f, "The copy did not run.");
-            taya.Teleport(copy.Feet);
-            yield return Steps(3);
-            Assert.IsTrue(copy == null || copy.Popped, "The taya's touch must pop the copy.");
-            yield return new WaitForSeconds(ZackAfterimage.PopSeconds + .2f);
-            Assert.IsFalse(ZackAfterimage.Active.Any(c => c != null && c.OwnerSlot == _caster.PlayerSlot));
+            Assert.IsTrue(Kit.Throttled, "The lock must run from the cast.");
+            Assert.AreEqual(ZackRules.MomentumRampSeconds, Kit.MomentumSeconds, 1e-4f, "Momentum must be full at once.");
+            Assert.AreEqual(1f, _caster.Stamina.Ratio, 1e-3f, "Charge must be full at once.");
+            Assert.IsFalse(_caster.Stamina.IsFatigued);
+            Assert.AreEqual(ZackRules.BaseSpeedScale * 1.25f, Kit.MovementSpeedScale, 1e-3f);
+            Assert.AreEqual(ZackRules.FullThrottleCooldown, Kit.AttackingSkill.CooldownRemaining, .2f);
+            var look = Object.FindObjectsByType<Visual.ZackThrottleLook>(FindObjectsSortMode.None)
+                .FirstOrDefault(l => l.BelongsTo(_caster));
+            Assert.IsNotNull(look, "Everyone sees the surge.");
+            // The surge draws: bolts and the charge band within the first frames, then the countdown ring at his feet.
+            bool bolts = false, band = false, clock = false;
+            float began = Time.time;
+            while (Time.time - began < .5f)
+            {
+                yield return null;
+                foreach (var line in look.GetComponentsInChildren<LineRenderer>())
+                {
+                    if (!line.enabled) continue;
+                    bolts |= line.name.StartsWith("SurgeBolt");
+                    band |= line.name == "ChargeBand";
+                    clock |= line.name == "LockClock";
+                }
+            }
+            // The charge band climbs his body, so his own first person holds it back (look rule 3); every other view draws it.
+            bool eyes = Visual.ZackFx.InOwnFirstPerson(_caster);
+            Assert.IsTrue(bolts && clock && band != eyes, "bolts=" + bolts + " band=" + band + " clock=" + clock + " eyes=" + eyes);
+            // Standing still for a second inside the lock costs him nothing (the ordinary grace is a quarter of that).
+            _caster.Intent.Clear();
+            yield return new WaitForSeconds(1.0f);
+            Assert.IsTrue(Kit.Throttled);
+            Assert.AreEqual(ZackRules.MomentumRampSeconds, Kit.MomentumSeconds, 1e-4f, "A stop must not cost Momentum in the lock.");
+            Assert.Greater(Kit.ThrottleLeft, 0f);
+            Assert.Less(Kit.ThrottleLeft, ZackRules.FullThrottleSeconds - .9f, "The lock counts down.");
+            // Once it runs out the ordinary rule is back: still standing, Momentum is gone within the grace.
+            yield return new WaitForSeconds(Kit.ThrottleLeft + ZackRules.MomentumStopGrace + .2f);
+            Assert.IsFalse(Kit.Throttled);
+            Assert.Zero(Kit.MomentumSeconds, "After the lock a stop costs Momentum again.");
         }
 
         [UnityTest, Timeout(60000)]
-        public IEnumerator OverclockedAfterimageSendsTwoCopiesAndTheTayaCannotUseIt()
+        public IEnumerator AHitBreaksFullThrottleAndOverclockShortensItsCooldown()
         {
-            Kit.BeginOverclock(_caster);
             Kit.AttackingSkill.Activate(Context());
-            Assert.AreEqual(2, ZackAfterimage.Active.Count(c => c.OwnerSlot == _caster.PlayerSlot));
-            ZackAfterimage.RetireOwnedBy(-1);
+            Assert.IsTrue(Kit.Throttled);
+            yield return Steps(2);
+            _caster.ApplyZapped();
+            yield return Steps(2);
+            Assert.IsFalse(Kit.Throttled, "A stun must break the lock: Live Wire, stuns and tags still stop him.");
+            Assert.Zero(Kit.MomentumSeconds);
+            // Overclocked: "every skill overclocked". A Full Throttle cooling is pulled down to 8 s at once.
+            Kit.BeginOverclock(_caster);
+            Assert.AreEqual(ZackRules.FullThrottleOverclockedCooldown, Kit.AttackingSkill.CooldownRemaining, .05f);
             _caster.IsDefender = true;
-            Assert.IsFalse(Kit.AttackingSkill.CanActivate(Context()), "Afterimage is an attacker's skill.");
+            Assert.IsFalse(Kit.AttackingSkill.CanActivate(Context()), "Full Throttle is an attacker's skill.");
             yield return null;
         }
 
@@ -369,46 +384,166 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(60000)]
-        public IEnumerator LiveWireZapsTheFirstCrosserAndSnaps()
+        public IEnumerator LiveWireStaysAfterATripGoesDarkThenRearms()
         {
             _caster.IsDefender = true;
             Vector3 a = _caster.transform.position, b = a + Vector3.right * 4f;
             Assert.IsTrue(ZackLiveWire.CanPlace(_caster, a, b));
             Assert.IsFalse(ZackLiveWire.CanPlace(_caster, a, a + Vector3.right * 7f), "Longer than 6 m.");
             var wire = ZackLiveWire.Cast(_caster, a, b, false);
-            Assert.IsNotNull(wire); Assert.IsFalse(wire.Overcharged);
+            Assert.IsNotNull(wire); Assert.IsFalse(wire.StrungOvercharged); Assert.IsTrue(wire.IsArmed);
             var first = GameServices.Round.PlayerAt(2); var second = GameServices.Round.PlayerAt(3);
             var mid = (a + b) * .5f;
             yield return Cross(first, mid + Vector3.forward, mid + Vector3.back);
-            Assert.IsTrue(first.IsZapped, "The first attacker across is Zapped.");
+            Assert.IsTrue(first.IsZapped, "An attacker across a lit wire is Zapped.");
             Assert.IsFalse(first.CanAct(), "Zapped: cannot move or act.");
             Assert.AreEqual(StatusRules.ZappedSeconds, first.ZappedLeft, .1f);
-            Assert.IsTrue(wire == null || wire.Snapped, "A normal wire snaps on its first Zap.");
+            Assert.IsTrue(wire != null && wire.IsLive, "Owner, 2026-10-26: the wire stays on the court after a trip.");
+            Assert.IsTrue(wire.Dark && !wire.IsArmed, "It goes dark after the trip.");
             yield return Cross(second, mid + Vector3.right * .5f + Vector3.forward, mid + Vector3.right * .5f + Vector3.back);
-            Assert.IsFalse(second.IsZapped, "A snapped wire Zaps nobody else.");
+            Assert.IsFalse(second.IsZapped, "A dark wire Zaps nobody.");
             yield return new WaitForSeconds(StatusRules.ZappedSeconds + .15f);
             Assert.IsFalse(first.IsZapped, "Zapped lasts 1 s.");
+            yield return Cross(first, mid + Vector3.back, mid + Vector3.forward);
+            Assert.IsFalse(first.IsZapped, "The victim walks back across the dark wire freely: no stun-lock.");
+            yield return new WaitForSeconds(ZackRules.LiveWireDarkSeconds - StatusRules.ZappedSeconds);
+            Assert.IsTrue(wire.IsArmed, "After the dark window it relights.");
+            yield return Cross(second, mid + Vector3.right * .5f + Vector3.back, mid + Vector3.right * .5f + Vector3.forward);
+            Assert.IsTrue(second.IsZapped, "A rearmed wire trips again.");
+            Assert.AreEqual(1, ZackLiveWire.Active.Count(w => w != null && w.IsLive), "One wire, still in place.");
         }
 
         [UnityTest, Timeout(60000)]
-        public IEnumerator OverchargedWireZapsEveryCrosserOnceAndHolds()
+        public IEnumerator OverchargedWireNeverGoesDarkButGivesEachVictimGrace()
         {
             _caster.IsDefender = true;
+            Kit.BeginOverclock(_caster);
             Vector3 a = _caster.transform.position, b = a + Vector3.right * 5f;
             var wire = ZackLiveWire.Cast(_caster, a, b, true);
-            Assert.IsTrue(wire.Overcharged);
+            Assert.IsTrue(wire.StrungOvercharged && wire.OverchargedNow);
             var first = GameServices.Round.PlayerAt(2); var second = GameServices.Round.PlayerAt(3);
             var mid = (a + b) * .5f;
             yield return Cross(first, mid + Vector3.forward, mid + Vector3.back);
             yield return Cross(second, mid + Vector3.left + Vector3.forward, mid + Vector3.left + Vector3.back);
             Assert.IsTrue(first.IsZapped); Assert.IsTrue(second.IsZapped);
-            Assert.IsTrue(wire != null && wire.IsLive, "An overcharged wire lasts its whole 10 s.");
+            Assert.IsTrue(wire.IsArmed, "An overcharged wire never goes dark while he is Overclocked.");
             yield return new WaitForSeconds(StatusRules.ZappedSeconds + .2f);
             yield return Cross(first, mid + Vector3.back, mid + Vector3.forward);
-            Assert.IsFalse(first.IsZapped, "Each attacker is Zapped once per wire.");
+            Assert.IsFalse(first.IsZapped, "The victim has a grace against the wire that just Zapped them.");
+            yield return new WaitForSeconds(ZackRules.LiveWireOverchargeGrace);
+            yield return Cross(first, mid + Vector3.forward, mid + Vector3.back);
+            Assert.IsTrue(first.IsZapped, "After the grace it can Zap them again.");
             var taya = GameServices.Round.PlayerAt(0); taya.IsDefender = true;
             yield return Cross(taya, mid + Vector3.right + Vector3.forward, mid + Vector3.right + Vector3.back);
             Assert.IsFalse(taya.IsZapped, "The taya's side never trips its own wire.");
+            // Overclock runs out: the overcharge goes with it.
+            Kit.BeginOverclock(_caster, .05f);
+            yield return new WaitForSeconds(.2f);
+            Assert.IsFalse(Kit.IsOverclocked); Assert.IsFalse(wire.OverchargedNow);
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator ReelingInIsHeldTimedAndScopedByTheHost()
+        {
+            _caster.IsDefender = true;
+            Vector3 a = _caster.transform.position + Vector3.forward * 1.5f + Vector3.left * 2f, b = a + Vector3.right * 4f;
+            var wire = ZackLiveWire.Cast(_caster, a, b, false);
+            Assert.IsNotNull(wire);
+            // The offline court has no match router; a disabled one routes the solo host's requests straight to its own
+            // host path (`RequestZackReel` resolves locally when not networked), exactly as a listen host does.
+            var rpc = Net.MatchRpc.Instance;
+            GameObject router = null;
+            if (rpc == null) { router = new GameObject("Zack reel router"); rpc = router.AddComponent<Net.MatchRpc>(); rpc.enabled = false; }
+            try
+            {
+                rpc.RequestZackReel(_caster.PlayerSlot, wire.EventId, Net.MatchRpc.ZackReelPhase.Complete);
+                Assert.IsTrue(wire.IsLive, "No start, no reel.");
+                rpc.RequestZackReel(_caster.PlayerSlot, wire.EventId, Net.MatchRpc.ZackReelPhase.Start);
+                rpc.RequestZackReel(_caster.PlayerSlot, wire.EventId, Net.MatchRpc.ZackReelPhase.Complete);
+                Assert.IsTrue(wire.IsLive, "The host times the hold itself.");
+                var other = GameServices.Round.PlayerAt(2);
+                rpc.RequestZackReel(other.PlayerSlot, wire.EventId, Net.MatchRpc.ZackReelPhase.Start);
+                yield return new WaitForSeconds(ZackRules.LiveWireReelHoldSeconds);
+                rpc.RequestZackReel(other.PlayerSlot, wire.EventId, Net.MatchRpc.ZackReelPhase.Complete);
+                rpc.RequestZackReel(_caster.PlayerSlot, wire.EventId + 99, Net.MatchRpc.ZackReelPhase.Complete);
+                Assert.IsTrue(wire.IsLive, "Only his own seat and his own wire's id reel it.");
+                rpc.RequestZackReel(_caster.PlayerSlot, wire.EventId, Net.MatchRpc.ZackReelPhase.Complete);
+                Assert.IsTrue(wire.Reeled, "A held, in-reach reel completes.");
+                yield return new WaitForSeconds(ZackLiveWire.ReelSeconds + .2f);
+                Assert.IsFalse(ZackLiveWire.Active.Any(w => w != null && w.OwnerSlot == _caster.PlayerSlot), "It whips into his hand and is gone.");
+                var far = ZackLiveWire.Cast(_caster, a, b, false);
+                _caster.Teleport(a + Vector3.back * 7f); yield return Steps(2);
+                rpc.RequestZackReel(_caster.PlayerSlot, far.EventId, Net.MatchRpc.ZackReelPhase.Start);
+                yield return new WaitForSeconds(ZackRules.LiveWireReelHoldSeconds + .05f);
+                rpc.RequestZackReel(_caster.PlayerSlot, far.EventId, Net.MatchRpc.ZackReelPhase.Complete);
+                Assert.IsTrue(far.IsLive, "Reel reach is checked by the host.");
+                _caster.Teleport(a + Vector3.right * 2f + Vector3.back * 1.5f); yield return Steps(2);
+                var look = new AbilityContext(_caster, null, null, _caster.transform.position, Vector3.forward, a + Vector3.right * 2f);
+                Assert.AreEqual(far, Kit.WireInReelReach(look));
+                var away = new AbilityContext(_caster, null, null, _caster.transform.position, Vector3.back, _caster.transform.position + Vector3.back * 3f);
+                Assert.IsNull(Kit.WireInReelReach(away));
+                Assert.IsTrue(Kit.DefendingSkill.TakesHeldCommand(look), "Looking at his wire makes the press a reel, never a cast.");
+            }
+            finally
+            {
+                if (router != null) { Object.Destroy(router); typeof(Net.MatchRpc).GetProperty("Instance").SetValue(null, null); }
+            }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator OverclockZapLocksZapsGroundsAndBurnsFuel()
+        {
+            _caster.IsDefender = true;
+            var victim = GameServices.Round.PlayerAt(2); victim.IsDefender = false;
+            _caster.Teleport(new Vector3(0, .12f, -8)); _caster.transform.rotation = Quaternion.identity;
+            victim.Teleport(new Vector3(0, .12f, -3)); yield return Steps(3);
+            Kit.BeginOverclock(_caster);
+            var ctx = new AbilityContext(_caster, null, null, _caster.transform.position, Vector3.forward, victim.transform.position);
+            Assert.IsTrue(Kit.Ultimate.TakesHeldCommand(ctx), "While Overclocked the ultimate key is the zap.");
+            float fuelBefore = Kit.OverclockLeft, began = Time.time;
+            while (Time.time - began < ZackRules.ZapLockSeconds + .3f && !victim.IsZapped)
+            {
+                Kit.Ultimate.StepHeldCommand(ctx, true, Time.time - began);
+                yield return null;
+                Assert.IsTrue(Kit.Zapping);
+            }
+            Assert.IsTrue(victim.IsZapped, "Held one second, the rival is Zapped.");
+            Assert.AreEqual(victim.PlayerSlot, Kit.ZapTarget);
+            float spent = fuelBefore - Kit.OverclockLeft, elapsed = Time.time - began;
+            Assert.Greater(spent, elapsed * 2.4f, "Connected, the zap burns fuel about three times as fast.");
+            Kit.Ultimate.StepHeldCommand(ctx, true, 2f); yield return null;
+            Assert.IsTrue(Kit.ZapGrounded, "The rival it just Zapped is grounded against it.");
+            Assert.Less(Kit.MovementSpeedScale, ZackRules.SpeedScale(0, true), "He walks while channelling.");
+            Assert.IsTrue(Kit.BlocksSprint);
+            Kit.Ultimate.StepHeldCommand(ctx, false, 2f); yield return null;
+            Assert.IsFalse(Kit.Zapping, "Release stops it at once."); Assert.AreEqual(-1, Kit.ZapTarget);
+            victim.Teleport(new Vector3(0, .12f, -8 + ZackRules.ZapRange + 2f)); yield return Steps(2);
+            var far = new AbilityContext(_caster, null, null, _caster.transform.position, Vector3.forward, victim.transform.position);
+            Kit.Ultimate.StepHeldCommand(far, true, 0f); yield return null;
+            Assert.AreEqual(-1, Kit.ZapTarget, "Beyond 9 m the zap only searches.");
+            Kit.Ultimate.StepHeldCommand(far, false, 0f);
+            Kit.BeginOverclock(_caster, .1f);
+            victim.Teleport(new Vector3(0, .12f, -4)); yield return Steps(2);
+            var near = new AbilityContext(_caster, null, null, _caster.transform.position, Vector3.forward, victim.transform.position);
+            for (int i = 0; i < 20; i++) { Kit.Ultimate.StepHeldCommand(near, true, i * .02f); yield return null; }
+            Assert.IsFalse(Kit.IsOverclocked); Assert.IsFalse(Kit.Zapping, "Out of fuel, the zap stops.");
+            Kit.Ultimate.StepHeldCommand(near, false, 1f);
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator ChargeIsHisOwnEnergyAndOverclockMakesTheSprintFree()
+        {
+            Assert.AreEqual(ZackRules.ChargeDrainRate, Kit.StaminaProfile.DrainRate);
+            Assert.IsFalse(Kit.StaminaProfile.FreeSprint);
+            yield return Steps(2);
+            Assert.AreEqual(ZackRules.ChargeDrainRate, _caster.Stamina.Profile.DrainRate, "The motor runs his Charge rates.");
+            var other = GameServices.Round.PlayerAt(2);
+            Assert.AreEqual(Balance.StaminaDrainRate, other.Stamina.Profile.DrainRate, "Everyone else keeps the shared bar.");
+            _caster.Stamina.Deplete();
+            Kit.BeginOverclock(_caster);
+            Assert.AreEqual(Balance.StaminaMax, _caster.Stamina.Current, .01f, "The bolt fills his Charge.");
+            yield return Steps(2);
+            Assert.IsTrue(_caster.Stamina.Profile.FreeSprint, "Overclocked, his sprint costs nothing.");
         }
 
         [UnityTest, Timeout(60000)]
@@ -458,7 +593,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(Kit.IsOverclocked); Assert.AreEqual(ZackRules.OverclockSeconds, Kit.OverclockLeft, .05f);
             Assert.LessOrEqual(Kit.Skill1.CooldownRemaining, ZackRules.BacktrackOverclockedCooldown + .01f,
                 "Overclock's start clamps a running Backtrack to 3 s.");
-            Assert.AreEqual(1.4f, Kit.MovementSpeedScale, .001f);
+            Assert.AreEqual(ZackRules.SpeedScale(Kit.MomentumSeconds, true), Kit.MovementSpeedScale, .001f);
+            Assert.AreEqual(ZackRules.BaseSpeedScale * ZackRules.OverclockSpeedScale, ZackRules.SpeedScale(0f, true), .001f);
             Assert.IsTrue(Kit.UltimateAftermath(out float left, out float total)); Assert.AreEqual(ZackRules.OverclockSeconds, total);
             yield return new WaitForSeconds(.5f);
             Assert.Less(Kit.OverclockLeft, ZackRules.OverclockSeconds - .3f, "The clock runs.");

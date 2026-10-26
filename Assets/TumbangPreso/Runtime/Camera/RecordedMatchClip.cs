@@ -23,7 +23,9 @@ namespace TumbangPreso.CameraSystem
         //15: companion bodies/slippers retain their own bounded seats and holders.
         //14: barricade fields preserve curved-wall geometry and remaining hits.
         // 16 (protocol 182): Zack's AFTERIMAGE and LIVE WIRE fields; the old magnet charge (107) is skipped on load.
-        public const int WireVersion=16;
+        // 17 (protocol 184): LIVE WIRE stays on the court (its lifetime is a bound, `FirstScale` is when it went dark, `Split` is
+        // reeled in). A 16 clip's 10 s wire is read in its own meaning and translated (`ZackLiveWire.FromRecordedV16`).
+        public const int WireVersion=17;
         public const int ObjectLimit=21; // Four players, shoes, pets, dolls, doll shoes and one can.
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
@@ -116,7 +118,7 @@ namespace TumbangPreso.CameraSystem
                 int version=reader.ReadInt32();
                 // Retain earlier field layouts for saved clips. Arc walls require14;
                 // live network admission separately requires the current protocol.
-                if(version!=WireVersion&&version!=15&&version!=14&&version!=13&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
+                if(version!=WireVersion&&version!=16&&version!=15&&version!=14&&version!=13&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
                 int bodies=version>=15?CompanionSeats.BodyCount:Balance.PlayerCount;
                 var result=new RecordedMatchClip{MatchId=reader.ReadInt64(),Id=reader.ReadInt64(),Round=reader.ReadInt32(),Actor=reader.ReadInt32(),Subject=reader.ReadInt32(),Mode=(GameMode)reader.ReadByte()};
                 result.Map=ReadText(reader,64);result.Reason=ReadText(reader,96);
@@ -194,6 +196,7 @@ namespace TumbangPreso.CameraSystem
                         }
                         if(id<=0||id>100000||!ids.Add(id))throw new InvalidDataException("Invalid recorded field");
                         if(retiredGate)continue;
+                        if(kind==WorldEffectSnapshot.Kind.LiveWire&&version<17)f=Abilities.ZackLiveWire.FromRecordedV16(f);
                         if(kind==RecordedSpecialFields.Charge&&RecordedSpecialFields.Valid(f))continue;
                         if(!RecordedSpecialFields.Valid(f))throw new InvalidDataException("Invalid recorded field");
                         kept.Add(new RecordedField{Id=id,State=f});

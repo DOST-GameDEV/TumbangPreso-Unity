@@ -170,6 +170,10 @@ namespace TumbangPreso.UI
         ZackLiveWire,
         /// <summary>Zack ultimate: OVERCLOCK (a gauge pinned past its end by a bolt).</summary>
         ZackOverclock,
+
+        // ⚠️ FULL THROTTLE replaced AFTERIMAGE (owner pick, 2026-10-26), appended to keep every serialized value.
+        /// <summary>Zack attacking: FULL THROTTLE (a battery tipped forward, every cell full, the charging bolt on its face).</summary>
+        ZackFullThrottle,
     }
 
     /// <summary>
@@ -379,6 +383,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.ZackThunderstrike: return "FROM ABOVE";
                 case AbilityGlyph.ZackBacktrack: return "MOBILITY";
                 case AbilityGlyph.ZackAfterimage: return "DECOY";
+                case AbilityGlyph.ZackFullThrottle: return "SPEED BOOST";
                 case AbilityGlyph.ZackLiveWire: return "TRIPWIRE";
                 case AbilityGlyph.ZackOverclock: return "POWER-UP";
                 case AbilityGlyph.NemuPhase: return "EVASION";
@@ -617,6 +622,7 @@ namespace TumbangPreso.UI
                     return Mathf.Max(EllipseRing(u, v, 0.62f, 0.62f, Stroke), Chevron(u + 0.62f, -v, 0.30f, Stroke));
                 case AbilityGlyph.ZackAfterimage:
                 case AbilityGlyph.ZackOverclock:
+                case AbilityGlyph.ZackFullThrottle:
                     return SprintBolt(u, v);
                 case AbilityGlyph.ZackLiveWire:
                     return Mathf.Max(Mathf.Max(Box(u + 0.62f, v + 0.15f, 0.07f, 0.55f), Box(u - 0.62f, v + 0.15f, 0.07f, 0.55f)),

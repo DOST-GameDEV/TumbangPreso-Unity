@@ -411,7 +411,11 @@ namespace TumbangPreso.UI
                 _staminaArc.Set(ratio);
                 var fill = drained ? new Color(.62f, .30f, .34f, 1f) : fatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold;
                 _staminaArc.Paint(fill, drained ? new Color(.30f, .04f, .08f, .55f) : new Color(0, 0, 0, .42f));
+                // Zack's own energy takes this arc over (`TumpMatchReadout.Zack.cs`); every other body keeps it as it is.
+                if (ZackMeter(local, ratio, fatigued, drained)) want = true;
             }
+            else ZackMeter(null, 1, false, false);
+            ZackVictimWarning(local);
             float dt = Time.unscaledDeltaTime;
             StepDrainPins(drained, wringing, local, dt);
             _staminaAlpha = Mathf.MoveTowards(_staminaAlpha, want ? 1 : 0, dt / (want ? .15f : .4f));

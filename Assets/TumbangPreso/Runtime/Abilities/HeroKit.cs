@@ -138,6 +138,15 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Existing movement skills may scale wish speed; impulses and slows retain their own rules.</summary>
         public virtual float MovementSpeedScale => 1.0f;
+
+        /// <summary>
+        /// How this hero's stamina spends and refills (`Core.StaminaProfile`); the shared bar for everyone but a hero with its
+        /// own energy (Zack's Charge). Read by the motor every step on the owner and on the host, so both agree.
+        /// </summary>
+        public virtual Core.StaminaProfile StaminaProfile => Core.StaminaProfile.Shared;
+
+        /// <summary>A kit state that refuses the sprint (Zack while he channels the Overclock zap).</summary>
+        public virtual bool BlocksSprint => false;
         // Ability-owned commitment gates are opt-in; they are not a status effect.
         public virtual bool BlocksOwnLocomotion => false;
         public virtual bool BlocksOwnActions => false;

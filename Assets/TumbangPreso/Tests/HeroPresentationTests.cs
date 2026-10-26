@@ -303,7 +303,7 @@ namespace TumbangPreso.Tests
             AssertTelegraph("sean", 3, 5.4f, 0.0f);     // Live blast and crater share the 5.4 m footprint.
 
             AssertTelegraph("zack", 1, 0.0f, 0.0f);     // BACKTRACK goes to his own path, nothing aimed.
-            AssertTelegraph("zack", 2, 0.0f, 0.0f);     // AFTERIMAGE runs his aim; its path is solved, not placed.
+            AssertTelegraph("zack", 2, 0.0f, 0.0f);     // FULL THROTTLE is on him.
             AssertTelegraph("zack", 3, 0.0f, 0.0f);     // OVERCLOCK is on him.
             AssertRoleTelegraph("zack", .35f, ZackRules.LiveWireMaxLength); // LIVE WIRE: post B's spot, up to 6 m.
 
@@ -846,7 +846,7 @@ namespace TumbangPreso.Tests
         private static readonly string[][] Kits =
         {
             new[] { "hero-sean-dash", "hero-sean-ignite", "hero-sean-supernova" },
-            new[] { "hero-zack-backtrack", "hero-zack-afterimage", "hero-zack-wire", "hero-zack-overclock" },
+            new[] { "hero-zack-backtrack", "hero-zack-throttle", "hero-zack-wire", "hero-zack-overclock" },
             new[] { "hero-dante-stomp", "hero-dante-roar", "hero-dante-fissure" },
             new[] { "hero-cheska-frostwave", "hero-cheska-raise", "hero-cheska-nova" },
             new[] { "hero-nemu-ghoststep", "hero-nemu-project", "hero-nemu-seance" },

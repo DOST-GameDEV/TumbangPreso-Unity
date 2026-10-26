@@ -189,8 +189,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 {
                     var a = new Vector3(-2f, 0f, 0f); var b = new Vector3(2f, 0f, 0f);
                     var field = new Net.WorldEffectSnapshot.Field { Type = Net.WorldEffectSnapshot.Kind.LiveWire, EventId = 1,
-                        Position = a, Forward = Vector3.right, Radius = 4f, Duration = Core.ZackRules.LiveWireSeconds,
-                        Remaining = Core.ZackRules.LiveWireSeconds, SecondScale = 1f, Path = new[] { a, b } };
+                        Position = a, Forward = Vector3.right, Radius = 4f, Duration = Core.ZackRules.LiveWireLifeBound,
+                        Remaining = Core.ZackRules.LiveWireLifeBound, SecondScale = 1f, Path = new[] { a, b } };
                     var look = ZackLiveWireLook.Build(host.transform, field, renderOnly: true);
                     return new AuditRun(look.gameObject, t => look.StepTo(1f + t % 5f), () => Object.DestroyImmediate(look.gameObject), 1.5f);
                 }, "");

@@ -4,10 +4,14 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     // =============================================================================================
-    // ZACK THE SPEEDSTER (2026-10-25 rework, `docs/reports/zack-kit-2026-10-25/plan.md` section 3). Five clips, `ZackMotionAuthor`
+    // ZACK THE SPEEDSTER (2026-10-25 rework, `docs/reports/zack-kit-2026-10-25/plan.md` section 3). Six clips, `ZackMotionAuthor`
     // bakes them. The look family's motion rule is "snap, then chatter": everything arrives in one frame and then settles.
     //  * `hero-zack-backtrack`: a sharp inhale of current, a flicker-snap with the arms tucked, and the landing in his knees.
     //  * `hero-zack-afterimage`: the quick sideways shrug of the shoulders as the copy peels out of him, and a point after it.
+    //    Retired with the skill on 2026-10-26; still baked so older replays that name it draw it.
+    //  * `hero-zack-throttle` (FULL THROTTLE, 2026-10-26, owner: "make it look like he's recharged"): he hunches and yanks both
+    //    fists down to his hips as the charge goes in, then bursts up, chest open, arms flung wide as the bolts land, and
+    //    drops straight into a forward drive. Upper body only: his legs keep running under it.
     //  * `hero-zack-wire-aim`, held while the key is down (`HeroAbility.AimPoseAction`): he pulls a wire out from his left fist
     //    across his body, the right hand drawing it taut, a small chatter in the hands.
     //  * `hero-zack-wire`, the release: he throws the coil (post B drops where he aimed) and stamps post A in at his feet.
@@ -29,7 +33,7 @@ namespace TumbangPreso.Visual
             var clips = new[]
             {
                 BuildZackBacktrack(paths), BuildZackAfterimage(paths), BuildZackWireAim(paths), BuildZackWire(paths),
-                BuildZackOverclock(paths),
+                BuildZackOverclock(paths), BuildZackThrottle(paths),
             };
             foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
             return clips;
@@ -60,6 +64,21 @@ namespace TumbangPreso.Visual
             b.HoldAt(.16f, .08f);
             PoseKey(b, .34f, 0, V(2, 6, 0), V(0, 4, 0), V(4, 0, 16), V(-50, 0, 6), V(0, 0, 6), V(0, 0, -6));
             PoseKey(b, .5f, 0, V(0, 0, 0), V(0, 0, 0), ZkRestLeft, ZkRestRight);
+            return b.Build();
+        }
+
+        /// <summary>0.55 s: the charge goes in (hunched, fists yanked to the hips), the burst (chest open, arms flung wide), the drive.</summary>
+        private static AnimationClip BuildZackThrottle(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-zack-throttle", paths);
+            PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), ZkRestLeft, ZkRestRight);
+            PoseKey(b, .08f, -.04f, V(16, 0, 0), V(8, 0, 0), V(26, 0, 22), V(26, 0, -22), V(-10, 0, 6), V(-10, 0, -6));
+            PoseKey(b, .14f, -.05f, V(18, 0, 0), V(10, 0, 0), V(30, 0, 18), V(30, 0, -18), V(-12, 0, 6), V(-12, 0, -6));
+            b.PunchAt(.18f);
+            PoseKey(b, .18f, .03f, V(-12, 0, 0), V(-14, 0, 0), V(-34, 0, 72), V(-34, 0, -72), V(4, 0, 6), V(4, 0, -6));
+            b.HoldAt(.18f, .06f);
+            PoseKey(b, .36f, 0, V(18, 0, 0), V(-4, 0, 0), V(-52, 0, 12), V(42, 0, -12), V(-20, 0, 6), V(12, 0, -6));
+            PoseKey(b, .55f, 0, V(0, 0, 0), V(0, 0, 0), ZkRestLeft, ZkRestRight);
             return b.Build();
         }
 

@@ -490,6 +490,24 @@ def zack_afterimage(a):
     a.glint(600, 210, 18, 30)
 
 
+def zack_full_throttle(a):
+    """FULL THROTTLE (owner pick, 2026-10-26): he is recharged at once. A battery tipped up and forward, every cell full,
+    the charging bolt on its face and speed lines streaming off its back."""
+    for y, x0 in ((560, 30), (680, 10), (800, 40)):
+        a.add(a.band([(x0, y), (x0 + 150, y)], 46), GOLD, shade=False)
+    cx, cy, ang = 540, 600, -18
+    shell = a.poly(rot([(200, 400), (800, 400), (800, 800), (200, 800)], cx, cy, ang))
+    cap = a.poly(rot([(800, 500), (890, 500), (890, 700), (800, 700)], cx, cy, ang))
+    a.add(np.maximum(shell, cap), STONE_DK)
+    for k in range(4):
+        x0 = 240 + k * 140
+        a.add(a.poly(rot([(x0, 440), (x0 + 116, 440), (x0 + 116, 760), (x0, 760)], cx, cy, ang)), LEMON if k == 3 else GOLD)
+    a.add(a.poly(rot([(560, 330), (390, 640), (510, 640), (450, 880), (690, 540), (570, 540), (650, 330)], cx, cy, ang)), CREAM)
+    a.add(a.poly(star_pts(860, 200, 100, 34, 4, rot=0)), LEMON)
+    a.add(a.poly(star_pts(700, 110, 56, 20, 4, rot=0)), GOLD)
+    a.glint(300, 470, 14, 34)
+
+
 def zack_live_wire(a):
     for x in (170, 854):
         a.add(a.rect(x - 52, 420, x + 52, 900), STONE)
@@ -1168,7 +1186,7 @@ GLYPHS = {
     "CheskaFrostbite": cheska_frostbite,
     "ZackSprint": zack_sprint, "ZackOvercharge": zack_magnet, "ZackThunderstrike": zack_thunder,
     "ZackBacktrack": zack_backtrack, "ZackAfterimage": zack_afterimage, "ZackLiveWire": zack_live_wire,
-    "ZackOverclock": zack_overclock,
+    "ZackOverclock": zack_overclock, "ZackFullThrottle": zack_full_throttle,
     "NemuPhase": nemu_phase, "NemuAstralPet": nemu_pet, "NemuSeanceVoid": nemu_seance,
     "NemuTerrify": nemu_terrify, "NemuKuroGuard": nemu_guard,
     "NemuDontLook": nemu_dont_look, "NemuSkitter": nemu_skitter, "NemuLookout": nemu_lookout,

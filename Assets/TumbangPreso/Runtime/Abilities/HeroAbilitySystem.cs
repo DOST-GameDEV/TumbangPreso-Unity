@@ -587,6 +587,25 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Was this slot's key down on the previous Update? One entry per slot.</summary>
         private readonly bool[] _keyWasDown = { false, false, false };
+
+        /// <summary>When each slot's held command began (negative when none) and which ability owns it (`HeroAbility.TakesHeldCommand`).</summary>
+        private readonly float[] _commandSince = { -1.0f, -1.0f, -1.0f };
+        private readonly HeroAbility[] _commandAbility = new HeroAbility[3];
+
+        /// <summary>Ends every held command with its release call (a cutscene, a kit reset, a round boundary).</summary>
+        internal void ReleaseHeldCommands()
+        {
+            for (int i = 0; i < _commandSince.Length; i++)
+            {
+                if (_commandSince[i] < 0.0f) continue;
+                var commanded = _commandAbility[i];
+                _commandSince[i] = -1.0f; _commandAbility[i] = null;
+                commanded?.StepHeldCommand(_context, false, 0.0f);
+            }
+        }
+
+        /// <summary>True while this slot's key is driving a held command rather than a cast.</summary>
+        public bool InHeldCommand(Slot slot) => _commandSince[(int)slot] >= 0.0f;
         private bool _grabWasDown;
 
         /// <summary>
@@ -622,6 +641,23 @@ namespace TumbangPreso.Abilities
             bool justPressed = down && !_keyWasDown[i];
             bool justReleased = !down && _keyWasDown[i];
             _keyWasDown[i] = down;
+
+            // A held command owns the whole press, from its edge to its release, and never reaches the cast buffer.
+            if (_commandSince[i] >= 0.0f)
+            {
+                bool keep = down && ability != null && _motor != null && _motor.CanAct();
+                var commanded = _commandAbility[i];
+                commanded?.StepHeldCommand(_context, keep, Time.time - _commandSince[i]);
+                if (!keep) { _commandSince[i] = -1.0f; _commandAbility[i] = null; }
+                return;
+            }
+            if (justPressed && ability != null && _motor != null && _motor.CanAct() && ability.TakesHeldCommand(_context))
+            {
+                _commandSince[i] = Time.time; _commandAbility[i] = ability;
+                _heldSince[i] = -1.0f;
+                ability.StepHeldCommand(_context, true, 0.0f);
+                return;
+            }
 
             if (ability == null || !ability.HoldToAim)
             {
@@ -1659,6 +1695,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void ClearBuffers()
         {
+            ReleaseHeldCommands();
             ClearAimPresentation();
             _pendingUltimateRequest = 0;
             _pendingUltimateSky = false;

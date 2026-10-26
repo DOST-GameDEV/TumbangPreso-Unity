@@ -463,6 +463,7 @@ namespace TumbangPreso.Visual
             dict["hero-zack-wire-aim"] = BuildZackWireAim(paths);
             dict["hero-zack-wire"] = BuildZackWire(paths);
             dict["hero-zack-overclock"] = BuildZackOverclock(paths);
+            dict["hero-zack-throttle"] = BuildZackThrottle(paths);
 
             // DANTE
             dict["hero-dante-stomp"] = BuildDanteStomp(paths);

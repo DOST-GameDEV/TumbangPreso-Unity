@@ -260,7 +260,8 @@ namespace TumbangPreso.Core
                 "Use Ignition Cannon eight times", true, 8),
 
             // ---------------------------------------------------------------
-            // ZACK. BACKTRACK / AFTERIMAGE. `ZackHeroKit` (speedster rework, 2026-10-25).
+            // ZACK. BACKTRACK / FULL THROTTLE. `ZackHeroKit` (speedster rework, 2026-10-25; Full Throttle replaced
+            // Afterimage on 2026-10-26).
             // ⚠️ THE IDS ARE THE OLD KIT'S so saves, mastery and loadouts hold; the base names and glyphs are the new kit's,
             // which `HeroLoadoutTests` compares with the real abilities. Sidegrades are closed (`SidegradesOpen`), so the two
             // alternates change nothing; they are kept as rows rather than deleted for the same saves.
@@ -275,15 +276,15 @@ namespace TumbangPreso.Core
                 0.45f, -0.45f, "Retired", "Unavailable",
                 "Use Backtrack eight times", true, 8),
 
-            new AbilityVariant("zack.2.charge", "zack", 2, "AFTERIMAGE", "ZackAfterimage",
-                "AFTERIMAGE",
-                "Send a running copy for 3 s. The taya's touch pops it.",
-                0.0f, 0.0f, "Draws the taya away", "Runs straight"),
+            new AbilityVariant("zack.2.charge", "zack", 2, "FULL THROTTLE", "ZackFullThrottle",
+                "FULL THROTTLE",
+                "Full Momentum and full Charge at once, locked in for 3 seconds.",
+                0.0f, 0.0f, "Top speed at once", "A hit still stops you"),
 
-            new AbilityVariant("zack.2.discharge", "zack", 2, "AFTERIMAGE", "ZackAfterimage",
+            new AbilityVariant("zack.2.discharge", "zack", 2, "FULL THROTTLE", "ZackFullThrottle",
                 "SNAP DISCHARGE", "Not available: retired with Magnet in the 2026-10-25 kit.",
                 0.50f, -0.50f, "Retired", "Unavailable",
-                "Use Afterimage eight times", true, 8),
+                "Use Full Throttle eight times", true, 8),
 
             // ---------------------------------------------------------------
             // NEMU. PHANTOM VEIL / ASTRAL HIJACK. `NemuHeroKit`.

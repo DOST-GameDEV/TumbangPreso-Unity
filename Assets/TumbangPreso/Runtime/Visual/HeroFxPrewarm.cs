@@ -99,8 +99,8 @@ namespace TumbangPreso.Visual
                     // Zack's LIVE WIRE, overcharged and humming, as the field's own look builds it (render only).
                     var a = at + Vector3.left * 2f; var b = at + Vector3.right * 2f;
                     var wire = new Net.WorldEffectSnapshot.Field { Type = Net.WorldEffectSnapshot.Kind.LiveWire, EventId = 1,
-                        Position = a, Forward = Vector3.right, Radius = 4f, Duration = Core.ZackRules.LiveWireSeconds,
-                        Remaining = Core.ZackRules.LiveWireSeconds, SecondScale = 1f, Path = new[] { a, b } };
+                        Position = a, Forward = Vector3.right, Radius = 4f, Duration = Core.ZackRules.LiveWireLifeBound,
+                        Remaining = Core.ZackRules.LiveWireLifeBound, SecondScale = 1f, Path = new[] { a, b } };
                     var look = ZackLiveWireLook.Build(holder, wire, renderOnly: true);
                     look.StepTo(1.0f);
                     return () => Kill(look.gameObject);

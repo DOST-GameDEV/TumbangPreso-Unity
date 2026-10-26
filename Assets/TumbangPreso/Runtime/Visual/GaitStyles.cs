@@ -150,6 +150,25 @@ namespace TumbangPreso.Visual
                 Bounce = .06f, BounceDelay = .05f, Sway = .01f, Glide = 1.3f,
                 Elbow = 88, ElbowPump = 22,
             },
+            // ⚠️ THE DASH (owner, 2026-10-26: *"His run should look convincingly fast, with urgency and appropriate body/leg
+            // motion, not an ordinary jog with trails added"*). Read from sprinters and screen speedsters rather than invented:
+            // the Flash's run is a deep forward lean from the ankles with the chin up and long, driving strides; a real sprinter's
+            // top speed is high knee drive in front, a full back kick, and arms pumping hard from the shoulder with the elbows at
+            // about 90 degrees; JJK's fast fighters (Naoya's frame-perfect bursts, Maki and Toji's low dashes) read as the body
+            // committed ahead of the feet with no bob. So: the chest pitched 27 degrees into the run with the head lifted back to
+            // the court, legs swinging much further and snapping through the extremes, arms pumping knife-edged through a big arc
+            // with the elbows locked near 90, a little more shoulder twist, almost no side sway, and a longer airborne stride
+            // (Glide) so the feet read as fast without becoming a blur on this short body.
+            HasDash = true,
+            Dash = new Gait
+            {
+                LegForward = 72, LegBack = 66, LegSnap = 1.55f, Stance = 0,
+                ArmSpread = 15, ArmForward = 80, ArmBack = 70, ArmCarry = 16, ArmSnap = 1.6f, ArmLag = 0.03f,
+                Lean = 27, LeanPulse = 2.5f, Roll = 1.5f, Twist = 13,
+                HeadPitch = -14, HeadTilt = 0, HeadNod = .5f, HeadSteady = .85f,
+                Bounce = .1f, BounceDelay = .06f, Sway = 0, Glide = 1.55f,
+                Elbow = 95, ElbowPump = 28,
+            },
         };
 
         /// <summary>

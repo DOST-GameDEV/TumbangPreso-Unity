@@ -1,6 +1,11 @@
 # Zack rework: plan and direction (2026-10-25)
 
-Status: IMPLEMENTED ON MAIN, focused local validation complete; owner visual/audio review and actual peers pending. The owner authorized enabling Zack sounds and publication; see [electrical audio](lightning-audio.md). [Verification](verification-session3.md). Approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
+> Superseded in part on 2026-10-26: Full Throttle replaced Afterimage and the V4 numbers apply. See
+> [the refinement](refinement-2026-10-26.md). Afterimage rows below are history.
+
+Status: IMPLEMENTED ON MAIN, focused local validation complete; owner visual/audio review and actual peers pending.
+Refined 2026-10-26 from owner feedback (speed, Charge, past moments, persistent Live Wire, Overclock fuel and zap):
+[refinement](refinement-2026-10-26.md) supersedes the matching numbers below. The owner authorized enabling Zack sounds and publication; see [electrical audio](lightning-audio.md). [Verification](verification-session3.md). Approved kit (Wiki "Zack Kit Rework" tab, V3 SKILL SHEET), the owner's four open answers recorded in
 section 7. Every number is a starting value: section 8 lists the ones to watch in play. Research is `research.md` beside
 this file. Method: `docs/HERO_KIT_METHOD.md`. Network: `docs/SKILL_NETWORK_CONTRACT.md`.
 

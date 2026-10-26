@@ -207,7 +207,7 @@ namespace TumbangPreso.Visual
             }
 
             float cycleRate = FlatSpeed / Mathf.Max(.1f, FootfallCycleMetres);
-            var pose = _gaitStyle.Evaluate(_gaitPhase, _runWeight, Time.time, cycleRate);
+            var pose = _gaitStyle.Evaluate(_gaitPhase, _runWeight, Time.time, cycleRate, _dashWeight);
             float amount = _armSwingAmount;
             StrideSwing = pose.Stride;
             StanceSide = pose.Stance * amount;

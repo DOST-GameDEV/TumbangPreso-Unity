@@ -220,6 +220,7 @@ namespace TumbangPreso.Visual
             // Zack's speedster kit (2026-10-25), baked by `ZackMotionAuthor`; the aim pose is played by `AimPose`, not this table.
             { "hero-zack-backtrack", new[] { "hero-zack-backtrack", Sprint } },
             { "hero-zack-afterimage", new[] { "hero-zack-afterimage", "emote-no" } },
+            { "hero-zack-throttle", new[] { "hero-zack-throttle", "emote-yes", Jump } },
             { "hero-zack-wire", new[] { "hero-zack-wire", "attack-kick-right", Interact } },
             { "hero-zack-overclock", new[] { "hero-zack-overclock", "holding-both-shoot", Jump } },
 
@@ -693,8 +694,11 @@ namespace TumbangPreso.Visual
         private float _runReference = 5.4f;
         private float _walkCycleMetres = .92f;
         private float _runCycleMetres = 1.12f;
+        private float _dashReference = 5.4f, _dashCycleMetres = 1.12f, _dashWeight;
         private float _gaitTravelDirection = 1f;
-        public float FootfallCycleMetres => Mathf.Lerp(_walkCycleMetres,_runCycleMetres,_runWeight);
+        public float FootfallCycleMetres => Mathf.Lerp(Mathf.Lerp(_walkCycleMetres,_runCycleMetres,_runWeight),_dashCycleMetres,_dashWeight*_runWeight);
+        /// <summary>0 to 1: how far into its dash gear a body with one is (`GaitStyle.Dash`), from its speed above its sprint.</summary>
+        public float GaitDashWeight => _dashWeight;
 
         private void CalibrateGait(AnimationClip walk, AnimationClip run)
         {
@@ -723,9 +727,12 @@ namespace TumbangPreso.Visual
                 var style=_gaitStyle??GaitStyles.Custom;
                 _walkReference=style.CycleMetres(reach,0f)/Mathf.Max(.05f,walk.length);
                 _runReference=style.CycleMetres(reach,1f)/Mathf.Max(.05f,run.length);
+                _dashReference=style.HasDash?style.CycleMetres(reach,1f,1f)/Mathf.Max(.05f,run.length):_runReference;
             }
+            else _dashReference=_runReference;
             _walkCycleMetres=_walkReference*walk.length;
             _runCycleMetres=_runReference*run.length;
+            _dashCycleMetres=_dashReference*run.length;
         }
 
         private float OrdinaryWalkSpeed => Core.Stamina.MovementSpeed(_motor.IsDefender, false)
@@ -739,8 +746,8 @@ namespace TumbangPreso.Visual
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
             // These upper-body actions permit movement; their legs must follow the motor.
-            // Zack's Afterimage is cast on the run: the shrug is his upper body, his legs keep running.
-            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-afterimage";
+            // Zack's Full Throttle (and the retired Afterimage) is cast on the run: the surge is his upper body, his legs keep running.
+            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-afterimage" || _current == "hero-zack-throttle";
             bool movingAction = _throwReleaseTime >= 0 || mobileUpperBody;
             // Carrying the can back (CAN-CARRY-1024): the legs walk under the held can while the raise owns the arms.
             bool carryWalk = _carrier != null && _carrier.IsCarryWalking;
@@ -754,7 +761,16 @@ namespace TumbangPreso.Visual
             // slide or stomp would erase its support pose at the moment of commitment.
             if ((_oneShotLeft > 0 && !movingAction) || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
             _runWeight = Mathf.MoveTowards(_runWeight, _running ? 1f : 0f, dt / .10f);
-            float reference = Mathf.Lerp(_walkReference, _runReference, _runWeight);
+            // The dash gear (a body with one): from 95% of the role's sprint to 35% past it, eased so a cut or a stop
+            // straightens him up quickly while the lean builds over a stride or two.
+            float dashTarget = 0f;
+            if (_gaitStyle != null && _gaitStyle.HasDash)
+            {
+                float sprint = Core.Stamina.MovementSpeed(_motor.IsDefender, true) * Mathf.Max(.1f, _motor.Stamina.SpeedZones.Value);
+                dashTarget = Mathf.Clamp01((speed - sprint * .95f) / (sprint * .4f));
+            }
+            _dashWeight = Mathf.MoveTowards(_dashWeight, dashTarget, dt / (dashTarget > _dashWeight ? .3f : .12f));
+            float reference = Mathf.Lerp(Mathf.Lerp(_walkReference, _runReference, _runWeight), _dashReference, _dashWeight * _runWeight);
             float length = Mathf.Lerp(_walkGait.GetAnimationClip().length, _runGait.GetAnimationClip().length, _runWeight);
             if(speed>WalkSpeedThreshold)
             {

@@ -934,6 +934,17 @@ namespace TumbangPreso.Abilities
         public virtual Vector3 TelegraphCentre(AbilityContext context)
             => context.Position + context.Forward * TelegraphRange;
 
+        /// <summary>
+        /// A HELD COMMAND instead of a cast: asked on the press edge on the owner's screen. True takes this press away from the
+        /// cast buffer entirely and routes it, frame by frame until release, to <see cref="StepHeldCommand"/>. Used by Zack's
+        /// Live Wire reel-in (look at your own wire and hold) and his Overclock zap (hold the ultimate while Overclocked). The
+        /// ability owns any request it sends; nothing here spends a cooldown or a charge.
+        /// </summary>
+        public virtual bool TakesHeldCommand(AbilityContext ctx) => false;
+
+        /// <summary>One frame of a held command. <paramref name="down"/> false is the release (or a loss of control) and the last call.</summary>
+        public virtual void StepHeldCommand(AbilityContext ctx, bool down, float heldSeconds) { }
+
         public virtual bool CanReactivate => false;
 
         /// <summary>

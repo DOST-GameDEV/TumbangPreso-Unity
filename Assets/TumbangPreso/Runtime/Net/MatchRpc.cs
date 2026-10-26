@@ -348,7 +348,7 @@ namespace TumbangPreso.Net
             ResetFeatherfallTransport();
             PresentationMatchId = 0; _pendingMoments.Clear();
             ResetUltimateTransport();
-            ResetTimedKitTransport();
+            ResetTimedKitTransport(); ResetZackTransport();
             ResetPaeteVineTransport();
             ResetNemuGhostTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
@@ -425,6 +425,9 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqThrow", OnReqThrowMsg);
             cm.RegisterNamedMessageHandler("ReqReset", OnReqResetMsg);
             cm.RegisterNamedMessageHandler("ReqReclaim", OnReqReclaimMsg);
+            cm.RegisterNamedMessageHandler("ReqZackReel", OnReqZackReelMsg);
+            cm.RegisterNamedMessageHandler("ReqZackZap", OnReqZackZapMsg);
+            cm.RegisterNamedMessageHandler("ZackZap", OnZackZapMsg);
             cm.RegisterNamedMessageHandler("ReqEmote", OnReqEmoteMsg);
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);

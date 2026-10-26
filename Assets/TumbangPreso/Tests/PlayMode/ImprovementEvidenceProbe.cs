@@ -321,23 +321,23 @@ namespace TumbangPreso.PlayTests
             who.Teleport(new Vector3(-6, .12f, -8));
             var kit = (ZackHeroKit)who.AbilitySystem.Kit;
             who.Intent.Parked = false; who.Intent.Move = Vector2.up;
-            yield return new WaitForSeconds(1.25f);
+            yield return new WaitForSeconds(1.0f);
             Assert.AreEqual(1, ZackRules.MomentumStep(kit.MomentumSeconds));
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.7f);
             Assert.AreEqual(2, ZackRules.MomentumStep(kit.MomentumSeconds));
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.6f);
             Assert.AreEqual(3, ZackRules.MomentumStep(kit.MomentumSeconds));
-            Assert.AreEqual(1.2f, kit.MovementSpeedScale, .001f);
+            Assert.AreEqual(ZackRules.SpeedScale(ZackRules.MomentumRampSeconds, false), kit.MovementSpeedScale, .001f);
             float boosted = new Vector2(who.Velocity.x, who.Velocity.z).magnitude;
-            Assert.AreEqual(Balance.AttackerWalkSpeed * 1.2f, boosted, .15f);
+            Assert.AreEqual(Balance.AttackerWalkSpeed * ZackRules.SpeedScale(ZackRules.MomentumRampSeconds, false), boosted, .15f);
             kit.BeginOverclock(who);
-            Assert.AreEqual(1.68f, kit.MovementSpeedScale, .001f, "Momentum and Overclock multiply.");
+            Assert.AreEqual(ZackRules.SpeedScale(ZackRules.MomentumRampSeconds, true), kit.MovementSpeedScale, .001f, "Momentum and Overclock multiply.");
             who.Intent.Move = Vector2.zero;
             yield return new WaitForSeconds(.5f);
             Assert.Zero(kit.MomentumSeconds, "Stopping starts Momentum over.");
-            Assert.AreEqual(1.4f, kit.MovementSpeedScale, .001f, "Stopping does not cancel Overclock.");
+            Assert.AreEqual(ZackRules.SpeedScale(0, true), kit.MovementSpeedScale, .001f, "Stopping does not cancel Overclock.");
             kit.ResetForRound(new AbilityContext(who, who.GetComponent<Carrier>(), who.GetComponent<CombatVerbs>()));
-            Assert.AreEqual(1f, kit.MovementSpeedScale);
+            Assert.AreEqual(ZackRules.BaseSpeedScale, kit.MovementSpeedScale, .001f, "His base speed stays.");
             who.Intent.Clear();
         }
 
@@ -417,7 +417,11 @@ namespace TumbangPreso.PlayTests
                     if(hero=="dante")captureSeconds=Mathf.Max(captureSeconds,slot==2?6.5f:4.3f);
                     yield return Record(witness, hero + "-" + (slot+1), captureSeconds, who, t =>
                     {
-                        who.Intent.Set(verb, t >= .25f && t < .65f);
+                        // BACKTRACK needs a route to go back along (half a second and half a metre at least): he walks
+                        // for 0.9 s first, then presses. Standing still it is a correct refusal, not a missing cast.
+                        bool backtrack = hero == "zack" && slot == 0;
+                        who.Intent.Set(verb, backtrack ? t >= .9f && t < 1.3f : t >= .25f && t < .65f);
+                        if (backtrack) who.Intent.Move = t < .9f ? Vector2.up : Vector2.zero;
                         if (hero == "zack" && slot == 0 && Environment.GetEnvironmentVariable("TUMP_REVIEW_MOVING_SPRINT") == "1")
                             who.Intent.Move = t >= .1f && t < 3.3f ? Vector2.up * .65f : Vector2.zero;
                         if ((hero == "sean" || hero == "zack") && slot == 1 && Environment.GetEnvironmentVariable("TUMP_REVIEW_EMPOWERED_THROW") == "1")
