@@ -158,6 +158,12 @@ namespace TumbangPreso.Net
         /// </summary>
         public const string HostLeftMessage = "The host left the game.";
 
+        // LAN must work before online sign-in and keep the same saved identity
+        // after it completes. Account/handle verification remains a separate claim.
+        public string LocalConnectionToken => IsRelay
+            ? GameServices.Account?.ConnectionToken ?? NetIdentity.Token
+            : NetIdentity.LocalToken;
+
         public static event Action<string> ClientDisconnected;
 
         /// <summary>Why the last client connection ended. Read once by the join screen, which
@@ -1995,7 +2001,7 @@ namespace TumbangPreso.Net
             {
                 Protocol = ProtocolVersion,
                 SkillContract = SkillContractFingerprint.Current,
-                Token = account?.ConnectionToken ?? NetIdentity.Token,
+                Token = LocalConnectionToken,
                 Name = LocalLobbyName(),
 
                 // ⚠️ WHATEVER IS CACHED, AND NEVER A NETWORK CALL FROM HERE. This runs inside
@@ -2402,7 +2408,7 @@ namespace TumbangPreso.Net
                     int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
                     var identity = GameServices.Account;
                     MatchRpc.Instance?.IdentifyServerRpc(
-                        identity?.ConnectionToken ?? NetIdentity.Token,
+                        LocalConnectionToken,
                         LocalLobbyName(),
                         identity != null && identity.IsSignedIn ? identity.PlayerId : "",
                         identity?.HandleProof ?? "",
@@ -2422,7 +2428,7 @@ namespace TumbangPreso.Net
             {
                 hello = new ConnectionHello
                 {
-                    Token = GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
+                    Token = LocalConnectionToken,
                     Name = LocalLobbyName(),
 
                     // ⚠️ THE HOST NEVER SENDS ITSELF A HELLO, so this is the only path on which

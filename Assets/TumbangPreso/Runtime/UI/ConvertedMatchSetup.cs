@@ -2263,7 +2263,7 @@ namespace TumbangPreso.UI
             // who did nothing but change their slipper. `docs/TODO.md` § 88.1c.
             var account = GameServices.Account;
             MatchRpc.Instance?.IdentifyServerRpc(
-                account?.ConnectionToken ?? NetIdentity.Token,
+                NetSession.Instance?.LocalConnectionToken ?? account?.ConnectionToken ?? NetIdentity.Token,
                 account?.LobbyName ?? s.PlayerName,
                 account != null && account.IsSignedIn ? account.PlayerId : "",
                 account?.HandleProof ?? "",
