@@ -47,7 +47,7 @@ namespace TumbangPreso.Visual
             var t = go.transform;
             for (int i = 0; i < Bolts; i++)
             {
-                look._boltInk[i] = ZackFx.Line(t, "SurgeBoltInk" + i, 9, 0.11f, ZackFx.Ink, 0.0f);
+                look._boltInk[i] = ZackFx.Line(t, "SurgeBoltInk" + i, 9, 0.075f, ZackFx.Ink, 0.0f);
                 look._bolts[i] = ZackFx.Line(t, "SurgeBolt" + i, 9, 0.05f, ZackFx.Core, 2.2f);
                 look._bolts[i].widthCurve = look._boltInk[i].widthCurve =
                     new AnimationCurve(new Keyframe(0, .35f), new Keyframe(.85f, 1), new Keyframe(1, .6f));
@@ -133,6 +133,7 @@ namespace TumbangPreso.Visual
                 ZackFx.Jag(_bolts[i], from, hit, 0.22f, seed);
                 float fade = 1.0f - local;
                 ZackFx.Tint(_bolts[i], new Color(ZackFx.Core.r, ZackFx.Core.g, ZackFx.Core.b, 0.4f + 0.6f * fade));
+                ZackFx.Tint(_boltInk[i], new Color(ZackFx.Ink.r, ZackFx.Ink.g, ZackFx.Ink.b, 0.22f + 0.20f * fade));
             }
             // The charge band: a ring around him that climbs from his feet to the crown, the meter filling.
             float b = _surgeAge / BandLife;

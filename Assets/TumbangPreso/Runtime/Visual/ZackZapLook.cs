@@ -86,12 +86,14 @@ namespace TumbangPreso.Visual
             int strike = reduced ? 0 : Mathf.FloorToInt(_age / 0.045f);
             float on = _pose;
 
+            // His own view has two equal feeds into a point ahead of both palms, so neither hand reads as a prop holder.
+            var emitter = eyes ? (lead + rear) * .5f + Camera.main.transform.forward * .12f : lead;
             // The circuit between his hands: always while the key is down.
             _bridge.enabled = true;
-            ZackFx.Jag(_bridge, rear, lead, 0.035f, strike * 1.3f);
+            ZackFx.Jag(_bridge, rear, eyes ? emitter : lead, 0.035f, strike * 1.3f);
             ZackFx.Tint(_bridge, Alpha(ZackFx.Core, on));
-            _bridgeB.enabled = !reduced;
-            if (_bridgeB.enabled) { ZackFx.Jag(_bridgeB, rear, lead, 0.05f, strike * 2.1f + 5); ZackFx.Tint(_bridgeB, Alpha(ZackFx.Body, on * (Mathf.Repeat(_age, .09f) < .05f ? 1 : .35f))); }
+            _bridgeB.enabled = eyes || !reduced;
+            if (_bridgeB.enabled) { ZackFx.Jag(_bridgeB, eyes ? lead : rear, eyes ? emitter : lead, reduced ? .02f : .05f, strike * 2.1f + 5); ZackFx.Tint(_bridgeB, Alpha(ZackFx.Body, on * (reduced || Mathf.Repeat(_age, .09f) < .05f ? 1 : .35f))); }
 
             bool grounded = _kit.ZapGrounded;
             if (rival != null && zapping)
@@ -105,7 +107,7 @@ namespace TumbangPreso.Visual
                 _bolt.widthMultiplier = grounded ? 0.022f : 0.045f;
                 _boltInk.widthMultiplier = grounded ? 0.05f : 0.085f;
                 float amp = Mathf.Lerp(0.05f, 0.14f, Mathf.Clamp01(Vector3.Distance(lead, aimAt) / ZackRules.ZapRange));
-                ZackFx.Jag(_bolt, lead, aimAt, amp, strike * 1.7f);
+                ZackFx.Jag(_bolt, emitter, aimAt, amp, strike * 1.7f);
                 for (int i = 0; i < BoltPoints; i++) _boltInk.SetPosition(i, _bolt.GetPosition(i) + Vector3.down * 0.008f);
                 ZackFx.Tint(_bolt, Alpha(boltColour, on * (grounded && Mathf.Repeat(_age, .12f) < .05f ? .3f : 1f)));
                 ZackFx.Tint(_boltInk, Alpha(ZackFx.Ink, on * .8f));
@@ -140,8 +142,8 @@ namespace TumbangPreso.Visual
                 _sputter.enabled = Mathf.Repeat(_age, 0.11f) < 0.06f;
                 if (_sputter.enabled)
                 {
-                    var ahead = (aimAt - lead).normalized;
-                    ZackFx.Jag(_sputter, lead, lead + ahead * (0.6f + 0.4f * Mathf.Abs(Mathf.Sin(_age * 9))), 0.06f, strike * 2.3f);
+                    var ahead = (aimAt - emitter).normalized;
+                    ZackFx.Jag(_sputter, emitter, emitter + ahead * (0.6f + 0.4f * Mathf.Abs(Mathf.Sin(_age * 9))), 0.06f, strike * 2.3f);
                     ZackFx.Tint(_sputter, Alpha(ZackFx.Core, on));
                 }
             }

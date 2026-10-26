@@ -1,17 +1,16 @@
 # Current checkpoint
 
-Updated 2026-10-26. Owner scope: [TODO](TODO.md).
+Updated 2026-10-27. Owner scope: [TODO](TODO.md).
 
-- Zack owner refinement (2026-10-26) in progress on main from `078f98e87`: base
-  speed, faster Momentum with a dash gait, Charge in the stamina arc, Backtrack
-  past moments on the approved outline look, persistent Live Wire with dark/rearm
-  and host-timed reel-in, Overclock fuel with a held two-handed zap; protocol 184,
-  clip schema 17. Full Throttle replaces Afterimage (owner pick); Momentum speed language.
-  Wiki still names Afterimage.
-  Audio is Codex's lane. Evidence: `Logs/zack-refine-20261026/`.
+- Zack refinement follows main `6ab16b867`: short Momentum streamers, tapered
+  ribbons, correct gold/ink layering and two empty zap hands with prop return.
+  Final native film passed 1/1 across 12 takes; final focused zap capture passed
+  1/1. Five Unity starts and five bundled-Mono listener probes completed; the old
+  startup crash was not reproduced. No machine network settings were changed.
+  Evidence: `Logs/zack-refine-20261026/`. Protocol 184, clip schema 17 unchanged.
   [Refinement](reports/zack-kit-2026-10-25/refinement-2026-10-26.md).
-  Focused Zack Unity cases pass. Next: owner review, Wiki text, real peers.
-  Five owner files stay excluded.
+  Next: owner picture review, Wiki/voice text, rejected SFX and real peers.
+  Five owner files stay excluded; no Unity job remains after validation.
 - Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
   NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
   [Receipt](reports/repository-cleanup-2026-10-25.md).

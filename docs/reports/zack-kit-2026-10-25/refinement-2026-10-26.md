@@ -7,8 +7,65 @@ on the court and be reeled in by looking at it and holding; Overclock needs fuel
 and a held two-handed zap. Afterimage is replaced by Full Throttle (owner pick, the
 same day; see below). Audio is Codex's lane and is untouched here.
 
-The Wiki's Abilities, Status Effects and Zack Kit Rework tabs carry the same
-numbers (V4 note). Nothing below is owner-approved until reviewed.
+The Wiki has the V4 refinement numbers; its Afterimage row still needs the Full
+Throttle replacement text. Nothing below is owner-approved until reviewed.
+
+## Visual follow-up and startup checks, 2026-10-27
+
+The follow-up replaces Momentum's long dark hip trail with short body streamers
+and tapers its heel ribbons without their ink rails. Full Throttle's recharge
+had another layering problem: its transparent ink and gold lines shared a render
+queue, allowing the backing to cover the core. Zack's ink lines now draw first;
+the recharge border is thinner and translucent. The cast reads as gold lightning.
+
+First-person zapping now stows only the viewmodel slipper, brings two equally
+sized empty hands forward below the crosshair and feeds the bolt from their
+shared convergence point. The actual held slipper and its owner do not change.
+The prop returns after the pose releases, including through normal holding-state
+updates. The observer zap take uses an unobstructed three-quarter court view.
+
+Two capture defects were corrected rather than relaxing the checks. Full
+Throttle previously claimed to cover throwing while the HUD refused the throw
+inside the danger zone. It now starts outside the box, demonstrates a real
+in-flight slipper and avoids running into the wall. The victim-zap take aimed its
+command context at the victim while leaving the body's aim elsewhere; the host
+correctly refused that mismatch. Both aim inputs now agree.
+
+Fresh evidence under `Logs/zack-refine-20261026/`:
+
+- `codex-r1.xml`: 1/1 passed, four initial Momentum/Full Throttle takes.
+- `codex-r2.xml`: failed the victim take because of the stale body aim above.
+  The failure remains preserved.
+- `codex-r3.xml`: 1/1 passed, all twelve takes, including actual throws, three
+  Backtrack moments, persistent/rearming/reelable wire and the victim warning.
+- `codex-r4.xml`: 1/1 passed, three focused zap takes. Picture review prompted
+  equal hand scaling and an improved observer camera position.
+- `codex-r5.xml`: 1/1 passed, the final three focused zap takes. The check covers
+  both separated hands in frame at matching scale, hidden viewmodel prop,
+  unchanged real possession and prop restoration after release.
+
+The final video set combines the unchanged nine takes from r3 with the three
+final zap takes from r5. Exports are muted 1280x720 H.264 at 30 fps; raw native
+audio remains in the evidence. Frame counts and full decoding are checked, with
+normal-speed picture review. This is solo-native evidence, not real-peer/WAN or
+human-feel approval. Audio assets were not changed.
+
+The earlier startup crashes were in Mono's internal loopback wakeup connection,
+from the editor's BuildReportRestService. The logs do not retain a numeric
+Winsock error. Current OS loopback checks passed 40/40 on IPv4 and 40/40 on IPv6.
+Five fresh processes of Unity's bundled Mono each completed 20 asynchronous
+HttpListener cycles. Five Unity starts completed in this follow-up, including
+recompilation/reload runs. No Winsock reset, firewall change, reboot or editor
+replacement was made. The old intermittent crash was not reproduced, so a
+permanent root-cause fix is not claimed. The standalone probe's first client hit
+an unrelated framework compatibility exception; its raw local TCP client then
+tested the same listener/async-accept path successfully. Probe logs are in
+`codex-startup-diagnostics/` under the evidence folder.
+
+Five owner files, QualitySettings and ProjectAuditorSettings are preserved by
+per-run byte snapshots; the named-profile guard restores existing profile files
+and shared editor input preferences. Owner review, Wiki/voice updates, a new SFX
+pass and actual-peer/WAN tests remain open.
 
 ## What the videos showed
 
@@ -102,10 +159,11 @@ Flash." Every peer counts the stage from the speed it sees (the owner from the k
 | Stage | Adds |
 |---|---|
 | 1 (0.7 s) | heel sparks every stride; the dash gait starts leaning in |
-| 2 (1.4 s) | twin heel ribbons; a motion-blur smear of his real body (four fading electric contours stepped back along his actual route, the Backtrack memory shader's trail layers); a lightning trail at hip height along the route, re-struck every frame; first-person edge streaks |
-| 3 (2 s, full) | longer, brighter smear; three strobe afterimages at 0.1, 0.2 and 0.3 s; the trail forks; arcs crawl shoulder to hip; ember kicks; shoulder and hip speed streaks; a sonic boom on arrival (a double ring, a spark burst, a stretch along the run, a gold edge flash in first person) |
+| 2 (1.4 s) | twin heel ribbons; a motion-blur smear of his real body (four fading electric contours stepped back along his actual route, the Backtrack memory shader's trail layers); two lightning streamers: short bright bolts that peel off a hip or shoulder, trail about a metre along his route and flicker out in about 0.1 s, re-struck elsewhere (no ink edge; the first hip-height trail read as a crack or cable in owner review); first-person edge streaks |
+| 3 (2 s, full) | longer, brighter smear; three strobe afterimages at 0.1, 0.2 and 0.3 s; three longer streamers; arcs crawl shoulder to hip; ember kicks; shoulder and hip speed streaks; a sonic boom on arrival (a double ring, a spark burst, a stretch along the run, a gold edge flash in first person) |
 
-Reduced effects keeps the rings off and drops the smear, strobes, forks and embers.
+Reduced effects keeps the rings off, reduces the streamers to one and drops the
+smear, strobes and embers.
 
 ## Afterimage candidates (decided: Full Throttle)
 

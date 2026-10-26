@@ -16,9 +16,11 @@ namespace TumbangPreso.Visual
     /// * Stage 2 also starts the SPEED LANGUAGE (owner, 2026-10-26: *"visually communicate to everyone that zack is getting
     ///   faster ... vfx, animation, dash/blur effect, like the Flash or other fast characters"*): a motion-blur SMEAR of his
     ///   real body, four fading contours stepped back along the route he actually ran (the Backtrack memory shader's trail
-    ///   layers), and a crackling LIGHTNING TRAIL at hip height along that route, re-struck every frame.
+    ///   layers), and LIGHTNING STREAMERS: short bright bolts that peel off his hips and shoulders, trail a metre behind
+    ///   him along his route and flicker out in about a tenth of a second, each re-struck somewhere new. No ink edge and no
+    ///   long tail: the owner's review of a single hip-height trail (2026-10-26) read it as a crack or a cable on the court.
     /// * Stage 3 (2 s, full): the ribbons thicken, the smear stretches and brightens, three STROBE afterimages hang further
-    ///   back on alternate beats (the Flash's stutter), the lightning trail forks, short arcs crawl over his body, embers kick
+    ///   back on alternate beats (the Flash's stutter), more and longer streamers, short arcs crawl over his body, embers kick
     ///   off his feet, and speed streaks peel off his shoulders and hips. Reaching full is a SONIC BOOM: a double ring, a
     ///   spark burst and a stretch of his body along the run. In his own first person (where his body is not drawn) the same
     ///   stages show as thin streaks in the edges of the frame, never the centre, a lens that widens per stage and a gold
@@ -33,7 +35,7 @@ namespace TumbangPreso.Visual
     public sealed class ZackMomentumLook : MonoBehaviour
     {
         private const int RibbonPoints = 10, Ghosts = 3, Streaks = 4, EyeStreaks = 6, RingPoints = 20;
-        private const int RouteKeep = 48, TrailPoints = 16, BodyArcs = 2;
+        private const int RouteKeep = 48, Streamers = 3, StreamerPoints = 6, BodyArcs = 2;
         private static readonly System.Collections.Generic.Dictionary<int, ZackMomentumLook> Live =
             new System.Collections.Generic.Dictionary<int, ZackMomentumLook>();
         private CharacterMotor _motor;
@@ -49,7 +51,13 @@ namespace TumbangPreso.Visual
         private readonly Vector3[] _route = new Vector3[RouteKeep];
         private readonly float[] _routeTime = new float[RouteKeep];
         private int _routeHead, _routeCount;
-        private LineRenderer _trail, _trailInk, _fork, _boomRing;
+        private LineRenderer _boomRing;
+        // Each streamer: its line, age and life, where on his body it peels from (side, height), how far back it reaches.
+        private readonly LineRenderer[] _streamers = new LineRenderer[Streamers];
+        private readonly float[] _streamAge = new float[Streamers], _streamLife = new float[Streamers];
+        private readonly float[] _streamSide = new float[Streamers], _streamHeight = new float[Streamers];
+        private readonly float[] _streamReach = new float[Streamers];
+        private int _streamStrikes;
         private readonly LineRenderer[] _bodyArcs = new LineRenderer[BodyArcs];
         private ZackFx.Echo _smear;
         private readonly Vector4[] _smearTrail = new Vector4[5];
@@ -77,8 +85,10 @@ namespace TumbangPreso.Visual
             look._ribbonL = ZackFx.Line(go.transform, "RibbonL", RibbonPoints, 0.04f, ZackFx.Body, 1.4f);
             look._ribbonR = ZackFx.Line(go.transform, "RibbonR", RibbonPoints, 0.04f, ZackFx.Body, 1.4f);
             look._ribbonCurrent = ZackFx.Line(go.transform, "RibbonCurrent", 7, 0.018f, ZackFx.Core, 1.8f);
+            // Soft glowing ribbons that taper to nothing: a hard ink edge under two straight lines read as rails or a cable
+            // on the court in owner review (2026-10-26), so the ink lines stay built but are never drawn.
             foreach (var r in new[] { look._ribbonL, look._ribbonR, look._ribbonInkL, look._ribbonInkR })
-                r.widthCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(1, .15f));
+                r.widthCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(.4f, .6f), new Keyframe(1, 0));
             look._ring = ZackFx.Line(go.transform, "StageRing", RingPoints, 0.04f, ZackFx.Core, 1.6f);
             look._ring.loop = true; look._ring.enabled = false;
             for (int i = 0; i < Streaks; i++)
@@ -92,14 +102,19 @@ namespace TumbangPreso.Visual
                 look._eyeStreaks[i].widthCurve = new AnimationCurve(new Keyframe(0, .1f), new Keyframe(.5f, 1), new Keyframe(1, .1f));
             }
             for (int i = 0; i < RibbonPoints; i++) look._heelsL[i] = look._heelsR[i] = motor.transform.position;
-            look._trailInk = ZackFx.Line(go.transform, "LightningTrailInk", TrailPoints, 0.075f, ZackFx.Ink, 0.0f);
-            look._trail = ZackFx.Line(go.transform, "LightningTrail", TrailPoints, 0.035f, ZackFx.Core, 2.0f);
-            look._trail.widthCurve = look._trailInk.widthCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(1, .1f));
-            look._fork = ZackFx.Line(go.transform, "LightningFork", 5, 0.02f, ZackFx.Core, 1.9f);
+            for (int i = 0; i < Streamers; i++)
+            {
+                // A bright core that is thickest where it leaves his body and tapers to nothing behind him.
+                var streamer = ZackFx.Line(go.transform, "LightningStreamer" + i, StreamerPoints, 0.04f, ZackFx.Core, 2.4f);
+                streamer.widthCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(.5f, .55f), new Keyframe(1, 0));
+                streamer.enabled = false;
+                look._streamers[i] = streamer;
+                look._streamAge[i] = look._streamLife[i] = 1.0f;
+            }
             look._boomRing = ZackFx.Line(go.transform, "SonicBoomRing", RingPoints, 0.06f, ZackFx.Body, 1.8f);
             look._boomRing.loop = true;
             for (int i = 0; i < BodyArcs; i++) look._bodyArcs[i] = ZackFx.Line(go.transform, "BodyArc" + i, 6, 0.016f, ZackFx.Core, 2.0f);
-            look._trail.enabled = look._trailInk.enabled = look._fork.enabled = look._boomRing.enabled = false;
+            look._boomRing.enabled = false;
             foreach (var arc in look._bodyArcs) arc.enabled = false;
             Live[motor.PlayerSlot] = look;
             return look;
@@ -162,7 +177,7 @@ namespace TumbangPreso.Visual
             RecordRoute(at);
             StepBoom(dt, reduced);
             StepSmear(step, eyes, reduced);
-            StepLightningTrail(step, eyes, reduced);
+            StepStreamers(step, eyes, reduced, dt);
             StepBodyArcs(step, eyes, reduced, at);
             if (step >= 3 && !eyes && !reduced && Time.time >= _nextEmber)
             {
@@ -201,7 +216,8 @@ namespace TumbangPreso.Visual
             }
             _ribbonL.widthMultiplier = _ribbonR.widthMultiplier = 0.04f * width;
             _ribbonInkL.widthMultiplier = _ribbonInkR.widthMultiplier = 0.08f * width;
-            _ribbonL.enabled = _ribbonR.enabled = _ribbonInkL.enabled = _ribbonInkR.enabled = ribbons;
+            _ribbonL.enabled = _ribbonR.enabled = ribbons;
+            _ribbonInkL.enabled = _ribbonInkR.enabled = false;
             _ribbonCurrent.enabled = ribbons && !reduced && Mathf.Repeat(_age, 0.08f) < 0.05f;
             if (_ribbonCurrent.enabled)
             {
@@ -298,36 +314,57 @@ namespace TumbangPreso.Visual
             _smear.Trail(_smearTrail);
         }
 
-        /// <summary>The lightning trail along his hip route: re-struck every frame, longer and forking at full.</summary>
-        private void StepLightningTrail(int step, bool eyes, bool reduced)
+        /// <summary>
+        /// The lightning streamers: two at stage 2, three at full. Each is struck from a point on his body (a hip or a shoulder,
+        /// either side), follows his route back for a tenth of a second or so (about a metre at his speed) with small jagged
+        /// knees that grow toward its tail, and fades out over its short life, then strikes again somewhere else.
+        /// </summary>
+        private void StepStreamers(int step, bool eyes, bool reduced, float dt)
         {
-            bool on = step >= 2 && !eyes && _routeCount > 3;
-            _trail.enabled = _trailInk.enabled = on;
-            _fork.enabled = false;
-            if (!on) return;
-            float span = step >= 3 ? 0.42f : 0.24f, amplitude = step >= 3 ? 0.09f : 0.06f;
-            int seed = reduced ? 0 : Mathf.FloorToInt(_age * 30.0f);
-            var side = _motor.transform.right;
-            for (int i = 0; i < TrailPoints; i++)
+            int live = eyes || step < 2 || _routeCount < 4 ? 0 : reduced ? 1 : step >= 3 ? Streamers : 2;
+            var right = _motor.transform.right; right.y = 0.0f;
+            var now = _motor.transform.position;
+            for (int i = 0; i < Streamers; i++)
             {
-                float t = i / (float)(TrailPoints - 1);
-                var p = RouteAgo(span * t) + Vector3.up * (0.75f + 0.12f * Mathf.Sin(t * 9.0f + _age * 4.0f));
-                float knee = i == 0 ? 0.0f : ((i % 2 == 0) ? 1 : -1) * amplitude * (0.4f + 0.6f * Mathf.Abs(Mathf.Sin(i * 2.3f + seed)));
-                p += side * knee + Vector3.up * knee * 0.6f;
-                _trail.SetPosition(i, p); _trailInk.SetPosition(i, p - Vector3.up * 0.01f);
-            }
-            _trail.widthMultiplier = step >= 3 ? 0.05f : 0.035f;
-            _trailInk.widthMultiplier = step >= 3 ? 0.1f : 0.075f;
-            // Full: a fork snaps off a point along the trail on alternate beats.
-            if (step >= 3 && !reduced && Mathf.Repeat(_age * 10.0f, 1.0f) < 0.5f)
-            {
-                int at = 4 + Mathf.FloorToInt(Mathf.Repeat(_age * 23.0f, 1.0f) * (TrailPoints - 6));
-                var from = _trail.GetPosition(at);
-                var to = from + (Mathf.Repeat(_age * 7.0f, 2.0f) < 1.0f ? side : -side) * 0.35f + Vector3.down * 0.45f;
-                ZackFx.Jag(_fork, from, to, 0.06f, seed + at);
-                _fork.enabled = true;
+                var streamer = _streamers[i];
+                if (i >= live) { streamer.enabled = false; _streamAge[i] = _streamLife[i]; continue; }
+                _streamAge[i] += dt;
+                if (_streamAge[i] >= _streamLife[i])
+                {
+                    // Strike again: a new place on his body, a new length and a new shape.
+                    float h = Hash(++_streamStrikes);
+                    _streamAge[i] = 0.0f;
+                    _streamLife[i] = Mathf.Lerp(0.08f, 0.15f, Hash(_streamStrikes * 3 + 1));
+                    _streamHeight[i] = h < 0.34f ? 0.5f : h < 0.67f ? 0.8f : 1.1f;
+                    _streamSide[i] = (Hash(_streamStrikes * 5 + 2) < 0.5f ? -1.0f : 1.0f) * Mathf.Lerp(0.16f, 0.28f, Hash(_streamStrikes * 7 + 3));
+                    _streamReach[i] = Mathf.Lerp(0.07f, step >= 3 ? 0.16f : 0.11f, Hash(_streamStrikes * 11 + 4));
+                }
+                float u = _streamAge[i] / _streamLife[i];
+                // It snaps in bright and fades out; on alternate frames at full it flickers like an arc.
+                float alpha = Mathf.Pow(1.0f - u, 1.5f) * (step >= 3 && !reduced && (Time.frameCount + i) % 3 == 0 ? 0.55f : 1.0f);
+                streamer.enabled = alpha > 0.02f;
+                if (!streamer.enabled) continue;
+                int seed = _streamStrikes * 13 + i * 31 + (reduced ? 0 : Time.frameCount / 2);
+                for (int k = 0; k < StreamerPoints; k++)
+                {
+                    float t = k / (float)(StreamerPoints - 1);
+                    // Along his route behind him, drawn in toward the line of his body as it trails off.
+                    var p = RouteAgo(_streamReach[i] * t) - now;
+                    var at = now + p + Vector3.up * (_streamHeight[i] - 0.1f * t) + right * _streamSide[i] * (1.0f - 0.5f * t);
+                    if (k > 0)
+                    {
+                        float knee = (k % 2 == 0 ? 1.0f : -1.0f) * (0.03f + 0.07f * t) * (0.5f + Hash(seed + k));
+                        at += right * knee + Vector3.up * knee * 0.7f;
+                    }
+                    streamer.SetPosition(k, at);
+                }
+                streamer.widthMultiplier = (step >= 3 ? 0.075f : 0.06f) * (0.7f + 0.3f * (1.0f - u));
+                ZackFx.Tint(streamer, new Color(ZackFx.Core.r, ZackFx.Core.g, ZackFx.Core.b, alpha));
             }
         }
+
+        /// <summary>A stable 0 to 1 hash, the same on every peer for the same count, so nothing here needs a random state.</summary>
+        private static float Hash(int n) => Mathf.Repeat(Mathf.Sin(n * 12.9898f + 78.233f) * 43758.5453f, 1.0f);
 
         /// <summary>Full: short arcs crawl over his body, shoulder to opposite hip, flickering.</summary>
         private void StepBodyArcs(int step, bool eyes, bool reduced, Vector3 at)

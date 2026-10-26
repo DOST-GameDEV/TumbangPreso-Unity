@@ -246,7 +246,7 @@ namespace TumbangPreso.CameraSystem
                 BeginActionReturn(SlideCarryBlendSeconds);
 
             _carrying = holding;
-            if (_heldSlipper != null) _heldSlipper.gameObject.SetActive(holding);
+            if (_heldSlipper != null) _heldSlipper.gameObject.SetActive(holding && !_zapShoeStowed);
         }
 
         /// <summary>

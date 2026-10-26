@@ -28,6 +28,8 @@ namespace TumbangPreso.Visual
             line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             line.receiveShadows = false;
             VfxMaterial.Ghost(line, colour, emission);
+            // Coplanar transparent backings must draw first; equal queues can cover the gold core with solid ink.
+            if (colour == Ink && line.sharedMaterial != null) line.sharedMaterial.renderQueue--;
             return line;
         }
 

@@ -247,7 +247,7 @@ namespace TumbangPreso.PlayTests
                     bool eyes = take.EndsWith("first-person");
                     Prepare(); Place(_zack, new Vector3(-6, .12f, -6)); yield return new WaitForSeconds(.2f);
                     float maxMomentum = 0, maxDash = 0; int stageUps = 0, lastStage = 0;
-                    bool trailSeen = false, forkSeen = false, arcSeen = false;
+                    bool streamerSeen = false, threeStreamers = false, arcSeen = false;
                     yield return Take(take, 5.2f, f =>
                     {
                         _zack.Intent.Move = f >= 12 && f < 48 ? Vector2.right : f >= 48 && f < 92 ? Vector2.up : f >= 92 && f < 126 ? Vector2.left : Vector2.zero;
@@ -258,15 +258,19 @@ namespace TumbangPreso.PlayTests
                         int stage = ZackRules.MomentumStep(Kit.MomentumSeconds);
                         if (stage > lastStage) stageUps++; lastStage = stage;
                         foreach (var look in Object.FindObjectsByType<ZackMomentumLook>(FindObjectsSortMode.None))
+                        {
+                            int streamers = 0;
                             foreach (var line in look.GetComponentsInChildren<LineRenderer>())
                             {
                                 if (!line.enabled) continue;
-                                trailSeen |= line.name == "LightningTrail"; forkSeen |= line.name == "LightningFork";
+                                if (line.name.StartsWith("LightningStreamer")) streamers++;
                                 arcSeen |= line.name.StartsWith("BodyArc");
                             }
+                            streamerSeen |= streamers > 0; threeStreamers |= streamers >= 3;
+                        }
                     }, owner: eyes);
-                    if (!eyes) Assert.IsTrue(trailSeen && forkSeen && arcSeen,
-                        "Observers must see the speed language: trail=" + trailSeen + " fork=" + forkSeen + " arcs=" + arcSeen);
+                    if (!eyes) Assert.IsTrue(streamerSeen && threeStreamers && arcSeen,
+                        "Observers must see the speed language: streamers=" + streamerSeen + " three=" + threeStreamers + " arcs=" + arcSeen);
                     Assert.AreEqual(3, ZackRules.MomentumStep(maxMomentum));
                     Assert.GreaterOrEqual(stageUps, 3, "Each Momentum stage must arrive as its own beat.");
                     Assert.Greater(maxDash, .6f, "His sprint at full Momentum must flatten into the dash gear.");
@@ -317,20 +321,35 @@ namespace TumbangPreso.PlayTests
             {
                 if (!Want(take)) continue;
                 bool eyes = take.EndsWith("first-person");
-                Prepare(); Place(_zack, new Vector3(-6, .12f, -6)); Place(_taya, new Vector3(4, .12f, -1), true);
+                Prepare(); Place(_zack, new Vector3(-4, .12f, -Confinement.Radius - .4f)); Place(_taya, new Vector3(4, .12f, -1), true);
                 yield return new WaitForSeconds(.2f);
                 _zack.Stamina.Deplete();
                 bool surged = false, fullAtOnce = false, heldThroughStop = true, heldThroughThrow = true, endedAfter = false;
+                bool actuallyThrew = false, goldSurge = false;
+                var thrownShoe = _zack.GetComponent<Carrier>().Held;
+                Assert.IsNotNull(thrownShoe);
+                Assert.IsFalse(_zack.IsInsideBox(), "The throw demonstration starts outside the danger zone.");
                 int castFrame = -1;
                 yield return Take(take, 5.4f, f =>
                 {
                     _zack.Intent.Set(Verb.Skill2, f >= 18 && f < 22);
                     bool stopped = f >= 58 && f < 74;
-                    _zack.Intent.Move = f >= 22 && !stopped && f < 150 ? Vector2.right : Vector2.zero;
-                    _zack.Intent.Set(Verb.Sprint, f >= 22 && !stopped && f < 150);
+                    var move = f >= 22 && f < 48 ? Vector2.right : f >= 48 && f < 58 ? Vector2.up
+                        : f >= 74 && f < 98 ? Vector2.up : f >= 98 && f < 134 ? Vector2.left : Vector2.zero;
+                    _zack.Intent.Move = move;
+                    _zack.Intent.Set(Verb.Sprint, move.sqrMagnitude > 0);
                     // A short charge and release: the throw leaves his hand at frame 46.
                     _zack.Intent.Set(Verb.SpecialAbility, f >= 34 && f < 46);
-                    _zack.Intent.AimPoint = _zack.transform.position + Vector3.right * 20;
+                    if (move.sqrMagnitude > 0) _zack.Intent.AimPoint = _zack.transform.position + new Vector3(move.x, 0, move.y) * 20;
+                    actuallyThrew |= thrownShoe != null && thrownShoe.State == SlipperState.InFlight
+                        && thrownShoe.ThrowerSlot == _zack.PlayerSlot && _zack.GetComponent<Carrier>().Held == null;
+                    foreach (var look in Object.FindObjectsByType<ZackThrottleLook>(FindObjectsSortMode.None).Where(l => l.BelongsTo(_zack)))
+                    {
+                        var core = look.transform.Find("SurgeBolt0")?.GetComponent<LineRenderer>();
+                        var ink = look.transform.Find("SurgeBoltInk0")?.GetComponent<LineRenderer>();
+                        if (core != null && ink != null && core.enabled && ink.enabled)
+                            goldSurge |= core.sharedMaterial.color.g > .7f && core.sharedMaterial.renderQueue > ink.sharedMaterial.renderQueue;
+                    }
                     if (Kit.Throttled && castFrame < 0)
                     {
                         castFrame = f; surged = true;
@@ -347,8 +366,10 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(fullAtOnce, "Momentum and Charge must both be full the frame the lock starts.");
                 Assert.IsTrue(heldThroughStop, "A stop inside the lock must not cost Momentum.");
                 Assert.IsTrue(heldThroughThrow, "A throw inside the lock must not cost Momentum.");
+                Assert.IsTrue(actuallyThrew, "The capture must release a real slipper, not pass while its throw is refused.");
+                Assert.IsTrue(goldSurge, "The recharge must draw its gold core above its backing instead of a solid dark cable.");
                 Assert.IsTrue(endedAfter, "After the lock a stop must cost Momentum again.");
-                _observations.AppendLine(FormattableString.Invariant($"{take}: cast at frame {castFrame}; full Momentum and Charge at once; held through a throw and a stop; reset after the lock."));
+                _observations.AppendLine(FormattableString.Invariant($"{take}: cast at frame {castFrame}; full Momentum and Charge at once; actual slipper release; held through a throw and a stop; gold core above backing; reset after the lock."));
             }
 
             // LIVE WIRE: a tap strings it; a timed jump clears it; a walker is Zapped and the wire goes dark but stays; a second
@@ -428,6 +449,8 @@ namespace TumbangPreso.PlayTests
             {
                 Prepare(); Kit.AddUltimateCharge(Kit.UltimateCost);
                 Place(_taya, new Vector3(3, .12f, -3), true);
+                _wide.transform.position = new Vector3(-5, 3.2f, -10);
+                _wide.transform.LookAt(new Vector3(1.8f, .9f, -3.8f));
                 yield return new WaitForSeconds(.2f); bool charged = false, zapped = false, grounded = false; int chargedAt = -1;
                 yield return Take("05-overclock", 13f, f =>
                 {
@@ -452,7 +475,13 @@ namespace TumbangPreso.PlayTests
             {
                 Prepare(); Place(_taya, new Vector3(1.5f, .12f, -2), true); Place(_a, new Vector3(3, .12f, -6));
                 Kit.BeginOverclock(_zack);
-                yield return new WaitForSeconds(.2f); bool zapped = false, searched = false; float fuelStart = Kit.OverclockLeft, fuelEnd = 0;
+                yield return new WaitForSeconds(.2f); bool zapped = false, searched = false, stowed = false, bothHands = false; float fuelStart = Kit.OverclockLeft, fuelEnd = 0;
+                var zapArms = rig.GetComponentInChildren<ViewmodelArms>(true);
+                Assert.IsNotNull(zapArms);
+                var viewShoe = zapArms.transform.Find("RightPivot/Arm/HeldSlipper");
+                var leftZapPivot = zapArms.transform.Find("LeftPivot"); var rightZapPivot = zapArms.transform.Find("RightPivot");
+                var realShoe = _zack.GetComponent<Carrier>().Held;
+                Assert.IsNotNull(viewShoe); Assert.IsNotNull(realShoe);
                 yield return Take("05b-overclock-zap-first-person", 6f, f =>
                 {
                     // Sweep from empty court onto the taya, hold through the Zap, then let go.
@@ -461,9 +490,24 @@ namespace TumbangPreso.PlayTests
                     _zack.Intent.Set(Verb.Ultimate, f >= 12 && f < 120);
                     searched |= Kit.Zapping && Kit.ZapTarget < 0;
                     zapped |= _taya.IsZapped; fuelEnd = Kit.OverclockLeft;
+                    if (Kit.Zapping && f >= 20)
+                    {
+                        Assert.AreSame(realShoe, _zack.GetComponent<Carrier>().Held, "Stowing the viewmodel must not change possession.");
+                        stowed |= !viewShoe.gameObject.activeSelf;
+                        if (zapArms.TryZackHandTips(out var left, out var right))
+                        {
+                            var l = rig.Camera.WorldToViewportPoint(left); var r = rig.Camera.WorldToViewportPoint(right);
+                            bothHands |= l.z > 0 && r.z > 0 && l.x > 0 && l.x < 1 && r.x > 0 && r.x < 1
+                                && l.y > 0 && l.y < 1 && r.y > 0 && r.y < 1 && Mathf.Abs(l.x - r.x) > .15f
+                                && Vector3.Distance(leftZapPivot.localScale, rightZapPivot.localScale) < .02f;
+                        }
+                    }
                 }, owner: true);
                 Assert.IsTrue(searched, "Holding with nobody in the cone searches.");
                 Assert.IsTrue(zapped);
+                Assert.IsTrue(stowed && bothHands, "Both empty hands must be separated and visible while the zap is held.");
+                Assert.AreSame(realShoe, _zack.GetComponent<Carrier>().Held);
+                Assert.IsTrue(viewShoe.gameObject.activeSelf, "The held slipper must return after the zap pose releases.");
                 _observations.AppendLine(FormattableString.Invariant($"05b: first-person zap searched, held and Zapped; fuel {fuelStart:F1} to {fuelEnd:F1} over 6 s."));
             }
 
@@ -471,6 +515,7 @@ namespace TumbangPreso.PlayTests
             {
                 // Another seat's Zack holds the zap on this screen's body: the victim's warning, lock bar and the Zap.
                 Prepare(); var enemy = _taya;
+                enemy.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "zack");
                 enemy.AbilitySystem.BindHero("zack");
                 var enemyArt = RosterBook.Load().FindPersonArt("zack");
                 enemy.GetComponent<CharacterVisual>().ApplyModel(enemyArt.Model, enemyArt.Tint, enemyArt.Clips, enemyArt.Palette, enemyArt.PetModel);
@@ -482,6 +527,8 @@ namespace TumbangPreso.PlayTests
                 yield return Take("07-zap-victim-first-person", 4f, f =>
                 {
                     FaceTo(_zack, enemy.transform.position);
+                    // Host validation reads the body's aim too, not only the command context.
+                    enemy.Intent.AimPoint = _zack.transform.position;
                     var ctx = new AbilityContext(enemy, null, null, enemy.transform.position, enemy.transform.forward, _zack.transform.position);
                     enemyKit.Ultimate.StepHeldCommand(ctx, f >= 15 && f < 95, f / 30f);
                     warned |= enemyKit.ZapTarget == _zack.PlayerSlot; victimZapped |= _zack.IsZapped;

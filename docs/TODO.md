@@ -1,6 +1,6 @@
 # Current work
 
-This is the only active queue. Updated 2026-10-26 from source and the owner's
+This is the only active queue. Updated 2026-10-27 from source and the owner's
 current assignment. Older unchecked boxes are not automatically unfinished work.
 [Retirement decisions](RETIRED_WORK.md) explain superseded requirements.
 All original IDs and full bodies remain in the
@@ -12,7 +12,7 @@ All original IDs and full bodies remain in the
 | ID | Status | Acceptance / next action |
 |---|---|---|
 | REPO-CLEANUP-1025 | DONE | Cleanup aaf96e52e1 integrated into main; BugFix deleted after ancestry verification; NETWORKFIX created at the merged commit. 107.2 MiB assets removed; entry docs 97.62% smaller. [Evidence](reports/repository-cleanup-2026-10-25.md) |
-| ZACK-SPEEDSTER-1025 | Refinement in progress, main | Owner 2026-10-26 feedback: faster base and Momentum with a dash gait, Charge energy in the stamina arc, Backtrack past moments, a persistent Live Wire with dark/rearm and reel-in, and Overclock fuel with a held two-handed zap. Protocol 184. Full Throttle replaces Afterimage (owner pick) with its own icon, cast animation and recharge VFX; Momentum gained a Flash-style speed language (smear, lightning trail, strobes, sonic boom). Audio stays Codex's. Owner review and actual peers remain open. [Refinement](reports/zack-kit-2026-10-25/refinement-2026-10-26.md). |
+| ZACK-SPEEDSTER-1025 | Visual follow-up verified; owner review | Full Throttle, Charge, Backtrack past moments, persistent Live Wire and Overclock fuel/zap follow main 6ab16b867. Short body streamers replace the long Momentum trail; gold cores render above ink; first-person zap uses two equally sized empty hands and returns the held prop. Final 12-take native capture 1/1 plus final focused zap capture 1/1 passed. Five current Unity starts completed without the earlier crash; a permanent startup fix is not claimed. Protocol 184 unchanged. Owner review, Wiki/voice text, rejected SFX and actual peers remain open. [Refinement](reports/zack-kit-2026-10-25/refinement-2026-10-26.md). |
 | SPECTATOR-1025 | IN PROGRESS, main | Controls/pacing, actual player FPP, body/effect framing, all six maps and private hallucination/held-marker delivery are checked. Continue regular skill/flight and live event transitions alongside current network checks. [Evidence](reports/spectator-2026-10-25/README.md) |
 | NETWORKFIX-1025 | OPEN, NETWORKFIX only | Reproduce disconnect/reconnect/lag/remote-state defects, fix causally, notify spectator on departure, exercise actual peers without regressing current behavior |
 | MOBILE-1025 | OPEN, after NETWORKFIX | Thoroughly refresh stale mobile input, UI/flows, map/kit presentation, performance and Android/network compatibility after networking is complete. Preserve existing support during earlier work; future unrelated sessions do not automatically owe mobile updates. |
