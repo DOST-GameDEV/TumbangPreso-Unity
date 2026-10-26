@@ -6,28 +6,27 @@ Updated 2026-10-26. [TODO](TODO.md) is the only active queue.
   107.2 MiB of proven unused assets; seven entry docs are97.62% smaller.
   Preserve owner metadata/settings. [Receipt](reports/repository-cleanup-2026-10-25.md).
 - Desktop spectator is on main: grouped live controls, calmer camera, actual
-  player eyes/hands/lens, all21 bodies/six maps and private cues. Actual private
-  payloads and cleanup passed controlled Windows peers.
+  player eyes/hands/lens,21 bodies/six maps and private cues.
   [Evidence](reports/spectator-2026-10-25/README.md).
-- Network/mobile work stays on `mobile+network` until integration is requested.
-  Network loss revokes old simulation, retained notices and yellow/red quality
-  icons work, and seat/role-preserving rejoin is verified in controlled Windows
-  cases. Throws/current dolls/recall/round transitions have separate receipts.
-  [Evidence and limits](reports/networkfix-2026-10-25/README.md).
-- Mobile touch aiming/lifecycle, spectator tools, safe areas, real lens framing
-  and lossless packaging are implemented. Android rule drift is fixed without
-  weakening the compatibility guard. Actual Windows-to-Android FPP passed;
-  reverse streaming found recovery easing, now fixed with25/25 native cases.
-  Final builds/reconnect/touch journeys remain in validation.
-  [Evidence](reports/mobile-2026-10-26/README.md). Unrelated future sessions do
-  not automatically owe mobile updates.
-- Main through078f98e87 is merged into this candidate. Zack's electrical-outline
-  Backtrack look308fb345f is owner-approved; contour persistence/curved wisps
-  have23/23 native plus1/1 stroke capture. Skin-mounted hand zigzags were removed
-  with1/1 native capture. Sound review is next; procedural SFX were rejected,
-  source auditions are not installed. Listening/actual peers remain open and
-  five owner files remain excluded. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
+- Network/mobile code0d8bee6ba stays on `mobile+network` until integration is
+  requested. Stable saved LAN identity survives late online sign-in; Relay keeps
+  online identity. Queue512 and12-second silence allowance support mobile loading;
+  deliberate host exits still notify immediately. Old simulation is revoked.
+- Actual Windows/Android view transfer passed with Android as player, spectator
+  and host. Android outage/background rejoin restored the same seat/match. Actual
+  touch pause/resume, follow/FPP/TPP, tools, replay/return, peer card and host-loss
+  notice were checked. All six Android map scenes and Classic HUD passed smoke.
+  Core841/841 and focused native groups passed. Four unrelated broad guard/scanner
+  failures and emulator quality-recovery limits remain explicit.
+  [Evidence/build hashes](reports/mobile-2026-10-26/README.md).
+- Mobile uses ARM64 IL2CPP/API26 minimum/target36; lossless asset payload is about71%
+  smaller. Unrelated future sessions do not automatically owe mobile updates.
+- Main078f98e87 is included. Zack's owner-approved electrical-outline Backtrack
+  look308fb345f has23/23 native and1/1 stroke capture; hand zigzags were removed
+  with1/1 capture. Sound review remains open; rejected procedural SFX were not
+  installed and five owner files stay excluded.
+  [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
-Android proof uses ARM translation in an API36 emulator. Physical Wi-Fi discovery,
-phone performance, separate machines, WAN/Relay and natural play remain distinct.
+Android proof uses ARM translation, not physical phone performance or thermals.
+Physical Wi-Fi discovery, separate machines and WAN/Relay remain unqualified.
 [Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.

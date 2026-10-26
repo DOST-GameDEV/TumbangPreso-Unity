@@ -113,3 +113,5 @@ and relevant Core/native tests as applicable. Prove sender rejection, duplicatio
 late delivery, round/role replacement, pause, cleanup and hydration. Then exercise
 actual host, owner and observer/rejoin peers; a local test does not certify a
 network path. See [TESTING](TESTING.md) and [NETWORKING](NETWORKING.md).
+
+Transport identity/loading rules: [mobile contract](reports/mobile-2026-10-26/README.md).

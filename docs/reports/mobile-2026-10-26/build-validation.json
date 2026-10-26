@@ -1,0 +1,36 @@
+{
+  "source": "0d8bee6baca72bd8985b05f58376389e65025203",
+  "unity": "6000.5.8f1",
+  "gameplayProtocol": 183,
+  "builds": [
+    {
+      "platform": "Android",
+      "source": "0d8bee6baca72bd8985b05f58376389e65025203",
+      "path": "Builds/Android/TumbangPreso.apk",
+      "size": 1677232688,
+      "sha256": "9ac9cc276dceb65d49f0b4dbd604c29bfafe64725f1a14de169afaabf32746ad",
+      "preserved_files": 127
+    },
+    {
+      "platform": "Windows",
+      "source": "0d8bee6baca72bd8985b05f58376389e65025203",
+      "path": "Builds/Windows/TumbangPreso.exe",
+      "size": 667648,
+      "sha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+      "preserved_files": 127,
+      "runtime_sha256": "bb6162c131b4a06b84a476dedbc04df01e0890e9ddab55f4270cacf9598cbd61"
+    }
+  ],
+  "android": {
+    "scriptingBackend": "IL2CPP",
+    "abi": [
+      "arm64-v8a"
+    ],
+    "minSdk": 26,
+    "targetSdk": 36,
+    "compression": "LZ4HC",
+    "standaloneApk": true
+  },
+  "preservation": "127 pre-existing canonical metadata/settings files restored byte-for-byte after each build. Build identity marks dirty input; not a clean-checkout claim.",
+  "windowsHashNote": "The launcher is unchanged across builds; runtime_sha256 identifies the actual changed game assembly."
+}

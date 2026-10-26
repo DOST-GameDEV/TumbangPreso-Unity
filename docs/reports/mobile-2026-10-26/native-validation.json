@@ -47,7 +47,48 @@
   "renderScope": "Native UI fixtures, including synthetic ready replay frames for the return control. Separate from natural playback and Android peers.",
   "limits": [
     "Groups overlap earlier evidence; do not add them to previous run totals.",
-    "Actual Android/Windows peers and physical device qualification remain separate.",
-    "Earlier v3-play-a replacement regression and initial Android Gradle failure logs are retained."
-  ]
+    "Earlier v3-play-a replacement regression and initial Android Gradle failure logs are retained.",
+    "Actual device peer evidence is recorded separately; physical phone hardware remains unqualified."
+  ],
+  "followup": {
+    "source": "63cc4565b",
+    "artifact": "Logs/mobilefix-1026/settings-recovery.xml",
+    "passed": 25,
+    "cases": 25,
+    "sha256": "f49a309d376af3799df24204767b35b856c4ccaac0c0af87b76be9bc15537945",
+    "scope": "Fresh mobile settings interaction/cutout fit and missing-to-fresh remote camera recovery, with existing actual-view and touch viewport cases."
+  },
+  "burstFollowup": {
+    "source": "5f8f5a8da9333c015b76bb26f5bc4374937c552d",
+    "artifact": "Logs/mobilefix-1026/burst-disconnect.xml",
+    "total": 65,
+    "passed": 61,
+    "failed": 4,
+    "sha256": "573e96ac7c8f0fd14e51e0af41b708b20f065f19a4cfba1a679ba3f617d081ff",
+    "relevantDisconnectAndReconnectCasesPassed": 12,
+    "failures": [
+      "TumbangPreso.Tests.NationalsHardeningTests.EverySettableStaticSwitchIsEitherAModifierOrWrittenDownAsNotOne",
+      "TumbangPreso.Tests.NationalsHardeningTests.EveryVerbActionNameResolvesOnTheViewmodelArm",
+      "TumbangPreso.Tests.NationalsHardeningTests.NoWorldCueIsFiredAtTheOriginOrAtTheCameraToFakeBeingNonDiegetic",
+      "TumbangPreso.Tests.NationalsHardeningTests.TheSlideAddsNoNewVerbAndReusesADeadControl"
+    ],
+    "failureScope": "Unchanged static-switch inventory, Phaister body-action scanner (explicit arm action wring exists), Zack positional-cue scanner and old slide binding expectation. Not a65/65 pass; no protected authored kit changed."
+  },
+  "identityFollowup": {
+    "source": "0d8bee6baca72bd8985b05f58376389e65025203",
+    "groups": [
+      {
+        "artifact": "Logs/mobilefix-1026/stable-identity.xml",
+        "cases": 23,
+        "passed": 23,
+        "sha256": "d3c3b36f8864aa615abc474d7e0952555bdf5b9d37f1c6908991c1e2a2b5e674"
+      },
+      {
+        "artifact": "Logs/mobilefix-1026/stable-host-identity.xml",
+        "cases": 4,
+        "passed": 4,
+        "sha256": "54a792e511e7f1c7907d3f4884a36acf49c46944ffc79e942b055ca36deadb63"
+      }
+    ]
+  }
 }

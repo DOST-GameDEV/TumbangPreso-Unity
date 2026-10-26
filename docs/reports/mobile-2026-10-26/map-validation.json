@@ -1,0 +1,61 @@
+{
+  "source": "0d8bee6baca72bd8985b05f58376389e65025203",
+  "scope": "API36 Android ARM64 through translation,4GB/four vCPUs. Each scene loaded through the actual lobby start with readiness automation; four installed actor identities, live round and rendered phone HUD checked. Local hosted scene smoke, not physical phone performance, bot behavior or remote-per-map network acceptance.",
+  "maps": [
+    {
+      "map": "Eskinita",
+      "passed": true,
+      "mode": "HeroStrike",
+      "reportSha256": "0995cfc1e20869f920fbfc899183cf676afa274221b0bad110f87943ec9f0166",
+      "imageSha256": "2504ad617005bf3602f1860b1c4d4f65f94ab5a99ac5ddca1a76c2fe9e0f59c5",
+      "artifact": "Logs/mobile-map-smoke-1026-final03/Eskinita"
+    },
+    {
+      "map": "IlalimNgTulay",
+      "passed": true,
+      "mode": "HeroStrike",
+      "reportSha256": "62c6094ab8f0493889c9c2474b8b062d389cabce82a164e76222bb8826dfcdfc",
+      "imageSha256": "077e9370ef5abbfd66024eda5cb50ae32dc0ec87d3264e07650631c5e5730ac9",
+      "artifact": "Logs/mobile-map-smoke-1026-final03/IlalimNgTulay"
+    },
+    {
+      "map": "LagoonCove",
+      "passed": true,
+      "mode": "HeroStrike",
+      "reportSha256": "42166c5fb413bf9c057717ca4b02e259fde35e36e00ac503cf5d8218dd8c9b33",
+      "imageSha256": "813f4048a91fc760ca6fdb7dc2b51eaa57de5d33659bd942e28e5aac80ff714d",
+      "artifact": "Logs/mobile-map-smoke-1026-final03/LagoonCove"
+    },
+    {
+      "map": "Kanto",
+      "passed": true,
+      "mode": "HeroStrike",
+      "reportSha256": "30f4e857907b32e8ed392b8561f8581b6ccbee0ff1d3d6a574e1608d6b7cfc26",
+      "imageSha256": "0cea6dbf2e1a3aaacd49b38fb2227d3f745a700dfe7e91860224650ff364c272",
+      "artifact": "Logs/mobile-map-smoke-1026-final03/Kanto"
+    },
+    {
+      "map": "Arena",
+      "passed": true,
+      "mode": "HeroStrike",
+      "reportSha256": "9fa580112ea5b59744c83c3527d534894a5caca622534543ea707fc713252633",
+      "imageSha256": "d3530ba9dd5b9225031b2deb3178b07bcc280b75e4a1442e6a03ed0956144cc3",
+      "artifact": "Logs/mobile-map-smoke-1026-final03/Arena"
+    },
+    {
+      "map": "Payo",
+      "passed": true,
+      "mode": "HeroStrike",
+      "reportSha256": "9ddb942e5482705ec7347df0fdb8adec4058b48be985fa27e6e5b1538df271f3",
+      "imageSha256": "c00420b6838f49e14be467b8bb3a368023f89e5e5f7d72a23898b271dbc3c59e",
+      "artifact": "Logs/mobile-map-smoke-1026-final03/Payo"
+    }
+  ],
+  "classic": {
+    "map": "Eskinita",
+    "passed": true,
+    "reportSha256": "98dc521482cedb0a0697251ca8a5f2b29566bcda9b766b1563537157059a6970",
+    "imageSha256": "4ecfc99cabb35b8ed2e4517e4b9f700ed3325d4ac957945d14cee7627c1c23be",
+    "observed": "Live Classic round with four actor identities; hero-only controls absent from actual rendered phone HUD."
+  }
+}

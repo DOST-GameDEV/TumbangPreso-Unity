@@ -1,0 +1,265 @@
+{
+  "source": "0d8bee6baca72bd8985b05f58376389e65025203",
+  "scope": "Actual Android input events via adb against targets grounded in inspected screenshots, with Windows peers. Resilience fixture parks bodies, not spectator commands. Emulator, not physical fingers/hardware.",
+  "cases": [
+    {
+      "run": "final01",
+      "harnessPassed": false,
+      "checks": [
+        "Actual touch pause reached Windows host; tools/resume remained available while paused.",
+        "Phone follow/FPP/TPP observed. Harness later timed out; partial observed actions only."
+      ],
+      "images": [
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final01/android-tap-pause.png",
+          "sha256": "cb4914c348e53a72292685d635266b7fc6b91c03894325c448c3935cdbdce60e"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final01/android-tools-paused.png",
+          "sha256": "4bee7965b8e3cf997399c96ce049a9a82dae75518fc70887bf1a5daed7350b76"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final01/android-follow-paused.png",
+          "sha256": "9584f52b45bb084e3f0834dbc9f978a3a428d86458dd02cb866f430e3e372071"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final01/android-fpp-paused.png",
+          "sha256": "bc174612354c8ed7104c1ebcad670ad50d4c86347f4d42b9cd8cd8162a72ea37"
+        }
+      ]
+    },
+    {
+      "run": "final03",
+      "harnessPassed": true,
+      "checks": [
+        "Match page and inline touch help toggle observed.",
+        "Actual captured replay and return-to-live touch target operated.",
+        "Peer card appeared at scale1; actual touch pause and resume reached both survivors.",
+        "Host loss retired Android old round and retained Home notice."
+      ],
+      "images": [
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-match-tools.png",
+          "sha256": "d38286ecf4670c25389da248e0726eb0dd04758976a7654abb133087298096ba"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-touch-help.png",
+          "sha256": "ec95e800ae56d0f1693ab6237b934b059428fb8396d9c88be821c183d46446d1"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-replay.png",
+          "sha256": "68097fc485528f59913a8ff415510ea57f74ce0bc45490e2331a8239ce2b8cf8"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-returned-live.png",
+          "sha256": "710184f9036634ea8ae1dd17d858f55283f0051a3d96812c01087832651b164f"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-peer-left.png",
+          "sha256": "91d8f80f4b47764b186d71e0ed23eeb2c78dc02be1d2f04616d120fcc4d1d182"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-peer-left-paused.png",
+          "sha256": "b0b156a123bf1f8712af3efed3383a967e6e7d575e066c355b0d824cec10d0a2"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-resumed.png",
+          "sha256": "2b9dae10c389cfd79756910f90d8563f04b3d925d0e3b4aa986e1a15147231b1"
+        },
+        {
+          "artifact": "Logs/mobile-touch-crossplay-1026-final03/android-host-loss.png",
+          "sha256": "1cb9285140fdcc7a6e023e5c11bf86446ac954d626bb4b790884fbe5c798b6ba"
+        }
+      ],
+      "peerPause": {
+        "before": {
+          "role": "observer",
+          "scene": "Eskinita",
+          "error": "",
+          "link": "Bad",
+          "tier": "Severe",
+          "notice": "",
+          "cause": "None",
+          "lastDeparture": "P2 \u00b7 Player#6261 DISCONNECTED \u00b7 SEAT RESERVED",
+          "networked": true,
+          "active": true,
+          "spectator": true,
+          "host": false,
+          "sawLive": true,
+          "revokedAtLoss": false,
+          "oldRoundStopped": false,
+          "peerNoticeVisible": true,
+          "peerNoticeSeconds": 2.1333346366882324,
+          "scale": 1.0,
+          "local": -1,
+          "round": 2,
+          "ended": 0,
+          "epoch": 0,
+          "departures": 1,
+          "displayWidth": 1600,
+          "displayHeight": 720,
+          "scores": [
+            900,
+            390,
+            0,
+            0
+          ],
+          "match": 639285849147339494,
+          "rtt": 555,
+          "time": 204.89875770000003,
+          "silence": 0.21630050000021583
+        },
+        "after": {
+          "role": "observer",
+          "scene": "Eskinita",
+          "error": "",
+          "link": "Good",
+          "tier": "Severe",
+          "notice": "",
+          "cause": "None",
+          "lastDeparture": "P2 \u00b7 Player#6261 DISCONNECTED \u00b7 SEAT RESERVED",
+          "networked": true,
+          "active": true,
+          "spectator": true,
+          "host": false,
+          "sawLive": true,
+          "revokedAtLoss": false,
+          "oldRoundStopped": false,
+          "peerNoticeVisible": false,
+          "peerNoticeSeconds": 0.0,
+          "scale": 0.0,
+          "local": -1,
+          "round": 2,
+          "ended": 0,
+          "epoch": 0,
+          "departures": 1,
+          "displayWidth": 1600,
+          "displayHeight": 720,
+          "scores": [
+            900,
+            410,
+            0,
+            0
+          ],
+          "match": 639285849147339494,
+          "rtt": 182,
+          "time": 209.12898930000006,
+          "silence": 0.209518399999979
+        },
+        "host": {
+          "role": "host",
+          "scene": "Eskinita",
+          "error": "",
+          "link": "Poor",
+          "tier": "Severe",
+          "notice": "",
+          "cause": "None",
+          "lastDeparture": "P2 \u00c2\u00b7 Player#6261 DISCONNECTED \u00c2\u00b7 SEAT RESERVED",
+          "networked": true,
+          "active": true,
+          "spectator": false,
+          "host": true,
+          "sawLive": true,
+          "revokedAtLoss": false,
+          "oldRoundStopped": false,
+          "peerNoticeVisible": false,
+          "peerNoticeSeconds": 0.0,
+          "scale": 0.0,
+          "local": 0,
+          "round": 2,
+          "ended": 0,
+          "epoch": 6,
+          "departures": 1,
+          "displayWidth": 960,
+          "displayHeight": 540,
+          "scores": [
+            900,
+            420,
+            0,
+            0
+          ],
+          "match": 639285849147339494,
+          "rtt": 204,
+          "time": 231.2594037,
+          "silence": -1.0
+        }
+      },
+      "resume": {
+        "observer": {
+          "role": "observer",
+          "scene": "Eskinita",
+          "error": "",
+          "link": "Poor",
+          "tier": "Healthy",
+          "notice": "",
+          "cause": "None",
+          "lastDeparture": "P2 \u00b7 Player#6261 DISCONNECTED \u00b7 SEAT RESERVED",
+          "networked": true,
+          "active": true,
+          "spectator": true,
+          "host": false,
+          "sawLive": true,
+          "revokedAtLoss": false,
+          "oldRoundStopped": false,
+          "peerNoticeVisible": false,
+          "peerNoticeSeconds": 0.0,
+          "scale": 1.0,
+          "local": -1,
+          "round": 2,
+          "ended": 0,
+          "epoch": 0,
+          "departures": 1,
+          "displayWidth": 1600,
+          "displayHeight": 720,
+          "scores": [
+            900,
+            440,
+            0,
+            0
+          ],
+          "match": 639285849147339494,
+          "rtt": 389,
+          "time": 245.31985650000001,
+          "silence": 0.09510009999985414
+        },
+        "host": {
+          "role": "host",
+          "scene": "Eskinita",
+          "error": "",
+          "link": "Good",
+          "tier": "Healthy",
+          "notice": "",
+          "cause": "None",
+          "lastDeparture": "P2 \u00c2\u00b7 Player#6261 DISCONNECTED \u00c2\u00b7 SEAT RESERVED",
+          "networked": true,
+          "active": true,
+          "spectator": false,
+          "host": true,
+          "sawLive": true,
+          "revokedAtLoss": false,
+          "oldRoundStopped": false,
+          "peerNoticeVisible": false,
+          "peerNoticeSeconds": 0.0,
+          "scale": 1.0,
+          "local": 0,
+          "round": 2,
+          "ended": 0,
+          "epoch": 6,
+          "departures": 1,
+          "displayWidth": 960,
+          "displayHeight": 540,
+          "scores": [
+            900,
+            440,
+            0,
+            0
+          ],
+          "match": 639285849147339494,
+          "rtt": 164,
+          "time": 267.3983964,
+          "silence": -1.0
+        }
+      }
+    }
+  ]
+}

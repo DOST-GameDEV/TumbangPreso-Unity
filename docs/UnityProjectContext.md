@@ -50,8 +50,8 @@ Python/.NET and the installed matching Unity Editor support validation.
 No connected Unity MCP was available during this audit; the manifest's pipeline
 package alone does not establish a connected tool. Use [TESTING](TESTING.md) and
 [setup](WORKSTATION_SETUP.md), fresh XML and actual graphics/peers where required.
-Current-source LAN/Relay/reconnect and spectator acceptance are active work;
-older passing reports do not certify the present build.
+Platform and peer qualification belongs in the current TODO and dated reports;
+older passing reports do not certify a different build or physical device.
 
 ## Constraints
 
