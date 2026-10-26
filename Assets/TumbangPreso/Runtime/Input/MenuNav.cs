@@ -55,8 +55,21 @@ namespace TumbangPreso.InputLayer
         /// does not and must not try to consume anything, because the callers are what know
         /// which of them is innermost.
         /// </summary>
+        private static int _softKeyboardFrame = -10;
         public static bool CancelPressed
-            => UnityEngine.Input.GetKeyDown(KeyCode.Escape) || PadCancelPressed;
+        {
+            get
+            {
+                // Android may report Back to Unity on the frame its IME disappears.
+                // Sample while the menu is live so that press belongs to the keyboard.
+                if (Application.isMobilePlatform)
+                {
+                    if (TouchScreenKeyboard.visible) _softKeyboardFrame = Time.frameCount;
+                    if (Time.frameCount - _softKeyboardFrame <= 1) return false;
+                }
+                return UnityEngine.Input.GetKeyDown(KeyCode.Escape) || PadCancelPressed;
+            }
+        }
 
         /// <summary>
         /// The pad half, kept separate so a test can drive one side without the other.

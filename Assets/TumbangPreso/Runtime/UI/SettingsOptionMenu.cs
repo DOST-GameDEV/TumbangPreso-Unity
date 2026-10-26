@@ -15,18 +15,19 @@ namespace TumbangPreso.UI
         public Button Button { get; private set; }
         public static SettingsOptionMenu Create(Transform parent,string name,string[] values,int selected,Action<int> choose)
         {
+            float height = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible ? InputLayer.TouchMetrics.MinTargetUnits : 78;
             var frame=OwnerUiLayout.Rect(parent,name).gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(frame.rectTransform,0,0,533,78); frame.color=SettingsPalette.Control;
+            OwnerUiLayout.Place(frame.rectTransform,0,0,533,height); frame.color=SettingsPalette.Control;
             var menu=frame.gameObject.AddComponent<SettingsOptionMenu>();menu._options=values;
             menu._selected=Mathf.Clamp(selected,0,Mathf.Max(0,values.Length-1));menu._choose=choose;
             menu.Button=frame.gameObject.AddComponent<Button>();menu.Button.targetGraphic=frame;
             frame.gameObject.AddComponent<SettingsControlFocus>();
             menu.Button.transition=Selectable.Transition.ColorTint;menu.Button.onClick.AddListener(menu.Open);
             menu._value=OwnerUiLayout.Text(frame.transform,"SelectedValue",values.Length>0?values[menu._selected]:"",29);
-            menu._value.color=SettingsPalette.Ink;OwnerUiLayout.Place(menu._value.rectTransform,25,8,428,60);
+            menu._value.color=SettingsPalette.Ink;OwnerUiLayout.Place(menu._value.rectTransform,25,(height-60)*.5f,428,60);
             var mark=OwnerUiGlyph.Create(frame.transform,"Expand",OwnerUiGlyph.Mark.Back,SettingsPalette.Ink);
             OwnerUiLayout.Place(mark.rectTransform,477,27,25,25);
-            mark.rectTransform.pivot=new Vector2(.5f,.5f);mark.rectTransform.anchoredPosition=new Vector2(489.5f,-39.5f);
+            mark.rectTransform.pivot=new Vector2(.5f,.5f);mark.rectTransform.anchoredPosition=new Vector2(489.5f,-height*.5f);
             mark.rectTransform.localRotation=Quaternion.Euler(0,0,90);
             return menu;
         }
@@ -41,7 +42,9 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Fill(blocker.rectTransform);blocker.color=Color.clear;
             var outside=blocker.gameObject.AddComponent<Button>();outside.targetGraphic=blocker;outside.onClick.AddListener(Close);
             var box=OwnerUiLayout.Rect(_popup.transform,"Choices");box.anchorMin=box.anchorMax=box.pivot=new Vector2(.5f,.5f);
-            float height=Mathf.Min(566,Mathf.Max(108,_options.Length*72+40));box.sizeDelta=new Vector2(566,height);
+            bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
+            float rowHeight = touch ? InputLayer.TouchMetrics.MinTargetUnits : 64;
+            float height=Mathf.Min(touch ? 720 : 566,Mathf.Max(108,_options.Length*(rowHeight+8)+40));box.sizeDelta=new Vector2(566,height);
             var origin=(RectTransform)transform;var corners=new Vector3[4];origin.GetWorldCorners(corners);
             var ownerCanvas=GetComponentInParent<Canvas>();var camera=ownerCanvas.renderMode==RenderMode.ScreenSpaceOverlay?null:ownerCanvas.worldCamera;
             var point=RectTransformUtility.WorldToScreenPoint(camera,(corners[0]+corners[3])*.5f);
@@ -57,8 +60,8 @@ namespace TumbangPreso.UI
             {
                 int index=i;
                 var button=SettingsWorkspaceRows.Action(column,"Option"+i,_options[i],()=>Select(index),492);
-                OwnerUiLayout.Place(button.GetComponentInChildren<Text>().rectTransform,18,0,456,64);
-                var layout=button.gameObject.AddComponent<LayoutElement>();layout.preferredHeight=64;
+                OwnerUiLayout.Place(button.GetComponentInChildren<Text>().rectTransform,18,0,456,rowHeight);
+                var layout=button.gameObject.AddComponent<LayoutElement>();layout.preferredHeight=rowHeight;
                 var colours=button.colors; colours.normalColor=i==_selected?SettingsPalette.Accent:SettingsPalette.Ink; button.colors=colours;
                 if(i==_selected)selectedButton=button;
             }

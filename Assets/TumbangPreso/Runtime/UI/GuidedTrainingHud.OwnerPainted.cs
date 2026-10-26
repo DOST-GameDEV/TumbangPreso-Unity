@@ -8,6 +8,7 @@ namespace TumbangPreso
     {
         private Text _ownerSkipLabel;
         private RectTransform _ownerQuit;
+        private bool _phoneControls;
         private bool _hasLessonAction;
         private bool _inspecting;
         public void SetInspecting(bool held)
@@ -31,7 +32,10 @@ namespace TumbangPreso
             gameObject.AddComponent<OwnerUiCanvas>();gameObject.AddComponent<OwnerUiOverrides>();gameObject.AddComponent<GraphicRaycaster>();InputLayer.UiInputModule.Ensure();
             var scaler=gameObject.AddComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution=OwnerUiTheme.Current.ReferenceResolution;scaler.screenMatchMode=CanvasScaler.ScreenMatchMode.Expand;
-            var card=OwnerUiLayout.Rect(transform,"ObjectiveCard");OwnerUiLayout.Place(card,36,36,CardWidth,0);
+            bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
+            _phoneControls = touch;
+            var content = touch ? UiSafeArea.Content(canvas, "TrainingSafeArea") : (RectTransform)transform;
+            var card=OwnerUiLayout.Rect(content,"ObjectiveCard");OwnerUiLayout.Place(card,36,36,touch ? 900 : CardWidth,0);
             var panel=card.gameObject.AddComponent<Image>();panel.color=new Color32(28,42,58,242);panel.raycastTarget=false;
             var edge=OwnerUiLayout.Rect(card,"TrainingEdge").gameObject.AddComponent<Image>();
             edge.gameObject.AddComponent<LayoutElement>().ignoreLayout=true;edge.raycastTarget=false;edge.color=TrainingMuted;
@@ -69,21 +73,42 @@ namespace TumbangPreso
             _complete.rectTransform.anchorMin=_complete.rectTransform.anchorMax=_complete.rectTransform.pivot=new Vector2(.5f,.5f);
             _complete.rectTransform.anchoredPosition=new Vector2(0,150);_complete.rectTransform.sizeDelta=new Vector2(790,85);_complete.enabled=false;
             var outline=_complete.gameObject.AddComponent<Outline>();outline.effectColor=UiTheme.InGameOutline;outline.effectDistance=new Vector2(2,-2);
-            var footer=OwnerRow(card,"RouteControls",96);
+            var footer=OwnerRow(card,"RouteControls",touch ? 152 : 96);
             var training=GetComponentInParent<GuidedTraining>();
             var skip=TrainingAction(footer,"SkipTrainingLesson","SKIP LESSON","ENTER",()=>training?.SkipFromUi(),0,300);
-            _ownerSkipLabel=skip.GetComponentInChildren<Text>();_ownerSkipLabel.color=TrainingCurrent;
+            _ownerSkipLabel=skip.GetComponentInChildren<Text>();_ownerSkipLabel.color=touch ? HudDraw.Brown : TrainingCurrent;
             var quit=TrainingAction(footer,"QuitTraining","QUIT","BACKSPACE",()=>training?.QuitFromUi(),320,318,1.25f);
-            quit.GetComponentInChildren<Text>().color=TrainingMuted;
+            quit.GetComponentInChildren<Text>().color=touch ? HudDraw.Brown : TrainingMuted;
             _ownerQuit=(RectTransform)quit.transform;
+            if (touch)
+            {
+                var phoneHeader = OwnerRow(card, "PhoneLessonHeader", InputLayer.TouchMetrics.MinTargetUnits);
+                phoneHeader.SetAsFirstSibling();
+                _counter.transform.SetParent(phoneHeader, false);
+                OwnerUiLayout.Place(_counter.rectTransform, 0, 0, 520, 42); _counter.alignment = TextAnchor.MiddleLeft;
+                _title.transform.SetParent(phoneHeader, false);
+                OwnerUiLayout.Place(_title.rectTransform, 0, 48, 520, 90);
+                footer.SetParent(phoneHeader, false);
+                OwnerUiLayout.Place(footer, 540, 0, 308, InputLayer.TouchMetrics.MinTargetUnits);
+                OwnerUiLayout.Place((RectTransform)skip.transform, 0, 0, 144, 144);
+                OwnerUiLayout.Place(_ownerQuit, 164, 0, 144, 144);
+                _ownerSkipLabel.text = "SKIP";
+                header.gameObject.SetActive(false);
+            }
             HudReadingLayout.Watch(card);
             HudReadingLayout.Watch(_complete.rectTransform);
         }
         private static OwnerTextAction TrainingAction(Transform parent,string name,string words,string key,
             System.Action callback,float x,float width,float scale=1)
         {
-            var action=OwnerTextAction.Create(parent,name,words,callback,x,0,width,76*scale,Mathf.RoundToInt(30*scale));
+            bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
+            var action=OwnerTextAction.Create(parent,name,words,callback,x,0,width,touch ? InputLayer.TouchMetrics.MinTargetUnits : 76*scale,Mathf.RoundToInt(30*scale));
             var label=action.GetComponentInChildren<Text>();label.font=InGameTypography.Resolve(OwnerUiTheme.Current.Display,true,label);
+            if (touch)
+            {
+                SettingsWorkspaceRows.Slab(action, name == "SkipTrainingLesson");
+                return action;
+            }
             label.alignment=TextAnchor.MiddleLeft;
             OwnerUiLayout.Place(label.rectTransform,88*scale,0,width-96*scale,76*scale);
             KeyCap(action.transform,key);

@@ -429,7 +429,7 @@ namespace TumbangPreso.InputLayer
         {
             if (_sandboxRoot == null) return;
 
-            bool allowed = PracticeSandbox.Allowed && !SpectatorMode;
+            bool allowed = PracticeSandbox.Allowed && !SpectatorMode && !GameLaunch.GuidedTutorial;
             if (_sandboxRoot.activeSelf != allowed) _sandboxRoot.SetActive(allowed);
 
             if (!allowed || _sandboxLabel == null) return;
@@ -626,7 +626,8 @@ namespace TumbangPreso.InputLayer
         private bool VisibleInMode(VerbInput entry)
             => TouchButton.Customising || (!SpectatorMode &&
                ((entry.Zone != TouchZone.SkillRail && entry.Verb != Verb.Interact)
-               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike));
+               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike
+               || (GameLaunch.GuidedTutorial && entry.Verb == Verb.Interact)));
 
         // ⚠️ AND WHILE A STREET CHARACTER OFFERS SOMETHING (`StreetInteractions`, the Ilalim
         // rebuild's beggar), in Classic too: the offer is taken with INTERACT on every device, so a
@@ -747,6 +748,7 @@ namespace TumbangPreso.InputLayer
             // frames of a networked match, which is the one state it must never show.
             RefreshSandbox();
             RefreshStreetInteract();
+            RefreshPlayerUtilities();
 
             Verb? hint = _hintVerb;
             _hintVerb = null;

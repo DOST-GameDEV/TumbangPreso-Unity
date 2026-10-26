@@ -32,7 +32,7 @@ namespace TumbangPreso.UI
 
         public void Open(Transform owner, Action back, Action controller, Action touch)
         {
-            if (_canvas == null && Application.isMobilePlatform) _device = InputDeviceKind.Touch;
+            if (_canvas == null && (Application.isMobilePlatform || TouchHud.ForceVisible)) _device = InputDeviceKind.Touch;
             _back = back; _controller = controller; _touch = touch;
             ReleaseSession();
             _session = new TumpSettingsSession(); _session.Changed += Changed;

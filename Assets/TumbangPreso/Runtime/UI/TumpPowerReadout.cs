@@ -155,7 +155,7 @@ namespace TumbangPreso.UI
             if (kit.IsUltimateReady && !kit.PracticeMode && !_ultimateReady) GameServices.Audio?.PlayUi("sfx_super_ready");
             _ultimateReady = kit.IsUltimateReady && !kit.PracticeMode;
             _hint.text = Hud.OnTouch ? "Hold info for skills" : "Hold " + Hud.KeyLabelFor("AbilityInfo") + " for skills";
-            bool held = _captureReference || (_inspect != null && _inspect.IsPressed());
+            bool held = _captureReference || InputLayer.TouchInput.ScreenHeld("AbilityInfo") || (_inspect != null && _inspect.IsPressed());
             _detail.gameObject.SetActive(held);
             if (held) Describe(kit, skills);
         }

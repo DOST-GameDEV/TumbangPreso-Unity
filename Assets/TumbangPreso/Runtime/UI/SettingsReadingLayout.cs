@@ -19,6 +19,7 @@ namespace TumbangPreso.UI
         private void Refresh(RectTransform list)
         {
             bool large = SettingsStore.Current.LargerText;
+            bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
             var dead = new List<Text>();
             foreach (var item in _sizes) if (item.Key == null) dead.Add(item.Key);
             foreach (var text in dead) _sizes.Remove(text);
@@ -34,11 +35,25 @@ namespace TumbangPreso.UI
                 var control = child.Find("Control") as RectTransform;
                 var label = child.Find("Label")?.GetComponent<Text>();
                 if (control == null || label == null) continue;
-                child.GetComponent<LayoutElement>().preferredHeight = large ? 190 : 104;
+                child.GetComponent<LayoutElement>().preferredHeight = large ? (touch ? 252 : 190) : (touch ? 164 : 104);
                 OwnerUiLayout.Place(label.rectTransform, 3, 9, large ? 1160 : 585, large ? 64 : 78);
                 label.verticalOverflow = VerticalWrapMode.Overflow;
                 control.anchorMin = control.anchorMax = control.pivot = new Vector2(1, large ? 1 : .5f);
                 control.anchoredPosition = new Vector2(-20, large ? -90 : 0);
+                if (touch)
+                {
+                    float target = InputLayer.TouchMetrics.MinTargetUnits;
+                    control.sizeDelta = new Vector2(control.sizeDelta.x, target);
+                    foreach (RectTransform widget in control)
+                    {
+                        if (widget.GetComponent<Selectable>() == null || widget.sizeDelta.y >= target) continue;
+                        float extra = (target - widget.sizeDelta.y) * .5f;
+                        widget.sizeDelta = new Vector2(widget.sizeDelta.x, target);
+                        foreach (RectTransform part in widget)
+                            if (part.anchorMin == Vector2.up && part.anchorMax == Vector2.up)
+                                part.anchoredPosition += Vector2.down * extra;
+                    }
+                }
             }
             LayoutRebuilder.MarkLayoutForRebuild(list);
         }

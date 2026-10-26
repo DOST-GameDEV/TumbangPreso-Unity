@@ -43,6 +43,7 @@ namespace TumbangPreso.InputLayer
             var paper=OwnerUiLayout.Rect(sandbox.transform,"SandboxPaper").gameObject.AddComponent<OwnerUiPaper>();
             OwnerUiLayout.Fill(paper.rectTransform);paper.raycastTarget=false;paper.transform.SetAsFirstSibling();
             _sandboxRoot=sandbox.gameObject;_sandboxLabel=sandbox.GetComponentInChildren<Text>();
+            BuildPlayerUtilities(root);
             ApplyModeVisibility();ApplyLayout();RefreshSandbox();
         }
         private static void Inset(RectTransform rect,float pixels)

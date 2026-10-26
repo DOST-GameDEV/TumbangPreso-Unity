@@ -497,10 +497,11 @@ namespace TumbangPreso
             // Pektus (curve spin), independent of WASD movement, only while the throw charges.
             // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`: a press edge is
             // one step (a wheel notch is nothing but an edge), a held key keeps turning.
+            float touchCurve = InputLayer.TouchInput.ReadCurve(CurveStep, CurveRate, Time.deltaTime);
             if (intent.Pressed(Verb.SpecialAbility))
             {
                 _currentPektusSpin = Mathf.Clamp(_currentPektusSpin
-                    - CurveInput(_curveLeft) + CurveInput(_curveRight), -1.0f, 1.0f);
+                    - CurveInput(_curveLeft) + CurveInput(_curveRight) + touchCurve, -1.0f, 1.0f);
             }
             else
             {

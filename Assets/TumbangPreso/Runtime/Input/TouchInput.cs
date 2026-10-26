@@ -33,6 +33,32 @@ namespace TumbangPreso.InputLayer
     public static class TouchInput
     {
         private static readonly HashSet<Verb> Held = new HashSet<Verb>();
+        private static readonly Dictionary<object, string> ScreenHolds = new Dictionary<object, string>();
+        private static bool _curveLeftEdge, _curveRightEdge;
+        public static bool ScreenHeld(string action)
+        {
+            if (!Active) return false;
+            foreach (var held in ScreenHolds.Values) if (held == action) return true;
+            return false;
+        }
+        public static void SetScreenHold(object owner, string action, bool held)
+        {
+            if (owner == null) return;
+            bool wasHeld = ScreenHeld(action);
+            if (held) ScreenHolds[owner] = action; else ScreenHolds.Remove(owner);
+            if (Active && held && !wasHeld)
+            {
+                if (action == "CurveLeft") _curveLeftEdge = true;
+                if (action == "CurveRight") _curveRightEdge = true;
+            }
+        }
+        public static float ReadCurve(float step, float rate, float seconds)
+        {
+            float edge = (_curveRightEdge ? 1 : 0) - (_curveLeftEdge ? 1 : 0);
+            _curveLeftEdge = _curveRightEdge = false;
+            float held = (ScreenHeld("CurveRight") ? 1 : 0) - (ScreenHeld("CurveLeft") ? 1 : 0);
+            return Active ? edge * step + held * rate * seconds : 0;
+        }
         private static bool _recoveryPressed;
         public static uint ReleaseVersion { get; private set; }
         private static object _lookOwner;
@@ -100,6 +126,7 @@ namespace TumbangPreso.InputLayer
             unchecked { ReleaseVersion++; }
             _lookOwner = null;
             Held.Clear();
+            ScreenHolds.Clear(); _curveLeftEdge = _curveRightEdge = false;
             _recoveryPressed=false;
             Move = Vector2.zero;
             LookDelta = Vector2.zero;

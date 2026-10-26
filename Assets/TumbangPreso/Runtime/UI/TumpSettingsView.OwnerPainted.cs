@@ -58,6 +58,7 @@ namespace TumbangPreso.UI
                 _tabs[i].colors=colours;
             }
             _heading.text=Sections[_tab];
+            if (_deviceMenu != null) _deviceMenu.gameObject.SetActive(_tab == 0);
             switch(_tab){case 0:Controls();break;case 1:Audio();break;case 2:Graphics();break;case 3:Player();break;case 4:Accessibility();break;}
             _list.GetComponentInParent<ScrollRect>().verticalNormalizedPosition=1;
             PrepareSettingsRows();Changed("");_canvas.GetComponent<ScreenFocus>().Rebuild();
@@ -143,7 +144,7 @@ namespace TumbangPreso.UI
         private void Player()
         {
             var s=SettingsStore.Current;
-            Header("PROFILE");
+            if (!_touchLayout) Header("PROFILE");
             var name=SettingsWorkspaceRows.Entry(Row("PlayerName","Player name"),"PlayerNameField","PLAYER NAME");
             name.SetTextWithoutNotify(s.PlayerName);name.gameObject.AddComponent<SettingsControlFocus>();name.characterLimit=Core.Balance.PlayerNameMax;
             name.onValueChanged.AddListener(v=>{s.PlayerName=v;_session.Preview();});
@@ -186,9 +187,12 @@ namespace TumbangPreso.UI
         }
         private void Controls()
         {
-            Header("DEVICE");
-            Choice("InputDevice","Input device",new[]{"Keyboard & mouse","Controller","Touch"},(int)_device,
-                v=>{_device=(InputDeviceKind)v;ShowSection(0);});
+            if (!_touchLayout)
+            {
+                Header("DEVICE");
+                Choice("InputDevice","Input device",new[]{"Keyboard & mouse","Controller","Touch"},(int)_device,
+                    v=>{_device=(InputDeviceKind)v;ShowSection(0);});
+            }
             if(_device==InputDeviceKind.Touch)
             {
                 var s=SettingsStore.Current;
@@ -238,7 +242,7 @@ namespace TumbangPreso.UI
             var dim=root.gameObject.AddComponent<Image>();dim.color=new Color(0,0,0,.72f);
             var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<Image>();paper.color=SettingsPalette.Surface;
             paper.rectTransform.anchorMin=paper.rectTransform.anchorMax=paper.rectTransform.pivot=new Vector2(.5f,.5f);
-            paper.rectTransform.sizeDelta=new Vector2(950,604);paper.raycastTarget=true;
+            paper.rectTransform.sizeDelta=new Vector2(950,_touchLayout ? 760 : 604);paper.raycastTarget=true;
             var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",50,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.Ink;
             // ⚠️ THREE BUTTONS THAT LOOK LIKE BUTTONS AND RANK THEMSELVES (2026-09-23 UI review). The
@@ -247,12 +251,15 @@ namespace TumbangPreso.UI
             // the filled accent (the one primary), DISCARD and KEEP EDITING are outlined.
             var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},560);
             OwnerUiLayout.Place((RectTransform)save.transform,195,200,560,96);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)save.transform,195,190,560,InputLayer.TouchMetrics.MinTargetUnits);
             SettingsWorkspaceRows.Slab(save,true);
             var discard=SettingsWorkspaceRows.Action(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},560);
             OwnerUiLayout.Place((RectTransform)discard.transform,195,326,560,88);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)discard.transform,195,360,560,InputLayer.TouchMetrics.MinTargetUnits);
             SettingsWorkspaceRows.Slab(discard,false);
             var keep=SettingsWorkspaceRows.Action(paper.transform,"KeepEditing","KEEP EDITING",CloseDecision,560);
             OwnerUiLayout.Place((RectTransform)keep.transform,195,444,560,88);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)keep.transform,195,530,560,InputLayer.TouchMetrics.MinTargetUnits);
             SettingsWorkspaceRows.Slab(keep,false);
             ScreenFocus.Install(root.gameObject).Rebuild();
         }
