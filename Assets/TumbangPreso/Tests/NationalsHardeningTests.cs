@@ -115,10 +115,11 @@ namespace TumbangPreso.Tests
                 SessionEndRules.Diagnostic(SessionEndCause.LocalQuit, 3, 4),
                 "Leaving on purpose is not an abandonment and must not read as one.");
 
-            StringAssert.Contains("host left",
-                SessionEndRules.PlayerLine(SessionEndCause.HostLost).ToLowerInvariant(),
-                "A player told only that they were disconnected goes looking for a fault in " +
-                "their own wifi.");
+            string playerLine=SessionEndRules.PlayerLine(SessionEndCause.HostLost).ToLowerInvariant();
+            StringAssert.Contains("host",playerLine);
+            StringAssert.Contains("stopped",playerLine);
+            StringAssert.DoesNotContain("host left",playerLine,
+                "A closed host connection can also be a timed-out link; do not assert that the host quit.");
         }
 
         /// <summary>

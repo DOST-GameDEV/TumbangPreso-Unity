@@ -1882,6 +1882,11 @@ namespace TumbangPreso.Net
             _utp.DisconnectTimeoutMS = 8000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
+            // NGO defaults to128 packet slots, below Transport's512 default.
+            // Cold Android scene activation can fill that queue before the next
+            // frame, dropping fresh traffic. Keep a bounded burst buffer without
+            // delaying loss detection or weakening packet/session validation.
+            _utp.MaxPacketQueueSize = 512;
 
             // ⚠️ EVERY START PATH AND `Stop` REACH THIS METHOD, which is what makes it the one
             // place a new session can forget the last one's ending. A latch that survived into a

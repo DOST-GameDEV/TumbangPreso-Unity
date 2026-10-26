@@ -139,16 +139,15 @@ namespace TumbangPreso.Core
         /// <summary>
         /// The line the player reads, when the raw reason is not already a sentence worth showing.
         ///
-        /// ⚠️ IT NAMES HOST LOSS RATHER THAN SAYING "DISCONNECTED". § 143.9: the diagnostic must
-        /// "identify host loss rather than pretending the match ended normally", and a player told
-        /// only that they were disconnected goes looking for a fault in their own wifi.
+        /// The transport can report a closed host connection after either a host exit
+        /// or an interrupted link. State what is known and confirm that this device stopped.
         /// </summary>
         public static string PlayerLine(SessionEndCause cause)
         {
             switch (cause)
             {
                 case SessionEndCause.HostLost:
-                    return "The host left and the match cannot continue.";
+                    return "The connection to the host was lost. This match has stopped on your device.";
                 case SessionEndCause.RemovedByHost:
                     return "The host ended your connection.";
                 case SessionEndCause.VersionMismatch:
