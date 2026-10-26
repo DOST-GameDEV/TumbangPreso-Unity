@@ -20,11 +20,11 @@ namespace TumbangPreso.InputLayer
             PlayerUtility(tools, "TouchPlayerMenu", "MENU", size + 16, 0,
                 () => Object.FindFirstObjectByType<PauseWatcher>()?.ToggleFromUi());
             var curves = OwnerUiLayout.Rect(root, "ThrowCurveControls");
-            curves.anchorMin = curves.anchorMax = curves.pivot = Vector2.zero;
-            curves.anchoredPosition = new Vector2(StickCentreX + StickRadius + TouchMetrics.MinGapUnits, 36);
-            curves.sizeDelta = new Vector2(size, size * 2 + 16); _curveControls = curves.gameObject;
+            curves.anchorMin = curves.anchorMax = curves.pivot = Vector2.up;
+            curves.anchoredPosition = new Vector2(36, -385);
+            curves.sizeDelta = new Vector2(size * 2 + TouchMetrics.MinGapUnits, size); _curveControls = curves.gameObject;
             PlayerUtility(curves, "TouchCurveLeft", "CURVE\nLEFT", 0, 0, null).gameObject.AddComponent<TouchHoldControl>().Bind(this, "CurveLeft");
-            PlayerUtility(curves, "TouchCurveRight", "CURVE\nRIGHT", 0, size + 16, null).gameObject.AddComponent<TouchHoldControl>().Bind(this, "CurveRight");
+            PlayerUtility(curves, "TouchCurveRight", "CURVE\nRIGHT", size + TouchMetrics.MinGapUnits, 0, null).gameObject.AddComponent<TouchHoldControl>().Bind(this, "CurveRight");
             RefreshPlayerUtilities();
         }
         private static Button PlayerUtility(Transform parent, string name, string words, float x, float y, System.Action action)

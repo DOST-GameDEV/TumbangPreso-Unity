@@ -35,11 +35,14 @@ namespace TumbangPreso.UI
                 var control = child.Find("Control") as RectTransform;
                 var label = child.Find("Label")?.GetComponent<Text>();
                 if (control == null || label == null) continue;
-                child.GetComponent<LayoutElement>().preferredHeight = large ? (touch ? 252 : 190) : (touch ? 164 : 104);
-                OwnerUiLayout.Place(label.rectTransform, 3, 9, large ? 1160 : 585, large ? 64 : 78);
+                // A phone's first editable row must remain above its keyboard.
+                // Short entry labels still fit beside the larger text field.
+                bool stacked = large && !(touch && control.GetComponentInChildren<InputField>() != null);
+                child.GetComponent<LayoutElement>().preferredHeight = stacked ? (touch ? 252 : 190) : (touch ? 164 : 104);
+                OwnerUiLayout.Place(label.rectTransform, 3, 9, stacked ? 1160 : 585, stacked ? 64 : 78);
                 label.verticalOverflow = VerticalWrapMode.Overflow;
-                control.anchorMin = control.anchorMax = control.pivot = new Vector2(1, large ? 1 : .5f);
-                control.anchoredPosition = new Vector2(-20, large ? -90 : 0);
+                control.anchorMin = control.anchorMax = control.pivot = new Vector2(1, stacked ? 1 : .5f);
+                control.anchoredPosition = new Vector2(-20, stacked ? -90 : 0);
                 if (touch)
                 {
                     float target = InputLayer.TouchMetrics.MinTargetUnits;

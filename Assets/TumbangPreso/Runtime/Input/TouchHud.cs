@@ -429,7 +429,8 @@ namespace TumbangPreso.InputLayer
         {
             if (_sandboxRoot == null) return;
 
-            bool allowed = PracticeSandbox.Allowed && !SpectatorMode && !GameLaunch.GuidedTutorial;
+            bool allowed = PracticeSandbox.Allowed && !SpectatorMode && !GameLaunch.GuidedTutorial
+                && !TouchButton.Customising && !TouchInput.Pressed(Verb.SpecialAbility);
             if (_sandboxRoot.activeSelf != allowed) _sandboxRoot.SetActive(allowed);
 
             if (!allowed || _sandboxLabel == null) return;

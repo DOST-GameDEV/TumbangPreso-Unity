@@ -43,6 +43,7 @@ namespace TumbangPreso.PlayTests
             var background = inputSettings.backgroundBehavior;
             var editorInput = inputSettings.editorInputBehaviorInPlayMode;
             var rules = SceneFlow.SelectedRules;
+            bool largerBefore = Settings.SettingsStore.Current.LargerText;
             try
             {
                 TouchHud.ForceVisible = true; GameLaunch.GuidedTutorial = true; SceneFlow.Networked = false;
@@ -85,6 +86,18 @@ namespace TumbangPreso.PlayTests
                 curve.OnPointerDown(new PointerEventData(EventSystem.current) { pointerId = 82 });
                 yield return new WaitForSeconds(.25f);
                 Assert.Greater(actor.GetComponent<Carrier>().CurrentPektusSpin, 0, "The live reader/carrier must consume the touch curve.");
+                Settings.SettingsStore.Current.LargerText = true; yield return null; yield return null;
+                var tutorialCard = Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponentsInChildren<RectTransform>()
+                    .Single(r => r.name == "ObjectiveCard");
+                foreach (var control in touch.Canvas.GetComponentsInChildren<TouchHoldControl>().Where(c => c.name.StartsWith("TouchCurve")))
+                {
+                    Rect bounds = PointerRect((RectTransform)control.transform);
+                    Assert.IsFalse(bounds.Overlaps(PointerRect(tutorialCard)), "A curve control must clear the compact larger tutorial.");
+                    Assert.IsFalse(bounds.Overlaps(PointerRect((RectTransform)touch.Stick.transform)), "A curve control must clear movement.");
+                    foreach (var verb in touch.Buttons.Where(b => b.isActiveAndEnabled))
+                        Assert.IsFalse(bounds.Overlaps(PointerRect((RectTransform)verb.transform)), control.name + " overlaps " + verb.name);
+                }
+                Settings.SettingsStore.Current.LargerText = largerBefore; yield return null;
                 yield return TumpUiCapture.Capture("PhonePlayer-curve", touch.Canvas, 1600, 720, false, includeWorld: true);
                 curve.OnPointerUp(new PointerEventData(EventSystem.current) { pointerId = 82 }); fire.OnPointerUp(pointer);
                 yield return new WaitForSeconds(.2f);
@@ -111,6 +124,7 @@ namespace TumbangPreso.PlayTests
                 if (screen != null && screen.added) UnityEngine.InputSystem.InputSystem.RemoveDevice(screen);
                 typeof(LastInputDevice).GetProperty("Current").SetValue(null, deviceBefore);
                 inputSettings.backgroundBehavior = background; inputSettings.editorInputBehaviorInPlayMode = editorInput;
+                Settings.SettingsStore.Current.LargerText = largerBefore;
                 SceneFlow.Networked = network; SceneFlow.SetSelectedRules(rules);
             }
             yield return PlayModeWorld.Reset();
@@ -173,8 +187,19 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(1, arrange); Assert.IsFalse(canvas.gameObject.activeSelf);
                 view.Resume(); yield return null;
                 ClickPhoneControl(canvas, "InputDeviceValue"); yield return null;
-                var popup = Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None).Single(b => b.name == "Option0");
-                popup.onClick.Invoke(); yield return null;
+                var popupCanvas = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(c => c.name == "OwnerOptionCanvas");
+                yield return TumpUiCapture.Capture("PhoneSettings-device-options", popupCanvas, 1600, 720, false, checkActionBounds: true,
+                    inspectViewport: () =>
+                    {
+                        var options = popupCanvas.GetComponentInChildren<UnityEngine.UI.ScrollRect>();
+                        foreach (var option in popupCanvas.GetComponentsInChildren<UnityEngine.UI.Button>().Where(b => b.name.StartsWith("Option")))
+                        {
+                            var bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(options.viewport, option.transform);
+                            Assert.GreaterOrEqual(bounds.min.y, options.viewport.rect.yMin - 1, option.name + " is clipped below the picker.");
+                            Assert.LessOrEqual(bounds.max.y, options.viewport.rect.yMax + 1, option.name + " is clipped above the picker.");
+                        }
+                    });
+                ClickPhoneControl(popupCanvas, "Option0"); yield return null;
                 Assert.IsTrue(canvas.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b => b.name.StartsWith("Binding_")), "External keyboard controls stay reachable.");
                 ClickPhoneControl(canvas, "InputDeviceValue"); yield return null;
                 Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None).Single(b => b.name == "Option2").onClick.Invoke();
@@ -185,6 +210,15 @@ namespace TumbangPreso.PlayTests
                     Assert.IsNull(SettingsOptionMenu.OpenOption);
                     yield return TumpUiCapture.Capture("PhoneSettings-" + TumpSettingsView.Sections[i], canvas, 1600, 720, false, checkActionBounds: true);
                 }
+                view.ShowSection(3); Settings.SettingsStore.Current.LargerText = true; view.Session.Preview(); yield return null;
+                yield return TumpUiCapture.Capture("PhoneSettings-player-larger-text", canvas, 1600, 720, false, checkActionBounds: true,
+                    inspectViewport: () =>
+                    {
+                        var entry = canvas.GetComponentInChildren<UnityEngine.UI.InputField>();
+                        var corners = new Vector3[4]; entry.textComponent.rectTransform.GetWorldCorners(corners);
+                        float bottom = corners.Min(p => RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, p).y);
+                        Assert.GreaterOrEqual(bottom, 400, "The larger editable text must stay in the upper phone area, above the tested keyboard.");
+                    });
                 Settings.SettingsStore.Current.ReducedUiMotion = !Settings.SettingsStore.Current.ReducedUiMotion;
                 view.Session.Preview(); ClickPhoneControl(canvas, "TumpSettingsBack"); yield return null;
                 ClickPhoneControl(canvas, "KeepEditing"); yield return null;
@@ -212,6 +246,11 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotEmpty(hits, name + " has no pointer target.");
             Assert.AreSame(button, hits[0].gameObject.GetComponentInParent<UnityEngine.UI.Button>(), name + " is obscured by another target.");
             ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
+        }
+        private static Rect PointerRect(RectTransform rect)
+        {
+            var corners = new Vector3[4]; rect.GetWorldCorners(corners);
+            return Rect.MinMaxRect(corners.Min(p => p.x), corners.Min(p => p.y), corners.Max(p => p.x), corners.Max(p => p.y));
         }
 
         [UnityTest] public IEnumerator PhoneMenuKeepsItsDoorsAndReplayLibraryAvoidsDesktopFileOperations()

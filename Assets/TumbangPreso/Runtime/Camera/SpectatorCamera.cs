@@ -875,7 +875,7 @@ namespace TumbangPreso.CameraSystem
             }
             // Only relative mouse look needs a locked cursor. The existing Update
             // overlay gate keeps pad look out of menus, too.
-            if (Cursor.lockState == CursorLockMode.Locked)
+            if (Cursor.lockState == CursorLockMode.Locked && !(InputLayer.TouchInput.Active && InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch))
                 delta += new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
             if (delta.sqrMagnitude <= 0) return;
 
@@ -2300,7 +2300,7 @@ namespace TumbangPreso.CameraSystem
             if (InputLayer.TouchInput.Active && (InputLayer.TouchInput.Move.sqrMagnitude > .0001f
                 || InputLayer.TouchInput.LookDelta.sqrMagnitude > .0001f)) return true;
             if (SpectatorStickLook().sqrMagnitude > 0) return true;
-            if (Cursor.lockState == CursorLockMode.Locked)
+            if (Cursor.lockState == CursorLockMode.Locked && !(InputLayer.TouchInput.Active && InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch))
             {
                 float dx = Mathf.Abs(Input.GetAxisRaw("Mouse X"));
                 float dy = Mathf.Abs(Input.GetAxisRaw("Mouse Y"));

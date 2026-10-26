@@ -1,5 +1,9 @@
 # Phone UI follow-up, 2026-10-26
 
+2026-10-27: the owner requested wrapping up. Read the
+[current handoff](HANDOFF.md) for the uploaded ff9 candidate, newer unfinished source,
+the6/7 focused result and exact remaining work. The earlier snapshot below is history.
+
 The normal Android launcher/Guest journey exposed desktop-shaped menu/settings
 controls, keyboard captions on hero cards, a desktop file-browser replay route and
 an overlapping tutorial footer. The phone variant now keeps larger controls,

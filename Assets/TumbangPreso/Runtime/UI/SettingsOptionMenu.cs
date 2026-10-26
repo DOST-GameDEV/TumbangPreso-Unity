@@ -44,7 +44,7 @@ namespace TumbangPreso.UI
             var box=OwnerUiLayout.Rect(_popup.transform,"Choices");box.anchorMin=box.anchorMax=box.pivot=new Vector2(.5f,.5f);
             bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
             float rowHeight = touch ? InputLayer.TouchMetrics.MinTargetUnits : 64;
-            float height=Mathf.Min(touch ? 720 : 566,Mathf.Max(108,_options.Length*(rowHeight+8)+40));box.sizeDelta=new Vector2(566,height);
+            float height=Mathf.Min(touch ? 720 : 566,Mathf.Max(108,_options.Length*(rowHeight+(touch ? 16 : 8))+40));box.sizeDelta=new Vector2(566,height);
             var origin=(RectTransform)transform;var corners=new Vector3[4];origin.GetWorldCorners(corners);
             var ownerCanvas=GetComponentInParent<Canvas>();var camera=ownerCanvas.renderMode==RenderMode.ScreenSpaceOverlay?null:ownerCanvas.worldCamera;
             var point=RectTransformUtility.WorldToScreenPoint(camera,(corners[0]+corners[3])*.5f);
@@ -53,8 +53,9 @@ namespace TumbangPreso.UI
             var bounds=popupRect.rect;
             box.anchoredPosition=new Vector2(Mathf.Clamp(local.x,bounds.xMin+299,bounds.xMax-299),
                 Mathf.Clamp(local.y-height*.5f-8,bounds.yMin+height*.5f+18,bounds.yMax-height*.5f-18));
-            var paper=box.gameObject.AddComponent<Image>();paper.color=SettingsPalette.Surface;paper.raycastTarget=true;
+            var paper=box.gameObject.AddComponent<Image>();paper.color=touch ? SettingsPalette.Background : SettingsPalette.Surface;paper.raycastTarget=true;
             var column=OwnerScrollColumn.Build(box,"ChoiceList",new Rect(22,20,522,height-40),out var scroll);
+            if (touch) column.GetComponent<VerticalLayoutGroup>().padding.bottom = 16;
             Button selectedButton=null;
             for(int i=0;i<_options.Length;i++)
             {

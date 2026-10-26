@@ -217,7 +217,7 @@ namespace TumbangPreso
         private void Update()
         {
             if (!_ready || _local == null || Panel.AnyOpen || UI.Hub.HubLoading.Visible) return;
-            _hud?.SetInspecting(InspectingAbilities);
+            _hud?.SetInspecting(InspectingAbilities || (Hud.OnTouch && !_local.IsDefender && InputLayer.TouchInput.Pressed(Verb.SpecialAbility)));
             StepTrainingWorld();
 
             var keyboard = Keyboard.current;

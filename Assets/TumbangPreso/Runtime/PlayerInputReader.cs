@@ -563,7 +563,10 @@ namespace TumbangPreso
             }
             // The mouse, in the raw units every sensitivity number in this game is written
             // against. Legacy axes are live because `activeInputHandler` is Both.
-            var delta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            // Android also emulates a legacy mouse from touch. Reading that mouse
+            // turns a second button finger into an unowned camera swipe.
+            bool touch = InputLayer.TouchInput.Active && InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch;
+            var delta = touch ? Vector2.zero : new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
 
             if (_look != null)
             {
