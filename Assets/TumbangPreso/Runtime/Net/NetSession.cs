@@ -1868,24 +1868,17 @@ namespace TumbangPreso.Net
             ResetQualityProbe();
             _lastLinkTrafficAt = -1;
             _linkSampleLeft = 0;
-            // ⚠️⚠️ 8000, DOWN FROM 30000, AND THIRTY SECONDS IS NOT A TIMEOUT ANYBODY CAN PLAY
-            // THROUGH. This is the silence timer: how long a peer keeps believing in a machine it
-            // has stopped hearing from. `Stop` now sends a real `DisconnectClient` so an orderly
-            // exit is instant and never reaches this at all, but the case this covers is the one
-            // that cannot say goodbye — alt-F4, a pulled cable, a laptop lid. Half a minute of
-            // four people standing in a match whose host is gone is most of a round.
-            //
-            // ⚠️ AND IT IS NOT SET SHORTER THAN THAT, because it is also what a real network
-            // hiccup is measured against. The VPS is 48 ms from Manila and the LAN is under 2;
-            // eight seconds of complete silence on either is a machine that has gone, not a
-            // machine that is late.
-            _utp.DisconnectTimeoutMS = 8000;
+            // Cold mobile scene activation can span two frames totaling about10 s.
+            // Allow12 s of complete silence before retiring its transport. Orderly
+            // host exits still send HostLeftMessage immediately; the quality badge
+            // warns about missing traffic earlier. Never disable loss detection.
+            _utp.DisconnectTimeoutMS = 12000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
             // NGO defaults to128 packet slots, below Transport's512 default.
             // Cold Android scene activation can fill that queue before the next
             // frame, dropping fresh traffic. Keep a bounded burst buffer without
-            // delaying loss detection or weakening packet/session validation.
+            // weakening packet/session validation.
             _utp.MaxPacketQueueSize = 512;
 
             // ⚠️ EVERY START PATH AND `Stop` REACH THIS METHOD, which is what makes it the one
