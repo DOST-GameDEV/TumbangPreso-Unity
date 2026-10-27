@@ -75,7 +75,7 @@ namespace TumbangPreso.PlayTests.Trailer
             var resolved=new RenderTexture(width,height,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB); resolved.Create();
             var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
             var shot=new GameObject("~TrailerProductionShot").AddComponent<LateFrameShot>();
-            var geometry=new System.Text.StringBuilder("age\tshot\tgrip_error\tshoe_viewport\tshoe_hidden\n");
+            var geometry=new System.Text.StringBuilder("age\tshot\tgrip_error\tshoe_viewport\tshoe_hidden\tcamera_eye\tcamera_euler\n");
             var prior=camera.targetTexture;
             shot.Shoot=path=>
             {
@@ -86,7 +86,8 @@ namespace TumbangPreso.PlayTests.Trailer
                     {
                         var renderer=opening.Shoe.GetComponentInChildren<Renderer>();
                         var point=camera.WorldToViewportPoint(renderer.bounds.center);
-                        geometry.AppendLine(FormattableString.Invariant($"{director.HeldAge:F5}\t{director.Beat}\t{opening.GripError:F5}\t{point.x:F3},{point.y:F3},{point.z:F3}\t{renderer.forceRenderingOff}"));
+                        Vector3 eye=camera.transform.position,angles=camera.transform.eulerAngles;
+                        geometry.AppendLine(FormattableString.Invariant($"{director.HeldAge:F5}\t{director.Beat}\t{opening.GripError:F5}\t{point.x:F3},{point.y:F3},{point.z:F3}\t{renderer.forceRenderingOff}\t{eye.x:F5},{eye.y:F5},{eye.z:F5}\t{angles.x:F5},{angles.y:F5},{angles.z:F5}"));
                     }
                     camera.targetTexture=target; camera.Render(); camera.targetTexture=prior;
                     Graphics.Blit(target,resolved); var active=RenderTexture.active; RenderTexture.active=resolved;

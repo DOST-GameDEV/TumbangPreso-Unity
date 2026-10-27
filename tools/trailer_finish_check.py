@@ -11,7 +11,9 @@ MEDIA=ROOT/'Logs/trailer/bring-it-home'
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('tag');args=parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('tag')
+    parser.add_argument('--sweep-fps',type=int,choices=(1,2,3,5),help='Additional ordered review samples over the entire picture')
+    args=parser.parse_args()
     work=MEDIA/'edits'/args.tag;witness=json.loads((work/'picture-witness.json').read_text())
     movie=Path(witness['master'])
     if hashlib.sha256(movie.read_bytes()).hexdigest()!=witness['sha256']:raise ValueError('Picture differs from witness')
@@ -20,7 +22,8 @@ def main():
     pairs=[max(0,n) for cut in witness['cuts'] for n in (cut['master_from']-1,cut['master_from'])]
     windows={'opening-contact':list(range(108,151,3)), 'pickup':list(range(2877,2916,3)),
         'escape':list(range(3000,3091,6)), 'identity':list(range(3354,3391,3))}
-    selection=sorted(set(overview+pairs+sum(windows.values(),[])))
+    sweep=list(range(0,3600,30//args.sweep_fps)) if args.sweep_fps else []
+    selection=sorted(set(overview+pairs+sum(windows.values(),[])+sweep))
     def balanced(terms):
         if len(terms)==1:return terms[0]
         middle=len(terms)//2
@@ -40,7 +43,9 @@ def main():
     for number,start in enumerate((0,1200,2400),1):sheet(f'overview-{number:02}',[n for n in overview if start<=n<start+1200])
     for name,frames in windows.items():sheet(name,frames)
     for index in range(0,len(pairs),18):sheet(f'cut-boundaries-{index//18+1:02}',pairs[index:index+18],2)
+    for index in range(0,len(sweep),12):sheet(f'sweep-{index//12+1:02}',sweep[index:index+12])
     report={'picture_sha256':witness['sha256'],'selected_frames':selection,
+        'whole_picture_sweep_fps':args.sweep_fps,'whole_picture_sweep_frames':sweep,
         'evidence':'Ordered decoded samples, contact windows and both sides of cut boundaries',
         'limits':'These files support visual sequence inspection. No UI playback or owner creative acceptance is claimed.'}
     (qa/'review-evidence.json').write_text(json.dumps(report,indent=2),encoding='utf-8')

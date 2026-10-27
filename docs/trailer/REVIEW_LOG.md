@@ -114,3 +114,15 @@ then regenerated the movie, witness, review frames and 161 sync cues. Pickup/lif
 and recovered prop remain legible. Native local bot matches and partial replay
 archives are accurately identified; no human playtest or full-match result claimed.
 No UI playback was reopened. Normal-speed owner review remains pending.
+
+## Goal continuation: reaction camera refinement
+
+A denser C14 review exposed an unintended final-second pullback/orbit. The shot
+side was recomputed every frame from a shoulder moved by the native idle clip.
+The camera now uses a side chosen once from the actual rest rig in Prepare.
+Character performance and all cut timing stay unchanged. Capture telemetry now
+records camera position and angles, so a steady shot can be checked directly.
+ending-v13-camera-probe passed1/1 with17 samples and normal exit. Its three C14
+camera positions/rotations are identical; grip error .01549-.01969m and the
+recovered blue slipper remains visible. Render the full revised ending next.
+The delivered v01 picture/bundle stay intact while v02 is validated.

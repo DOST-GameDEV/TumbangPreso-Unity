@@ -1,3 +1,18 @@
+# Active refinement, October 28
+
+The active goal explicitly requests further review/refinement. v01 below is a
+retained delivered baseline, not a stop instruction for this new goal turn.
+Confirmed defect: C14 camera side was recalculated from the animated shoulder,
+causing an unintended last-second orbit/pullback. New source fixes the shot side
+once in Prepare and records camera position/angles per captured frame.
+
+Current job: ending-v13-camera-probe, session99032, guardPID12668. Consult live
+PRODUCTION_JOB.json and actual Unity.exe. ONE job; never edit Assets during it.
+Next: review probe grip/composition and stable camera trace, then render a new
+1080p30 ending, replace only C09 in trailer-v02 and refresh all review/bundle proof.
+Preserve v01 and existing team sync: no timeline or native footage changes.
+All monitor, owner-dirt, silent-sound and cleanup constraints below still apply.
+
 # Trailer production checkpoint
 
 Branch `trailer/pandaigdig-plan`. All final native/cinema recording and picture

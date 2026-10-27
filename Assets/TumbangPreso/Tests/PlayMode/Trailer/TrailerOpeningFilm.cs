@@ -89,6 +89,7 @@ namespace TumbangPreso.PlayTests.Trailer
         private Quaternion _releaseTurn;
         private Vector3 _canRestScale,_canPivot,_shoeScale,_release;
         private Vector3 _pickupOffset;
+        private Vector3 _reactionSide;
         private Vector3 _releaseCentre;
         private float _fallenHeight=.18f,_shoeHeight=.055f;
         private ArenaStage _liveStage;private bool _stageEnabled;
@@ -144,6 +145,11 @@ namespace TumbangPreso.PlayTests.Trailer
             _rago.Sample(C,180,"idle",0,pickupPose);
             Vector3 shoulder=_rago.Body.RightShoulder-C;
             _pickupOffset=new Vector3(-shoulder.x,0,-shoulder.z);
+            // The shot's side is a set decision. Deriving it from an animated shoulder every
+            // frame made the idle clip drag the camera through an unintended orbit/pullback.
+            _rago.Sample(RagoMark,7,"idle",0,Pose.Rest);
+            _reactionSide=Vector3.ProjectOnPlane(_rago.Body.RightShoulder-_rago.E.Root.transform.position,Vector3.up).normalized;
+            if(_reactionSide.sqrMagnitude<.01f)_reactionSide=_rago.E.Root.transform.right;
             // Two independent competitors, never teammates. Their attention shifts separately.
             _rago.Sample(RagoMark+new Vector3(.08f,0,-.16f),180,"idle",Release*.6f,ThrowPose(Release));
             _release=HeldShoe(out _releaseTurn);
@@ -471,11 +477,7 @@ namespace TumbangPreso.PlayTests.Trailer
             _grip.Pose(hand,fore,face,out var position,out turn);
             return position;
         }
-        private Vector3 ReactionSide()
-        {
-            Vector3 side=Vector3.ProjectOnPlane(_rago.Body.RightShoulder-_rago.E.Root.transform.position,Vector3.up);
-            return side.sqrMagnitude>.001f?side.normalized:_rago.E.Root.transform.right;
-        }
+        private Vector3 ReactionSide()=>_reactionSide;
         private Vector3 ReactionEye(Vector3 actor)=>actor+ReactionSide()*3+Vector3.forward*3.1f+Vector3.up*1.45f;
         protected override void Restore()
         {if(_liveStage!=null)_liveStage.enabled=_stageEnabled;}

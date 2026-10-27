@@ -1,11 +1,11 @@
 {
-  "tag": "defender-v02-final",
-  "kind": "defender",
+  "tag": "ending-v13-camera-probe",
+  "kind": "ending-probe",
   "status": "finished",
-  "guard_pid": 7264,
-  "started_utc": "2026-10-27T18:01:45.942751+00:00",
-  "updated_utc": "2026-10-27T18:06:03.552371+00:00",
-  "output": "Logs/trailer/bring-it-home/defender-v02-final",
+  "guard_pid": 12668,
+  "started_utc": "2026-10-27T18:46:04.365705+00:00",
+  "updated_utc": "2026-10-27T18:46:59.099613+00:00",
+  "output": "Logs/trailer/bring-it-home/ending-v13-camera-probe",
   "tests": {
     "result": "Passed",
     "total": "1",
