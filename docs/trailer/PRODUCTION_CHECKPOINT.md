@@ -1,86 +1,62 @@
-# Active v02 refinement
+# Current trailer checkpoint
 
-Goal continuation requests finishing, review and further refinement. v01 below is
-retained as the previously delivered baseline. Current production source 09a5c664c.
-No live Unity process. ending-v13-camera-probe and ending-v14-camera-master each
-passed 1/1 with normal exit and exact QualitySettings restoration.
+Branch trailer/pandaigdig-plan. Preferred picture is trailer-v02. v01 stays intact
+as a previously delivered baseline. No live Unity/render/encode/review job remains.
+Current source includes the verified final lunge radius and routing below; consult
+Git HEAD/status. Preserve five owner-dirty files listed below.
 
-Fixed C14 camera side once in Prepare: native idle movement no longer orbits or
-pulls the camera back. Full 540-frame master has 120 C14 frames, camera translation/
-rotation span exactly 0, max grip error .01969m and visible in-frame slipper on
-all 120 frames. Evidence: refinement-v02/camera-validation.json and reaction-before.jpg.
+## Verified v02
 
-Current edit: tools/trailer_cut.py --tag trailer-v02, tool session 63703. Verify
-actual Python/ffmpeg process before launching anything else against that output.
-Only C09 changes to ending-v14-camera-master; all other encoded clips copied
-independently from v01. No hardlinks/overwrites of delivered v01. Timeline unchanged.
-Next: finish encode, run trailer_finish_check.py trailer-v02 --sweep-fps 2, review all full-duration sweep sheets and contacts, regenerate
-sync notes and verify unchanged cues/other clips. Then refreshed portable bundle,
-completion audit, source publication and update_goal only after proof is complete.
-All original monitor, sound, source ownership and cleanup limits below still apply.
-
-# Trailer production checkpoint
-
-Branch `trailer/pandaigdig-plan`. All final native/cinema recording and picture
-assembly are complete. Read DELIVERY.md and PICTURE_EDL.json. No Unity job remains.
-Production source is published through d0d851600. Final completion documentation
-follows it; consult Git HEAD/status rather than guessing a source revision.
-
-## Current finished picture
-
-- Logs/trailer/bring-it-home/trailer-v01.mp4: 120.000 s, 3600 frames, 1080p30,
-  H.264 BT.709 limited range and ZERO audio. Full decode passed. SHA256
-  4ec35b24d3226c0191f8410cdfa3a9d1f4fd33594cbdfe55c688b0229ee5d1ad.
-- trailer-v01_share.mp4: 720p review copy, same 3600 frames, zero audio, decode pass.
-- Original cinema: opening-v12-master (600), ending-v12-master (540),
-  neighborhood-v03-master (180). Each 1/1 native pass. No legacy map/hero film.
-- Native sources: classic-v04-final (35 s), hero-street-v02-final (30 s),
-  hero-arena-v03-final (20 s), defender-v02-final (22 s). All four views complete,
-  each 1/1 pass, observer visibility scope and capture_mask_revision=2. Current
-  source takes remain intact. All four partial-match replay manifests/sidecars
-  verified. Selected encoded clips are portable visual source of truth.
-- Checked 127 ordered decoded samples, dense throw/contact/pickup/escape/identity
-  windows and both sides of cut boundaries. G12 revised to closer same-event side
-  angle after assembled critique. Rechecked final images and regenerated cues.
-- Team authors ALL audio. TRAILER_SYNC.csv has 161 frame/timecode cues plus sound
-  brief/mux command in edits/trailer-v01. No temporary score, SFX or voice added.
+- 120.000 s, 3600 frames, 1080p30, H.264 BT.709 limited range, zero audio. Master/share
+  fully decoded. Master SHA256
+  766ac3f0c3533883c7ea70e4f04869581353b57c441d0cc70f39dfb1c24dbbe5.
+- Original cinema: opening-v18-final-master 600 frames, ending-v20-final-master 540,
+  neighborhood-v03-master 180. Every final native capture 1/1 passed. No old films.
+- Full foot tracing: 216 opening guard frames minimum .08621m can clearance;
+  all 540 ending frames minimum .15587m. Actual skinning matrices/lower-foot bounds,
+  visible can geometry and nonzero measured-foot samples on every checked frame.
+- All 120 reaction frames: camera position/rotation unchanged, slipper in frame,
+  max grip error .01969m. C06 framing retains the head. Camera/foot issues repaired.
+- Reviewed 311 decoded samples: 240 half-second samples spanning the entire film plus
+  71 contacts/cut boundaries. All 20 sweep sheets reviewed; changed cinema rechecked.
+  This is file-based temporal review, not claimed normal-speed UI playback.
+- All cut times and the entire 161-row sound cue CSV match v01 byte for byte. All
+  gameplay, neighborhood and title encoded clips are byte-identical. Only the two
+  original cinema clips changed. The team authors ALL music, voices and SFX.
+- Same four qualified native takes: classic-v04-final, hero-street-v02-final,
+  hero-arena-v03-final, defender-v02-final. Real local bot matches/partial archives,
+  valid-eye/unheld-frame qualification and masked HUD/role markers. Native power
+  VFX and physical court art remain. Real peers/full matches are not claimed.
 
 ## ONE next action
 
-Owner watches the completed silent picture, then the team creates/mixes all sound.
-No production job remains. Do not restart rendering without a requested picture
-change. The overnight continuation heartbeat is PAUSED after successful delivery
-verification. All source/tools and final edit decisions are published; consult HEAD.
+Publish source, then run python tools/trailer_handoff.py trailer-v02. Verify fresh
+package PORTABILITY_CHECK.json, all file hashes and ZIP CRC. The delivered rebuild
+must reproduce the current master exactly from another working directory. Final
+completion audit is GOAL_AUDIT.md; update its packaging result only after success.
+Then publish completion metadata, verify no owned helpers remain and complete the
+active goal. The separate overnight heartbeat is already PAUSED; no duplicate
+automation is needed. Do not rerender unchanged material.
 
-Portable bundle: delivery/TUMP_BringItHome_trailer-v01.zip under the media root,
-502129962 bytes, 257 files. OTIO roundtrip: 3600 frames, all relative media resolved,
-file hashes and ZIP CRC passed. The supplied rebuild helper ran from a different
-working directory and reproduced the ENTIRE master file byte for byte. Production
-source commit d0d851600; final completion documentation follows it. See
-DELIVERY_VERIFICATION.json and package PORTABILITY_CHECK.json for exact evidence.
+## Boundaries and ownership
 
-## Preserve boundaries and owner work
+Keep monitor asleep. No browser/native playback, window activation or injected
+input was used. No power setting changed. No paid services, extra agents/chats,
+Drive uploads, resets, clean or force push. One Unity job, frozen source and the
+named-profile/exact-byte guard if any new picture revision is later requested.
+0-20 original cinema; 20-88 native gameplay; 88-112 original cinema; 112-120 graphics.
 
-- Background only overnight. Owner confirmed monitor sleeps after preview closed.
-  No UI playback, browser previews, window activation or injected input. None were
-  reopened. No display/power settings changed. Owner normal-speed viewing and
-  creative acceptance remain separate from encoded/image evidence.
-- 0-20 new cinema, 20-88 native gameplay, 88-112 new cinema, 112-120 actual TUMP
-  graphics. Do not put gameplay or existing game cutscenes into cinematic blocks.
-- No paid services, extra agents/chats, resets, clean or force push. No Drive upload.
-- Keep owner dirt excluded: SceneryTextureIdentities.asset, tump_logo.png.meta,
-  cloud-bank-a.png.meta, GraphicsSettings.asset and ProjectSettings.asset.
-- QualitySettings restored exactly after every job. Current SHA256
-  b12f8817b7355d4844c2a7cb0a057982de075131ae223850bc5b51244ad6b191.
-- Source/picture changes require a fresh witness, cue sheet and refreshed bundle.
-  Use tools/run_trailer_job.py, fresh tags, frozen source and ONE Unity process.
+Preserve owner dirt: SceneryTextureIdentities.asset, tump_logo.png.meta,
+cloud-bank-a.png.meta, GraphicsSettings.asset and ProjectSettings.asset.
+QualitySettings SHA256 restored after every run:
+b12f8817b7355d4844c2a7cb0a057982de075131ae223850bc5b51244ad6b191.
 
-## Cleanup receipt
+Failed/unaccepted intermediate geometry: v15/v16 foot diagnostics double-counted
+scale, so are superseded measurements. v17 corrected probe confirmed clear opening
+route. Ending v18/v19 render passed but full geometry found a close pass; v20 fixes
+it. Do not select these intermediate takes for the current edit.
 
-No task-owned preview/browser tab/server remains. Native/encode/review jobs are
-terminal. Task-owned obsolete raw generations retired with kept critical frames,
-movies, XML, logs, replay data and source hashes. cleanup-20261028.json reclaimed
-3,626,986,904 bytes; cleanup-final-generation-20261028.json reclaimed
-14,234,035,995 bytes. Earlier v03-v05 pruning is separately receipted. Preserve
-current source takes, final media and pre-existing Claude animatics. No branch
-was reset/cleaned/force-pushed or deleted; this unmerged trailer source is needed.
+All v01 delivery/source/sync files are preserved. Retire only obsolete unshared
+raw candidates with terminal-job/path/ownership checks, retaining essential frames,
+CSV, XML and source hashes. Cleanup receipts sit beneath media root. No task-owned
+browser/HTTP server remains. Keep final takes, accepted media and unmerged source.

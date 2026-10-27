@@ -1,6 +1,6 @@
 {
   "title": "TUMP Bring It Home",
-  "status": "v02 reaction camera refinement; unchanged timeline and native clips; review pending",
+  "status": "v02 completed and reviewed through full-duration decoded sequences and frame-level cinema geometry",
   "fps": 30,
   "total_frames": 3600,
   "block_frames": [
@@ -14,7 +14,7 @@
     {
       "id": "C01-opening",
       "kind": "cinema",
-      "take": "opening-v12-master",
+      "take": "opening-v18-final-master",
       "start_frame": 0,
       "frames": 600
     },
@@ -199,7 +199,7 @@
     {
       "id": "C09-arena-return",
       "kind": "cinema",
-      "take": "ending-v14-camera-master",
+      "take": "ending-v20-final-master",
       "start_frame": 0,
       "frames": 540
     },

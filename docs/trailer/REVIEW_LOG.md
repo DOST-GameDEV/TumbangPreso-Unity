@@ -122,7 +122,7 @@ side was recomputed every frame from a shoulder moved by the native idle clip.
 The camera now uses a side chosen once from the actual rest rig in Prepare.
 Character performance and all cut timing stay unchanged. Capture telemetry now
 records camera position and angles, so a steady shot can be checked directly.
-ending-v13-camera-probe passed1/1 with17 samples and normal exit. Its three C14
+ending-v13-camera-probe passed 1/1 with17 samples and normal exit. Its three C14
 camera positions/rotations are identical; grip error .01549-.01969m and the
 recovered blue slipper remains visible. Render the full revised ending next.
 The delivered v01 picture/bundle stay intact while v02 is validated.
@@ -141,3 +141,21 @@ their render passes are not foot-clearance acceptance. Corrected v17 probe
 passed 1/1. Same-pose counterfactual old approach reaches -.13436m signed bound
 clearance; new sampled approach stays at least .08621m clear. Sparse samples
 are not whole-motion proof: render full takes and inspect every traced frame.
+
+## v02 full-motion acceptance
+
+opening-v18-final-master passed 1/1 with 600 true 1080p30 frames. Every frame of
+its guard move/hold has measured lower-foot clearance above .05m, minimum .08621m.
+The ending's intermediate v18/v19 render tests passed, but their geometry traces
+showed a single close pass during recovery/lunge and were not accepted. Added
+an eased 1.25 m turn radius during the lunge, preserving continuous entry.
+ending-v20-final-master passed 1/1 with 540 frames; every frame has measured feet
+and at least .15587m can clearance. All 120 reaction frames keep camera position/
+rotation fixed, slipper inside the frame and grip error below .01969m.
+
+v02's master/share fully decode at exactly 3600 frames / 120 seconds with no audio.
+Inspected 311 ordered decoded samples: full-duration 2 fps sweep plus contacts and
+cut boundaries. All 20 sweep sheets reviewed; changed opening and ending inspected
+again after final encoding. All cut times and 161-row cue CSV match v01 exactly;
+all gameplay, neighborhood and title encoded inputs are byte-identical. Current
+picture SHA is in the encoded witness. Owner normal-speed playback not claimed.

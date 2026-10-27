@@ -456,7 +456,15 @@ namespace TumbangPreso.PlayTests.Trailer
             if(t>=10 && t<14)
             {
                 float lunge=Smooth((t-10)/.7f);
-                dante=Vector3.Lerp(GuardMark,C+new Vector3(-.55f,0,.95f),lunge)+Vector3.forward*(.7f*Mathf.Sin(lunge*Mathf.PI));
+                dante=Vector3.Lerp(GuardMark,C+new Vector3(-.85f,0,.95f),lunge)+Vector3.forward*(.7f*Mathf.Sin(lunge*Mathf.PI));
+                if(t<10.7f)
+                {
+                    // Keep the outside of the can while the lunge changes sides. Ease
+                    // into the turn radius so entering this beat cannot teleport him.
+                    Vector3 radial=dante-C;
+                    float radius=Mathf.Lerp((GuardMark-C).magnitude,1.25f,Smooth((t-10)/.16f));
+                    if(radial.sqrMagnitude<radius*radius)dante=C+radial.normalized*radius;
+                }
                 dante+=Vector3.back*(.45f*Smooth((t-11.2f)/2.2f));
                 guard=t<10.8f?Pose.Contact:Pose.Rest;guard.Lean=10;
                 guardClip=t<10.8f?"attack-melee-right":"idle";guardClock=t-10;
@@ -467,7 +475,7 @@ namespace TumbangPreso.PlayTests.Trailer
                 if(t<15.2f)
                 {
                     float around=Smooth((t-14)/1.2f);
-                    dante=Vector3.Lerp(C+new Vector3(-.55f,0,.5f),mid,around)+Vector3.left*(.8f*Mathf.Sin(around*Mathf.PI));
+                    dante=Vector3.Lerp(C+new Vector3(-.85f,0,.5f),mid,around)+Vector3.left*(.8f*Mathf.Sin(around*Mathf.PI));
                 }
                 else
                 {

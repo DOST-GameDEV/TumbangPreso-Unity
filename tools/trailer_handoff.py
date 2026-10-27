@@ -105,6 +105,9 @@ print(root/'REBUILT_SILENT.mp4')
         review=package/'picture-review';review.mkdir()
         for name in ('overview-01.jpg','overview-02.jpg','overview-03.jpg','opening-contact.jpg','pickup.jpg','escape.jpg','identity.jpg','review-evidence.json'):
             if (work/'qa'/name).is_file():shutil.copy2(work/'qa'/name,review/name)
+        for path in sorted((work/'qa').glob('sweep-*.jpg')):shutil.copy2(path,review/path.name)
+    for source_name,delivered_name in (('refinement-comparison.json','REFINEMENT_CHECK.json'),('cinema-geometry.json','CINEMA_GEOMETRY_CHECK.json')):
+        if (work/source_name).is_file():shutil.copy2(work/source_name,package/delivered_name)
     readme=f'''# TUMP: Bring It Home
 
 Start with TUMP_BringItHome_1080p30_SILENT.mp4. It is 120 seconds, 3600 frames,
