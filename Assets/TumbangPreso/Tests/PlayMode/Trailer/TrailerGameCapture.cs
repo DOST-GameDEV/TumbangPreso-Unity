@@ -3,6 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
@@ -22,15 +23,17 @@ namespace TumbangPreso.PlayTests.Trailer
     public sealed class TrailerGameCapture
     {
         private string _settings;
+        private float _audioVolume;
         private int _frame;
         private readonly StringBuilder _events=new StringBuilder();
         [UnitySetUp] public IEnumerator Before()
-        { yield return PlayModeWorld.Reset(); _settings=JsonUtility.ToJson(Settings.SettingsStore.Current); }
+        { yield return PlayModeWorld.Reset(); _settings=JsonUtility.ToJson(Settings.SettingsStore.Current); _audioVolume=AudioListener.volume; AudioListener.volume=0; }
         [UnityTearDown] public IEnumerator After()
         {
             HeroAbilitySystem.CastPresented-=Cast; MatchFlair.Presented-=Flair;
             Time.captureFramerate=0; GameLaunch.Spectator=false; GameLaunch.AllBots=false;
             if(_settings!=null) JsonUtility.FromJsonOverwrite(_settings,Settings.SettingsStore.Current);
+            AudioListener.volume=_audioVolume;
             yield return PlayModeWorld.Reset();
         }
 
@@ -57,6 +60,7 @@ namespace TumbangPreso.PlayTests.Trailer
                 Assert.IsFalse(Directory.Exists(folder)&&Directory.EnumerateFiles(folder,"frame_*.jpg").Any(),"Use a fresh native take tag.");
                 Directory.CreateDirectory(folder);
             }
+            Assert.IsTrue(LocalReplayStore.SetFolder(Path.Combine(root,"replays"),out var replayError),replayError);
             SceneFlow.Networked=false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.SoloSeat=1; GameLaunch.GuidedTutorial=false; GameLaunch.Spectator=true; GameLaunch.AllBots=true;
             Settings.SettingsStore.Current.CinematicCameraMotion=false;
@@ -95,7 +99,7 @@ namespace TumbangPreso.PlayTests.Trailer
             HeroAbilitySystem.CastPresented+=Cast;MatchFlair.Presented+=Flair;
             var line=new Operator();var side=new Operator();
             int count=seconds*fps;
-            File.WriteAllText(Path.Combine(root,"capture.json"),$"{{\"kind\":\"native-gameplay\",\"mode\":\"{mode}\",\"map\":\"{map}\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":0,\"frames\":{count},\"probe\":false,\"pov_seat\":{povSeat}}}");
+            File.WriteAllText(Path.Combine(root,"capture.json"),$"{{\"kind\":\"native-gameplay\",\"mode\":\"{mode}\",\"map\":\"{map}\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":0,\"frames\":{count},\"probe\":false,\"pov_seat\":{povSeat},\"external_visibility_scope\":true}}");
             File.WriteAllLines(Path.Combine(root,"frame-times.tsv"),Enumerable.Range(0,count).Select(i=>$"{i}\t{((float)i/fps).ToString("F5",CultureInfo.InvariantCulture)}"));
             var shot=new GameObject("~NativeTrailerCoverage").AddComponent<LateFrameShot>();
             shot.Shoot=_=>
@@ -111,7 +115,8 @@ namespace TumbangPreso.PlayTests.Trailer
                 Vector3 original=camera.transform.position;Quaternion turn=camera.transform.rotation;float fov=camera.fieldOfView;
                 Render(camera,target,resolved,image,Path.Combine(root,"fpv",$"frame_{_frame:00000}.jpg"),false);
                 line.Aim(camera,can+new Vector3(5.8f,2.7f,9.8f),focus,43,1f/fps);
-                Render(camera,target,resolved,image,Path.Combine(root,"line",$"frame_{_frame:00000}.jpg"),true);
+                int visibleBody=Render(camera,target,resolved,image,Path.Combine(root,"line",$"frame_{_frame:00000}.jpg"),true);
+                if(_frame==0)Assert.Greater(visibleBody,0,"Observer body visibility must be restored for external capture");
                 side.Aim(camera,can+new Vector3(8.8f,1.65f,3.9f),focus,55,1f/fps);
                 Render(camera,target,resolved,image,Path.Combine(root,"side",$"frame_{_frame:00000}.jpg"),true);
                 camera.transform.SetPositionAndRotation(original,turn);camera.fieldOfView=fov;
@@ -141,6 +146,23 @@ namespace TumbangPreso.PlayTests.Trailer
             }
             foreach(string view in new[]{"fpv","line","side"})
                 Assert.AreEqual(count,Directory.EnumerateFiles(Path.Combine(root,view),"frame_*.jpg").Count(),"Incomplete native "+view);
+            // Keep portable actual-match data outside the isolated profile that the guard restores.
+            // The archive owns its recorder; disabling it flushes the current tail without starting a new one.
+            var archive=Object.FindFirstObjectByType<MatchReplayArchive>();
+            if(archive!=null)
+            {
+                var local=typeof(MatchReplayArchive).GetField("_local",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(archive);
+                var writer=local?.GetType().GetField("_writer",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(local) as LocalReplayStore.Writer;
+                archive.enabled=false;
+                if(writer!=null)
+                {
+                    double until=Time.realtimeSinceStartupAsDouble+60;
+                    while(!writer.Completion.IsCompleted && Time.realtimeSinceStartupAsDouble<until) yield return null;
+                    Assert.IsTrue(writer.Completion.IsCompleted,"Portable replay flush did not finish");
+                    Assert.IsNull(writer.Error,"Portable replay failed: "+writer.Error);
+                    Debug.Log("[TrailerGameCapture] portable replay: "+writer.Directory);
+                }
+            }
             Debug.Log($"[TrailerGameCapture] complete {tag}: {count} native frames per view to {root}");
         }
 
@@ -170,17 +192,49 @@ namespace TumbangPreso.PlayTests.Trailer
             }
         }
 
-        private static void Render(Camera camera,RenderTexture target,RenderTexture resolved,Texture2D image,string path,bool external)
+        private sealed class ExternalBodyScope:IDisposable
+        {
+            private readonly System.Collections.Generic.List<(Renderer renderer,UnityEngine.Rendering.ShadowCastingMode mode)> _changed=
+                new System.Collections.Generic.List<(Renderer,UnityEngine.Rendering.ShadowCastingMode)>();
+            public int Count=>_changed.Count;
+            public ExternalBodyScope(Camera camera,bool external)
+            {
+                if(!external)return;
+                var spectator=camera.GetComponent<SpectatorCamera>();if(spectator==null)return;
+                Restore(spectator,"_povHiddenRenderers","_povShadowModes");
+                Restore(spectator,"_povCarriedRenderers","_povCarriedModes");
+            }
+            private void Restore(SpectatorCamera spectator,string rendererField,string modeField)
+            {
+                const BindingFlags flags=BindingFlags.Instance|BindingFlags.NonPublic;
+                var renderers=typeof(SpectatorCamera).GetField(rendererField,flags)?.GetValue(spectator) as System.Collections.Generic.List<Renderer>;
+                var modes=typeof(SpectatorCamera).GetField(modeField,flags)?.GetValue(spectator) as System.Collections.Generic.List<UnityEngine.Rendering.ShadowCastingMode>;
+                if(renderers==null||modes==null)throw new InvalidOperationException("Observer capture fields changed; update the test-only visibility adapter.");
+                for(int i=0;i<renderers.Count&&i<modes.Count;i++)
+                {
+                    var renderer=renderers[i];if(renderer==null)continue;
+                    _changed.Add((renderer,renderer.shadowCastingMode));renderer.shadowCastingMode=modes[i];
+                }
+            }
+            public void Dispose()
+            {foreach(var item in _changed)if(item.renderer!=null)item.renderer.shadowCastingMode=item.mode;}
+        }
+
+        private static int Render(Camera camera,RenderTexture target,RenderTexture resolved,Texture2D image,string path,bool external)
         {
             var previous=camera.targetTexture;
+            int count;
+            using(var body=new ExternalBodyScope(camera,external))
             using(var mask=new TrailerCaptureMask())
             {
+                count=body.Count;
                 mask.Apply(external);
                 camera.targetTexture=target;camera.Render();camera.targetTexture=previous;
                 Graphics.Blit(target,resolved);var active=RenderTexture.active;RenderTexture.active=resolved;
                 image.ReadPixels(new Rect(0,0,image.width,image.height),0,0);image.Apply();RenderTexture.active=active;
                 File.WriteAllBytes(path,image.EncodeToJPG(96));
             }
+            return count;
         }
     }
 }

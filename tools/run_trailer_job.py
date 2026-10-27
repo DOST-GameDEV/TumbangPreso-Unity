@@ -18,7 +18,7 @@ def digest(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("kind", choices=("probe", "opening", "ending", "classic", "hero-arena", "hero-street", "defender"))
+    parser.add_argument("kind", choices=("probe", "opening", "ending", "neighborhood", "classic", "hero-arena", "hero-street", "defender"))
     parser.add_argument("--tag", required=True)
     parser.add_argument("--width", type=int, default=960)
     parser.add_argument("--height", type=int, default=540)
@@ -45,7 +45,7 @@ def main():
     quality_bytes = quality.read_bytes()
     (output / "QualitySettings.before.asset").write_bytes(quality_bytes)
     native=args.kind in ("classic", "hero-arena", "hero-street", "defender")
-    test = {"probe": "OpeningProbe", "opening": "OpeningMotion", "ending": "Ending", "classic":"ClassicMatch",
+    test = {"probe": "OpeningProbe", "opening": "OpeningMotion", "ending": "Ending", "neighborhood":"Neighborhood", "classic":"ClassicMatch",
         "hero-arena":"HeroArenaMatch", "hero-street":"HeroStreetMatch", "defender":"DefenderMatch"}[args.kind]
     fixture="TrailerGameCapture" if native else "TrailerProductionRecording"
     graphics = ["-force-d3d11"] if sys.platform == "win32" else []
@@ -64,6 +64,12 @@ def main():
     receipt_path = output / "job.json"
     def save():
         receipt_path.write_text(json.dumps(receipt, indent=2), encoding="utf-8")
+        state={"tag":args.tag,"kind":args.kind,"status":receipt["status"],
+            "guard_pid":receipt.get("guard_pid"),"started_utc":receipt["started_utc"],
+            "updated_utc":dt.datetime.now(dt.timezone.utc).isoformat(),
+            "output":output.relative_to(ROOT).as_posix(),"tests":receipt.get("tests"),
+            "resume_rule":"Verify actual Unity.exe command/PID and read PRODUCTION_CHECKPOINT.md before any edit or duplicate launch."}
+        (ROOT/"docs/trailer/PRODUCTION_JOB.json").write_text(json.dumps(state,indent=2)+"\n",encoding="utf-8")
     save()
     process = None
     try:

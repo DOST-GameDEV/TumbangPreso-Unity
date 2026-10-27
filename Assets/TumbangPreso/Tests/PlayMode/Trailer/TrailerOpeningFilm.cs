@@ -15,8 +15,8 @@ namespace TumbangPreso.PlayTests.Trailer
         {
             ("C01-small-object",0,2.2f), ("C02-commitment",2.2f,4.2f), ("C03-contact",4.2f,5.8f), ("C04-world",5.8f,9.6f),
             ("C05-restore",9.6f,12.8f), ("C06-defender",12.8f,15.8f), ("C07-geography",15.8f,18.1f), ("C08-decision",18.1f,20),
-            ("C09-return",20,25), ("C10-decision",25,30), ("C11-turn",30,34),
-            ("C12-escape",34,38), ("C13-home-placeholder",38,44)
+            ("C09-return",20,22.5f), ("C10-decision",22.5f,25), ("C11-turn",25,27.7f),
+            ("C12-grip",27.7f,29), ("C13-escape",29,34), ("C14-release",34,38), ("C15-home-placeholder",38,44)
         };
         protected override string Region => "TRAILER";
         protected override Color Accent => new Color(.95f,.68f,.25f);
@@ -174,6 +174,11 @@ namespace TumbangPreso.PlayTests.Trailer
                 if(age<2.2f || age>=4.2f && age<5.8f) {lens.Focus=C+Vector3.up*.28f;lens.BlurPixels=10;}
                 else if(age<4.2f || age>=18.1f && age<20) {lens.Focus=_rago.E.Root.transform.position+Vector3.up*1.2f;lens.BlurPixels=9;}
                 else if(age>=9.6f && age<15.8f) {lens.Focus=_dante.E.Root.transform.position+Vector3.up*.8f;lens.BlurPixels=7;}
+                else if(age>=20 && age<38)
+                {
+                    lens.Focus=_rago.E.Root.transform.position+Vector3.up; lens.BlurPixels=7;
+                    if(age>=27.7f&&age<29) {lens.Focus=_shoe.transform.position+Vector3.up*.08f;lens.BlurPixels=9;}
+                }
             }
         }
 
@@ -338,11 +343,12 @@ namespace TumbangPreso.PlayTests.Trailer
             }
         }
 
-        private void Ending(float t)
+        private void Ending(float time)
         {
+            float t=time<5?time*2:time<9?time+5:time<14?14+(time-9)*.8f:18;
             Vector3 start=RagoMark+new Vector3(.25f,0,-1.7f);
             Vector3 fake=start+new Vector3(-.45f,0,-.4f);
-            Vector3 pickup=ShoeMark+new Vector3(.12f,-_shoeHeight,.15f);
+            Vector3 pickup=ShoeMark+new Vector3(0,-_shoeHeight,.7f);
             Vector3 rago=start,dante=C+new Vector3(.65f,0,-.15f);
             Pose pose=Pose.Rest,guard=Pose.Ready;
             string clip="idle",guardClip="idle";
@@ -384,7 +390,7 @@ namespace TumbangPreso.PlayTests.Trailer
                 if(t<15.2f) dante=Vector3.Lerp(C+new Vector3(-.55f,0,.5f),mid,Smooth((t-14)/1.2f));
                 else
                 {
-                    float lag=Mathf.Lerp(2.4f,1.05f,Smooth((t-15.2f)/2.8f));
+                    float lag=Mathf.Lerp(2.8f,1.35f,Smooth((t-15.2f)/2.8f));
                     Vector3 following=rago+new Vector3(-.55f,0,-lag);
                     dante=Vector3.Lerp(mid,following,Smooth((t-15.2f)/.5f));
                 }
@@ -392,12 +398,21 @@ namespace TumbangPreso.PlayTests.Trailer
                 guardClip=t<17.6f?"sprint":"attack-melee-right";
                 guardClock=t<17.6f?(t-14)*1.1f:(t-17.6f)*1.4f;
             }
-            float yaw=t<13.4f?180:Mathf.LerpAngle(180,7,Smooth((t-13.4f)/.6f));
+            if(time>=14)
+            {
+                float reaction=time-14;
+                var carry=new Pose {Lean=3,Nod=3,Arm=new Vector3(.35f,-.6f,.55f),Fore=new Vector3(.18f,.35f,.9f)};
+                var lifted=carry;lifted.Arm=new Vector3(.25f,.18f,.93f);lifted.Fore=new Vector3(.12f,.78f,.6f);lifted.Turn=9;
+                pose=Pose.Mix(carry,lifted,Smooth(reaction/.75f));
+                guard=Pose.Mix(Pose.Contact,Pose.Rest,Smooth(reaction/.45f));guard.Lean=-2;guard.Nod=3*Mathf.Sin(reaction*2)*Mathf.Exp(-reaction);
+                clip=guardClip="idle";clock=guardClock=reaction;
+            }
+            float yaw=t<13.6f?180:Mathf.LerpAngle(180,7,Smooth((t-13.6f)/.4f));
             float guardYaw=t<10?0:Mathf.Atan2(rago.x-dante.x,rago.z-dante.z)*Mathf.Rad2Deg;
             _rago.Sample(rago,yaw,clip,clock,pose);
             _dante.Sample(dante,guardYaw,guardClip,guardClock,guard);
-            if(t>=13 && t<13.65f) _rago.Body.ReachRight(ShoeMark+Vector3.up*.10f);
-            if(t>=17.72f) _dante.Body.ReachRight(rago+Vector3.up*.75f);
+            if(t>=13 && t<13.65f) _rago.Body.ReachRight(ShoeMark+Vector3.up*.18f);
+            if(time<14 && t>=17.72f) _dante.Body.ReachRight(rago+Vector3.up*.75f);
             Place(_can,C+_canPivot,_canRest);
             if(t<13.65f) Place(_shoe,ShoeMark,Quaternion.Euler(0,35,0));
             else
@@ -406,10 +421,12 @@ namespace TumbangPreso.PlayTests.Trailer
                 float lift=Smooth((t-13.65f)/.35f);
                 Place(_shoe,Vector3.Lerp(ShoeMark,hand,lift),Quaternion.Slerp(Quaternion.Euler(0,35,0),rotation,lift));
             }
-            if(t<5) {Beat="C09-return";Shoot(C+new Vector3(-5.9f,1.4f,3.8f),C+new Vector3(.25f,.9f,1.6f),49);}
+            if(time>=14) {Beat="C14-release";Shoot(C+new Vector3(-3.8f,1.65f,8.6f),Vector3.Lerp(rago,dante,.2f)+Vector3.up,42);}
+            else if(t<5) {Beat="C09-return";Shoot(C+new Vector3(-5.9f,1.4f,3.8f),C+new Vector3(.25f,.9f,1.6f),49);}
             else if(t<10) {Beat="C10-decision";Shoot(C+new Vector3(-4.2f,1.4f,2.2f),C+new Vector3(.25f,1,1.5f),45);}
-            else if(t<14) {Beat="C11-turn";Shoot(C+new Vector3(-4.8f,1.25f,1.1f),C+new Vector3(.5f,.8f,.2f),49);}
-            else if(t<18) {Beat="C12-escape";Shoot(C+new Vector3(-5.7f,1.3f,5),Vector3.Lerp(rago,dante,.35f)+Vector3.up*.9f,52);}
+            else if(t<12.7f) {Beat="C11-turn";Shoot(C+new Vector3(-4.8f,1.25f,1.1f),C+new Vector3(.5f,.8f,.2f),49);}
+            else if(t<14) {Beat="C12-grip";Shoot(ShoeMark+new Vector3(-1.6f,.65f,-1.8f),ShoeMark+new Vector3(0,.32f,.15f),44);}
+            else if(t<18) {Beat="C13-escape";Shoot(C+new Vector3(-5.7f,1.3f,5),Vector3.Lerp(rago,dante,.35f)+Vector3.up*.9f,52);}
             else {Beat="C13-placeholder";Shoot(C+new Vector3(-6,3.2f,9),rago+Vector3.up,48);}
         }
 

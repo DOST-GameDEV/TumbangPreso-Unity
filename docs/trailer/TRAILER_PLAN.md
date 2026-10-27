@@ -1,5 +1,10 @@
 # TUMP trailer plan: "PANDAIGDIG"
 
+Superseded 2026-10-27 by [PRODUCTION_BRIEF](PRODUCTION_BRIEF.md). This page is
+concept history. Current work and exact resume commands are in
+[PRODUCTION_CHECKPOINT](PRODUCTION_CHECKPOINT.md). Do not restore the rejected
+Lolo story, borrowed films, aspect-ratio changes or temporary audio.
+
 **Status, 2026-10-27:** Acts 1 and 2 below are superseded by [STORY](STORY.md) ("Lolo's Tsinelas")
 and built in [ANIMATIC](ANIMATIC.md) (v4). Acts 3 to 6 still follow this plan.
 

@@ -27,7 +27,9 @@ namespace TumbangPreso.PlayTests.Trailer
                     ||renderer.GetComponentInParent<DanteWardBadge>()!=null
                     ||renderer.GetComponentInParent<PaeteCatchMarker>()!=null
                     ||renderer.GetComponentInParent<PhaisterAimSigil>()!=null
+                    ||renderer.GetComponentInParent<GroundReticle>()!=null
                     ||renderer.name=="TayaHeadband"
+                    ||renderer.name=="~CanSetRing"
                     ||renderer.name.StartsWith("StatusBadge",StringComparison.Ordinal)
                     ||renderer.GetComponentInParent<UI.PlayerNameplate>()!=null
                     ||(hideHands && renderer.GetComponentInParent<CameraSystem.ViewmodelArms>()!=null);

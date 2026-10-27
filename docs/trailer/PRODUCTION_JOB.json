@@ -1,0 +1,17 @@
+{
+  "tag": "neighborhood-v01-draft",
+  "kind": "neighborhood",
+  "status": "finished",
+  "guard_pid": 2868,
+  "started_utc": "2026-10-27T15:45:10.802887+00:00",
+  "updated_utc": "2026-10-27T15:45:48.053783+00:00",
+  "output": "Logs/trailer/bring-it-home/neighborhood-v01-draft",
+  "tests": {
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "skipped": "0"
+  },
+  "resume_rule": "Verify actual Unity.exe command/PID and read PRODUCTION_CHECKPOINT.md before any edit or duplicate launch."
+}

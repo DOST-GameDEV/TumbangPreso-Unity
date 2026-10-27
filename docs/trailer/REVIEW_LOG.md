@@ -46,6 +46,24 @@
 - Owner monitor issue: the AC display timeout remained 60 seconds. Closed preview
   tab/server and stopped UI playback checks. Owner confirmed the monitor again
   turns off and stays off. Continue background-only; no power setting was changed.
+- Native camera audit: the original external cameras inherited the spectator's
+  POV ShadowsOnly body/carried-item hide, so their watched actor could disappear.
+  Added a test-only render scope restoring the observer's cached original modes
+  only around external draws, then restoring POV state. Added an initial native
+  assertion and external_visibility_scope metadata. classic-v03-world-master
+  passed 1/1 at 1080p30 for 35 seconds with this correction. Earlier external views
+  are retired from selection. Also masked GroundReticle and the can-set ring.
+- Hero-arena-v01: 1/1 pass, 75 seconds, accepted casts and actual event telemetry.
+  Portable real-match replay flushed to the take folder. Its original outer
+  cameras predate the visibility correction; keep as reference, not final coverage.
+- Classic-v02: verified/copied all 58 manifest-declared replay files (2,882,240
+  bytes) to its take folder with SHA checks and capture-time/map/mode matching.
+  Source named-profile replays were preserved.
+- Ending-v01: 1/1 render pass but long idle and an occluded pickup were weak.
+  v02 retimed the action, added a grip close view, widened chase separation and
+  added a quiet released-object reaction. v02 passed 1/1, but the still sequence
+  exposed an unconvincing upright pickup and obscured carried shoe. Own the new
+  stoop/reach and display pose before a full-resolution ending render.
 
 All versions are generated from new trailer-only direction. No old map/hero
 films or native gameplay have been inserted into these cinematic takes.

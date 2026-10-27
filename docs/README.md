@@ -15,7 +15,7 @@ Do not read every report or historical queue at session start.
 | Character art and motion | [Character method](CHARACTER_MODEL_METHOD.md), [art direction](Art_Direction.md), [clothing](CAST_CLOTHING_STYLE.md) | Per-character source, current rig, authored clips |
 | Skills, VFX, SFX, ultimates | [Hero method](HERO_KIT_METHOD.md), [VFX method](VFX_BENCH_METHOD.md), network contract | HeroAbilitySystem, kit, shared presentation; `.claude/skills/tump-sfx/SKILL.md` for audio |
 | Map films and previews | [Films](MAP_FILM_METHOD.md), [recording](MAP_PREVIEW_RECORDING.md) | MapFilm, MapPreviewVideo, source receipts |
-| Trailer | [Trailer plan](trailer/TRAILER_PLAN.md) | MapFilm, ArenaIntro, ultimate intros, replay viewer |
+| Trailer | [Accepted production brief](trailer/PRODUCTION_BRIEF.md), [checkpoint](trailer/PRODUCTION_CHECKPOINT.md) | TrailerOpeningFilm, TrailerStreetPayoffFilm, TrailerGameCapture, run_trailer_job.py |
 | Maps and source art | [Reference index](REFERENCE_INDEX.md) | Current scene, builder, authored sources |
 | Recorded matches | [Local replays](LOCAL_REPLAYS.md) | RecordedMatchClip, RecordedWorldView, replay codecs |
 | Native rendering | [Rendering pipeline](CANONICAL_RENDERING_PIPELINE.md) | Existing probe and actual graphics output |

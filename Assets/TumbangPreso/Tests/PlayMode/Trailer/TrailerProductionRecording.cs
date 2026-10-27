@@ -20,20 +20,23 @@ namespace TumbangPreso.PlayTests.Trailer
     public sealed class TrailerProductionRecording
     {
         private string _settings;
+        private float _audioVolume;
         [UnitySetUp] public IEnumerator Before()
-        { yield return PlayModeWorld.Reset(); _settings=JsonUtility.ToJson(Settings.SettingsStore.Current); }
+        { yield return PlayModeWorld.Reset(); _settings=JsonUtility.ToJson(Settings.SettingsStore.Current); _audioVolume=AudioListener.volume; AudioListener.volume=0; }
         [UnityTearDown] public IEnumerator After()
         {
             MapFilm.Stop(); Hold(false); Time.captureFramerate=0;
             if(_settings!=null) JsonUtility.FromJsonOverwrite(_settings,Settings.SettingsStore.Current);
+            AudioListener.volume=_audioVolume;
             yield return PlayModeWorld.Reset();
         }
 
         [UnityTest,Timeout(3600000)] public IEnumerator OpeningProbe()=>Record(true,0,20);
         [UnityTest,Timeout(7200000)] public IEnumerator OpeningMotion()=>Record(false,0,20);
         [UnityTest,Timeout(7200000)] public IEnumerator Ending()=>Record(false,20,18);
+        [UnityTest,Timeout(7200000)] public IEnumerator Neighborhood()=>Record(false,0,6,true);
 
-        private IEnumerator Record(bool probe,float start,float length)
+        private IEnumerator Record(bool probe,float start,float length,bool neighborhood=false)
         {
             LogAssert.ignoreFailingMessages=true;
             int width=Number("-trailer-width",probe?960:1920),height=Number("-trailer-height",probe?540:1080),fps=Number("-trailer-fps",30);
@@ -46,7 +49,7 @@ namespace TumbangPreso.PlayTests.Trailer
             GameLaunch.SoloSeat=1; GameLaunch.GuidedTutorial=false; GameLaunch.Spectator=false; GameLaunch.AllBots=false;
             Settings.SettingsStore.Current.CinematicCameraMotion=true;
             Settings.SettingsStore.Current.ReducedUiMotion=false;
-            yield return SceneManager.LoadSceneAsync(SceneFlow.Arena);
+            yield return SceneManager.LoadSceneAsync(neighborhood?SceneFlow.Eskinita:SceneFlow.Arena);
             while(HubLoading.Preparing) yield return null;
             for(int i=0;i<8;i++) yield return null;
             foreach(var gate in Object.FindObjectsByType<ReadyGate>(FindObjectsSortMode.None)) gate.enabled=false;
@@ -60,7 +63,10 @@ namespace TumbangPreso.PlayTests.Trailer
             Assert.IsTrue(lens.Ready,"Trailer focus shader failed to load/compile");
             if(MapFilm.Instance!=null) Object.Destroy(MapFilm.Instance.gameObject);
             yield return null;
-            var director=new GameObject("Bring It Home original cinema").AddComponent<TrailerOpeningFilm>();
+            var filmRoot=new GameObject("Bring It Home original cinema");
+            MapFilm director;
+            if(neighborhood)director=filmRoot.AddComponent<TrailerStreetPayoffFilm>();
+            else director=filmRoot.AddComponent<TrailerOpeningFilm>();
             Assert.IsTrue(director.Begin(camera,GameServices.Round.Players.OrderBy(p=>p.PlayerSlot).ToArray(),
                 camera.transform.position,camera.transform.rotation,camera.fieldOfView,false),"Opening refused");
             var target=new RenderTexture(width,height,24,camera.allowHDR?RenderTextureFormat.DefaultHDR:RenderTextureFormat.ARGB32,
@@ -82,7 +88,8 @@ namespace TumbangPreso.PlayTests.Trailer
             var samples=probe?new[]{0f,1.2f,2.4f,3f,3.7f,3.95f,4.15f,4.43f,4.47f,4.8f,5.4f,7.5f,9.9f,11.5f,12.5f,14.5f,16.5f,18.5f,19.9f}:
                 Enumerable.Range(0,Mathf.CeilToInt(length*fps)).Select(i=>start+(float)i/fps).ToArray();
             File.WriteAllText(Path.Combine(folder,"capture.json"),$"{{\"kind\":\"original-cinema\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":{start.ToString(CultureInfo.InvariantCulture)},\"frames\":{samples.Length},\"probe\":{probe.ToString().ToLowerInvariant()}}}");
-            File.WriteAllLines(Path.Combine(folder,"shots.tsv"),TrailerOpeningFilm.Shots.Select(s=>$"{s.name}\t{s.from.ToString(CultureInfo.InvariantCulture)}\t{s.to.ToString(CultureInfo.InvariantCulture)}"));
+            var shotList=neighborhood?TrailerStreetPayoffFilm.Shots:TrailerOpeningFilm.Shots;
+            File.WriteAllLines(Path.Combine(folder,"shots.tsv"),shotList.Select(s=>$"{s.name}\t{s.from.ToString(CultureInfo.InvariantCulture)}\t{s.to.ToString(CultureInfo.InvariantCulture)}"));
             File.WriteAllLines(Path.Combine(folder,"frame-times.tsv"),samples.Select((time,i)=>$"{i}\t{time.ToString("F5",CultureInfo.InvariantCulture)}"));
             director.HeldAge=start; director.Roll(); Time.captureFramerate=fps;
             try
