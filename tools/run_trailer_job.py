@@ -18,7 +18,7 @@ def digest(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("kind", choices=("probe", "opening", "ending", "neighborhood", "classic", "hero-arena", "hero-street", "defender"))
+    parser.add_argument("kind", choices=("probe", "opening", "ending", "ending-probe", "neighborhood", "classic", "hero-arena", "hero-street", "defender"))
     parser.add_argument("--tag", required=True)
     parser.add_argument("--width", type=int, default=960)
     parser.add_argument("--height", type=int, default=540)
@@ -45,7 +45,7 @@ def main():
     quality_bytes = quality.read_bytes()
     (output / "QualitySettings.before.asset").write_bytes(quality_bytes)
     native=args.kind in ("classic", "hero-arena", "hero-street", "defender")
-    test = {"probe": "OpeningProbe", "opening": "OpeningMotion", "ending": "Ending", "neighborhood":"Neighborhood", "classic":"ClassicMatch",
+    test = {"probe": "OpeningProbe", "opening": "OpeningMotion", "ending": "EndingMotion", "ending-probe":"EndingProbe", "neighborhood":"Neighborhood", "classic":"ClassicMatch",
         "hero-arena":"HeroArenaMatch", "hero-street":"HeroStreetMatch", "defender":"DefenderMatch"}[args.kind]
     fixture="TrailerGameCapture" if native else "TrailerProductionRecording"
     graphics = ["-force-d3d11"] if sys.platform == "win32" else []

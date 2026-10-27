@@ -1,70 +1,78 @@
 # Trailer production checkpoint
 
-Branch `trailer/pandaigdig-plan`. Use current Git HEAD/status; coherent source
-checkpoints include 64521f916, b9b88d1c0 and a5299625f. New changes are listed by
-Git. Exact frozen input hashes and native results are in each take's job.json.
-Read [accepted brief](PRODUCTION_BRIEF.md), [review log](REVIEW_LOG.md) and
-[gameplay coverage](GAMEPLAY_SHOTS.md).
+Branch `trailer/pandaigdig-plan`. Published checkpoints include ea7c927f1; consult current HEAD. Inspect
+HEAD/status and [live runner state](PRODUCTION_JOB.json) before continuing.
+Source changes after that commit are task-owned unless excluded below. Exact
+frozen source hashes and fresh native XML belong to each take's job.json.
 
-## Do not lose these constraints
+## Boundaries
 
-- Background only overnight. The owner's AC display timeout is 60 seconds and he
-  confirmed sleep resumed after the preview closed. NO browser/native playback,
-  window activation, UI automation or input injection. No power settings changed.
-- Read [live runner state](PRODUCTION_JOB.json), then verify ALL actual Unity.exe
-  processes/commands. One Unity job; never edit Assets during a live run.
-- Team authors ALL sound. Silent picture only. New cinema stays separate from
-  gameplay: 0-20 cinema, 20-88 gameplay, 88-112 cinema, 112-120 end graphics.
+- Background only overnight. Owner confirmed monitor now stays off. No UI playback,
+  browser previews, window activation or input injection. No power settings changed.
+- Verify actual Unity.exe command/PID. ONE job. Never edit Assets during a run.
+- Team authors ALL sound. Silent picture: 0-20 original cinema, 20-88 native
+  gameplay, 88-112 original cinema, 112-120 actual TUMP end graphics.
+- No old map/ultimate films or game cutscenes in cinematic slots. No HUD/markers.
 - No paid service, new agents/chats, resets, clean or force push.
 - Preserve owner dirt: SceneryTextureIdentities.asset, tump_logo.png.meta,
   cloud-bank-a.png.meta, GraphicsSettings.asset and ProjectSettings.asset.
-- QualitySettings baseline SHA256:
+- QualitySettings baseline SHA256
   b12f8817b7355d4844c2a7cb0a057982de075131ae223850bc5b51244ad6b191.
-  Every completed run restored exact bytes. Keep using run_trailer_job.py.
+  run_trailer_job.py restores exact pre-run bytes after its guard terminates.
 
-## Current picture and evidence
+## Current material and fixes
 
-- Retained opening candidate: opening-v10-master, 600 frames, 1080p30, 1/1 native
-  pass, silent MP4/decode passed. Held slipper visible and orientation continuous.
-- Ending-v02-draft: 540 frames at 960x540, 1/1 pass. Pacing and pickup camera improved,
-  but the actual hand never reaches the floor convincingly and the reaction's
-  blue slipper is obscured. Needs a manually authored stoop/true contact and a
-  lower cross-body display pose. Measure the grip error; do not just move the prop.
-- Current job is neighborhood-v01-draft (check PRODUCTION_JOB.json). New original
-  6-second street director is now in Assets. Its image has not been reviewed yet.
-- Qualified native generation: classic-v03-world-master, 35 s, 1080p30, 1/1 pass.
-  external_visibility_scope=true means body/carried-item shadow modes are restored
-  only for external camera renders. The first-frame assertion passed. Masks now
-  include status sprites, aim/ground reticles and the can-set ring. Need image review.
-- OLD classic-v02 and hero-arena-v01 have valid FPP data and real replays, but their
-  external cameras incorrectly inherited POV ShadowsOnly. Do not select those
-  outer views. Prefer entirely new qualified takes to avoid residual marker risk.
-- Remaining native coverage: qualified hero-arena (35 s), hero-street (45 s) and
-  defender (30 s), same CLI kinds. These have not been captured with the new scope.
-- Classic-v02 replay copied/verified: 58 files, 2,882,240 bytes under its take/replays.
-  Hero-arena-v01 already has portable replay data. Original profile copies preserved.
+- Qualified Classic: classic-v03-world-master, 35 s, 1080p30, 1/1 pass.
+- Qualified Kanto: hero-street-v01-master, 45 s, 1080p30, 1/1 pass.
+  Both have external_visibility_scope=true and actual replay archives. Old
+  classic-v02/hero-arena-v01 inherited ShadowsOnly; do not select those takes.
+- Need qualified hero-arena 35 s and defender 30 s, same CLI kinds.
+- Current cinema freezes/hides only live Stage geometry and dresses a constant
+  flat competition deck at stage Y+2.5. Stadium bowl stays visible. Opening-v10
+  predates this change. Render a NEW paired opening/ending.
+- TrailerBody measures palm/fingertip geometry from actual forearm weights and
+  bindposes. Rago forearm is .326 m, not old .162 m proxy. Pickup contact is now
+  within about .013 m in inspected probes. Compress pose keeps feet planted.
+- TrailerPropGrip measures true long X axis and model pivot. Flying motion follows
+  mass center. Latest reaction IK lowered/outward to (-.85,.85,.2) relative to
+  grounded Rago. Needs final image confirmation.
+- ending-v09-present-probe proves stable set/pickup, but reaction prop obscured.
+  Latest lowered reaction pose is newer than that probe.
+- Street payoff v01 had foreground occlusion/stair staging. Latest source moves
+  action six meters onto flat street, friends behind/right, uses explicit local
+  BakeMesh(false) grounding and measured prop grip.
+- neighborhood-v02-draft: 180 frames, 1/1 pass; framing/grounding improved in
+  ordered samples. Completed Editor shutdown lingered; verified parent/importer
+  stopped after complete frames, passing XML and final shutdown marker. Guard
+  restored settings. Receipt is in its take folder.
+- opening-v11-stage-probe: 19 samples, 1/1 pass and normal process exit. Stable
+  stadium set, visible held slipper, center-based can contact and restore reviewed.
 
 ## ONE next action
 
-Finish and review neighborhood-v01-draft. Use
-`python tools/trailer_review.py neighborhood-v01-draft`. Inspect actual running,
-hand/slipper, framing and reactions. Then continue the accepted full production.
-The opening is already reviewable; do not rerender it for ending-only changes.
+Render opening-v12-master, ending-v10-master and neighborhood-v03-master at
+1080p30 using frozen current source. Then qualified hero-arena 35 s and defender
+30 s, select gameplay and finish edit. Consult live job JSON before launch.
 
-## Commands and remaining delivery
+## Tools and delivery
 
-`python tools/run_trailer_job.py KIND --tag FRESH-TAG --width 1920 --height 1080 --fps 30 --seconds N`
-Kinds: probe, opening, ending, neighborhood, classic, hero-arena, hero-street, defender.
-`python tools/trailer_review.py TAG --view fpv|line|side --encode` handles silent
-video and review sheets. Omit --view for cinema. Drafts can use 960x540.
+`python tools/run_trailer_job.py KIND --tag FRESH --width 1920 --height 1080 --fps 30 --seconds N`
+Kinds: probe, opening, ending, ending-probe, neighborhood, classic, hero-arena,
+hero-street, defender. Native seconds flag ignored by fixed-length cinema.
 
-Need: convincing 18-second arena ending + 6-second neighborhood payoff; qualified
-native selections; 8-second actual TUMP end card; complete 120-second silent edit;
-precise source/frame sync sheet and portable source/media handoff. Actual logos
-and PaalalabasDisplayWide.otf are in Resources/UI. bh_studios_logo.png appears blank;
-do not place an empty asset. No release date, platform or store page may be invented.
+`tools/trailer_review.py` creates frame evidence and optional silent movies.
+`tools/trailer_cut.py --tag trailer-v01` reads PICTURE_EDL.json (still to author),
+enforces source/block boundaries and writes 3600-frame silent 709 master + share
+copy. Title-only mode passed: actual TUMP logo and Paalalabas font. No empty BH logo.
+`tools/trailer_sync.py TAG` derives sound cue sheet from encoded picture witness.
+Verify visual contact times against retained frames before handoff.
 
-Auto continuation: tump-trailer-overnight-continuation. Pause after complete final
-picture/source/sync delivery. Keep this checkpoint short and push coherent units.
-Media is Logs/trailer/bring-it-home. No Drive handoffs. v03-v05 obsolete draft raw
-frames were pruned; retained their movies, sheets, XML and six critical frames each.
+Need final 120-second picture, source/edit inputs and frame sync handoff. Replay
+data is real native match evidence; do not promise full future visual parity.
+Media: Logs/trailer/bring-it-home (ignored). No Drive uploads. Keep one clear final
+and essential failure evidence. Old opening-v03/v04/v05 raw pruned with receipt;
+movies and critical frames remain. Temporary HTTP server/browser tab closed.
+Do not reopen overnight.
+
+Hourly heartbeat tump-trailer-overnight-continuation ACTIVE. Pause after complete
+final picture/source/sync delivery. Push coherent source checkpoints.

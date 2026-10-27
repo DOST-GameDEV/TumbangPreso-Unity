@@ -11,7 +11,7 @@ namespace TumbangPreso.PlayTests.Trailer
     /// </summary>
     public struct Pose
     {
-        public float Twist, Lean, Roll, Nod, Turn, Tilt, Hop, Sink;
+        public float Twist, Lean, Roll, Nod, Turn, Tilt, Hop, Sink, Compress;
         public Vector3 Arm, Fore, Off, OffFore;
 
         /// <summary>Unclamped, so an eased key can OVERSHOOT and settle (the whip of a follow-through).</summary>
@@ -20,6 +20,7 @@ namespace TumbangPreso.PlayTests.Trailer
             Twist = Mathf.LerpUnclamped(a.Twist, b.Twist, t), Lean = Mathf.LerpUnclamped(a.Lean, b.Lean, t), Roll = Mathf.LerpUnclamped(a.Roll, b.Roll, t),
             Nod = Mathf.LerpUnclamped(a.Nod, b.Nod, t), Turn = Mathf.LerpUnclamped(a.Turn, b.Turn, t), Tilt = Mathf.LerpUnclamped(a.Tilt, b.Tilt, t),
             Hop = Mathf.LerpUnclamped(a.Hop, b.Hop, t), Sink = Mathf.LerpUnclamped(a.Sink, b.Sink, t),
+            Compress = Mathf.LerpUnclamped(a.Compress, b.Compress, t),
             Arm = Dir(a.Arm, b.Arm, t), Fore = Dir(a.Fore, b.Fore, t), Off = Dir(a.Off, b.Off, t), OffFore = Dir(a.OffFore, b.OffFore, t),
         };
 
@@ -140,10 +141,14 @@ namespace TumbangPreso.PlayTests.Trailer
     public sealed class TrailerBody
     {
         public readonly Transform Frame;
+        public Vector3 RightShoulder=>_armR!=null?_armR.position:Frame.position;
         private readonly Transform _torso, _head, _armR, _armL, _foreR, _foreL;
         private readonly Vector3 _alongR = Vector3.right, _alongL = Vector3.left, _foreAlongR = Vector3.right, _foreAlongL = Vector3.left;
         private readonly Dictionary<Transform, Quaternion> _rest = new Dictionary<Transform, Quaternion>();
+        private readonly Dictionary<Transform, Vector3> _restPositions = new Dictionary<Transform, Vector3>();
         private readonly float _side = 1.0f, _foreLength = 0.2f;
+        private readonly Vector3 _gripR,_gripL;
+        private readonly bool _hasGripR,_hasGripL;
 
         public TrailerBody(GameObject model)
         {
@@ -160,13 +165,36 @@ namespace TumbangPreso.PlayTests.Trailer
                     else if (b.name == "head" && _head == null) _head = b;
                     else if (b.name == "arm-right" && _armR == null) { _armR = b; _alongR = Along(binds, i, _alongR); }
                     else if (b.name == "arm-left" && _armL == null) { _armL = b; _alongL = Along(binds, i, _alongL); }
-                    else if (b.name == "forearm-right" && _foreR == null) { _foreR = b; _foreAlongR = Along(binds, i, _foreAlongR); }
-                    else if (b.name == "forearm-left" && _foreL == null) { _foreL = b; _foreAlongL = Along(binds, i, _foreAlongL); }
+                    else if (b.name == "forearm-right" && _foreR == null) { _foreR = b; _foreAlongR = Along(binds, i, _foreAlongR); _hasGripR=Grip(skin,i,_foreAlongR,out _gripR); }
+                    else if (b.name == "forearm-left" && _foreL == null) { _foreL = b; _foreAlongL = Along(binds, i, _foreAlongL); _hasGripL=Grip(skin,i,_foreAlongL,out _gripL); }
                 }
             }
-            foreach (var b in new[] { _torso, _head, _armR, _armL, _foreR, _foreL }) if (b != null) _rest[b] = b.localRotation;
+            foreach (var b in new[] { _torso, _head, _armR, _armL, _foreR, _foreL }) if (b != null) {_rest[b] = b.localRotation;_restPositions[b]=b.localPosition;}
             if (_armR != null) _side = Frame.InverseTransformPoint(_armR.position).x >= 0 ? 1.0f : -1.0f;
             if (_armR != null && _foreR != null) _foreLength = Vector3.Distance(_armR.position, _foreR.position);
+            if(_hasGripR)_foreLength=Vector3.Distance(_foreR.position,_foreR.TransformPoint(_gripR));
+            Debug.Log($"[TrailerBody] geometry grip R={_hasGripR} L={_hasGripL} foreLength={_foreLength:F3}");
+        }
+
+        private static bool Grip(SkinnedMeshRenderer skin,int bone,Vector3 along,out Vector3 grip)
+        {
+            grip=Vector3.zero;var mesh=skin.sharedMesh;
+            if(mesh==null||!mesh.isReadable||bone>=mesh.bindposes.Length)return false;
+            var vertices=mesh.vertices;var weights=mesh.boneWeights;var bind=mesh.bindposes[bone];
+            float far=float.NegativeInfinity;
+            float Weight(BoneWeight w)=>(w.boneIndex0==bone?w.weight0:0)+(w.boneIndex1==bone?w.weight1:0)
+                +(w.boneIndex2==bone?w.weight2:0)+(w.boneIndex3==bone?w.weight3:0);
+            for(int i=0;i<vertices.Length&&i<weights.Length;i++)
+                if(Weight(weights[i])>.5f)far=Mathf.Max(far,Vector3.Dot(bind.MultiplyPoint3x4(vertices[i]),along));
+            if(float.IsInfinity(far))return false;
+            int count=0;
+            for(int i=0;i<vertices.Length&&i<weights.Length;i++)
+            {
+                if(Weight(weights[i])<=.5f)continue;var point=bind.MultiplyPoint3x4(vertices[i]);
+                if(Vector3.Dot(point,along)<far-.02f)continue;grip+=point;count++;
+            }
+            if(count==0)return false;
+            grip=grip/count-along*.012f;return true;
         }
 
         private static Vector3 Along(Matrix4x4[] binds, int index, Vector3 fallback)
@@ -179,14 +207,18 @@ namespace TumbangPreso.PlayTests.Trailer
             return Mathf.Sign(side) == Mathf.Sign(axis) ? Vector3.right : Vector3.left;
         }
 
-        public void Reset() { foreach (var pair in _rest) if (pair.Key != null) pair.Key.localRotation = pair.Value; }
+        public void Reset() { foreach (var pair in _rest) if (pair.Key != null) {pair.Key.localRotation = pair.Value;pair.Key.localPosition=_restPositions[pair.Key];} }
 
         public void Apply(in Pose p, Transform root)
         {
             Vector3 up = Frame.up, right = Frame.right, fwd = Frame.forward;
             if (root != null) root.position += Vector3.up * (p.Hop - p.Sink);
             if (_torso != null)
+            {
+                // Kneeless chibi compression lowers the waist while the planted legs remain fixed.
+                _torso.position-=up*p.Compress;
                 _torso.rotation = Quaternion.AngleAxis(p.Twist * _side, up) * Quaternion.AngleAxis(p.Lean, right) * Quaternion.AngleAxis(-p.Roll * _side, fwd) * _torso.rotation;
+            }
             // The head keeps looking where the body means to go, then takes its own nod, turn and tilt.
             if (_head != null)
                 _head.rotation = Quaternion.AngleAxis(-p.Twist * _side * 0.75f + p.Turn, up) * Quaternion.AngleAxis(-p.Lean * 0.5f + p.Nod, right) * Quaternion.AngleAxis(-p.Tilt, fwd) * _head.rotation;
@@ -209,6 +241,7 @@ namespace TumbangPreso.PlayTests.Trailer
             var fore = _foreR != null ? _foreR : _armR;
             var along = _foreR != null ? _foreAlongR : _alongR;
             if (fore == null) { pointing = Frame.forward; return Frame.position + Vector3.up; }
+            if(_hasGripR&&_foreR!=null){var hand=_foreR.TransformPoint(_gripR);pointing=(hand-_foreR.position).normalized;return hand;}
             pointing = fore.TransformDirection(along);
             return fore.position + pointing * _foreLength * 0.95f;
         }
@@ -218,6 +251,7 @@ namespace TumbangPreso.PlayTests.Trailer
             var fore = _foreL != null ? _foreL : _armL;
             var along = _foreL != null ? _foreAlongL : _alongL;
             if (fore == null) return Frame.position + Vector3.up;
+            if(_hasGripL&&_foreL!=null)return _foreL.TransformPoint(_gripL);
             return fore.position + fore.TransformDirection(along) * _foreLength * 0.95f;
         }
 

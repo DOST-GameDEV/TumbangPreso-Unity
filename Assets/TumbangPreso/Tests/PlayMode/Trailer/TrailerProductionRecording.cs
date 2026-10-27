@@ -33,7 +33,8 @@ namespace TumbangPreso.PlayTests.Trailer
 
         [UnityTest,Timeout(3600000)] public IEnumerator OpeningProbe()=>Record(true,0,20);
         [UnityTest,Timeout(7200000)] public IEnumerator OpeningMotion()=>Record(false,0,20);
-        [UnityTest,Timeout(7200000)] public IEnumerator Ending()=>Record(false,20,18);
+        [UnityTest,Timeout(7200000)] public IEnumerator EndingMotion()=>Record(false,20,18);
+        [UnityTest,Timeout(3600000)] public IEnumerator EndingProbe()=>Record(true,20,18);
         [UnityTest,Timeout(7200000)] public IEnumerator Neighborhood()=>Record(false,0,6,true);
 
         private IEnumerator Record(bool probe,float start,float length,bool neighborhood=false)
@@ -74,18 +75,28 @@ namespace TumbangPreso.PlayTests.Trailer
             var resolved=new RenderTexture(width,height,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB); resolved.Create();
             var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
             var shot=new GameObject("~TrailerProductionShot").AddComponent<LateFrameShot>();
+            var geometry=new System.Text.StringBuilder("age\tshot\tgrip_error\tshoe_viewport\tshoe_hidden\n");
             var prior=camera.targetTexture;
             shot.Shoot=path=>
             {
                 using(var mask=new TrailerCaptureMask())
                 {
-                    mask.Apply(true); camera.targetTexture=target; camera.Render(); camera.targetTexture=prior;
+                    mask.Apply(true);
+                    if(director is TrailerOpeningFilm opening)
+                    {
+                        var renderer=opening.Shoe.GetComponentInChildren<Renderer>();
+                        var point=camera.WorldToViewportPoint(renderer.bounds.center);
+                        geometry.AppendLine(FormattableString.Invariant($"{director.HeldAge:F5}\t{director.Beat}\t{opening.GripError:F5}\t{point.x:F3},{point.y:F3},{point.z:F3}\t{renderer.forceRenderingOff}"));
+                    }
+                    camera.targetTexture=target; camera.Render(); camera.targetTexture=prior;
                     Graphics.Blit(target,resolved); var active=RenderTexture.active; RenderTexture.active=resolved;
                     pixels.ReadPixels(new Rect(0,0,width,height),0,0); pixels.Apply(); RenderTexture.active=active;
                     File.WriteAllBytes(path,pixels.EncodeToJPG(97));
                 }
             };
-            var samples=probe?new[]{0f,1.2f,2.4f,3f,3.7f,3.95f,4.15f,4.43f,4.47f,4.8f,5.4f,7.5f,9.9f,11.5f,12.5f,14.5f,16.5f,18.5f,19.9f}:
+            var probeTimes=start>0?new[]{0f,2.4f,4.6f,5.6f,7.5f,7.9f,8.2f,8.4f,8.6f,8.8f,9f,10.5f,12.8f,13.8f,14.5f,16.5f,17.8f}.Select(t=>start+t).ToArray():
+                new[]{0f,1.2f,2.4f,3f,3.7f,3.95f,4.15f,4.43f,4.47f,4.8f,5.4f,7.5f,9.9f,11.5f,12.5f,14.5f,16.5f,18.5f,19.9f};
+            var samples=probe?probeTimes:
                 Enumerable.Range(0,Mathf.CeilToInt(length*fps)).Select(i=>start+(float)i/fps).ToArray();
             File.WriteAllText(Path.Combine(folder,"capture.json"),$"{{\"kind\":\"original-cinema\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":{start.ToString(CultureInfo.InvariantCulture)},\"frames\":{samples.Length},\"probe\":{probe.ToString().ToLowerInvariant()}}}");
             var shotList=neighborhood?TrailerStreetPayoffFilm.Shots:TrailerOpeningFilm.Shots;
@@ -104,6 +115,7 @@ namespace TumbangPreso.PlayTests.Trailer
             finally
             {
                 camera.targetTexture=prior; Time.captureFramerate=0;
+                File.WriteAllText(Path.Combine(folder,"geometry.tsv"),geometry.ToString());
                 Object.Destroy(shot.gameObject); Object.Destroy(pixels);
                 target.Release(); Object.Destroy(target); resolved.Release(); Object.Destroy(resolved);
             }

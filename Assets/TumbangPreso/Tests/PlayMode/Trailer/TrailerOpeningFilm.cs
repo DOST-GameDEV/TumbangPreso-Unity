@@ -83,11 +83,17 @@ namespace TumbangPreso.PlayTests.Trailer
 
         private Actor _rago,_dante,_amihan,_nemu;
         private GameObject _can,_shoe;
+        private TrailerPropGrip _grip;
         private float _ground;
         private Quaternion _canRest;
         private Quaternion _releaseTurn;
         private Vector3 _canRestScale,_canPivot,_shoeScale,_release;
+        private Vector3 _pickupOffset;
+        private Vector3 _releaseCentre;
         private float _fallenHeight=.18f,_shoeHeight=.055f;
+        private ArenaStage _liveStage;private bool _stageEnabled;
+        public float GripError {get;private set;}=-1;
+        public GameObject Shoe=>_shoe;
         private Vector3 C => new Vector3(Centre.x,_ground,Centre.z);
         private Vector3 RagoMark => C+new Vector3(0,0,4.7f);
         private Vector3 DanteMark => C+new Vector3(-1.05f,0,-.7f);
@@ -96,7 +102,7 @@ namespace TumbangPreso.PlayTests.Trailer
 
         protected override void Prepare()
         {
-            _ground = (ArenaStage.Instance != null ? ArenaStage.Instance.transform.position.y+ArenaStage.Instance.CanHeight : Floor(Centre,Centre.y))+.045f;
+            _ground = ArenaStage.Instance != null ? ArenaStage.Instance.transform.position.y+2.5f : Floor(Centre,Centre.y)+.045f;
             _rago=Cast("Trailer Rago","sean"); _dante=Cast("Trailer Dante","dante");
             _amihan=Cast("Trailer Amihan","amihan"); _nemu=Cast("Trailer Nemu","nemu");
             if(_rago==null || _dante==null) throw new InvalidOperationException("Trailer requires the actual Rago and Dante models.");
@@ -112,12 +118,20 @@ namespace TumbangPreso.PlayTests.Trailer
             _shoe=Ghost(art.Model,"Cinematic tsinelas");
             _shoeScale=_shoe.transform.localScale;
             ToonSkin.ApplySlipper(_shoe,ToonSkin.PersonOutlineWidth);
+            _grip=new TrailerPropGrip(_shoe);
             Place(_can,C,_canRest);
             _canPivot.y=C.y-Lowest(_can)+.003f;
             Place(_can,C+new Vector3(0,.18f,0),Quaternion.Euler(84,170,32)*_canRest);
             _fallenHeight=.18f+C.y-Lowest(_can)+.003f;
             Place(_shoe,C,Quaternion.Euler(0,35,0));
             _shoeHeight=C.y-Lowest(_shoe)+.003f;
+            _liveStage=ArenaStage.Instance;
+            if(_liveStage!=null)
+            {
+                _stageEnabled=_liveStage.enabled;_liveStage.enabled=false;
+                ForceOff(_liveStage.GetComponentsInChildren<Renderer>(true));
+            }
+            foreach(var original in FindObjectsByType<Slipper>())ForceOff(original.GetComponentsInChildren<Renderer>(true));
             // A trailer-only dressed level court, above the live stage; no runtime asset or collider is edited.
             Prop(PrimitiveType.Cylinder,"Cinematic competition deck",C+Vector3.down*.14f,Quaternion.identity,
                 new Vector3(14.4f,.14f,14.4f),new Color(.26f,.29f,.32f),false);
@@ -126,9 +140,14 @@ namespace TumbangPreso.PlayTests.Trailer
             foreach(float side in new[]{-1f,1f})
                 Prop(PrimitiveType.Cube,"Physical side court paint",C+new Vector3(side*4.55f,.007f,0),Quaternion.identity,
                     new Vector3(.045f,.012f,10.7f),new Color(.59f,.65f,.65f),false);
+            var pickupPose=Pose.Rest;pickupPose.Lean=70;pickupPose.Nod=5;pickupPose.Twist=-5;pickupPose.Compress=.12f;
+            _rago.Sample(C,180,"idle",0,pickupPose);
+            Vector3 shoulder=_rago.Body.RightShoulder-C;
+            _pickupOffset=new Vector3(-shoulder.x,0,-shoulder.z);
             // Two independent competitors, never teammates. Their attention shifts separately.
             _rago.Sample(RagoMark+new Vector3(.08f,0,-.16f),180,"idle",Release*.6f,ThrowPose(Release));
             _release=HeldShoe(out _releaseTurn);
+            _releaseCentre=_grip.CentreAt(_release,_releaseTurn);
             Debug.Log($"[TrailerOpening] ground={_ground:F3} centre={Centre} canPivot={_canPivot} release={_release} shoeScale={_shoeScale}");
             foreach(var a in new[]{_rago,_dante})
                 Debug.Log("[TrailerOpening] "+a.E.Root.name+" clips="+string.Join(",",a.E.Clips.Where(x=>x!=null).Select(x=>x.name)));
@@ -205,20 +224,21 @@ namespace TumbangPreso.PlayTests.Trailer
             {
                 float u=(t-Release)/(Contact-Release);
                 var end=C+_canPivot+Vector3.up*.26f;
-                Place(_shoe,Vector3.Lerp(_release,end,u)+Vector3.up*(.28f*Mathf.Sin(u*Mathf.PI)),
-                    Quaternion.AngleAxis(u*650,Vector3.right)*_releaseTurn);
+                Quaternion flightTurn=Quaternion.AngleAxis(u*650,Vector3.right)*_releaseTurn;
+                Place(_shoe,_grip.RootAtCentre(Vector3.Lerp(_releaseCentre,end,u)+Vector3.up*(.28f*Mathf.Sin(u*Mathf.PI)),flightTurn),flightTurn);
             }
             else
             {
                 float u=t-Contact;
                 float land=Mathf.Clamp01(u/.4f);
                 Vector3 origin=C+_canPivot+Vector3.up*.26f;
-                Vector3 velocity=(ShoeMark-origin)/.4f+Vector3.up*(4.9f*.4f);
+                Vector3 landing=_grip.CentreAt(ShoeMark,Quaternion.Euler(0,35,0));
+                Vector3 velocity=(landing-origin)/.4f+Vector3.up*(4.9f*.4f);
                 float flight=Mathf.Min(u,.4f);
                 Vector3 position=origin+velocity*flight+Vector3.down*(4.9f*flight*flight);
                 if(u>.4f) position.y+=.018f*Mathf.Exp(-(u-.4f)*14)*Mathf.Abs(Mathf.Sin((u-.4f)*28));
-                Place(_shoe,position,
-                    Quaternion.Slerp(Quaternion.AngleAxis(650,Vector3.right)*_releaseTurn,Quaternion.Euler(0,35,0),land));
+                Quaternion settled=Quaternion.Slerp(Quaternion.AngleAxis(650,Vector3.right)*_releaseTurn,Quaternion.Euler(0,35,0),land);
+                Place(_shoe,_grip.RootAtCentre(position,settled),settled);
             }
             CanAndDefender(t);
             OpeningCamera(t);
@@ -348,7 +368,7 @@ namespace TumbangPreso.PlayTests.Trailer
             float t=time<5?time*2:time<9?time+5:time<14?14+(time-9)*.8f:18;
             Vector3 start=RagoMark+new Vector3(.25f,0,-1.7f);
             Vector3 fake=start+new Vector3(-.45f,0,-.4f);
-            Vector3 pickup=ShoeMark+new Vector3(0,-_shoeHeight,.7f);
+            Vector3 pickup=ShoeMark+new Vector3(_pickupOffset.x,-_shoeHeight,_pickupOffset.z);
             Vector3 rago=start,dante=C+new Vector3(.65f,0,-.15f);
             Pose pose=Pose.Rest,guard=Pose.Ready;
             string clip="idle",guardClip="idle";
@@ -367,8 +387,11 @@ namespace TumbangPreso.PlayTests.Trailer
             }
             if(t>=13 && t<14)
             {
-                rago=pickup;clip="pick-up";clock=(t-13)*.95f;
-                pose=new Pose {Lean=5,Nod=-3};
+                rago=pickup;clip="idle";clock=t*.4f;
+                var bend=Pose.Rest;bend.Lean=70;bend.Nod=5;bend.Twist=-5;bend.Compress=.12f;
+                bend.Off=new Vector3(-.25f,-.15f,-.9f);bend.OffFore=new Vector3(.45f,.45f,-.3f);
+                pose=Pose.Mix(Pose.Rest,bend,Smooth((t-13)/.35f));
+                if(t>13.7f)pose=Pose.Mix(bend,Pose.Rest,Smooth((t-13.7f)/.3f));
             }
             if(t>=14)
             {
@@ -402,7 +425,7 @@ namespace TumbangPreso.PlayTests.Trailer
             {
                 float reaction=time-14;
                 var carry=new Pose {Lean=3,Nod=3,Arm=new Vector3(.35f,-.6f,.55f),Fore=new Vector3(.18f,.35f,.9f)};
-                var lifted=carry;lifted.Arm=new Vector3(.25f,.18f,.93f);lifted.Fore=new Vector3(.12f,.78f,.6f);lifted.Turn=9;
+                var lifted=carry;lifted.Arm=new Vector3(.65f,.05f,.75f);lifted.Fore=new Vector3(.3f,.8f,.35f);lifted.Turn=5;
                 pose=Pose.Mix(carry,lifted,Smooth(reaction/.75f));
                 guard=Pose.Mix(Pose.Contact,Pose.Rest,Smooth(reaction/.45f));guard.Lean=-2;guard.Nod=3*Mathf.Sin(reaction*2)*Mathf.Exp(-reaction);
                 clip=guardClip="idle";clock=guardClock=reaction;
@@ -411,13 +434,15 @@ namespace TumbangPreso.PlayTests.Trailer
             float guardYaw=t<10?0:Mathf.Atan2(rago.x-dante.x,rago.z-dante.z)*Mathf.Rad2Deg;
             _rago.Sample(rago,yaw,clip,clock,pose);
             _dante.Sample(dante,guardYaw,guardClip,guardClock,guard);
-            if(t>=13 && t<13.65f) _rago.Body.ReachRight(ShoeMark+Vector3.up*.18f);
+            GripError=-1;
+            if(t>=13 && t<13.65f) GripError=_rago.Body.ReachRight(ShoeMark+Vector3.up*.18f);
+            if(time>=14)GripError=_rago.Body.ReachRight(_rago.E.Root.transform.position+new Vector3(-.85f,.85f,.2f));
             if(time<14 && t>=17.72f) _dante.Body.ReachRight(rago+Vector3.up*.75f);
             Place(_can,C+_canPivot,_canRest);
             if(t<13.65f) Place(_shoe,ShoeMark,Quaternion.Euler(0,35,0));
             else
             {
-                Vector3 hand=HeldShoe(out var rotation);
+                Vector3 hand=HeldShoe(out var rotation,time>=14?Smooth((time-14)/.6f):0);
                 float lift=Smooth((t-13.65f)/.35f);
                 Place(_shoe,Vector3.Lerp(ShoeMark,hand,lift),Quaternion.Slerp(Quaternion.Euler(0,35,0),rotation,lift));
             }
@@ -425,7 +450,7 @@ namespace TumbangPreso.PlayTests.Trailer
             else if(t<5) {Beat="C09-return";Shoot(C+new Vector3(-5.9f,1.4f,3.8f),C+new Vector3(.25f,.9f,1.6f),49);}
             else if(t<10) {Beat="C10-decision";Shoot(C+new Vector3(-4.2f,1.4f,2.2f),C+new Vector3(.25f,1,1.5f),45);}
             else if(t<12.7f) {Beat="C11-turn";Shoot(C+new Vector3(-4.8f,1.25f,1.1f),C+new Vector3(.5f,.8f,.2f),49);}
-            else if(t<14) {Beat="C12-grip";Shoot(ShoeMark+new Vector3(-1.6f,.65f,-1.8f),ShoeMark+new Vector3(0,.32f,.15f),44);}
+            else if(t<14) {Beat="C12-grip";Shoot(ShoeMark+new Vector3(1.6f,.65f,-1.8f),ShoeMark+new Vector3(0,.32f,.15f),44);}
             else if(t<18) {Beat="C13-escape";Shoot(C+new Vector3(-5.7f,1.3f,5),Vector3.Lerp(rago,dante,.35f)+Vector3.up*.9f,52);}
             else {Beat="C13-placeholder";Shoot(C+new Vector3(-6,3.2f,9),rago+Vector3.up,48);}
         }
@@ -438,13 +463,15 @@ namespace TumbangPreso.PlayTests.Trailer
             foreach(var renderer in prop.GetComponentsInChildren<Renderer>(false)) if(renderer.enabled) low=Mathf.Min(low,renderer.bounds.min.y);
             return low;
         }
-        private Vector3 HeldShoe(out Quaternion turn)
+        private Vector3 HeldShoe(out Quaternion turn,float display=0)
         {
             Vector3 hand=_rago.Body.Hand(out var fore);
-            Vector3 toe=(Vector3.up*.92f+fore*.35f).normalized;
-            turn=Quaternion.LookRotation(toe,-_rago.E.Root.transform.forward);
-            // Heel remains by the glove, with the toe beyond the fist silhouette.
-            return hand+fore*.13f+_rago.E.Root.transform.right*.07f+Vector3.up*.12f;
+            Vector3 face=_rago.E.Root.transform.forward;
+            if(display>0)face=Vector3.Slerp(face,(C+new Vector3(-3.8f,1.65f,8.6f)-hand).normalized,display);
+            _grip.Pose(hand,fore,face,out var position,out turn);
+            return position;
         }
+        protected override void Restore()
+        {if(_liveStage!=null)_liveStage.enabled=_stageEnabled;}
     }
 }

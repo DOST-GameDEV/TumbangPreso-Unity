@@ -67,3 +67,19 @@
 
 All versions are generated from new trailer-only direction. No old map/hero
 films or native gameplay have been inserted into these cinematic takes.
+
+## Stable set and real hand geometry, October 28
+
+Arena source now freezes the live Stage and uses one level cinematic deck; bowl
+and audience remain native art. Real weighted fingertips replace the short arm
+proxy. Slipper grip measures the long X axis and root pivot; flight follows its
+center. New opening-v11-stage-probe passed 1/1 and its 19 samples show held prop,
+contact, grounded can restore and consistent set. neighborhood-v02-draft passed
+1/1 with 180 frames; the foreground obstruction and stair staging are corrected.
+Ordered half-second frames show grounded feet and the blue slipper at the lead
+hand. Reaction pose lowered for the next ending master. These are image/sequence
+findings, not normal-speed owner playback acceptance. All sound remains absent.
+
+Classic-v03 and hero-street-v01 provide qualified native matches and exact event
+records. Avoid long POV selections looking away from the contest or external
+frames obstructed by architecture. Select actual action after capture.

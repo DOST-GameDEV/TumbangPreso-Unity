@@ -1,11 +1,11 @@
 {
-  "tag": "neighborhood-v01-draft",
-  "kind": "neighborhood",
+  "tag": "opening-v11-stage-probe",
+  "kind": "probe",
   "status": "finished",
-  "guard_pid": 2868,
-  "started_utc": "2026-10-27T15:45:10.802887+00:00",
-  "updated_utc": "2026-10-27T15:45:48.053783+00:00",
-  "output": "Logs/trailer/bring-it-home/neighborhood-v01-draft",
+  "guard_pid": 19352,
+  "started_utc": "2026-10-27T17:24:32.506384+00:00",
+  "updated_utc": "2026-10-27T17:25:04.161571+00:00",
+  "output": "Logs/trailer/bring-it-home/opening-v11-stage-probe",
   "tests": {
     "result": "Passed",
     "total": "1",

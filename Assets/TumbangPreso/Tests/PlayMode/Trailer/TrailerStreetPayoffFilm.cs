@@ -22,6 +22,7 @@ namespace TumbangPreso.PlayTests.Trailer
             public Extra E;public TrailerBody Body;public SkinnedMeshRenderer[] Skins;
             public Transform[] Bones;public Vector3[] Positions,Scales;public Quaternion[] Turns;
             public Mesh Baked;public bool[] CarriesScale;public readonly List<Vector3> Vertices=new List<Vector3>();
+            public Vector3 ModelPosition,ModelScale;public Quaternion ModelTurn;
             private float Low(int index,bool scaled,out float high)
             {
                 var skin=Skins[index];
@@ -33,27 +34,24 @@ namespace TumbangPreso.PlayTests.Trailer
             public void Calibrate()
             {
                 CarriesScale=new bool[Skins.Length];
-                for(int i=0;i<Skins.Length;i++)
-                {
-                    Skins[i].BakeMesh(Baked);Baked.GetVertices(Vertices);
-                    float a=Low(i,true,out float ah),b=Low(i,false,out float bh),height=Skins[i].bounds.size.y;
-                    CarriesScale[i]=Mathf.Abs(ah-a-height)<=Mathf.Abs(bh-b-height);
-                }
+                // Explicit useScale=false bakes in renderer-local coordinates; use its full localToWorld matrix.
             }
             public void Sample(Vector3 at,float yaw,string clip,float clock,Pose pose)
             {
                 E.Show(true);E.Pose(at,yaw);
+                E.Model.transform.localPosition=ModelPosition;E.Model.transform.localRotation=ModelTurn;E.Model.transform.localScale=ModelScale;
                 for(int i=0;i<Bones.Length;i++) {Bones[i].localPosition=Positions[i];Bones[i].localRotation=Turns[i];Bones[i].localScale=Scales[i];}
                 E.Play(clip,clock);Body.Apply(pose,E.Root.transform);
                 float low=float.PositiveInfinity;
-                for(int i=0;i<Skins.Length;i++) {Skins[i].BakeMesh(Baked);Baked.GetVertices(Vertices);low=Mathf.Min(low,Low(i,CarriesScale[i],out _));}
+                for(int i=0;i<Skins.Length;i++) {Skins[i].BakeMesh(Baked,false);Baked.GetVertices(Vertices);low=Mathf.Min(low,Low(i,false,out _));}
                 if(!float.IsInfinity(low))E.Root.transform.position+=Vector3.up*(at.y+Mathf.Max(0,pose.Hop)-low);
             }
         }
         private Child _lead,_taya,_bebang,_jun;
         private GameObject _shoe,_can;
+        private TrailerPropGrip _grip;
         private float _floor;
-        private Vector3 C=>new Vector3(Centre.x,_floor,Centre.z);
+        private Vector3 C=>new Vector3(Centre.x,_floor,Centre.z-6);
         private static readonly Mood Warm=new Mood
         {
             Sky=new Color(.55f,.62f,.78f),Equator=new Color(.68f,.65f,.58f),Ground=new Color(.36f,.34f,.30f),
@@ -69,6 +67,7 @@ namespace TumbangPreso.PlayTests.Trailer
             _bebang=Cast("Street Bebang","bebang");_jun=Cast("Street Jun-Jun","jun_jun");
             var art=RosterBook.Load().SlipperArt(0);if(art?.Model==null)throw new InvalidOperationException("No payoff slipper");
             _shoe=Ghost(art.Model,"Street cinematic slipper");ToonSkin.ApplySlipper(_shoe,ToonSkin.PersonOutlineWidth);
+            _grip=new TrailerPropGrip(_shoe);
             var lata=GameServices.Round.Lata;_can=Ghost(lata.gameObject,"Street cinematic can");
             _can.transform.position=C;
             foreach(var slipper in FindObjectsByType<Slipper>())ForceOff(slipper.GetComponentsInChildren<Renderer>(true));
@@ -91,6 +90,7 @@ namespace TumbangPreso.PlayTests.Trailer
             var bones=model.GetComponentsInChildren<SkinnedMeshRenderer>(true).SelectMany(s=>s.bones).Where(b=>b!=null).Distinct().ToArray();
             var child=new Child {E=extra,Body=new TrailerBody(model),Bones=bones,Positions=bones.Select(b=>b.localPosition).ToArray(),
                 Turns=bones.Select(b=>b.localRotation).ToArray(),Scales=bones.Select(b=>b.localScale).ToArray(),
+                ModelPosition=model.transform.localPosition,ModelTurn=model.transform.localRotation,ModelScale=model.transform.localScale,
                 Skins=model.GetComponentsInChildren<SkinnedMeshRenderer>(false).Where(s=>s.enabled&&s.sharedMesh!=null).ToArray(),
                 Baked=Own(new Mesh{name="Street grounding "+id})};child.Calibrate();return child;
         }
@@ -104,6 +104,7 @@ namespace TumbangPreso.PlayTests.Trailer
             var carry=new Pose{Lean=5,Nod=-2,Arm=new Vector3(.3f,-.65f,.45f),Fore=new Vector3(.15f,.3f,.9f)};
             if(t>2.2f) {carry.Lean=2;carry.Turn=-22*Smooth((t-2.2f)/1.1f);carry.Tilt=-3;}
             float leadYaw=t<2.2f?7:Mathf.LerpAngle(7,-35,Smooth((t-2.2f)/1.3f));
+            lead.y=Floor(lead,_floor);taya.y=Floor(taya,_floor);
             _lead.Sample(lead,leadYaw,t<2.2f?"sprint":"idle",t<2.2f?4.4f+t*1.5f:t-2.2f,carry);
             var chase=new Pose{Lean=7,Nod=-2};
             if(t>1.8f) {chase.Lean=14*(1-Smooth((t-2.1f)/1));chase.Nod=3;chase.Turn=10;}
@@ -111,13 +112,15 @@ namespace TumbangPreso.PlayTests.Trailer
             if(t>1.75f&&t<2.25f)_taya.Body.ReachRight(lead+Vector3.up*.45f);
             var happy=Pose.Rest;
             happy=Pose.Mix(happy,new Pose{Lean=-5,Nod=-10,Arm=new Vector3(.3f,.9f,.15f),Fore=new Vector3(.15f,1,.05f),Off=Pose.OffDown,OffFore=Pose.OffDownFore},Smooth((t-1.9f)/.65f));
-            _bebang.Sample(C+new Vector3(-1.3f,0,8.8f),60,"idle",t+.7f,happy);
+            Vector3 friend=C+new Vector3(3.7f,0,10.3f);friend.y=Floor(friend,_floor);
+            _bebang.Sample(friend,220,"idle",t+.7f,happy);
             var laugh=Pose.Rest;float reaction=Smooth((t-2.35f)/.65f);laugh.Lean=-7*reaction;laugh.Tilt=5*reaction;
             laugh.Arm=new Vector3(.2f,-.6f,.5f);laugh.Fore=new Vector3(-.6f,.3f,.7f);
-            _jun.Sample(C+new Vector3(3.1f,0,9.3f),240,"idle",t+1.8f,laugh);
+            friend=C+new Vector3(4.3f,0,8.7f);friend.y=Floor(friend,_floor);
+            _jun.Sample(friend,240,"idle",t+1.8f,laugh);
             Vector3 hand=_lead.Body.Hand(out var fore);
-            _shoe.transform.SetPositionAndRotation(hand+fore*.085f+Vector3.up*.07f,
-                Quaternion.LookRotation((Vector3.up*.92f+fore*.35f).normalized,-_lead.E.Root.transform.forward));
+            _grip.Pose(hand,fore,_lead.E.Root.transform.forward,out var shoePosition,out var shoeRotation);
+            _shoe.transform.SetPositionAndRotation(shoePosition,shoeRotation);
             float finish=Smooth((t-2.2f)/2.8f);
             Vector3 offset=Vector3.Lerp(new Vector3(-4.2f,1.1f,-.5f),new Vector3(-2.7f,1.1f,2.1f),finish);
             Shoot(lead+offset,lead+Vector3.up*.70f,48);
