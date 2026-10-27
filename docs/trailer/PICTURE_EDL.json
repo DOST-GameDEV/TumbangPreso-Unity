@@ -1,6 +1,6 @@
 {
   "title": "TUMP Bring It Home",
-  "status": "working selection; later native ranges require actual-event review before assembly",
+  "status": "Complete silent picture; encoded ordered sequences and cut boundaries reviewed; owner playback pending",
   "fps": 30,
   "total_frames": 3600,
   "block_frames": [
@@ -68,37 +68,69 @@
       "frames": 75
     },
     {
-      "id": "G04-hero-impact",
-      "kind": "gameplay",
-      "take": "hero-arena-v03-final",
-      "view": "fpv",
-      "start_frame": 90,
-      "frames": 180,
-      "label": "HERO STRIKE"
-    },
-    {
-      "id": "G05-hero-change",
-      "kind": "gameplay",
-      "take": "hero-street-v02-final",
-      "view": "fpv",
-      "start_frame": 90,
-      "frames": 180
-    },
-    {
-      "id": "G06-hero-counter",
-      "kind": "gameplay",
-      "take": "hero-street-v02-final",
-      "view": "line",
-      "start_frame": 270,
-      "frames": 180
-    },
-    {
-      "id": "G07-hero-retrieval",
+      "id": "G04a-coven",
       "kind": "gameplay",
       "take": "hero-street-v02-final",
       "view": "follow",
-      "start_frame": 450,
+      "start_frame": 120,
+      "frames": 120,
+      "label": "HERO STRIKE"
+    },
+    {
+      "id": "G04b-bamboo-eyes",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "fpv",
+      "start_frame": 240,
+      "frames": 60
+    },
+    {
+      "id": "G05a-magma-eyes",
+      "kind": "gameplay",
+      "take": "hero-arena-v03-final",
+      "view": "fpv",
+      "start_frame": 300,
+      "frames": 51
+    },
+    {
+      "id": "G05b-arena-route",
+      "kind": "gameplay",
+      "take": "hero-arena-v03-final",
+      "view": "follow",
+      "start_frame": 351,
+      "frames": 54
+    },
+    {
+      "id": "G05c-arena-contest",
+      "kind": "gameplay",
+      "take": "hero-arena-v03-final",
+      "view": "line",
+      "start_frame": 405,
+      "frames": 75
+    },
+    {
+      "id": "G06-street-counter",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "line",
+      "start_frame": 300,
       "frames": 180
+    },
+    {
+      "id": "G07a-arena-contact",
+      "kind": "gameplay",
+      "take": "hero-arena-v03-final",
+      "view": "line",
+      "start_frame": 480,
+      "frames": 90
+    },
+    {
+      "id": "G07b-wind-eyes",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "fpv",
+      "start_frame": 555,
+      "frames": 90
     },
     {
       "id": "G08-defend-eyes",
@@ -113,40 +145,56 @@
       "kind": "gameplay",
       "take": "defender-v02-final",
       "view": "follow",
-      "start_frame": 210,
+      "start_frame": 390,
       "frames": 210
     },
     {
-      "id": "G10-escalate",
+      "id": "G10-classic-payoff",
       "kind": "gameplay",
-      "take": "hero-arena-v03-final",
-      "view": "follow",
-      "start_frame": 300,
-      "frames": 120
-    },
-    {
-      "id": "G11-exchange",
-      "kind": "gameplay",
-      "take": "hero-street-v02-final",
+      "take": "classic-v04-final",
       "view": "line",
-      "start_frame": 630,
+      "start_frame": 855,
       "frames": 120
     },
     {
-      "id": "G12-pressure",
+      "id": "G11a-hex-eyes",
       "kind": "gameplay",
       "take": "hero-street-v02-final",
       "view": "fpv",
+      "start_frame": 600,
+      "frames": 90
+    },
+    {
+      "id": "G11b-magma-response",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "line",
+      "start_frame": 690,
+      "frames": 30
+    },
+    {
+      "id": "G12-shift",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "side",
       "start_frame": 720,
       "frames": 90
     },
     {
-      "id": "G13-payoff",
+      "id": "G13a-last-throw",
       "kind": "gameplay",
-      "take": "defender-v02-final",
+      "take": "hero-street-v02-final",
       "view": "fpv",
-      "start_frame": 540,
-      "frames": 90
+      "start_frame": 810,
+      "frames": 30
+    },
+    {
+      "id": "G13b-last-contact",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "line",
+      "start_frame": 840,
+      "frames": 60
     },
     {
       "id": "C09-arena-return",

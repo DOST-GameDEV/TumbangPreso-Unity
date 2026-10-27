@@ -1,28 +1,40 @@
-# Reserved gameplay showcase: 0:20-1:28
+# Gameplay in the delivered picture
 
-All footage here must come from the running game's actual rules, movement and
-abilities. No gameplay is inserted into the original cinematic blocks. Record
-clean frames, with no rejected HUD/world markers. Player perspective is primary;
-same-event observer angles explain spatial relationships.
+The reserved block is 0:20-1:28. All clips are real local native bot matches,
+recorded from the actual player eye or same-event observer cameras. No game
+cutscene or authored cinematic is inserted here. PICTURE_EDL.json owns exact
+source frames/views; the portable timeline owns the selected encoded media.
 
-| ID | Master time | Required picture | Selection criterion |
-|---|---|---|---|
-| G01 | 0:20-0:27 | Classic aim, release and can knockdown in real first person | Goal and hit readable |
-| G02 | 0:27-0:31 | Same play, taya restores as runner approaches loose slipper | Can state changes visibly |
-| G03 | 0:31-0:36 | Same player's pickup and escape | Complete loop, ordinary tag state |
-| G04 | 0:36-0:42 | Hero Strike power changes a retrieval | Setup, action and consequence |
-| G05 | 0:42-0:48 | Defender interception or route control | Actual opponent agency |
-| G06 | 0:48-0:54 | Another hero creates a different opening | Distinct solution |
-| G07 | 0:54-1:00 | An opponent counters | Outcome held long enough to read |
-| G08 | 1:00-1:07 | Real defender player view, tag attempt/outcome | Show defending as playable |
-| G09 | 1:07-1:14 | Recovery from pressure | Legible changed decision |
-| G10 | 1:14-1:18 | Classic near miss | Precision without powers |
-| G11 | 1:18-1:22 | Another current playable court, meaningful action | Variety through play |
-| G12 | 1:22-1:25 | Familiar move, concise payoff | No new terminology |
-| G13 | 1:25-1:28 | Complete an exciting/funny result | No fake bridge into cinema |
+- 0:20-0:36: Classic in Eskinita. Tikboy's throw, can knockdown, retrieval and
+  interception; a separate successful retrieval/escape; a new first-person setup.
+  These are two actual exchanges, not a fabricated continuous match outcome.
+- 0:36-0:42: Hero Strike in Kanto. Phaister's actual cast and Rago's response,
+  followed by Paete's bamboo field seen from the watched player's eye.
+- 0:42-0:48: Arena. Rago's flaming hands, actual route around the platforms and
+  the contest near the can. A real camera change keeps the power and geography legible.
+- 0:48-0:54: Kanto. Throws, can state change and the defender's actual counterplay.
+- 0:54-1:00: Arena's real can contact, then Amihan's wind seen from the player eye.
+- 1:00-1:14: Defending is playable. Dante's actual first-person approach, blocks
+  and close opponents, then a body-follow angle of his next contest and tag.
+- 1:14-1:18: Classic can contact and contest, tightening the rhythm.
+- 1:18-1:28: Kanto's hex and magma exchange, closer side angle, then the last
+  first-person release and same-event observer contact. No invented match win.
 
-Capture handles and telemetry: mode/map, cast, role, can upright/down, slipper
-state/owner, positions, throws, pickups and tags. Select successful real events
-after capture rather than manufacturing an unsupported interaction to fit a card.
-Specific abilities remain capture-dependent. Never imply immediate role rotation
-on a tag or championship victory from a single escape.
+## Cast and evidence
+
+Classic: seat 0 Totoy, seat 1 Tikboy, seat 2 Bebang, seat 3 Jun-Jun.
+Kanto: seat 0 Paete, seat 1 Phaister, seat 2 Amihan, seat 3 Rago.
+Arena/defender: seat 0 Dante, seat 1 Rago, seat 2 Amihan, seat 3 Nemu.
+
+Final native sources: classic-v04-final (35 s), hero-street-v02-final (30 s),
+hero-arena-v03-final (20 s), defender-v02-final (22 s). Every take passed 1/1,
+1080p30 and all four complete camera folders. Final compositor requires native
+source, mask revision 2, correct observer body visibility, unheld clock and valid
+player-eye evidence for every selected frame. No time stretching was used.
+
+Each source includes events.tsv, state telemetry, fresh XML and a flushed actual
+replay archive. All four archive manifests and declared sidecar hashes verified.
+These are partial match recordings, not complete eight-round matches. Encoded
+clips are the portable visual source; future replay rendering parity is unverified.
+UI/nameplates/aim/role markers are masked at render time. Native power VFX and
+physical authored court paint remain. The team supplies all sound.

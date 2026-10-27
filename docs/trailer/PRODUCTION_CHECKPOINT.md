@@ -1,100 +1,62 @@
 # Trailer production checkpoint
 
-Branch `trailer/pandaigdig-plan`. Published source a4eea154d; newer task-owned
-source changes are dirty. Read AGENTS, accepted brief and live PRODUCTION_JOB.json.
-Verify actual Unity.exe command/PID. ONE job. Do not edit Assets while it runs.
+Branch `trailer/pandaigdig-plan`. All final native/cinema recording and picture
+assembly are complete. Read DELIVERY.md and PICTURE_EDL.json. No Unity job remains.
+Current source is published through ceb59323c plus the final source commit being
+prepared; consult Git HEAD/status rather than guessing a source revision.
 
-## Boundaries and ownership
+## Current finished picture
 
-- Background only overnight. Owner confirmed monitor stays off. No UI playback,
-  browsers, window activation or input injection. Power plan was not changed.
-- Team creates ALL sound. Silent picture: 0-20 new cinema, 20-88 native gameplay,
-  88-112 new cinema, 112-120 TUMP title. No old map/ultimate films or game cutscenes.
-- No HUD/markers. Cute blocky cast, flat faces, actual logo/Paalalabas typography.
-- No paid services, extra agents/chats, resets, clean or force push. No Drive upload.
-- Preserve owner dirt: SceneryTextureIdentities.asset, tump_logo.png.meta,
-  cloud-bank-a.png.meta, GraphicsSettings.asset and ProjectSettings.asset.
-- QualitySettings exact-byte guard baseline SHA256
-  b12f8817b7355d4844c2a7cb0a057982de075131ae223850bc5b51244ad6b191.
-
-## Current final capture queue
-
-Tool session 12994, source Logs/trailer/bring-it-home/work/clean_queue.py.
-Sequential, frozen source, only one Unity at a time. Check live JSON for current:
-1. ending-v12-master (18 s)
-2. classic-v04-final (35 s)
-3. hero-street-v02-final (30 s)
-4. hero-arena-v03-final (20 s)
-5. defender-v02-final (22 s)
-All 1080p30. Do not launch duplicates. Wrapper restores QualitySettings/profile.
-
-## Picture decisions and evidence
-
-- Retain opening-v12-master, 600 frames, 1080p30, 1/1 pass. Stable dressed arena
-  deck at stage Y+2.5, bowl retained, actual geometry grip and center-based flight.
-  Ordered samples reviewed; no normal-speed playback claimed overnight.
-- Retain neighborhood-v03-master, 180 frames, 1080p30, 1/1 pass. New original
-  six-second performance. Previous v02 draft fixed stair/foreground obstruction.
-- ending-v10 had good pickup (.013 m) but obscured reaction shoe. NEW source now
-  targets actual RightShoulder plus a short reachable offset and puts the camera
-  on that shoulder side. ending-v11-side-probe passed 1/1: clear recovered blue
-  slipper, actual reach error .016-.020 m. ending-v12-master uses this source.
-- NEW capture_mask_revision=2 hides ~CanChalkSeal, LataDownMark descendants and
-  LataRestoreShield, in addition to existing HUD/nameplate/taya/aim/status masks.
-  Final compositor REQUIRES revision 2 plus external_visibility_scope=true.
-- Native recordings now include fpv/line/side/follow. Follow tracks the watched
-  body with physical clearance, making real retrieval/escape visible. Gameplay
-  actions are actual local native bot matches; nothing is puppeteered.
-- All older native takes predate mask revision 2. Their data remains valid native
-  evidence, but DO NOT select them for final edit. Sources in the current queue
-  are the clean final generation. Select actual outcomes after reading events.
+- Logs/trailer/bring-it-home/trailer-v01.mp4: 120.000 s, 3600 frames, 1080p30,
+  H.264 BT.709 limited range and ZERO audio. Full decode passed. SHA256
+  4ec35b24d3226c0191f8410cdfa3a9d1f4fd33594cbdfe55c688b0229ee5d1ad.
+- trailer-v01_share.mp4: 720p review copy, same 3600 frames, zero audio, decode pass.
+- Original cinema: opening-v12-master (600), ending-v12-master (540),
+  neighborhood-v03-master (180). Each 1/1 native pass. No legacy map/hero film.
+- Native sources: classic-v04-final (35 s), hero-street-v02-final (30 s),
+  hero-arena-v03-final (20 s), defender-v02-final (22 s). All four views complete,
+  each 1/1 pass, observer visibility scope and capture_mask_revision=2. Current
+  source takes remain intact. All four partial-match replay manifests/sidecars
+  verified. Selected encoded clips are portable visual source of truth.
+- Checked 127 ordered decoded samples, dense throw/contact/pickup/escape/identity
+  windows and both sides of cut boundaries. G12 revised to closer same-event side
+  angle after assembled critique. Rechecked final images and regenerated cues.
+- Team authors ALL audio. TRAILER_SYNC.csv has 161 frame/timecode cues plus sound
+  brief/mux command in edits/trailer-v01. No temporary score, SFX or voice added.
 
 ## ONE next action
 
-Monitor queue. Review ending-v12 recovered prop and first Classic follow samples
-from files. No UI. Once Classic is terminal, select its actual continuous loop
-from telemetry/events and clear views. While later native takes run, author exact
-PICTURE_EDL.json; prefer genuine player-eye actions and same-event explanatory
-angles. Continue final assembly after the final native take completes.
+Run `python tools/trailer_handoff.py trailer-v01` after publishing final source.
+It creates delivery/TUMP_BringItHome_trailer-v01 folder and ZIP beneath the media
+root, validates relative OTIO media and 3600-frame timeline, runs the supplied
+picture-rebuild helper from a different working directory, compares video streams,
+checks copied file hashes and tests ZIP CRCs. Use PORTABILITY_CHECK.json and the
+successful command result to establish completion. If these already exist and
+are verified, do not build/render again: owner playback and team sound are next.
+Then pause heartbeat tump-trailer-overnight-continuation and deliver final links.
 
-Middle planned durations: Classic 7+4+5 s (20-36), powers 6+6+6+6 (36-60), defender
-7+7 (60-74), late payoffs 4+4+3+3 (74-88). Adjust subcuts for honest clear actions;
-this is an editorial guide, not permission to fabricate results. Classic retrieval
-is the hook. Hero Street is visually clear; avoid arena falls/blocked POV downtime.
+## Preserve boundaries and owner work
 
-## Tools and remaining delivery
+- Background only overnight. Owner confirmed monitor sleeps after preview closed.
+  No UI playback, browser previews, window activation or injected input. None were
+  reopened. No display/power settings changed. Owner normal-speed viewing and
+  creative acceptance remain separate from encoded/image evidence.
+- 0-20 new cinema, 20-88 native gameplay, 88-112 new cinema, 112-120 actual TUMP
+  graphics. Do not put gameplay or existing game cutscenes into cinematic blocks.
+- No paid services, extra agents/chats, resets, clean or force push. No Drive upload.
+- Keep owner dirt excluded: SceneryTextureIdentities.asset, tump_logo.png.meta,
+  cloud-bank-a.png.meta, GraphicsSettings.asset and ProjectSettings.asset.
+- QualitySettings restored exactly after every job. Current SHA256
+  b12f8817b7355d4844c2a7cb0a057982de075131ae223850bc5b51244ad6b191.
+- Source/picture changes require a fresh witness, cue sheet and refreshed bundle.
+  Use tools/run_trailer_job.py, fresh tags, frozen source and ONE Unity process.
 
-- tools/run_trailer_job.py: fixed cinema lengths or native --seconds, named profile,
-  source hashes, fresh nonzero XML and exact quality restore. Current kinds include
-  ending-probe. Use fresh tags, 1080p30 for final. No Assets edits during a run.
-- tools/trailer_cut.py --tag trailer-v01: author PICTURE_EDL.json first. Enforces
-  block/material/mask/true1080p30 boundaries and exactly 3600 frames. Writes silent
-  709 master, 720p share and clips + source/hash witness. Title-only passed: actual
-  TUMP logo + YOUR TURN. Empty BH logo omitted. Never invent release/platform copy.
-- tools/trailer_finish_check.py TAG: extracts final decoded overview, dense contacts
-  and both sides of cut boundaries without UI. New tool syntax and select filter
-  smoke check passed; exercise on final movie. Review these sequences honestly.
-- tools/trailer_sync.py TAG: cue CSV + team sound brief from encoded witness. Opening
-  release119/contact134/reveal174/restore384/decision543; return2640, grip2888,
-  lift2900, escape~3034, street3180, title3360. Verify important contacts visually.
-- tools/trailer_handoff.py TAG: portable selected clips, OTIO/CMX timeline, Python
-  rebuild script, verified replay data, source/docs, SHA manifest and tested ZIP.
-  OTIO 0.18.1 installed only in ignored work/python-libs. No paid tools. Package
-  script syntax passed; run/verify full bundle after final picture and source push.
+## Cleanup receipt
 
-Need final 120-second movie, verified editable media bundle, frame sync notes,
-concise handoff in chat and pushed source. No Drive. Owner playback/creative
-acceptance remains separate from capture, ordered-image and codec evidence.
-
-## Cleanup and continuation
-
-No task-owned browser tab/HTTP server/UI preview remains. No extra agents/chats.
-Cleanup receipts under media root retired 7158 superseded owned JPGs (3.627 GB)
-on Oct28 plus older v03-v05 pruning. Key failure frames, movies, XML, native event
-records and replays retained. Leave pre-existing Claude animatics alone. During
-final cleanup prune further unused task-owned raw drafts only after new accepted
-media exists. Verify process ownership/terminal state and exact absolute paths.
-
-Hourly heartbeat tump-trailer-overnight-continuation ACTIVE; pause only after
-complete final delivery. Source publish uses explicit owned paths, git commit -F,
-M4tyu633 and normal push. Never stage owner dirt. Run tools/audit_docs.py after docs.
+No task-owned preview/browser tab/server remains. Native/encode/review jobs are
+terminal. Task-owned obsolete raw generations retired with kept critical frames,
+movies, XML, logs, replay data and source hashes. cleanup-20261028.json reclaimed
+3,626,986,904 bytes; cleanup-final-generation-20261028.json reclaimed
+14,234,035,995 bytes. Earlier v03-v05 pruning is separately receipted. Preserve
+current source takes, final media and pre-existing Claude animatics. No branch
+was reset/cleaned/force-pushed or deleted; this unmerged trailer source is needed.

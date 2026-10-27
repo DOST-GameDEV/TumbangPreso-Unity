@@ -29,6 +29,11 @@ def main():
         start=cut["master_from"]
         cue(start,cut["id"],"Cut begins: "+cut["kind"],"Section or phrase boundary; not every cut needs an accent","Encoded cut boundary")
         if cut["kind"]!="gameplay":continue
+        cast=("Totoy","Tikboy","Bebang","Jun-Jun") if cut["take"].startswith("classic") else \
+            ("Paete","Phaister","Amihan","Rago") if cut["take"].startswith("hero-street") else ("Dante","Rago","Amihan","Nemu")
+        def who(value):
+            slot=int(value)
+            return cast[slot]+f" (seat {slot})" if 0<=slot<4 else "world"
         events=MEDIA/cut["take"]/"events.tsv"
         if not events.exists():continue
         with events.open(encoding="utf-8") as source:
@@ -37,9 +42,23 @@ def main():
                 if not cut.get("start_frame",0)<=frame<cut.get("start_frame",0)+cut["frames"]:continue
                 if event["kind"] not in ("Throw","LataDown","Tag","ability","ultimate","SeanSlam","HeroHit","NearMiss","Block"):continue
                 master=start+frame-cut.get("start_frame",0)
-                action=event["kind"]+(" / "+event["id"] if event["id"] else "")+" / actor "+event["actor"]
+                action=event["kind"]+(" / "+event["id"] if event["id"] else "")+" / "+who(event["actor"])
+                if int(event["subject"])>=0:action+=" -> "+who(event["subject"])
                 cue(master,cut["id"],action,"Team chooses the audible priority; suppress nonessential layers",
                     "Accepted native event aligned +1 capture frame; verify impact/footage before final mix")
+        telemetry=MEDIA/cut["take"]/"telemetry.tsv"
+        with telemetry.open(encoding="utf-8") as source:rows=list(csv.DictReader(source,delimiter="\t"))
+        lo=cut.get("start_frame",0);hi=lo+cut["frames"]
+        for index in range(max(1,lo),min(hi,len(rows))):
+            for slot in range(4):
+                previous=rows[index-1][f"p{slot}"].split(",");current=rows[index][f"p{slot}"].split(",")
+                pickup=previous[3]=="0" and current[3:5]==["1","1"]
+                step=sum((float(current[i])-float(previous[i]))**2 for i in range(3))**.5
+                escape=previous[4]=="1" and current[3:5]==["1","0"] and step<1 and max(abs(float(current[0])),abs(float(current[2])))>6.98
+                if pickup or escape:
+                    cue(start+index-lo,cut["id"],("Retrieval / " if pickup else "Court exit / ")+who(slot),
+                        "Small physical pickup" if pickup else "Release tension when the runner reaches the boundary",
+                        "Captured holding/taggable/position transition; teleport returns excluded; spot against visible action")
     for frame,action,role in [(2640,"Cinematic story returns","Pull toward the athlete's point of view"),
         (2790,"Committed feint","Body intent and defender response"),(2888,"Hand reaches slipper","Small physical grip contact"),
         (2900,"Slipper lift begins","Grip and prop weight"),
@@ -75,6 +94,16 @@ Use human voice recordings if dialogue is added. Essential meaning survives mute
 Picture changes require a new witness and regenerated cue sheet. Verify chosen
 contacts on the encoded movie before final mix. Listening and creative acceptance
 belong to the team and owner; metadata cannot certify emotional impact.
+
+After the team has one final stereo mix, copy the picture stream without another
+picture encode. Run this inside the portable editing folder with ffmpeg on PATH:
+
+```
+ffmpeg -n -i TUMP_BringItHome_1080p30_SILENT.mp4 -i TEAM_FINAL_MIX.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 320k -af apad -t 120 -movflags +faststart TUMP_BringItHome_WITH_SOUND.mp4
+```
+
+This pads a short mix with silence and caps the output at 120 seconds. The team
+should author the intended final musical tail inside that picture duration.
 ''',encoding="utf-8")
     print(f"Wrote {len(cues)} picture/sound sync entries to {out}")
 

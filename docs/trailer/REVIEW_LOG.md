@@ -103,3 +103,14 @@ and escape425. They are separate plays, not one invented continuous outcome.
 Short real-eye setup/release cuts switch to same-event observer views before a
 bot looks away from impact. Native screenshot evidence reviewed from extracted
 files. No UI player/browser was opened and no sound was generated.
+
+## Complete assembled picture
+
+Final master SHA256 4ec35b24d3226c0191f8410cdfa3a9d1f4fd33594cbdfe55c688b0229ee5d1ad. Exactly 120 seconds / 3600 frames, 1080p30, no audio.
+Both master/review copy fully decode with exact counts. Checked 127 ordered final
+frames, contact/grip/chase/identity windows and cut-boundary pairs. G12's line
+angle was too wide; replaced with closer same-event side view without retiming,
+then regenerated the movie, witness, review frames and 161 sync cues. Pickup/lift
+and recovered prop remain legible. Native local bot matches and partial replay
+archives are accurately identified; no human playtest or full-match result claimed.
+No UI playback was reopened. Normal-speed owner review remains pending.

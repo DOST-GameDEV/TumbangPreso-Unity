@@ -65,12 +65,13 @@ def main():
     evidence=package/'capture-evidence';evidence.mkdir()
     for tag in sorted(set(sources)):
         take=MEDIA/tag;out=evidence/tag;out.mkdir()
-        for name in ('capture.json','job.json','results.xml','telemetry.tsv','events.tsv','frame-times.tsv','geometry.tsv','shots.tsv'):
+        for name in ('capture.json','job.json','results.xml','telemetry.tsv','events.tsv','frame-times.tsv','geometry.tsv','shots.tsv','replay-transfer.json'):
             if (take/name).is_file():shutil.copy2(take/name,out/name)
         if (take/'replays').is_dir():shutil.copytree(take/'replays',out/'replays')
     source=package/'source';source.mkdir()
     owned=subprocess.check_output(['git','ls-files','Assets/TumbangPreso/Tests/PlayMode/Trailer','tools/*trailer*.py','docs/trailer','.claude/skills/tump-trailer/SKILL.md'],cwd=ROOT,text=True).splitlines()
     for name in owned:
+        if Path(name).name in ('ANIMATIC.md','STORY.md','TRAILER_PLAN.md','trailer_animatic.py','trailer_sheet.py'):continue
         target=source/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/name,target)
     revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     clean_witness={key:value for key,value in witness.items() if key not in ('master','share','probe')}
@@ -85,6 +86,21 @@ subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-n','-f','concat','
 print(root/'REBUILT_SILENT.mp4')
 '''
     (package/'rebuild_picture.py').write_text(rebuild,encoding='utf-8')
+    # Exercise the delivered helper from a different working directory before shipping it.
+    subprocess.run([sys.executable,str(package/'rebuild_picture.py')],cwd=MEDIA/'work',check=True)
+    rebuilt=package/'REBUILT_SILENT.mp4'
+    def video_hash(path):
+        return subprocess.check_output(['ffmpeg','-v','error','-i',str(path),'-map','0:v:0','-c','copy','-f','hash','-hash','sha256','-'],text=True).strip()
+    expected=video_hash(master);actual=video_hash(rebuilt)
+    if actual!=expected:raise ValueError('Portable rebuild changed the picture bitstream')
+    validation={'rebuild_from_different_working_directory':'passed','video_bitstream':actual,
+        'full_file_sha256_equal':sha(rebuilt)==witness['sha256'],'timeline_roundtrip_frames':3600}
+    (package/'PORTABILITY_CHECK.json').write_text(json.dumps(validation,indent=2),encoding='utf-8')
+    rebuilt.unlink()
+    if (work/'qa').is_dir():
+        review=package/'picture-review';review.mkdir()
+        for name in ('overview-01.jpg','overview-02.jpg','overview-03.jpg','opening-contact.jpg','pickup.jpg','escape.jpg','identity.jpg','review-evidence.json'):
+            if (work/'qa'/name).is_file():shutil.copy2(work/'qa'/name,review/name)
     readme=f'''# TUMP: Bring It Home
 
 Start with TUMP_BringItHome_1080p30_SILENT.mp4. It is 120 seconds, 3600 frames,

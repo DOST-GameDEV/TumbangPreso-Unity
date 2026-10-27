@@ -21,7 +21,11 @@ def main():
     windows={'opening-contact':list(range(108,151,3)), 'pickup':list(range(2877,2916,3)),
         'escape':list(range(3000,3091,6)), 'identity':list(range(3354,3391,3))}
     selection=sorted(set(overview+pairs+sum(windows.values(),[])))
-    expression='select='+ '+'.join(f'eq(n\\,{n})' for n in selection)
+    def balanced(terms):
+        if len(terms)==1:return terms[0]
+        middle=len(terms)//2
+        return '('+balanced(terms[:middle])+'+'+balanced(terms[middle:])+')'
+    expression='select='+balanced([f'eq(n\\,{n})' for n in selection])
     subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(movie),'-vf',expression,
         '-fps_mode','vfr','-q:v','2',str(qa/'frame_%04d.jpg')],check=True)
     pictures={frame:qa/f'frame_{i+1:04d}.jpg' for i,frame in enumerate(selection)}
