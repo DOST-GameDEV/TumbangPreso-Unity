@@ -58,7 +58,7 @@ def main():
     otio.adapters.write_to_file(timeline,str(timeline_path))
     restored=otio.adapters.read_from_file(str(timeline_path))
     if restored.duration().to_frames()!=3600:raise ValueError('Portable timeline duration drift')
-    for clip in restored.each_clip():
+    for clip in restored.find_clips():
         if not (package/clip.media_reference.target_url).is_file():raise ValueError('Machine-bound/missing timeline source')
     (package/'TUMP_BringItHome.edl').write_text('\n'.join(edit),encoding='utf-8')
     (clips/'concat.txt').write_text(''.join("file '"+cut['encoded']+"'\n" for cut in witness['cuts']),encoding='utf-8')
