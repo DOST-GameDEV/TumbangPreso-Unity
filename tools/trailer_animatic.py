@@ -94,6 +94,11 @@ EDL = [
 # Music is TEMP guide only (the team writes the score); it follows the energy curve: none on the street, the theme
 # from the gift, cut to silence for the breath, the big hit on the Arena contact.
 def cues(at, total):
+    # Owner, 2026-10-27: "PLS DELETE UR SFX". No effects, no temp music from Claude. The team supplies all sound.
+    return []
+
+
+def _retired_cues(at, total):
     return [
         (AMB + "sfx_life_kid_taya_1.wav", at["A"] + 0.25, 1.0, {}),
         (AMB + "eskinita_street.wav", at["B1"], 0.5, {"dur": at["D1"] - at["B1"], "fade_out": 0.6}),
@@ -394,7 +399,7 @@ def main():
         contact.save(os.path.join(OUT, name + "_sheet.png"))
 
     final = os.path.join(OUT, name + ".mp4")
-    if args.no_audio:
+    if args.no_audio or not cues(at, total):
         shutil.copyfile(silent, final)
     else:
         inputs, chains, labels = [], [], []
