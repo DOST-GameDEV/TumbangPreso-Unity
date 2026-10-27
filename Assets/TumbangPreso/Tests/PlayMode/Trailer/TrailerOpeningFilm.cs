@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TumbangPreso.Map;
 using TumbangPreso.Visual;
@@ -32,6 +33,28 @@ namespace TumbangPreso.PlayTests.Trailer
             public Quaternion[] Turns;
             public Vector3 ModelPosition, ModelScale;
             public Quaternion ModelTurn;
+            public SkinnedMeshRenderer[] Skins;
+            public bool[] CarriesScale;
+            public Mesh Baked;
+            public readonly List<Vector3> Vertices=new List<Vector3>();
+            private float Low(SkinnedMeshRenderer skin,bool scaled,out float high)
+            {
+                Matrix4x4 space=scaled?Matrix4x4.TRS(skin.transform.position,skin.transform.rotation,Vector3.one):skin.transform.localToWorldMatrix;
+                float low=float.PositiveInfinity;high=float.NegativeInfinity;
+                foreach(var vertex in Vertices) {float y=space.MultiplyPoint3x4(vertex).y;low=Mathf.Min(low,y);high=Mathf.Max(high,y);}
+                return low;
+            }
+            public void CalibrateGround()
+            {
+                CarriesScale=new bool[Skins.Length];
+                for(int i=0;i<Skins.Length;i++)
+                {
+                    Skins[i].BakeMesh(Baked);Baked.GetVertices(Vertices);
+                    float a=Low(Skins[i],true,out float aHigh),b=Low(Skins[i],false,out float bHigh);
+                    float height=Skins[i].bounds.size.y;
+                    CarriesScale[i]=Mathf.Abs(aHigh-a-height)<=Mathf.Abs(bHigh-b-height);
+                }
+            }
             public void Sample(Vector3 at,float yaw,string clip,float clock,Pose pose)
             {
                 E.Show(true); E.Pose(at,yaw);
@@ -41,7 +64,20 @@ namespace TumbangPreso.PlayTests.Trailer
                 for(int i=0;i<Bones.Length;i++)
                 { Bones[i].localPosition=Positions[i]; Bones[i].localRotation=Turns[i]; Bones[i].localScale=Scales[i]; }
                 E.Play(clip,clock);
+                if(clip=="walk"||clip=="sprint")
+                {
+                    if(pose.Arm==Pose.Down) {pose.Arm=Vector3.zero;pose.Fore=Vector3.zero;}
+                    if(pose.Off==Pose.OffDown) {pose.Off=Vector3.zero;pose.OffFore=Vector3.zero;}
+                }
                 Body.Apply(pose,E.Root.transform);
+                float low=float.PositiveInfinity;
+                for(int i=0;i<Skins.Length;i++)
+                {
+                    Skins[i].BakeMesh(Baked);Baked.GetVertices(Vertices);
+                    low=Mathf.Min(low,Low(Skins[i],CarriesScale[i],out _));
+                }
+                if(!float.IsInfinity(low)&&!float.IsNaN(low))
+                    E.Root.transform.position+=Vector3.up*(at.y+Mathf.Max(0,pose.Hop)-low);
             }
         }
 
@@ -49,12 +85,14 @@ namespace TumbangPreso.PlayTests.Trailer
         private GameObject _can,_shoe;
         private float _ground;
         private Quaternion _canRest;
+        private Quaternion _releaseTurn;
         private Vector3 _canRestScale,_canPivot,_shoeScale,_release;
+        private float _fallenHeight=.18f,_shoeHeight=.055f;
         private Vector3 C => new Vector3(Centre.x,_ground,Centre.z);
         private Vector3 RagoMark => C+new Vector3(0,0,4.7f);
         private Vector3 DanteMark => C+new Vector3(-1.05f,0,-.7f);
-        private Vector3 ShoeMark => C+new Vector3(1.05f,.055f,-1.4f);
-        private Vector3 FallenCan => C+new Vector3(-.2f,.18f,-.05f);
+        private Vector3 ShoeMark => C+new Vector3(1.05f,_shoeHeight,-1.4f);
+        private Vector3 FallenCan => C+new Vector3(-.2f,_fallenHeight,-.05f);
 
         protected override void Prepare()
         {
@@ -74,6 +112,12 @@ namespace TumbangPreso.PlayTests.Trailer
             _shoe=Ghost(art.Model,"Cinematic tsinelas");
             _shoeScale=_shoe.transform.localScale;
             ToonSkin.ApplySlipper(_shoe,ToonSkin.PersonOutlineWidth);
+            Place(_can,C,_canRest);
+            _canPivot.y=C.y-Lowest(_can)+.003f;
+            Place(_can,C+new Vector3(0,.18f,0),Quaternion.Euler(84,170,32)*_canRest);
+            _fallenHeight=.18f+C.y-Lowest(_can)+.003f;
+            Place(_shoe,C,Quaternion.Euler(0,35,0));
+            _shoeHeight=C.y-Lowest(_shoe)+.003f;
             // A trailer-only dressed level court, above the live stage; no runtime asset or collider is edited.
             Prop(PrimitiveType.Cylinder,"Cinematic competition deck",C+Vector3.down*.14f,Quaternion.identity,
                 new Vector3(14.4f,.14f,14.4f),new Color(.26f,.29f,.32f),false);
@@ -84,7 +128,7 @@ namespace TumbangPreso.PlayTests.Trailer
                     new Vector3(.045f,.012f,10.7f),new Color(.59f,.65f,.65f),false);
             // Two independent competitors, never teammates. Their attention shifts separately.
             _rago.Sample(RagoMark+new Vector3(.08f,0,-.16f),180,"idle",Release*.6f,ThrowPose(Release));
-            _release=_rago.Body.Hand(out var pointing)+pointing*.02f;
+            _release=HeldShoe(out _releaseTurn);
             Debug.Log($"[TrailerOpening] ground={_ground:F3} centre={Centre} canPivot={_canPivot} release={_release} shoeScale={_shoeScale}");
             foreach(var a in new[]{_rago,_dante})
                 Debug.Log("[TrailerOpening] "+a.E.Root.name+" clips="+string.Join(",",a.E.Clips.Where(x=>x!=null).Select(x=>x.name)));
@@ -98,7 +142,7 @@ namespace TumbangPreso.PlayTests.Trailer
             if(art?.Model==null) return null;
             var root=Own(new GameObject(name)); root.transform.SetParent(transform,false);
             var model=Instantiate(art.Model,root.transform,false);
-            model.transform.localScale=Vector3.one*CharacterVisual.PersonScale;
+            model.transform.localScale=Vector3.one*(CharacterVisual.PersonScale*CharacterVisual.BodyScaleFor(art.Model.name));
             model.transform.localRotation=Quaternion.Euler(0,CharacterVisual.PersonModelYaw,0);
             foreach(var component in model.GetComponentsInChildren<MonoBehaviour>(true)) component.enabled=false;
             foreach(var collider in model.GetComponentsInChildren<Collider>(true)) Destroy(collider);
@@ -107,10 +151,14 @@ namespace TumbangPreso.PlayTests.Trailer
             var extra=new Extra {Root=root,Model=model,Clips=art.Clips,Scale=1};
             extra.Play("idle",0);
             var bones=model.GetComponentsInChildren<SkinnedMeshRenderer>(true).SelectMany(s=>s.bones).Where(b=>b!=null).Distinct().ToArray();
-            return new Actor { E=extra,Body=new TrailerBody(model),Bones=bones,
+            var actor=new Actor { E=extra,Body=new TrailerBody(model),Bones=bones,
                 Positions=bones.Select(b=>b.localPosition).ToArray(),Turns=bones.Select(b=>b.localRotation).ToArray(),
                 Scales=bones.Select(b=>b.localScale).ToArray(),ModelPosition=model.transform.localPosition,
-                ModelTurn=model.transform.localRotation,ModelScale=model.transform.localScale };
+                ModelTurn=model.transform.localRotation,ModelScale=model.transform.localScale,
+                Skins=model.GetComponentsInChildren<SkinnedMeshRenderer>(false).Where(s=>s.enabled&&s.sharedMesh!=null).ToArray(),
+                Baked=Own(new Mesh {name="Trailer grounding "+id}) };
+            actor.CalibrateGround();
+            return actor;
         }
 
         protected override void Stage(float age)
@@ -146,15 +194,14 @@ namespace TumbangPreso.PlayTests.Trailer
             _rago.Sample(at,180,t>6.4f && t<8.6f?"walk":"idle",t>6.4f?(t-6.4f)*1.2f:t*.6f,pose);
             if(t<Release)
             {
-                var hand=_rago.Body.Hand(out var axis);
-                Place(_shoe,hand,Quaternion.LookRotation(axis,Vector3.up)*Quaternion.Euler(0,90,15));
+                Place(_shoe,HeldShoe(out var turn),turn);
             }
             else if(t<Contact)
             {
                 float u=(t-Release)/(Contact-Release);
                 var end=C+_canPivot+Vector3.up*.26f;
                 Place(_shoe,Vector3.Lerp(_release,end,u)+Vector3.up*(.28f*Mathf.Sin(u*Mathf.PI)),
-                    Quaternion.Euler(20+u*650,45,u*140));
+                    Quaternion.AngleAxis(u*650,Vector3.right)*_releaseTurn);
             }
             else
             {
@@ -166,7 +213,7 @@ namespace TumbangPreso.PlayTests.Trailer
                 Vector3 position=origin+velocity*flight+Vector3.down*(4.9f*flight*flight);
                 if(u>.4f) position.y+=.018f*Mathf.Exp(-(u-.4f)*14)*Mathf.Abs(Mathf.Sin((u-.4f)*28));
                 Place(_shoe,position,
-                    Quaternion.Slerp(Quaternion.Euler(100,25,40),Quaternion.Euler(0,35,0),land));
+                    Quaternion.Slerp(Quaternion.AngleAxis(650,Vector3.right)*_releaseTurn,Quaternion.Euler(0,35,0),land));
             }
             CanAndDefender(t);
             OpeningCamera(t);
@@ -293,42 +340,94 @@ namespace TumbangPreso.PlayTests.Trailer
 
         private void Ending(float t)
         {
-            // The final neighborhood scene is a separate street director, not this arena hold.
-            // Frames 38-44 are excluded from the production edit until that scene is authored.
-            var defender=Pose.Ready;
-            Vector3 dante=C+new Vector3(.65f,0,-.15f),rago=RagoMark+new Vector3(.25f,0,-1.7f);
-            Pose pose=Pose.Rest;
-            string clip="idle";
-            if(t>5 && t<10) { pose.Lean=8*Smooth((t-5)/5); pose.Turn=6; pose.Nod=5; }
-            if(t>=10)
+            Vector3 start=RagoMark+new Vector3(.25f,0,-1.7f);
+            Vector3 fake=start+new Vector3(-.45f,0,-.4f);
+            Vector3 pickup=ShoeMark+new Vector3(.12f,-_shoeHeight,.15f);
+            Vector3 rago=start,dante=C+new Vector3(.65f,0,-.15f);
+            Pose pose=Pose.Rest,guard=Pose.Ready;
+            string clip="idle",guardClip="idle";
+            float clock=t*.7f,guardClock=t*.7f;
+            if(t>2) {pose.Turn=-12*Smooth((t-2)/2);pose.Nod=5;}
+            if(t>=5 && t<10)
+            {
+                rago=Vector3.Lerp(start,fake,Smooth((t-7.6f)/1.6f));
+                pose.Lean=8*Smooth((t-5)/3);pose.Twist=-6;pose.Nod=4;
+            }
+            if(t>=10 && t<13)
             {
                 float k=Smooth((t-10)/3);
-                rago=Vector3.Lerp(rago,ShoeMark+new Vector3(.12f,-.055f,.15f),k);
-                rago.x+=.65f*Mathf.Sin(k*Mathf.PI);
-                clip="sprint";
-                dante+=new Vector3(-1.2f*Smooth((t-10)/.7f),0,1.1f*Smooth((t-10)/.7f));
+                rago=Vector3.Lerp(fake,pickup,k)+Vector3.right*(.65f*Mathf.Sin(k*Mathf.PI));
+                clip="sprint";clock=(t-10)*1.05f;pose=Pose.Rest;
             }
-            if(t>=13 && t<14) { clip="pick-up"; pose.Lean=34; pose.Nod=-18; pose.Arm=new Vector3(.1f,-.9f,.4f); pose.Fore=new Vector3(.1f,-.9f,.3f); }
+            if(t>=13 && t<14)
+            {
+                rago=pickup;clip="pick-up";clock=(t-13)*.95f;
+                pose=new Pose {Lean=5,Nod=-3};
+            }
             if(t>=14)
             {
                 float k=Smooth((t-14)/4);
-                rago=Vector3.Lerp(ShoeMark+new Vector3(.12f,-.055f,.15f),C+new Vector3(1.9f,0,5.9f),k);
-                clip="sprint"; pose=Pose.Rest;
-                dante=Vector3.Lerp(C+new Vector3(-.55f,0,.95f),C+new Vector3(.9f,0,4.7f),Smooth((t-14)/4.25f));
+                rago=Vector3.Lerp(pickup,C+new Vector3(1.9f,0,5.9f),k);
+                clip=t<18?"sprint":"idle";clock=t<18?(t-14)*1.1f:t-18;
+                pose=new Pose {Lean=6,Nod=-3,Arm=new Vector3(.35f,-.6f,.55f),Fore=new Vector3(.18f,.35f,.9f)};
             }
-            _rago.Sample(rago,t>=14?7:180,clip,t*.9f,pose);
-            _dante.Sample(dante,t>=14?7:0,t>=10?"sprint":"idle",t*.9f,defender);
+            if(t>=10 && t<14)
+            {
+                dante=Vector3.Lerp(C+new Vector3(.65f,0,-.15f),C+new Vector3(-.55f,0,.95f),Smooth((t-10)/.7f));
+                dante+=Vector3.back*(.45f*Smooth((t-11.2f)/2.2f));
+                guard=t<10.8f?Pose.Contact:Pose.Rest;guard.Lean=10;
+                guardClip=t<10.8f?"attack-melee-right":"idle";guardClock=t-10;
+            }
+            if(t>=14)
+            {
+                var mid=C+new Vector3(.1f,0,-1.8f);
+                if(t<15.2f) dante=Vector3.Lerp(C+new Vector3(-.55f,0,.5f),mid,Smooth((t-14)/1.2f));
+                else
+                {
+                    float lag=Mathf.Lerp(2.4f,1.05f,Smooth((t-15.2f)/2.8f));
+                    Vector3 following=rago+new Vector3(-.55f,0,-lag);
+                    dante=Vector3.Lerp(mid,following,Smooth((t-15.2f)/.5f));
+                }
+                guard=new Pose {Lean=8,Nod=-3};
+                guardClip=t<17.6f?"sprint":"attack-melee-right";
+                guardClock=t<17.6f?(t-14)*1.1f:(t-17.6f)*1.4f;
+            }
+            float yaw=t<13.4f?180:Mathf.LerpAngle(180,7,Smooth((t-13.4f)/.6f));
+            float guardYaw=t<10?0:Mathf.Atan2(rago.x-dante.x,rago.z-dante.z)*Mathf.Rad2Deg;
+            _rago.Sample(rago,yaw,clip,clock,pose);
+            _dante.Sample(dante,guardYaw,guardClip,guardClock,guard);
+            if(t>=13 && t<13.65f) _rago.Body.ReachRight(ShoeMark+Vector3.up*.10f);
+            if(t>=17.72f) _dante.Body.ReachRight(rago+Vector3.up*.75f);
             Place(_can,C+_canPivot,_canRest);
             if(t<13.65f) Place(_shoe,ShoeMark,Quaternion.Euler(0,35,0));
-            else { var hand=_rago.Body.Hand(out var axis); Place(_shoe,hand,Quaternion.LookRotation(axis)*Quaternion.Euler(0,90,0)); }
-            if(t<5) { Beat="C09-return"; Shoot(C+new Vector3(-5.9f,1.4f,3.8f),C+new Vector3(.25f,.9f,1.6f),49); }
-            else if(t<10) { Beat="C10-decision"; Shoot(rago+new Vector3(-2.5f,1.8f,-2.8f),rago+Vector3.up*1.35f,38); }
-            else if(t<14) { Beat="C11-turn"; Shoot(C+new Vector3(-5,1.25f,1),C+new Vector3(.5f,.8f,.2f),49); }
-            else if(t<18) { Beat="C12-escape"; Shoot(C+new Vector3(-5.7f,1.3f,5),Vector3.Lerp(rago,dante,.35f)+Vector3.up,52); }
-            else { Beat="C13-placeholder"; Shoot(C+new Vector3(-6,3.2f,9),rago+Vector3.up,48); }
+            else
+            {
+                Vector3 hand=HeldShoe(out var rotation);
+                float lift=Smooth((t-13.65f)/.35f);
+                Place(_shoe,Vector3.Lerp(ShoeMark,hand,lift),Quaternion.Slerp(Quaternion.Euler(0,35,0),rotation,lift));
+            }
+            if(t<5) {Beat="C09-return";Shoot(C+new Vector3(-5.9f,1.4f,3.8f),C+new Vector3(.25f,.9f,1.6f),49);}
+            else if(t<10) {Beat="C10-decision";Shoot(C+new Vector3(-4.2f,1.4f,2.2f),C+new Vector3(.25f,1,1.5f),45);}
+            else if(t<14) {Beat="C11-turn";Shoot(C+new Vector3(-4.8f,1.25f,1.1f),C+new Vector3(.5f,.8f,.2f),49);}
+            else if(t<18) {Beat="C12-escape";Shoot(C+new Vector3(-5.7f,1.3f,5),Vector3.Lerp(rago,dante,.35f)+Vector3.up*.9f,52);}
+            else {Beat="C13-placeholder";Shoot(C+new Vector3(-6,3.2f,9),rago+Vector3.up,48);}
         }
 
         private static void Place(GameObject prop,Vector3 at,Quaternion turn)
         { if(prop!=null) { prop.SetActive(true); prop.transform.SetPositionAndRotation(at,turn); } }
+        private static float Lowest(GameObject prop)
+        {
+            float low=float.PositiveInfinity;
+            foreach(var renderer in prop.GetComponentsInChildren<Renderer>(false)) if(renderer.enabled) low=Mathf.Min(low,renderer.bounds.min.y);
+            return low;
+        }
+        private Vector3 HeldShoe(out Quaternion turn)
+        {
+            Vector3 hand=_rago.Body.Hand(out var fore);
+            Vector3 toe=(Vector3.up*.92f+fore*.35f).normalized;
+            turn=Quaternion.LookRotation(toe,-_rago.E.Root.transform.forward);
+            // Heel remains by the glove, with the toe beyond the fist silhouette.
+            return hand+fore*.13f+_rago.E.Root.transform.right*.07f+Vector3.up*.12f;
+        }
     }
 }

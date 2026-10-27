@@ -41,6 +41,10 @@ Then a motion draft:
 A final run uses `--width 1920 --height 1080 --fps 30` with a fresh tag.
 
 Use one heavy Unity job per machine. Never edit Assets while Unity is active.
+Keep the monitor asleep overnight. The owner's AC display timeout is 60 seconds;
+the owner confirmed sleep resumed after the video preview closed. Do not use UI
+playback, browser previews, window activation or input injection overnight. Use
+background capture and extracted frame/sequence analysis with honest review limits.
 Verify PID and command before stopping a job. Preserve existing dirty files,
 profiles and source. No reset, clean or force push. No paid tools without approval.
 

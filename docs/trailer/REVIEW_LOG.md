@@ -30,8 +30,22 @@
   settling still appeared floaty, so replaced eased prop travel with ballistic
   arcs and short damped ground bounces. Closed the review tab and verified/stopped
   its exact localhost server PID 29448.
-- v07: first 1920x1080/30 fps candidate rendering at checkpoint. Review the changed
-  ballistic contact/landing and cue frame before calling it the retained opening.
+- v07: first 1920x1080/30 fps candidate, 1/1 native pass, 600 frames, silent encode
+  and full decode pass. Faster ballistic prop settling replaced the floaty eased
+  motion. Further still review motivated measuring actual prop support and actor
+  geometry rather than guessing floor offsets.
+- v08: 1920x1080/30, 1/1 pass, 600 frames, zero-audio encode and full decode pass.
+  Actor grounding calibrates the bake scale convention; can/shoe rest height is
+  measured from the source geometry. The wind-up frame exposed the next issue:
+  the slipper was hidden by the large fist silhouette. v09 changes heel grip,
+  toe direction and release orientation continuity and probes the wind-up frames.
+- Classic clean probe: 1/1 pass, valid native-eye data and 360 frames per camera.
+  No can knockdown in this short take. StatusBadge sprites survived the first mask;
+  added exact renderer-name suppression and moved the side camera away from the
+  awning. New footage must verify these corrections before selecting showcase clips.
+- Owner monitor issue: the AC display timeout remained 60 seconds. Closed preview
+  tab/server and stopped UI playback checks. Owner confirmed the monitor again
+  turns off and stays off. Continue background-only; no power setting was changed.
 
 All versions are generated from new trailer-only direction. No old map/hero
 films or native gameplay have been inserted into these cinematic takes.

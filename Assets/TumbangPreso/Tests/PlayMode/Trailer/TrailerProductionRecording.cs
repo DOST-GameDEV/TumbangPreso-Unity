@@ -79,7 +79,7 @@ namespace TumbangPreso.PlayTests.Trailer
                     File.WriteAllBytes(path,pixels.EncodeToJPG(97));
                 }
             };
-            var samples=probe?new[]{0f,2.2f,4.4f,5.5f,5.95f,6.45f,6.55f,7.2f,8.8f,10.8f,12.4f,13.9f,15.4f,17.2f,19.5f}:
+            var samples=probe?new[]{0f,1.2f,2.4f,3f,3.7f,3.95f,4.15f,4.43f,4.47f,4.8f,5.4f,7.5f,9.9f,11.5f,12.5f,14.5f,16.5f,18.5f,19.9f}:
                 Enumerable.Range(0,Mathf.CeilToInt(length*fps)).Select(i=>start+(float)i/fps).ToArray();
             File.WriteAllText(Path.Combine(folder,"capture.json"),$"{{\"kind\":\"original-cinema\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":{start.ToString(CultureInfo.InvariantCulture)},\"frames\":{samples.Length},\"probe\":{probe.ToString().ToLowerInvariant()}}}");
             File.WriteAllLines(Path.Combine(folder,"shots.tsv"),TrailerOpeningFilm.Shots.Select(s=>$"{s.name}\t{s.from.ToString(CultureInfo.InvariantCulture)}\t{s.to.ToString(CultureInfo.InvariantCulture)}"));

@@ -18,11 +18,12 @@ def digest(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("kind", choices=("probe", "opening", "ending"))
+    parser.add_argument("kind", choices=("probe", "opening", "ending", "classic", "hero-arena", "hero-street", "defender"))
     parser.add_argument("--tag", required=True)
     parser.add_argument("--width", type=int, default=960)
     parser.add_argument("--height", type=int, default=540)
     parser.add_argument("--fps", type=int, default=30)
+    parser.add_argument("--seconds", type=int, default=60, help="Native gameplay take duration")
     args = parser.parse_args()
     if not args.tag.replace("-", "").replace("_", "").isalnum():
         parser.error("Use an alphanumeric, hyphen/underscore tag")
@@ -43,14 +44,17 @@ def main():
     quality = ROOT / "ProjectSettings/QualitySettings.asset"
     quality_bytes = quality.read_bytes()
     (output / "QualitySettings.before.asset").write_bytes(quality_bytes)
-    test = {"probe": "OpeningProbe", "opening": "OpeningMotion", "ending": "Ending"}[args.kind]
+    native=args.kind in ("classic", "hero-arena", "hero-street", "defender")
+    test = {"probe": "OpeningProbe", "opening": "OpeningMotion", "ending": "Ending", "classic":"ClassicMatch",
+        "hero-arena":"HeroArenaMatch", "hero-street":"HeroStreetMatch", "defender":"DefenderMatch"}[args.kind]
+    fixture="TrailerGameCapture" if native else "TrailerProductionRecording"
     graphics = ["-force-d3d11"] if sys.platform == "win32" else []
     command = [sys.executable, str(ROOT / "tools/run_unity_guarded.py"), "-batchmode", *graphics,
         "-tp-profile", "trailer-bring-it-home-1027", "-runTests", "-testPlatform", "PlayMode",
-        "-testFilter", "TumbangPreso.PlayTests.Trailer.TrailerProductionRecording." + test,
+        "-testFilter", "TumbangPreso.PlayTests.Trailer." + fixture + "." + test,
         "-testResults", str(output / "results.xml"), "-logFile", str(output / "unity.log"),
         "-trailer-tag", args.tag, "-trailer-width", str(args.width), "-trailer-height", str(args.height),
-        "-trailer-fps", str(args.fps)]
+        "-trailer-fps", str(args.fps), "-trailer-seconds", str(args.seconds)]
     inputs = [p for p in (ROOT / "Assets/TumbangPreso/Tests/PlayMode/Trailer").iterdir()
         if p.suffix in (".cs", ".shader", ".meta")]
     receipt = {"started_utc": dt.datetime.now(dt.timezone.utc).isoformat(), "command": command,
