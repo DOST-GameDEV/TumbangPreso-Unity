@@ -301,9 +301,13 @@ namespace TumbangPreso.Map
         /// lighting of all"). Each film still names its mood; nothing is blended while <see cref="AdoptsGameLight"/> holds.
         /// The Arena's opening is not a `MapFilm` and is untouched.
         /// </summary>
+        /// <summary>True when this film may relight the map with <see cref="Tint"/>. Every map film keeps the game's light
+        /// (<see cref="AdoptsGameLight"/>); only a non-match film (the trailer's, in the test assembly) opts in.</summary>
+        protected virtual bool OwnsLight => !AdoptsGameLight;
+
         protected void Tint(in Mood mood, float weight)
         {
-            if (AdoptsGameLight || !_lightTaken) return;
+            if (!OwnsLight || !_lightTaken) return;
             var a = Authored;
             float w = Mathf.Clamp01(weight);
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
