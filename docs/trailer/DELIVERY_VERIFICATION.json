@@ -1,0 +1,37 @@
+{
+  "completed_utc": "2026-10-27T18:38:18.691995+00:00",
+  "master": "Logs/trailer/bring-it-home/trailer-v01.mp4",
+  "master_sha256": "4ec35b24d3226c0191f8410cdfa3a9d1f4fd33594cbdfe55c688b0229ee5d1ad",
+  "frames": 3600,
+  "seconds": 120,
+  "width": 1920,
+  "height": 1080,
+  "rate": "30/1",
+  "color_space": "bt709",
+  "color_range": "tv",
+  "audio_streams": 0,
+  "full_decode": "passed",
+  "encoded_sequence_samples": 127,
+  "block_frames": [
+    0,
+    600,
+    2640,
+    3360,
+    3600
+  ],
+  "portable_zip": "Logs/trailer/bring-it-home/delivery/TUMP_BringItHome_trailer-v01.zip",
+  "zip_bytes": 502129962,
+  "zip_sha256": "d505c6e5928c4c8f76c0aa71b1a64381127640b56cbd24b3d2d0094b059fb1dc",
+  "zip_crc": "passed",
+  "packaged_files": 257,
+  "portable_rebuild": {
+    "rebuild_from_different_working_directory": "passed",
+    "video_bitstream": "SHA256=f35665e975071fdc89b54f262d3fdd5ff0091dd0dbf77b4e345bcac154fe24ec",
+    "full_file_sha256_equal": true,
+    "timeline_roundtrip_frames": 3600
+  },
+  "production_source_commit": "d0d8516003d173e07d497f756cf08a7102c5ab77",
+  "heartbeat_status": "PAUSED",
+  "human_playback": "pending; overnight UI playback was not reopened",
+  "sound": "All sound remains owner/team-authored"
+}

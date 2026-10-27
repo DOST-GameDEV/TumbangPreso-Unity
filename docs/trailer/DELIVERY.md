@@ -57,3 +57,11 @@ Picture changes need a new encoded witness, regenerated cues and a refreshed
 portable bundle. Do not restart rendering merely because an old checkpoint says
 production was active. Retired raw drafts retain essential failure evidence but
 cannot be re-encoded as complete takes. Current final source takes are intact.
+
+## Verified portable package
+
+Package completed: 257 files, 502129962 bytes. Relative timeline
+roundtrip, copied-file hashes and ZIP CRCs passed. The delivered rebuild helper
+ran from another working directory and reproduced the exact master file byte
+for byte. Production source commit: d0d851600. Completion evidence is in
+DELIVERY_VERIFICATION.json. The overnight continuation is now PAUSED.

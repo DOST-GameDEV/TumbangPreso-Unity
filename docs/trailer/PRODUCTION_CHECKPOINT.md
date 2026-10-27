@@ -2,8 +2,8 @@
 
 Branch `trailer/pandaigdig-plan`. All final native/cinema recording and picture
 assembly are complete. Read DELIVERY.md and PICTURE_EDL.json. No Unity job remains.
-Current source is published through ceb59323c plus the final source commit being
-prepared; consult Git HEAD/status rather than guessing a source revision.
+Production source is published through d0d851600. Final completion documentation
+follows it; consult Git HEAD/status rather than guessing a source revision.
 
 ## Current finished picture
 
@@ -26,14 +26,17 @@ prepared; consult Git HEAD/status rather than guessing a source revision.
 
 ## ONE next action
 
-Run `python tools/trailer_handoff.py trailer-v01` after publishing final source.
-It creates delivery/TUMP_BringItHome_trailer-v01 folder and ZIP beneath the media
-root, validates relative OTIO media and 3600-frame timeline, runs the supplied
-picture-rebuild helper from a different working directory, compares video streams,
-checks copied file hashes and tests ZIP CRCs. Use PORTABILITY_CHECK.json and the
-successful command result to establish completion. If these already exist and
-are verified, do not build/render again: owner playback and team sound are next.
-Then pause heartbeat tump-trailer-overnight-continuation and deliver final links.
+Owner watches the completed silent picture, then the team creates/mixes all sound.
+No production job remains. Do not restart rendering without a requested picture
+change. The overnight continuation heartbeat is PAUSED after successful delivery
+verification. All source/tools and final edit decisions are published; consult HEAD.
+
+Portable bundle: delivery/TUMP_BringItHome_trailer-v01.zip under the media root,
+502129962 bytes, 257 files. OTIO roundtrip: 3600 frames, all relative media resolved,
+file hashes and ZIP CRC passed. The supplied rebuild helper ran from a different
+working directory and reproduced the ENTIRE master file byte for byte. Production
+source commit d0d851600; final completion documentation follows it. See
+DELIVERY_VERIFICATION.json and package PORTABILITY_CHECK.json for exact evidence.
 
 ## Preserve boundaries and owner work
 
