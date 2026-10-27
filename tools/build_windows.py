@@ -41,8 +41,7 @@ def main():
     import msvcrt
     (ROOT/'Logs').mkdir(exist_ok=True)
     build_lock=(ROOT/'Logs/windows-build.lock').open('a+b')
-    build_lock.seek(0)
-    if not build_lock.read(1):build_lock.write(b'0');build_lock.flush()
+    if os.fstat(build_lock.fileno()).st_size==0:build_lock.write(b'0');build_lock.flush()
     build_lock.seek(0)
     try:msvcrt.locking(build_lock.fileno(),msvcrt.LK_NBLCK,1)
     except OSError:raise SystemExit('A build shortcut is already running. Read Logs/windows-build-current.json; do not start another.')
