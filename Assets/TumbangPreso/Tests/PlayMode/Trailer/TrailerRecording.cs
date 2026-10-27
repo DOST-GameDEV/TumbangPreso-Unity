@@ -41,16 +41,17 @@ namespace TumbangPreso.PlayTests.Trailer
         }
 
         [UnityTest, Timeout(3600000)] public IEnumerator Street() =>
-            Record<TrailerStreetFilm>(SceneFlow.Eskinita, "street", TrailerStreetFilm.Length, TrailerStreetFilm.Shots);
+            Record<TrailerStreetFilm>(SceneFlow.Eskinita, "street", TrailerStreetFilm.Length, TrailerStreetFilm.Shots, GameMode.HeroStrike);
 
         [UnityTest, Timeout(3600000)] public IEnumerator Arena() =>
-            Record<TrailerArenaFilm>(SceneFlow.Arena, "arena", TrailerArenaFilm.Length, TrailerArenaFilm.Shots);
+            Record<TrailerArenaFilm>(SceneFlow.Arena, "arena", TrailerArenaFilm.Length, TrailerArenaFilm.Shots, GameMode.HeroStrike);
 
-        private IEnumerator Record<T>(string map, string name, float length, (string name, float from, float to)[] shots) where T : MapFilm
+        private IEnumerator Record<T>(string map, string name, float length, (string name, float from, float to)[] shots, GameMode mode) where T : MapFilm
         {
             LogAssert.ignoreFailingMessages = true;
             SceneFlow.Networked = false;
-            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            // Hero Strike: the Arena builds its stage at load only in Hero Strike (v3 review: Classic left an empty shaft).
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false; GameLaunch.Spectator = false; GameLaunch.AllBots = false;
             Settings.SettingsStore.Current.CinematicCameraMotion = true;
             Settings.SettingsStore.Current.ReducedUiMotion = false;

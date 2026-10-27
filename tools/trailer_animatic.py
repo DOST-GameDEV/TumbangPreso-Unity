@@ -23,7 +23,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "Logs", "trailer")
 FRAMES = os.path.join(OUT, "frames")
 WORK = os.path.join(OUT, "work")
-DISPLAY = os.path.join(ROOT, "Assets/TumbangPreso/Resources/UI/fonts/DarumadropOne-Regular.ttf")
+# Owner, 2026-10-27: not Darumadrop. Paalalabas Display Wide reads as a sports title; it has no middle-dot glyph.
+DISPLAY = os.path.join(ROOT, "Assets/TumbangPreso/Resources/UI/fonts/PaalalabasDisplayWide.otf")
 BODY = os.path.join(ROOT, "Assets/TumbangPreso/Resources/UI/fonts/WorkSans-Bold.ttf")
 AMB = "Assets/TumbangPreso/Art/audio/ambience/"
 SFX = "Assets/TumbangPreso/Resources/Sfx/"
@@ -40,55 +41,95 @@ PILLAR = 240                               # 4:3 inside 16:9
 SCOPE = int(round((H - W / 2.39) / 2))     # 2.39:1 bars
 
 # ---------------------------------------------------------------------------------------------- the edit
-# (id, source, look, duration, extra). Sources: ("film", name, shot, offset) | ("clip", mp4, start) | ("card", lines) | ("black",)
+# (id, source, look, duration, extra). Sources:
+#   ("film", name, shot, offset)       an in-engine story shot (Logs/trailer/frames)
+#   ("game", take, view, frame)        real gameplay (Logs/trailer/gameplay/<take>/<view>/f_#####.jpg), view fpv|line|side
+#   ("card", lines) | ("black",)
+# Looks carry the story: "present" (16:9, the street now and real play), "past74" (4:3 newsreel), "vhs" (4:3 tape),
+# "widen" (16:9 opening to 2.39 on the Arena hit), "scope" (2.39). Beats A to P follow docs/trailer/STORY.md.
 # Sound cues refer to a segment by its id, so segments can be added, cut or reordered freely.
+GAME = "street2"
 EDL = [
-    # ACT 1 · THE THROW
-    ("open", ("black",), "black", 1.0, {}),
-    ("can", ("film", "street", "can", 0.5), "street", 1.6, {}),
-    ("kid", ("film", "street", "kid", 0.3), "street", 1.9, {}),
-    ("windup", ("film", "street", "windup", 0.15), "street", 0.95, {}),
-    ("throw", ("film", "street", "throw", 1.1), "street", 2.0, {}),
-    ("spin", ("film", "arena", "spin", 0.0), "widen", 1.6, {}),
-    ("crane", ("film", "arena", "crane", 0.6), "scope", 2.2, {}),
-    ("crack", ("film", "arena", "crack", 0.05), "scope", 1.15, {}),
-    ("card1", ("card", ["IN THIS WORLD,", "THE BIGGEST GAME ON EARTH"]), "card", 2.2, {}),
-    ("card2", ("card", ["STARTED ON OUR STREETS."]), "card", 2.0, {"accent": True}),
-    # ACT 2 · OUR WORLD
-    ("archive", ("film", "street", "archive", 0.0), "newsreel", 3.0, {"caption": "PANDAIGDIG 1974  ·  MAYNILA"}),
-    ("vhs", ("film", "street", "vhs", 0.0), "vhs", 2.5, {"caption": "JUN. 14 1996"}),
-    ("train", ("clip", "Logs/map-films/Ermita_intro_film.mp4", 8.6), "placeholder", 2.0, {"tag": "PLACEHOLDER  ·  HERO-ART TRAIN WRAP COMES NEXT"}),
-    ("jeep", ("clip", "Logs/map-films/BGC_intro_film.mp4", 3.0), "placeholder", 1.5, {"tag": "PLACEHOLDER  ·  \"RAGO\" JEEPNEY COMES NEXT"}),
-    ("rack", ("film", "street", "rack", 0.0), "street", 2.0, {}),
-    ("laugh", ("clip", "Logs/map-films/Tondo_intro_film.mp4", 12.5), "placeholder", 2.5, {"tag": "FROM THE TONDO MAP FILM  ·  RE-SHOOT WITHOUT HUD"}),
-    ("elder", ("film", "street", "elder", 0.2), "street", 3.3, {}),
-    ("card3", ("card", ["EVERY STREET HAS A COURT."]), "card", 1.6, {}),
-    ("ident", ("card", ["PANDAIGDIG", "2026"]), "ident", 1.6, {}),
-    ("card4", ("card", ["AND EVERY YEAR,", "THE WHOLE COUNTRY STOPS TO WATCH."]), "card", 2.2, {}),
-    ("tv", ("film", "street", "tv", 0.0), "street", 5.2, {}),
+    # A, B   cold open: "Taya!", then a real match with Totoy as the taya
+    ("A", ("black",), "black", 0.9, {}),
+    # real match, round 1, cut on action: knock-down (side, can hit at 587), scramble past Totoy, race to the can, cornered
+    ("B1", ("game", GAME, "side", 560), "game", 1.4, {}),
+    ("B2", ("game", GAME, "fpv", 452), "game", 1.0, {}),
+    ("B3", ("game", GAME, "side", 604), "game", 1.1, {}),
+    ("B4", ("game", GAME, "fpv", 758), "game", 1.1, {}),
+    # C, D   the laugh, the gift, the sole
+    ("C", ("film", "street", "laugh", 0.5), "present", 1.7, {}),
+    ("D1", ("film", "street", "gift", 0.6), "present", 3.9, {}),
+    ("D2", ("film", "street", "sole", 0.3), "present", 1.7, {}),
+    # E, F   1974 and 1996: the same throw
+    ("E", ("film", "street", "y1974", 0.6), "past74", 3.3, {"caption": "MAYNILA, 1974"}),
+    ("F", ("film", "street", "y1996", 0.2), "vhs", 2.3, {"caption": "JUN. 14 1996"}),
+    # G      the world it built, cut on the beat
+    ("G1", ("film", "street", "jeep", 0.3), "present", 1.3, {}),
+    ("G2", ("film", "street", "display", 0.3), "present", 1.2, {}),
+    ("G3", ("film", "street", "statue", 0.3), "present", 1.2, {}),
+    ("G4", ("film", "street", "crane", 0.6), "present", 1.7, {}),
+    # H, I, J   the line-up, his real eyes, the breath, the throw
+    ("H1", ("film", "street", "lineup", 0.3), "present", 2.7, {}),
+    # real match, round 2: Totoy attacking, his own hands on the tsinelas, lining up the can
+    ("H2", ("game", GAME, "fpv", 2236), "game", 1.4, {}),
+    ("I", ("film", "street", "breath", 0.0), "present", 1.3, {}),
+    ("J1", ("film", "street", "windup", 0.15), "present", 0.95, {}),
+    ("J2", ("film", "street", "throw", 1.5), "present", 1.6, {}),
+    # K, L   the Arena: hit first, then the reveal
+    ("K", ("film", "arena", "hit", 0.0), "widen", 1.4, {}),
+    ("L", ("film", "arena", "reveal", 0.0), "scope", 3.6, {}),
+    # M, N, O, P
+    ("M", ("film", "street", "payoff", 0.0), "present", 2.6, {}),
+    ("M2", ("film", "street", "lolo", 0.2), "present", 1.5, {}),
+    ("N", ("card", ["IN OUR WORLD,", "THE BIGGEST GAME ON EARTH", "STARTED ON A STREET LIKE THIS."]), "card", 2.8, {}),
+    # night: nervous faces in the TV light, the screen flashes the hit, the barangay erupts
+    ("O1", ("film", "street", "tv", 0.7), "present", 1.8, {}),
+    ("O2", ("film", "street", "tvscreen", 0.0), "present", 0.9, {}),
+    ("O3", ("film", "street", "tv", 2.65), "present", 2.2, {}),
+    ("P", ("black",), "black", 0.5, {}),
 ]
 
-# Sound: (file, at seconds, volume, options). The kid's "Taya!" is the only voice in Acts 1 and 2; the rest is
-# guide music (TEMP: the team is writing the real score) and recorded effects from the game.
+# Sound: (file, at seconds, volume, options). Voices: only the recorded kid's "Taya!" in Acts 1 and 2 (STORY.md).
+# Music is TEMP guide only (the team writes the score); it follows the energy curve: none on the street, the theme
+# from the gift, cut to silence for the breath, the big hit on the Arena contact.
 def cues(at, total):
     return [
-        (AMB + "eskinita_street.wav", 0.0, 0.55, {"dur": at["spin"], "fade_out": 0.15}),
-        (AMB + "alley_bed_kids.wav", 0.3, 0.35, {"dur": at["spin"] - 0.3, "fade_out": 0.15}),
-        (AMB + "sfx_alley_rooster_crow_1.wav", 0.35, 0.35, {}),
-        (AMB + "sfx_life_kid_taya_1.wav", at["kid"] + 0.35, 0.9, {}),
-        (SFX + "throw_charge.wav", at["windup"] + 0.1, 0.5, {}),
-        (SFX + "throw_whoosh.wav", at["windup"] + 0.85, 0.9, {}),
-        (SFX + "sfx_arena_crowd_erupt.wav", at["spin"], 1.0, {"dur": 4.6, "fade_out": 0.8}),
-        (SFX + "sfx_arena_crowd_bed_roar.wav", at["spin"] + 0.2, 0.6, {"dur": at["card1"] - at["spin"] - 0.2, "fade_out": 0.3}),
-        (SFX + "lata_knockdown.wav", at["crack"] + 0.3, 1.0, {}),
-        (MUSIC + "ost_menu.mp3", at["card1"] + 0.4, 0.55, {"dur": total - at["card1"] - 0.4, "fade_in": 1.2, "fade_out": 1.0, "tag": "TEMP GUIDE MUSIC"}),
-        (AMB + "kanto_horn_jeepney_1.wav", at["jeep"] + 0.3, 0.45, {}),
-        (AMB + "sfx_taho_call_1.wav", at["rack"] + 0.2, 0.35, {}),
-        (AMB + "sfx_life_kid_giggle_2.wav", at["laugh"] + 0.4, 0.6, {}),
-        (SFX + "sfx_arena_crowd_bed_lively.wav", at["tv"], 0.35, {"dur": total - at["tv"], "filter": "highpass=f=600,lowpass=f=3200", "fade_in": 0.5}),
-        (AMB + "sfx_life_cheer_1.wav", at["tv"] + 3.5, 0.9, {}),
-        (AMB + "sfx_life_cheer_2.wav", at["tv"] + 3.58, 0.8, {}),
-        (SFX + "sfx_arena_crowd_cheer.wav", at["tv"] + 3.5, 0.45, {"filter": "highpass=f=600,lowpass=f=3200", "dur": 1.5, "fade_out": 0.4}),
+        (AMB + "sfx_life_kid_taya_1.wav", at["A"] + 0.25, 1.0, {}),
+        (AMB + "eskinita_street.wav", at["B1"], 0.5, {"dur": at["D1"] - at["B1"], "fade_out": 0.6}),
+        (AMB + "alley_bed_kids.wav", at["B1"], 0.45, {"dur": at["D1"] - at["B1"], "fade_out": 0.6}),
+        (SFX + "throw_whoosh.wav", at["B1"] + 0.75, 0.7, {}),
+        (SFX + "lata_knockdown.wav", at["B1"] + 1.12, 0.95, {}),
+        (AMB + "sfx_life_kid_giggle_2.wav", at["B2"] + 0.3, 0.5, {}),
+        (SFX + "step_rubber.wav", at["B3"] + 0.1, 0.6, {}),
+        (SFX + "step_rubber.wav", at["B3"] + 0.45, 0.55, {}),
+        (SFX + "step_rubber.wav", at["B4"] + 0.3, 0.5, {}),
+        (AMB + "sfx_life_kid_giggle_1.wav", at["C"] + 0.2, 0.8, {}),
+        (AMB + "sfx_life_kid_giggle_3.wav", at["C"] + 0.5, 0.7, {}),
+        (AMB + "eskinita_street.wav", at["D1"], 0.3, {"dur": at["E"] - at["D1"], "fade_in": 0.5}),
+        (MUSIC + "ost_menu.mp3", at["D1"] + 0.3, 0.5, {"dur": at["I"] - at["D1"] - 0.3, "fade_in": 1.5, "fade_out": 0.25}),
+        (AMB + "sfx_life_cheer_1.wav", at["E"] + 1.0, 0.6, {"filter": "lowpass=f=3500,highpass=f=300"}),
+        (AMB + "sfx_life_clap_2.wav", at["E"] + 1.2, 0.5, {"filter": "lowpass=f=3500,highpass=f=300"}),
+        (AMB + "sfx_life_cheer_2.wav", at["F"] + 1.0, 0.5, {"filter": "lowpass=f=5000"}),
+        (AMB + "kanto_horn_jeepney_1.wav", at["G1"] + 0.2, 0.45, {}),
+        (AMB + "sfx_taho_call_1.wav", at["G3"] + 0.1, 0.3, {}),
+        (SFX + "throw_charge.wav", at["J1"] + 0.1, 0.55, {}),
+        (SFX + "throw_whoosh.wav", at["J1"] + 0.85, 0.95, {}),
+        (SFX + "lata_impact.wav", at["K"] + 0.32, 1.0, {}),
+        (SFX + "lata_knockdown.wav", at["K"] + 0.33, 1.0, {}),
+        (SFX + "sfx_arena_crowd_erupt.wav", at["K"] + 0.35, 1.0, {"dur": 5.5, "fade_out": 1.2}),
+        (SFX + "sfx_arena_crowd_bed_roar.wav", at["K"] + 0.6, 0.55, {"dur": at["M"] - at["K"] - 0.6, "fade_out": 0.4}),
+        (MUSIC + "ost_match.mp3", at["K"] + 0.32, 0.6, {"dur": total - at["K"] - 0.32, "fade_out": 0.8}),
+        (SFX + "lata_knockdown.wav", at["M"] + 0.05, 0.8, {}),
+        (AMB + "sfx_life_cheer_3.wav", at["M"] + 1.2, 0.8, {}),
+        (AMB + "sfx_life_clap_1.wav", at["M"] + 1.4, 0.6, {}),
+        (AMB + "sfx_life_clap_2.wav", at["M2"] + 0.9, 0.5, {}),
+        (SFX + "sfx_arena_crowd_bed_tension.wav", at["O1"], 0.35, {"dur": at["O2"] - at["O1"], "filter": "highpass=f=600,lowpass=f=3200", "fade_in": 0.4}),
+        (SFX + "lata_knockdown.wav", at["O2"] + 0.05, 0.5, {"filter": "highpass=f=700,lowpass=f=3000"}),
+        (SFX + "sfx_arena_crowd_erupt.wav", at["O2"] + 0.05, 0.4, {"dur": at["P"] - at["O2"], "filter": "highpass=f=600,lowpass=f=3200", "fade_out": 0.3}),
+        (AMB + "sfx_life_cheer_1.wav", at["O3"] + 0.02, 0.95, {}),
+        (AMB + "sfx_life_cheer_2.wav", at["O3"] + 0.1, 0.85, {}),
+        (AMB + "sfx_life_clap_3.wav", at["O3"] + 0.3, 0.6, {}),
     ]
 
 
@@ -108,6 +149,17 @@ def film_frame(film, shot, t):
     a, b = _shots[film][shot]
     i = min(b, a + int(round(t * FPS)))
     return Image.open(os.path.join(FRAMES, film, f"frame_{i:04d}.png")).convert("RGB")
+
+
+GAMEPLAY = os.path.join(OUT, "gameplay")
+
+
+def game_frame(take, view, frame):
+    path = os.path.join(GAMEPLAY, take, view, f"f_{frame:05d}.jpg")
+    while not os.path.exists(path) and frame > 0:
+        frame -= 1
+        path = os.path.join(GAMEPLAY, take, view, f"f_{frame:05d}.jpg")
+    return Image.open(path).convert("RGB")
 
 
 def clip_frames(mp4, start, dur, key):
@@ -158,17 +210,28 @@ def street(a, t, d):
     return bars(a, PILLAR, 0)
 
 
+def present(a, t, d):
+    # The story shots are already lit at golden hour in the engine: no extra warmth, just film texture.
+    return vignette(grain(a, 3.0), 0.2)
+
+
+def game(a, t, d):
+    # Real gameplay keeps the match's own daylight, nudged a little toward the story's warmth.
+    a = a * np.array([1.03, 1.0, 0.96]) + np.array([3, 1, -2])
+    return vignette(grain(a, 3.0), 0.2)
+
+
 def widen(a, t, d):
-    k = ease((t - 0.1) / 0.5)
-    a = vignette(grain(a, 3.0), 0.18 * (1 - k) + 0.1)
-    return bars(a, int(PILLAR * (1 - k)), int(SCOPE * k))
+    # The bars arrive with the hit (contact at 0.32 s into the Arena shot): the dream goes cinema-wide.
+    k = ease((t - 0.3) / 0.35)
+    return bars(vignette(grain(a, 2.5), 0.14), 0, int(SCOPE * k))
 
 
 def scope(a, t, d):
     return bars(vignette(a, 0.12), 0, SCOPE)
 
 
-def newsreel(a, t, d):
+def past74(a, t, d):
     g = a @ np.array([0.30, 0.59, 0.11])
     a = np.stack([g * 1.08 + 18, g * 0.95 + 8, g * 0.76], -1)
     a = (a - 128) * 1.18 + 128
@@ -195,7 +258,7 @@ def placeholder(a, t, d):
     return bars(a, 0, SCOPE)
 
 
-LOOKS = {"street": street, "widen": widen, "scope": scope, "newsreel": newsreel, "vhs": vhs, "placeholder": placeholder}
+LOOKS = {"present": present, "game": game, "street": street, "widen": widen, "scope": scope, "past74": past74, "vhs": vhs, "placeholder": placeholder}
 
 _fonts = {}
 
@@ -219,14 +282,16 @@ def card(lines, t, d, accent=False, ident=False):
     pop = back((t - 0.05) / 0.32)
     out = 1.0 - ease((t - (d - 0.25)) / 0.25)
     if ident:
-        big = font(DISPLAY, int(220 * (0.85 + 0.15 * pop)))
+        big = font(DISPLAY, int(170 * (0.85 + 0.15 * pop)))
         outlined(draw, (W / 2, H / 2 - 50), lines[0], big, GOLD, width=9)
         small = font(BODY, 70)
         outlined(draw, (W / 2, H / 2 + 120), lines[1], small, CREAM, width=4)
         sub = font(BODY, 34)
         draw.text((W / 2, H / 2 + 200), "ANG GINTONG LATA", font=sub, fill=(200, 160, 90), anchor="mm")
     else:
-        size = 104 if max(len(s) for s in lines) < 26 else 86
+        size = 96
+        while size > 40 and max(draw.textlength(line, font=font(DISPLAY, size)) for line in lines) > 1500:
+            size -= 4
         f = font(DISPLAY, int(size * (0.9 + 0.1 * pop)))
         y0 = H / 2 - (len(lines) - 1) * size * 0.62
         for i, line in enumerate(lines):
@@ -238,7 +303,7 @@ def card(lines, t, d, accent=False, ident=False):
 
 def caption(img, text, look):
     draw = ImageDraw.Draw(img)
-    if look == "newsreel":
+    if look == "past74":
         f = font(BODY, 40)
         draw.rectangle([PILLAR + 60, H - 150, PILLAR + 60 + draw.textlength(text, font=f) + 40, H - 88], fill=(18, 12, 8))
         draw.text((PILLAR + 80, H - 119), text, font=f, fill=(232, 214, 180), anchor="lm")
@@ -299,6 +364,8 @@ def main():
             else:
                 if src[0] == "film":
                     img = film_frame(src[1], src[2], src[3] + t)
+                elif src[0] == "game":
+                    img = game_frame(src[1], src[2], src[3] + i)
                 else:
                     files = sorted(os.listdir(folder))
                     img = Image.open(os.path.join(folder, files[min(i, len(files) - 1)])).convert("RGB")

@@ -1,5 +1,8 @@
 # TUMP trailer plan: "PANDAIGDIG"
 
+**Status, 2026-10-27:** Acts 1 and 2 below are superseded by [STORY](STORY.md) ("Lolo's Tsinelas")
+and built in [ANIMATIC](ANIMATIC.md) (v4). Acts 3 to 6 still follow this plan.
+
 Owner brief, 2026-10-27: a two-minute trailer that is **cinematic, nostalgic and fun**, mixes
 new in-engine cinematics with real gameplay, gets hype, and is set in a world where the
 Philippines made it and tumbang preso is the football of the planet, with a world tournament
