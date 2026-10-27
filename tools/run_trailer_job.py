@@ -4,6 +4,7 @@ import datetime as dt
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -32,19 +33,26 @@ def main():
             "@(Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'Unity.exe' } | Select-Object ProcessId,CommandLine) | ConvertTo-Json -Compress"], text=True).strip()
         if running and running != "[]":
             raise SystemExit("Another Unity Editor is active. Preserve it; no trailer job started: " + running)
+    for meta in (ROOT / "Assets/TumbangPreso/Tests/PlayMode/Trailer").glob("*.meta"):
+        source = meta.read_text(encoding="utf-8-sig")
+        match = re.search(r"^guid: ([0-9a-f]+)$", source, re.MULTILINE)
+        if match is None or len(match[1]) != 32:
+            raise SystemExit("Malformed trailer asset GUID: " + str(meta))
     output = ROOT / "Logs/trailer/bring-it-home" / args.tag
     output.mkdir(parents=True, exist_ok=False)
     quality = ROOT / "ProjectSettings/QualitySettings.asset"
     quality_bytes = quality.read_bytes()
     (output / "QualitySettings.before.asset").write_bytes(quality_bytes)
-    test = {"probe": "OpeningProbe", "opening": "Opening", "ending": "Ending"}[args.kind]
-    command = [sys.executable, str(ROOT / "tools/run_unity_guarded.py"), "-batchmode", "-force-d3d11",
+    test = {"probe": "OpeningProbe", "opening": "OpeningMotion", "ending": "Ending"}[args.kind]
+    graphics = ["-force-d3d11"] if sys.platform == "win32" else []
+    command = [sys.executable, str(ROOT / "tools/run_unity_guarded.py"), "-batchmode", *graphics,
         "-tp-profile", "trailer-bring-it-home-1027", "-runTests", "-testPlatform", "PlayMode",
         "-testFilter", "TumbangPreso.PlayTests.Trailer.TrailerProductionRecording." + test,
         "-testResults", str(output / "results.xml"), "-logFile", str(output / "unity.log"),
         "-trailer-tag", args.tag, "-trailer-width", str(args.width), "-trailer-height", str(args.height),
         "-trailer-fps", str(args.fps)]
-    inputs = list((ROOT / "Assets/TumbangPreso/Tests/PlayMode/Trailer").glob("*.cs"))
+    inputs = [p for p in (ROOT / "Assets/TumbangPreso/Tests/PlayMode/Trailer").iterdir()
+        if p.suffix in (".cs", ".shader", ".meta")]
     receipt = {"started_utc": dt.datetime.now(dt.timezone.utc).isoformat(), "command": command,
         "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "input_sha256": {str(p.relative_to(ROOT)): digest(p) for p in inputs},

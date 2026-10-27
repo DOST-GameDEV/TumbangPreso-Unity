@@ -220,5 +220,23 @@ namespace TumbangPreso.PlayTests.Trailer
             if (fore == null) return Frame.position + Vector3.up;
             return fore.position + fore.TransformDirection(along) * _foreLength * 0.95f;
         }
+
+        /// <summary>Two-bone reach for a cinematic prop contact, keeping the elbow outside the torso.</summary>
+        public float ReachRight(Vector3 target)
+        {
+            if (_armR == null || _foreR == null) return float.PositiveInfinity;
+            Vector3 shoulder = _armR.position, delta = target - shoulder;
+            float upper = Vector3.Distance(shoulder, _foreR.position), lower = _foreLength * .95f;
+            float distance = Mathf.Clamp(delta.magnitude, Mathf.Abs(upper-lower)+.001f, upper+lower-.001f);
+            Vector3 direction = delta.normalized;
+            Vector3 pole = Vector3.ProjectOnPlane(Frame.right*_side-Frame.up*.1f,direction).normalized;
+            if (pole.sqrMagnitude < .01f) pole = Vector3.Cross(direction,Frame.forward).normalized;
+            float cosine = Mathf.Clamp((upper*upper+distance*distance-lower*lower)/(2*upper*distance),-1,1);
+            Vector3 elbow = shoulder+direction*(upper*cosine)+pole*(upper*Mathf.Sqrt(Mathf.Max(0,1-cosine*cosine)));
+            _armR.rotation = Quaternion.FromToRotation(_foreR.position-shoulder,elbow-shoulder)*_armR.rotation;
+            Vector3 hand = Hand(out _);
+            _foreR.rotation = Quaternion.FromToRotation(hand-_foreR.position,target-_foreR.position)*_foreR.rotation;
+            return Vector3.Distance(Hand(out _),target);
+        }
     }
 }

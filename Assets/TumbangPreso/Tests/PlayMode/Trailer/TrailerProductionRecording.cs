@@ -11,6 +11,7 @@ using TumbangPreso.UI;
 using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
 using Object=UnityEngine.Object;
 
 namespace TumbangPreso.PlayTests.Trailer
@@ -29,7 +30,7 @@ namespace TumbangPreso.PlayTests.Trailer
         }
 
         [UnityTest,Timeout(3600000)] public IEnumerator OpeningProbe()=>Record(true,0,20);
-        [UnityTest,Timeout(7200000)] public IEnumerator Opening()=>Record(false,0,20);
+        [UnityTest,Timeout(7200000)] public IEnumerator OpeningMotion()=>Record(false,0,20);
         [UnityTest,Timeout(7200000)] public IEnumerator Ending()=>Record(false,20,18);
 
         private IEnumerator Record(bool probe,float start,float length)
@@ -55,13 +56,15 @@ namespace TumbangPreso.PlayTests.Trailer
             Hold(true); yield return null;
             var camera=Camera.main; Assert.IsNotNull(camera,"No capture camera");
             var rig=camera.GetComponent<CameraSystem.CameraRig>(); if(rig!=null) rig.SetActive(false);
+            var lens=camera.gameObject.AddComponent<TrailerLens>();
+            Assert.IsTrue(lens.Ready,"Trailer focus shader failed to load/compile");
             if(MapFilm.Instance!=null) Object.Destroy(MapFilm.Instance.gameObject);
             yield return null;
             var director=new GameObject("Bring It Home original cinema").AddComponent<TrailerOpeningFilm>();
             Assert.IsTrue(director.Begin(camera,GameServices.Round.Players.OrderBy(p=>p.PlayerSlot).ToArray(),
                 camera.transform.position,camera.transform.rotation,camera.fieldOfView,false),"Opening refused");
             var target=new RenderTexture(width,height,24,camera.allowHDR?RenderTextureFormat.DefaultHDR:RenderTextureFormat.ARGB32,
-                camera.allowHDR?RenderTextureReadWrite.Linear:RenderTextureReadWrite.Default); target.Create();
+                camera.allowHDR?RenderTextureReadWrite.Linear:RenderTextureReadWrite.Default); target.antiAliasing=4; target.Create();
             var resolved=new RenderTexture(width,height,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB); resolved.Create();
             var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
             var shot=new GameObject("~TrailerProductionShot").AddComponent<LateFrameShot>();
