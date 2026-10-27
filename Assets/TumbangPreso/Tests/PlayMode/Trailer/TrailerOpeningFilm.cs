@@ -79,6 +79,46 @@ namespace TumbangPreso.PlayTests.Trailer
                 if(!float.IsInfinity(low)&&!float.IsNaN(low))
                     E.Root.transform.position+=Vector3.up*(at.y+Mathf.Max(0,pose.Hop)-low);
             }
+            public float FootClearance(Bounds prop,Vector3 offset,out int samples)
+            {
+                samples=0;float nearest=999;
+                foreach(var skin in Skins)
+                {
+                    var mesh=skin.sharedMesh;if(mesh==null||!mesh.isReadable)continue;
+                    var weights=mesh.boneWeights;var vertices=mesh.vertices;var binds=mesh.bindposes;
+                    var world=new Matrix4x4[skin.bones.Length];
+                    for(int i=0;i<world.Length&&i<binds.Length;i++)
+                        if(skin.bones[i]!=null)world[i]=skin.bones[i].localToWorldMatrix*binds[i];
+                    for(int bone=0;bone<skin.bones.Length;bone++)
+                    {
+                        string name=skin.bones[bone]!=null?skin.bones[bone].name:"";
+                        if(name!="leg-left"&&name!="leg-right")continue;
+                        bool found=false;Bounds foot=default;
+                        for(int i=0;i<vertices.Length&&i<weights.Length;i++)
+                        {
+                            var w=weights[i];float weight=(w.boneIndex0==bone?w.weight0:0)+(w.boneIndex1==bone?w.weight1:0)
+                                +(w.boneIndex2==bone?w.weight2:0)+(w.boneIndex3==bone?w.weight3:0);
+                            if(weight<.5f)continue;
+                            // Match the actual skinning matrices directly. BakeMesh can carry
+                            // inherited scale, so another TransformPoint could double it.
+                            Vector3 point=offset;
+                            if(w.weight0>0)point+=world[w.boneIndex0].MultiplyPoint3x4(vertices[i])*w.weight0;
+                            if(w.weight1>0)point+=world[w.boneIndex1].MultiplyPoint3x4(vertices[i])*w.weight1;
+                            if(w.weight2>0)point+=world[w.boneIndex2].MultiplyPoint3x4(vertices[i])*w.weight2;
+                            if(w.weight3>0)point+=world[w.boneIndex3].MultiplyPoint3x4(vertices[i])*w.weight3;
+                            if(point.y>prop.max.y+.03f)continue;
+                            if(!found){foot=new Bounds(point,Vector3.zero);found=true;}else foot.Encapsulate(point);
+                            samples++;
+                        }
+                        if(!found)continue;
+                        float x=Mathf.Max(prop.min.x-foot.max.x,foot.min.x-prop.max.x);
+                        float z=Mathf.Max(prop.min.z-foot.max.z,foot.min.z-prop.max.z);
+                        float gap=x>0||z>0?new Vector2(Mathf.Max(0,x),Mathf.Max(0,z)).magnitude:Mathf.Max(x,z);
+                        nearest=Mathf.Min(nearest,gap);
+                    }
+                }
+                return nearest;
+            }
         }
 
         private Actor _rago,_dante,_amihan,_nemu;
@@ -90,6 +130,8 @@ namespace TumbangPreso.PlayTests.Trailer
         private Vector3 _canRestScale,_canPivot,_shoeScale,_release;
         private Vector3 _pickupOffset;
         private Vector3 _reactionSide;
+        private Vector3 _priorFootOffset;
+        private bool _clearanceLogged;
         private Vector3 _releaseCentre;
         private float _fallenHeight=.18f,_shoeHeight=.055f;
         private ArenaStage _liveStage;private bool _stageEnabled;
@@ -98,6 +140,7 @@ namespace TumbangPreso.PlayTests.Trailer
         private Vector3 C => new Vector3(Centre.x,_ground,Centre.z);
         private Vector3 RagoMark => C+new Vector3(0,0,4.7f);
         private Vector3 DanteMark => C+new Vector3(-1.05f,0,-.7f);
+        private Vector3 GuardMark => C+new Vector3(.85f,0,-.15f);
         private Vector3 ShoeMark => C+new Vector3(1.05f,_shoeHeight,-1.4f);
         private Vector3 FallenCan => C+new Vector3(-.2f,_fallenHeight,-.05f);
 
@@ -188,6 +231,7 @@ namespace TumbangPreso.PlayTests.Trailer
 
         protected override void Stage(float age)
         {
+            _priorFootOffset=Vector3.zero;
             for(int i=0;i<Seats;i++) ShowSeat(i,false);
             var mood=Authored; mood.Brightness=1.03f; mood.Saturation=1.02f; Tint(mood,1);
             OtherPlayers(age);
@@ -281,7 +325,10 @@ namespace TumbangPreso.PlayTests.Trailer
             {
                 reach.Lean=5; reach.Nod=-5; reach.Turn=8;
                 reach.Off=new Vector3(-.3f,-.8f,.2f); reach.OffFore=new Vector3(-.1f,-.95f,.18f);
-                _dante.Sample(Vector3.Lerp(DanteMark,C+new Vector3(.65f,0,-.15f),Smooth((t-12.8f)/1.8f)),0,
+                float step=Smooth((t-12.8f)/1.8f);
+                Vector3 around=Vector3.Lerp(DanteMark,GuardMark,step)+Vector3.back*(.75f*Mathf.Sin(step*Mathf.PI));
+                _priorFootOffset=Vector3.Lerp(DanteMark,C+new Vector3(.65f,0,-.15f),step)-around;
+                _dante.Sample(around,0,
                     t<14.6f?"walk":"idle",t-12.8f,reach);
             }
             if(t<Contact) Place(_can,C+_canPivot,_canRest);
@@ -352,7 +399,7 @@ namespace TumbangPreso.PlayTests.Trailer
             else if(t<15.8f)
             {
                 Beat="C06-defender";
-                Shoot(C+new Vector3(2.7f,.6f,1.9f),C+new Vector3(.3f,.72f,-.3f),43);
+                Shoot(C+new Vector3(3.4f,1.05f,2.7f),GuardMark+Vector3.up*.95f,43);
             }
             else if(t<18.1f)
             {
@@ -375,7 +422,7 @@ namespace TumbangPreso.PlayTests.Trailer
             Vector3 start=RagoMark+new Vector3(.25f,0,-1.7f);
             Vector3 fake=start+new Vector3(-.45f,0,-.4f);
             Vector3 pickup=ShoeMark+new Vector3(_pickupOffset.x,-_shoeHeight,_pickupOffset.z);
-            Vector3 rago=start,dante=C+new Vector3(.65f,0,-.15f);
+            Vector3 rago=start,dante=GuardMark;
             Pose pose=Pose.Rest,guard=Pose.Ready;
             string clip="idle",guardClip="idle";
             float clock=t*.7f,guardClock=t*.7f;
@@ -408,7 +455,8 @@ namespace TumbangPreso.PlayTests.Trailer
             }
             if(t>=10 && t<14)
             {
-                dante=Vector3.Lerp(C+new Vector3(.65f,0,-.15f),C+new Vector3(-.55f,0,.95f),Smooth((t-10)/.7f));
+                float lunge=Smooth((t-10)/.7f);
+                dante=Vector3.Lerp(GuardMark,C+new Vector3(-.55f,0,.95f),lunge)+Vector3.forward*(.7f*Mathf.Sin(lunge*Mathf.PI));
                 dante+=Vector3.back*(.45f*Smooth((t-11.2f)/2.2f));
                 guard=t<10.8f?Pose.Contact:Pose.Rest;guard.Lean=10;
                 guardClip=t<10.8f?"attack-melee-right":"idle";guardClock=t-10;
@@ -416,7 +464,11 @@ namespace TumbangPreso.PlayTests.Trailer
             if(t>=14)
             {
                 var mid=C+new Vector3(.1f,0,-1.8f);
-                if(t<15.2f) dante=Vector3.Lerp(C+new Vector3(-.55f,0,.5f),mid,Smooth((t-14)/1.2f));
+                if(t<15.2f)
+                {
+                    float around=Smooth((t-14)/1.2f);
+                    dante=Vector3.Lerp(C+new Vector3(-.55f,0,.5f),mid,around)+Vector3.left*(.8f*Mathf.Sin(around*Mathf.PI));
+                }
                 else
                 {
                     float lag=Mathf.Lerp(2.8f,1.35f,Smooth((t-15.2f)/2.8f));
@@ -478,6 +530,18 @@ namespace TumbangPreso.PlayTests.Trailer
             return position;
         }
         private Vector3 ReactionSide()=>_reactionSide;
+        public float DefenderFootClearance(bool priorOpeningPath,out int samples)
+        {
+            bool found=false;Bounds prop=default;
+            foreach(var renderer in _can.GetComponentsInChildren<Renderer>(false))
+                if(renderer.enabled&&!renderer.forceRenderingOff&&renderer.GetComponent<VfxRenderTag>()==null)
+                {
+                    if(!_clearanceLogged)Debug.Log($"[TrailerClearance] visible can {renderer.name}: {renderer.bounds}");
+                    if(!found){prop=renderer.bounds;found=true;}else prop.Encapsulate(renderer.bounds);
+                }
+            _clearanceLogged=true;
+            return _dante.FootClearance(prop,priorOpeningPath?_priorFootOffset:Vector3.zero,out samples);
+        }
         private Vector3 ReactionEye(Vector3 actor)=>actor+ReactionSide()*3+Vector3.forward*3.1f+Vector3.up*1.45f;
         protected override void Restore()
         {if(_liveStage!=null)_liveStage.enabled=_stageEnabled;}

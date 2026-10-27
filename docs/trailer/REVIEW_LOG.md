@@ -126,3 +126,18 @@ ending-v13-camera-probe passed1/1 with17 samples and normal exit. Its three C14
 camera positions/rotations are identical; grip error .01549-.01969m and the
 recovered blue slipper remains visible. Render the full revised ending next.
 The delivered v01 picture/bundle stay intact while v02 is validated.
+
+## Opening footwork and framing refinement
+
+Full-duration half-second review showed the defender crowding the can while
+moving to his blocking mark. Added a path around the prop, a shared guard mark
+for opening/ending continuity and matching curved lunge/recovery paths. The
+C06 eye/target now retain the head and show the can beside the feet clearly.
+
+Foot clearance uses actual bone-world times bind-pose skinning matrices and
+separate lower-foot bounds against the visible can bounds. The first v15/v16
+foot diagnostics were scaled twice and are superseded measurement evidence;
+their render passes are not foot-clearance acceptance. Corrected v17 probe
+passed 1/1. Same-pose counterfactual old approach reaches -.13436m signed bound
+clearance; new sampled approach stays at least .08621m clear. Sparse samples
+are not whole-motion proof: render full takes and inspect every traced frame.

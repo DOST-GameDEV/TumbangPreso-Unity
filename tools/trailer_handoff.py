@@ -33,6 +33,10 @@ def main():
     if witness.get('share'):shutil.copy2(witness['share'],package/'TUMP_BringItHome_720p_SILENT.mp4')
     for name in ('TRAILER_SYNC.csv','SOUND_BRIEF.md'):
         shutil.copy2(work/name,package/name)
+    sound=package/'SOUND_BRIEF.md'
+    sound.write_text(sound.read_text(encoding='utf-8').replace(
+        f'Picture: `{args.tag}.mp4`.',
+        f'Picture: `TUMP_BringItHome_1080p30_SILENT.mp4` (source cut `{args.tag}`).'),encoding='utf-8')
     shutil.copy2(ROOT/'docs/trailer/PICTURE_EDL.json',package/'PICTURE_EDL.json')
     timeline=otio.schema.Timeline(name='TUMP Bring It Home - SILENT 30fps')
     timeline.global_start_time=otio.opentime.RationalTime(0,30)

@@ -1,17 +1,23 @@
-# Active refinement, October 28
+# Active v02 refinement
 
-The active goal explicitly requests further review/refinement. v01 below is a
-retained delivered baseline, not a stop instruction for this new goal turn.
-Confirmed defect: C14 camera side was recalculated from the animated shoulder,
-causing an unintended last-second orbit/pullback. New source fixes the shot side
-once in Prepare and records camera position/angles per captured frame.
+Goal continuation requests finishing, review and further refinement. v01 below is
+retained as the previously delivered baseline. Current production source 09a5c664c.
+No live Unity process. ending-v13-camera-probe and ending-v14-camera-master each
+passed 1/1 with normal exit and exact QualitySettings restoration.
 
-Current job: ending-v13-camera-probe, session99032, guardPID12668. Consult live
-PRODUCTION_JOB.json and actual Unity.exe. ONE job; never edit Assets during it.
-Next: review probe grip/composition and stable camera trace, then render a new
-1080p30 ending, replace only C09 in trailer-v02 and refresh all review/bundle proof.
-Preserve v01 and existing team sync: no timeline or native footage changes.
-All monitor, owner-dirt, silent-sound and cleanup constraints below still apply.
+Fixed C14 camera side once in Prepare: native idle movement no longer orbits or
+pulls the camera back. Full 540-frame master has 120 C14 frames, camera translation/
+rotation span exactly 0, max grip error .01969m and visible in-frame slipper on
+all 120 frames. Evidence: refinement-v02/camera-validation.json and reaction-before.jpg.
+
+Current edit: tools/trailer_cut.py --tag trailer-v02, tool session 63703. Verify
+actual Python/ffmpeg process before launching anything else against that output.
+Only C09 changes to ending-v14-camera-master; all other encoded clips copied
+independently from v01. No hardlinks/overwrites of delivered v01. Timeline unchanged.
+Next: finish encode, run trailer_finish_check.py trailer-v02 --sweep-fps 2, review all full-duration sweep sheets and contacts, regenerate
+sync notes and verify unchanged cues/other clips. Then refreshed portable bundle,
+completion audit, source publication and update_goal only after proof is complete.
+All original monitor, sound, source ownership and cleanup limits below still apply.
 
 # Trailer production checkpoint
 

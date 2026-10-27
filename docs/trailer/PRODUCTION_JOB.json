@@ -1,11 +1,11 @@
 {
-  "tag": "ending-v13-camera-probe",
-  "kind": "ending-probe",
+  "tag": "opening-v17-skin-clearance-probe",
+  "kind": "probe",
   "status": "finished",
-  "guard_pid": 12668,
-  "started_utc": "2026-10-27T18:46:04.365705+00:00",
-  "updated_utc": "2026-10-27T18:46:59.099613+00:00",
-  "output": "Logs/trailer/bring-it-home/ending-v13-camera-probe",
+  "guard_pid": 16460,
+  "started_utc": "2026-10-27T19:14:55.152466+00:00",
+  "updated_utc": "2026-10-27T19:15:43.562568+00:00",
+  "output": "Logs/trailer/bring-it-home/opening-v17-skin-clearance-probe",
   "tests": {
     "result": "Passed",
     "total": "1",

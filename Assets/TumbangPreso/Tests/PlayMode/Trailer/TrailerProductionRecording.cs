@@ -75,7 +75,7 @@ namespace TumbangPreso.PlayTests.Trailer
             var resolved=new RenderTexture(width,height,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB); resolved.Create();
             var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
             var shot=new GameObject("~TrailerProductionShot").AddComponent<LateFrameShot>();
-            var geometry=new System.Text.StringBuilder("age\tshot\tgrip_error\tshoe_viewport\tshoe_hidden\tcamera_eye\tcamera_euler\n");
+            var geometry=new System.Text.StringBuilder("age\tshot\tgrip_error\tshoe_viewport\tshoe_hidden\tcamera_eye\tcamera_euler\tdefender_foot_clearance\tprior_opening_foot_clearance\tfoot_samples\n");
             var prior=camera.targetTexture;
             shot.Shoot=path=>
             {
@@ -87,7 +87,8 @@ namespace TumbangPreso.PlayTests.Trailer
                         var renderer=opening.Shoe.GetComponentInChildren<Renderer>();
                         var point=camera.WorldToViewportPoint(renderer.bounds.center);
                         Vector3 eye=camera.transform.position,angles=camera.transform.eulerAngles;
-                        geometry.AppendLine(FormattableString.Invariant($"{director.HeldAge:F5}\t{director.Beat}\t{opening.GripError:F5}\t{point.x:F3},{point.y:F3},{point.z:F3}\t{renderer.forceRenderingOff}\t{eye.x:F5},{eye.y:F5},{eye.z:F5}\t{angles.x:F5},{angles.y:F5},{angles.z:F5}"));
+                        float foot=opening.DefenderFootClearance(false,out int count),priorFoot=opening.DefenderFootClearance(true,out _);
+                        geometry.AppendLine(FormattableString.Invariant($"{director.HeldAge:F5}\t{director.Beat}\t{opening.GripError:F5}\t{point.x:F3},{point.y:F3},{point.z:F3}\t{renderer.forceRenderingOff}\t{eye.x:F5},{eye.y:F5},{eye.z:F5}\t{angles.x:F5},{angles.y:F5},{angles.z:F5}\t{foot:F5}\t{priorFoot:F5}\t{count}"));
                     }
                     camera.targetTexture=target; camera.Render(); camera.targetTexture=prior;
                     Graphics.Blit(target,resolved); var active=RenderTexture.active; RenderTexture.active=resolved;
@@ -96,7 +97,7 @@ namespace TumbangPreso.PlayTests.Trailer
                 }
             };
             var probeTimes=start>0?new[]{0f,2.4f,4.6f,5.6f,7.5f,7.9f,8.2f,8.4f,8.6f,8.8f,9f,10.5f,12.8f,13.8f,14.5f,16.5f,17.8f}.Select(t=>start+t).ToArray():
-                new[]{0f,1.2f,2.4f,3f,3.7f,3.95f,4.15f,4.43f,4.47f,4.8f,5.4f,7.5f,9.9f,11.5f,12.5f,14.5f,16.5f,18.5f,19.9f};
+                new[]{0f,1.2f,2.4f,3f,3.7f,3.95f,4.15f,4.43f,4.47f,4.8f,5.4f,7.5f,9.9f,11.5f,12.5f,13f,13.3f,13.6f,13.9f,14.2f,14.5f,16.5f,18.5f,19.9f};
             var samples=probe?probeTimes:
                 Enumerable.Range(0,Mathf.CeilToInt(length*fps)).Select(i=>start+(float)i/fps).ToArray();
             File.WriteAllText(Path.Combine(folder,"capture.json"),$"{{\"kind\":\"original-cinema\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":{start.ToString(CultureInfo.InvariantCulture)},\"frames\":{samples.Length},\"probe\":{probe.ToString().ToLowerInvariant()}}}");
