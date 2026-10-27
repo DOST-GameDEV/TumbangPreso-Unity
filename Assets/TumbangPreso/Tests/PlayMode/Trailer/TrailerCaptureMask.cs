@@ -30,6 +30,8 @@ namespace TumbangPreso.PlayTests.Trailer
                     ||renderer.GetComponentInParent<GroundReticle>()!=null
                     ||renderer.name=="TayaHeadband"
                     ||renderer.name=="~CanSetRing"
+                    ||renderer.name=="~CanChalkSeal"
+                    ||UnderCanMarker(renderer.transform)
                     ||renderer.name.StartsWith("StatusBadge",StringComparison.Ordinal)
                     ||renderer.GetComponentInParent<UI.PlayerNameplate>()!=null
                     ||(hideHands && renderer.GetComponentInParent<CameraSystem.ViewmodelArms>()!=null);
@@ -41,6 +43,13 @@ namespace TumbangPreso.PlayTests.Trailer
                 if(!cue) continue;
                 _renderers.Add((renderer,renderer.forceRenderingOff)); renderer.forceRenderingOff=true;
             }
+        }
+
+        private static bool UnderCanMarker(Transform node)
+        {
+            for(var at=node;at!=null;at=at.parent)
+                if(at.name=="LataDownMark"||at.name=="LataRestoreShield")return true;
+            return false;
         }
 
         public void Dispose()

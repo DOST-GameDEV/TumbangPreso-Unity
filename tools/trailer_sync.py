@@ -41,7 +41,8 @@ def main():
                 cue(master,cut["id"],action,"Team chooses the audible priority; suppress nonessential layers",
                     "Accepted native event aligned +1 capture frame; verify impact/footage before final mix")
     for frame,action,role in [(2640,"Cinematic story returns","Pull toward the athlete's point of view"),
-        (2790,"Committed feint","Body intent and defender response"),(2900,"Pickup / lift","Grip and prop contact"),
+        (2790,"Committed feint","Body intent and defender response"),(2888,"Hand reaches slipper","Small physical grip contact"),
+        (2900,"Slipper lift begins","Grip and prop weight"),
         (2910,"Turn into escape","Build the chase"),(3034,"Crossing the established exit","Release / late tag attempt, no hit"),
         (3060,"Immediate escape resolved","Crowd and character breathing room"),(3180,"Neighborhood echo","Bring back human scale and warmth"),
         (3249,"Friends react","Small human reaction; not another large trailer hit"),(3360,"TUMP identity","Title arrival and musical resolution"),

@@ -83,3 +83,23 @@ findings, not normal-speed owner playback acceptance. All sound remains absent.
 Classic-v03 and hero-street-v01 provide qualified native matches and exact event
 records. Avoid long POV selections looking away from the contest or external
 frames obstructed by architecture. Select actual action after capture.
+
+## Clean final generation, October 28
+
+ending-v11-side-probe passed 1/1 with a reachable shoulder-relative hand target
+and camera on that side. Reaction grip error .016-.020 m; recovered blue slipper
+is clearly visible. ending-v12-master passed 1/1 with 540 true 1080p30 frames.
+Opening-v12 (600) and neighborhood-v03 (180) remain the other final cinema inputs.
+
+Capture mask revision 2 suppresses can protection/down indicator renderers. A
+fourth observer follow view tracks the actual watched body without changing
+outcomes. classic-v04-final passed 1/1, all four views 1050 frames, real portable
+replay tail flushed. No runtime Exception/error CS matches in checked final
+cinema/Classic logs. Capture evidence is not a whole-game regression claim.
+
+Classic selections show two actual exchanges: source20-27 includes release638,
+canDown660, pickup796 and tag804; source8.8-15.3 includes canDown283, pickup346
+and escape425. They are separate plays, not one invented continuous outcome.
+Short real-eye setup/release cuts switch to same-event observer views before a
+bot looks away from impact. Native screenshot evidence reviewed from extracted
+files. No UI player/browser was opened and no sound was generated.

@@ -436,7 +436,7 @@ namespace TumbangPreso.PlayTests.Trailer
             _dante.Sample(dante,guardYaw,guardClip,guardClock,guard);
             GripError=-1;
             if(t>=13 && t<13.65f) GripError=_rago.Body.ReachRight(ShoeMark+Vector3.up*.18f);
-            if(time>=14)GripError=_rago.Body.ReachRight(_rago.E.Root.transform.position+new Vector3(-.85f,.85f,.2f));
+            if(time>=14)GripError=_rago.Body.ReachRight(_rago.Body.RightShoulder+ReactionSide()*.2f+Vector3.down*.25f+Vector3.forward*.16f);
             if(time<14 && t>=17.72f) _dante.Body.ReachRight(rago+Vector3.up*.75f);
             Place(_can,C+_canPivot,_canRest);
             if(t<13.65f) Place(_shoe,ShoeMark,Quaternion.Euler(0,35,0));
@@ -446,7 +446,7 @@ namespace TumbangPreso.PlayTests.Trailer
                 float lift=Smooth((t-13.65f)/.35f);
                 Place(_shoe,Vector3.Lerp(ShoeMark,hand,lift),Quaternion.Slerp(Quaternion.Euler(0,35,0),rotation,lift));
             }
-            if(time>=14) {Beat="C14-release";Shoot(C+new Vector3(-3.8f,1.65f,8.6f),Vector3.Lerp(rago,dante,.2f)+Vector3.up,42);}
+            if(time>=14) {Beat="C14-release";Shoot(ReactionEye(rago),Vector3.Lerp(rago,dante,.1f)+Vector3.up*.95f,42);}
             else if(t<5) {Beat="C09-return";Shoot(C+new Vector3(-5.9f,1.4f,3.8f),C+new Vector3(.25f,.9f,1.6f),49);}
             else if(t<10) {Beat="C10-decision";Shoot(C+new Vector3(-4.2f,1.4f,2.2f),C+new Vector3(.25f,1,1.5f),45);}
             else if(t<12.7f) {Beat="C11-turn";Shoot(C+new Vector3(-4.8f,1.25f,1.1f),C+new Vector3(.5f,.8f,.2f),49);}
@@ -467,10 +467,16 @@ namespace TumbangPreso.PlayTests.Trailer
         {
             Vector3 hand=_rago.Body.Hand(out var fore);
             Vector3 face=_rago.E.Root.transform.forward;
-            if(display>0)face=Vector3.Slerp(face,(C+new Vector3(-3.8f,1.65f,8.6f)-hand).normalized,display);
+            if(display>0)face=Vector3.Slerp(face,(ReactionEye(_rago.E.Root.transform.position)-hand).normalized,display);
             _grip.Pose(hand,fore,face,out var position,out turn);
             return position;
         }
+        private Vector3 ReactionSide()
+        {
+            Vector3 side=Vector3.ProjectOnPlane(_rago.Body.RightShoulder-_rago.E.Root.transform.position,Vector3.up);
+            return side.sqrMagnitude>.001f?side.normalized:_rago.E.Root.transform.right;
+        }
+        private Vector3 ReactionEye(Vector3 actor)=>actor+ReactionSide()*3+Vector3.forward*3.1f+Vector3.up*1.45f;
         protected override void Restore()
         {if(_liveStage!=null)_liveStage.enabled=_stageEnabled;}
     }

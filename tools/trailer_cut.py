@@ -89,7 +89,8 @@ def source(cut,work):
     if start<0 or start+frames>meta["frames"]:raise ValueError("Source range outside take")
     if kind=="gameplay":
         if not meta.get("external_visibility_scope"):raise ValueError("Native capture predates clean visibility/marker qualification")
-        if cut["view"] not in ("fpv","line","side"):raise ValueError("Unknown native view")
+        if meta.get("capture_mask_revision",0)<2:raise ValueError("Native capture predates can protection/down marker suppression")
+        if cut["view"] not in ("fpv","line","side","follow"):raise ValueError("Unknown native view")
         rows=list(csv.DictReader((take/"telemetry.tsv").open(encoding="utf-8"),delimiter="\t"))[start:start+frames]
         if len(rows)!=frames or any(r["held_clock"]!="0" or r["fpv_valid"]!="1" for r in rows):
             raise ValueError("Native range contains a held/cutscene/unqualified player-view frame")

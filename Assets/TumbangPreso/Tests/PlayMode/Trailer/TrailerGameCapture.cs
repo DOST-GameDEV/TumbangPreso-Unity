@@ -54,7 +54,7 @@ namespace TumbangPreso.PlayTests.Trailer
             string tag=Argument("-trailer-tag")??"gameplay";
             Assert.IsTrue(tag.All(c=>char.IsLetterOrDigit(c)||c=='-'||c=='_'));
             string root=Path.GetFullPath(Path.Combine("Logs","trailer","bring-it-home",tag));
-            foreach(string view in new[]{"fpv","line","side"})
+            foreach(string view in new[]{"fpv","line","side","follow"})
             {
                 string folder=Path.Combine(root,view);
                 Assert.IsFalse(Directory.Exists(folder)&&Directory.EnumerateFiles(folder,"frame_*.jpg").Any(),"Use a fresh native take tag.");
@@ -97,9 +97,9 @@ namespace TumbangPreso.PlayTests.Trailer
             var telemetry=new StringBuilder("frame\ttime\tround\tdefender\tcan_up\tcan_x\tcan_y\tcan_z\tfpv_seat\tfpv_valid\theld_clock\tp0\tp1\tp2\tp3\tslippers\n");
             _events.Clear();_events.AppendLine("frame\tkind\tactor\tsubject\tid\tx\ty\tz\tstrength");
             HeroAbilitySystem.CastPresented+=Cast;MatchFlair.Presented+=Flair;
-            var line=new Operator();var side=new Operator();
+            var line=new Operator();var side=new Operator();var follow=new Operator();
             int count=seconds*fps;
-            File.WriteAllText(Path.Combine(root,"capture.json"),$"{{\"kind\":\"native-gameplay\",\"mode\":\"{mode}\",\"map\":\"{map}\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":0,\"frames\":{count},\"probe\":false,\"pov_seat\":{povSeat},\"external_visibility_scope\":true}}");
+            File.WriteAllText(Path.Combine(root,"capture.json"),$"{{\"kind\":\"native-gameplay\",\"mode\":\"{mode}\",\"map\":\"{map}\",\"width\":{width},\"height\":{height},\"fps\":{fps},\"start\":0,\"frames\":{count},\"probe\":false,\"pov_seat\":{povSeat},\"external_visibility_scope\":true,\"capture_mask_revision\":2}}");
             File.WriteAllLines(Path.Combine(root,"frame-times.tsv"),Enumerable.Range(0,count).Select(i=>$"{i}\t{((float)i/fps).ToString("F5",CultureInfo.InvariantCulture)}"));
             var shot=new GameObject("~NativeTrailerCoverage").AddComponent<LateFrameShot>();
             shot.Shoot=_=>
@@ -119,6 +119,12 @@ namespace TumbangPreso.PlayTests.Trailer
                 if(_frame==0)Assert.Greater(visibleBody,0,"Observer body visibility must be restored for external capture");
                 side.Aim(camera,can+new Vector3(8.8f,1.65f,3.9f),focus,55,1f/fps);
                 Render(camera,target,resolved,image,Path.Combine(root,"side",$"frame_{_frame:00000}.jpg"),true);
+                Vector3 body=watched.transform.position;
+                Vector3 followFocus=body+Vector3.up*.9f;
+                if(defender!=null && defender!=watched && Vector3.Distance(body,defender.transform.position)<4)
+                    followFocus=Vector3.Lerp(body,defender.transform.position,.22f)+Vector3.up*.9f;
+                follow.Aim(camera,body+new Vector3(4.6f,2.7f,-4.2f),followFocus,50,1f/fps);
+                Render(camera,target,resolved,image,Path.Combine(root,"follow",$"frame_{_frame:00000}.jpg"),true);
                 camera.transform.SetPositionAndRotation(original,turn);camera.fieldOfView=fov;
                 telemetry.Append(FormattableString.Invariant($"{_frame}\t{(float)_frame/fps:F5}\t{GameServices.Match.RoundNumber}\t{defender?.PlayerSlot??-1}\t{(lata.IsUpright?1:0)}\t{can.x:F3}\t{can.y:F3}\t{can.z:F3}\t{povSeat}\t{(spectator.IsWatchingEyes(watched)?1:0)}\t{(PresentationClock.Held?1:0)}"));
                 foreach(var p in players)
@@ -144,7 +150,7 @@ namespace TumbangPreso.PlayTests.Trailer
                 Object.Destroy(shot.gameObject);Object.Destroy(image);
                 target.Release();Object.Destroy(target);resolved.Release();Object.Destroy(resolved);
             }
-            foreach(string view in new[]{"fpv","line","side"})
+            foreach(string view in new[]{"fpv","line","side","follow"})
                 Assert.AreEqual(count,Directory.EnumerateFiles(Path.Combine(root,view),"frame_*.jpg").Count(),"Incomplete native "+view);
             // Keep portable actual-match data outside the isolated profile that the guard restores.
             // The archive owns its recorder; disabling it flushes the current tail without starting a new one.

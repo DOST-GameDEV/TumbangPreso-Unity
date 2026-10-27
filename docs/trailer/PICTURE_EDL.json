@@ -1,0 +1,172 @@
+{
+  "title": "TUMP Bring It Home",
+  "status": "working selection; later native ranges require actual-event review before assembly",
+  "fps": 30,
+  "total_frames": 3600,
+  "block_frames": [
+    0,
+    600,
+    2640,
+    3360,
+    3600
+  ],
+  "cuts": [
+    {
+      "id": "C01-opening",
+      "kind": "cinema",
+      "take": "opening-v12-master",
+      "start_frame": 0,
+      "frames": 600
+    },
+    {
+      "id": "G01a-classic-throw",
+      "kind": "gameplay",
+      "take": "classic-v04-final",
+      "view": "fpv",
+      "start_frame": 600,
+      "frames": 45,
+      "label": "CLASSIC"
+    },
+    {
+      "id": "G01b-classic-contact",
+      "kind": "gameplay",
+      "take": "classic-v04-final",
+      "view": "line",
+      "start_frame": 645,
+      "frames": 60
+    },
+    {
+      "id": "G01c-classic-counter",
+      "kind": "gameplay",
+      "take": "classic-v04-final",
+      "view": "follow",
+      "start_frame": 705,
+      "frames": 105
+    },
+    {
+      "id": "G02a-classic-retry",
+      "kind": "gameplay",
+      "take": "classic-v04-final",
+      "view": "line",
+      "start_frame": 264,
+      "frames": 60
+    },
+    {
+      "id": "G02b-classic-escape",
+      "kind": "gameplay",
+      "take": "classic-v04-final",
+      "view": "follow",
+      "start_frame": 324,
+      "frames": 135
+    },
+    {
+      "id": "G03-classic-return",
+      "kind": "gameplay",
+      "take": "classic-v04-final",
+      "view": "fpv",
+      "start_frame": 450,
+      "frames": 75
+    },
+    {
+      "id": "G04-hero-impact",
+      "kind": "gameplay",
+      "take": "hero-arena-v03-final",
+      "view": "fpv",
+      "start_frame": 90,
+      "frames": 180,
+      "label": "HERO STRIKE"
+    },
+    {
+      "id": "G05-hero-change",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "fpv",
+      "start_frame": 90,
+      "frames": 180
+    },
+    {
+      "id": "G06-hero-counter",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "line",
+      "start_frame": 270,
+      "frames": 180
+    },
+    {
+      "id": "G07-hero-retrieval",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "follow",
+      "start_frame": 450,
+      "frames": 180
+    },
+    {
+      "id": "G08-defend-eyes",
+      "kind": "gameplay",
+      "take": "defender-v02-final",
+      "view": "fpv",
+      "start_frame": 0,
+      "frames": 210
+    },
+    {
+      "id": "G09-defend-response",
+      "kind": "gameplay",
+      "take": "defender-v02-final",
+      "view": "follow",
+      "start_frame": 210,
+      "frames": 210
+    },
+    {
+      "id": "G10-escalate",
+      "kind": "gameplay",
+      "take": "hero-arena-v03-final",
+      "view": "follow",
+      "start_frame": 300,
+      "frames": 120
+    },
+    {
+      "id": "G11-exchange",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "line",
+      "start_frame": 630,
+      "frames": 120
+    },
+    {
+      "id": "G12-pressure",
+      "kind": "gameplay",
+      "take": "hero-street-v02-final",
+      "view": "fpv",
+      "start_frame": 720,
+      "frames": 90
+    },
+    {
+      "id": "G13-payoff",
+      "kind": "gameplay",
+      "take": "defender-v02-final",
+      "view": "fpv",
+      "start_frame": 540,
+      "frames": 90
+    },
+    {
+      "id": "C09-arena-return",
+      "kind": "cinema",
+      "take": "ending-v12-master",
+      "start_frame": 0,
+      "frames": 540
+    },
+    {
+      "id": "C15-neighborhood",
+      "kind": "cinema",
+      "take": "neighborhood-v03-master",
+      "start_frame": 0,
+      "frames": 180
+    },
+    {
+      "id": "E01-title",
+      "kind": "graphics",
+      "source": "title",
+      "frames": 240
+    }
+  ]
+}

@@ -15,7 +15,7 @@ def main():
     parser.add_argument("tag")
     parser.add_argument("--encode", action="store_true")
     parser.add_argument("--step", type=float, default=1.0, help="Seconds between review frames for a motion take")
-    parser.add_argument("--view", choices=("fpv", "line", "side"), default="fpv", help="Native gameplay camera")
+    parser.add_argument("--view", choices=("fpv", "line", "side", "follow"), default="fpv", help="Native gameplay camera")
     parser.add_argument("--start", type=float)
     parser.add_argument("--end", type=float)
     args = parser.parse_args()

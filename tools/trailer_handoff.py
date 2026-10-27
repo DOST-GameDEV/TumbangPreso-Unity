@@ -129,7 +129,7 @@ The README in that repository plus docs/trailer/PRODUCTION_CHECKPOINT.md own the
 current render workflow. Never reset a workspace/profile or discard unrelated work.
 
 capture-evidence includes accepted scene/mode/event telemetry and actual replay
-archives. It preserves real outcomes. Replay rendering parity on another machine
+archives from local native bot matches. It preserves real outcomes. Replay rendering parity on another machine
 is not certified. Selected encoded clips are the portable visual source of truth.
 No unrelated profiles, saves, credentials or private owner files are included.
 '''

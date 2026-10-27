@@ -1,17 +1,11 @@
 {
-  "tag": "opening-v11-stage-probe",
-  "kind": "probe",
-  "status": "finished",
-  "guard_pid": 19352,
-  "started_utc": "2026-10-27T17:24:32.506384+00:00",
-  "updated_utc": "2026-10-27T17:25:04.161571+00:00",
-  "output": "Logs/trailer/bring-it-home/opening-v11-stage-probe",
-  "tests": {
-    "result": "Passed",
-    "total": "1",
-    "passed": "1",
-    "failed": "0",
-    "skipped": "0"
-  },
+  "tag": "hero-street-v02-final",
+  "kind": "hero-street",
+  "status": "running",
+  "guard_pid": 10948,
+  "started_utc": "2026-10-27T17:49:35.928154+00:00",
+  "updated_utc": "2026-10-27T17:49:36.114593+00:00",
+  "output": "Logs/trailer/bring-it-home/hero-street-v02-final",
+  "tests": null,
   "resume_rule": "Verify actual Unity.exe command/PID and read PRODUCTION_CHECKPOINT.md before any edit or duplicate launch."
 }
