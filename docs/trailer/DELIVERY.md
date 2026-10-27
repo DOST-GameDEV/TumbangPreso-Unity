@@ -14,7 +14,7 @@ TUMP end graphics. Material boundaries are enforced by the compositor. Opening,
 ending and neighborhood performances are newly directed. Existing models and
 clips are materials; old map/hero films and game cutscenes are not inserted.
 
-The final image review used127 ordered decoded frames, both sides of cut
+An earlier review used 127 ordered decoded frames; the final v02 review uses 311 frames, both sides of cut
 boundaries and dense throw/contact/pickup/escape samples. One late wide gameplay
 shot was replaced by a closer same-event angle and rechecked. The owner's monitor
 was kept free of UI playback. Normal-speed human viewing/creative acceptance and
@@ -76,3 +76,11 @@ The final review covers 240 half-second samples over the full 120 seconds plus
 71 contact/boundary samples. The review includes all 20 sweep sheets. This is
 ordered file-based temporal review with rig telemetry; no UI playback was used.
 The team supplies all audio, and normal-speed owner viewing remains separate.
+
+## Verified v02 package
+
+The portable ZIP contains 281 files. OTIO roundtrip, relative media resolution,
+file hashes and ZIP CRCs passed. Its delivered rebuild helper ran from another
+working directory and reproduced the entire v02 master byte for byte. Production
+source is efee3795d. Exact evidence is in DELIVERY_VERIFICATION.json. v01 remains
+intact as a delivered baseline; v02 is preferred. The heartbeat remains PAUSED.

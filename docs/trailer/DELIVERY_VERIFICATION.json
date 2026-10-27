@@ -1,17 +1,19 @@
 {
-  "completed_utc": "2026-10-27T18:38:18.691995+00:00",
-  "master": "Logs/trailer/bring-it-home/trailer-v01.mp4",
-  "master_sha256": "4ec35b24d3226c0191f8410cdfa3a9d1f4fd33594cbdfe55c688b0229ee5d1ad",
+  "completed_utc": "2026-10-27T19:55:04.876491+00:00",
+  "version": "v02",
+  "master": "Logs/trailer/bring-it-home/trailer-v02.mp4",
+  "master_sha256": "766ac3f0c3533883c7ea70e4f04869581353b57c441d0cc70f39dfb1c24dbbe5",
   "frames": 3600,
   "seconds": 120,
   "width": 1920,
   "height": 1080,
-  "rate": "30/1",
+  "fps": "30/1",
+  "audio_streams": 0,
   "color_space": "bt709",
   "color_range": "tv",
-  "audio_streams": 0,
   "full_decode": "passed",
-  "encoded_sequence_samples": 127,
+  "review_samples": 311,
+  "full_duration_sweep_fps": 2,
   "block_frames": [
     0,
     600,
@@ -19,19 +21,58 @@
     3360,
     3600
   ],
-  "portable_zip": "Logs/trailer/bring-it-home/delivery/TUMP_BringItHome_trailer-v01.zip",
-  "zip_bytes": 502129962,
-  "zip_sha256": "d505c6e5928c4c8f76c0aa71b1a64381127640b56cbd24b3d2d0094b059fb1dc",
+  "portable_zip": "Logs/trailer/bring-it-home/delivery/TUMP_BringItHome_trailer-v02.zip",
+  "zip_bytes": 510574533,
+  "zip_sha256": "e89bc011a88a356e93d01ee1b598163913933f8a0d12f1185cb45045fe33b1c2",
   "zip_crc": "passed",
-  "packaged_files": 257,
-  "portable_rebuild": {
+  "packaged_files": 281,
+  "portability": {
     "rebuild_from_different_working_directory": "passed",
-    "video_bitstream": "SHA256=f35665e975071fdc89b54f262d3fdd5ff0091dd0dbf77b4e345bcac154fe24ec",
+    "video_bitstream": "SHA256=d3019ab506050a042d40efff67b2099b642b563f9c7b9dac5aabba3624f27c48",
     "full_file_sha256_equal": true,
     "timeline_roundtrip_frames": 3600
   },
-  "production_source_commit": "d0d8516003d173e07d497f756cf08a7102c5ab77",
-  "heartbeat_status": "PAUSED",
-  "human_playback": "pending; overnight UI playback was not reopened",
-  "sound": "All sound remains owner/team-authored"
+  "v01_comparison": {
+    "baseline_master_sha256": "4ec35b24d3226c0191f8410cdfa3a9d1f4fd33594cbdfe55c688b0229ee5d1ad",
+    "current_master_sha256": "766ac3f0c3533883c7ea70e4f04869581353b57c441d0cc70f39dfb1c24dbbe5",
+    "all_cut_times_unchanged": true,
+    "changed_cinema_clips": [
+      "C01-opening",
+      "C09-arena-return"
+    ],
+    "all_gameplay_neighborhood_title_clip_hashes": "identical",
+    "sound_cue_sheet_sha256": "3767c94b81f7b1305e9ac211b9f35c1a49ed34ca5afe2c3d92795ceb85efc6ad",
+    "sound_cue_sheet_matches_v01": true
+  },
+  "cinema_geometry": {
+    "opening-v18-final-master": {
+      "frames": 600,
+      "checked_frames": 216,
+      "minimum_foot_clearance_m": 0.08621
+    },
+    "ending-v20-final-master": {
+      "frames": 540,
+      "checked_frames": 540,
+      "minimum_foot_clearance_m": 0.15587,
+      "reaction_frames": 120,
+      "camera_spans": {
+        "camera_eye": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "camera_euler": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "grip_max_m": 0.01969,
+      "shoe_visible_all_reaction_frames": true
+    }
+  },
+  "production_source_commit": "efee3795d8b231e240aeb2b6dc1fc38fef71eda3",
+  "heartbeat": "PAUSED",
+  "normal_speed_ui_playback": "not performed under overnight monitor constraint",
+  "audio": "all owner/team-authored"
 }

@@ -41,3 +41,12 @@ cinematic opening and overall trailer. The team creates all sound.
 The picture and its review/refinement are deliverable work. The owner/team will
 watch it at normal speed, compose the sound and supply future creative feedback.
 Those future choices are not represented as completed or approved here.
+
+## Packaging result
+
+v02 packaging completed successfully: 281 files, 510574533 bytes. Relative OTIO
+media and 3600-frame roundtrip passed. Delivered rebuild reproduced the complete
+master SHA256 exactly. Copied-file hashes and ZIP CRC passed. All artifacts are
+local and source is published on trailer/pandaigdig-plan. No mandatory picture
+production or assistant review/refinement work remains under the accepted scope.
+Normal-speed owner viewing and team sound remain accurately identified above.

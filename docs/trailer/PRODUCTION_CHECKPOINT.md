@@ -30,13 +30,13 @@ Git HEAD/status. Preserve five owner-dirty files listed below.
 
 ## ONE next action
 
-Publish source, then run python tools/trailer_handoff.py trailer-v02. Verify fresh
-package PORTABILITY_CHECK.json, all file hashes and ZIP CRC. The delivered rebuild
-must reproduce the current master exactly from another working directory. Final
-completion audit is GOAL_AUDIT.md; update its packaging result only after success.
-Then publish completion metadata, verify no owned helpers remain and complete the
-active goal. The separate overnight heartbeat is already PAUSED; no duplicate
-automation is needed. Do not rerender unchanged material.
+Picture/review/refinement and portable v02 delivery are complete. Owner watches
+and the team composes/mixes all sound. Do not launch new renders without a new
+picture request. The active goal can be marked complete after final source/remote
+verification; no further production work is queued. The separate heartbeat remains
+PAUSED. Current package: delivery/TUMP_BringItHome_trailer-v02.zip, 281 files,
+510574533 bytes. OTIO, media/hash, ZIP CRC and exact full-file rebuild all passed.
+DELIVERY_VERIFICATION.json owns exact hashes/evidence. v01 is preserved.
 
 ## Boundaries and ownership
 
