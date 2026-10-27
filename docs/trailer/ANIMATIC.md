@@ -1,4 +1,8 @@
-# Trailer animatic: Acts 1 and 2, "Lolo's Tsinelas"
+# Rejected animatic history: v1-v4
+
+Superseded 2026-10-27. v4 is rejected evidence, not the current deliverable. Read
+[PRODUCTION_BRIEF](PRODUCTION_BRIEF.md) and [PRODUCTION_CHECKPOINT](PRODUCTION_CHECKPOINT.md)
+for the newly authorized production. No music/SFX from this old pipeline are authorized.
 
 Owner, 2026-10-27: start the animatic with **The Throw** and **Our World**; refine until
 satisfied; very well animated; show the real game; tell a story; anyone on any PC with their

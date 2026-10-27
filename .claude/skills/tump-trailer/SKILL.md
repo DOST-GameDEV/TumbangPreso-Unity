@@ -1,80 +1,57 @@
 ---
 name: tump-trailer
-description: Direct, render, edit and refine the TUMP game trailer (the PANDAIGDIG concept, "Lolo's Tsinelas" story) from real recorded gameplay, in-engine story cinematics and title cards. Use for any trailer, animatic, cinematic shot, trailer cut or trailer feedback work on TumbangPreso, on any machine.
+description: Build and refine the original Bring It Home TUMP trailer with separate cinematic and gameplay blocks, silent picture and portable production state.
 ---
 
-# TUMP trailer
+# TUMP trailer production
 
-Owner brief, 2026-10-27: a two-minute trailer, cinematic, nostalgic and fun, mixing new
-in-engine cinematics with real gameplay, set in a world where the Philippines made it and
-tumbang preso is the world's biggest sport with a yearly world final, PANDAIGDIG. The owner
-writes the music; Claude decides where voices go. "Refine, refine, refine"; "very well animated";
-"thoroughly think about every aspect, don't just make some random trailer"; anyone on any PC with
-their own Claude must be able to continue.
+Read `docs/trailer/PRODUCTION_BRIEF.md`, `PRODUCTION_CHECKPOINT.md` and
+`GAMEPLAY_SHOTS.md` first, then AGENTS.md. New owner instructions always win.
+The older Lolo story and v1-v4 are rejected history, not the current assignment.
 
-## Read first, in order
+## Owner authorization and boundaries
 
-1. [docs/trailer/STORY.md](../../../docs/trailer/STORY.md): the story, beat sheet and energy curve.
-   **Every shot must serve a beat there. If it does not, cut it.**
-2. [docs/trailer/ANIMATIC.md](../../../docs/trailer/ANIMATIC.md): pipeline, iteration log (the checkpoint),
-   owner notes, next step. Update the log every round.
-3. [docs/trailer/TRAILER_PLAN.md](../../../docs/trailer/TRAILER_PLAN.md): the whole two minutes and the world.
-4. The repo's AGENTS.md rules (one heavy Unity job per machine, named profile, author, no em dashes in repo prose).
+On 2026-10-27 the owner authorized overnight production, prioritizing the new
+cinematic opening, repeated review and iteration, then gameplay capture and the
+finished silent two-minute trailer. Existing animation clips or new animation
+are allowed. New cinematic performances, staging, lighting and cameras are
+required. Do not reuse map/hero films or recorded gameplay as cinematic scenes.
 
-## What the owner has rejected (do not repeat)
+- 0:00-0:20 new cinema; 0:20-1:28 native gameplay; 1:28-1:52 new cinema;
+  1:52-2:00 TUMP identity and truthful final copy.
+- The team authors ALL music/sound. No temp music, generated voices or SFX.
+- Clean image: no taya rings, aim lines, nameplates, status badges or hit text.
+- TUMP blocky cast, flat faces, one 16:9 frame and the supplied logo/accepted font.
+- Cause before effect. Planted feet, prop contact, readable intent and geography.
+- The story's immediate goal is slipper retrieval and escape, not an invented
+  match win, permanent taya punishment or magical inherited object.
 
-- A montage of unrelated vignettes with title cards doing the storytelling. Story first: a protagonist
-  who wants something, an obstacle, a turn.
-- No real gameplay. The game must be on screen, recorded from a real match, not only cutscenes.
-- Borrowed footage (the map intro films, HUD visible). Everything is made for the trailer.
-- Effect before cause: v2 cut to the stadium, craned out, THEN the can was hit. The hit lands on the cut;
-  the reveal is the payoff after it.
-- Energy that jumps around. Build in steps with planned valleys (stopdowns), climax, then a high exit.
-- The Darumadrop One font. Cards use Paalalabas Display Wide.
-- A "signature tsinelas rack" of single flat slippers that read as blobs. Props must read instantly.
+## Current tools
 
-## The pipeline (all reproducible from source; outputs are gitignored)
+- `TrailerOpeningFilm.cs`: new arena scene and choreography, test assembly only.
+- `TrailerProductionRecording.cs`: new original-cinema capture/probe.
+- `TrailerCaptureMask.cs`: render-time suppression of gameplay overlays.
+- `tools/run_trailer_job.py`: guarded Unity launch, source hashes, unique outputs
+  and exact QualitySettings.asset restoration.
 
-| Stage | Source | Command (one heavy Unity job at a time) | Output |
-|---|---|---|---|
-| Real gameplay | `Tests/PlayMode/Trailer/TrailerGameplay.cs` | `-testFilter "TumbangPreso.PlayTests.Trailer.TrailerGameplay.Street"` | `Logs/trailer/gameplay/<take>/{fpv,line,side}/f_#####.jpg` + `telemetry.tsv` |
-| Story shots | `TrailerStreetFilm.cs`, `TrailerArenaFilm.cs`, `TrailerBody.cs` | `-testFilter "TumbangPreso.PlayTests.Trailer.TrailerRecording.Arena;TumbangPreso.PlayTests.Trailer.TrailerRecording.Street"` (Arena first: the TV shows its frame) | `Logs/trailer/frames/<film>/frame_####.png` + `shots.txt` |
-| Edit | `tools/trailer_animatic.py` (EDL by beat id, looks, cards, sound cues) | `py -3 tools/trailer_animatic.py --version N` (`--sound-only` remixes audio) | `Logs/trailer/animatic_vN.mp4` (master) and `_share.mp4` (small, send this) |
-| Review | `tools/trailer_sheet.py street` / `arena` | contact sheets per shot | `Logs/trailer/review/` |
+Start cheaply:
+`python tools/run_trailer_job.py probe --tag opening-v01-probe`
+Then a motion draft:
+`python tools/run_trailer_job.py opening --tag opening-v01-draft --width 960 --height 540 --fps 30`
+A final run uses `--width 1920 --height 1080 --fps 30` with a fresh tag.
 
-Every Unity command is `python tools/run_unity_guarded.py -batchmode -force-d3d11 -tp-profile trailer-<date> -runTests -testPlatform PlayMode -testFilter "..." -testResults Logs/trailer/x.xml -logFile Logs/trailer/x.log`.
-Needs: the Unity Editor in `ProjectSettings/ProjectVersion.txt` (graphics, never `-nographics`), Python 3 with
-`numpy` and `Pillow`, `ffmpeg` on PATH. A 130 s gameplay take is about 25 minutes; story shots about 10.
-Do not edit `Assets/` while Unity runs; draft in a scratch folder and copy in after.
+Use one heavy Unity job per machine. Never edit Assets while Unity is active.
+Verify PID and command before stopping a job. Preserve existing dirty files,
+profiles and source. No reset, clean or force push. No paid tools without approval.
 
-**Gameplay:** bots play a real Classic match as the story's kids (seat 0 is Totoy, taya in round 1, attacking from
-round 2 at about frame 2200). `fpv` is the spectator's real first-person view with the game's hands; `line` and
-`side` are tracking operators that keep a clear sight line. Pick moments from `telemetry.tsv` (round, defender,
-`can_up` 1 to 0 is a knock-down, `flying` > 0 is a throw), then put the frame numbers in the EDL.
+## Review and continuity
 
-## How a story shot is made
+Inspect actual frames and motion sequences, plus the complete assembled cut.
+Contact sheets are framing evidence only; do not claim full playback review from
+stills. Identify a concrete defect, fix it and recheck the changed boundaries.
+Keep one current review candidate plus necessary failure/acceptance evidence.
 
-- Directors subclass `MapFilm`. Each shot owns a span (`Shots`); `Stage(age)` is a pure function of time.
-- Cast with `Person(...)` wrapped in `TrailerBody`; drive with `Perform(actor, at, yaw, clip, time, pose)`.
-- **Acting standard:** anticipation, committed peak, overshoot, settle (`Track`, `Ease.Back`, `Ease.Whip`); nobody
-  frozen (`Alive`); crowds staggered; emotion in the body (flat faces). The shared throw (`ThrowTrack`, the game's
-  charge/contact/follow) is the story's motif: 1974, 1996, Totoy and Rago throw the same way.
-- Camera: purposeful move plus a little `Wobble`; one idea per shot; nothing blocking the subject.
-- Light: trailer films override `OwnsLight` and `Tint`; match map films never do.
-- Words in the world (sole, livery, plaque, TV lower third) are `TextMesh` in Paalalabas.
-
-## Edit rules
-
-- Aspect ratio carries meaning: the past is 4:3 (1974 newsreel, 1996 VHS), the present is full 16:9 (street story
-  and real play), the dream opens to 2.39 on the Arena hit.
-- Cut on action; match cut on shape and motion (tsinelas into lens, out of lens; the same throw pose).
-- One title card per act at most; let the world's own signs and broadcasts speak.
-- Voices: only human recordings in the project or recorded by the team. Never synthesize a voice.
-- Temp music follows the energy curve; give the composer sync points from the printed segment starts.
-
-## The refine loop
-
-1. Read STORY.md and the log. Find the weakest beat for the STORY, not the easiest fix.
-2. Change the director or the EDL, render, build contact sheets, judge every frame as a director.
-3. Cut, watch the whole thing for flow and energy, write what changed and what is still weak.
-4. Send `_share.mp4` with SendUserFile. Commit and push source and docs on `trailer/pandaigdig-plan`.
+Update PRODUCTION_CHECKPOINT after each coherent unit with source revision,
+exact commands, running job identity, outputs, review limits and ONE next action.
+Commit only owned paths as M4tyu633 and push coherent units so another PC can
+continue. Final viewing file and concise manual handoff belong in chat, not Drive.

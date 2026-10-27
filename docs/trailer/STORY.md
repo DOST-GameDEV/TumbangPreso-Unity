@@ -1,4 +1,8 @@
-# Acts 1 and 2 rebuilt: "Lolo's Tsinelas"
+# Rejected history: "Lolo's Tsinelas"
+
+Superseded 2026-10-27 by [PRODUCTION_BRIEF](PRODUCTION_BRIEF.md). Do not produce
+this story or restore its footage/aspect treatments. Current execution state is
+[PRODUCTION_CHECKPOINT](PRODUCTION_CHECKPOINT.md).
 
 Owner, 2026-10-27, on animatic v2: no story, the real game is not shown, borrowed cutscenes,
 "the energy buildup is all over the place", the zoom out before the can hit "panget ng flow",
