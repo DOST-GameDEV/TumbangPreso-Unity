@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--protocol',required=True,type=int)
     parser.add_argument('--seconds',type=int,default=145)
     parser.add_argument('--cast-nemu',action='store_true')
+    parser.add_argument('--allbots',action='store_true',help='Diagnostic spectator route; omit for normal player cameras')
     args=parser.parse_args();exe=args.exe.resolve();out=args.out.resolve()
     assert exe.parent==ROOT/'Builds/Windows' and out.is_relative_to(ROOT/'Logs')
     if out.exists():raise RuntimeError('Use a new task-owned evidence folder')
@@ -61,11 +62,12 @@ def main():
             evidence=out/role;evidence.mkdir()
             command=[str(exe),'-force-d3d11','-screen-fullscreen','0','-screen-width','960','-screen-height','540',
                 '-tp-framecap','60','-tp-profile',name,'-tp-lobby','-tp-lobbyport',str(port if role=='host' else port+1),
-                '-tp-map',args.map,'-tp-autostart','2','-tp-allbots','-tp-netreport',str(evidence/'state.txt'),
-                '-tp-netseconds',str(args.seconds),'-tp-grounding-report',str(evidence),'-logFile',str(evidence/'player.log')]
+                '-tp-map',args.map,'-tp-autostart','2','-tp-netreport',str(evidence/'state.txt'),
+                '-tp-netseconds',str(args.seconds+30 if role=='host' else args.seconds),'-tp-grounding-report',str(evidence),'-logFile',str(evidence/'player.log')]
+            if args.allbots:command.append('-tp-allbots')
             if role=='client':command+=['-tp-lobbyjoin','127.0.0.1:'+str(port)]
             elif args.cast_nemu:command+=['-tp-grounding-cast','nemu']
-            startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
+            startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=4
             process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup,creationflags=subprocess.CREATE_NO_WINDOW)
             children.append(process);commands.append(command);save('running');print(role,'PID',process.pid,flush=True)
             if role=='host':
@@ -75,7 +77,7 @@ def main():
                     if 'connected as seat 1' in text or 'hosting' in text.lower():break
                     if process.poll() is not None:raise RuntimeError('Host exited during startup')
                     time.sleep(.4)
-        until=time.monotonic()+args.seconds+35
+        until=time.monotonic()+args.seconds+65
         while time.monotonic()<until and any(p.poll() is None for p in children):time.sleep(.5)
         codes=[p.poll() for p in children]
         if any(code is None for code in codes):raise RuntimeError('Native peer timed out')

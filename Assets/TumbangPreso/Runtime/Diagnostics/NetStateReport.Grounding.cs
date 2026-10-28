@@ -22,7 +22,7 @@ namespace TumbangPreso.Diagnostics
             public double serverTime;
             public int local, round, quality;
             public bool host, held, scriptedUltimate, ultimateThreshold;
-            public string scene, phase, beat;
+            public string scene, phase, beat, pipeline;
             public Color sky, equator, groundColour, fog, sun;
             public float sunIntensity, brightness=1, saturation=1;
             public List<GroundActor> actors=new List<GroundActor>();
@@ -61,10 +61,14 @@ namespace TumbangPreso.Diagnostics
             _groundWriter=new StreamWriter(Path.Combine(_groundFolder,"frames.jsonl")){AutoFlush=true};
             File.WriteAllText(Path.Combine(_groundFolder,"identity.txt"),BuildIdentity.OneLine()+"\n"+SkillContractFingerprint.Current);
             RenderPipelineManager.endCameraRendering+=ObserveGroundingCamera;
+            Camera.onPostRender+=ObserveGroundingBuiltin;
         }
+        private void ObserveGroundingBuiltin(Camera camera) => ObserveGroundingCamera(default,camera);
+
         private void ObserveGroundingCamera(ScriptableRenderContext context, Camera camera)
         {
-            if(_groundWriter==null || camera!=Camera.main || Time.realtimeSinceStartup<_groundNext)return;
+            if(_groundWriter==null || camera==null || Time.realtimeSinceStartup<_groundNext)return;
+            if(camera!=Camera.main && camera.GetComponent<CameraSystem.CameraRig>()==null && camera.GetComponent<CameraSystem.SpectatorCamera>()==null)return;
             _groundNext=Time.realtimeSinceStartup+.2f;
             try
             {
@@ -73,6 +77,7 @@ namespace TumbangPreso.Diagnostics
                 var frame=new GroundFrame{time=Time.realtimeSinceStartup,local=NetAuthority.LocalSlot,host=NetAuthority.IsHost,
                     round=GameServices.Match?.RoundNumber??-1,roundLeft=round.TimeLeft,held=PresentationClock.Held,
                     scene=SceneManager.GetActiveScene().name,quality=QualitySettings.GetQualityLevel(),scriptedUltimate=_groundCast,
+                    pipeline=RenderPipelineManager.currentPipeline!=null?RenderPipelineManager.currentPipeline.GetType().Name:"Built-in",
                     ultimateThreshold=_groundThreshold,sky=RenderSettings.ambientSkyColor,equator=RenderSettings.ambientEquatorColor,
                     groundColour=RenderSettings.ambientGroundColor,fog=RenderSettings.fogColor};
                 var nm=NetworkManager.Singleton;frame.serverTime=nm!=null&&nm.IsListening?nm.ServerTime.Time:0;
@@ -162,6 +167,6 @@ namespace TumbangPreso.Diagnostics
             actor.Intent.Set(Verb.Ultimate,true);actor.Intent.BufferPress(Verb.Ultimate);_groundCast=true;_groundRelease=Time.realtimeSinceStartup+.25f;
             Debug.Log("[GroundAudit] Named scenario granted ultimate charge and buffered the ordinary Nemu request; threshold="+_groundThreshold);
         }
-        private void OnDestroy(){RenderPipelineManager.endCameraRendering-=ObserveGroundingCamera;_groundWriter?.Dispose();_groundWriter=null;}
+        private void OnDestroy(){RenderPipelineManager.endCameraRendering-=ObserveGroundingCamera;Camera.onPostRender-=ObserveGroundingBuiltin;_groundWriter?.Dispose();_groundWriter=null;}
     }
 }
